@@ -22,8 +22,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.apicurio.registry.rest.client.models.ArtifactMetaData;
+import io.apicurio.registry.rest.client.models.ArtifactSearchResults;
 import io.apicurio.registry.rest.client.models.CreateArtifactResponse;
 import io.apicurio.registry.rest.client.models.GroupMetaData;
+import io.apicurio.registry.rest.client.models.ProblemDetails;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import org.apache.camel.Exchange;
@@ -31,11 +33,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
 
@@ -84,8 +85,8 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
         Exchange groupResult = template.request("direct:operation", exchange -> {
             exchange.getIn().setHeaders(headers);
         });
-        assertNotNull(groupResult.getIn().getBody());
-        assertInstanceOf(GroupMetaData.class, groupResult.getIn().getBody());
+        assertThat(groupResult.getException()).isNull();
+        assertThat(groupResult.getIn().getBody()).isInstanceOf(GroupMetaData.class);
 
         // 2. Create artifact
         Map<String, Object> createHeaders = new HashMap<>();
@@ -98,8 +99,8 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
             exchange.getIn().setHeaders(createHeaders);
             exchange.getIn().setBody(JSON_SCHEMA);
         });
-        assertNotNull(createResult.getIn().getBody());
-        assertInstanceOf(CreateArtifactResponse.class, createResult.getIn().getBody());
+        assertThat(createResult.getException()).isNull();
+        assertThat(createResult.getIn().getBody()).isInstanceOf(CreateArtifactResponse.class);
 
         // 3. Get artifact metadata
         Map<String, Object> getMetaHeaders = new HashMap<>();
@@ -110,9 +111,9 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
         Exchange metaResult = template.request("direct:operation", exchange -> {
             exchange.getIn().setHeaders(getMetaHeaders);
         });
-        assertInstanceOf(ArtifactMetaData.class, metaResult.getIn().getBody());
+        assertThat(metaResult.getIn().getBody()).isInstanceOf(ArtifactMetaData.class);
         ArtifactMetaData metadata = (ArtifactMetaData) metaResult.getIn().getBody();
-        assertEquals(artifactId, metadata.getArtifactId());
+        assertThat(metadata.getArtifactId()).isEqualTo(artifactId);
 
         // 4. Get artifact content
         Map<String, Object> getContentHeaders = new HashMap<>();
@@ -124,9 +125,9 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
             exchange.getIn().setHeaders(getContentHeaders);
         });
         byte[] contentBody = contentResult.getIn().getBody(byte[].class);
-        assertNotNull(contentBody);
+        assertThat(contentBody).isNotNull();
         String contentStr = new String(contentBody, StandardCharsets.UTF_8);
-        assertTrue(contentStr.contains("name"));
+        assertThat(contentStr).isEqualTo(JSON_SCHEMA);
 
         // 5. Update artifact (new version)
         Map<String, Object> updateHeaders = new HashMap<>();
@@ -138,7 +139,7 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
             exchange.getIn().setHeaders(updateHeaders);
             exchange.getIn().setBody(JSON_SCHEMA_V2);
         });
-        assertInstanceOf(VersionMetaData.class, updateResult.getIn().getBody());
+        assertThat(updateResult.getIn().getBody()).isInstanceOf(VersionMetaData.class);
 
         // 6. List versions
         Map<String, Object> listHeaders = new HashMap<>();
@@ -149,9 +150,9 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
         Exchange listResult = template.request("direct:operation", exchange -> {
             exchange.getIn().setHeaders(listHeaders);
         });
-        assertInstanceOf(VersionSearchResults.class, listResult.getIn().getBody());
+        assertThat(listResult.getIn().getBody()).isInstanceOf(VersionSearchResults.class);
         VersionSearchResults versions = (VersionSearchResults) listResult.getIn().getBody();
-        assertTrue(versions.getCount() >= 2);
+        assertThat(versions.getCount()).isEqualTo(2);
 
         // 7. Delete artifact
         Map<String, Object> deleteHeaders = new HashMap<>();
@@ -159,9 +160,10 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
                 ApicurioRegistryConstants.OPERATION_DELETE_ARTIFACT);
         deleteHeaders.put(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
         deleteHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
-        template.request("direct:operation", exchange -> {
+        Exchange deleted = template.request("direct:operation", exchange -> {
             exchange.getIn().setHeaders(deleteHeaders);
         });
+        assertThat(deleted.getException()).isNull();
     }
 
     @Test
@@ -194,13 +196,29 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
         Exchange searchResult = template.request("direct:operation", exchange -> {
             exchange.getIn().setHeaders(searchHeaders);
         });
-        assertNotNull(searchResult.getIn().getBody());
+        assertThat(searchResult.getException()).isNull();
+        ArtifactSearchResults results = searchResult.getIn().getBody(ArtifactSearchResults.class);
+        assertThat(results.getArtifacts()).extracting("artifactId").containsExactly(artifactId);
 
         // Cleanup
         Map<String, Object> deleteHeaders = new HashMap<>();
         deleteHeaders.put(ApicurioRegistryConstants.HEADER_OPERATION, ApicurioRegistryConstants.OPERATION_DELETE_ARTIFACT);
         deleteHeaders.put(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
         deleteHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
-        template.request("direct:operation", exchange -> exchange.getIn().setHeaders(deleteHeaders));
+        Exchange deleted = template.request("direct:operation", exchange -> exchange.getIn().setHeaders(deleteHeaders));
+        assertThat(deleted.getException()).isNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "deleteArtifact", "updateArtifact" })
+    void testMissingArtifact(String operation) {
+        Exchange result = template.request("direct:operation", exchange -> {
+            exchange.getIn().setHeader(ApicurioRegistryConstants.HEADER_OPERATION, operation);
+            exchange.getIn().setHeader(ApicurioRegistryConstants.HEADER_GROUP_ID, "missing-group-" + UUID.randomUUID());
+            exchange.getIn().setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, "missing-artifact");
+            exchange.getIn().setBody(JSON_SCHEMA);
+        });
+        assertThat(result.getException()).isInstanceOf(ProblemDetails.class);
+        assertThat(((ProblemDetails) result.getException()).getStatus()).isEqualTo(404);
     }
 }

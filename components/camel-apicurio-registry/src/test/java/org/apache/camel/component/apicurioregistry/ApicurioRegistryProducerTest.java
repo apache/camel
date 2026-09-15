@@ -19,9 +19,12 @@ package org.apache.camel.component.apicurioregistry;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import com.microsoft.kiota.ApiException;
 import io.apicurio.registry.rest.client.RegistryClient;
+import io.apicurio.registry.rest.client.groups.item.artifacts.ArtifactsRequestBuilder;
 import io.apicurio.registry.rest.client.models.ArtifactMetaData;
 import io.apicurio.registry.rest.client.models.ArtifactSearchResults;
 import io.apicurio.registry.rest.client.models.CreateArtifact;
@@ -29,6 +32,9 @@ import io.apicurio.registry.rest.client.models.CreateArtifactResponse;
 import io.apicurio.registry.rest.client.models.CreateGroup;
 import io.apicurio.registry.rest.client.models.CreateVersion;
 import io.apicurio.registry.rest.client.models.GroupMetaData;
+import io.apicurio.registry.rest.client.models.IfArtifactExists;
+import io.apicurio.registry.rest.client.models.ProblemDetails;
+import io.apicurio.registry.rest.client.models.RuleViolationProblemDetails;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import org.apache.camel.BindToRegistry;
@@ -37,21 +43,23 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ApicurioRegistryProducerTest extends CamelTestSupport {
 
-    private final RegistryClient mockClient = mock(RegistryClient.class, org.mockito.Mockito.RETURNS_DEEP_STUBS);
+    private final RegistryClient mockClient = mock(RegistryClient.class, RETURNS_DEEP_STUBS);
 
     @BindToRegistry("apicurio-registry")
     public ApicurioRegistryComponent getComponent() {
@@ -120,8 +128,33 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .thenReturn(mockResponse);
 
         Object result = template.requestBody("direct:createArtifact", "{\"test\":true}");
-        assertNotNull(result);
+        assertThat(result).isSameAs(mockResponse);
         verify(mockClient.groups().byGroupId("testGroup").artifacts()).post(any(CreateArtifact.class), any());
+    }
+
+    @Test
+    void testCreateHeaderOverrides() throws Exception {
+        injectMockClient("apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3"
+                         + "&operation=createArtifact");
+        when(mockClient.groups().byGroupId("other-group").artifacts().post(any(CreateArtifact.class), any()))
+                .thenAnswer(call -> {
+                    CreateArtifact request = call.getArgument(0);
+                    assertThat(request.getArtifactId()).isEqualTo("other-artifact");
+                    assertThat(request.getArtifactType()).isEqualTo("AVRO");
+                    assertThat(request.getFirstVersion().getContent().getContent()).isEqualTo("{\"type\":\"string\"}");
+                    ArtifactsRequestBuilder builder = mockClient.groups().byGroupId("other-group").artifacts();
+                    var config = builder.new PostRequestConfiguration();
+                    Consumer<ArtifactsRequestBuilder.PostRequestConfiguration> configure = call.getArgument(1);
+                    configure.accept(config);
+                    assertThat(config.queryParameters.ifExists).isEqualTo(IfArtifactExists.CREATE_VERSION);
+                    return new CreateArtifactResponse();
+                });
+        Object response = template.requestBodyAndHeaders("direct:createArtifact", "{\"type\":\"string\"}", Map.of(
+                ApicurioRegistryConstants.HEADER_GROUP_ID, "other-group",
+                ApicurioRegistryConstants.HEADER_ARTIFACT_ID, "other-artifact",
+                ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, "AVRO",
+                ApicurioRegistryConstants.HEADER_IF_EXISTS, "CREATE_VERSION"));
+        assertThat(response).isInstanceOf(CreateArtifactResponse.class);
     }
 
     @Test
@@ -145,7 +178,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .thenReturn(mockMetadata);
 
         Object result = template.requestBody("direct:getArtifactMetadata", (Object) null);
-        assertEquals(mockMetadata, result);
+        assertThat(result).isSameAs(mockMetadata);
     }
 
     @Test
@@ -154,13 +187,14 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=getArtifactContent";
         injectMockClient(endpointUri);
 
-        ByteArrayInputStream mockContent = new ByteArrayInputStream("{\"test\":true}".getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream mockContent = spy(new ByteArrayInputStream("{\"test\":true}".getBytes(StandardCharsets.UTF_8)));
         when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
                 .versions().byVersionExpression("branch=latest").content().get())
                 .thenReturn(mockContent);
 
         Object result = template.requestBody("direct:getArtifactContent", (Object) null);
-        assertNotNull(result);
+        assertThat(result).isEqualTo("{\"test\":true}".getBytes(StandardCharsets.UTF_8));
+        verify(mockContent).close();
     }
 
     @Test
@@ -176,7 +210,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .thenReturn(mockResults);
 
         Object result = template.requestBody("direct:listVersions", (Object) null);
-        assertEquals(mockResults, result);
+        assertThat(result).isSameAs(mockResults);
     }
 
     @Test
@@ -189,7 +223,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
         when(mockClient.groups().post(any(CreateGroup.class))).thenReturn(mockGroupMeta);
 
         Object result = template.requestBody("direct:createGroup", (Object) null);
-        assertEquals(mockGroupMeta, result);
+        assertThat(result).isSameAs(mockGroupMeta);
     }
 
     @Test
@@ -204,7 +238,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .thenReturn(mockVersionMeta);
 
         Object result = template.requestBody("direct:updateArtifact", "{\"updated\":true}");
-        assertEquals(mockVersionMeta, result);
+        assertThat(result).isSameAs(mockVersionMeta);
     }
 
     @Test
@@ -219,7 +253,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
 
         Object result = template.requestBodyAndHeader("direct:operationFromHeader", null,
                 ApicurioRegistryConstants.HEADER_OPERATION, "getArtifactMetadata");
-        assertEquals(mockMetadata, result);
+        assertThat(result).isSameAs(mockMetadata);
     }
 
     @Test
@@ -232,7 +266,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
         when(mockClient.search().artifacts().get(any())).thenReturn(mockResults);
 
         Object result = template.requestBody("direct:searchArtifacts", (Object) null);
-        assertEquals(mockResults, result);
+        assertThat(result).isSameAs(mockResults);
     }
 
     @Test
@@ -247,7 +281,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .thenReturn(mockVersion);
 
         Object result = template.requestBody("direct:testCompatibility", "{\"test\":true}");
-        assertEquals(true, result);
+        assertThat(result).isEqualTo(true);
     }
 
     @Test
@@ -258,10 +292,10 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
 
         when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
                 .versions().post(any(CreateVersion.class), any()))
-                .thenThrow(new ApiException("incompatible"));
+                .thenThrow(ruleViolation("incompatible"));
 
         Object result = template.requestBody("direct:testCompatibility", "{\"bad\":true}");
-        assertEquals(false, result);
+        assertThat(result).isEqualTo(false);
     }
 
     @Test
@@ -275,8 +309,14 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .versions().post(any(CreateVersion.class), any()))
                 .thenReturn(mockVersion);
 
-        var exchange = template.request("direct:validate", ex -> ex.getIn().setBody("{\"test\":true}"));
-        assertTrue(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, Boolean.class));
+        var exchange = template.request("direct:validate", ex -> {
+            ex.getIn().setBody("{\"test\":true}");
+            ex.getIn().setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS, "stale error");
+        });
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, Boolean.class)).isTrue();
+        assertThat(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS)).isNull();
+        assertThat(exchange.getIn().getBody()).isEqualTo("{\"test\":true}");
     }
 
     @Test
@@ -287,11 +327,13 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
 
         when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
                 .versions().post(any(CreateVersion.class), any()))
-                .thenThrow(new ApiException("validation error"));
+                .thenThrow(ruleViolation("validation error"));
 
         var exchange = template.request("direct:validate", ex -> ex.getIn().setBody("{\"bad\":true}"));
-        assertFalse(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, Boolean.class));
-        assertNotNull(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS));
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, Boolean.class)).isFalse();
+        assertThat(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS))
+                .isEqualTo("validation error");
     }
 
     @Test
@@ -302,12 +344,58 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
 
         when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
                 .versions().post(any(CreateVersion.class), any()))
-                .thenThrow(new ApiException("validation error"));
+                .thenThrow(ruleViolation("validation error"));
 
-        try {
-            template.requestBody("direct:validateFail", "{\"bad\":true}");
-        } catch (CamelExecutionException e) {
-            assertInstanceOf(ApicurioRegistryValidationException.class, e.getCause());
+        assertThatThrownBy(() -> template.requestBody("direct:validateFail", "{\"bad\":true}"))
+                .isInstanceOf(CamelExecutionException.class)
+                .hasCauseInstanceOf(ApicurioRegistryValidationException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "testCompatibility", "validate" })
+    void testNonValidationFailuresPropagate(String operation) throws Exception {
+        String uri = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3"
+                     + "&operation=" + operation + ("validate".equals(operation) ? "&failOnValidation=false" : "");
+        injectMockClient(uri);
+        ProblemDetails unauthorized = new ProblemDetails();
+        unauthorized.setName("NotAuthorizedException");
+        unauthorized.setStatus(401);
+        ApiException serverError = new ApiException("server error");
+        IllegalStateException connectionError = new IllegalStateException("connection failed");
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().post(any(CreateVersion.class), any()))
+                .thenThrow(unauthorized, serverError, connectionError);
+
+        for (Exception failure : List.of(unauthorized, serverError, connectionError)) {
+            var exchange = template.request("direct:" + operation, ex -> ex.getIn().setBody("{}"));
+            assertThat(exchange.getException()).isSameAs(failure);
+            assertThat(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS)).isNull();
         }
+    }
+
+    @Test
+    void testUpdateHeaderOverrides() throws Exception {
+        injectMockClient("apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3"
+                         + "&operation=updateArtifact");
+        template.requestBodyAndHeaders("direct:updateArtifact", "syntax = \"proto3\";", Map.of(
+                ApicurioRegistryConstants.HEADER_GROUP_ID, "other/group",
+                ApicurioRegistryConstants.HEADER_ARTIFACT_ID, "other-artifact",
+                ApicurioRegistryConstants.HEADER_VERSION, "2",
+                ApicurioRegistryConstants.HEADER_CONTENT_TYPE, "application/x-protobuf"));
+
+        ArgumentCaptor<CreateVersion> request = ArgumentCaptor.forClass(CreateVersion.class);
+        verify(mockClient.groups().byGroupId("other/group").artifacts().byArtifactId("other-artifact").versions())
+                .post(request.capture());
+        assertThat(request.getValue().getVersion()).isEqualTo("2");
+        assertThat(request.getValue().getContent().getContentType()).isEqualTo("application/x-protobuf");
+        assertThat(request.getValue().getContent().getContent()).isEqualTo("syntax = \"proto3\";");
+    }
+
+    private static RuleViolationProblemDetails ruleViolation(String message) {
+        RuleViolationProblemDetails error = new RuleViolationProblemDetails();
+        error.setName("RuleViolationException");
+        error.setStatus(409);
+        error.setTitle(message);
+        return error;
     }
 }
