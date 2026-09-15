@@ -34,8 +34,7 @@ public class GoogleSecretManagerConfiguration implements Cloneable, GoogleCommon
     @UriParam(label = "common", description = "Service account key to authenticate an application as a service account")
     private String serviceAccountKey;
 
-    @UriParam(label = "producer",
-              enums = "createSecret")
+    @UriParam(label = "producer")
     private GoogleSecretManagerOperations operation;
 
     @UriParam(defaultValue = "false", description = "Specifies if the request is a pojo request")

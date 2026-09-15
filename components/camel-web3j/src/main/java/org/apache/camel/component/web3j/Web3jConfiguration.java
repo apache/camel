@@ -27,7 +27,7 @@ import org.web3j.protocol.Web3j;
 @UriParams
 public class Web3jConfiguration implements Cloneable {
 
-    @UriParam(label = "producer", defaultValue = "transaction")
+    @UriParam(label = "common", defaultValue = "transaction")
     private String operation = Web3jConstants.TRANSACTION.toLowerCase(); // TODO: Make this an enum
 
     @UriParam(label = "common", defaultValue = "latest")

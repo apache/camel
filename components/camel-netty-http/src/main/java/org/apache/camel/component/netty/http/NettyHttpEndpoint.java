@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyEndpoint;
+import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport;
 import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.base.cookie.CookieHandler;
@@ -74,6 +75,10 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private String httpMethodRestrict;
     @UriParam(label = "consumer,advanced")
     private NettySharedHttpServer nettySharedHttpServer;
+    @UriParam(label = "consumer,advanced",
+              description = "To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint."
+                            + " When set, its properties are merged into the endpoint configuration.")
+    private NettyServerBootstrapConfiguration bootstrapConfiguration; // resolved in component createEndpoint, not bound here
     @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;
     @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
@@ -228,6 +233,18 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
      */
     public void setNettySharedHttpServer(NettySharedHttpServer nettySharedHttpServer) {
         this.nettySharedHttpServer = nettySharedHttpServer;
+    }
+
+    public NettyServerBootstrapConfiguration getBootstrapConfiguration() {
+        return bootstrapConfiguration;
+    }
+
+    /**
+     * To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint. When set, its
+     * properties are merged into the endpoint configuration.
+     */
+    public void setBootstrapConfiguration(NettyServerBootstrapConfiguration bootstrapConfiguration) {
+        this.bootstrapConfiguration = bootstrapConfiguration;
     }
 
     public NettyHttpSecurityConfiguration getSecurityConfiguration() {
