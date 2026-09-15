@@ -276,8 +276,8 @@ class CatalogDocsTest {
         JsonObject groovy = catalogDoc(Map.of("name", "groovy", "kind", "api"));
         assertEquals("api", groovy.getString("kind"));
         JsonObject vars = groovy.getMap("variables");
-        assertTrue(vars.containsKey("camelContext") && vars.containsKey("request") && vars.containsKey("log"));
-        assertFalse(vars.containsKey("message"), "groovy binds no message variable");
+        assertTrue(vars.containsKey("camelContext") && vars.containsKey("message") && vars.containsKey("log"));
+        assertTrue(vars.getString("message").contains("request"), "the older name is given as an alias");
         assertTrue(groovy.getString("note").contains("lookupByName('myBean')"), "a bean name is not a variable");
         assertTrue(groovy.getCollection("apis").contains("Exchange"));
 
@@ -294,7 +294,7 @@ class CatalogDocsTest {
         JsonObject lang = catalogDoc(Map.of("name", "groovy", "kind", "language"));
         assertEquals("language", lang.getString("kind"));
         assertTrue(lang.getMap("scriptVariables").containsKey("camelContext"));
-        assertTrue(lang.getString("scriptNote").contains("no message variable"));
+        assertTrue(lang.getString("scriptNote").contains("lookupByName('myBean')"));
         assertNull(catalogDoc(Map.of("name", "simple", "kind", "language")).get("scriptVariables"));
     }
 
@@ -316,7 +316,8 @@ class CatalogDocsTest {
                 }
             }
             JsonObject groovy = CatalogDocs.scriptVariables("groovy").getMap("variables");
-            assertTrue(groovy.containsKey("attachments") && groovy.containsKey("log"), "the groovy extras");
+            assertTrue(groovy.containsKey("message") && groovy.containsKey("attachments") && groovy.containsKey("log"),
+                    "the groovy extras");
         }
     }
 }

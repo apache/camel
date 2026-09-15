@@ -469,7 +469,7 @@ public final class CatalogDocs {
 
     /**
      * The variables a script language binds, hand-written because each language binds its own set with its own names
-     * (groovy has camelContext and no message, javascript has context and message), and how a script reaches the Camel
+     * (groovy has camelContext and request, javascript has context and no request), and how a script reaches the Camel
      * API and a registry bean from them; null for a language that is not a script.
      */
     static JsonObject scriptVariables(String language) {
@@ -478,7 +478,8 @@ public final class CatalogDocs {
         switch (language) {
             case "groovy" -> {
                 variables.put("exchange", "the Exchange");
-                variables.put("request", "the message (exchange.getMessage()); in is an alias");
+                variables.put("message",
+                        "the message (exchange.getMessage()); request is an alias, in is an alias (older names)");
                 variables.put("body", "the message body");
                 variables.put("headers", "the message headers (Map); header is an alias");
                 variables.put("variables", "the exchange variables (Map); variable is an alias");
@@ -488,12 +489,10 @@ public final class CatalogDocs {
                 variables.put("attachments", "the message attachments (Map)");
                 variables.put("log", "an SLF4J logger");
                 variables.put("response", "the out message, only when one exists; out is an alias");
-                note = "There is no message variable: use request (or exchange.message). The value of the last"
-                       + " statement is the result. A registry bean is not a variable: use"
+                note = "The value of the last statement is the result. A registry bean is not a variable: use"
                        + " camelContext.registry.lookupByName('myBean'). Setting body or headers in the script"
-                       + " does not change the message: use exchange.message.body = ... or exchange.message"
-                       + ".setHeader(name, value). Groovy property syntax works on the Camel API: exchange.message.body,"
-                       + " exchange.context.registry.";
+                       + " does not change the message: use message.body = ... or message.setHeader(name, value)."
+                       + " Groovy property syntax works on the Camel API: message.body, exchange.context.registry.";
             }
             case "js", "python" -> {
                 variables.put("exchange", "the Exchange");
