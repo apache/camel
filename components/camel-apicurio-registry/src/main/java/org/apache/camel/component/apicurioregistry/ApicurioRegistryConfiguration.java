@@ -40,19 +40,19 @@ public class ApicurioRegistryConfiguration implements Cloneable {
               description = "The authentication type to use")
     private String authType = "none";
 
-    @UriParam(label = "security", security = "secret", description = "Username for basic authentication")
+    @UriParam(label = "security", description = "Username for basic authentication")
     private String username;
 
-    @UriParam(label = "security", security = "secret", description = "Password for basic authentication")
+    @UriParam(label = "security", secret = true, description = "Password for basic authentication")
     private String password;
 
     @UriParam(label = "security", description = "OAuth2 token endpoint URL")
     private String tokenEndpoint;
 
-    @UriParam(label = "security", security = "secret", description = "OAuth2 client ID")
+    @UriParam(label = "security", description = "OAuth2 client ID")
     private String clientId;
 
-    @UriParam(label = "security", security = "secret", description = "OAuth2 client secret")
+    @UriParam(label = "security", secret = true, description = "OAuth2 client secret")
     private String clientSecret;
 
     @UriParam(label = "security", description = "OAuth2 scope")

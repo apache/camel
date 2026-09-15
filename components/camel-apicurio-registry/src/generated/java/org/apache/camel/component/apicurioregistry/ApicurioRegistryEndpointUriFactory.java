@@ -62,11 +62,9 @@ public class ApicurioRegistryEndpointUriFactory extends org.apache.camel.support
         props.add("useFixedDelay");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
-        secretProps.add("clientId");
+        Set<String> secretProps = new HashSet<>(2);
         secretProps.add("clientSecret");
         secretProps.add("password");
-        secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);

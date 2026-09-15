@@ -19,9 +19,7 @@ package org.apache.camel.component.apicurioregistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ApicurioRegistryComponentTest extends CamelTestSupport {
 
@@ -29,19 +27,17 @@ class ApicurioRegistryComponentTest extends CamelTestSupport {
     void testEndpointCreatedWithGroupAndArtifact() throws Exception {
         ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(
                 "apicurio-registry:myGroup/myArtifact?registryUrl=http://localhost:8080/apis/registry/v3");
-        assertNotNull(endpoint);
-        assertEquals("myGroup", endpoint.getGroupId());
-        assertEquals("myArtifact", endpoint.getArtifactId());
-        assertEquals("http://localhost:8080/apis/registry/v3", endpoint.getConfiguration().getRegistryUrl());
+        assertThat(endpoint.getGroupId()).isEqualTo("myGroup");
+        assertThat(endpoint.getArtifactId()).isEqualTo("myArtifact");
+        assertThat(endpoint.getConfiguration().getRegistryUrl()).isEqualTo("http://localhost:8080/apis/registry/v3");
     }
 
     @Test
     void testEndpointCreatedWithGroupOnly() throws Exception {
         ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(
                 "apicurio-registry:myGroup?registryUrl=http://localhost:8080/apis/registry/v3");
-        assertNotNull(endpoint);
-        assertEquals("myGroup", endpoint.getGroupId());
-        assertNull(endpoint.getArtifactId());
+        assertThat(endpoint.getGroupId()).isEqualTo("myGroup");
+        assertThat(endpoint.getArtifactId()).isNull();
     }
 
     @Test
@@ -49,10 +45,9 @@ class ApicurioRegistryComponentTest extends CamelTestSupport {
         ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(
                 "apicurio-registry:g/a?registryUrl=http://localhost:8080/apis/registry/v3"
                                                                                            + "&authType=basic&username=user&password=pass");
-        assertNotNull(endpoint);
-        assertEquals("basic", endpoint.getConfiguration().getAuthType());
-        assertEquals("user", endpoint.getConfiguration().getUsername());
-        assertEquals("pass", endpoint.getConfiguration().getPassword());
+        assertThat(endpoint.getConfiguration().getAuthType()).isEqualTo("basic");
+        assertThat(endpoint.getConfiguration().getUsername()).isEqualTo("user");
+        assertThat(endpoint.getConfiguration().getPassword()).isEqualTo("pass");
     }
 
     @Test
@@ -60,8 +55,7 @@ class ApicurioRegistryComponentTest extends CamelTestSupport {
         ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(
                 "apicurio-registry:g/a?registryUrl=http://localhost:8080/apis/registry/v3"
                                                                                            + "&operation=createArtifact");
-        assertNotNull(endpoint);
-        assertEquals("createArtifact", endpoint.getConfiguration().getOperation());
+        assertThat(endpoint.getConfiguration().getOperation()).isEqualTo("createArtifact");
     }
 
     @Test
@@ -73,17 +67,33 @@ class ApicurioRegistryComponentTest extends CamelTestSupport {
         config.setUsername("user");
 
         ApicurioRegistryConfiguration copy = config.copy();
-        assertEquals(config.getRegistryUrl(), copy.getRegistryUrl());
-        assertEquals(config.getOperation(), copy.getOperation());
-        assertEquals(config.getAuthType(), copy.getAuthType());
-        assertEquals(config.getUsername(), copy.getUsername());
+        assertThat(copy).isNotSameAs(config);
+        assertThat(copy.getRegistryUrl()).isEqualTo(config.getRegistryUrl());
+        assertThat(copy.getOperation()).isEqualTo(config.getOperation());
+        assertThat(copy.getAuthType()).isEqualTo(config.getAuthType());
+        assertThat(copy.getUsername()).isEqualTo(config.getUsername());
     }
 
     @Test
     void testEndpointServiceLocation() throws Exception {
         ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(
                 "apicurio-registry:g/a?registryUrl=http://localhost:8080/apis/registry/v3");
-        assertEquals("http://localhost:8080/apis/registry/v3", endpoint.getServiceUrl());
-        assertEquals("http", endpoint.getServiceProtocol());
+        assertThat(endpoint.getServiceUrl()).isEqualTo("http://localhost:8080/apis/registry/v3");
+        assertThat(endpoint.getServiceProtocol()).isEqualTo("http");
+    }
+
+    @Test
+    void testEndpointWithOidcOptions() {
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(
+                "apicurio-registry:g/a?registryUrl=http://localhost:8080/apis/registry/v3"
+                                                                + "&authType=oidc&tokenEndpoint=http://localhost:8080/token"
+                                                                + "&clientId=registry-client&clientSecret=secret&scope=registry",
+                ApicurioRegistryEndpoint.class);
+        ApicurioRegistryConfiguration configuration = endpoint.getConfiguration();
+        assertThat(configuration.getAuthType()).isEqualTo("oidc");
+        assertThat(configuration.getTokenEndpoint()).isEqualTo("http://localhost:8080/token");
+        assertThat(configuration.getClientId()).isEqualTo("registry-client");
+        assertThat(configuration.getClientSecret()).isEqualTo("secret");
+        assertThat(configuration.getScope()).isEqualTo("registry");
     }
 }

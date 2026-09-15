@@ -20,15 +20,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import io.apicurio.registry.rest.client.models.CreateRule;
+import io.apicurio.registry.rest.client.models.RuleType;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants;
+import org.apache.camel.component.apicurioregistry.ApicurioRegistryEndpoint;
+import org.apache.camel.component.apicurioregistry.ApicurioRegistryValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
 
@@ -65,6 +70,11 @@ class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
                         .to("apicurio-registry:" + groupId + "/" + artifactId
                             + "?registryUrl=" + getRegistryUrl()
                             + "&operation=testCompatibility");
+
+                from("direct:validateFail")
+                        .to("apicurio-registry:" + groupId + "/" + artifactId
+                            + "?registryUrl=" + getRegistryUrl()
+                            + "&operation=validate");
             }
         };
     }
@@ -75,7 +85,8 @@ class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
         Map<String, Object> groupHeaders = new HashMap<>();
         groupHeaders.put(ApicurioRegistryConstants.HEADER_OPERATION, ApicurioRegistryConstants.OPERATION_CREATE_GROUP);
         groupHeaders.put(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
-        template.request("direct:setup", exchange -> exchange.getIn().setHeaders(groupHeaders));
+        Exchange group = template.request("direct:setup", exchange -> exchange.getIn().setHeaders(groupHeaders));
+        assertThat(group.getException()).isNull();
 
         // Create artifact with JSON Schema
         Map<String, Object> createHeaders = new HashMap<>();
@@ -84,10 +95,20 @@ class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
         createHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
         createHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, "JSON");
         createHeaders.put(ApicurioRegistryConstants.HEADER_IF_EXISTS, "FIND_OR_CREATE_VERSION");
-        template.request("direct:setup", exchange -> {
+        Exchange artifact = template.request("direct:setup", exchange -> {
             exchange.getIn().setHeaders(createHeaders);
             exchange.getIn().setBody(JSON_SCHEMA);
         });
+        assertThat(artifact.getException()).isNull();
+
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(
+                "apicurio-registry:" + groupId + "/" + artifactId + "?registryUrl=" + getRegistryUrl()
+                                                                + "&operation=validate",
+                ApicurioRegistryEndpoint.class);
+        CreateRule rule = new CreateRule();
+        rule.setRuleType(RuleType.COMPATIBILITY);
+        rule.setConfig("BACKWARD");
+        endpoint.getRegistryClient().groups().byGroupId(groupId).artifacts().byArtifactId(artifactId).rules().post(rule);
     }
 
     @Test
@@ -98,8 +119,7 @@ class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
                     "type": "object",
                     "properties": {
                         "name": {"type": "string"},
-                        "age": {"type": "integer"},
-                        "email": {"type": "string"}
+                        "age": {"type": "number"}
                     },
                     "required": ["name"]
                 }
@@ -109,7 +129,8 @@ class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
             exchange.getIn().setBody(compatibleSchema);
         });
 
-        assertEquals(true, result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT));
+        assertThat(result.getException()).isNull();
+        assertThat(result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT)).isEqualTo(true);
     }
 
     @Test
@@ -128,6 +149,28 @@ class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
             exchange.getIn().setBody(compatibleSchema);
         });
 
-        assertEquals(true, result.getIn().getBody());
+        assertThat(result.getException()).isNull();
+        assertThat(result.getIn().getBody()).isEqualTo(true);
+    }
+
+    @Test
+    void testIncompatibleContent() {
+        String incompatible = "{\"type\":\"integer\"}";
+        Exchange validation = template.request("direct:validate", exchange -> exchange.getIn().setBody(incompatible));
+        assertThat(validation.getException()).isNull();
+        assertThat(validation.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT)).isEqualTo(false);
+        assertThat(validation.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS, String.class)).isNotBlank();
+        assertThat(validation.getIn().getBody()).isEqualTo(incompatible);
+
+        Exchange compatibility
+                = template.request("direct:testCompatibility", exchange -> exchange.getIn().setBody(incompatible));
+        assertThat(compatibility.getException()).isNull();
+        assertThat(compatibility.getIn().getBody()).isEqualTo(false);
+        assertThat(compatibility.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS, String.class))
+                .isNotBlank();
+
+        assertThatThrownBy(() -> template.requestBody("direct:validateFail", incompatible))
+                .isInstanceOf(CamelExecutionException.class)
+                .hasCauseInstanceOf(ApicurioRegistryValidationException.class);
     }
 }

@@ -18,7 +18,6 @@ package org.apache.camel.component.apicurioregistry;
 
 import java.io.InputStream;
 
-import com.microsoft.kiota.ApiException;
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.models.ArtifactMetaData;
 import io.apicurio.registry.rest.client.models.CreateArtifact;
@@ -27,6 +26,7 @@ import io.apicurio.registry.rest.client.models.CreateGroup;
 import io.apicurio.registry.rest.client.models.CreateVersion;
 import io.apicurio.registry.rest.client.models.GroupMetaData;
 import io.apicurio.registry.rest.client.models.IfArtifactExists;
+import io.apicurio.registry.rest.client.models.RuleViolationProblemDetails;
 import io.apicurio.registry.rest.client.models.VersionContent;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
@@ -214,6 +214,7 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
     }
 
     private boolean doDryRun(Message message) throws Exception {
+        message.removeHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS);
         String groupId = resolveGroupId(message);
         String artifactId = resolveArtifactId(message);
         String content = message.getBody(String.class);
@@ -231,8 +232,9 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
                     .byArtifactId(artifactId).versions()
                     .post(createVersion, config -> config.queryParameters.dryRun = true);
             return true;
-        } catch (ApiException e) {
-            message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS, e.getMessage());
+        } catch (RuleViolationProblemDetails e) {
+            message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS,
+                    e.getDetail() != null ? e.getDetail() : e.getTitle());
             return false;
         }
     }
