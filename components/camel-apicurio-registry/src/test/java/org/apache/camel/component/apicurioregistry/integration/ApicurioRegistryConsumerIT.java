@@ -21,13 +21,14 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ApicurioRegistryConsumerIT extends ApicurioRegistryTestSupport {
 
@@ -55,7 +56,7 @@ class ApicurioRegistryConsumerIT extends ApicurioRegistryTestSupport {
 
                 // Consumer route
                 from("apicurio-registry:" + groupId + "/" + artifactId
-                     + "?registryUrl=" + getRegistryUrl() + "&delay=1000")
+                     + "?registryUrl=" + getRegistryUrl() + "&delay=1000&fetchContent=true")
                         .to("mock:consumed");
             }
         };
@@ -67,7 +68,8 @@ class ApicurioRegistryConsumerIT extends ApicurioRegistryTestSupport {
         Map<String, Object> groupHeaders = new HashMap<>();
         groupHeaders.put(ApicurioRegistryConstants.HEADER_OPERATION, ApicurioRegistryConstants.OPERATION_CREATE_GROUP);
         groupHeaders.put(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
-        template.request("direct:createForConsumer", exchange -> exchange.getIn().setHeaders(groupHeaders));
+        Exchange group = template.request("direct:createForConsumer", exchange -> exchange.getIn().setHeaders(groupHeaders));
+        assertThat(group.getException()).isNull();
 
         // Create the artifact
         Map<String, Object> createHeaders = new HashMap<>();
@@ -76,19 +78,35 @@ class ApicurioRegistryConsumerIT extends ApicurioRegistryTestSupport {
         createHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
         createHeaders.put(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, "JSON");
         createHeaders.put(ApicurioRegistryConstants.HEADER_IF_EXISTS, "FIND_OR_CREATE_VERSION");
-        template.request("direct:createForConsumer", exchange -> {
+        Exchange artifact = template.request("direct:createForConsumer", exchange -> {
             exchange.getIn().setHeaders(createHeaders);
             exchange.getIn().setBody(JSON_SCHEMA);
         });
+        assertThat(artifact.getException()).isNull();
 
         MockEndpoint mock = getMockEndpoint("mock:consumed");
-        mock.expectedMinimumMessageCount(1);
+        mock.expectedMessageCount(1);
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // Verify headers set by consumer
         Map<String, Object> receivedHeaders = mock.getReceivedExchanges().get(0).getIn().getHeaders();
-        assertEquals(groupId, receivedHeaders.get(ApicurioRegistryConstants.HEADER_GROUP_ID));
-        assertEquals(artifactId, receivedHeaders.get(ApicurioRegistryConstants.HEADER_ARTIFACT_ID));
+        assertThat(receivedHeaders.get(ApicurioRegistryConstants.HEADER_GROUP_ID)).isEqualTo(groupId);
+        assertThat(receivedHeaders.get(ApicurioRegistryConstants.HEADER_ARTIFACT_ID)).isEqualTo(artifactId);
+        assertThat(mock.getExchanges().get(0).getIn().getBody(String.class)).isEqualTo(JSON_SCHEMA);
+
+        createHeaders.put(ApicurioRegistryConstants.HEADER_OPERATION, ApicurioRegistryConstants.OPERATION_UPDATE_ARTIFACT);
+        String secondSchema = "{\"type\":\"string\"}";
+        Exchange update = template.request("direct:createForConsumer", exchange -> {
+            exchange.getIn().setHeaders(createHeaders);
+            exchange.getIn().setBody(secondSchema);
+        });
+        assertThat(update.getException()).isNull();
+        mock.expectedMessageCount(2);
+        mock.setAssertPeriod(1500);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        assertThat(mock.getExchanges().get(1).getIn().getBody(String.class)).isEqualTo(secondSchema);
+        assertThat(mock.getExchanges().get(1).getIn().getHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, Long.class))
+                .isGreaterThan((Long) receivedHeaders.get(ApicurioRegistryConstants.HEADER_GLOBAL_ID));
     }
 
 }

@@ -42,6 +42,7 @@
 *** xref:alibaba-sls-component.adoc[Alibaba Simple Log Service (SLS)]
 *** xref:alibaba-ots-component.adoc[Alibaba Tablestore (OTS)]
 ** xref:amqp-component.adoc[AMQP]
+** xref:apicurio-registry-component.adoc[Apicurio Registry]
 ** xref:arangodb-component.adoc[ArangoDb]
 ** xref:as2-component.adoc[AS2]
 ** xref:asterisk-component.adoc[Asterisk]
