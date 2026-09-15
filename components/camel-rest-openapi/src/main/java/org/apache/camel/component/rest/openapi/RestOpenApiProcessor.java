@@ -19,6 +19,7 @@ package org.apache.camel.component.rest.openapi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -28,7 +29,9 @@ import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.processor.RestBindingAdviceFactory;
@@ -47,6 +50,7 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
     private final String apiContextPath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
     private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
+    private RestOpenApiUnmatchedRequestHandler unmatchedRequestHandler = new DefaultRestOpenApiUnmatchedRequestHandler();
     private PlatformHttpConsumerAware platformHttpConsumer;
     private Consumer consumer;
     private OpenApiUtils openApiUtils;
@@ -130,13 +134,8 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         final String contextPath = path;
         List<String> allow = METHODS.stream()
                 .filter(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null).toList();
-        if (allow.isEmpty()) {
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-        } else {
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 405);
-            // include list of allowed VERBs
-            exchange.getMessage().setHeader("Allow", String.join(", ", allow));
-        }
+        int statusCode = allow.isEmpty() ? 404 : 405;
+        unmatchedRequestHandler.handle(exchange, statusCode, allow);
         exchange.setRouteStop(true);
         callback.done(true);
         return true;
@@ -156,6 +155,7 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
 
         this.openApiUtils = new OpenApiUtils(camelContext, endpoint.getBindingPackageScan(), openAPI.getComponents());
         this.restRegistry = PluginHelper.getRestRegistry(camelContext);
+        this.unmatchedRequestHandler = lookupUnmatchedRequestHandler(camelContext);
         // register all openapi paths
         for (var e : openAPI.getPaths().entrySet()) {
             String path = e.getKey(); // path
@@ -227,6 +227,22 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         }
 
         ServiceHelper.startService(restOpenapiProcessorStrategy);
+    }
+
+    private static RestOpenApiUnmatchedRequestHandler lookupUnmatchedRequestHandler(CamelContext camelContext) {
+        RestOpenApiUnmatchedRequestHandler answer
+                = CamelContextHelper.findSingleByType(camelContext, RestOpenApiUnmatchedRequestHandler.class);
+        if (answer == null) {
+            // lookup via classpath to find custom factory
+            Optional<RestOpenApiUnmatchedRequestHandler> result = ResolverHelper.resolveService(
+                    camelContext,
+                    camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                    RestOpenApiUnmatchedRequestHandler.FACTORY,
+                    RestOpenApiUnmatchedRequestHandler.class);
+            // else use a default implementation
+            answer = result.orElseGet(DefaultRestOpenApiUnmatchedRequestHandler::new);
+        }
+        return answer;
     }
 
     private RestBindingConfiguration createRestBindingConfiguration(Operation o) {
