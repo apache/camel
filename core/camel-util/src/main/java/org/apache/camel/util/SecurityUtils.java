@@ -65,7 +65,9 @@ public final class SecurityUtils {
         map.put("allowlocalwebhookurls", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowoperationheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowpredicatefrommessage", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowqueryfromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
+        map.put("allowtemplatefromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlbody", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlsource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("devconsoleenabled", new SecurityOption(INSECURE_DEV, "true"));
