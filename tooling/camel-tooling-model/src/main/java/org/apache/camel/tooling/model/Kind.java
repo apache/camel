@@ -35,6 +35,7 @@ public enum Kind implements Jsonable {
     other,
     eip,
     bean,
+    api,
     model;
 
     @Override

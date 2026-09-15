@@ -263,13 +263,24 @@ project `directory` as an argument, the runtime tools take the integration `name
 | Tool | Description
 
 | `camel_catalog_doc`
-| Catalog documentation of a component, data format, language or EIP: description, options (with a keyword
-  filter), Maven coordinates, and for a component the rules of its endpoint URI spelled out (which options
-  are path parts, the YAML `uri` plus `parameters` form, placeholders, `RAW()`). For the `simple` language the
-  syntax rules, functions and operators (their count and names by group, or with `optionsFilter` the matching
-  ones with parameters and examples), and `docPage` serves the functions, operators, OGNL and advanced pages.
-  With `endpoint` it checks a URI against the catalog: unknown options with the closest real names, invalid
-  values, missing path parts, consumer options on a producer endpoint. `includeDoc=true` adds the AsciiDoc page.
+| Catalog documentation of a component, data format, language, EIP or built-in bean: description, options (with
+  a keyword filter), Maven coordinates, and for a component the rules of its endpoint URI spelled out (which
+  options are path parts, the YAML `uri` plus `parameters` form, placeholders, `RAW()`). For the `simple`
+  language the syntax rules, functions and operators (their count and names by group, or with `optionsFilter`
+  the matching ones with parameters and examples), and `docPage` serves the functions, operators, OGNL and
+  advanced pages. With `endpoint` it checks a URI against the catalog: unknown options with the closest real
+  names, invalid values, missing path parts, consumer options on a producer endpoint. `includeDoc=true` adds
+  the AsciiDoc page.
+  With `kind=api` (or a class name such as `Exchange`) it answers with the compact API reference of the core
+  classes a bean or script calls: `Exchange`, `Message`, `CamelContext`, `Registry`, `ProducerTemplate`,
+  `Processor`, `AggregationStrategy`, `Predicate`, `Expression` and `TypeConverter`, one line per method with
+  the signatures, an example and the common mistakes (the first call of an aggregation strategy has a `null`
+  `oldExchange`, a `Map` body has no `${body.type}`, a bean name is not a Groovy variable, there is no
+  `getOut()` in Camel 4). The reference is generated from the `@Metadata(label = "api")` annotations on the
+  real methods in `camel-api` and shipped in `camel-catalog` (`org/apache/camel/catalog/apis/`), so it
+  cannot drift. The name of a script language (`groovy`, `js`, `python`, `python3`, `quickjs`, `java`) or
+  `template` returns the variables that script sees and how to reach the Camel API from them; the language
+  documentation of those languages carries the same `scriptVariables`.
 
 | `camel_catalog_find`
 | Finds components, data formats and languages by a protocol, product or other term that is not the exact

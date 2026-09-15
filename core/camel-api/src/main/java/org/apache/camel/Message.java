@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.spi.HeadersMapFactory;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.trait.message.MessageTrait;
 import org.jspecify.annotations.Nullable;
 
@@ -35,6 +36,11 @@ import org.jspecify.annotations.Nullable;
  * @see Exchange
  * @see ExchangePattern
  */
+@Metadata(label = "api",
+          description = "The body and the headers of the exchange, from exchange.getMessage(). getBody(type) converts "
+                        + "the body with the type converters (a Map body has no properties: read map.get(\"type\"), not "
+                        + "${body.type}); getHeader(name) is case-insensitive and null when the header is absent; setBody "
+                        + "replaces the body and keeps the headers.")
 public interface Message {
 
     /**
@@ -98,6 +104,7 @@ public interface Message {
      * @return the exchange
      */
     @Nullable
+    @Metadata(label = "api", description = "The exchange this message belongs to (properties, variables, context).")
     Exchange getExchange();
 
     /**
@@ -138,6 +145,13 @@ public interface Message {
      *                                 given name
      * @throws TypeConversionException is thrown if error during type conversion
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "A header by name (case-insensitive), converted to the type; null when absent, or the default "
+                            + "value when one is given.",
+              examples = {
+                      "message.getHeader(\"CamelFileName\", String.class)",
+                      "message.getHeader(\"count\", 0, Integer.class)" })
     <T> @Nullable T getHeader(String name, Class<T> type);
 
     /**
@@ -169,6 +183,11 @@ public interface Message {
      * @param name  of the header
      * @param value to associate with the name
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "Sets a header; headers travel with the message to the endpoints (as HTTP headers, JMS "
+                            + "properties, Kafka headers).",
+              examples = { "message.setHeader(\"CamelHttpMethod\", \"POST\")" })
     void setHeader(String name, @Nullable Object value);
 
     /**
@@ -178,6 +197,9 @@ public interface Message {
      * @return      the old value of the header
      */
     @Nullable
+    @Metadata(label = "api",
+              description = "Removes a header; removeHeaders(pattern) removes by wildcard, e.g. \"Camel*\" strips the Camel "
+                            + "ones.")
     Object removeHeader(String name);
 
     /**
@@ -211,6 +233,8 @@ public interface Message {
      *
      * @return all the headers in a Map
      */
+    @Metadata(label = "api",
+              description = "All headers as a case-insensitive Map<String, Object>; changes to the map change the message.")
     Map<String, Object> getHeaders();
 
     /**
@@ -275,6 +299,11 @@ public interface Message {
      * @see                            org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange,
      *                                 Class)
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "The body, converted to the type when one is given (String, byte[], InputStream, a POJO through "
+                            + "the registered converters); null when there is no body or no conversion.",
+              examples = { "message.getBody(String.class)", "message.getBody()" })
     <T> @Nullable T getBody(Class<T> type);
 
     /**
@@ -294,6 +323,9 @@ public interface Message {
      * @see                            org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange,
      *                                 Class)
      */
+    @Metadata(label = "api",
+              description = "Like getBody(type) but throws InvalidPayloadException when the body is null or cannot be "
+                            + "converted.")
     <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException;
 
     /**
@@ -301,6 +333,10 @@ public interface Message {
      *
      * @param body the body
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "Replaces the body, the headers stay; this is how a step returns its result.",
+              examples = { "message.setBody(order)" })
     void setBody(@Nullable Object body);
 
     /**

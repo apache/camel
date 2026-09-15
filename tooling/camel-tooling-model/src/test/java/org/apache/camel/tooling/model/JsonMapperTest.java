@@ -82,4 +82,44 @@ class JsonMapperTest {
         assertEquals(header2.getDescription(), headers.get(1).getDescription());
         assertEquals(header2.getConstantName(), headers.get(1).getConstantName());
     }
+
+    @Test
+    void testShouldSerializeAndDeserializeApiReference() {
+        ApiReferenceModel model = new ApiReferenceModel();
+        model.setName("Message");
+        model.setTitle("Message");
+        model.setJavaType("org.apache.camel.Message");
+        model.setDescription("The body and headers of the exchange");
+        model.setArtifactId("camel-api");
+        ApiReferenceModel.ApiMethodOptionModel method = new ApiReferenceModel.ApiMethodOptionModel();
+        method.setName("getBody");
+        method.setJavaType("java.lang.Object");
+        method.setDescription("The body, converted when a type is given");
+        method.setImportant(true);
+        method.addSignature("Object getBody()");
+        method.addSignature("<T> T getBody(Class<T> type)");
+        method.addExample("message.getBody(String.class)");
+        model.addOption(method);
+
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"api\""));
+        assertTrue(json.contains("\"kind\": \"api\""));
+
+        BaseModel<?> generic = JsonMapper.generateModel(json);
+        assertTrue(generic instanceof ApiReferenceModel);
+        ApiReferenceModel model2 = JsonMapper.generateApiReferenceModel(json);
+        assertEquals(Kind.api, model2.getKind());
+        assertEquals("Message", model2.getName());
+        assertEquals("org.apache.camel.Message", model2.getJavaType());
+        assertEquals("camel-api", model2.getArtifactId());
+        assertEquals(1, model2.getOptions().size());
+        ApiReferenceModel.ApiMethodOptionModel m = model2.getOptions().get(0);
+        assertEquals("getBody", m.getName());
+        assertEquals("java.lang.Object", m.getJavaType());
+        assertEquals(method.getDescription(), m.getDescription());
+        assertTrue(m.isImportant());
+        assertFalse(m.isDeprecated());
+        assertEquals(List.of("Object getBody()", "<T> T getBody(Class<T> type)"), m.getSignatures());
+        assertEquals(List.of("message.getBody(String.class)"), m.getExamples());
+    }
 }

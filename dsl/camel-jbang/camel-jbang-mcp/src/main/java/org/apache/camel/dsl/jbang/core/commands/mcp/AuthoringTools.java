@@ -47,18 +47,20 @@ public class AuthoringTools {
     private static final String DIRECTORY_DESC = "Project directory with the source files (absolute path)";
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Camel catalog documentation of a component, data format, language or EIP (description, "
-                        + "options, Maven coordinates), with the URI rules of a component. For simple also its syntax "
-                        + "rules, functions and operators: count and names by group, or with optionsFilter the "
-                        + "matching ones with parameters and examples. endpoint validates a URI: unknown or invalid "
-                        + "options, missing path. Replaces the former AsciiDoc-only camel_catalog_doc: includeDoc=true "
-                        + "adds the AsciiDoc page.")
+          description = "Camel catalog documentation of a component, data format, language, EIP, built-in bean or the "
+                        + "Java API (description, options, Maven coordinates), with the URI rules of a component. For "
+                        + "simple also its syntax rules, functions and operators: count and names by group, or with "
+                        + "optionsFilter the matching ones with parameters and examples. kind=api is the Java API to "
+                        + "call from a bean or script (Exchange, Message, CamelContext, AggregationStrategy, ...) and "
+                        + "the variables a groovy, js, python or java script sees. endpoint validates a URI: unknown or "
+                        + "invalid options, missing path. Replaces the former AsciiDoc-only camel_catalog_doc: "
+                        + "includeDoc=true adds the AsciiDoc page.")
     public JsonObject camel_catalog_doc(
-            @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split",
+            @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange",
                      required = false) String name,
             @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
                      required = false) String endpoint,
-            @ToolArg(description = "component, dataformat, language, eip or bean (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it)",
+            @ToolArg(description = "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                      required = false) String kind,
             @ToolArg(description = "Include the options (default true)", required = false) Boolean includeOptions,
             @ToolArg(description = "Include the full AsciiDoc page (default false)", required = false) Boolean includeDoc,

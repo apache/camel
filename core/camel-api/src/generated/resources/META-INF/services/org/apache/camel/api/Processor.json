@@ -1,0 +1,15 @@
+{
+  "api": {
+    "kind": "api",
+    "name": "Processor",
+    "title": "Processor",
+    "description": "A step written in Java: process(exchange) reads and writes the exchange in place, the result goes into exchange.getMessage(). Used as .process(new MyProcessor()) or a lambda, or as a bean (process: {ref: myProcessor}); a plain bean method taking the body (.bean(myBean, \"method\")) is often simpler than a Processor.",
+    "deprecated": false,
+    "javaType": "org.apache.camel.Processor",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-api",
+    "version": "4.23.0-SNAPSHOT",
+    "methods": { "process": { "index": 0, "signatures": [ "void process(Exchange exchange) throws Exception" ], "javaType": "void", "important": true, "description": "Processes the exchange in place: read exchange.getMessage().getBody(type), put the result with setBody; throw to fail the exchange.", "examples": [ "exchange -> exchange.getMessage().setBody(exchange.getMessage().getBody(String.class).toUpperCase())" ] } }
+  }
+}
+

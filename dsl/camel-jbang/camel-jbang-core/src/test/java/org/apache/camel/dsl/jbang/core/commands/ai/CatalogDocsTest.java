@@ -21,6 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
@@ -41,6 +45,10 @@ class CatalogDocsTest {
         args.forEach((k, v) -> stringArgs.put(k, String.valueOf(v)));
         String json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), stringArgs));
         return (JsonObject) Jsoner.deserialize(json);
+    }
+
+    private static String json(Map<String, Object> args) throws Exception {
+        return catalogDoc(args).toJson();
     }
 
     @Test
@@ -216,5 +224,99 @@ class CatalogDocsTest {
         args.put("name", "nosuchthing");
         json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), args));
         assertTrue(json.contains("not found"), json);
+    }
+
+    @Test
+    void apiKindIsTheCompactReferenceOfACoreClass() throws Exception {
+        JsonObject exchange = catalogDoc(Map.of("name", "Exchange", "kind", "api"));
+
+        assertEquals("api", exchange.getString("kind"));
+        assertEquals("org.apache.camel.Exchange", exchange.getString("javaType"));
+        // the Camel 4 changes for a model trained on older Camel
+        assertTrue(exchange.getString("description").contains("getOut() is deprecated"), exchange.getString("description"));
+        List<JsonObject> methods = exchange.getCollection("methods").stream().map(JsonObject.class::cast).toList();
+        // the important methods first
+        assertEquals("getMessage", methods.get(0).getString("name"));
+        assertTrue(methods.get(0).getCollection("signatures").contains("Message getMessage()"));
+        assertTrue(methods.get(0).getCollection("examples").contains("exchange.getMessage().getBody(String.class)"));
+        // the overloads of an annotated method come from the compiled class
+        JsonObject getProperty = methods.stream().filter(m -> "getProperty".equals(m.getString("name"))).findFirst()
+                .orElseThrow();
+        assertTrue(getProperty.getCollection("signatures").contains("<T> T getProperty(String name, Class<T> type)"));
+        assertTrue(methods.stream().noneMatch(m -> "getOut".equals(m.getString("name"))), "deprecated is left out");
+        // the other cards, so a model can navigate
+        Collection<?> apis = exchange.getCollection("apis");
+        assertTrue(apis.contains("Message") && apis.contains("CamelContext") && apis.contains("groovy"), apis.toString());
+        assertNull(exchange.get("implementations"), "Exchange has no built-in implementations");
+
+        // a qualified name and a lower case name work too, and the kind is detected
+        assertEquals("api", catalogDoc(Map.of("name", "org.apache.camel.Message")).getString("kind"));
+        assertEquals("Message", catalogDoc(Map.of("name", "message", "kind", "api")).getString("name"));
+        assertTrue(json(Map.of("name", "message", "kind", "api")).contains("<T> T getHeader(String name, Class<T> type)"));
+
+        // an interface lists the catalog beans that implement it: the strategies exist, no need to write one
+        JsonObject strategy = catalogDoc(Map.of("name", "AggregationStrategy"));
+        assertEquals("api", strategy.getString("kind"), "the api card wins over a bean implementing the interface");
+        assertTrue(strategy.getString("description").contains("oldExchange is null"));
+        assertTrue(strategy.getCollection("implementations").stream()
+                .anyMatch(i -> i.toString().startsWith("GroupedBodyAggregationStrategy (")), strategy.toJson());
+        // the registry card carries the methods inherited from BeanRepository
+        assertTrue(json(Map.of("name", "Registry", "kind", "api")).contains("lookupByNameAndType"));
+
+        // a miss says which cards exist
+        JsonObject miss = catalogDoc(Map.of("name", "Nope", "kind", "api"));
+        assertTrue(miss.getString("error").contains("No API reference"));
+        assertTrue(miss.getCollection("apis").contains("Exchange"));
+        // and without the kind the usual not found
+        assertTrue(json(Map.of("name", "Nope")).contains("not found"));
+    }
+
+    @Test
+    void scriptVariablesAreACardOfTheirOwnAndComeWithTheLanguageDoc() throws Exception {
+        JsonObject groovy = catalogDoc(Map.of("name", "groovy", "kind", "api"));
+        assertEquals("api", groovy.getString("kind"));
+        JsonObject vars = groovy.getMap("variables");
+        assertTrue(vars.containsKey("camelContext") && vars.containsKey("request") && vars.containsKey("log"));
+        assertFalse(vars.containsKey("message"), "groovy binds no message variable");
+        assertTrue(groovy.getString("note").contains("lookupByName('myBean')"), "a bean name is not a variable");
+        assertTrue(groovy.getCollection("apis").contains("Exchange"));
+
+        // javascript has context and message, not camelContext; joor and javascript are aliases
+        JsonObject js = catalogDoc(Map.of("name", "javascript", "kind", "api"));
+        assertEquals("js", js.getString("name"));
+        assertTrue(js.getMap("variables").containsKey("context"));
+        assertFalse(js.getMap("variables").containsKey("camelContext"));
+        assertTrue(catalogDoc(Map.of("name", "joor", "kind", "api")).getMap("variables").containsKey("optionalBody"));
+        // the template components share one card
+        assertEquals("template", catalogDoc(Map.of("name", "velocity", "kind", "api")).getString("name"));
+
+        // the language doc carries the same variables, so no kind is needed to find them
+        JsonObject lang = catalogDoc(Map.of("name", "groovy", "kind", "language"));
+        assertEquals("language", lang.getString("kind"));
+        assertTrue(lang.getMap("scriptVariables").containsKey("camelContext"));
+        assertTrue(lang.getString("scriptNote").contains("no message variable"));
+        assertNull(catalogDoc(Map.of("name", "simple", "kind", "language")).get("scriptVariables"));
+    }
+
+    @Test
+    void scriptVariableCardsDoNotDriftFromTheVariableMapCamelBinds() throws Exception {
+        // groovy and the template components bind ExchangeHelper.populateVariableMap (groovy adds attachments and log)
+        try (var context = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("hi");
+            Map<String, Object> bound = new HashMap<>();
+            ExchangeHelper.populateVariableMap(exchange, bound, true);
+            assertTrue(bound.size() > 10);
+            for (String card : List.of("groovy", "template")) {
+                JsonObject vars = CatalogDocs.scriptVariables(card).getMap("variables");
+                String text = vars.toJson();
+                for (String name : bound.keySet()) {
+                    assertTrue(vars.containsKey(name) || text.contains(name + " is an alias"),
+                            card + " card misses the variable " + name);
+                }
+            }
+            JsonObject groovy = CatalogDocs.scriptVariables("groovy").getMap("variables");
+            assertTrue(groovy.containsKey("attachments") && groovy.containsKey("log"), "the groovy extras");
+        }
     }
 }

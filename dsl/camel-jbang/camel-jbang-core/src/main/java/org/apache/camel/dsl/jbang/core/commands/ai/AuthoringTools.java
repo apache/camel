@@ -61,11 +61,11 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Catalog documentation of a component, data format, language, EIP or built-in bean: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
-                .param("name", "string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split", false)
+                "Catalog documentation of a component, data format, language, EIP, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
+                .param("name", "string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange", false)
                 .param("endpoint", "string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092", false)
                 .param("kind", "string",
-                        "component, dataformat, language, eip or bean (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it)",
+                        "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                         false)
                 .param("includeOptions", "boolean", "Include the options (default true)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
