@@ -306,8 +306,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                                 ClassName.get("org.apache.camel.dsl.yaml.common.exception",
                                                         "InvalidExpressionException"),
                                                 "an expression is expected here, not a plain value (",
-                                                "): write constant: \"",
-                                                "\" for a fixed value, or simple: \"...\" for a dynamic one")
+                                                "): write constant: {expression: \"",
+                                                "\"} for a fixed value, or simple: {expression: \"...\"} for a dynamic one")
                                         .endControlFlow()
                                         .addStatement("$T val = constructExpressionType(node)", CN_EXPRESSION_DEFINITION)
                                         .addStatement("return new org.apache.camel.model.ExpressionSubElementDefinition(val)")
@@ -627,6 +627,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             setProperty.addStatement("ed = ExpressionDeserializers.constructExpressionType(propertyKey, node)");
             setProperty.beginControlFlow("if (ed != null)");
             setProperty.addStatement("target.setExpressionType(ed)");
+            // the language key directly on the EIP is the compact notation (canonical is under expression:)
+            setProperty.addStatement("warnCompactNotation(node)");
             setProperty.nextControlFlow("else");
             setProperty.addStatement("return false");
             setProperty.endControlFlow();

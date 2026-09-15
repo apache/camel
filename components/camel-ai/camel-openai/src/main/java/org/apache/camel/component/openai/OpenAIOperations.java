@@ -20,6 +20,8 @@ public enum OpenAIOperations {
 
     chatCompletion("chat-completion"),
     responses("responses"),
+    responsesRetrieve("responses-retrieve"),
+    responsesCancel("responses-cancel"),
     embeddings("embeddings"),
     toolExecution("tool-execution"),
     audioTranscription("audio-transcription"),
@@ -43,7 +45,8 @@ public enum OpenAIOperations {
         }
         throw new IllegalArgumentException(
                 "Unknown operation: " + value
-                                           + ". Supported: chat-completion, responses, embeddings, tool-execution, "
+                                           + ". Supported: chat-completion, responses, responses-retrieve, "
+                                           + "responses-cancel, embeddings, tool-execution, "
                                            + "audio-transcription, audio-translation, audio-speech, moderation, "
                                            + "image-generation, image-edit");
     }

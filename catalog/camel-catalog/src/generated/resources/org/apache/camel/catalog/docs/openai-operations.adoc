@@ -115,8 +115,9 @@ For custom table schemas, complex queries (joins, CTEs), or integration with exi
 
 [source,yaml]
 ----
-- to:
-    uri: sql:INSERT INTO documents (content, embedding) VALUES (:#text, :#embedding::vector)
+steps:
+  - to:
+      uri: sql:INSERT INTO documents (content, embedding) VALUES (:#text, :#embedding::vector)
 ----
 
 ==== Alternative: Dedicated Vector Databases

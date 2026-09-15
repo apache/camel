@@ -289,6 +289,7 @@ class RoutesTest extends YamlTestSupport {
                     routePolicyRef: "myPolicy"
                     shutdownRoute: "Defer"
                     shutdownRunningTask: "CompleteAllTasks"
+                    delayer: "200"
                     from:
                       uri: "direct:info"
                       steps:
@@ -305,6 +306,7 @@ class RoutesTest extends YamlTestSupport {
             routePolicyRef == 'myPolicy'
             shutdownRoute == "Defer"
             shutdownRunningTask == "CompleteAllTasks"
+            delayer == '200'
             input.endpointUri == 'direct:info'
 
             with (outputs[0], LogDefinition) {

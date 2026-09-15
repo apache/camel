@@ -105,6 +105,17 @@ The `route-topology` developer console (used by `camel cmd route-topology` and t
 includes routes created by Kamelets, as these are an implementation detail of the Kamelet and were already hidden
 from the route console. Set the `kamelets=true` option (or `--kamelets` on the CLI) to include them.
 
+=== camel-groovy
+
+A `GroovyShellFactory` is now looked up in the registry once per `CamelContext`, when the first groovy expression is
+evaluated, instead of on every evaluation. A factory bound to the registry after that point is no longer used; bind
+it before the context starts.
+
+The `exchangeProperties`, `exchangeProperty`, `variables`, `variable` and `attachments` script variables are now read
+from the exchange the first time the script uses them instead of being copied before the script runs. A script that
+changes a property or variable through `exchange` and then reads one of these variables for the first time now sees
+its own change where it previously saw the state from before the script ran.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
@@ -163,22 +174,6 @@ The Maven archetype `camel-archetype-spring` was deprecated in 4.17. Use spring 
 ==== camel-catalog-lucene
 
 The maven plugin was deprecated in 4.12. The catalog now has built-in suggestions (see `camel-catalog` below).
-
-=== camel-catalog - did-you-mean suggestions by default, camel-catalog-suggest deprecated
-
-`CamelCatalog` now suggests the closest option names (and enum values) by default when validation finds an
-unknown one, using the new edit-distance based `org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy`
-from `camel-core-catalog`. Before, suggestions were only produced when a `SuggestionStrategy` had been set
-explicitly, which meant the CLI and the TUI validators never gave any. Code that never wants suggestions can call
-`setSuggestionStrategy(null)`.
-
-The `camel-catalog-suggest` module with its phonetic (Soundex, commons-codec based) `CatalogSuggestionStrategy`
-is deprecated: the class now delegates to the edit-distance strategy and the module no longer depends on
-commons-codec. Remove the dependency and the `setSuggestionStrategy` call; the default gives the same or better
-suggestions. Edit distance also changes what is suggested: a partly typed name lists the names starting with it,
-and a name with a typo lists the names a few edits away, whereas Soundex matched by the sound of the consonants
-(for `showE` the `log` component now suggests `showException`, `showExchangeId` and `showExchangePattern`, no
-longer `showAll`).
 
 ==== camel-digitalocean
 
@@ -640,6 +635,19 @@ id being a dynamic top-level JSON key. Anything that parses this console's raw J
 (custom tooling, or scripts calling the dev console HTTP endpoint) must be updated to the new
 shape. The `camel get variable` CLI command has already been updated accordingly.
 
+=== camel-javascript
+
+The `js` language now shares one GraalJS `Engine` per language instance (a `Context` is still created per
+evaluation), so the engine is built when the `CamelContext` starts instead of on every evaluation.
+
+Values returned by a script are now converted to plain Java objects before the script's `Context` is closed. Previously
+a JavaScript object, array, `Map`, `Set` or `Date` came back as a polyglot `Value` bound to a `Context` that had already
+been closed, and reading it failed. A script now returns a `LinkedHashMap` for an object or a JavaScript `Map`, an
+`ArrayList` for an array, a `LinkedHashSet` for a `Set` and a `java.time.Instant` for a `Date`. Code that handled the
+polyglot `Value` itself needs to work with these types instead.
+
+`JavaScriptHelper.newContext()` is deprecated: contexts are created by the language from its shared engine.
+
 === camel-jbang
 
 The `--runtime` option of `camel run` has a new default value `jbang`, which is the existing in-process
@@ -654,6 +662,16 @@ run, use `--runtime=jbang` (or leave the option out). The options `--background`
 Running an existing Maven project (`camel run pom.xml`) is unchanged, and still detects the runtime
 from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
 `camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
+
+The YAML that `camel init` writes (`camel init foo.yaml`, and the Integration and Kamelet templates), the
+bundled examples (`camel init --example`) and the routes the `camel_ai_pipeline_scaffold` and
+`camel_openapi_scaffold` MCP tools generate are now written in the canonical YAML DSL format, with an
+expression under `expression:` and a step as a map of its options
+(`setBody: {expression: {simple: {expression: "..."}}}`, `log: {message: "..."}`, `to: {uri: "..."}`).
+The compact notation they used to be written in (`setBody: {simple: "..."}`, `log: "..."`) is deprecated:
+`camel run` warns about it, `camel validate yaml --canonical` reports it, and `camel validate normalize`
+rewrites a file in the canonical format. Existing files keep working; only the generated starting point
+changed. Scripts that post-process the generated YAML by matching the old text need to be updated.
 
 === camel-jbang (MCP servers)
 
@@ -1345,6 +1363,22 @@ level that includes all details from the invoked health checks. To get the trace
 camel.health.exposure-level = full
 ----
 
+=== camel-catalog - did-you-mean suggestions by default, camel-catalog-suggest deprecated
+
+`CamelCatalog` now suggests the closest option names (and enum values) by default when validation finds an
+unknown one, using the new edit-distance based `org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy`
+from `camel-core-catalog`. Before, suggestions were only produced when a `SuggestionStrategy` had been set
+explicitly, which meant the CLI and the TUI validators never gave any. Code that never wants suggestions can call
+`setSuggestionStrategy(null)`.
+
+The `camel-catalog-suggest` module with its phonetic (Soundex, commons-codec based) `CatalogSuggestionStrategy`
+is deprecated: the class now delegates to the edit-distance strategy and the module no longer depends on
+commons-codec. Remove the dependency and the `setSuggestionStrategy` call; the default gives the same or better
+suggestions. Edit distance also changes what is suggested: a partly typed name lists the names starting with it,
+and a name with a typo lists the names a few edits away, whereas Soundex matched by the sound of the consonants
+(for `showE` the `log` component now suggests `showException`, `showExchangeId` and `showExchangePattern`, no
+longer `showAll`).
+
 === camel-spring-boot
 
 A set of starter defaults changed in this release. Each is a deliberate change to what an application gets
@@ -1796,6 +1830,13 @@ converted to a `String` and moderated as text; it is now moderated as an image, 
 that accepts images, such as the default `omni-moderation-latest`. A list body containing an image file now fails
 with an `IllegalArgumentException` instead of moderating the file content as text; split the list to moderate
 each image on its own.
+The `hostedMcpTools` option of the `responses` operation now sends every field of each MCP tool definition.
+Previously only `server_label`, `server_url` and `server_description` were sent, so fields such as
+`require_approval`, `allowed_tools` and `headers` were silently dropped and the API applied its defaults,
+including asking for approval before every hosted MCP call. The option is now also marked as secret.
+
+A `responses` call whose output asks for the approval of hosted MCP tool calls now fails with a
+`CamelExchangeException` naming the pending calls. Previously the exchange completed with an empty body.
 
 === camel-infinispan
 
@@ -1973,3 +2014,44 @@ stored-procedure template text and no longer resolves it through `SqlHelper.reso
 as a resource, consistent with how `camel-sql` already treats the body under `useMessageBodyForSql=true`. A route
 that relied on the body being a resource location must resolve it to the template text before the `sql-stored`
 endpoint.
+=== camel-core - the inheritErrorHandler attribute on circuitBreaker and failoverLoadBalancer is now a String
+
+`CircuitBreakerDefinition.inheritErrorHandler` and `FailoverLoadBalancerDefinition.inheritErrorHandler` are now
+declared as `String` instead of `Boolean`, the same way nearly every other scalar attribute in the Camel model
+is declared. This allows a property placeholder to be used, which is resolved when the route starts:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - circuitBreaker:
+            inheritErrorHandler: "{{myInheritFlag}}"
+            steps:
+              - to:
+                  uri: mock:a
+----
+
+Before this change the value was converted to a `Boolean` while the route was being loaded, so
+`+inheritErrorHandler: "{{myInheritFlag}}"+` silently evaluated to `false` instead of resolving the placeholder.
+
+The accessors changed accordingly:
+
+* `ProcessorDefinition.getInheritErrorHandler()` and `setInheritErrorHandler(...)` now use `String` instead of
+  `Boolean`, and so do the overrides on `CircuitBreakerDefinition` and the accessors on
+  `FailoverLoadBalancerDefinition`. Use `CamelContextHelper.parseBoolean(camelContext, getInheritErrorHandler())`
+  where a `CamelContext` is available to resolve the value.
+
+The fluent builder `CircuitBreakerDefinition.inheritErrorHandler(boolean)` and the `failover(...)` methods on
+`LoadBalanceDefinition` are unchanged, and a `CircuitBreakerDefinition.inheritErrorHandler(String)` overload was
+added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change; the `inheritErrorHandler`
+attribute in the XML schema is now `xs:string` so a placeholder validates.
+
+=== camel-weaviate - removed the unused vector field name header
+
+The `CamelweaviateVectorFieldName` header (`WeaviateVectorDbHeaders.VECTOR_FIELD_NAME`) has been removed.
+It was read by the Weaviate embeddings data-type transformer but its value was never used — the embedding
+vector is always sent as the object vector, so a "vector field name" had no effect (Weaviate has no named
+vector-field concept in this producer). Routes that set this header can simply drop it; behaviour is
+unchanged.

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.List;
+
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -108,7 +110,33 @@ public class CatalogSamplesTest {
         assertThat(o.getString("placement")).contains("top-level");
         JsonArray samples = (JsonArray) o.get("samples");
         assertThat(samples).hasSize(3);
-        String yaml = ((JsonObject) samples.get(0)).getString("yaml");
+        // the second example of yaml-dsl.adoc declares a bean and calls it from a route, within the default limit
+        String yaml = ((JsonObject) samples.get(1)).getString("yaml");
         assertThat(yaml).contains("- beans:").contains("- name: myBean").contains("ref: myBean");
+    }
+
+    @Test
+    void theGeneratedSamplesCoverTheEipsAndTheFileEntries() {
+        // eip-samples.json is generated from the documentation by the build (CAMEL-24713): the EIP pages, the user
+        // manual pages of the file entries, and the beans of yaml-dsl.adoc
+        assertThat(CatalogSamples.names())
+                .contains("aggregate", "split", "choice", "circuitBreaker", "deadLetterChannel", "intercept",
+                        "keyValueRepository", "route", "rest", "routeTemplate", "routeConfiguration", "onException",
+                        "onCompletion", "doTry", "beans")
+                .hasSizeGreaterThan(100);
+        assertThat(CatalogSamples.samples().get("deadLetterChannel").get(0).get("source"))
+                .isEqualTo("dead-letter-channel.adoc");
+        assertThat(CatalogSamples.samples().get("doTry")).extracting(s -> s.get("source"))
+                .contains("doTry-eip.adoc", "try-catch-finally.adoc");
+        assertThat(CatalogSamples.samples().values().stream().mapToInt(List::size).sum()).isGreaterThan(300);
+    }
+
+    @Test
+    void patternPagesWithoutTheEipSuffixAreReadFromTheCatalog() {
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, "deadLetterChannel", 1).get("samples");
+        assertThat(((JsonObject) samples.get(0)).getString("source")).startsWith("dead-letter-channel.adoc (Camel ");
+        samples = (JsonArray) CatalogSamples.sample(catalog, "keyValueRepository", 1).get("samples");
+        assertThat(((JsonObject) samples.get(0)).getString("source")).startsWith("keyValueRepository.adoc (Camel ");
     }
 }

@@ -55,6 +55,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "messageHistory", type = "boolean"),
                   @YamlProperty(name = "logMask", type = "boolean"),
                   @YamlProperty(name = "trace", type = "boolean"),
+                  @YamlProperty(name = "delayer", type = "string",
+                                description = "Whether to slow down processing messages by a given delay in msec."),
                   @YamlProperty(name = "errorHandlerRef", type = "string"),
                   @YamlProperty(name = "errorHandler", type = "object:org.apache.camel.model.ErrorHandlerDefinition"),
                   @YamlProperty(name = "shutdownRoute", type = "enum:Default,Defer",
@@ -144,6 +146,9 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "trace":
                     target.setTrace(asText(val));
+                    break;
+                case "delayer":
+                    target.setDelayer(asText(val));
                     break;
                 case "errorHandlerRef":
                     target.setErrorHandlerRef(asText(val));

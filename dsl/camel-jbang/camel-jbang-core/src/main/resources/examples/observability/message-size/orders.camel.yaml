@@ -8,10 +8,14 @@
       steps:
         - setHeader:
             name: Content-Length
-            simple: "${random(100,1023)}"
+            expression:
+              simple:
+                expression: "${random(100,1023)}"
         - setHeader:
             name: source
-            simple: small-producer
+            expression:
+              simple:
+                expression: small-producer
         - to:
             uri: seda:small
 
@@ -24,13 +28,19 @@
       steps:
         - setHeader:
             name: Content-Length
-            simple: "${random(8192,18432)}"
+            expression:
+              simple:
+                expression: "${random(8192,18432)}"
         - setHeader:
             name: source
-            simple: medium-producer
+            expression:
+              simple:
+                expression: medium-producer
         - setHeader:
             name: tracking-id
-            simple: "TRK-${random(10000,99999)}"
+            expression:
+              simple:
+                expression: "TRK-${random(10000,99999)}"
         - to:
             uri: seda:medium
 
@@ -43,19 +53,29 @@
       steps:
         - setHeader:
             name: Content-Length
-            simple: "${random(10485760,20971520)}"
+            expression:
+              simple:
+                expression: "${random(10485760,20971520)}"
         - setHeader:
             name: source
-            simple: large-producer
+            expression:
+              simple:
+                expression: large-producer
         - setHeader:
             name: tracking-id
-            simple: "TRK-${random(10000,99999)}"
+            expression:
+              simple:
+                expression: "TRK-${random(10000,99999)}"
         - setHeader:
             name: batch-id
-            simple: "BATCH-${random(100,999)}"
+            expression:
+              simple:
+                expression: "BATCH-${random(100,999)}"
         - setHeader:
             name: priority
-            simple: "${random(1,5)}"
+            expression:
+              simple:
+                expression: "${random(1,5)}"
         - to:
             uri: seda:large
 

@@ -67,6 +67,13 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
     private String endpoint;
     @Metadata(description = "Key prefix used to namespace entries in Redis", defaultValue = "camel-kvr:")
     private String keyPrefix = "camel-kvr:";
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " values read back from the repository. When not set, the JVM-wide jdk.serialFilter is"
+                            + " used if present; otherwise a conservative default filter denying java.net.* and"
+                            + " otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen"
+                            + " this pattern when storing instances of your own classes in the repository.")
+    private String deserializationFilter;
 
     public RedisKeyValueRepository() {
     }
@@ -96,7 +103,7 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
     public @Nullable Object get(String key) {
         RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
         byte[] bytes = bucket.get();
-        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes, deserializationFilter) : null;
     }
 
     @Override
@@ -110,7 +117,7 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
         } else {
             previous = bucket.getAndSet(serialized);
         }
-        return previous != null ? KeyValueRepositoryHelper.deserialize(previous) : null;
+        return previous != null ? KeyValueRepositoryHelper.deserialize(previous, deserializationFilter) : null;
     }
 
     @Override
@@ -118,7 +125,7 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
     public @Nullable Object delete(String key) {
         RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
         byte[] bytes = bucket.getAndDelete();
-        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes, deserializationFilter) : null;
     }
 
     @Override
@@ -160,7 +167,7 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
         }
         // Key already existed; return the current value
         byte[] existing = bucket.get();
-        return existing != null ? KeyValueRepositoryHelper.deserialize(existing) : null;
+        return existing != null ? KeyValueRepositoryHelper.deserialize(existing, deserializationFilter) : null;
     }
 
     /**
@@ -221,6 +228,20 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
 
     public void setRedisson(RedissonClient redisson) {
         this.redisson = redisson;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing values read back from the repository. When not set, the JVM-wide {@code jdk.serialFilter} is used
+     * if present, otherwise a conservative default filter is applied. Widen this pattern when storing instances of your
+     * own classes in the repository.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     // ---- Lifecycle ----

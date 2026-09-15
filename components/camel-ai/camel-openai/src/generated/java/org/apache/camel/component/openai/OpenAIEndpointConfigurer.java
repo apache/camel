@@ -45,6 +45,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": target.getConfiguration().setAudioTimestampGranularities(property(camelContext, java.lang.String.class, value)); return true;
         case "autotoolexecution":
         case "autoToolExecution": target.getConfiguration().setAutoToolExecution(property(camelContext, boolean.class, value)); return true;
+        case "background": target.getConfiguration().setBackground(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "builtintools":
@@ -53,6 +54,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, long.class, value)); return true;
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": target.getConfiguration().setConversationHistoryProperty(property(camelContext, java.lang.String.class, value)); return true;
+        case "conversationid":
+        case "conversationId": target.getConfiguration().setConversationId(property(camelContext, java.lang.String.class, value)); return true;
         case "conversationmemory":
         case "conversationMemory": target.getConfiguration().setConversationMemory(property(camelContext, boolean.class, value)); return true;
         case "developermessage":
@@ -215,6 +218,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": return java.lang.String.class;
         case "autotoolexecution":
         case "autoToolExecution": return boolean.class;
+        case "background": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
         case "builtintools":
@@ -223,6 +227,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "connectTimeout": return long.class;
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": return java.lang.String.class;
+        case "conversationid":
+        case "conversationId": return java.lang.String.class;
         case "conversationmemory":
         case "conversationMemory": return boolean.class;
         case "developermessage":
@@ -386,6 +392,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": return target.getConfiguration().getAudioTimestampGranularities();
         case "autotoolexecution":
         case "autoToolExecution": return target.getConfiguration().isAutoToolExecution();
+        case "background": return target.getConfiguration().isBackground();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "builtintools":
@@ -394,6 +401,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": return target.getConfiguration().getConversationHistoryProperty();
+        case "conversationid":
+        case "conversationId": return target.getConfiguration().getConversationId();
         case "conversationmemory":
         case "conversationMemory": return target.getConfiguration().isConversationMemory();
         case "developermessage":

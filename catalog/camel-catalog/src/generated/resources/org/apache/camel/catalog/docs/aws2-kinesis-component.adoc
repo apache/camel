@@ -169,7 +169,7 @@ Java::
 +
 [source,java]
 ----
-from("aws2-kinesis://mykinesisstream?asyncClient=true&useDefaultCredentialsProvider=true&useKclConsumers=true&region=myregion")
+from("aws2-kinesis://mykinesisstream?asyncClient=true&useDefaultCredentialsProvider=true&useKclConsumers=true&region=eu-west-1")
     .to("log:out?showAll=true");
 ----
 
@@ -178,7 +178,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="aws2-kinesis://mykinesisstream?asyncClient=true&amp;useDefaultCredentialsProvider=true&amp;useKclConsumers=true&amp;region=myregion"/>
+  <from uri="aws2-kinesis://mykinesisstream?asyncClient=true&amp;useDefaultCredentialsProvider=true&amp;useKclConsumers=true&amp;region=eu-west-1"/>
   <to uri="log:out?showAll=true"/>
 </route>
 ----
@@ -194,7 +194,7 @@ YAML::
         asyncClient: true
         useDefaultCredentialsProvider: true
         useKclConsumers: true
-        region: myregion
+        region: eu-west-1
       steps:
         - to:
             uri: log:out

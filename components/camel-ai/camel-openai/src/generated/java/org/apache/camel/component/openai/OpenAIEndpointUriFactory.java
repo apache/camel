@@ -24,7 +24,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(85);
+        Set<String> props = new HashSet<>(87);
         props.add("additionalBodyProperty");
         props.add("additionalHeader");
         props.add("additionalResponseHeader");
@@ -36,10 +36,12 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("audioTemperature");
         props.add("audioTimestampGranularities");
         props.add("autoToolExecution");
+        props.add("background");
         props.add("baseUrl");
         props.add("builtinTools");
         props.add("connectTimeout");
         props.add("conversationHistoryProperty");
+        props.add("conversationId");
         props.add("conversationMemory");
         props.add("developerMessage");
         props.add("dimensions");
@@ -111,9 +113,10 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("userMessage");
         props.add("writeTimeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
+        Set<String> secretProps = new HashSet<>(6);
         secretProps.add("additionalHeader");
         secretProps.add("apiKey");
+        secretProps.add("hostedMcpTools");
         secretProps.add("sslKeyPassword");
         secretProps.add("sslKeystorePassword");
         secretProps.add("sslTruststorePassword");

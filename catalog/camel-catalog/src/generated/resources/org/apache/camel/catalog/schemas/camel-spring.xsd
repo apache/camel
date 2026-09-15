@@ -4539,7 +4539,7 @@ Refers to a circuit breaker configuration to use for configuring the circuit bre
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="inheritErrorHandler" type="xs:boolean">
+        <xs:attribute name="inheritErrorHandler" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -6949,7 +6949,7 @@ value: -1
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="inheritErrorHandler" type="xs:boolean">
+        <xs:attribute name="inheritErrorHandler" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -48,6 +49,7 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
     private final List<ImageExpectation> imageEditExpectations;
     private final OpenAIMockBuilder builder;
     private final ObjectMapper objectMapper;
+    private final List<RecordedRequest> receivedRequests = new CopyOnWriteArrayList<>();
     private ExecutorService executor;
 
     public OpenAIMock() {
@@ -78,8 +80,26 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
         return "http://localhost:" + server.getAddress().getPort();
     }
 
+    /**
+     * Returns the requests received since the mock server started, in arrival order.
+     */
+    public List<RecordedRequest> getReceivedRequests() {
+        return List.copyOf(receivedRequests);
+    }
+
+    /**
+     * Returns the last request received since the mock server started.
+     */
+    public RecordedRequest getLastRequest() {
+        if (receivedRequests.isEmpty()) {
+            throw new IllegalStateException("The mock server has not received any request");
+        }
+        return receivedRequests.get(receivedRequests.size() - 1);
+    }
+
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        receivedRequests.clear();
         server = HttpServer.create(new InetSocketAddress(0), 0);
         server.createContext("/",
                 new OpenAIMockServerHandler(
@@ -87,7 +107,8 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
                                 expectations, embeddingExpectations, audioTranscriptionExpectations,
                                 audioTranslationExpectations, speechExpectations, moderationExpectations,
                                 imageGenerationExpectations, imageEditExpectations),
-                        objectMapper));
+                        objectMapper))
+                .getFilters().add(new RequestRecordingFilter(receivedRequests));
 
         executor = Executors.newSingleThreadExecutor();
         server.setExecutor(executor);

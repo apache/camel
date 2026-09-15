@@ -123,7 +123,7 @@ Java::
 [source,java]
 ----
 from("direct:startBatch")
-    .to("spring-batch:myJob?jobLauncherRef=myJobLauncher");
+    .to("spring-batch:myJob?jobLauncher=#myJobLauncher");
 ----
 
 XML::
@@ -132,7 +132,7 @@ XML::
 ----
 <route>
   <from uri="direct:startBatch"/>
-  <to uri="spring-batch:myJob?jobLauncherRef=myJobLauncher"/>
+  <to uri="spring-batch:myJob?jobLauncher=#myJobLauncher"/>
 </route>
 ----
 
@@ -147,7 +147,7 @@ YAML::
         - to:
             uri: spring-batch:myJob
             parameters:
-              jobLauncherRef: myJobLauncher
+              jobLauncher: "#myJobLauncher"
 ----
 ====
 

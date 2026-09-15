@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Readiness check for the OPA server a producer sends its decisions to.
@@ -49,7 +50,9 @@ public class OpaProducerHealthCheck extends AbstractHealthCheck {
     private final String policyPath;
 
     public OpaProducerHealthCheck(String serverUrl, String bearerToken, String policyPath, String id) {
-        super("camel", "producer:opa-" + id);
+        // the id is built from the endpoint URI so that two endpoints sharing a policy path stay distinct, but that
+        // URI carries the bearerToken in the clear and the id is published in the health output, so sanitize it
+        super("camel", "producer:opa-" + URISupport.sanitizeUri(id));
         this.serverUrl = serverUrl;
         this.bearerToken = bearerToken;
         this.policyPath = policyPath;
@@ -57,7 +60,7 @@ public class OpaProducerHealthCheck extends AbstractHealthCheck {
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        builder.detail("opa.serverUrl", serverUrl);
+        builder.detail("opa.serverUrl", URISupport.sanitizeUri(serverUrl));
         builder.detail("opa.policyPath", policyPath);
 
         HttpRequest.Builder request = HttpRequest.newBuilder()

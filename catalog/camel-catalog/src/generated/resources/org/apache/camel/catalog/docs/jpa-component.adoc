@@ -276,9 +276,9 @@ YAML::
       uri: jpa://org.apache.camel.examples.MultiSteps
       parameters:
         query: "select o from org.apache.camel.examples.MultiSteps o where o.step = 1"
-    steps:
-      - to:
-          uri: bean:myBusinessLogic
+      steps:
+        - to:
+            uri: bean:myBusinessLogic
 ----
 ====
 
@@ -317,9 +317,9 @@ YAML::
       uri: jpa://org.apache.camel.examples.MultiSteps
       parameters:
         nativeQuery: "select * from MultiSteps where step = 1"
-    steps:
-      - to:
-          uri: bean:myBusinessLogic
+      steps:
+        - to:
+            uri: bean:myBusinessLogic
 ----
 ====
 
@@ -415,11 +415,11 @@ YAML::
 - route:
     from:
       uri: direct:query
-    steps:
-      - to:
-          uri: jpa://org.apache.camel.examples.MultiSteps
-          parameters:
-            query: "select o from org.apache.camel.examples.MultiSteps o where o.step = 1"
+      steps:
+        - to:
+            uri: jpa://org.apache.camel.examples.MultiSteps
+            parameters:
+              query: "select o from org.apache.camel.examples.MultiSteps o where o.step = 1"
 ----
 ====
 
@@ -456,12 +456,12 @@ YAML::
 - route:
     from:
       uri: direct:nativeQuery
-    steps:
-      - to:
-          uri: jpa://org.apache.camel.examples.MultiSteps
-          parameters:
-            resultClass: org.apache.camel.examples.MultiSteps
-            nativeQuery: "select * from MultiSteps where step = 1"
+      steps:
+        - to:
+            uri: jpa://org.apache.camel.examples.MultiSteps
+            parameters:
+              resultClass: org.apache.camel.examples.MultiSteps
+              nativeQuery: "select * from MultiSteps where step = 1"
 ----
 ====
 

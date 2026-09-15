@@ -42,4 +42,6 @@ spec:
       uri: "kamelet:source"
       steps:
       - delay:
-          constant: "{{milliseconds}}"
+          expression:
+            constant:
+              expression: "{{milliseconds}}"

@@ -190,15 +190,15 @@ YAML::
 - route:
     from:
       uri: direct:disableKey
-    steps:
-      - setHeader:
-          name: CamelAwsKMSKeyId
-          constant: "123"
-      - to:
-          uri: aws2-kms://test
-          parameters:
-            kmsClient: "#amazonKmsClient"
-            operation: disableKey
+      steps:
+        - setHeader:
+            name: CamelAwsKMSKeyId
+            constant: "123"
+        - to:
+            uri: aws2-kms://test
+            parameters:
+              kmsClient: "#amazonKmsClient"
+              operation: disableKey
 ----
 ====
 
@@ -235,15 +235,15 @@ YAML::
 - route:
     from:
       uri: direct:enableKey
-    steps:
-      - setHeader:
-          name: CamelAwsKMSKeyId
-          constant: "123"
-      - to:
-          uri: aws2-kms://test
-          parameters:
-            kmsClient: "#amazonKmsClient"
-            operation: enableKey
+      steps:
+        - setHeader:
+            name: CamelAwsKMSKeyId
+            constant: "123"
+        - to:
+            uri: aws2-kms://test
+            parameters:
+              kmsClient: "#amazonKmsClient"
+              operation: enableKey
 ----
 ====
 

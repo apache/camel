@@ -329,45 +329,45 @@ from("kafka:security-events")
 - route:
     from:
       uri: kafka:security-events
-    steps:
-      - unmarshal:
-          ocsf:
-            unmarshalType: "org.apache.camel.dataformat.ocsf.model.DetectionFinding"
-      - setHeader:
-          name: "findingTitle"
-          expression:
-            simple:
-              expression: "${body.findingInfo?.title}"
-      - setHeader:
-          name: "findingSeverity"
-          expression:
-            simple:
-              expression: "${body.severityId}"
-      - setHeader:
-          name: "findingMessage"
-          expression:
-            simple:
-              expression: "${body.message}"
-      - setBody:
-          expression:
-            simple:
-              expression: |
-            Analyze this security detection finding and provide a brief summary:
+      steps:
+        - unmarshal:
+            ocsf:
+              unmarshalType: "org.apache.camel.dataformat.ocsf.model.DetectionFinding"
+        - setHeader:
+            name: "findingTitle"
+            expression:
+              simple:
+                expression: "${body.findingInfo?.title}"
+        - setHeader:
+            name: "findingSeverity"
+            expression:
+              simple:
+                expression: "${body.severityId}"
+        - setHeader:
+            name: "findingMessage"
+            expression:
+              simple:
+                expression: "${body.message}"
+        - setBody:
+            expression:
+              simple:
+                expression: |
+                  Analyze this security detection finding and provide a brief summary:
 
-            Title: ${header.findingTitle}
-            Severity: ${header.findingSeverity}
-            Message: ${header.findingMessage}
+                  Title: ${header.findingTitle}
+                  Severity: ${header.findingSeverity}
+                  Message: ${header.findingMessage}
 
-            Provide:
-            1. A one-sentence summary of the threat
-            2. Recommended immediate actions
-            3. Risk assessment (Critical/High/Medium/Low)
-      - to:
-          uri: langchain4j-chat:security-analyst
-          parameters:
-            chatModel: "#chatLanguageModel"
-      - to:
-          uri: direct:ai-summary
+                  Provide:
+                  1. A one-sentence summary of the threat
+                  2. Recommended immediate actions
+                  3. Risk assessment (Critical/High/Medium/Low)
+        - to:
+            uri: langchain4j-chat:security-analyst
+            parameters:
+              chatModel: "#chatLanguageModel"
+        - to:
+            uri: direct:ai-summary
 ----
 
 == Dependencies

@@ -141,6 +141,13 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
     private int pollDurationMs = DEFAULT_POLL_DURATION_MS;
     @Metadata(description = "Whether to sync on startup only, or to continue syncing while Camel is running.")
     private boolean startupOnly;
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " values read back from the repository. When not set, the JVM-wide jdk.serialFilter is"
+                            + " used if present; otherwise a conservative default filter denying java.net.* and"
+                            + " otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen"
+                            + " this pattern when storing instances of your own classes in the repository.")
+    private String deserializationFilter;
 
     public KafkaKeyValueRepository() {
     }
@@ -356,7 +363,7 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
 
     private Object deserializeValue(byte[] data) {
         // Value starts at offset 9 (1 byte action + 8 bytes expiresAt)
-        return KeyValueRepositoryHelper.deserialize(data, 9, data.length - 9);
+        return KeyValueRepositoryHelper.deserialize(data, 9, data.length - 9, deserializationFilter);
     }
 
     private long deserializeExpiresAt(byte[] data) {
@@ -676,6 +683,20 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
      */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing values read back from the repository. When not set, the JVM-wide {@code jdk.serialFilter} is used
+     * if present, otherwise a conservative default filter is applied. Widen this pattern when storing instances of your
+     * own classes in the repository.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     @ManagedOperation(description = "Number of sync events received from the kafka topic")

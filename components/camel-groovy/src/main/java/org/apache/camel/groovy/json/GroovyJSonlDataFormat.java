@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 @Dataformat("groovyJson")
@@ -49,13 +50,13 @@ public class GroovyJSonlDataFormat extends ServiceSupport implements DataFormat,
             graph = NodeToJsonHelper.nodeToJson(n);
         }
         if (graph instanceof Map map) {
-            serialize(map, stream);
+            serialize(exchange, map, stream);
         } else {
             // optional jackson 2.x or 3.x support
             String type = graph.getClass().getName();
             if (type.startsWith("com.fasterxml.jackson.databind") || type.startsWith("tools.jackson.databind")) {
                 var map = exchange.getContext().getTypeConverter().convertTo(Map.class, exchange, graph);
-                serialize(map, stream);
+                serialize(exchange, map, stream);
             } else {
                 byte[] arr = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, graph);
                 stream.write(arr);
@@ -74,12 +75,16 @@ public class GroovyJSonlDataFormat extends ServiceSupport implements DataFormat,
         return "groovyJson";
     }
 
-    private void serialize(Map map, OutputStream stream) throws IOException {
-        String out = JsonOutput.toJson(map);
-        if (prettyPrint) {
-            out = JsonOutput.prettyPrint(out);
-        }
-        stream.write(out.getBytes());
+    private void serialize(Exchange exchange, Map map, OutputStream stream) throws IOException {
+        String out = prettyPrint ? toPrettyJson(map) : JsonOutput.toJson(map);
+        stream.write(out.getBytes(ExchangeHelper.getCharset(exchange, true)));
     }
 
+    /**
+     * Renders the value with the layout of {@link JsonOutput#prettyPrint(String)} in a single pass, instead of
+     * generating compact JSON and lexing it again.
+     */
+    static String toPrettyJson(Object value) {
+        return new PrettyJsonGenerator().toJson(value);
+    }
 }

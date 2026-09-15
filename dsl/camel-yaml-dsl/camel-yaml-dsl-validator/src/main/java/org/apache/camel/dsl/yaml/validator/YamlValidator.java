@@ -245,7 +245,9 @@ public class YamlValidator {
         boolean seenContent = false;
         for (int i = 0; i < lines.length; i++) {
             String t = lines[i].trim();
-            if (t.equals("---") || t.equals("...")) {
+            // a marker starts at column 1; an indented --- or ... is text, such as a line of a block scalar
+            String marker = lines[i].stripTrailing();
+            if (marker.equals("---") || marker.equals("...")) {
                 if (seenContent) {
                     return Error.builder()
                             .messageKey("document")
@@ -265,6 +267,9 @@ public class YamlValidator {
     private List<Error> validate(JsonNode target) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
+        if (canonical) {
+            errors = withCompactNotationHints(errors);
+        }
         errors = withExpressionHints(errors);
         errors = withPropertyHints(errors);
         errors = withListHints(errors);
@@ -299,6 +304,90 @@ public class YamlValidator {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
         }
         return errors;
+    }
+
+    /** The property a step written as a string sets: the argument of the definition's String constructor. */
+    private static final Map<String, String> STRING_STEP_PROPERTY = Map.ofEntries(
+            Map.entry("bean", "ref"), Map.entry("convertBodyTo", "type"), Map.entry("log", "message"),
+            Map.entry("poll", "uri"), Map.entry("removeHeader", "name"), Map.entry("removeHeaders", "pattern"),
+            Map.entry("removeProperties", "pattern"), Map.entry("removeProperty", "name"),
+            Map.entry("removeVariable", "name"), Map.entry("rollback", "message"),
+            Map.entry("setExchangePattern", "pattern"), Map.entry("to", "uri"), Map.entry("toD", "uri"));
+
+    private static final String NORMALIZE_HINT = "; camel validate normalize rewrites a file in the canonical format";
+
+    /**
+     * The canonical schema rejects the compact notation as a schema error that says nothing about it: "property
+     * 'simple' is not defined" for a language key directly on the EIP, "string found, object expected" for a step or a
+     * language written as a string. Each is replaced with a message that names the notation, the canonical form of that
+     * line, and the normalize command.
+     */
+    List<Error> withCompactNotationHints(List<Error> errors) {
+        List<Error> answer = new ArrayList<>(errors.size());
+        for (Error error : errors) {
+            String hint = compactNotationHint(error);
+            if (hint == null) {
+                answer.add(error);
+                continue;
+            }
+            answer.add(Error.builder()
+                    .keyword("compactNotation")
+                    .instanceLocation(error.getInstanceLocation())
+                    .messageKey("compactNotation")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(hint + NORMALIZE_HINT)
+                    .build());
+        }
+        return answer;
+    }
+
+    private String compactNotationHint(Error error) {
+        String message = error.getMessage();
+        if (message == null) {
+            return null;
+        }
+        String location = String.valueOf(error.getInstanceLocation());
+        String name = location.substring(location.lastIndexOf('/') + 1);
+        if ("additionalProperties".equals(error.getKeyword())) {
+            // setBody: {simple: ...} or when: [- simple: ...]: the language key sits on the EIP, not under expression:
+            String unknown = between(message, "property '", "'");
+            if (unknown == null || !languageKeys.contains(unknown)) {
+                return null;
+            }
+            if (name.matches("\\d+")) {
+                String parent = location.substring(0, location.lastIndexOf('/'));
+                name = parent.substring(parent.lastIndexOf('/') + 1);
+                return "a " + name + " item with " + unknown + ": ... is the deprecated compact notation: an expression"
+                       + " is written under expression: (- expression: {" + unknown + ": {" + languageForm(unknown)
+                       + "}})";
+            }
+            return name + ": {" + unknown + ": ...} is the deprecated compact notation: an expression is written under"
+                   + " expression: (" + name + ": {expression: {" + unknown + ": {" + languageForm(unknown) + "}}})";
+        }
+        if ("type".equals(error.getKeyword()) && message.contains("string found, object expected")) {
+            if (languageKeys.contains(name)) {
+                // simple: "..." : the language is a map with its expression
+                return name + ": \"...\" is the deprecated compact notation: write " + name + ": {" + languageForm(name)
+                       + "}";
+            }
+            if (stepNames.contains(name) || topLevelEntries.contains(name)) {
+                // log: "..." : the step is a map with its properties
+                String property = STRING_STEP_PROPERTY.get(name);
+                return name + ": \"...\" is the deprecated compact notation: write " + name
+                       + (property != null ? ": {" + property + ": \"...\"}" : " as a map with its properties");
+            }
+        }
+        return null;
+    }
+
+    /** The canonical body of a language: its expression property, or token for tokenize, as key: "...". */
+    private String languageForm(String language) {
+        JsonNode ref = model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties/"
+                                + language + "/$ref");
+        JsonNode properties = ref.isTextual() ? model.at(ref.asText().substring(1) + "/properties") : null;
+        String property = properties != null && properties.has("expression") ? "expression"
+                : properties != null && properties.has("token") ? "token" : "expression";
+        return property + ": \"...\"";
     }
 
     /**
@@ -356,16 +445,17 @@ public class YamlValidator {
             "idempotentConsumer");
 
     private static final Map<String, String> EXPRESSION_EXAMPLES = Map.of(
-            "split", "split: {tokenize: \",\"} or split: {simple: \"${body}\"} (delimiter only applies to the result of"
-                     + " the expression)",
-            "filter", "filter: {simple: \"${header.type} == 'urgent'\"}",
-            "when", "when: {simple: \"${body} contains 'x'\"}",
-            "setBody", "setBody: {simple: \"Hello ${body}\"} or setBody: {constant: \"Hello\"}",
-            "setHeader", "setHeader: {name: id, simple: \"${exchangeId}\"}",
-            "loop", "loop: {constant: \"3\"}",
-            "recipientList", "recipientList: {simple: \"${header.to}\"}",
-            "script", "script: {groovy: \"...\"}",
-            "delay", "delay: {constant: \"1000\"}");
+            "split", "split: {expression: {tokenize: {token: \",\"}}} or split: {expression: {simple: {expression:"
+                     + " \"${body}\"}}} (delimiter only applies to the result of the expression)",
+            "filter", "filter: {expression: {simple: {expression: \"${header.type} == 'urgent'\"}}}",
+            "when", "when: {expression: {simple: {expression: \"${body} contains 'x'\"}}}",
+            "setBody", "setBody: {expression: {simple: {expression: \"Hello ${body}\"}}} or setBody: {expression:"
+                       + " {constant: {expression: \"Hello\"}}}",
+            "setHeader", "setHeader: {name: id, expression: {simple: {expression: \"${exchangeId}\"}}}",
+            "loop", "loop: {expression: {constant: {expression: \"3\"}}}",
+            "recipientList", "recipientList: {expression: {simple: {expression: \"${header.to}\"}}}",
+            "script", "script: {expression: {groovy: {expression: \"...\"}}}",
+            "delay", "delay: {expression: {constant: {expression: \"1000\"}}}");
 
     private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel", "ognl",
             "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "wasm", "datasonnet");
@@ -419,7 +509,8 @@ public class YamlValidator {
                         .messageKey("type")
                         .format(new MessageFormat("{0}"))
                         .arguments(name + ": ${...} is simple syntax, not " + name + ": write the expression in " + name
-                                   + " (" + example + "), or use simple: \"" + text.replace("\"", "'") + "\"")
+                                   + " (" + example + "), or use simple: {expression: \"" + text.replace("\"", "'")
+                                   + "\"}")
                         .build());
             }
             checkSimpleSyntaxInScripts(value, path.append(name), errors);
@@ -463,7 +554,8 @@ public class YamlValidator {
             if (EXPRESSION_REQUIRED.contains(name) && (value == null || value.isNull() || value.isObject())
                     && !hasExpression(value)) {
                 String example = EXPRESSION_EXAMPLES.getOrDefault(name,
-                        name + ": {simple: \"...\"} or " + name + ": {constant: \"...\"}");
+                        name + ": {expression: {simple: {expression: \"...\"}}} or " + name
+                                                                        + ": {expression: {constant: {expression: \"...\"}}}");
                 errors.add(Error.builder()
                         .keyword("required")
                         .instanceLocation(path.append(name))
@@ -721,9 +813,10 @@ public class YamlValidator {
      * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and strings
      * that do not parse as the expected type.
      * <p>
-     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The few model
-     * attributes that are still converted while deserializing (so a placeholder is never resolved for them) are not
-     * reachable from the schema today - see CAMEL-24696 before exposing one of them.
+     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The only model
+     * attribute that is still converted while deserializing (so a placeholder is never resolved for it) is
+     * {@code BeanConstructorDefinition.index}, which is a map key and is not reachable from the schema - see
+     * CAMEL-24696 before exposing it.
      */
     static boolean isRuntimeAcceptedScalar(Error error) {
         if (!"type".equals(error.getKeyword())) {
@@ -784,7 +877,7 @@ public class YamlValidator {
         String name = location.substring(location.lastIndexOf('/') + 1);
         String value = instance.asText();
         String message = String.format(
-                "a plain value (%s) found, an expression expected: write %s: {constant: \"%s\"} for a fixed value, or %s: {simple: \"...\"} for a dynamic one",
+                "a plain value (%s) found, an expression expected: write %s: {constant: {expression: \"%s\"}} for a fixed value, or %s: {simple: {expression: \"...\"}} for a dynamic one",
                 value, name, value, name);
         // the message is not a MessageFormat pattern (it contains braces), so pass it as the single argument
         return Error.builder()
@@ -828,8 +921,9 @@ public class YamlValidator {
                     .instanceLocation(error.getInstanceLocation())
                     .messageKey("type")
                     .format(new MessageFormat("{0}"))
-                    .arguments(error.getMessage() + " (an expression is written with the language as the key, e.g."
-                               + " groovy: \"...\", simple: \"...\", constant: \"...\"; the language: form is"
+                    .arguments(error.getMessage() + " (an expression is written with the language as the key and its"
+                               + " expression: property, e.g. groovy: {expression: \"...\"}, simple: {expression: \"...\"},"
+                               + " constant: {expression: \"...\"}; the language: form is"
                                + " language: {language: groovy, expression: \"...\"})")
                     .build();
         }
@@ -860,7 +954,8 @@ public class YamlValidator {
                     .format(new MessageFormat("{0}"))
                     .arguments(error.getMessage() + " (" + entry + " is a map, not a list: - " + entry + ": followed by its"
                                + " properties indented" + (entry.equals("onException")
-                                       ? " (exception: [java.lang.Exception], handled: {constant: \"true\"}, steps: [...])"
+                                       ? " (exception: [java.lang.Exception], handled: {constant: {expression: \"true\"}},"
+                                         + " steps: [...])"
                                        : "")
                                + "; several of them are several - " + entry + ": items)")
                     .build();
@@ -999,18 +1094,20 @@ public class YamlValidator {
                 && (EXPRESSION_REQUIRED.contains(location.substring(location.lastIndexOf('/') + 1))
                         || location.endsWith("/expression"))) {
             // setBody: {script: ...}: script is an EIP; the language is the key of an expression
-            hint = "script is an EIP step, not a language: write the language as the key of the expression (groovy:"
-                   + " \"...\", simple: \"...\"), or run a script as its own step with - script: {groovy: \"...\"}";
+            hint = "script is an EIP step, not a language: write the language as the key of the expression (expression:"
+                   + " {groovy: {expression: \"...\"}}, expression: {simple: {expression: \"...\"}}), or run a script as"
+                   + " its own step with - script: {expression: {groovy: {expression: \"...\"}}}";
         } else if (unknown.equals("bean") && !location.endsWith("/steps")) {
             // setBody: {bean: myBean} : the bean language is method:
-            hint = "the bean language is written as method: (method: {ref: myBean, method: process}), or call the bean"
-                   + " as a step with - bean: {ref: myBean, method: process}";
+            hint = "the bean language is written as method: (expression: {method: {ref: myBean, method: process}}), or"
+                   + " call the bean as a step with - bean: {ref: myBean, method: process}";
         } else if (location.matches(".*/(setHeader|setProperty|setVariable|removeHeader|removeProperty|removeVariable)")
                 && closest(unknown, knownProperties(String.valueOf(error.getSchemaLocation()))) == null) {
             // setHeader: {CamelNumberA: {simple: ...}} : the name is a property, not the key
             String eip = location.substring(location.lastIndexOf('/') + 1);
             hint = "the name is a property: " + eip + ": {name: " + unknown
-                   + (eip.startsWith("set") ? ", simple: \"...\"}" : "}") + " (" + unknown + " is not the key)";
+                   + (eip.startsWith("set") ? ", expression: {simple: {expression: \"...\"}}}" : "}")
+                   + " (" + unknown + " is not the key)";
         } else if (location.endsWith("/bean")
                 && (unknown.equals("parameters") || unknown.equals("args") || unknown.equals("arguments"))) {
             hint = "arguments are written in the method call: bean: {ref: myBean, method: \"process(${body}, 'x')\"}";

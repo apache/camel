@@ -389,11 +389,17 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     private void addArangodbToCamelFile() throws Exception {
         File camelFile = new File(workingDir, "src/main/resources/camel/my.camel.yaml");
         String content = Files.readString(camelFile.toPath());
-        content = content.replace("- log: ${body}", """
-                - to:
-                             uri: arangodb
-                             parameters:
-                               database: demo
+        // the generated route ends with a canonical log step; swap it for an arangodb producer
+        String log = """
+                        - log:
+                            message: "${body}"
+                """;
+        assertThat(content).contains(log);
+        content = content.replace(log, """
+                        - to:
+                            uri: arangodb
+                            parameters:
+                              database: demo
                 """);
         Files.writeString(camelFile.toPath(), content);
     }

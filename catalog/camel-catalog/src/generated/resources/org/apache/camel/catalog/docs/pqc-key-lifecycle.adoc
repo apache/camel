@@ -1171,27 +1171,27 @@ YAML::
       uri: timer:check-rotation
       parameters:
         period: 86400000  # Check daily
-    steps:
-      - bean:
-          ref: keyLifecycleManager
-          method: needsRotation('route-signing-key', 90, 10000)
-      - choice:
-          when:
-            - expression:
-                simple:
-                  expression: "${body} == true"
+      steps:
+        - bean:
+            ref: keyLifecycleManager
+            method: needsRotation('route-signing-key', 90, 10000)
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == true"
+                steps:
+                  - log:
+                      message: "Rotating signing key"
+                  - bean:
+                      ref: keyLifecycleManager
+                      method: rotateKey('route-signing-key', 'route-signing-key-new', 'DILITHIUM')
+                  - to:
+                      uri: log:rotation-complete
+            otherwise:
               steps:
                 - log:
-                    message: "Rotating signing key"
-                - bean:
-                    ref: keyLifecycleManager
-                    method: rotateKey('route-signing-key', 'route-signing-key-new', 'DILITHIUM')
-                - to:
-                    uri: log:rotation-complete
-          otherwise:
-            steps:
-              - log:
-                  message: "Key rotation not needed"
+                    message: "Key rotation not needed"
 ----
 ====
 

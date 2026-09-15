@@ -39,9 +39,9 @@ YAML::
         amazonS3Client: "#amazonS3Client"
         moveAfterRead: true
         destinationBucket: myothercamelbucket
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -175,9 +175,9 @@ YAML::
         amazonS3Client: "#amazonS3Client"
         prefix: processed/
         delay: 30000
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -219,9 +219,9 @@ YAML::
         delay: 60000
         maxMessagesPerPoll: 5
         includeBody: false
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -262,9 +262,9 @@ YAML::
         amazonS3Client: "#amazonS3Client"
         deleteAfterRead: false
         fileName: "*.pdf"
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -304,9 +304,9 @@ YAML::
       parameters:
         amazonS3Client: "#amazonS3Client"
         doneFileName: "*.done"
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 

@@ -77,7 +77,7 @@ class OnExceptionTest extends YamlTestSupport {
             for (Throwable t = e; t != null; t = t.cause) {
                 messages << t.message
             }
-            messages.any { it != null && it.contains('an expression is expected here, not a plain value (true)') && it.contains('constant: "true"') }
+            messages.any { it != null && it.contains('an expression is expected here, not a plain value (true)') && it.contains('constant: {expression: "true"}') }
     }
 
 
@@ -97,6 +97,6 @@ class OnExceptionTest extends YamlTestSupport {
             for (Throwable t = e; t != null; t = t.cause) {
                 messages << t.message
             }
-            messages.any { it != null && it.contains('Error constructing YAML node id: setBody: unsupported field: bean') && it.contains('method: {ref: myBean, method: process}') }
+            messages.any { it != null && it.contains('Error constructing YAML node id: setBody: unsupported field: bean') && it.contains('expression: {method: {ref: myBean, method: process}}') }
     }
 }
