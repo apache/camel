@@ -224,7 +224,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Whether to allow overriding the endpoint-configured stored-procedure
          * template with the CamelSqlStoredTemplate header. Disabled by default;
          * a header-supplied template is resolved with placeholders only, never
-         * as a file:/http: resource.
+         * as a file:, http:, https: or classpath: resource.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -242,7 +242,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Whether to allow overriding the endpoint-configured stored-procedure
          * template with the CamelSqlStoredTemplate header. Disabled by default;
          * a header-supplied template is resolved with placeholders only, never
-         * as a file:/http: resource.
+         * as a file:, http:, https: or classpath: resource.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
