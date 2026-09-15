@@ -49,12 +49,14 @@ jobs:
 
       # collect-flakes.py declares defusedxml inline (PEP 723); uv resolves it.
       - name: Install uv
-      - name: Install uv
         uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           enable-cache: true
           version: "0.12.5"
           python-version: "3.11"
+
+      - name: Test the incremental build scripts
+        shell: bash
         run: |
           cd .github/actions/incremental-build
           uv run --with defusedxml python3 -m unittest discover --verbose
