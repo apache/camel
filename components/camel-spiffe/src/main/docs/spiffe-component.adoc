@@ -63,7 +63,9 @@ header to its SPIFFE ID.
 * `fetchJwtSvid` — fetches a JWT-SVID for the configured `audience` (or the `CamelSpiffeAudience` header). The
 message body is set to the JWT token string, with the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` headers.
 * `validateJwtSvid` — validates the JWT-SVID passed in the `CamelSpiffeToken` header (or the body) against the
-`audience`. The message body is set to the validated `io.spiffe.svid.jwtsvid.JwtSvid`.
+`audience`. When several audiences are configured the token is accepted if it matches *any* of them — the
+Workload API validates one audience at a time, so each is tried in turn. The message body is set to the validated
+`io.spiffe.svid.jwtsvid.JwtSvid`.
 
 [NOTE]
 ====

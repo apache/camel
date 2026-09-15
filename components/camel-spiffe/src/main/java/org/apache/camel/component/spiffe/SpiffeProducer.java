@@ -18,6 +18,7 @@ package org.apache.camel.component.spiffe;
 
 import java.util.Arrays;
 
+import io.spiffe.exception.JwtSvidException;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.svid.x509svid.X509Svid;
 import io.spiffe.workloadapi.WorkloadApiClient;
@@ -78,11 +79,36 @@ public class SpiffeProducer extends DefaultProducer {
         // the audience is the check here, not a parameter: it is what binds the token to THIS workload, so it
         // comes from the configuration only. Honouring CamelSpiffeAudience would let a caller validate a token
         // minted for someone else against an audience of their choosing.
-        String[] audiences = resolveConfiguredAudiences();
-        JwtSvid svid = client.validateJwtSvid(token, audiences[0]);
+        JwtSvid svid = validateAgainstAnyAudience(client, token, resolveConfiguredAudiences());
         Message message = getMessageForResponse(exchange);
         message.setBody(svid);
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
+    }
+
+    /**
+     * Validates the token against the configured audiences, accepting it if <em>any</em> of them matches.
+     * <p/>
+     * The Workload API validates against one audience at a time, so a configured list has to be tried in turn. Taking
+     * only the first would silently enforce a narrower rule than the configuration asks for, which is the wrong failure
+     * mode for a check that decides whether a caller is authenticated.
+     */
+    private JwtSvid validateAgainstAnyAudience(WorkloadApiClient client, String token, String[] audiences)
+            throws JwtSvidException {
+        JwtSvidException failure = null;
+        for (String audience : audiences) {
+            try {
+                return client.validateJwtSvid(token, audience);
+            } catch (JwtSvidException e) {
+                // could be this audience, or the token itself; only once every audience has failed do we know
+                failure = e;
+            }
+        }
+        // resolveConfiguredAudiences never returns an empty array, so the loop ran and failure is set; be explicit
+        // rather than leaving a reader (or a static analyser) to prove it
+        if (failure == null) {
+            throw new IllegalStateException("No audience was configured to validate against");
+        }
+        throw failure;
     }
 
     private SpiffeOperation determineOperation(Exchange exchange) {

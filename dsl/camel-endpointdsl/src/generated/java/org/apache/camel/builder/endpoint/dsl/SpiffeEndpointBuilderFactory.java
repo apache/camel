@@ -47,11 +47,11 @@ public interface SpiffeEndpointBuilderFactory {
 
         /**
          * The comma-separated audience(s) to request for a JWT-SVID
-         * (fetchJwtSvid) or to validate against (validateJwtSvid). Can be
-         * overridden per-message with the CamelSpiffeAudience header. Note that
-         * validateJwtSvid validates against a single audience, so when several
-         * comma-separated audiences are given only the first one is used for
-         * validation; fetchJwtSvid requests all of them.
+         * (fetchJwtSvid) or to validate against (validateJwtSvid). fetchJwtSvid
+         * requests all of them and can be overridden per-message with the
+         * CamelSpiffeAudience header; validateJwtSvid ignores that header and
+         * uses this configuration only, accepting the token if it matches any
+         * of the configured audiences, trying each in turn.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
