@@ -101,6 +101,18 @@ class OpaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void prefersATopLevelKeyThatItselfContainsADot() throws Exception {
+        // walking "com.acme.allow" as a path would miss a document that has it as one key. Rego rule names cannot
+        // contain a dot, but a decision document is arbitrary JSON and may well come from elsewhere.
+        givenDecision(Map.of("com.acme.allow", true, "com", Map.of("acme", Map.of("allow", false))));
+
+        Exchange out = template.request(ENDPOINT + "&allowKey=com.acme.allow", e -> {
+        });
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+    }
+
+    @Test
     void deniesWhenADottedPathDoesNotResolve() throws Exception {
         givenDecision(Map.of("result", Map.of("permitted", true)));
 

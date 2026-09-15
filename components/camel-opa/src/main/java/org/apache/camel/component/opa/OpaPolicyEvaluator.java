@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.styra.opa.OPAClient;
 import org.apache.camel.Exchange;
@@ -47,6 +48,7 @@ public class OpaPolicyEvaluator {
     private final Set<String> includedProperties;
     private final boolean includeBody;
     private final boolean failOpen;
+    private final AtomicBoolean unreadableVerdictWarned = new AtomicBoolean();
 
     public OpaPolicyEvaluator(OPAClient client, String policyPath, String allowKey, String includeHeaders,
                               String includeProperties, boolean includeBody, boolean failOpen) {
@@ -166,10 +168,16 @@ public class OpaPolicyEvaluator {
             return b;
         }
         // a decision document we cannot read a verdict from is a configuration problem, not a routine deny, and the
-        // route cannot tell the two apart from the verdict header alone - so say so at WARN rather than DEBUG
-        LOG.warn("Policy {} returned a decision with no boolean '{}' verdict, denying. Check that allowKey matches"
-                 + " the shape the policy returns; the raw document is on the {} header. Decision: {}",
-                policyPath, allowKey, OpaConstants.DECISION, decision);
+        // route cannot tell the two apart from the verdict header alone - so say so at WARN. Once only: a policy
+        // written as deny[msg] without a `default allow := false` reaches this on every legitimate deny, which on a
+        // busy route would be a log flood carrying a whole decision document per message.
+        if (unreadableVerdictWarned.compareAndSet(false, true)) {
+            LOG.warn("Policy {} returned a decision with no boolean '{}' verdict, denying. Check that allowKey"
+                     + " matches the shape the policy returns; the raw document is on the {} header. Logged once"
+                     + " per evaluator - later occurrences are at DEBUG.",
+                    policyPath, allowKey, OpaConstants.DECISION);
+        }
+        LOG.debug("Policy {} returned no boolean '{}' verdict, denying. Decision: {}", policyPath, allowKey, decision);
         return false;
     }
 
@@ -179,6 +187,15 @@ public class OpaPolicyEvaluator {
      * dot is looked up directly, exactly as before.
      */
     private Object readVerdict(Object decision) {
+        if (!(decision instanceof Map<?, ?> top)) {
+            return null;
+        }
+        // a top-level entry under the whole key wins over walking it as a path, so an allowKey that itself
+        // contains a dot resolves exactly as it did before dotted paths were understood
+        Object direct = top.get(allowKey);
+        if (direct != null) {
+            return direct;
+        }
         Object current = decision;
         for (String segment : allowKey.split("\\.", -1)) {
             if (!(current instanceof Map<?, ?> map)) {
