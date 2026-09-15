@@ -224,7 +224,9 @@ public interface OpaComponentBuilderFactory {
          * opa build -t wasm}. Accepts a {code file:}, {code classpath:} or
          * {code http:} location holding either the bundle.tar.gz that {code opa
          * build} emits or a bare .wasm module. Required when {code
-         * evaluationMode=wasm}.
+         * evaluationMode=wasm}. Prefer the bundle: it also carries the data
+         * document the policy reads as {code data.}, which a bare module does
+         * not.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

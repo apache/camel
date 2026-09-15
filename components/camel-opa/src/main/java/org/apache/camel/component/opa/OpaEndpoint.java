@@ -38,6 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 public class OpaEndpoint extends DefaultEndpoint {
 
     private static final String WASM_MODE = "wasm";
+    private static final String REST_MODE = "rest";
 
     @UriPath(description = "Path of the Rego rule head to evaluate, relative to the OPA data document. For a rule"
                            + " named allow in a policy declaring package authz.orders, this is authz/orders/allow."
@@ -60,8 +61,14 @@ public class OpaEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (WASM_MODE.equalsIgnoreCase(configuration.getEvaluationMode())) {
+        String mode = configuration.getEvaluationMode();
+        if (WASM_MODE.equalsIgnoreCase(mode)) {
             evaluator = createWasmEvaluator();
+        } else if (!REST_MODE.equalsIgnoreCase(mode)) {
+            // silently falling back to rest would leave a typo'd mode running against a server while quietly
+            // ignoring policyBundle, which is a miserable thing to debug in production
+            throw new IllegalArgumentException(
+                    "Unknown evaluationMode '" + mode + "'; expected one of " + REST_MODE + ", " + WASM_MODE);
         } else {
             opaClient = configuration.getOpaClient() != null
                     ? configuration.getOpaClient()
@@ -82,10 +89,11 @@ public class OpaEndpoint extends DefaultEndpoint {
         // after the rule, so the policy path is the right default
         String entrypoint = ObjectHelper.isNotEmpty(configuration.getEntrypoint())
                 ? configuration.getEntrypoint() : policyPath;
-        byte[] wasm = OpaWasmEvaluator.loadPolicy(getCamelContext(), configuration.getPolicyBundle());
+        OpaWasmEvaluator.Bundle bundle
+                = OpaWasmEvaluator.loadPolicy(getCamelContext(), configuration.getPolicyBundle());
         return new OpaWasmEvaluator(
-                wasm, entrypoint, configuration.getPoolSize(), policyPath, configuration.getAllowKey(),
-                configuration.getIncludeHeaders(), configuration.getIncludeProperties(),
+                bundle.wasm(), bundle.data(), entrypoint, configuration.getPoolSize(), policyPath,
+                configuration.getAllowKey(), configuration.getIncludeHeaders(), configuration.getIncludeProperties(),
                 configuration.isIncludeBody(), configuration.isFailOpen());
     }
 

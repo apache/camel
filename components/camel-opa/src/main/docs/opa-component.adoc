@@ -212,7 +212,23 @@ opa build -t wasm -e authz/orders/allow policy.rego
 
 `policyBundle` accepts a `file:`, `classpath:` or `http:` location holding either the `bundle.tar.gz` that
 `opa build` emits or a bare `.wasm`. `entrypoint` defaults to the endpoint's policy path, which is the name
-`opa build` gives it.
+`opa build` gives it. `evaluationMode` accepts only `rest` and `wasm`; anything else is rejected when the
+endpoint is created, rather than quietly falling back to a server call that ignores `policyBundle`.
+
+Prefer the `bundle.tar.gz`. A policy that reads `data.*` decides from the *data document*, and `opa build`
+packs that beside the module as `data.json` — a bare `.wasm` carries the rules but not the data, so such a
+policy evaluates against an empty data document and typically denies everything. Given the bundle, the
+component applies its data to every evaluation, so the decision matches what a server loading the same bundle
+would return:
+
+[source,sh]
+------------------------------------------------------------
+# roles.rego reads data.admins, which lives in data.json next to it
+opa build -t wasm -e authz/orders/allow roles.rego data.json
+------------------------------------------------------------
+
+Data that is *not* part of the bundle — what a server would receive through its Data API at runtime — has no
+equivalent in `wasm` mode. A policy depending on it needs `evaluationMode=rest`.
 
 Which to choose:
 

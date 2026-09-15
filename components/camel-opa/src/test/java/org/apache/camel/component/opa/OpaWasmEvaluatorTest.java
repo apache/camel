@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -69,11 +70,61 @@ public class OpaWasmEvaluatorTest extends CamelTestSupport {
     }
 
     @Test
-    void failsClosedOnAnUndefinedDecisionJustLikeTheRestEngine() {
-        // authz/decision has no default, so for mallory the rule is undefined. The WASM ABI returns an empty
-        // array where the REST client raises an error; both must reach the route the same way.
+    void keepsTheDenyReasonsJustLikeTheRestEngine() {
         Exchange out = template.request(
                 "opa:authz/decision?evaluationMode=wasm&policyBundle=classpath:authz.wasm",
+                e -> e.getMessage().setHeader("user", "mallory"));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION, Map.class))
+                .containsEntry("reasons", List.of("not the owner"));
+    }
+
+    @Test
+    void keepsTheEntrypointAcrossPooledReuse() {
+        // Returning a borrowed OpaPolicy resets it, and a reset puts the entrypoint back to 0 - so an instance
+        // configured only where it was built answers the first exchange from authz/decision and every later one
+        // from whatever rule happens to be entrypoint 0 (here authz/allow, a bare boolean). A single-instance
+        // pool and more than one message is what makes that visible.
+        String decision = "opa:authz/decision?evaluationMode=wasm&policyBundle=classpath:authz.wasm&poolSize=1";
+
+        for (int i = 0; i < 5; i++) {
+            Exchange out = template.request(decision, e -> e.getMessage().setHeader("user", "alice"));
+
+            assertThat(out.getException()).as("exchange %d", i).isNull();
+            assertThat(out.getMessage().getHeader(OpaConstants.DECISION))
+                    .as("message %d was still decided by authz/decision", i)
+                    .isInstanceOf(Map.class);
+            assertThat(out.getMessage().getHeader(OpaConstants.DECISION, Map.class)).containsEntry("allow", true);
+        }
+    }
+
+    @Test
+    void appliesTheDataDocumentPackedInTheBundle() {
+        // roles.rego decides from data.admins, which opa build packs into the bundle as data.json rather than
+        // into the module. A reset clears the data as well as the entrypoint, so it too has to be re-applied on
+        // every borrow - without it the policy sees an empty data document and denies everyone.
+        String roles = "opa:roles/allow?evaluationMode=wasm&policyBundle=classpath:roles-bundle.tar.gz&poolSize=1";
+
+        for (int i = 0; i < 3; i++) {
+            Exchange allowed = template.request(roles, e -> e.getMessage().setHeader("user", "carol"));
+            Exchange denied = template.request(roles, e -> e.getMessage().setHeader("user", "alice"));
+
+            assertThat(allowed.getException()).as("exchange %d", i).isNull();
+            assertThat(allowed.getMessage().getHeader(OpaConstants.DECISION_ALLOW))
+                    .as("data.admins was still visible on message %d", i)
+                    .isEqualTo(true);
+            assertThat(denied.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+        }
+    }
+
+    @Test
+    void failsClosedOnAnUndefinedDecisionJustLikeTheRestEngine() {
+        // authz/strict_allow has no default, so for mallory the rule is undefined. The WASM ABI returns an
+        // empty array where the REST client raises an error; both must reach the route the same way.
+        Exchange out = template.request(
+                "opa:authz/strict_allow?evaluationMode=wasm&policyBundle=classpath:authz.wasm",
                 e -> e.getMessage().setHeader("user", "mallory"));
 
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);

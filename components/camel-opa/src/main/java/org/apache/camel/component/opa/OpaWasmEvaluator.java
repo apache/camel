@@ -18,6 +18,7 @@ package org.apache.camel.component.opa;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,16 +41,44 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final String POLICY_WASM = "policy.wasm";
+    private static final String DATA_JSON = "data.json";
 
     private final OpaPolicyPool pool;
+    private final String entrypoint;
+    private final String data;
 
-    public OpaWasmEvaluator(byte[] wasm, String entrypoint, int poolSize, String policyPath, String allowKey,
-                            String includeHeaders, String includeProperties, boolean includeBody, boolean failOpen) {
+    public OpaWasmEvaluator(byte[] wasm, String data, String entrypoint, int poolSize, String policyPath,
+                            String allowKey, String includeHeaders, String includeProperties, boolean includeBody,
+                            boolean failOpen) {
         super(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+        this.entrypoint = entrypoint;
+        this.data = data;
         // OpaPolicy carries mutable input/data and is not thread-safe, while a Camel producer is invoked
         // concurrently - so each exchange borrows its own instance rather than sharing one
-        this.pool = OpaPolicyPool.create(() -> OpaPolicy.builder().withPolicy(wasm).build().entrypoint(entrypoint),
-                poolSize);
+        this.pool = OpaPolicyPool.create(() -> OpaPolicy.builder().withPolicy(wasm).build(), poolSize);
+        // fail at startup rather than on the first exchange: the OpaPolicy constructor is what rejects a module
+        // that is not a valid OPA bundle, and the pool creates instances lazily
+        try (OpaPolicyPool.Loan warmup = pool.borrow()) {
+            prepare(warmup.policy());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while loading the WebAssembly policy", e);
+        }
+    }
+
+    /**
+     * Applies the entrypoint and data to a borrowed instance.
+     * <p/>
+     * This has to happen on every borrow, not once when the instance is built: returning a {@link OpaPolicyPool.Loan}
+     * calls {@code OpaPolicy.reset()}, which clears the data and sets the entrypoint back to 0. An instance configured
+     * only at creation would therefore evaluate whatever rule happens to be entrypoint 0 from its second use onwards -
+     * a different policy deciding, silently.
+     */
+    private void prepare(OpaPolicy policy) {
+        policy.entrypoint(entrypoint);
+        if (data != null) {
+            policy.data(data);
+        }
     }
 
     /**
@@ -58,36 +87,66 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
      * {@code opa build} emits a {@code bundle.tar.gz} holding {@code /policy.wasm} alongside the source and a manifest,
      * so that is what an operator will actually have to hand; a bare {@code .wasm} is accepted too.
      */
-    public static byte[] loadPolicy(CamelContext camelContext, String location) throws Exception {
+    public static Bundle loadPolicy(CamelContext camelContext, String location) throws Exception {
         try (InputStream in = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, location)) {
             byte[] content = in.readAllBytes();
-            return isGzip(content) ? extractFromBundle(content, location) : content;
+            return isGzip(content) ? extractFromBundle(content, location) : new Bundle(content, null);
         }
+    }
+
+    /**
+     * A loaded policy: the WebAssembly module, and the data document that {@code opa build} packed beside it when the
+     * source was a bundle. A policy that reads {@code data.*} needs the latter to decide the same way it would against
+     * a server that had loaded the same bundle.
+     *
+     * @param wasm the WebAssembly module
+     * @param data the bundle's data document as JSON, or null when there was none
+     */
+    public record Bundle(byte[] wasm, String data) {
     }
 
     private static boolean isGzip(byte[] content) {
         return content.length > 1 && (content[0] & 0xff) == 0x1f && (content[1] & 0xff) == 0x8b;
     }
 
-    private static byte[] extractFromBundle(byte[] bundle, String location) throws Exception {
+    private static Bundle extractFromBundle(byte[] bundle, String location) throws Exception {
+        byte[] wasm = null;
+        String data = null;
         try (TarArchiveInputStream tar
                 = new TarArchiveInputStream(new GzipCompressorInputStream(new ByteArrayInputStream(bundle)))) {
             TarArchiveEntry entry;
             while ((entry = tar.getNextEntry()) != null) {
-                if (!entry.isDirectory() && entry.getName().endsWith(POLICY_WASM)) {
-                    return tar.readAllBytes();
+                if (entry.isDirectory()) {
+                    continue;
+                }
+                if (entry.getName().endsWith(POLICY_WASM)) {
+                    wasm = tar.readAllBytes();
+                } else if (entry.getName().endsWith(DATA_JSON)) {
+                    data = new String(tar.readAllBytes(), StandardCharsets.UTF_8);
                 }
             }
         }
-        throw new IllegalArgumentException(
-                "No " + POLICY_WASM + " inside the bundle at " + location
-                                           + ". Build it with: opa build -t wasm -e <entrypoint> <policy.rego>");
+        if (wasm == null) {
+            throw new IllegalArgumentException(
+                    "No " + POLICY_WASM + " inside the bundle at " + location
+                                               + ". Build it with: opa build -t wasm -e <entrypoint> <policy.rego>");
+        }
+        return new Bundle(wasm, data);
     }
 
     @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
-        try (OpaPolicyPool.Loan loan = pool.borrow()) {
-            return unwrap(loan.policy().evaluate(MAPPER.writeValueAsString(input)));
+        OpaPolicyPool.Loan loan = pool.borrow();
+        try {
+            prepare(loan.policy());
+            Object decision = unwrap(loan.policy().evaluate(MAPPER.writeValueAsString(input)));
+            loan.close();
+            return decision;
+        } catch (Exception e) {
+            // a trap part-way through an evaluation can leave the instance in an undefined state, so drop it
+            // rather than hand it to the next exchange
+            loan.discard();
+            throw e;
         }
     }
 

@@ -165,7 +165,8 @@ public class OpaConfiguration implements Cloneable {
     /**
      * The WebAssembly policy to evaluate in {@code wasm} mode, as produced by {@code opa build -t wasm}. Accepts a
      * {@code file:}, {@code classpath:} or {@code http:} location holding either the {@code bundle.tar.gz} that
-     * {@code opa build} emits or a bare {@code .wasm} module. Required when {@code evaluationMode=wasm}.
+     * {@code opa build} emits or a bare {@code .wasm} module. Required when {@code evaluationMode=wasm}. Prefer the
+     * bundle: it also carries the data document the policy reads as {@code data.*}, which a bare module does not.
      */
     public void setPolicyBundle(String policyBundle) {
         this.policyBundle = policyBundle;

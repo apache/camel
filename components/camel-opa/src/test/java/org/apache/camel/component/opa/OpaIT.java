@@ -124,6 +124,16 @@ public class OpaIT extends CamelTestSupport {
     }
 
     @Test
+    void failsClosedOnAnUndefinedDecision() {
+        // authz/strict_allow has no default, so OPA answers with an empty result rather than false. The WASM
+        // engine sees the same rule as an empty result array - OpaWasmEvaluatorTest asserts the same outcome.
+        Exchange out = template.request(opa("authz/strict_allow"), e -> e.getMessage().setHeader("user", "mallory"));
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+    }
+
+    @Test
     void failsClosedWhenTheServerIsNotReachable() {
         Exchange out = template.request("opa:authz/allow?serverUrl=http://localhost:1", e -> {
         });
