@@ -74,10 +74,10 @@ public class DJLConverter {
         Rectangle rect = detectedObject.getBoundingBox().getBounds();
         Image image = exchange.getMessage().getHeader(DJLConstants.INPUT, Image.class);
         return image.getSubImage(
-                (int) (rect.getX() * image.getWidth()),
-                (int) (rect.getY() * image.getHeight()),
-                (int) (rect.getWidth() * image.getWidth()),
-                (int) (rect.getHeight() * image.getHeight()));
+                (int) (rect.getX()),
+                (int) (rect.getY()),
+                (int) (rect.getWidth()),
+                (int) (rect.getHeight()));
     }
 
     @Converter
