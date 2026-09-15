@@ -469,8 +469,9 @@ public final class CatalogDocs {
 
     /**
      * The variables a script language binds, hand-written because each language binds its own set with its own names
-     * (groovy has camelContext and request, javascript has context and no request), and how a script reaches the Camel
-     * API and a registry bean from them; null for a language that is not a script.
+     * (the CamelContext is camelContext in groovy and context in javascript, the exchange properties exchangeProperties
+     * and properties), and how a script reaches the Camel API and a registry bean from them; null for a language that
+     * is not a script.
      */
     static JsonObject scriptVariables(String language) {
         JsonObject variables = new JsonObject();
