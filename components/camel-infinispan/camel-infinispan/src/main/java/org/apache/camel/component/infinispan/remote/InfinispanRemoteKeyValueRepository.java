@@ -73,6 +73,13 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
     private String cacheName;
     @Metadata(description = "Configuration for remote Infinispan")
     private InfinispanRemoteConfiguration configuration;
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " values read back from the repository. When not set, the JVM-wide jdk.serialFilter is"
+                            + " used if present; otherwise a conservative default filter denying java.net.* and"
+                            + " otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen"
+                            + " this pattern when storing instances of your own classes in the repository.")
+    private String deserializationFilter;
 
     public InfinispanRemoteKeyValueRepository() {
     }
@@ -90,7 +97,7 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
     @ManagedOperation(description = "Get value by key")
     public @Nullable Object get(String key) {
         byte[] bytes = cache.get().get(key);
-        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes, deserializationFilter) : null;
     }
 
     @Override
@@ -103,14 +110,14 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
         } else {
             previous = cache.get().put(key, serialized);
         }
-        return previous != null ? KeyValueRepositoryHelper.deserialize(previous) : null;
+        return previous != null ? KeyValueRepositoryHelper.deserialize(previous, deserializationFilter) : null;
     }
 
     @Override
     @ManagedOperation(description = "Delete a key")
     public @Nullable Object delete(String key) {
         byte[] bytes = cache.get().remove(key);
-        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes, deserializationFilter) : null;
     }
 
     @Override
@@ -139,7 +146,7 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
         } else {
             existing = cache.get().putIfAbsent(key, serialized);
         }
-        return existing != null ? KeyValueRepositoryHelper.deserialize(existing) : null;
+        return existing != null ? KeyValueRepositoryHelper.deserialize(existing, deserializationFilter) : null;
     }
 
     /**
@@ -156,7 +163,7 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
         if (metadata == null) {
             return false;
         }
-        Object currentObj = KeyValueRepositoryHelper.deserialize(metadata.getValue());
+        Object currentObj = KeyValueRepositoryHelper.deserialize(metadata.getValue(), deserializationFilter);
         if (!Objects.equals(currentObj, expectedOldValue)) {
             return false;
         }
@@ -180,7 +187,7 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
         if (metadata == null) {
             return false;
         }
-        Object currentObj = KeyValueRepositoryHelper.deserialize(metadata.getValue());
+        Object currentObj = KeyValueRepositoryHelper.deserialize(metadata.getValue(), deserializationFilter);
         if (!Objects.equals(currentObj, expectedValue)) {
             return false;
         }
@@ -221,6 +228,20 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
             this.configuration = new InfinispanRemoteConfiguration();
         }
         this.configuration.setCacheContainer(cacheContainer);
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing values read back from the repository. When not set, the JVM-wide {@code jdk.serialFilter} is used
+     * if present, otherwise a conservative default filter is applied. Widen this pattern when storing instances of your
+     * own classes in the repository.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     public InfinispanRemoteManager getManager() {

@@ -30,6 +30,8 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpiffeComponent target = (SpiffeComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowoperationheader":
+        case "allowOperationHeader": getOrCreateConfiguration(target).setAllowOperationHeader(property(camelContext, boolean.class, value)); return true;
         case "audience": getOrCreateConfiguration(target).setAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -53,6 +55,8 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowoperationheader":
+        case "allowOperationHeader": return boolean.class;
         case "audience": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
@@ -72,6 +76,8 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpiffeComponent target = (SpiffeComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowoperationheader":
+        case "allowOperationHeader": return getOrCreateConfiguration(target).isAllowOperationHeader();
         case "audience": return getOrCreateConfiguration(target).getAudience();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();

@@ -131,6 +131,27 @@ public interface SqlStoredComponentBuilderFactory {
             doSetProperty("serviceLocationEnabled", serviceLocationEnabled);
             return this;
         }
+    
+        
+        /**
+         * Whether to allow overriding the endpoint-configured stored-procedure
+         * template with the CamelSqlStoredTemplate header. Disabled by default;
+         * a header-supplied template is resolved with placeholders only, never
+         * as a file:/http: resource. This is the default for all sql-stored
+         * endpoints and can be overridden per endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
+         */
+        default SqlStoredComponentBuilder allowTemplateFromHeader(boolean allowTemplateFromHeader) {
+            doSetProperty("allowTemplateFromHeader", allowTemplateFromHeader);
+            return this;
+        }
     }
 
     class SqlStoredComponentBuilderImpl
@@ -150,6 +171,7 @@ public interface SqlStoredComponentBuilderFactory {
             case "lazyStartProducer": ((SqlStoredComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SqlStoredComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "serviceLocationEnabled": ((SqlStoredComponent) component).setServiceLocationEnabled((boolean) value); return true;
+            case "allowTemplateFromHeader": ((SqlStoredComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             default: return false;
             }
         }

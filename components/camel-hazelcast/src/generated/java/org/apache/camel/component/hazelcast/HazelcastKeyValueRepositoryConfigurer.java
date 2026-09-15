@@ -23,6 +23,8 @@ public class HazelcastKeyValueRepositoryConfigurer extends org.apache.camel.supp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.hazelcast.HazelcastKeyValueRepository target = (org.apache.camel.component.hazelcast.HazelcastKeyValueRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "hazelcastinstance":
         case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
         case "mapname":
@@ -34,6 +36,8 @@ public class HazelcastKeyValueRepositoryConfigurer extends org.apache.camel.supp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "hazelcastinstance":
         case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
         case "mapname":
@@ -46,6 +50,8 @@ public class HazelcastKeyValueRepositoryConfigurer extends org.apache.camel.supp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.hazelcast.HazelcastKeyValueRepository target = (org.apache.camel.component.hazelcast.HazelcastKeyValueRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "hazelcastinstance":
         case "hazelcastInstance": return target.getHazelcastInstance();
         case "mapname":

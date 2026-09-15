@@ -813,9 +813,10 @@ public class YamlValidator {
      * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and strings
      * that do not parse as the expected type.
      * <p>
-     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The few model
-     * attributes that are still converted while deserializing (so a placeholder is never resolved for them) are not
-     * reachable from the schema today - see CAMEL-24696 before exposing one of them.
+     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The only model
+     * attribute that is still converted while deserializing (so a placeholder is never resolved for it) is
+     * {@code BeanConstructorDefinition.index}, which is a map key and is not reachable from the schema - see
+     * CAMEL-24696 before exposing it.
      */
     static boolean isRuntimeAcceptedScalar(Error error) {
         if (!"type".equals(error.getKeyword())) {

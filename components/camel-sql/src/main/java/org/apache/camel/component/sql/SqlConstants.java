@@ -23,9 +23,11 @@ import org.apache.camel.spi.Metadata;
  */
 public final class SqlConstants {
 
-    @Metadata(label = "producer", description = "Query to execute. This query takes precedence over the" +
-                                                " query specified in the endpoint URI. Note that query parameters in the" +
-                                                " header are represented by a `?` instead of a `pass:[#]` symbol",
+    @Metadata(label = "producer", description = "Query to execute. This header is ignored unless the endpoint enables" +
+                                                " allowQueryFromHeader=true (disabled by default); when enabled it takes" +
+                                                " precedence over the query specified in the endpoint URI. Note that" +
+                                                " query parameters in the header are represented by a `?` instead of a" +
+                                                " `pass:[#]` symbol",
               javaType = "String")
     public static final String SQL_QUERY = "CamelSqlQuery";
     @Metadata(label = "producer", description = "The number of rows updated for `update` operations, returned as an" +

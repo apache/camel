@@ -96,7 +96,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @XmlTransient
     private final int index;
     @XmlTransient
-    private Boolean inheritErrorHandler; // used for camel-jta
+    private String inheritErrorHandler; // used for camel-jta
 
     protected ProcessorDefinition() {
         // every time we create a definition we should inc the counter
@@ -4507,11 +4507,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.disabled = disabled;
     }
 
-    public Boolean getInheritErrorHandler() {
+    public String getInheritErrorHandler() {
         return inheritErrorHandler;
     }
 
-    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+    public void setInheritErrorHandler(String inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }
 

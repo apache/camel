@@ -60,6 +60,28 @@ class CircuitBreakerTest extends YamlTestSupport {
         }
     }
 
+    def "circuitBreaker inheritErrorHandler placeholder"() {
+        when:
+        // YamlTestSupport validates against the raw schema (without the placeholder leniency of YamlValidator),
+        // which types inheritErrorHandler as boolean; the runtime resolves the placeholder when the route starts
+        // and YamlValidatorSchemaGroupsTest covers that the validator accepts it (CAMEL-24696)
+        loadRoutesNoValidate '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - circuitBreaker:
+                         inheritErrorHandler: "{{myInherit}}"
+                         steps:
+                           - log: "test"
+            '''
+        then:
+        with(context.routeDefinitions[0], RouteDefinition) {
+            with(outputs[0], CircuitBreakerDefinition) {
+                inheritErrorHandler == '{{myInherit}}'
+            }
+        }
+    }
+
     def "circuitBreaker with onFallback steps"() {
         when:
         loadRoutes '''

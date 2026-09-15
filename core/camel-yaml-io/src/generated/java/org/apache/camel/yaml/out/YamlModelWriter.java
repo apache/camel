@@ -900,7 +900,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "configuration", def.getConfiguration(), null);
-        doWriteAttribute(jo, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
+        doWriteAttribute(jo, "inheritErrorHandler", def.getInheritErrorHandler(), "false");
         doWriteChildElement(jo, "resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteChildElement(jo, "faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteChildElement(jo, "onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
@@ -3164,7 +3164,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "roundRobin", def.getRoundRobin(), null);
         doWriteAttribute(jo, "sticky", def.getSticky(), null);
         doWriteAttribute(jo, "maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
-        doWriteAttribute(jo, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
+        doWriteAttribute(jo, "inheritErrorHandler", def.getInheritErrorHandler(), "true");
         doWriteStringList(jo, null, "exception", def.getExceptions());
         return jo;
     }

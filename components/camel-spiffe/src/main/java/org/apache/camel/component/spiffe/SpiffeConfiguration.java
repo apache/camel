@@ -34,6 +34,9 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam
     private String audience;
 
+    @UriParam(label = "security", defaultValue = "false", security = "insecure:dev")
+    private boolean allowOperationHeader;
+
     @UriParam(label = "advanced",
               description = "An existing WorkloadApiClient to use. When set, the component does not"
                             + " create or close its own client and spiffeSocketPath is ignored.")
@@ -75,6 +78,21 @@ public class SpiffeConfiguration implements Cloneable {
 
     public void setAudience(String audience) {
         this.audience = audience;
+    }
+
+    public boolean isAllowOperationHeader() {
+        return allowOperationHeader;
+    }
+
+    /**
+     * Whether the {@code CamelSpiffeOperation} header may override the configured operation.
+     * <p/>
+     * Disabled by default: the operation decides whether this endpoint <em>validates</em> a token or <em>mints</em>
+     * one, so a message that can set it can turn a validator into an endpoint that hands out this workload's own
+     * JWT-SVID. Enable it only on routes whose input is trusted.
+     */
+    public void setAllowOperationHeader(boolean allowOperationHeader) {
+        this.allowOperationHeader = allowOperationHeader;
     }
 
     /**

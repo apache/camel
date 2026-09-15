@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
@@ -33,8 +34,12 @@ import org.apache.camel.RuntimeCamelException;
  * try/catch boilerplate in every implementation.
  * <p/>
  * <b>Security note:</b> These methods use plain Java serialization
- * ({@link ObjectOutputStream}/{@link ObjectInputStream}). The stored data is trusted — it was written by the same
- * application instance or cluster. Do not expose a repository's raw byte store to untrusted input.
+ * ({@link ObjectOutputStream}/{@link ObjectInputStream}). The byte store backing a repository is shared infrastructure
+ * (a Redis instance, a database table, a Kafka topic, a data grid) and is not necessarily writable only by the
+ * application that owns it. Every {@code deserialize} method therefore installs a JEP-290 {@link ObjectInputFilter}
+ * resolved by {@link DeserializationFilterHelper}, in the same way the aggregation repositories do. The default filter
+ * only allows standard Java and Apache Camel types, so applications that store their own classes must widen it through
+ * the {@code deserializationFilter} option of the repository they use.
  *
  * @since 4.23
  */
@@ -75,19 +80,46 @@ public final class KeyValueRepositoryHelper {
     }
 
     /**
-     * Deserializes a byte array back into an object using Java object serialization.
+     * Deserializes a byte array back into an object using Java object serialization, applying the default
+     * deserialization filter.
      *
      * @param  bytes                 the bytes to deserialize
      * @return                       the deserialized object
-     * @throws RuntimeCamelException if deserialization fails
+     * @throws RuntimeCamelException if deserialization fails or the filter rejects the stream
      */
     public static Object deserialize(byte[] bytes) {
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-             ObjectInputStream ois = new ObjectInputStream(bis)) {
-            return ois.readObject();
+        return deserialize(bytes, null);
+    }
+
+    /**
+     * Deserializes a byte array back into an object using Java object serialization.
+     *
+     * @param  bytes                 the bytes to deserialize
+     * @param  deserializationFilter the filter pattern to apply, or null to use the JVM-wide filter or the Camel
+     *                               default
+     * @return                       the deserialized object
+     * @throws RuntimeCamelException if deserialization fails or the filter rejects the stream
+     */
+    public static Object deserialize(byte[] bytes, String deserializationFilter) {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes)) {
+            return doDeserialize(bis, deserializationFilter);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeCamelException("Failed to deserialize value", e);
         }
+    }
+
+    /**
+     * Deserializes an object from a portion of a byte array using Java object serialization, applying the default
+     * deserialization filter. Useful when the serialized data starts at an offset (e.g. after a protocol header).
+     *
+     * @param  bytes                 the byte array containing the serialized data
+     * @param  offset                the start offset within the array
+     * @param  length                the number of bytes to read
+     * @return                       the deserialized object
+     * @throws RuntimeCamelException if deserialization fails or the filter rejects the stream
+     */
+    public static Object deserialize(byte[] bytes, int offset, int length) {
+        return deserialize(bytes, offset, length, null);
     }
 
     /**
@@ -97,16 +129,29 @@ public final class KeyValueRepositoryHelper {
      * @param  bytes                 the byte array containing the serialized data
      * @param  offset                the start offset within the array
      * @param  length                the number of bytes to read
+     * @param  deserializationFilter the filter pattern to apply, or null to use the JVM-wide filter or the Camel
+     *                               default
      * @return                       the deserialized object
-     * @throws RuntimeCamelException if deserialization fails
+     * @throws RuntimeCamelException if deserialization fails or the filter rejects the stream
      */
-    public static Object deserialize(byte[] bytes, int offset, int length) {
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes, offset, length);
-             ObjectInputStream ois = new ObjectInputStream(bis)) {
-            return ois.readObject();
+    public static Object deserialize(byte[] bytes, int offset, int length, String deserializationFilter) {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes, offset, length)) {
+            return doDeserialize(bis, deserializationFilter);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeCamelException("Failed to deserialize value", e);
         }
+    }
+
+    /**
+     * Deserializes an object from a {@link ByteBuffer} using Java object serialization, applying the default
+     * deserialization filter. The buffer's remaining bytes are consumed.
+     *
+     * @param  buffer                the ByteBuffer containing the serialized bytes
+     * @return                       the deserialized object
+     * @throws RuntimeCamelException if deserialization fails or the filter rejects the stream
+     */
+    public static Object deserialize(ByteBuffer buffer) {
+        return deserialize(buffer, null);
     }
 
     /**
@@ -114,12 +159,22 @@ public final class KeyValueRepositoryHelper {
      * are consumed.
      *
      * @param  buffer                the ByteBuffer containing the serialized bytes
+     * @param  deserializationFilter the filter pattern to apply, or null to use the JVM-wide filter or the Camel
+     *                               default
      * @return                       the deserialized object
-     * @throws RuntimeCamelException if deserialization fails
+     * @throws RuntimeCamelException if deserialization fails or the filter rejects the stream
      */
-    public static Object deserialize(ByteBuffer buffer) {
+    public static Object deserialize(ByteBuffer buffer, String deserializationFilter) {
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
-        return deserialize(bytes);
+        return deserialize(bytes, deserializationFilter);
+    }
+
+    private static Object doDeserialize(ByteArrayInputStream bis, String deserializationFilter)
+            throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(bis)) {
+            ois.setObjectInputFilter(DeserializationFilterHelper.resolveDeserializationFilter(deserializationFilter));
+            return ois.readObject();
+        }
     }
 }

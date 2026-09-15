@@ -28,5 +28,8 @@ spec:
           period: "1000"
         steps:
           - setBody:
-              constant: "Hello Camel from yaml"
-          - log: "${body}"
+              expression:
+                constant:
+                  expression: "Hello Camel from yaml"
+          - log:
+              message: "${body}"

@@ -17,13 +17,19 @@
 
 - route:
     from:
-      uri: timer:yaml
-      parameters:
-        period: "1000"
+      uri: direct:start
       steps:
-        - setBody:
-            expression:
-              simple:
-                expression: "Hello Camel from my"
-        - log:
-            message: "${body}"
+        - circuitBreaker:
+            inheritErrorHandler: "{{myInherit}}"
+            steps:
+              - to:
+                  uri: mock:a
+        - loadBalance:
+            failoverLoadBalancer:
+              inheritErrorHandler: "{{myInherit}}"
+              maximumFailoverAttempts: "10"
+            steps:
+              - to:
+                  uri: mock:b
+              - to:
+                  uri: mock:c
