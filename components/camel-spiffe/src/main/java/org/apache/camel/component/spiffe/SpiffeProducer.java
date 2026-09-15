@@ -103,8 +103,8 @@ public class SpiffeProducer extends DefaultProducer {
                 failure = e;
             }
         }
-        // resolveAudiences never returns an empty array, so the loop ran and failure is set; be explicit rather
-        // than leaving a reader (or a static analyser) to prove it
+        // resolveConfiguredAudiences never returns an empty array, so the loop ran and failure is set; be explicit
+        // rather than leaving a reader (or a static analyser) to prove it
         if (failure == null) {
             throw new IllegalStateException("No audience was configured to validate against");
         }
