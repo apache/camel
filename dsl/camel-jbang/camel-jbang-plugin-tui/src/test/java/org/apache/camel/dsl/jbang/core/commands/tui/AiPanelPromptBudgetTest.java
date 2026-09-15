@@ -39,13 +39,16 @@ class AiPanelPromptBudgetTest {
     // and from 3900 when the authoring tools became the camel_* set shared with camel-jbang-mcp (CAMEL-24695):
     // their schemas carry the directory and name arguments a server without a selection needs, and
     // camel_error_diagnose joined the core set
-    static final int CORE_BUDGET_TOKENS = 4_300;
+    // raised to 5000 when camel_catalog_find joined the core set (CAMEL-24760): the budget guards against accidental
+    // growth of the prefix, a 32k context leaves ample room
+    static final int CORE_BUDGET_TOKENS = 5_000;
     /** Measured ~6.9k tokens for 47 tools. */
     // raised from 7500 with tui_write_file and tui_validate_source
     // and from 7900 with the shared camel_* set (camel_catalog_find, camel_run and camel_error_diagnose added)
     // and from 8500 when camel_catalog_doc gained the api kind (CAMEL-24708): its kind argument names the core
     // classes and script languages the API reference covers, which is what makes a model ask for them
-    static final int FULL_BUDGET_TOKENS = 8_700;
+    // raised with the core budget (CAMEL-24760)
+    static final int FULL_BUDGET_TOKENS = 9_200;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -122,7 +125,8 @@ class AiPanelPromptBudgetTest {
         // the tool definitions already describe every tool; repeating them in prose doubles the cost
         // 450 before the file editing guidance (two bullets) was added
         // 530 before the tools were split into camel_* and tui_* in the introduction
-        assertTrue(AiPanel.estimateTokens(prompt.length()) <= 545,
+        // 545 before the file-write and canonical YAML shape lines (CAMEL-24760)
+        assertTrue(AiPanel.estimateTokens(prompt.length()) <= 620,
                 "system prompt grew to ~" + AiPanel.estimateTokens(prompt.length()) + " tokens");
         assertTrue(!prompt.contains("- tui_get_table:"), "system prompt must not list the tools again");
     }

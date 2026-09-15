@@ -2898,6 +2898,9 @@ class AiPanel {
         sb.append(
                 "retry a rejected write. Invalid YAML/properties is refused with errors: fix them (camel_catalog_doc has the ");
         sb.append("option names)\n");
+        sb.append("- Write files only with camel_write_file; never paste file contents in the answer\n");
+        sb.append("- YAML DSL shape: a step is `- log: {message: ...}`, `- to: {uri: ...}`, an expression goes under ");
+        sb.append("expression: (`- setBody: {expression: {simple: ...}}`); the shorthand forms are deprecated\n");
         sb.append("- tui_set_log_level is the app's root logger, only when asked; 'log at WARN' in a route is the log ");
         sb.append("step's loggingLevel in the source\n");
         sb.append("- Simple: functions inside ${...}, operators between them: ${header.a} == 'b', ");
