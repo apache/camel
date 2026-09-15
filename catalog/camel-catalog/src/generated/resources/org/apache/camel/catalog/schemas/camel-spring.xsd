@@ -10562,7 +10562,7 @@ The escape character. Default value: \
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The cipher algorithm to be used for encryption/decryption of the XML message content. Default value: AES-256-GCM
+The cipher algorithm to be used for encryption/decryption of the XML message content. Default value: AES_256_GCM
 ]]>
             </xs:documentation>
           </xs:annotation>
