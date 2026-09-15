@@ -79,7 +79,7 @@ public class PahoConsumer extends DefaultConsumer {
             }
 
             MqttClient callbackClient = client;
-            boolean ownedClient = stopClient;
+            boolean isOwnedClient = stopClient;
             callbackClient.setCallback(new MqttCallbackExtended() {
 
                 @Override
@@ -88,7 +88,7 @@ public class PahoConsumer extends DefaultConsumer {
                         try {
                             callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
                         } catch (MqttException e) {
-                            if (ownedClient) {
+                            if (isOwnedClient) {
                                 LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
                                         e.getMessage(), e);
                                 restartRouteAsync();
