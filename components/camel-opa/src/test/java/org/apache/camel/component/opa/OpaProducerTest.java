@@ -126,6 +126,39 @@ class OpaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void doesNotLeaveAVerdictClaimedByTheMessageBehindWhenEvaluationFails() throws Exception {
+        // the decision headers used to be written only on a path that reached a verdict, so a claim carried by
+        // the message survived a failure. A route that handles the exception - doTry/doCatch, or
+        // onException().handled(true) - then read the sender's own "allowed" as though a policy had said it
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+
+        Exchange out = template.request(ENDPOINT, e -> {
+            e.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
+            e.getMessage().setHeader(OpaConstants.DECISION, Map.of("allow", true));
+            e.getMessage().setHeader(OpaConstants.POLICY_PATH, "authz/some-other-policy");
+        });
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.POLICY_PATH)).isNull();
+    }
+
+    @Test
+    void replacesAVerdictClaimedByTheMessageWithTheOneThePolicyGave() throws Exception {
+        givenDecision(Boolean.FALSE);
+
+        Exchange out = template.request(ENDPOINT, e -> {
+            e.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
+            e.getMessage().setHeader(OpaConstants.POLICY_PATH, "authz/some-other-policy");
+        });
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+        assertThat(out.getMessage().getHeader(OpaConstants.POLICY_PATH)).isEqualTo(PATH);
+    }
+
+    @Test
     void failsClosedWhenTheSdkFailsWithSomethingOtherThanAnOpaException() throws Exception {
         when(client.evaluate(eq(PATH), anyMap(), eq(Object.class)))
                 .thenThrow(new IllegalArgumentException("could not serialize the input document"));
