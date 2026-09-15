@@ -91,6 +91,38 @@ class OpaInputDocumentTest extends CamelTestSupport {
     }
 
     @Test
+    void withholdsCredentialHeadersFromTheWildcard() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT, e -> {
+            e.getMessage().setHeader("user", "alice");
+            e.getMessage().setHeader("Authorization", "Bearer s3cr3t");
+            e.getMessage().setHeader("Cookie", "session=s3cr3t");
+            e.getMessage().setHeader("Proxy-Authorization", "Basic s3cr3t");
+            e.getMessage().setHeader("Set-Cookie", "session=abc; Path=/");
+        });
+
+        assertThat(headersOf(input)).containsOnlyKeys("user");
+    }
+
+    @Test
+    void matchesWithheldCredentialHeadersCaseInsensitively() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT,
+                e -> e.getMessage().setHeader("authorization", "Bearer s3cr3t"));
+
+        assertThat(headersOf(input)).doesNotContainKey("authorization");
+    }
+
+    @Test
+    void sendsACredentialHeaderWhenItIsNamedExplicitly() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeHeaders=Authorization,user", e -> {
+            e.getMessage().setHeader("user", "alice");
+            e.getMessage().setHeader("Authorization", "Bearer s3cr3t");
+        });
+
+        // naming it is the opt-in: a policy that must inspect the token can still get it
+        assertThat(headersOf(input)).containsEntry("Authorization", "Bearer s3cr3t");
+    }
+
+    @Test
     void sendsOnlyTheListedHeadersWhenNarrowed() throws Exception {
         Map<String, Object> input = inputSentFor(ENDPOINT + "&includeHeaders=user,tenant", e -> {
             e.getMessage().setHeader("user", "alice");

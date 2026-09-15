@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,13 @@ public class OpaPolicyEvaluator {
     private static final Logger LOG = LoggerFactory.getLogger(OpaPolicyEvaluator.class);
 
     private static final String ALL_NAMES = "*";
+
+    /**
+     * Headers that carry a caller credential verbatim. They are withheld when {@code includeHeaders} is the wildcard,
+     * because OPA's decision logging ships the whole input document - often off the box - and a policy that needs a
+     * credential should say so by naming the header. Listing one explicitly still sends it.
+     */
+    private static final Set<String> CREDENTIAL_HEADERS = credentialHeaders();
 
     private final OPAClient client;
     private final String policyPath;
@@ -115,7 +123,7 @@ public class OpaPolicyEvaluator {
             String name = entry.getKey();
             // never feed our own decision headers back in: a policy must not be able to read a verdict
             // that an inbound message claimed for itself
-            if (isDecisionHeader(name) || !isIncluded(includedHeaders, name)) {
+            if (isDecisionHeader(name) || !isIncluded(includedHeaders, name) || isWithheldCredential(name)) {
                 continue;
             }
             Object value = toJsonSafe(exchange, entry.getValue());
@@ -183,6 +191,22 @@ public class OpaPolicyEvaluator {
 
     private static boolean includesAnything(Set<String> filter) {
         return filter == null || !filter.isEmpty();
+    }
+
+    /**
+     * A credential header is only sent when the configuration names it, never through the wildcard.
+     */
+    private boolean isWithheldCredential(String name) {
+        return includedHeaders == null && CREDENTIAL_HEADERS.contains(name);
+    }
+
+    private static Set<String> credentialHeaders() {
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        names.add("Authorization");
+        names.add("Proxy-Authorization");
+        names.add("Cookie");
+        names.add("Set-Cookie");
+        return Collections.unmodifiableSet(names);
     }
 
     private static boolean isDecisionHeader(String name) {
