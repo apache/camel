@@ -304,26 +304,6 @@ public class RuntimeTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
-                  Evaluate an expression in the given language (e.g., simple, jsonpath, xpath) \
-                  against the Camel context.""")
-    public JsonObject camel_runtime_eval(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
-            @ToolArg(description = "Expression language (e.g., simple, jsonpath, xpath, jq)") String language,
-            @ToolArg(description = "Expression to evaluate") String expression) {
-        if (language == null || language.isBlank()) {
-            throw new ToolCallException("language is required", null);
-        }
-        if (expression == null || expression.isBlank()) {
-            throw new ToolCallException("expression is required", null);
-        }
-        Map<String, String> args = new HashMap<>();
-        args.put("language", language);
-        args.put("expression", expression);
-        return delegateToRegistry("eval_expression", nameOrPid, args);
-    }
-
-    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = """
                   Get the inter-route topology showing how routes connect to each other \
                   and to external endpoints. Returns nodes and edges describing the route graph.""")
     public JsonObject camel_runtime_route_topology(
@@ -334,15 +314,6 @@ public class RuntimeTools {
         args.put("metric", metric == null || metric ? "true" : "false");
         args.put("external", external == null || external ? "true" : "false");
         return delegateToRegistry("get_route_topology", nameOrPid, args);
-    }
-
-    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = """
-                  Get captured routing errors from the running Camel application. \
-                  Returns error details including exception, exchange context, and route information.""")
-    public JsonObject camel_runtime_errors(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        return delegateToRegistry("get_errors", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -532,15 +503,6 @@ public class RuntimeTools {
     public JsonObject camel_runtime_history(
             @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
         return delegateToRegistry("get_history", nameOrPid, Map.of());
-    }
-
-    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
-          description = """
-                  Initiate graceful shutdown of a running Camel application. \
-                  The application will finish processing in-flight exchanges before stopping.""")
-    public JsonObject camel_runtime_stop(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
-        return delegateToRegistry("stop_application", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),

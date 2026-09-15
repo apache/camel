@@ -68,6 +68,7 @@ public final class AuthoringTools {
                         "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                         false)
                 .param("includeOptions", "boolean", "Include the options (default true)", false)
+                .param("includeHeaders", "boolean", "Include the message headers of a component (default false)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
                 .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
                         false)
@@ -78,16 +79,18 @@ public final class AuthoringTools {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
                             args.get("kind"), args.get("optionsFilter"), bool(args, "includeOptions", true),
-                            bool(args, "includeDoc", false), args.get("docPage")).toJson();
+                            bool(args, "includeHeaders", false), bool(args, "includeDoc", false),
+                            args.get("docPage")).toJson();
                 }));
 
         registry.accept(tool("camel_catalog_find",
-                "Finds Camel components, data formats and languages by a protocol, product or other term that is not "
-                                                   + "the exact name (mqtt, s3, snowflake, csv): best match first with title and "
-                                                   + "description. camel_catalog_doc then gives the options of one.")
-                .param("term", "string", "What to look for, e.g. mqtt, s3, database, csv", true)
+                "Finds Camel components, data formats, languages and EIPs by a protocol, product, alias or other term "
+                                                   + "that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
+                                                   + "match first with title and description. camel_catalog_doc then gives the "
+                                                   + "options of one.")
+                .param("term", "string", "What to look for, e.g. mqtt, s3, database, csv, fan-out", true)
                 .param("kind", "string",
-                        "component, dataformat, language or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
+                        "component, dataformat, language, eip or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
                         false)
                 .param("limit", "integer", "Maximum matches per kind (default 10)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)

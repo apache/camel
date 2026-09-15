@@ -76,13 +76,14 @@ public final class CatalogDocs {
      * @param  optionsFilter  keyword to match in option names, descriptions and groups; also picks the simple functions
      *                        and operators to list in full
      * @param  includeOptions whether to list the options
+     * @param  includeHeaders whether to list the message headers of a component (name, constant, type, group)
      * @param  includeDoc     whether to add the full AsciiDoc page
      * @param  docPage        a language doc sub-page (simple: functions, operators, ognl, advanced) to return as text
      * @return                the JSON result, an {@code error} object when nothing matches
      */
     public static JsonObject catalogDoc(
             CamelCatalog catalog, String name, String endpoint, String kind, String optionsFilter,
-            boolean includeOptions, boolean includeDoc, String docPage) {
+            boolean includeOptions, boolean includeHeaders, boolean includeDoc, String docPage) {
         if (endpoint != null && !endpoint.isBlank()) {
             return validateEndpoint(catalog, endpoint.trim());
         }
@@ -96,7 +97,7 @@ public final class CatalogDocs {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
                 String doc = includeDoc ? catalog.asciiDoc(name + "-component") : null;
-                return componentDoc(cm, lowerFilter, includeOptions, doc);
+                return componentDoc(cm, lowerFilter, includeOptions, includeHeaders, doc);
             }
             JsonObject group = mainOptionsGroup(catalog, name);
             if (group != null) {
@@ -141,11 +142,15 @@ public final class CatalogDocs {
         if (kind == null || "eip".equals(kind)) {
             EipModel em = catalog.eipModel(name);
             if (em != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-eip") : null;
-                return eipDoc(em, lowerFilter, includeOptions, doc);
+                return eipDoc(catalog, em, lowerFilter, includeOptions, includeDoc, null);
             }
             if (kind != null) {
-                return error("EIP not found: " + name);
+                // an alias (fan-out, dedup, rate-limit) or a word of the title names the EIP as well
+                JsonObject byTerm = eipByTerm(catalog, name, lowerFilter, includeOptions, includeDoc);
+                if (byTerm != null) {
+                    return byTerm;
+                }
+                return notFound("EIP", name, catalog.suggestEipNames(name, 5));
             }
         }
         if (kind == null || "api".equals(kind)) {
@@ -178,11 +183,42 @@ public final class CatalogDocs {
         if (group != null) {
             return group;
         }
+        // nothing has the exact name: an EIP alias such as fan-out or dedup is the last thing the name can be
+        JsonObject eip = eipByTerm(catalog, name, lowerFilter, includeOptions, includeDoc);
+        if (eip != null) {
+            return eip;
+        }
         List<String> suggestions = new ArrayList<>(catalog.suggestComponentNames(name, 5));
         suggestions.addAll(catalog.suggestDataFormatNames(name, 3));
         suggestions.addAll(catalog.suggestLanguageNames(name, 3));
+        suggestions.addAll(catalog.suggestEipNames(name, 3));
         suggestions.addAll(findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(3).toList());
         return notFound("Artifact", name, suggestions);
+    }
+
+    /**
+     * The documentation of the EIP a term such as an alias (fan-out, dedup, rate-limit) or a word of the title names,
+     * with the term the caller used; null when no EIP matches.
+     */
+    private static JsonObject eipByTerm(
+            CamelCatalog catalog, String term, String filter, boolean includeOptions, boolean includeDoc) {
+        List<String> names = catalog.suggestEipNames(term, 1);
+        if (names.isEmpty()) {
+            return null;
+        }
+        EipModel em = catalog.eipModel(names.get(0));
+        return em == null ? null : eipDoc(catalog, em, filter, includeOptions, includeDoc, term);
+    }
+
+    private static JsonObject eipDoc(
+            CamelCatalog catalog, EipModel model, String filter, boolean includeOptions, boolean includeDoc,
+            String matchedTerm) {
+        String doc = includeDoc ? catalog.asciiDoc(model.getName() + "-eip") : null;
+        JsonObject result = eipDoc(model, filter, includeOptions, doc);
+        if (matchedTerm != null) {
+            result.put("matchedTerm", matchedTerm);
+        }
+        return result;
     }
 
     /**
@@ -241,11 +277,12 @@ public final class CatalogDocs {
 
     /**
      * Finds the catalog artifacts matching a term that need not be a name: a protocol (mqtt, amqp), a product (s3,
-     * snowflake) or a word of the title. Best match first, with the title and description so the caller can pick.
+     * snowflake), an EIP alias (fan-out, dedup) or a word of the title. Best match first, with the title and
+     * description so the caller can pick.
      *
      * @param catalog the catalog
      * @param term    what to look for
-     * @param kind    component, dataformat or language; null for all three
+     * @param kind    component, dataformat, language, eip or bean; null for all
      * @param limit   maximum matches per kind
      */
     public static JsonObject find(CamelCatalog catalog, String term, String kind, int limit) {
@@ -279,6 +316,18 @@ public final class CatalogDocs {
                 LanguageModel m = catalog.languageModel(name);
                 if (m != null) {
                     matches.add(summary("language", m.getName(), m.getTitle(), m.getDescription(), m.getLabel()));
+                }
+            }
+        }
+        if (kind == null || "eip".equals(kind)) {
+            for (String name : catalog.suggestEipNames(term, max)) {
+                EipModel m = catalog.eipModel(name);
+                if (m != null) {
+                    JsonObject o = summary("eip", m.getName(), m.getTitle(), m.getDescription(), m.getLabel());
+                    if (m.getAliases() != null && !m.getAliases().isEmpty()) {
+                        o.put("aliases", new JsonArray(m.getAliases()));
+                    }
+                    matches.add(o);
                 }
             }
         }
@@ -866,7 +915,8 @@ public final class CatalogDocs {
                + " in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
     }
 
-    private static JsonObject componentDoc(ComponentModel model, String filter, boolean includeOptions, String doc) {
+    private static JsonObject componentDoc(
+            ComponentModel model, String filter, boolean includeOptions, boolean includeHeaders, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -885,6 +935,7 @@ public final class CatalogDocs {
         result.put("remote", model.isRemote());
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
+        result.put("version", model.getVersion());
         addCommonModelFields(result, model);
 
         if (includeOptions) {
@@ -905,6 +956,31 @@ public final class CatalogDocs {
             }
             result.put("options", options);
             result.put("matchedOptions", options.size());
+        }
+        if (includeHeaders && model.getEndpointHeaders() != null) {
+            // the CamelXxx headers the component reads and sets, with the constant to use from Java
+            JsonArray headers = new JsonArray();
+            for (ComponentModel.EndpointHeaderModel h : model.getEndpointHeaders()) {
+                JsonObject jo = new JsonObject();
+                jo.put("name", h.getName());
+                if (h.getConstantName() != null) {
+                    jo.put("constantName", h.getConstantName());
+                }
+                if (h.getJavaType() != null) {
+                    jo.put("javaType", h.getJavaType());
+                }
+                if (h.getGroup() != null) {
+                    jo.put("group", h.getGroup());
+                }
+                if (h.isRequired()) {
+                    jo.put("required", true);
+                }
+                if (h.getDescription() != null) {
+                    jo.put("description", h.getDescription());
+                }
+                headers.add(jo);
+            }
+            result.put("headers", headers);
         }
         if (doc != null) {
             result.put("doc", doc);

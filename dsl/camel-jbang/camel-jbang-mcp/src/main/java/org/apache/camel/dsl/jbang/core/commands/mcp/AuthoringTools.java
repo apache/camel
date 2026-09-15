@@ -53,8 +53,9 @@ public class AuthoringTools {
                         + "optionsFilter the matching ones with parameters and examples. kind=api is the Java API to "
                         + "call from a bean or script (Exchange, Message, CamelContext, AggregationStrategy, ...) and "
                         + "the variables a groovy, js, python or java script sees. endpoint validates a URI: unknown or "
-                        + "invalid options, missing path. Replaces the former AsciiDoc-only camel_catalog_doc: "
-                        + "includeDoc=true adds the AsciiDoc page.")
+                        + "invalid options, missing path. An EIP alias such as fan-out or dedup finds the EIP. "
+                        + "includeHeaders=true adds the message headers of a component, includeDoc=true the AsciiDoc "
+                        + "page.")
     public JsonObject camel_catalog_doc(
             @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange",
                      required = false) String name,
@@ -63,23 +64,26 @@ public class AuthoringTools {
             @ToolArg(description = "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                      required = false) String kind,
             @ToolArg(description = "Include the options (default true)", required = false) Boolean includeOptions,
+            @ToolArg(description = "Include the message headers of a component (default false)",
+                     required = false) Boolean includeHeaders,
             @ToolArg(description = "Include the full AsciiDoc page (default false)", required = false) Boolean includeDoc,
             @ToolArg(description = "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
                      required = false) String docPage,
             @ToolArg(description = "Keyword to match in option names or descriptions", required = false) String optionsFilter,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_catalog_doc", args("name", name, "endpoint", endpoint, "kind", kind,
-                "includeOptions", includeOptions, "includeDoc", includeDoc, "docPage", docPage,
+                "includeOptions", includeOptions, "includeHeaders", includeHeaders, "includeDoc", includeDoc,
+                "docPage", docPage,
                 "optionsFilter", optionsFilter, "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Finds Camel components, data formats and languages by a protocol, product or other term that "
-                        + "is not the exact name (mqtt, s3, snowflake, csv): best match first with title and "
-                        + "description. camel_catalog_doc then gives the options of one.")
+          description = "Finds Camel components, data formats, languages and EIPs by a protocol, product, alias or "
+                        + "other term that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
+                        + "match first with title and description. camel_catalog_doc then gives the options of one.")
     public JsonObject camel_catalog_find(
-            @ToolArg(description = "What to look for, e.g. mqtt, s3, database, csv", required = true) String term,
-            @ToolArg(description = "component, dataformat, language or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
+            @ToolArg(description = "What to look for, e.g. mqtt, s3, database, csv, fan-out", required = true) String term,
+            @ToolArg(description = "component, dataformat, language, eip or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
                      required = false) String kind,
             @ToolArg(description = "Maximum matches per kind (default 10)", required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {

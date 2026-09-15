@@ -189,7 +189,7 @@ class CatalogDocsTest {
         assertTrue(matches.stream().anyMatch(
                 m -> "StringAggregationStrategy".equals(((org.apache.camel.util.json.JsonObject) m).getString("name"))));
 
-        var doc = CatalogDocs.catalogDoc(catalog, "StringAggregationStrategy", null, "bean", null, true, false, null);
+        var doc = CatalogDocs.catalogDoc(catalog, "StringAggregationStrategy", null, "bean", null, true, false, false, null);
         assertEquals("org.apache.camel.processor.aggregate.StringAggregationStrategy", doc.getString("javaType"));
         assertTrue(doc.getString("declare")
                 .contains("type: \"#class:org.apache.camel.processor.aggregate.StringAggregationStrategy\""));
@@ -197,6 +197,57 @@ class CatalogDocsTest {
 
         assertTrue(CatalogDocs.beansOfInterface(catalog, "org.apache.camel.AggregationStrategy").stream()
                 .anyMatch(b -> b.startsWith("GroupedBodyAggregationStrategy (")));
+    }
+
+    @Test
+    void anEipAliasFindsTheEip() throws Exception {
+        // the aliases of the EIP models (fan-out, dedup, rate-limit) are what a model asks with; the former
+        // camel_catalog_eips tool matched them, now camel_catalog_find and camel_catalog_doc do
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        var result = CatalogDocs.find(catalog, "fan-out", "eip", 5);
+        var matches = (org.apache.camel.util.json.JsonArray) result.get("matches");
+        var first = (org.apache.camel.util.json.JsonObject) matches.get(0);
+        assertEquals("eip", first.getString("kind"));
+        assertEquals("multicast", first.getString("name"));
+        assertTrue(first.getCollection("aliases").contains("fan-out"));
+
+        // without a kind the EIPs are searched with the rest
+        result = CatalogDocs.find(catalog, "dedup", null, 5);
+        matches = (org.apache.camel.util.json.JsonArray) result.get("matches");
+        assertTrue(matches.stream().anyMatch(
+                m -> "idempotentConsumer".equals(((org.apache.camel.util.json.JsonObject) m).getString("name"))));
+
+        // the doc of an alias is the doc of the EIP, saying which term it matched
+        JsonObject doc = catalogDoc(Map.of("name", "rate-limit", "kind", "eip"));
+        assertEquals("throttle", doc.getString("name"));
+        assertEquals("rate-limit", doc.getString("matchedTerm"));
+        doc = catalogDoc(Map.of("name", "fan-out"));
+        assertEquals("multicast", doc.getString("name"));
+        assertEquals("fan-out", doc.getString("matchedTerm"));
+        assertNull(catalogDoc(Map.of("name", "multicast")).get("matchedTerm"), "an exact name matched no term");
+
+        JsonObject missing = catalogDoc(Map.of("name", "no-such-pattern", "kind", "eip"));
+        assertTrue(missing.getString("error").contains("no-such-pattern"));
+    }
+
+    @Test
+    void aComponentListsItsHeadersOnRequest() throws Exception {
+        JsonObject doc = catalogDoc(Map.of("name", "kafka", "kind", "component"));
+        assertNull(doc.get("headers"), "headers only on request, they are many");
+        assertEquals("org.apache.camel", doc.getString("groupId"));
+        assertEquals("camel-kafka", doc.getString("artifactId"));
+        assertFalse(doc.getString("version").isBlank(), "the Maven coordinates are complete");
+
+        doc = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeHeaders", true, "includeOptions", false));
+        assertNull(doc.get("options"));
+        var headers = (org.apache.camel.util.json.JsonArray) doc.get("headers");
+        var key = headers.stream().map(h -> (org.apache.camel.util.json.JsonObject) h)
+                .filter(h -> "CamelKafkaKey".equals(h.getString("name"))).findFirst().orElseThrow();
+        assertEquals("org.apache.camel.component.kafka.KafkaConstants#KEY", key.getString("constantName"));
+        assertEquals("Object", key.getString("javaType"));
+        assertEquals("common", key.getString("group"));
+        assertTrue(key.getBoolean("required"));
+        assertTrue(key.getString("description").contains("key"));
     }
 
     @Test

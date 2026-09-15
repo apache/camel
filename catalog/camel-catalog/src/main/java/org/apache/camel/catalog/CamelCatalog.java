@@ -322,6 +322,20 @@ public interface CamelCatalog {
     }
 
     /**
+     * Finds EIP names that match a term that need not be the EIP name (for example <tt>fan-out</tt> finds
+     * <tt>multicast</tt> and <tt>dedup</tt> finds <tt>idempotentConsumer</tt>), best match first: the exact name, then
+     * declared aliases, words of the title, words of the name, and finally names containing the term.
+     *
+     * @param  term the pattern, alias, or EIP name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching EIP names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestEipNames(String term, int max) {
+        return CatalogTermMatcher.suggestNames(findModelNames(), this::eipModel, term, max);
+    }
+
+    /**
      * Returns the component information as JSON format.
      *
      * @param  name the component name
