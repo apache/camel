@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
@@ -72,7 +73,9 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
             assertTrue(e.getMessage()
                     .startsWith(
                             "Failed to create Producer for endpoint: activemq://queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true."));
-            assertTrue(e.getCause().toString().contains("jakarta.jms.JMSException: Failed to create session factory"));
+            // the exact message depends on the Artemis client version (2.57 maps ActiveMQException
+            // via JMSExceptionHelper instead of wrapping it as "Failed to create session factory")
+            assertIsInstanceOf(JMSException.class, e.getCause());
         }
     }
 
