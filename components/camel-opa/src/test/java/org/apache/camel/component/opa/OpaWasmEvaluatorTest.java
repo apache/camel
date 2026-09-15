@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -148,6 +149,36 @@ public class OpaWasmEvaluatorTest extends CamelTestSupport {
         }))
                 .isInstanceOf(ResolveEndpointFailedException.class)
                 .hasMessageContaining("policyBundle is required");
+    }
+
+    @Test
+    void rejectsAPoolSizeBelowOne() {
+        // the pool rejects it as well, but as "maxSize must be positive" - its own parameter rather than the
+        // option that was set, which is what the operator has to go looking for
+        assertThatThrownBy(() -> template.request(
+                "opa:authz/allow?evaluationMode=wasm&policyBundle=classpath:authz.wasm&poolSize=0", e -> {
+                }))
+                .isInstanceOf(ResolveEndpointFailedException.class)
+                .hasMessageContaining("poolSize must be at least 1");
+    }
+
+    @Test
+    @Timeout(60)
+    void keepsThePoolUsableAfterRepeatedEvaluationFailures() {
+        // a failed evaluation discards its instance. Mishandle the pool's permit while doing so and a
+        // single-instance pool either wedges on the next borrow or quietly stops bounding anything - neither of
+        // which a single failing exchange would show.
+        String strict = "opa:authz/strict_allow?evaluationMode=wasm&policyBundle=classpath:authz.wasm&poolSize=1";
+
+        for (int i = 0; i < 5; i++) {
+            Exchange failed = template.request(strict, e -> e.getMessage().setHeader("user", "mallory"));
+            assertThat(failed.getException()).as("failure %d", i).isInstanceOf(OpaPolicyEvaluationException.class);
+        }
+
+        Exchange out = template.request(strict, e -> e.getMessage().setHeader("user", "alice"));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
     }
 
     @Test

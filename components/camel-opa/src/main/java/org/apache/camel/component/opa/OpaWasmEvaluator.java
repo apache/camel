@@ -137,15 +137,22 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
         OpaPolicyPool.Loan loan = pool.borrow();
+        // set before close(), not after: Loan.close() delegates to a method that releases the pool's permit from a
+        // finally block, so the permit is gone whether or not close() then throws. Discarding after a failed close
+        // would release it a second time, and a pool whose semaphore gains permits stops bounding anything.
+        boolean returned = false;
         try {
             prepare(loan.policy());
             Object decision = unwrap(loan.policy().evaluate(MAPPER.writeValueAsString(input)));
+            returned = true;
             loan.close();
             return decision;
         } catch (Exception e) {
             // a trap part-way through an evaluation can leave the instance in an undefined state, so drop it
             // rather than hand it to the next exchange
-            loan.discard();
+            if (!returned) {
+                loan.discard();
+            }
             throw e;
         }
     }
