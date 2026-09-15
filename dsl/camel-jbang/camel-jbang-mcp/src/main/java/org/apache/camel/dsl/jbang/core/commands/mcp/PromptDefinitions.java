@@ -60,22 +60,24 @@ public class PromptDefinitions {
 
                 ### Step 1: Identify components
                 Analyze the requirements above and identify the Camel components needed.
-                Call `camel_catalog_components` with a relevant filter and runtime="%s" to find matching components.
+                Call `camel_catalog_find` with the protocol or product (kind="component") to find matching components.
 
                 ### Step 2: Identify EIPs
                 Determine which Enterprise Integration Patterns are needed (e.g., split, aggregate, filter, choice).
-                Call `camel_catalog_eips` with a relevant filter to find matching patterns.
+                Call `camel_catalog_find` with kind="eip" and a term such as fan-out, dedup or retry to find \
+                matching patterns; `camel_catalog_sample` gives a validated YAML sample of one.
 
                 ### Step 3: Get component details
-                For each component you selected, call `camel_catalog_component_doc` with the component name \
-                and runtime="%s" to get its endpoint options, required parameters, and URI syntax.
+                For each component you selected, call `camel_catalog_doc` with the component name \
+                to get its endpoint options, required parameters, and URI syntax.
 
                 ### Step 4: Build the route
                 Using the gathered information, write a complete YAML route definition. \
                 Use correct component URI syntax and required options from the documentation.
 
                 ### Step 5: Validate
-                Call `camel_validate_yaml_dsl` with the generated YAML route to check for syntax errors.
+                Call `camel_validate_source` with the generated YAML route as content and a .yaml file name \
+                to check the schema, endpoint URIs and expressions.
                 If validation fails, fix the issues and re-validate.
 
                 ### Step 6: Security review
@@ -87,7 +89,7 @@ public class PromptDefinitions {
                 - A brief explanation of each component and EIP used
                 - Any security recommendations from Step 6
                 - Instructions for running the route (e.g., with camel-jbang)
-                """.formatted(resolvedRuntime, requirements, resolvedRuntime, resolvedRuntime);
+                """.formatted(resolvedRuntime, requirements);
 
         return List.of(PromptMessage.withUserRole(instructions));
     }
