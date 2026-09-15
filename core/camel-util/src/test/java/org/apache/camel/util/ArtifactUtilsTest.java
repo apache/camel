@@ -78,6 +78,8 @@ public class ArtifactUtilsTest {
                 .isEqualTo("add camel-support (part of camel-core) to the classpath");
         // camel-base64 is a data format, not a core artifact
         assertThat(ArtifactUtils.dependencyHint("camel-base64")).isEqualTo("add camel-base64 to the classpath");
+        assertThat(ArtifactUtils.dependencyHint(null)).isEmpty();
+        assertThat(ArtifactUtils.dependencyHint(" ")).isEmpty();
     }
 
     @Test

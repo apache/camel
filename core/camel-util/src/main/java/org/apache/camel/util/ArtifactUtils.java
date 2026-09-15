@@ -748,6 +748,9 @@ public final class ArtifactUtils {
      * part of camel-core.
      */
     public static String dependencyHint(String artifactId) {
+        if (artifactId == null || artifactId.isBlank()) {
+            return "";
+        }
         if (isCoreArtifact(artifactId)) {
             return "add " + artifactId + " (part of camel-core) to the classpath";
         }
