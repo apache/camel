@@ -78,6 +78,10 @@ jobs:
             # JDK 17 is kept for runtime compatibility testing.
             # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
             maven_extra_args: '-Denforcer.phase=none'
+          - java: '27-ea'
+            # JDK 27 EA: early-access build to catch compatibility issues ahead of the Sep 2026 GA.
+            # Experimental — failures do not block PR merges.
+            experimental: true
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
