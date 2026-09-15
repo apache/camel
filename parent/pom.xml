@@ -3363,6 +3363,13 @@
                 <version>${jspecify-version}</version>
             </dependency>
 
+            <!-- Apicurio Registry -->
+            <dependency>
+                <groupId>io.apicurio</groupId>
+                <artifactId>apicurio-registry-java-sdk</artifactId>
+                <version>${apicurio-registry-sdk-version}</version>
+            </dependency>
+
             <!-- logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>

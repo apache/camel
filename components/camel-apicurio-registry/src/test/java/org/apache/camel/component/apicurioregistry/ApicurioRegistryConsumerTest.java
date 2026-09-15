@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.apicurioregistry;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +26,7 @@ import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.models.SearchedVersion;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -30,8 +34,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ApicurioRegistryConsumerTest {
@@ -39,7 +47,7 @@ class ApicurioRegistryConsumerTest {
     private static final String ENDPOINT_URI
             = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&delay=500";
 
-    private final RegistryClient mockClient = mock(RegistryClient.class, org.mockito.Mockito.RETURNS_DEEP_STUBS);
+    private final RegistryClient mockClient = mock(RegistryClient.class, RETURNS_DEEP_STUBS);
     private CamelContext context;
 
     @BeforeEach
@@ -131,7 +139,7 @@ class ApicurioRegistryConsumerTest {
         List<Long> receivedIds = mock.getReceivedExchanges().stream()
                 .map(e -> e.getIn().getHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, Long.class))
                 .toList();
-        assertEquals(List.of(2L, 5L, 8L), receivedIds);
+        assertThat(receivedIds).containsExactly(2L, 5L, 8L);
     }
 
     @Test
@@ -145,10 +153,57 @@ class ApicurioRegistryConsumerTest {
         VersionSearchResults results = new VersionSearchResults();
         results.setVersions(List.of(v1));
 
-        setupAndStartRoute(results);
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().get()).thenReturn(results);
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(ENDPOINT_URI, ApicurioRegistryEndpoint.class);
+        endpoint.setRegistryClient(mockClient);
+        List<Exchange> exchanges = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = (ApicurioRegistryConsumer) endpoint.createConsumer(exchanges::add);
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(consumer.poll()).isZero();
 
-        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMessageCount(1);
-        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        SearchedVersion v2 = new SearchedVersion();
+        v2.setGlobalId(2L);
+        v2.setVersion("2.0");
+        results.setVersions(List.of(v2, v1));
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(consumer.poll()).isZero();
+        assertThat(exchanges).hasSize(2);
+        assertThat(exchanges.get(1).getIn().getBody()).isSameAs(v2);
+    }
+
+    @Test
+    void testFetchContentClosesStream() throws Exception {
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(ENDPOINT_URI + "&fetchContent=true",
+                ApicurioRegistryEndpoint.class);
+        endpoint.setRegistryClient(mockClient);
+        SearchedVersion version = new SearchedVersion();
+        version.setGlobalId(1L);
+        version.setVersion("1");
+        VersionSearchResults results = new VersionSearchResults();
+        results.setVersions(List.of(version));
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().get()).thenReturn(results);
+        byte[] content = "{\"type\":\"object\"}".getBytes(StandardCharsets.UTF_8);
+        ByteArrayInputStream stream = spy(new ByteArrayInputStream(content));
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().byVersionExpression("1").content().get()).thenReturn(stream);
+        List<Exchange> exchanges = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = (ApicurioRegistryConsumer) endpoint.createConsumer(exchanges::add);
+
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(exchanges.get(0).getIn().getBody()).isEqualTo(content);
+        verify(stream).close();
+    }
+
+    @Test
+    void testMissingArtifactId() throws Exception {
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(
+                "apicurio-registry:testGroup?registryUrl=http://localhost:8080/apis/registry/v3",
+                ApicurioRegistryEndpoint.class);
+        ApicurioRegistryConsumer consumer = (ApicurioRegistryConsumer) endpoint.createConsumer(exchange -> {
+        });
+        assertThatThrownBy(consumer::poll).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Both groupId and artifactId are required for the consumer");
     }
 }

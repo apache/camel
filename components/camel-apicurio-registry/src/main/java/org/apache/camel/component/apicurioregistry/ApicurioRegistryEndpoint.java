@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.apicurioregistry;
 
+import java.util.concurrent.TimeUnit;
+
 import io.apicurio.registry.client.RegistryClientFactory;
 import io.apicurio.registry.client.common.RegistryClientOptions;
 import io.apicurio.registry.rest.client.RegistryClient;
+import io.vertx.core.Vertx;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -32,7 +35,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Manage artifacts, versions, and groups in Apicurio Registry v3.
  */
-@UriEndpoint(firstVersion = "4.22.0", scheme = "apicurio-registry", title = "Apicurio Registry",
+@UriEndpoint(firstVersion = "4.23.0", scheme = "apicurio-registry", title = "Apicurio Registry",
              syntax = "apicurio-registry:groupId/artifactId",
              category = { Category.CLOUD, Category.API }, headersClass = ApicurioRegistryConstants.class)
 public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
@@ -48,6 +51,8 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
 
     @UriParam(label = "advanced", description = "To use a pre-configured RegistryClient instance")
     private RegistryClient registryClient;
+
+    private Vertx vertx;
 
     ApicurioRegistryEndpoint(String uri, ApicurioRegistryComponent component,
                              ApicurioRegistryConfiguration configuration,
@@ -74,18 +79,35 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
     protected void doStart() throws Exception {
         super.doStart();
         if (registryClient == null) {
-            registryClient = createRegistryClient();
+            vertx = Vertx.vertx();
+            try {
+                registryClient = createRegistryClient();
+            } catch (Exception e) {
+                closeVertx();
+                throw e;
+            }
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        registryClient = null;
+        if (vertx != null) {
+            registryClient = null;
+            closeVertx();
+        }
+    }
+
+    private void closeVertx() throws Exception {
+        try {
+            vertx.close().toCompletionStage().toCompletableFuture().get(30, TimeUnit.SECONDS);
+        } finally {
+            vertx = null;
+        }
     }
 
     private RegistryClient createRegistryClient() {
-        RegistryClientOptions options = RegistryClientOptions.create(configuration.getRegistryUrl());
+        RegistryClientOptions options = RegistryClientOptions.create(configuration.getRegistryUrl(), vertx);
         String authType = configuration.getAuthType();
         if ("basic".equalsIgnoreCase(authType)) {
             options.basicAuth(configuration.getUsername(), configuration.getPassword());

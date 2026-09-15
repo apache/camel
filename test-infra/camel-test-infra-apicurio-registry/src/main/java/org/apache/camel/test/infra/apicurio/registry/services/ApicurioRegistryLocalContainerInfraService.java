@@ -56,6 +56,7 @@ public class ApicurioRegistryLocalContainerInfraService
         return new GenericContainer<>(imageName)
                 .withNetworkAliases(containerName)
                 .withExposedPorts(ApicurioRegistryProperties.DEFAULT_PORT)
+                .withEnv("APICURIO_REST_DELETION_ARTIFACT_ENABLED", "true")
                 .waitingFor(Wait.forHttp("/apis/registry/v3/system/info")
                         .forPort(ApicurioRegistryProperties.DEFAULT_PORT).forStatusCode(200));
     }
