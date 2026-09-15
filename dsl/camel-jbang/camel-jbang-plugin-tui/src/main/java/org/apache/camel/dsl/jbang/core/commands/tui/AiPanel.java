@@ -2901,8 +2901,8 @@ class AiPanel {
         sb.append("- Write files only with camel_write_file; never paste file contents in the answer\n");
         sb.append("- YAML DSL shape: a step is `- log: {message: ...}`, `- to: {uri: ...}`, an expression goes under ");
         sb.append("expression: (`- setBody: {expression: {simple: ...}}`); the shorthand forms are deprecated\n");
-        sb.append("- tui_set_log_level is the app's root logger, only when asked; 'log at WARN' in a route is the log ");
-        sb.append("step's loggingLevel in the source\n");
+        sb.append("- 'log at WARN' in a route is the log step's loggingLevel in the source");
+        sb.append(useCoreTools() ? "\n" : "; tui_set_log_level is the app's root logger, only when asked\n");
         sb.append("- Simple: functions inside ${...}, operators between them: ${header.a} == 'b', ");
         sb.append("${body} ?: 'none'; camel_eval_expression checks one, camel_catalog_doc simple lists them\n");
         if (!useCoreTools()) {

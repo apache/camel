@@ -157,10 +157,13 @@ class TuiToolRegistry {
     static final String VALIDATE_TOOL = "camel_validate_source";
 
     /** The TUI's own tools in the core subset; the shared tools add those flagged core in the registry. */
+    // CAMEL-24760: a tool earns its place here by the questions a local model gets asked, not by its size.
+    // tui_get_diagram is the ASCII drawing of what tui_get_topology returns as JSON, tui_filter a screen nicety
+    // (tui_get_table returns the whole table), tui_set_log_level a rare request the prompt guards anyway.
     private static final Set<String> CORE_TUI_TOOLS = Set.of(
-            "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_diagram", "tui_get_topology",
+            "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_topology",
             "tui_get_processor_detail", "tui_get_history", "tui_get_spans", "tui_send_message",
-            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status", "tui_infra");
+            "tui_get_readme", "tui_navigate", "tui_get_status", "tui_infra");
 
     static final Set<String> CORE_TOOLS = Stream.concat(
             CORE_TUI_TOOLS.stream(),
