@@ -25,7 +25,7 @@ import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
 @EnabledForJreRange(min = JRE.JAVA_11)
-public class KameletLocalBeanJoorExternalTest extends CamelTestSupport {
+public class KameletLocalBeanJavaExternalTest extends CamelTestSupport {
 
     @Test
     public void testOne() throws Exception {
@@ -60,7 +60,7 @@ public class KameletLocalBeanJoorExternalTest extends CamelTestSupport {
             public void configure() {
                 routeTemplate("whereTo")
                         .templateParameter("bar") // name of bar
-                        .templateBean("myBar", "joor", "resource:classpath:mybar.joor")
+                        .templateBean("myBar", "java", "resource:classpath:mybar.java")
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");

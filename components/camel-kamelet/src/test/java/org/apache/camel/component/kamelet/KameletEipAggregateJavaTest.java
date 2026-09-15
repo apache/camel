@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class KameletEipAggregateJoorTest extends CamelTestSupport {
+public class KameletEipAggregateJavaTest extends CamelTestSupport {
 
     @Test
     public void testAggregate() throws Exception {
@@ -48,9 +48,9 @@ public class KameletEipAggregateJoorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 routeTemplate("my-aggregate")
-                        .templateBean("myAgg", "joor",
+                        .templateBean("myAgg", "java",
                                 // for aggregation we can use a BiFunction that takes Exchange as input and return the aggregated response
-                                // camel-joor has special support for this if we use (e1, e2) -> { ... } as a lambda expression
+                                // camel-joor (java language) has special support for this if we use (e1, e2) -> { ... } as a lambda expression
                                 "(e1, e2) -> {" +
                                                        " String b1 = e1.getMessage().getBody(String.class);" +
                                                        " String b2 = e2.getMessage().getBody(String.class);" +
