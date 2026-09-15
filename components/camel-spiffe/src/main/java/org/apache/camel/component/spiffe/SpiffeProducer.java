@@ -75,7 +75,10 @@ public class SpiffeProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "A JWT-SVID token is required for validateJwtSvid (set the CamelSpiffeToken header or the body)");
         }
-        String[] audiences = resolveAudiences(exchange);
+        // the audience is the check here, not a parameter: it is what binds the token to THIS workload, so it
+        // comes from the configuration only. Honouring CamelSpiffeAudience would let a caller validate a token
+        // minted for someone else against an audience of their choosing.
+        String[] audiences = resolveConfiguredAudiences();
         JwtSvid svid = client.validateJwtSvid(token, audiences[0]);
         Message message = getMessageForResponse(exchange);
         message.setBody(svid);
@@ -83,27 +86,44 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     private SpiffeOperation determineOperation(Exchange exchange) {
+        SpiffeOperation configured = getEndpoint().getConfiguration().getOperation();
+        if (!getEndpoint().getConfiguration().isAllowOperationHeader()) {
+            return configured;
+        }
         SpiffeOperation operation
                 = exchange.getIn().getHeader(SpiffeConstants.OPERATION, SpiffeOperation.class);
-        return operation != null ? operation : getEndpoint().getConfiguration().getOperation();
+        return operation != null ? operation : configured;
     }
 
+    /**
+     * Audience for a fetch: a genuine per-message parameter, so the header may override the configuration.
+     */
     private String[] resolveAudiences(Exchange exchange) {
         String audience = exchange.getIn().getHeader(SpiffeConstants.AUDIENCE, String.class);
         if (ObjectHelper.isEmpty(audience)) {
             audience = getEndpoint().getConfiguration().getAudience();
         }
+        return splitAudiences(audience, "set the audience option or the CamelSpiffeAudience header");
+    }
+
+    /**
+     * Audience for a validation: taken from the configuration only, never from the message.
+     */
+    private String[] resolveConfiguredAudiences() {
+        // deliberately does not mention the header: it is ignored for validation
+        return splitAudiences(getEndpoint().getConfiguration().getAudience(), "set the audience option");
+    }
+
+    private String[] splitAudiences(String audience, String how) {
         if (ObjectHelper.isEmpty(audience)) {
-            throw new IllegalArgumentException(
-                    "At least one audience is required (set the audience option or the CamelSpiffeAudience header)");
+            throw new IllegalArgumentException("At least one audience is required (" + how + ")");
         }
         String[] parts = Arrays.stream(audience.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
         if (parts.length == 0) {
-            throw new IllegalArgumentException(
-                    "At least one non-blank audience is required (set the audience option or the CamelSpiffeAudience header)");
+            throw new IllegalArgumentException("At least one non-blank audience is required (" + how + ")");
         }
         return parts;
     }
