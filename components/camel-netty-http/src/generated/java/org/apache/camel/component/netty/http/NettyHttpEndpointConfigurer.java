@@ -57,8 +57,6 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "nettyHttpBinding": target.setNettyHttpBinding(property(camelContext, org.apache.camel.component.netty.http.NettyHttpBinding.class, value)); return true;
         case "nettysharedhttpserver":
         case "nettySharedHttpServer": target.setNettySharedHttpServer(property(camelContext, org.apache.camel.component.netty.http.NettySharedHttpServer.class, value)); return true;
-        case "bootstrapconfiguration":
-        case "bootstrapConfiguration": target.setBootstrapConfiguration(property(camelContext, org.apache.camel.component.netty.NettyServerBootstrapConfiguration.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": target.setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "okstatuscoderange":
@@ -120,8 +118,6 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "nettyHttpBinding": return org.apache.camel.component.netty.http.NettyHttpBinding.class;
         case "nettysharedhttpserver":
         case "nettySharedHttpServer": return org.apache.camel.component.netty.http.NettySharedHttpServer.class;
-        case "bootstrapconfiguration":
-        case "bootstrapConfiguration": return org.apache.camel.component.netty.NettyServerBootstrapConfiguration.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
         case "okstatuscoderange":
@@ -184,8 +180,6 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "nettyHttpBinding": return target.getNettyHttpBinding();
         case "nettysharedhttpserver":
         case "nettySharedHttpServer": return target.getNettySharedHttpServer();
-        case "bootstrapconfiguration":
-        case "bootstrapConfiguration": return target.getBootstrapConfiguration();
         case "oauthprofile":
         case "oauthProfile": return target.getOauthProfile();
         case "okstatuscoderange":

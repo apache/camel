@@ -75,9 +75,6 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private String httpMethodRestrict;
     @UriParam(label = "consumer,advanced")
     private NettySharedHttpServer nettySharedHttpServer;
-    @UriParam(label = "consumer,advanced",
-              description = "To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint."
-                            + " When set, its properties are merged into the endpoint configuration.")
     private NettyServerBootstrapConfiguration bootstrapConfiguration;
     @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;

@@ -68,7 +68,6 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
         props.add("nettyHttpBinding");
         props.add("nettyServerBootstrapFactory");
         props.add("nettySharedHttpServer");
-        props.add("bootstrapConfiguration");
         props.add("noReplyLogLevel");
         props.add("oauthProfile");
         props.add("okStatusCodeRange");
