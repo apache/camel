@@ -61,8 +61,9 @@ class LoadBalanceTest extends YamlTestSupport {
 
     def "failoverLoadBalancer inheritErrorHandler placeholder"() {
         when:
-            // the schema types inheritErrorHandler as boolean so skip the strict validation, the runtime accepts a
-            // placeholder that is resolved when the route starts (CAMEL-24696)
+            // YamlTestSupport validates against the raw schema (without the placeholder leniency of YamlValidator),
+            // which types inheritErrorHandler as boolean; the runtime resolves the placeholder when the route starts
+            // and YamlValidatorSchemaGroupsTest covers that the validator accepts it (CAMEL-24696)
             loadRoutesNoValidate '''
                 - from:
                    uri: "direct:start"
