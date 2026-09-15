@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The first attempt errored and the second one assertion-failed, so surefire
+     writes a flakyError before a flakyFailure. Reading them grouped by tag would
+     report the second attempt's message as the first failure. -->
+<testsuite name="org.apache.camel.component.probe.OrderTest" tests="1"
+           errors="0" skipped="0" failures="0" flakes="1">
+  <testcase name="errorsThenFails" classname="org.apache.camel.component.probe.OrderTest" time="1.100">
+    <flakyError message="first attempt timed out" type="java.util.concurrent.TimeoutException">
+      <stackTrace>java.util.concurrent.TimeoutException
+	at org.apache.camel.component.probe.OrderTest.errorsThenFails(OrderTest.java:31)
+</stackTrace>
+    </flakyError>
+    <flakyFailure message="second attempt asserted" type="org.opentest4j.AssertionFailedError">
+      <stackTrace>org.opentest4j.AssertionFailedError: &lt;elided&gt;
+	at org.apache.camel.component.probe.OrderTest.errorsThenFails(OrderTest.java:31)
+</stackTrace>
+    </flakyFailure>
+  </testcase>
+</testsuite>
