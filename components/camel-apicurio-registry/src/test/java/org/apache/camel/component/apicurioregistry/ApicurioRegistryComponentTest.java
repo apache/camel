@@ -24,6 +24,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ApicurioRegistryComponentTest extends CamelTestSupport {
 
     @Test
+    void testEmptyGroupIdNormalized() throws Exception {
+        ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getComponent("apicurio-registry")
+                .createEndpoint("apicurio-registry:/someArtifact?registryUrl=http://localhost:8080/apis/registry/v3");
+        assertThat(endpoint.getGroupId()).isNull();
+        assertThat(endpoint.getArtifactId()).isEqualTo("someArtifact");
+    }
+
+    @Test
     void testEndpointCreatedWithGroupAndArtifact() throws Exception {
         ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(
                 "apicurio-registry:myGroup/myArtifact?registryUrl=http://localhost:8080/apis/registry/v3");
