@@ -65,6 +65,7 @@
 ** xref:openai-providers.adoc[OpenAI - Compatible Providers]
 ** xref:openai-operations.adoc[OpenAI - Embeddings, Moderation, Audio and Image Operations]
 ** xref:openai-mcp.adoc[OpenAI - MCP Tool Calling]
+** xref:openai-webhooks.adoc[OpenAI - Webhook Events]
 ** xref:openai-responses.adoc[OpenAI - Responses API Operation]
 ** xref:openapi-java.adoc[Openapi Java]
 ** xref:openapi-validator.adoc[Openapi Validator]

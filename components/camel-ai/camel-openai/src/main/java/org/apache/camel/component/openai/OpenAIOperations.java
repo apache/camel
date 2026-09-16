@@ -33,7 +33,8 @@ public enum OpenAIOperations {
     audioSpeech("audio-speech"),
     moderation("moderation"),
     imageGeneration("image-generation"),
-    imageEdit("image-edit");
+    imageEdit("image-edit"),
+    webhook("webhook");
 
     private final String value;
 
@@ -53,7 +54,7 @@ public enum OpenAIOperations {
                                            + "responses-cancel, batch, batch-retrieve, batch-cancel, batch-results, "
                                            + "embeddings, tool-execution, "
                                            + "audio-transcription, audio-translation, audio-speech, moderation, "
-                                           + "image-generation, image-edit");
+                                           + "image-generation, image-edit, webhook");
     }
 
     public String getValue() {

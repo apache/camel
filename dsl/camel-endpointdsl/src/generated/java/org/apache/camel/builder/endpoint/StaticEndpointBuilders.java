@@ -12742,12 +12742,12 @@ public class StaticEndpointBuilders {
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
-     * 'image-generation', or 'image-edit'
-     * There are 16 enums and the value can be one of: chat-completion,
+     * 'image-generation', 'image-edit', or 'webhook' (a consumer)
+     * There are 17 enums and the value can be one of: chat-completion,
      * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
      * batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
-     * image-generation, image-edit
+     * image-generation, image-edit, webhook
      * 
      * @param path operation
      * @return the dsl builder
@@ -12771,12 +12771,12 @@ public class StaticEndpointBuilders {
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
-     * 'image-generation', or 'image-edit'
-     * There are 16 enums and the value can be one of: chat-completion,
+     * 'image-generation', 'image-edit', or 'webhook' (a consumer)
+     * There are 17 enums and the value can be one of: chat-completion,
      * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
      * batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
-     * image-generation, image-edit
+     * image-generation, image-edit, webhook
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
