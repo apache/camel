@@ -877,7 +877,7 @@ skipped.
 
 If you are using a Camel CXF endpoint to consume the SOAP request, you
 may need to throw the SOAP Fault from the camel context. +
- Basically, you can use the `throwFault` DSL to do that; it works for
+ Basically, you set the `SoapFault` as the message body to do that; it works for
 `POJO`, `PAYLOAD` and `RAW` data format. +
  You can define the soap fault as shown in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfCustomizedExceptionTest.java#L65[CxfCustomizedExceptionTest]:
 
@@ -893,10 +893,10 @@ detail.appendChild(tn);
 
 Then throw it as you like:
 
-._Java-only: setting a SOAP fault on the route using `setFaultBody`_
+._Java-only: setting a SOAP fault as the message body_
 [source,java]
 ----
-from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
+from(routerEndpointURI).process(exchange -> exchange.getMessage().setBody(SOAP_FAULT));
 ----
 
 

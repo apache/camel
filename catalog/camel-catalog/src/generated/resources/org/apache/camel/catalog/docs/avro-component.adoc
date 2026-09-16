@@ -309,11 +309,11 @@ XML::
 [source,xml]
 ----
         <route>
-            <from uri="avro:netty:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol">
+            <from uri="avro:netty:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
             <process ref="putProcessor"/>
         </route>
         <route>
-            <from uri="avro:netty:localhost:{{avroport}}/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&singleParameter=true"/>
+            <from uri="avro:netty:localhost:{{avroport}}/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol&amp;singleParameter=true"/>
             <process ref="getProcessor"/>
         </route>
 ----

@@ -122,12 +122,12 @@ YAML::
 ----
 ====
 
-=== Example 2: Loading properties into the JNDI registry in the Camel Context
+=== Example 2: Binding beans in the registry of the Camel Context
 
 ._Java-only: programmatic CamelContext and registry configuration_
 [source,java]
 ----
-CamelContext context = new DefaultCamelContext(createRegistry());
+CamelContext context = new DefaultCamelContext();
 Registry registry = context.getRegistry();
 registry.bind("whitespace", new File("./whitespaceIndexDir"));
 registry.bind("load_dir", new File("src/test/resources/sources"));

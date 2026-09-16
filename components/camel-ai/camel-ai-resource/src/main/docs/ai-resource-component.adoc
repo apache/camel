@@ -124,7 +124,7 @@ from("ai-resource:latest_report"
     + "&tags=crm"
     + "&description=Latest sales report"
     + "&mimeType=application/pdf")
-    .to("aws2-s3://reports?fileName=latest.pdf&operation=getObject");
+    .to("aws2-s3://reports?keyName=latest.pdf&operation=getObject");
 ----
 
 == Tags and exposure

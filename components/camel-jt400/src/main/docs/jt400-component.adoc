@@ -111,8 +111,8 @@ Java::
 +
 [source,java]
 ----
-from(“direct:george”).to(“jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”);
-from(“jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”).to(“mock:ringo”);
+from("direct:george").to("jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ");
+from("jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ").to("mock:ringo");
 ----
 
 XML::
@@ -120,13 +120,13 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri=”direct:george”/>
-  <to uri=”jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”/>
+  <from uri="direct:george"/>
+  <to uri="jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ"/>
 </route>
 
 <route>
-  <from uri=”jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”/>
-  <to uri=”mock:ringo”/>
+  <from uri="jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ"/>
+  <to uri="mock:ringo"/>
 </route>
 ----
 
@@ -202,20 +202,20 @@ In this example, the camel route will call the QUSRTVUS API to retrieve
 ._Java-only: uses lambda Processor to set program call parameters_
 [source,java]
 ----
-from(“timer://foo?period=60000”)
+from("timer://foo?period=60000")
     .process( exchange -> {
-        String usrSpc = “MYUSRSPACEMYLIB     “;
+        String usrSpc = "MYUSRSPACEMYLIB     ";
         Object[] parms = new Object[] {
             usrSpc, // Qualified user space name
             1,      // starting position
             16,     // length of data
-            “” // output
+            "" // output
         };
         exchange.getIn().setBody(parms);
     })
-    .to(“jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3”)
-    .setBody(simple(“${body[3]}”))
-    .to(“direct:foo”);
+    .to("jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3")
+    .setBody(simple("${body[3]}"))
+    .to("direct:foo");
 ----
 
 === Writing to keyed data queues
