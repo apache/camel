@@ -42,9 +42,7 @@ public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPrope
     public PropertiesFunction resolvePropertiesFunction(String name) {
         PropertiesFunction answer = null;
 
-        if (export) {
-            downloadPropertiesFunctionExport(name);
-        } else if (transform) {
+        if (transform) {
             if ("boolean".equals(name)) {
                 // ensure boolean function can fallback and return a value as we just want to transform
                 answer = new ExportBooleanFunction();
@@ -56,6 +54,11 @@ public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPrope
                 answer = new TransformDummyFunction(name);
                 addPropertiesFunction(answer);
             }
+        } else {
+            // for both run and export we must auto-download the JAR that backs the properties
+            // function (e.g. camel-kubernetes for secret/configmap) so the function can be resolved;
+            // otherwise the placeholder is silently parsed as a key with a default value (CAMEL-24776)
+            downloadPropertiesFunctionDependency(name);
         }
 
         if (answer == null) {
@@ -67,7 +70,7 @@ public class DependencyDownloaderPropertiesFunctionResolver extends DefaultPrope
         return answer;
     }
 
-    private void downloadPropertiesFunctionExport(String name) {
+    private void downloadPropertiesFunctionDependency(String name) {
         DependencyDownloader downloader = getCamelContext().hasService(DependencyDownloader.class);
 
         if ("base64".equals(name)) {
