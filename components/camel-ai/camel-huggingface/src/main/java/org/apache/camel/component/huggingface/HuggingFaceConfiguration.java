@@ -28,8 +28,8 @@ public class HuggingFaceConfiguration implements Cloneable {
 
     @UriPath(name = "task")
     @Metadata(required = true,
-              enums = "TEXT_CLASSIFICATION,TEXT_GENERATION,QUESTION_ANSWERING,SUMMARIZATION,SENTENCE_EMBEDDINGS,ZERO_SHOT_CLASSIFICATION,TEXT_TO_IMAGE,CHAT,AUTOMATIC_SPEECH_RECOGNITION,TEXT_TO_SPEECH",
-              description = "The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)")
+              description = "The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)."
+                            + " CUSTOM, or any other name, runs the predictor bean given by predictorBean.")
     private HuggingFaceTask task;
 
     @UriParam

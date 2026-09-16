@@ -82,7 +82,12 @@ public enum HuggingFaceTask {
      * Chat task (conversational text generation). Supported models: Instruct-tuned models like
      * mistralai/Mistral-7B-Instruct-v0.2.
      */
-    CHAT(ChatPredictor.class);
+    CHAT(ChatPredictor.class),
+    /**
+     * A task with no built-in predictor: the endpoint runs the {@link TaskPredictor} bean given by the predictorBean
+     * option. Any task name that is not one of the built-in tasks is treated as CUSTOM.
+     */
+    CUSTOM(null);
 
     private final Class<? extends TaskPredictor> predictorClass;
 

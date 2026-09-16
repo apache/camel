@@ -49,6 +49,7 @@ public class HuggingFaceComponent extends HealthCheckComponent {
                             String.format("Custom camel-huggingface task %s was specified, please set predictor bean option",
                                     normalized));
                 }
+                configuration.setTask(HuggingFaceTask.CUSTOM);
             }
         }
         return endpoint;

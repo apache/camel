@@ -70,7 +70,7 @@ public class XmppEndpointUriFactory extends org.apache.camel.support.component.E
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "port", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "port", 5222, false, copy);
         uri = buildPathParameter(syntax, uri, "participant", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;

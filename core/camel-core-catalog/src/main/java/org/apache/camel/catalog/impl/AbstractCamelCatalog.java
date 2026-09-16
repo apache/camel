@@ -1855,12 +1855,11 @@ public abstract class AbstractCamelCatalog {
     }
 
     /**
-     * Whether the name sets an entry of a Map option (userMetadata.messageId=x fills the userMetadata map), as property
-     * binding does.
+     * Whether the name sets an entry of a Map option (userMetadata.messageId=x fills the userMetadata map) or a
+     * property of an object option (approval.comments=x sets comments on the approval bean), as property binding does.
      */
     private static boolean isMapEntry(BaseOptionModel row, String name) {
-        String javaType = row.getJavaType();
-        return javaType != null && javaType.startsWith("java.util.Map") && name.startsWith(row.getName() + ".");
+        return "object".equals(row.getType()) && name.startsWith(row.getName() + ".");
     }
 
     /**

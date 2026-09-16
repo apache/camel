@@ -39,7 +39,8 @@ public class TaskPredictorFactory {
 
         Class<? extends TaskPredictor> predictorClass = task.getPredictorClass();
         if (predictorClass == null) {
-            throw new UnsupportedOperationException("Task " + task + " not supported");
+            throw new UnsupportedOperationException(
+                    "Task " + task + " has no built-in predictor, set the predictorBean option");
         }
         try {
             return predictorClass.getConstructor(HuggingFaceEndpoint.class).newInstance(endpoint);

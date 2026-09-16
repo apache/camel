@@ -125,8 +125,7 @@ public class Jt400Configuration {
     @Metadata(required = true)
     private String objectPath;
 
-    @UriPath
-    @Metadata(required = true)
+    // derived from the suffix of the object path by the component, not an option of its own
     private Jt400Type type;
 
     @UriParam
@@ -193,7 +192,8 @@ public class Jt400Configuration {
     }
 
     /**
-     * Whether to work with data queues or remote program call
+     * Whether to work with a data queue, a message queue, a program or a service program. The component sets this from
+     * the suffix of the object path.
      */
     public void setType(Jt400Type type) {
         this.type = type;
@@ -233,7 +233,9 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the fully qualified integrated file system path name of the target object of this endpoint.
+     * The integrated file system path of the target object, such as QSYS.LIB/MYLIB.LIB/MYQUEUE.DTAQ. The suffix of the
+     * object selects what the endpoint works with: .DTAQ a data queue, .MSGQ a message queue, .PGM a program call and
+     * .SRVPGM a service program call.
      */
     public String getObjectPath() {
         return objectPath;

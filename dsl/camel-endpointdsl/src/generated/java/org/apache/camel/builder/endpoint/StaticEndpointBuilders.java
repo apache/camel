@@ -7648,11 +7648,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>huggingface:task</code>
      * 
      * Path parameter: task (required)
-     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)
-     * There are 10 enums and the value can be one of: TEXT_CLASSIFICATION,
+     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION). CUSTOM, or
+     * any other name, runs the predictor bean given by predictorBean.
+     * There are 11 enums and the value can be one of: TEXT_CLASSIFICATION,
      * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
      * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
-     * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
+     * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT, CUSTOM
      * 
      * @param path task
      * @return the dsl builder
@@ -7672,11 +7673,12 @@ public class StaticEndpointBuilders {
      * Syntax: <code>huggingface:task</code>
      * 
      * Path parameter: task (required)
-     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)
-     * There are 10 enums and the value can be one of: TEXT_CLASSIFICATION,
+     * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION). CUSTOM, or
+     * any other name, runs the predictor bean given by predictorBean.
+     * There are 11 enums and the value can be one of: TEXT_CLASSIFICATION,
      * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
      * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
-     * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
+     * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT, CUSTOM
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9570,8 +9572,7 @@ public class StaticEndpointBuilders {
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
      * 
-     * Syntax:
-     * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
+     * Syntax: <code>jt400:userID:password@systemName/objectPath</code>
      * 
      * Path parameter: userID (required)
      * Returns the ID of the IBM i user.
@@ -9583,14 +9584,12 @@ public class StaticEndpointBuilders {
      * Returns the name of the IBM i system.
      * 
      * Path parameter: objectPath (required)
-     * Returns the fully qualified integrated file system path name of the
-     * target object of this endpoint.
+     * The integrated file system path of the target object, such as
+     * QSYS.LIB/MYLIB.LIB/MYQUEUE.DTAQ. The suffix of the object selects what
+     * the endpoint works with: .DTAQ a data queue, .MSGQ a message queue, .PGM
+     * a program call and .SRVPGM a service program call.
      * 
-     * Path parameter: type (required)
-     * Whether to work with data queues or remote program call
-     * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
-     * 
-     * @param path userID:password@systemName/QSYS.LIB/objectPath.type
+     * @param path userID:password@systemName/objectPath
      * @return the dsl builder
      */
     public static Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(String path) {
@@ -9606,8 +9605,7 @@ public class StaticEndpointBuilders {
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
      * 
-     * Syntax:
-     * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
+     * Syntax: <code>jt400:userID:password@systemName/objectPath</code>
      * 
      * Path parameter: userID (required)
      * Returns the ID of the IBM i user.
@@ -9619,16 +9617,14 @@ public class StaticEndpointBuilders {
      * Returns the name of the IBM i system.
      * 
      * Path parameter: objectPath (required)
-     * Returns the fully qualified integrated file system path name of the
-     * target object of this endpoint.
-     * 
-     * Path parameter: type (required)
-     * Whether to work with data queues or remote program call
-     * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
+     * The integrated file system path of the target object, such as
+     * QSYS.LIB/MYLIB.LIB/MYQUEUE.DTAQ. The suffix of the object selects what
+     * the endpoint works with: .DTAQ a data queue, .MSGQ a message queue, .PGM
+     * a program call and .SRVPGM a service program call.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path userID:password@systemName/QSYS.LIB/objectPath.type
+     * @param path userID:password@systemName/objectPath
      * @return the dsl builder
      */
     public static Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(String componentName, String path) {
@@ -17958,8 +17954,9 @@ public class StaticEndpointBuilders {
      * Path parameter: host (required)
      * Hostname for the chat server
      * 
-     * Path parameter: port (required)
+     * Path parameter: port
      * Port number for the chat server
+     * Default value: 5222
      * 
      * Path parameter: participant
      * JID (Jabber ID) of person to receive messages. room parameter has
@@ -17984,8 +17981,9 @@ public class StaticEndpointBuilders {
      * Path parameter: host (required)
      * Hostname for the chat server
      * 
-     * Path parameter: port (required)
+     * Path parameter: port
      * Port number for the chat server
+     * Default value: 5222
      * 
      * Path parameter: participant
      * JID (Jabber ID) of person to receive messages. room parameter has

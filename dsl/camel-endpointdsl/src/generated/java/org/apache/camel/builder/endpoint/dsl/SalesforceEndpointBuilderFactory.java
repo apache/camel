@@ -2845,6 +2845,44 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * The approval request for the Salesforce Approval API. Options
+         * approval.actionType, approval.comments, approval.contextActorId,
+         * approval.contextId, approval.nextApproverIds,
+         * approval.processDefinitionNameOrId, approval.skipEntryCriteria are
+         * bound as nested properties.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param approval the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder approval(org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest approval) {
+            doSetProperty("approval", approval);
+            return this;
+        }
+        /**
+         * The approval request for the Salesforce Approval API. Options
+         * approval.actionType, approval.comments, approval.contextActorId,
+         * approval.contextId, approval.nextApproverIds,
+         * approval.processDefinitionNameOrId, approval.skipEntryCriteria are
+         * bound as nested properties.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param approval the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointProducerBuilder approval(String approval) {
+            doSetProperty("approval", approval);
+            return this;
+        }
+        /**
          * Composite (raw) method.
          * 
          * The option is a: <code>java.lang.String</code> type.

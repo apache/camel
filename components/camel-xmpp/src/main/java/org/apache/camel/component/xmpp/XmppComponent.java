@@ -54,7 +54,9 @@ public class XmppComponent extends DefaultComponent {
 
         URI u = new URI(uri);
         endpoint.setHost(u.getHost());
-        endpoint.setPort(u.getPort());
+        if (u.getPort() > 0) {
+            endpoint.setPort(u.getPort());
+        }
         if (u.getUserInfo() != null) {
             String[] parts = u.getUserInfo().split(":");
             if (parts.length == 2) {

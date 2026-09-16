@@ -535,11 +535,12 @@ public interface HuggingFaceEndpointBuilderFactory {
          * Syntax: <code>huggingface:task</code>
          * 
          * Path parameter: task (required)
-         * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)
-         * There are 10 enums and the value can be one of: TEXT_CLASSIFICATION,
+         * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION). CUSTOM,
+         * or any other name, runs the predictor bean given by predictorBean.
+         * There are 11 enums and the value can be one of: TEXT_CLASSIFICATION,
          * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
          * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
-         * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
+         * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT, CUSTOM
          * 
          * @param path task
          * @return the dsl builder
@@ -559,11 +560,12 @@ public interface HuggingFaceEndpointBuilderFactory {
          * Syntax: <code>huggingface:task</code>
          * 
          * Path parameter: task (required)
-         * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)
-         * There are 10 enums and the value can be one of: TEXT_CLASSIFICATION,
+         * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION). CUSTOM,
+         * or any other name, runs the predictor bean given by predictorBean.
+         * There are 11 enums and the value can be one of: TEXT_CLASSIFICATION,
          * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
          * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
-         * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
+         * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT, CUSTOM
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
