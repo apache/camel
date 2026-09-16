@@ -253,6 +253,51 @@ public final class BeanModelHelper {
                     }
                 }));
             }
+        } else if (def.getBuilderClass() != null) {
+            // builder class and method, the type (class name) is optional
+            final CamelContext camelContext = routeTemplateContext.getCamelContext();
+            final Class<?> clazz;
+            if (def.getBeanClass() != null) {
+                clazz = def.getBeanClass();
+            } else if (def.getType() != null) {
+                String fqn = def.getType();
+                if (fqn.contains(":")) {
+                    fqn = StringHelper.after(fqn, ":");
+                }
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(fqn);
+            } else {
+                clazz = Object.class;
+            }
+            // memorize so the bean is only created once and the local bean is the same
+            // if a route template refers to the local bean multiple times
+            routeTemplateContext.bind(def.getName(), clazz, Suppliers.memorize(() -> {
+                try {
+                    Class<?> builderClass = camelContext.getClassResolver().resolveMandatoryClass(def.getBuilderClass());
+                    Object builder = camelContext.getInjector().newInstance(builderClass);
+                    String bm = def.getBuilderMethod() != null ? def.getBuilderMethod() : "build";
+                    // create bean via builder and assign as target output
+                    Object local = PropertyBindingSupport.build()
+                            .withCamelContext(camelContext)
+                            .withTarget(builder)
+                            .withRemoveParameters(true)
+                            .withProperties(props)
+                            .build(Object.class, bm);
+                    // set the optional properties the builder did not take on the created bean
+                    if (!props.isEmpty()) {
+                        PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
+                    }
+                    if (def.getInitMethod() != null) {
+                        ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
+                    }
+                    if (def.getDestroyMethod() != null) {
+                        routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
+                    }
+                    return local;
+                } catch (Exception e) {
+                    throw new IllegalStateException(
+                            "Cannot create bean: " + def.getName() + " using builder: " + def.getBuilderClass(), e);
+                }
+            }));
         } else if (def.getBeanClass() != null || def.getType() != null) {
             String type = def.getType();
             if (type == null) {
