@@ -132,7 +132,7 @@ public class DMSProducer extends DefaultProducer {
                 if (ObjectHelper.isEmpty(clientConfigurations.getSpecification())) {
                     throw new IllegalArgumentException("Specification is mandatory to create a Kafka instance");
                 }
-                if (ObjectHelper.isEmpty(clientConfigurations.getPartitionNum())) {
+                if (clientConfigurations.getPartitionNum() == null || clientConfigurations.getPartitionNum() <= 0) {
                     throw new IllegalArgumentException("Partition number is mandatory to create a Kafka instance");
                 }
                 if (ObjectHelper.isEmpty(clientConfigurations.getKafkaManagerUser())) {
@@ -153,7 +153,7 @@ public class DMSProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Engine must be 'kafka' or 'rabbitmq'");
             }
 
-            if (ObjectHelper.isEmpty(clientConfigurations.getStorageSpace())) {
+            if (clientConfigurations.getStorageSpace() == null || clientConfigurations.getStorageSpace() <= 0) {
                 throw new IllegalArgumentException("Storage space is mandatory to create an instance");
             }
             if (ObjectHelper.isEmpty(clientConfigurations.getVpcId())) {
@@ -344,13 +344,13 @@ public class DMSProducer extends DefaultProducer {
         // checking for storage space
         clientConfigurations.setStorageSpace(
                 ObjectHelper.isNotEmpty(exchange.getProperty(DMSProperties.STORAGE_SPACE))
-                        ? (Integer) exchange.getProperty(DMSProperties.STORAGE_SPACE)
+                        ? exchange.getProperty(DMSProperties.STORAGE_SPACE, Integer.class)
                         : endpoint.getStorageSpace());
 
         // checking for partition number
         clientConfigurations.setPartitionNum(
                 ObjectHelper.isNotEmpty(exchange.getProperty(DMSProperties.PARTITION_NUM))
-                        ? (Integer) exchange.getProperty(DMSProperties.PARTITION_NUM)
+                        ? exchange.getProperty(DMSProperties.PARTITION_NUM, Integer.class)
                         : endpoint.getPartitionNum());
 
         // checking for access user
