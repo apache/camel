@@ -27,12 +27,13 @@ import org.apache.camel.InvalidPayloadException;
 
 public class HoistField {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     public JsonNode process(@ExchangeProperty("field") String field, Exchange ex) throws InvalidPayloadException {
-        ObjectMapper mapper = new ObjectMapper();
         Object body = ex.getMessage().getBody();
         Map<Object, Object> updatedBody = new HashMap<>();
         updatedBody.put(field, body);
-        return mapper.valueToTree(updatedBody);
+        return OBJECT_MAPPER.valueToTree(updatedBody);
     }
 
 }

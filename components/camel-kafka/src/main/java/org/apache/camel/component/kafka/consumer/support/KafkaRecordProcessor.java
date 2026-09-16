@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.kafka.consumer.support;
 
-import java.util.stream.StreamSupport;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kafka.KafkaConfiguration;
@@ -60,10 +58,14 @@ public abstract class KafkaRecordProcessor {
 
         HeaderFilterStrategy headerFilterStrategy = configuration.getHeaderFilterStrategy();
         KafkaHeaderDeserializer headerDeserializer = configuration.getHeaderDeserializer();
+        Message in = exchange.getIn();
 
-        StreamSupport.stream(consumerRecord.headers().spliterator(), false)
-                .filter(header -> shouldBeFiltered(header, exchange, headerFilterStrategy))
-                .forEach(header -> exchange.getIn().setHeader(header.key(),
-                        headerDeserializer.deserialize(header.key(), header.value())));
+        // Iterate the record headers directly instead of allocating a Stream, spliterator and lambdas per
+        // consumed record; getIn() is resolved once rather than for every header (CAMEL-24779).
+        for (Header header : consumerRecord.headers()) {
+            if (shouldBeFiltered(header, exchange, headerFilterStrategy)) {
+                in.setHeader(header.key(), headerDeserializer.deserialize(header.key(), header.value()));
+            }
+        }
     }
 }

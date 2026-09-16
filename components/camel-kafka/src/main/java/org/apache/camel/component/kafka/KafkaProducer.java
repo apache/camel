@@ -464,7 +464,10 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 processIterableAsync(exchange, producerCallBack, message);
             } else {
                 final ProducerRecord<Object, Object> record = createRecord(exchange, message);
-                doSend(exchange, record, producerCallBack);
+                // Single message: the parent KafkaProducerCallBack already records the metadata and any
+                // exception on this exchange, so pass a null key to skip the redundant per-record metadata
+                // callback (avoids two short-lived allocations per message) (CAMEL-24779).
+                doSend(null, record, producerCallBack);
             }
 
             return producerCallBack.allSent();
