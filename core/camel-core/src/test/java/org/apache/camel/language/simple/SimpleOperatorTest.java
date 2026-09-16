@@ -509,6 +509,19 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testContainsBracesInQuotedLiteral() {
+        // a } inside a quoted literal is text, not the end of a function
+        exchange.getMessage().setBody("{name:XOrder,items:[]}");
+        assertPredicate("${body} contains '{name:XOrder}'", false);
+        assertPredicate("${body} contains '{name:XOrder,'", true);
+        assertPredicate("${body} contains '}'", true);
+        assertPredicate("${body} contains \"[]}\"", true);
+        assertPredicate("${body} contains '{'", true);
+        assertPredicate("${body} == '{name:XOrder,items:[]}'", true);
+        assertPredicate("${body} == '{name:XOrder,items:[]}' && ${body} contains '}'", true);
+    }
+
+    @Test
     public void testContainsNumberInString() {
         exchange.getMessage().setBody("The answer is 42 and is the answer to life the universe and everything");
         assertPredicate("${body} contains '42'", true);

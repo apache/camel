@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -213,7 +214,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         SimpleNode lastFunction = null;
         AtomicBoolean startSingle = new AtomicBoolean();
         AtomicBoolean startDouble = new AtomicBoolean();
-        AtomicBoolean startFunction = new AtomicBoolean();
+        AtomicInteger startFunction = new AtomicInteger();
 
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {
@@ -267,7 +268,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
             int index = evalIndex(lastDouble);
             throw new SimpleParserException("double quote has no ending quote", index);
         }
-        if (startFunction.get()) {
+        if (startFunction.get() > 0) {
             // we have a start function, but no ending function
             int index = evalIndex(lastFunction);
             throw new SimpleParserException("function has no ending token: missing } to close ${...}", index);
@@ -313,18 +314,20 @@ public class SimplePredicateParser extends BaseSimpleParser {
      */
     private SimpleNode createNode(
             SimpleToken token, AtomicBoolean startSingle, AtomicBoolean startDouble,
-            AtomicBoolean startFunction) {
+            AtomicInteger startFunction) {
         if (token.getType().isFunctionStart()) {
-            startFunction.set(true);
+            startFunction.incrementAndGet();
             return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
-        } else if (token.getType().isFunctionEnd()) {
-            startFunction.set(false);
+        } else if (startFunction.get() > 0 && token.getType().isFunctionEnd()) {
+            // there must be a start function already, to let this be an end function
+            // (a } elsewhere, such as inside a quoted literal, is plain text)
+            startFunction.decrementAndGet();
             return new SimpleFunctionEnd(token);
         }
 
         // if we are inside a function, then we do not support any other kind of tokens
         // as we want all the tokens to be literal instead
-        if (startFunction.get()) {
+        if (startFunction.get() > 0) {
             return null;
         }
 
