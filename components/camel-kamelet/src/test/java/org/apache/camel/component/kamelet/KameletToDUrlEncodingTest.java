@@ -37,25 +37,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 class KameletToDUrlEncodingTest extends CamelTestSupport {
 
     /**
-     * A parameter value that contains URL-special characters: {@code %}, {@code +}, {@code ?} and {@code =}. These must
-     * survive the round-trip through {@code toD} unmodified.
+     * A parameter value that contains URL-special characters: {@code %}, {@code +}, {@code ?} and {@code =}. Used by
+     * the static {@code to} route as a baseline — known to pass through unmodified.
      */
     private static final String PARAM_WITH_SPECIAL_CHARS = "http://example.com?key=abc%+def";
 
+    /**
+     * A distinct parameter value (different from {@link #PARAM_WITH_SPECIAL_CHARS}) used exclusively for the
+     * {@code toD} route. Using a different value prevents the {@code toD} route from hitting the endpoint-cache entry
+     * registered at startup by the static {@code to} route, ensuring that {@code doGetEndpoint} is actually exercised
+     * for the dynamic path (CAMEL-24747).
+     */
+    private static final String PARAM_WITH_SPECIAL_CHARS_TOD = "http://example.com?key=xyz%+def";
+
     @Test
     void toDPreservesSpecialCharsLikeTo() {
-        // Use toD with a literal URI containing URL-special characters in a parameter value.
-        // The result should be identical to what the static `to` DSL produces.
+        // Baseline: static `to` route with URL-special characters in a parameter value.
         String resultTo = template.requestBody("direct:via-to", (Object) null, String.class);
-        String resultToD = template.requestBody("direct:via-tod", (Object) null, String.class);
-
         assertThat(resultTo)
                 .as("to: parameter value must not be URL-encoded")
                 .isEqualTo(PARAM_WITH_SPECIAL_CHARS);
 
+        // Dynamic `toD` route uses a distinct value so the endpoint-cache populated by
+        // the `to` route above cannot mask a regression (CAMEL-24747).
+        String resultToD = template.requestBody("direct:via-tod", (Object) null, String.class);
         assertThat(resultToD)
-                .as("toD: parameter value must equal what to produces (CAMEL-24747)")
-                .isEqualTo(resultTo);
+                .as("toD: parameter value must not be URL-encoded (CAMEL-24747)")
+                .isEqualTo(PARAM_WITH_SPECIAL_CHARS_TOD);
     }
 
     /**
@@ -87,9 +95,10 @@ class KameletToDUrlEncodingTest extends CamelTestSupport {
                 from("direct:via-to")
                         .to("kamelet:echo-uri?uri=" + PARAM_WITH_SPECIAL_CHARS);
 
-                // dynamic `toD` — was broken before the fix (CAMEL-24747)
+                // dynamic `toD` — was broken before the fix (CAMEL-24747); uses a distinct
+                // value to bypass the startup-time endpoint-cache entry of the `to` route
                 from("direct:via-tod")
-                        .toD("kamelet:echo-uri?uri=" + PARAM_WITH_SPECIAL_CHARS);
+                        .toD("kamelet:echo-uri?uri=" + PARAM_WITH_SPECIAL_CHARS_TOD);
 
                 // non-useRawUri component via toD — must continue to work normally
                 from("direct:via-tod-mock")

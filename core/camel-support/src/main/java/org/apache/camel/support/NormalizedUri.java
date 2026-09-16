@@ -47,7 +47,7 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      */
     public static NormalizedUri newNormalizedUri(String uri, boolean normalized) {
         if (normalized) {
-            return new NormalizedUri(uri, uri);
+            return new NormalizedUri(uri, null);
         } else {
             return new NormalizedUri(EndpointHelper.normalizeEndpointUri(uri), uri);
         }
@@ -57,6 +57,10 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      * Returns the raw (un-normalized) URI that was used to create this instance. Components that declare
      * {@code useRawUri()=true} should receive this value so that parameter values are not URL-decoded before they reach
      * the component.
+     *
+     * <p>
+     * May be {@code null} when the raw form is not known (e.g. when the URI was already normalized at construction
+     * time). Callers should treat {@code null} as "fall back to the normalized URI".
      *
      * @since 4.23
      */
