@@ -16,15 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -41,7 +40,6 @@ class LaunchManager {
 
     private final Supplier<List<InfraInfo>> infraServices;
     private final List<PendingLaunch> pendingLaunches = new ArrayList<>();
-    private final Map<Long, Path> activeTempPoms = new HashMap<>();
     private DeferredLaunch deferredLaunch;
     private volatile String pendingAutoSelect;
     private BiConsumer<String, Boolean> notificationCallback;
@@ -203,123 +201,27 @@ class LaunchManager {
         return false;
     }
 
+    /**
+     * Runs an existing Maven project via {@code camel run pom.xml}, which detects the runtime, injects the CLI
+     * connector, and logs to a file in {@code ~/.camel} that the Log tab reads (the same for all runtimes).
+     */
     void launchMavenProject(String dir, String projectType, String displayName, List<String> extraArgs) {
         try {
-            List<String> cmd = new ArrayList<>();
-            cmd.add(resolveMvnCommand(dir));
-            switch (projectType) {
-                case "spring-boot" -> cmd.add("spring-boot:run");
-                case "quarkus" -> cmd.add("quarkus:dev");
-                default -> cmd.add("camel:run");
-            }
-            // Translate Camel JBang args to Maven-compatible args
-            cmd.addAll(translateArgsForMaven(extraArgs, projectType));
-            // Inject camel-cli-connector if not already in the project
-            Path tempPom = null;
-            if ("spring-boot".equals(projectType)) {
-                tempPom = injectCliConnectorIfMissing(dir, cmd);
-            }
+            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+            cmd.add("run");
+            cmd.add(Path.of(dir, "pom.xml").toString());
+            cmd.addAll(extraArgs);
             Path outputFile = createSecureTempFile("camel-maven-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.directory(new java.io.File(dir));
+            pb.directory(new File(dir));
             pb.redirectErrorStream(true);
             pb.redirectOutput(outputFile.toFile());
             Process process = pb.start();
-            pendingLaunches.add(new PendingLaunch(displayName, process, outputFile, System.currentTimeMillis(), tempPom));
-            if (pendingAutoSelect == null) {
-                pendingAutoSelect = displayName;
-            }
-            notify("Starting: " + displayName + " (mvn " + cmd.get(1) + ")", false);
+            addPendingLaunch(displayName, process, outputFile);
+            notify("Starting: " + displayName + " (" + projectType + ")", false);
         } catch (Exception e) {
             notify("Failed to start Maven project: " + e.getMessage(), true);
-        }
-    }
-
-    private Path injectCliConnectorIfMissing(String dir, List<String> cmd) {
-        try {
-            Path pomFile = Path.of(dir, "pom.xml");
-            if (!Files.isRegularFile(pomFile)) {
-                return null;
-            }
-            String pomContent = Files.readString(pomFile);
-            if (pomContent.contains("camel-cli-connector")) {
-                return null;
-            }
-            // Add cli-connector-starter dependency (version managed by BOM)
-            String dep = "\n        <dependency>\n"
-                         + "            <groupId>org.apache.camel.springboot</groupId>\n"
-                         + "            <artifactId>camel-cli-connector-starter</artifactId>\n"
-                         + "        </dependency>";
-            // Find the project-level </dependencies> (not inside dependencyManagement or plugins)
-            int insertIdx = findProjectDependenciesEnd(pomContent);
-            if (insertIdx < 0) {
-                return null;
-            }
-            String modified = pomContent.substring(0, insertIdx) + dep + "\n    " + pomContent.substring(insertIdx);
-            // Write temp pom in the project dir so Maven can find sources
-            Path tempPom = Path.of(dir, ".camel-tui-pom.xml");
-            Files.writeString(tempPom, modified);
-            cmd.add("-f");
-            cmd.add(tempPom.getFileName().toString());
-            return tempPom;
-        } catch (Exception e) {
-            // best effort — don't fail the launch
-            return null;
-        }
-    }
-
-    private static int findProjectDependenciesEnd(String pom) {
-        // Find <dependencies> that is a direct child of <project>,
-        // not nested inside <dependencyManagement>, <plugin>, or <profile>
-        int dmStart = pom.indexOf("<dependencyManagement>");
-        int dmEnd = dmStart >= 0 ? pom.indexOf("</dependencyManagement>", dmStart) : -1;
-        int buildStart = pom.indexOf("<build>");
-
-        int searchFrom = 0;
-        while (true) {
-            int depStart = pom.indexOf("<dependencies>", searchFrom);
-            if (depStart < 0) {
-                return -1;
-            }
-            // Skip if inside <dependencyManagement>
-            if (dmStart >= 0 && depStart > dmStart && (dmEnd < 0 || depStart < dmEnd)) {
-                searchFrom = dmEnd > 0 ? dmEnd : depStart + 14;
-                continue;
-            }
-            // Skip if inside <build> (plugins can have dependencies)
-            if (buildStart >= 0 && depStart > buildStart) {
-                searchFrom = depStart + 14;
-                continue;
-            }
-            int depEnd = pom.indexOf("</dependencies>", depStart);
-            return depEnd >= 0 ? depEnd : -1;
-        }
-    }
-
-    private static Path writeSpringBootLogbackConfig() {
-        try {
-            Path camelDir = Path.of(System.getProperty("user.home"), ".camel");
-            Files.createDirectories(camelDir);
-            Path logbackFile = camelDir.resolve(".tui-logback-spring-boot.xml");
-            String config = """
-                    <?xml version="1.0" encoding="UTF-8"?>
-                    <configuration>
-                        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-                        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
-                        <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
-                        <property name="LOG_FILE" value="${user.home}${file.separator}.camel${file.separator}${PID}.log"/>
-                        <property name="FILE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN}"/>
-                        <root level="INFO">
-                            <appender-ref ref="CONSOLE"/>
-                            <appender-ref ref="FILE"/>
-                        </root>
-                    </configuration>
-                    """;
-            Files.writeString(logbackFile, config);
-            return logbackFile;
-        } catch (Exception e) {
-            return null;
         }
     }
 
@@ -341,67 +243,6 @@ class LaunchManager {
         } catch (Exception e) {
             notify("Failed to start: " + sourceDir + " - " + e.getMessage(), true);
         }
-    }
-
-    private static String resolveMvnCommand(String dir) {
-        String wrapper = System.getProperty("os.name", "").toLowerCase().contains("win") ? "mvnw.cmd" : "./mvnw";
-        Path wrapperPath = Path.of(dir).resolve(wrapper.startsWith("./") ? wrapper.substring(2) : wrapper);
-        if (Files.isRegularFile(wrapperPath)) {
-            return wrapperPath.toString();
-        }
-        return "mvn";
-    }
-
-    static List<String> translateArgsForMaven(List<String> extraArgs, String projectType) {
-        List<String> mvnArgs = new ArrayList<>();
-        StringBuilder jvmArgs = new StringBuilder();
-        if ("spring-boot".equals(projectType)) {
-            Path logbackFile = writeSpringBootLogbackConfig();
-            if (logbackFile != null) {
-                jvmArgs.append("-Dlogging.config=file:").append(logbackFile);
-            }
-        }
-        for (String arg : extraArgs) {
-            if (arg.startsWith("--prop=")) {
-                String kv = arg.substring("--prop=".length());
-                mvnArgs.add("-D" + kv);
-            } else if (arg.startsWith("--port=")) {
-                String port = arg.substring("--port=".length());
-                if ("spring-boot".equals(projectType)) {
-                    mvnArgs.add("-Dserver.port=" + port);
-                } else if ("quarkus".equals(projectType)) {
-                    mvnArgs.add("-Dquarkus.http.port=" + port);
-                }
-            } else if (arg.startsWith("--profile=")) {
-                String profile = arg.substring("--profile=".length());
-                if (!"prod".equals(profile)) {
-                    if (!jvmArgs.isEmpty()) {
-                        jvmArgs.append(" ");
-                    }
-                    jvmArgs.append("-Dcamel.main.profile=").append(profile);
-                }
-            } else if (arg.startsWith("--jvm-args=")) {
-                String extra = arg.substring("--jvm-args=".length()).trim();
-                if (!extra.isEmpty()) {
-                    if (!jvmArgs.isEmpty()) {
-                        jvmArgs.append(" ");
-                    }
-                    jvmArgs.append(extra);
-                }
-            }
-            // other Camel JBang flags (--name, --runtime, --dev, --observe, etc.)
-            // are not applicable to Maven and are silently dropped
-        }
-        if (!jvmArgs.isEmpty()) {
-            if ("spring-boot".equals(projectType)) {
-                mvnArgs.add("-Dspring-boot.run.jvmArguments=" + jvmArgs);
-            } else if ("quarkus".equals(projectType)) {
-                mvnArgs.add("-Djvm.args=" + jvmArgs);
-            } else {
-                mvnArgs.add("-Dcamel.jvmArgs=" + jvmArgs);
-            }
-        }
-        return mvnArgs;
     }
 
     private void checkDeferredLaunch(long now) {
@@ -434,36 +275,10 @@ class LaunchManager {
                         failureLogCallback.accept(pl.name(), pl.outputFile());
                     }
                 }
-                cleanupTempPom(pl);
                 it.remove();
             } else if (now - pl.startTime() > 8000) {
                 notify("Started: " + pl.name(), false);
-                // keep temp pom reference for cleanup when process stops
-                if (pl.tempPom() != null) {
-                    activeTempPoms.put(pl.process().pid(), pl.tempPom());
-                }
                 it.remove();
-            }
-        }
-    }
-
-    void cleanupTempPom(long pid) {
-        Path tempPom = activeTempPoms.remove(pid);
-        if (tempPom != null) {
-            try {
-                Files.deleteIfExists(tempPom);
-            } catch (Exception e) {
-                // best effort
-            }
-        }
-    }
-
-    private static void cleanupTempPom(PendingLaunch pl) {
-        if (pl.tempPom() != null) {
-            try {
-                Files.deleteIfExists(pl.tempPom());
-            } catch (Exception e) {
-                // best effort
             }
         }
     }
@@ -474,10 +289,7 @@ class LaunchManager {
         }
     }
 
-    private record PendingLaunch(String name, Process process, Path outputFile, long startTime, Path tempPom) {
-        PendingLaunch(String name, Process process, Path outputFile, long startTime) {
-            this(name, process, outputFile, startTime, null);
-        }
+    private record PendingLaunch(String name, Process process, Path outputFile, long startTime) {
     }
 
     private record DeferredLaunch(

@@ -2385,7 +2385,6 @@ public class CamelMonitor extends CamelCommand {
             }
         } else {
             String pidStr = ctx.selectedPid;
-            actionsPopup.getLaunchManager().cleanupTempPom(pid);
             ProcessHandle.of(pid).ifPresent(ph -> {
                 if (forceKill) {
                     ph.destroyForcibly();
