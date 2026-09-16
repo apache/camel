@@ -43,14 +43,9 @@ class CatalogDocExamplesTest {
      * the component (CAMEL-24748 and the notes on it); checked again when the metadata is fixed.
      */
     private static final Map<String, String> PAGES_SKIPPED = Map.ofEntries(
-            Map.entry("azure-storage-datalake-component", "CAMEL-24748: the operation enum lists 2 of 15 values"),
-            Map.entry("google-secret-manager-component", "CAMEL-24748: the operation enum lists 1 of 4 values"),
-            Map.entry("google-storage-component", "CAMEL-24748: objectName is labelled producer, the consumer uses it"),
-            Map.entry("web3j-component", "CAMEL-24748: operation is labelled producer, the consumer uses it"),
-            Map.entry("grpc-component", "CAMEL-24748: forwardOnError and forwardOnCompleted are labelled consumer"),
             Map.entry("netty-http-component", "CAMEL-24748: bootstrapConfiguration is not in the metadata"),
-            Map.entry("jt400-component", "CAMEL-24748: the output options have no @UriParam; the syntax has literal"
-                                         + " segments (QSYS.LIB, objectPath.type) the catalog reads as options"),
+            Map.entry("jt400-component", "CAMEL-24748: the syntax has literal segments (QSYS.LIB, objectPath.type)"
+                                         + " the catalog reads as options"),
             Map.entry("olingo2-component", "CAMEL-24748: the syntax is apiName/methodName, the runtime reads"
                                            + " methodName/resourcePath with the api name implicit"),
             Map.entry("olingo4-component", "CAMEL-24748: the syntax is apiName/methodName, the runtime reads"
