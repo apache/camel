@@ -594,6 +594,19 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void validateMapOptionEntries() {
+        // userMetadata is a Map option: userMetadata.key=value fills an entry of the map, as property binding does
+        EndpointValidationResult result = catalog.validateEndpointProperties(
+                "spring-ai-chat:assistant?chatModel=#myModel&userMetadata.messageId=abc&userMetadata.priority=high");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the option before the dot must be a Map
+        result = catalog.validateEndpointProperties("spring-ai-chat:assistant?chatModel=#myModel&chatModel.foo=abc");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("chatModel.foo"));
+    }
+
+    @Test
     public void testEndpointPropertiesPlaceholders() throws Exception {
         Map<String, String> map = catalog.endpointProperties("timer:foo?period={{howoften}}&repeatCount=5");
         assertNotNull(map);

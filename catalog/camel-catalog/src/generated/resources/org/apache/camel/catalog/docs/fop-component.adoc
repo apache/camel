@@ -72,6 +72,8 @@ supported:
 
 The complete list of valid output formats can be found in the `MimeConstants.java` source file.
 
+The endpoint URI takes either the name in lower case (`fop:pdf`) or the output format (`fop:application/pdf`).
+
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -137,7 +139,7 @@ Java::
 ----
 from("file:source/data/xml")
     .to("xslt:xslt/template.xsl")
-    .to("fop:application/pdf")
+    .to("fop:pdf")
     .to("file:target/data");
 ----
 
@@ -148,7 +150,7 @@ XML::
 <route>
   <from uri="file:source/data/xml"/>
   <to uri="xslt:xslt/template.xsl"/>
-  <to uri="fop:application/pdf"/>
+  <to uri="fop:pdf"/>
   <to uri="file:target/data"/>
 </route>
 ----
@@ -164,7 +166,7 @@ YAML::
         - to:
             uri: xslt:xslt/template.xsl
         - to:
-            uri: fop:application/pdf
+            uri: fop:pdf
         - to:
             uri: file:target/data
 ----

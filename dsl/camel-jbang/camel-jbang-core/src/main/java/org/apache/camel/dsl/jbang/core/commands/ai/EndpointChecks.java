@@ -34,6 +34,7 @@ import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.YAML_URI_PAT
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.extractEipFromLine;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.findParentEip;
+import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.stripComment;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.unquote;
 
 /**
@@ -150,6 +151,9 @@ final class EndpointChecks {
                 String nextTrimmed = next.trim();
                 if (nextIndent == lineIndent && nextTrimmed.startsWith("parameters:")) {
                     int paramBlockIndent = nextIndent;
+                    int blockScalarIndent = -1;
+                    String mapKey = null;
+                    int mapIndent = -1;
                     for (int k = j + 1; k < lines.length; k++) {
                         String paramLine = lines[k];
                         if (paramLine.isBlank()) {
@@ -159,11 +163,33 @@ final class EndpointChecks {
                         if (paramIndent <= paramBlockIndent) {
                             break;
                         }
+                        if (blockScalarIndent >= 0 && paramIndent > blockScalarIndent) {
+                            // the lines of a block scalar (argSchema: | followed by JSON) are its value, not options
+                            continue;
+                        }
+                        blockScalarIndent = -1;
+                        if (mapKey != null && paramIndent <= mapIndent) {
+                            mapKey = null;
+                        }
                         String paramTrimmed = paramLine.trim();
                         int colonPos = paramTrimmed.indexOf(':');
                         if (colonPos > 0) {
-                            String key = paramTrimmed.substring(0, colonPos).trim();
-                            String val = unquote(paramTrimmed.substring(colonPos + 1).trim());
+                            String key = unquote(paramTrimmed.substring(0, colonPos).trim());
+                            String val = unquote(stripComment(paramTrimmed.substring(colonPos + 1).trim()));
+                            if (mapKey != null) {
+                                // headers: with foo: bar under it is the entry foo of the headers map option
+                                key = mapKey + "." + key;
+                            } else if (val.isEmpty() && k + 1 < lines.length
+                                    && countLeadingSpaces(lines[k + 1]) > paramIndent) {
+                                mapKey = key;
+                                mapIndent = paramIndent;
+                                continue;
+                            }
+                            if (YamlLines.isBlockScalarIndicator(val)) {
+                                // the option is checked by name; its value is the block that follows
+                                blockScalarIndent = paramIndent;
+                                val = "";
+                            }
                             char sep = hasParams ? '&' : '?';
                             uriBuilder.append(sep).append(key).append('=').append(val);
                             hasParams = true;

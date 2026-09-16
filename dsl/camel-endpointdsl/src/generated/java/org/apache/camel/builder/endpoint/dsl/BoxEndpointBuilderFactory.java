@@ -1159,6 +1159,20 @@ public interface BoxEndpointBuilderFactory {
          * Since: 2.14
          * Maven coordinates: org.apache.camel:camel-box
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default BoxHeaderNameBuilder box() {
+            return BoxHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Box (camel-box)
+         * Upload, download and manage files, folders, groups, collaborations,
+         * etc. on box.com.
+         * 
+         * Category: cloud,file,api
+         * Since: 2.14
+         * Maven coordinates: org.apache.camel:camel-box
+         * 
          * Syntax: <code>box:apiName/methodName</code>
          * 
          * Path parameter: apiName (required)
@@ -1205,6 +1219,30 @@ public interface BoxEndpointBuilderFactory {
             return BoxEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Box component.
+     */
+    public static class BoxHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final BoxHeaderNameBuilder INSTANCE = new BoxHeaderNameBuilder();
+
+        /**
+         * The prefix of the headers that carry the parameters of the API
+         * method: the header CamelBox.fileName holds the fileName parameter.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code Box.}.
+         */
+        public String box() {
+            return "CamelBox.";
+        }
     }
     static BoxEndpointBuilder endpointBuilder(String componentName, String path) {
         class BoxEndpointBuilderImpl extends AbstractEndpointBuilder implements BoxEndpointBuilder, AdvancedBoxEndpointBuilder {

@@ -27,6 +27,9 @@ public final class DigitalSignatureConstants {
     @Metadata(description = "The Certificate or PublicKey that should be used to verify the signature",
               javaType = "Certificate or PublicKey")
     public static final String SIGNATURE_PUBLIC_KEY_OR_CERT = "CamelSignaturePublicKeyOrCert";
+    @Metadata(description = "The signature of the message, set by the sign operation and read by the verify operation"
+                            + " (the signatureHeaderName option changes the header name)",
+              javaType = "byte[] (Base64 encoded)")
     public static final String SIGNATURE = "CamelDigitalSignature";
     @Metadata(description = "The alias used to query the KeyStore for keys and Certificates to be\n" +
                             " used in signing and verifying exchanges",

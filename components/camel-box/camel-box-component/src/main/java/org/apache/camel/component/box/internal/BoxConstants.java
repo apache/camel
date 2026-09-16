@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.box.internal;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants for Box component.
  */
 public interface BoxConstants {
 
-    // suffix for parameters when passed as exchange header properties
+    // prefix for parameters when passed as exchange header properties
+    @Metadata(description = "The prefix of the headers that carry the parameters of the API method: the header"
+                            + " CamelBox.fileName holds the fileName parameter.",
+              javaType = "Object")
     String PROPERTY_PREFIX = "CamelBox.";
 
     // thread profile name for this component

@@ -399,6 +399,64 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void aPropertyOrBeanNameIsNotAHeader() {
+        // CAMEL-24710: name: counts as a header only under setHeader/removeHeader; a dotted name is looked up as is,
+        // by the prefix the component documents (CamelSolrField.), and as the head of an OGNL path
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - beans:
+                    - name: CamelMyBean
+                      type: "#class:com.example.MyBean"
+                - from:
+                    uri: "file:in?noop=true"
+                    steps:
+                      - setProperty:
+                          name: CamelAwsSqsDeleteFiltered
+                          constant: "true"
+                      - setHeader:
+                          name: CamelSolrField.id
+                          simple: "${body}"
+                      - log: "${header.CamelFileName.length()} ${header.CamelFileNam.length()}"
+                      - to:
+                          uri: solr:localhost:8983/mycollection
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("header CamelFileNam.length is not set by").contains("did you mean CamelFileLength");
+    }
+
+    @Test
+    void aCommentABlockScalarAndANestedMapInTheParametersAreRead() {
+        // CAMEL-24710: a comment after a value is not the value; the body of a block scalar is not options; the keys
+        // under a Map option are its entries
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: ai-tool:createOrder
+                    parameters:
+                      description: "Create an order"
+                      argSchema: |
+                        {
+                          "type": "object",
+                          "properties": { "id": { "type": "string" } }
+                        }
+                    steps:
+                      - to:
+                          uri: log:out
+                          parameters:
+                            groupSize: 30000          # the default is none
+                            showAll: true
+                      - to:
+                          uri: once
+                          parameters:
+                            name: hello
+                            headers:
+                              foo: foolish
+                              bar: 456
+                            unknownOne: x
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("Unknown option 'unknownOne'");
+    }
+
+    @Test
     void aProducerOnlyComponentInFromIsNamed() {
         List<String> msgs = SourceValidator.validateYamlEndpoints("""
                 - from:
