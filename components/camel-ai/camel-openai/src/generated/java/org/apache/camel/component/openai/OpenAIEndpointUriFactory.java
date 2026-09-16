@@ -24,7 +24,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(87);
+        Set<String> props = new HashSet<>(94);
         props.add("additionalBodyProperty");
         props.add("additionalHeader");
         props.add("additionalResponseHeader");
@@ -38,6 +38,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("autoToolExecution");
         props.add("background");
         props.add("baseUrl");
+        props.add("bridgeErrorHandler");
         props.add("builtinTools");
         props.add("connectTimeout");
         props.add("conversationHistoryProperty");
@@ -47,9 +48,12 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("dimensions");
         props.add("embeddingModel");
         props.add("encodingFormat");
+        props.add("exceptionHandler");
+        props.add("exchangePattern");
         props.add("fileSearchVectorStoreIds");
         props.add("hallucinatedToolNameStrategy");
         props.add("hostedMcpTools");
+        props.add("httpServerComponent");
         props.add("imageBackground");
         props.add("imageCount");
         props.add("imageInputFidelity");
@@ -111,15 +115,19 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("toolExecutionErrorStrategy");
         props.add("topP");
         props.add("userMessage");
+        props.add("webhookMaxPayloadSize");
+        props.add("webhookPath");
+        props.add("webhookSecret");
         props.add("writeTimeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(6);
+        Set<String> secretProps = new HashSet<>(7);
         secretProps.add("additionalHeader");
         secretProps.add("apiKey");
         secretProps.add("hostedMcpTools");
         secretProps.add("sslKeyPassword");
         secretProps.add("sslKeystorePassword");
         secretProps.add("sslTruststorePassword");
+        secretProps.add("webhookSecret");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(4);

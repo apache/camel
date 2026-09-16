@@ -6,7 +6,7 @@
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: AI
 
@@ -52,6 +52,8 @@ See xref:others:openai-responses.adoc[Responses API operation] for usage (`previ
 * `moderation` - Check text or an image against the OpenAI usage policies before it reaches a model
 * `image-generation` - Generate images from a text prompt (e.g., gpt-image-1, gpt-image-1-mini)
 * `image-edit` - Edit an existing image, optionally through a mask, from a text prompt
+* `webhook` - Receive the events OpenAI sends when a background response, a batch or a job finishes. It is a
+consumer: it is used in a `from`, see xref:others:openai-webhooks.adoc[Webhook Events]
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -1288,6 +1290,7 @@ For more details on specific features, see:
 * xref:others:openai-mcp.adoc[MCP Tool Calling] - Model Context Protocol server configuration, agentic loop, streaming, and connection recovery
 * xref:others:openai-providers.adoc[OpenAI-Compatible Providers] - Using Ollama, LM Studio, vLLM, and OpenRouter as alternative backends
 * xref:others:openai-operations.adoc[Embeddings, Moderation, Audio and Image Operations] - Text embeddings, vector database integration, content moderation, audio transcription, and image generation
+* xref:others:openai-webhooks.adoc[Webhook Events] - Receiving the events OpenAI sends when a background response, a batch or a job finishes
 
 == Error Handling
 

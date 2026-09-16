@@ -29,7 +29,8 @@ public enum OpenAIOperations {
     audioSpeech("audio-speech"),
     moderation("moderation"),
     imageGeneration("image-generation"),
-    imageEdit("image-edit");
+    imageEdit("image-edit"),
+    webhook("webhook");
 
     private final String value;
 
@@ -48,7 +49,7 @@ public enum OpenAIOperations {
                                            + ". Supported: chat-completion, responses, responses-retrieve, "
                                            + "responses-cancel, embeddings, tool-execution, "
                                            + "audio-transcription, audio-translation, audio-speech, moderation, "
-                                           + "image-generation, image-edit");
+                                           + "image-generation, image-edit, webhook");
     }
 
     public String getValue() {

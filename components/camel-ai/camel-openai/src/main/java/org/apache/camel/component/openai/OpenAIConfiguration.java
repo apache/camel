@@ -30,6 +30,27 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class OpenAIConfiguration implements Cloneable {
 
+    @UriParam(label = "consumer", security = "secret")
+    @Metadata(description = "The webhook signing secret of the OpenAI dashboard (it starts with whsec_), used to verify "
+                            + "the signature of the events. Required by the webhook operation.",
+              security = "secret")
+    private String webhookSecret;
+
+    @UriParam(label = "consumer", defaultValue = "/openai/webhook")
+    @Metadata(description = "The HTTP path the webhook operation listens on.")
+    private String webhookPath = "/openai/webhook";
+
+    @UriParam(label = "consumer")
+    @Metadata(description = "The Camel component that serves the HTTP endpoint of the webhook operation. It must "
+                            + "implement RestConsumerFactory, for example platform-http, which is used when it is on "
+                            + "the classpath. Also read from the rest configuration when not set.")
+    private String httpServerComponent;
+
+    @UriParam(label = "consumer", defaultValue = "1048576")
+    @Metadata(description = "The largest webhook request body that is read, in bytes. A bigger request is answered "
+                            + "with 413 and is not verified.")
+    private int webhookMaxPayloadSize = 1048576;
+
     @UriParam(security = "secret")
     @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", security = "secret")
     private String apiKey;
@@ -488,6 +509,38 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The endpoint identification algorithm to validate the server hostname using the server certificate. "
                             + "Set to an empty string or 'none' to disable hostname verification")
     private String sslEndpointAlgorithm = "https";
+
+    public String getWebhookSecret() {
+        return webhookSecret;
+    }
+
+    public void setWebhookSecret(String webhookSecret) {
+        this.webhookSecret = webhookSecret;
+    }
+
+    public String getWebhookPath() {
+        return webhookPath;
+    }
+
+    public void setWebhookPath(String webhookPath) {
+        this.webhookPath = webhookPath;
+    }
+
+    public String getHttpServerComponent() {
+        return httpServerComponent;
+    }
+
+    public void setHttpServerComponent(String httpServerComponent) {
+        this.httpServerComponent = httpServerComponent;
+    }
+
+    public int getWebhookMaxPayloadSize() {
+        return webhookMaxPayloadSize;
+    }
+
+    public void setWebhookMaxPayloadSize(int webhookMaxPayloadSize) {
+        this.webhookMaxPayloadSize = webhookMaxPayloadSize;
+    }
 
     public String getApiKey() {
         return apiKey;

@@ -48,6 +48,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "background": target.getConfiguration().setBackground(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "builtintools":
         case "builtinTools": target.getConfiguration().setBuiltinTools(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -65,12 +67,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "embeddingModel": target.getConfiguration().setEmbeddingModel(property(camelContext, java.lang.String.class, value)); return true;
         case "encodingformat":
         case "encodingFormat": target.getConfiguration().setEncodingFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "exceptionhandler":
+        case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
+        case "exchangepattern":
+        case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filesearchvectorstoreids":
         case "fileSearchVectorStoreIds": target.getConfiguration().setFileSearchVectorStoreIds(property(camelContext, java.lang.String.class, value)); return true;
         case "hallucinatedtoolnamestrategy":
         case "hallucinatedToolNameStrategy": target.getConfiguration().setHallucinatedToolNameStrategy(property(camelContext, org.apache.camel.component.openai.HallucinatedToolNameStrategy.class, value)); return true;
         case "hostedmcptools":
         case "hostedMcpTools": target.getConfiguration().setHostedMcpTools(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpservercomponent":
+        case "httpServerComponent": target.getConfiguration().setHttpServerComponent(property(camelContext, java.lang.String.class, value)); return true;
         case "imagebackground":
         case "imageBackground": target.getConfiguration().setImageBackground(property(camelContext, java.lang.String.class, value)); return true;
         case "imagecount":
@@ -187,6 +195,12 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": target.getConfiguration().setTopP(property(camelContext, java.lang.Double.class, value)); return true;
         case "usermessage":
         case "userMessage": target.getConfiguration().setUserMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "webhookmaxpayloadsize":
+        case "webhookMaxPayloadSize": target.getConfiguration().setWebhookMaxPayloadSize(property(camelContext, int.class, value)); return true;
+        case "webhookpath":
+        case "webhookPath": target.getConfiguration().setWebhookPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "webhooksecret":
+        case "webhookSecret": target.getConfiguration().setWebhookSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "writetimeout":
         case "writeTimeout": target.getConfiguration().setWriteTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
@@ -221,6 +235,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "background": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "builtintools":
         case "builtinTools": return java.lang.String.class;
         case "connecttimeout":
@@ -238,12 +254,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "embeddingModel": return java.lang.String.class;
         case "encodingformat":
         case "encodingFormat": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filesearchvectorstoreids":
         case "fileSearchVectorStoreIds": return java.lang.String.class;
         case "hallucinatedtoolnamestrategy":
         case "hallucinatedToolNameStrategy": return org.apache.camel.component.openai.HallucinatedToolNameStrategy.class;
         case "hostedmcptools":
         case "hostedMcpTools": return java.lang.String.class;
+        case "httpservercomponent":
+        case "httpServerComponent": return java.lang.String.class;
         case "imagebackground":
         case "imageBackground": return java.lang.String.class;
         case "imagecount":
@@ -360,6 +382,12 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": return java.lang.Double.class;
         case "usermessage":
         case "userMessage": return java.lang.String.class;
+        case "webhookmaxpayloadsize":
+        case "webhookMaxPayloadSize": return int.class;
+        case "webhookpath":
+        case "webhookPath": return java.lang.String.class;
+        case "webhooksecret":
+        case "webhookSecret": return java.lang.String.class;
         case "writetimeout":
         case "writeTimeout": return long.class;
         default: return null;
@@ -395,6 +423,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "background": return target.getConfiguration().isBackground();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "builtintools":
         case "builtinTools": return target.getConfiguration().getBuiltinTools();
         case "connecttimeout":
@@ -412,12 +442,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "embeddingModel": return target.getConfiguration().getEmbeddingModel();
         case "encodingformat":
         case "encodingFormat": return target.getConfiguration().getEncodingFormat();
+        case "exceptionhandler":
+        case "exceptionHandler": return target.getExceptionHandler();
+        case "exchangepattern":
+        case "exchangePattern": return target.getExchangePattern();
         case "filesearchvectorstoreids":
         case "fileSearchVectorStoreIds": return target.getConfiguration().getFileSearchVectorStoreIds();
         case "hallucinatedtoolnamestrategy":
         case "hallucinatedToolNameStrategy": return target.getConfiguration().getHallucinatedToolNameStrategy();
         case "hostedmcptools":
         case "hostedMcpTools": return target.getConfiguration().getHostedMcpTools();
+        case "httpservercomponent":
+        case "httpServerComponent": return target.getConfiguration().getHttpServerComponent();
         case "imagebackground":
         case "imageBackground": return target.getConfiguration().getImageBackground();
         case "imagecount":
@@ -534,6 +570,12 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": return target.getConfiguration().getTopP();
         case "usermessage":
         case "userMessage": return target.getConfiguration().getUserMessage();
+        case "webhookmaxpayloadsize":
+        case "webhookMaxPayloadSize": return target.getConfiguration().getWebhookMaxPayloadSize();
+        case "webhookpath":
+        case "webhookPath": return target.getConfiguration().getWebhookPath();
+        case "webhooksecret":
+        case "webhookSecret": return target.getConfiguration().getWebhookSecret();
         case "writetimeout":
         case "writeTimeout": return target.getConfiguration().getWriteTimeout();
         default: return null;
