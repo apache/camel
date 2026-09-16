@@ -25,6 +25,7 @@ import java.util.TreeSet;
 
 import com.styra.opa.OPAClient;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +91,11 @@ public class OpaPolicyEvaluator {
      * @throws OpaPolicyEvaluationException when the policy could not be evaluated and {@code failOpen} is false
      */
     public boolean evaluate(Exchange exchange) throws OpaPolicyEvaluationException {
+        // a verdict the message arrived with is a claim, not evidence. Clear it before deciding anything, so that
+        // every way out of this method - allowed, denied, or a failure the route goes on to handle - leaves only
+        // what this component decided. Overwriting at the end is not enough: the paths that throw never get there,
+        // and a route that handles the exception would resume routing with the sender's own verdict still on it
+        clearDecisionHeaders(exchange);
         Object decision;
         try {
             decision = client.evaluate(policyPath, buildInput(exchange), Object.class);
@@ -176,6 +182,13 @@ public class OpaPolicyEvaluator {
         LOG.debug("Policy {} returned a decision with no boolean '{}' verdict, denying. Decision: {}",
                 policyPath, allowKey, decision);
         return false;
+    }
+
+    private static void clearDecisionHeaders(Exchange exchange) {
+        Message message = exchange.getMessage();
+        message.removeHeader(OpaConstants.DECISION_ALLOW);
+        message.removeHeader(OpaConstants.DECISION);
+        message.removeHeader(OpaConstants.POLICY_PATH);
     }
 
     private void setDecisionHeaders(Exchange exchange, Object decision, boolean allowed) {
