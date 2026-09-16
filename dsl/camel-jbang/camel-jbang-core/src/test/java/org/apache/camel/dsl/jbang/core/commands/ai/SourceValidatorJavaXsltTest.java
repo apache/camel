@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.List;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -214,7 +215,7 @@ public class SourceValidatorJavaXsltTest {
         assertThat(SourceValidator.isValidatableFile("t.xsl")).isTrue();
         assertThat(SourceValidator.isValidatableFile("in.xml")).isTrue();
         assertThat(SourceValidator.isValidatableFile("README.md")).isFalse();
-        assertThat(SourceValidator.validate("t.xsl", "<not-xslt/>", null, null)).isNotEmpty();
+        assertThat(SourceValidator.validate("t.xsl", "<not-xslt/>", new DefaultCamelCatalog(), null)).isNotEmpty();
     }
 
     @Test

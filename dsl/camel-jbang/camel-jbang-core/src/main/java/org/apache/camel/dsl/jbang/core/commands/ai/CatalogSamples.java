@@ -172,7 +172,7 @@ public final class CatalogSamples {
                     if (!yaml.stripLeading().startsWith("- ")) {
                         continue;
                     }
-                    if (SourceValidator.validateCamelYaml(yaml, null).isEmpty()) {
+                    if (SourceValidator.validateYamlSchema(yaml, catalog).isEmpty()) {
                         answer.add(Map.of("source", page + ".adoc (Camel " + catalog.getCatalogVersion() + ")", "yaml", yaml));
                     }
                 }

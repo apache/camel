@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,11 +47,6 @@ final class BeanRefChecks {
     }
 
     static final Pattern BEAN_NAME_PATTERN = Pattern.compile("^\\s*-?\\s*name:\\s*(\\S+)\\s*$");
-
-    static final Pattern BEAN_REF_PATTERN = Pattern.compile(
-            "^\\s*-?\\s*(ref|aggregationStrategy|strategyRef|processorRef|loadBalancerRef|executorServiceRef|onPrepareRef"
-                                                            + "|onRedeliveryRef|aggregationRepositoryRef|comparatorRef|bean|processor)"
-                                                            + ":\\s*(\\S+)\\s*$");
 
     static final Pattern BEAN_TYPE_PATTERN = Pattern.compile("^\\s*type:\\s*[\"']?#class:([\\w.$]+)");
 
@@ -75,15 +71,6 @@ final class BeanRefChecks {
         return types;
     }
 
-    /**
-     * Without a catalog: the options whose bean must implement an interface, and which (a subset of the EIP models).
-     */
-    static final Map<String, String> REQUIRED_TYPES = Map.of(
-            "aggregationStrategy", "org.apache.camel.AggregationStrategy",
-            "strategyRef", "org.apache.camel.AggregationStrategy",
-            "processorRef", "org.apache.camel.Processor",
-            "processor", "org.apache.camel.Processor");
-
     private static final Map<CamelCatalog, Map<String, String>> REQUIRED_TYPES_BY_CATALOG
             = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
     private static final Map<CamelCatalog, Pattern> BEAN_REF_PATTERN_BY_CATALOG
@@ -93,12 +80,9 @@ final class BeanRefChecks {
      * The interface the bean of an option must implement, from the EIP models of the catalog: every object option whose
      * javaType is a Camel interface (aggregationStrategy needs org.apache.camel.AggregationStrategy,
      * idempotentRepository needs org.apache.camel.spi.IdempotentRepository, ...), the same metadata the visual editors
-     * use to offer the built-in beans. Without a catalog the static subset above.
+     * use to offer the built-in beans.
      */
     static String requiredType(CamelCatalog catalog, String option) {
-        if (catalog == null) {
-            return REQUIRED_TYPES.get(option);
-        }
         return requiredTypes(catalog).get(option);
     }
 
@@ -122,16 +106,18 @@ final class BeanRefChecks {
         });
     }
 
-    /** {@link #BEAN_REF_PATTERN} plus every option the catalog's EIP models type with a Camel interface. */
+    /** The options whose value is a bean name whatever the catalog says: ref, bean and the *Ref options. */
+    private static final List<String> REF_OPTIONS = List.of("ref", "aggregationStrategy", "loadBalancerRef",
+            "executorServiceRef", "onPrepareRef", "onRedeliveryRef", "aggregationRepositoryRef", "comparatorRef", "bean");
+
+    /**
+     * The lines that reference a bean: option: name, for {@link #REF_OPTIONS} and every option the catalog's EIP models
+     * type with a Camel interface.
+     */
     static Pattern beanRefPattern(CamelCatalog catalog) {
-        if (catalog == null) {
-            return BEAN_REF_PATTERN;
-        }
         return BEAN_REF_PATTERN_BY_CATALOG.computeIfAbsent(catalog, c -> {
-            java.util.Set<String> names = new java.util.TreeSet<>(requiredTypes(c).keySet());
-            names.addAll(List.of("ref", "aggregationStrategy", "strategyRef", "processorRef", "loadBalancerRef",
-                    "executorServiceRef", "onPrepareRef", "onRedeliveryRef", "aggregationRepositoryRef", "comparatorRef",
-                    "bean", "processor"));
+            Set<String> names = new TreeSet<>(requiredTypes(c).keySet());
+            names.addAll(REF_OPTIONS);
             return Pattern.compile("^\\s*-?\\s*(" + String.join("|", names) + "):\\s*(\\S+)\\s*$");
         });
     }
@@ -173,11 +159,6 @@ final class BeanRefChecks {
      */
     static final Pattern SIMPLE_BEAN_FUNCTION = Pattern.compile("\\$\\{bean:([A-Za-z_][\\w-]*)");
 
-    public static List<String> validateYamlBeanRefs(String content, BeanDeclarations external) {
-        return validateYamlBeanRefs(content, external, null);
-    }
-
-    /** As above, and with a catalog the messages about a strategy name the built-in implementations. */
     public static List<String> validateYamlBeanRefs(String content, BeanDeclarations external, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
         if (content == null) {

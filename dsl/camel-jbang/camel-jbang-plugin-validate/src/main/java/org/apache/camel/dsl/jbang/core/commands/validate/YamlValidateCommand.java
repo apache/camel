@@ -85,7 +85,7 @@ public class YamlValidateCommand extends CamelCommand {
                         File parent = new File(n).getAbsoluteFile().getParentFile();
                         var declared = SourceValidator.BeanDeclarations.scan(parent != null ? parent.toPath() : null,
                                 new File(n).getName());
-                        for (String msg : SourceValidator.validateYamlBeanRefs(content, declared)) {
+                        for (String msg : SourceValidator.validateYamlBeanRefs(content, declared, camelCatalog)) {
                             report.add(catalogError(msg));
                         }
                         if (parent != null) {

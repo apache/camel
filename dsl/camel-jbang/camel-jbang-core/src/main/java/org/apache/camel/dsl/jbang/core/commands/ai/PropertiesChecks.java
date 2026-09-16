@@ -61,41 +61,39 @@ final class PropertiesChecks {
             return "logging.level.root=" + rl.group(1) + " also hides the route's own log steps (they log at INFO under"
                    + " the route file's name): keep root at INFO, or add logging.level.<route-file-name>=INFO";
         }
-        if (catalog != null) {
-            // camel.component.logger.level: the catalog skips a component it does not know, camel run does not
-            Matcher km = COMPONENT_KEY_PATTERN.matcher(line);
-            if (km.find()) {
-                String kind = km.group(1);
-                String name = km.group(2);
-                List<String> known = switch (kind) {
-                    case "component" -> catalog.findComponentNames();
-                    case "dataformat" -> catalog.findDataFormatNames();
-                    default -> catalog.findLanguageNames();
-                };
-                if (!known.contains(name)) {
-                    String closest = closestName(name, known);
-                    return name + "    Unknown " + kind + (closest != null ? " (did you mean " + closest + "?)" : "");
-                }
+        // camel.component.logger.level: the catalog skips a component it does not know, camel run does not
+        Matcher km = COMPONENT_KEY_PATTERN.matcher(line);
+        if (km.find()) {
+            String kind = km.group(1);
+            String name = km.group(2);
+            List<String> known = switch (kind) {
+                case "component" -> catalog.findComponentNames();
+                case "dataformat" -> catalog.findDataFormatNames();
+                default -> catalog.findLanguageNames();
+            };
+            if (!known.contains(name)) {
+                String closest = closestName(name, known);
+                return name + "    Unknown " + kind + (closest != null ? " (did you mean " + closest + "?)" : "");
             }
-            try {
-                ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
-                if (result.isAccepted()) {
-                    if (!result.isSuccess()) {
-                        String msg = result.summaryErrorMessage(false);
-                        if (msg != null) {
-                            msg = msg.trim();
-                            String hint = mainOptionHint(line, catalog);
-                            if (hint == null && km.reset().find() && "component".equals(km.group(1))) {
-                                hint = endpointOptionHint(km.group(2), line, catalog);
-                            }
-                            return hint != null ? msg + " " + hint : msg;
+        }
+        try {
+            ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
+            if (result.isAccepted()) {
+                if (!result.isSuccess()) {
+                    String msg = result.summaryErrorMessage(false);
+                    if (msg != null) {
+                        msg = msg.trim();
+                        String hint = mainOptionHint(line, catalog);
+                        if (hint == null && km.reset().find() && "component".equals(km.group(1))) {
+                            hint = endpointOptionHint(km.group(2), line, catalog);
                         }
+                        return hint != null ? msg + " " + hint : msg;
                     }
-                    return null;
                 }
-            } catch (Exception e) {
-                // ignore validation errors
+                return null;
             }
+        } catch (Exception e) {
+            // ignore validation errors
         }
         return extra != null ? extra.apply(line) : null;
     }

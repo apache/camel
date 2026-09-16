@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -71,7 +72,8 @@ public final class SourceValidator {
      *
      * @param  fileName          the file name; its extension picks the checks
      * @param  content           the source
-     * @param  catalog           the catalog of the Camel version the source is for
+     * @param  catalog           the catalog of the Camel version the source is for (required: every check that is not
+     *                           the schema reads it)
      * @param  extraPropertyLine an extra check for a properties line the catalog does not know (Spring Boot
      *                           properties), returning the message or null; may be null
      * @return                   the messages, empty when the source is valid
@@ -99,6 +101,7 @@ public final class SourceValidator {
     public static List<String> validate(
             String fileName, String content, CamelCatalog catalog, Function<String, String> extraPropertyLine,
             Path directory, YamlValidator schemaValidator) {
+        Objects.requireNonNull(catalog, "catalog");
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator);
@@ -147,22 +150,44 @@ public final class SourceValidator {
         if (content == null || content.isBlank()) {
             return msgs;
         }
+        if (validateYamlSchema(content, catalog, schemaValidator, msgs)) {
+            msgs.addAll(validateYamlCatalog(content, catalog));
+        }
+        return msgs;
+    }
+
+    /**
+     * The schema half of {@link #validateCamelYaml(String, CamelCatalog)}: the YAML DSL schema of the catalog's Camel
+     * version, without the catalog checks. For a sample that is right for its version but uses what the catalog cannot
+     * know (a custom step, a header a component sets at runtime).
+     */
+    public static List<String> validateYamlSchema(String content, CamelCatalog catalog) {
+        Objects.requireNonNull(catalog, "catalog");
+        List<String> msgs = new ArrayList<>();
+        if (content != null && !content.isBlank()) {
+            validateYamlSchema(content, catalog, null, msgs);
+        }
+        return msgs;
+    }
+
+    /** Adds the schema errors to msgs; false when the YAML could not be checked at all (no schema, not YAML). */
+    private static boolean validateYamlSchema(
+            String content, CamelCatalog catalog, YamlValidator schemaValidator, List<String> msgs) {
         YamlValidator validator;
         try {
             validator = schemaValidator != null ? schemaValidator : yamlValidator(catalog);
         } catch (Exception e) {
             msgs.add("Cannot validate against the YAML DSL schema of Camel " + catalog.getCatalogVersion() + ": "
                      + e.getMessage());
-            return msgs;
+            return false;
         }
         try {
             msgs.addAll(formatSchemaErrors(validator.validate(content)));
+            return true;
         } catch (Exception e) {
             msgs.add("Invalid YAML: " + e.getMessage());
-            return msgs;
+            return false;
         }
-        msgs.addAll(validateYamlCatalog(content, catalog));
-        return msgs;
     }
 
     /**
@@ -170,7 +195,7 @@ public final class SourceValidator {
      * for the schema of the version the catalog was loaded for (CAMEL-24711), built once per version.
      */
     static YamlValidator yamlValidator(CamelCatalog catalog) throws Exception {
-        String version = catalog != null ? catalog.getCatalogVersion() : null;
+        String version = catalog.getCatalogVersion();
         if (version == null || version.equals(BUILTIN_VERSION)) {
             return yamlValidator();
         }
@@ -198,7 +223,7 @@ public final class SourceValidator {
      */
     public static List<String> validateYamlCatalog(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
-        if (content == null || content.isBlank() || catalog == null) {
+        if (content == null || content.isBlank()) {
             return msgs;
         }
         msgs.addAll(validateYamlEndpoints(content, catalog));
@@ -207,7 +232,7 @@ public final class SourceValidator {
         return msgs;
     }
 
-    private static YamlValidator yamlValidator() throws Exception {
+    static YamlValidator yamlValidator() throws Exception {
         YamlValidator v = yamlValidator;
         if (v == null) {
             synchronized (SourceValidator.class) {
@@ -394,11 +419,10 @@ public final class SourceValidator {
         return BeanRefChecks.declaredBeans(content);
     }
 
-    public static List<String> validateYamlBeanRefs(String content, BeanDeclarations external) {
-        return BeanRefChecks.validateYamlBeanRefs(content, external);
-    }
-
-    /** As above, and with a catalog the messages about a strategy name the built-in implementations. */
+    /**
+     * Bean references in the YAML that nothing declares, each with how to declare it; a bean whose option needs a Camel
+     * interface (an aggregationStrategy, an onPrepare processor...) must implement it.
+     */
     public static List<String> validateYamlBeanRefs(String content, BeanDeclarations external, CamelCatalog catalog) {
         return BeanRefChecks.validateYamlBeanRefs(content, external, catalog);
     }
