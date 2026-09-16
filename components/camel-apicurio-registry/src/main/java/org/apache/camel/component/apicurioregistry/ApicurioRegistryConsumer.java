@@ -67,33 +67,37 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
         for (SearchedVersion version : versions) {
             Long globalId = version.getGlobalId();
             if (lastSeenGlobalId == null || globalId > lastSeenGlobalId) {
-                Exchange exchange = createExchange(true);
-                Message message = exchange.getIn();
+                Exchange exchange = createExchange(false);
+                try {
+                    Message message = exchange.getIn();
 
-                message.setHeader(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
-                message.setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
-                message.setHeader(ApicurioRegistryConstants.HEADER_VERSION, version.getVersion());
-                message.setHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, globalId);
-                message.setHeader(ApicurioRegistryConstants.HEADER_CONTENT_ID, version.getContentId());
-                message.setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, version.getArtifactType());
-                if (version.getState() != null) {
-                    message.setHeader(ApicurioRegistryConstants.HEADER_VERSION_STATE,
-                            version.getState().getValue());
-                }
-
-                if (configuration.isFetchContent()) {
-                    try (InputStream content = client.groups().byGroupId(groupId).artifacts()
-                            .byArtifactId(artifactId).versions()
-                            .byVersionExpression(version.getVersion()).content().get()) {
-                        message.setBody(content.readAllBytes());
+                    message.setHeader(ApicurioRegistryConstants.HEADER_GROUP_ID, groupId);
+                    message.setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_ID, artifactId);
+                    message.setHeader(ApicurioRegistryConstants.HEADER_VERSION, version.getVersion());
+                    message.setHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, globalId);
+                    message.setHeader(ApicurioRegistryConstants.HEADER_CONTENT_ID, version.getContentId());
+                    message.setHeader(ApicurioRegistryConstants.HEADER_ARTIFACT_TYPE, version.getArtifactType());
+                    if (version.getState() != null) {
+                        message.setHeader(ApicurioRegistryConstants.HEADER_VERSION_STATE,
+                                version.getState().getValue());
                     }
-                } else {
-                    message.setBody(version);
-                }
 
-                getProcessor().process(exchange);
-                lastSeenGlobalId = globalId;
-                count++;
+                    if (configuration.isFetchContent()) {
+                        try (InputStream content = client.groups().byGroupId(groupId).artifacts()
+                                .byArtifactId(artifactId).versions()
+                                .byVersionExpression(version.getVersion()).content().get()) {
+                            message.setBody(content.readAllBytes());
+                        }
+                    } else {
+                        message.setBody(version);
+                    }
+
+                    getProcessor().process(exchange);
+                    lastSeenGlobalId = globalId;
+                    count++;
+                } finally {
+                    releaseExchange(exchange, false);
+                }
             }
         }
         return count;
