@@ -23,6 +23,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -64,7 +65,9 @@ public final class OpaHealthProbe {
         builder.detail("opa.policyPath", policyPath);
 
         HttpRequest.Builder request = HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl + "/health"))
+                // a serverUrl with a trailing slash would build //health, which OPA's router answers with a
+                // redirect the client is not configured to follow - reporting a healthy server DOWN on HTTP 301
+                .uri(URI.create(FileUtil.stripTrailingSeparator(serverUrl) + "/health"))
                 .timeout(TIMEOUT)
                 .GET();
         if (ObjectHelper.isNotEmpty(bearerToken)) {
