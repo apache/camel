@@ -198,7 +198,7 @@ A bean can also be created from another builder class as shown below:
         <properties>
           <property key="id" value="123"/>
           <property key="name" value="Acme"/>
-        </constructors>
+        </properties>
 	</bean>
 ----
 

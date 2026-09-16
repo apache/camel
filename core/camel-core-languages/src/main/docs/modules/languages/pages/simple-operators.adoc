@@ -357,12 +357,13 @@ order:
 ._XML-only:_
 [source,xml]
 ----
-<from uri="seda:orders">
-   <filter>
-       <simple>${header.type} == 'widget'</simple>
-       <to uri="bean:orderService?method=handleWidget"/>
-   </filter>
-</from>
+<route>
+  <from uri="seda:orders"/>
+  <filter>
+    <simple>${header.type} == 'widget'</simple>
+    <to uri="bean:orderService?method=handleWidget"/>
+  </filter>
+</route>
 ----
 
 === Combining multiple expression using AND / OR Operator

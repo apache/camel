@@ -28,31 +28,16 @@ The _object pooling_ is currently disabled by default. If you are using Camel Ma
 camel.main.exchange-factory = pooled
 ----
 
-=== Enabling Exchange Pooling on Camel 3.x
+=== Enabling Exchange Pooling programmatically
 
-If you are using a different runtime or want to do that programmatically, you can do so in Camel version 3 (Camel 3.x) using the `setExchangeFactory` method from the `ExtendedCamelContext`. Here's an example of how to do that using Java:
+If you are using a different runtime or if you want to do that programmatically, you can do so using the `setExchangeFactory` method from the `ExtendedCamelContext`. Here's an example of how to do that using Java:
 
 [source,java]
 ----
 // suppose a Camel context object declared in the scope
 CamelContext context = ...
 
-context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
-----
-
-[NOTE]
-====
-The `ExtendedCamelContext` is an internal API of Camel and, as such, may not offer the same level of backward compatibility as the public APIs. Whenever possible, configure the exchange pooling via application properties.
-====
-
-=== Enabling Exchange Pooling on Camel 4.x
-
-If you are using a different runtime or if you want to do that programmatically, you can do so in Camel 4 and newer versions using the `setExchangeFactory` method from the `ExtendedCamelContext`. Here's an example of how to do that using Java:
-
-[source,java]
-----
-CamelContext context = ...
-context.getExchangeExtension().setExchangeFactory(new PooledExchangeFactory());
+context.getCamelContextExtension().setExchangeFactory(new PooledExchangeFactory());
 ----
 
 [NOTE]

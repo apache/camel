@@ -146,7 +146,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 ----
 ...
   <camel:destination name="{http://widgets/widgetvendor.net}widgetSOAPPort.http-destination>
-    <camelContext id="context" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
          <route>
            <from uri="direct:EndpointC" />
            <to uri="direct:EndpointD" />
@@ -194,7 +194,7 @@ endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 [source,xml]
 ----
 ...
-  <camelContext id="conduit_context" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext id="conduit_context" xmlns="http://camel.apache.org/schema/spring">
        <route>
            <from uri="direct:EndpointA" />
            <to uri="direct:EndpointB" />

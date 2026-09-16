@@ -113,6 +113,7 @@ For fine-grained configuration of the location, then this can be done as follows
       resolver = "classpath"
       path     = "com/my/company/something/my-properties-2.properties"
       optional = "false"/>
+  </propertyPlaceholder>
 </camelContext>
 ----
 
