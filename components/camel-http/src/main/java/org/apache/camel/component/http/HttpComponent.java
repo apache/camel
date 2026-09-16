@@ -41,6 +41,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
@@ -81,7 +82,8 @@ import org.slf4j.LoggerFactory;
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("http,https")
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {
+public class HttpComponent extends HttpCommonComponent
+        implements RestProducerFactory, SSLContextParametersAware, SecretRotationAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
     private static final String TARGET_URI_PARAMETER = HttpComponent.class.getName() + ".targetUri";
@@ -584,6 +586,21 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         endpoint.setHttpClientOptions(httpClientOptions);
         endpoint.setHttpConnectionOptions(httpConnectionOptions);
         return endpoint;
+    }
+
+    @Override
+    public void onSecretRotation(Object source) throws Exception {
+        // The component options (authUsername, authPassword, proxyAuthUsername, proxyAuthPassword, etc.)
+        // have already been re-applied with the newly resolved secret values before this callback fires.
+        // Log the rotation event. The route restart that follows this callback (triggered by
+        // DefaultContextReloadStrategy.reloadRoutes()) will stop the active routes, shut down their
+        // endpoints, and recreate them from the updated component fields — so subsequent requests will
+        // use the new credentials. The shared PoolingHttpClientConnectionManager is preserved across
+        // the restart because HttpEndpoint.createHttpClient() marks it as shared when it belongs to
+        // the component, letting the pool drain naturally rather than being closed abruptly.
+        LOG.info("Secret rotation triggered (source={}): HTTP component credentials have been updated; "
+                 + "endpoints will be rebuilt with the new credentials on the next route start",
+                source);
     }
 
     protected HttpClientConnectionManager createConnectionManager(
