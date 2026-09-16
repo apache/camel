@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.camel.models.ClientConfigurations;
 
@@ -34,7 +35,17 @@ public final class FunctionGraphUtils {
      */
     public static String extractJsonFieldAsString(String jsonString, String fieldName) {
         Gson gson = new Gson();
-        return gson.fromJson(jsonString, JsonObject.class).getAsJsonObject(fieldName).toString();
+        JsonObject root = gson.fromJson(jsonString, JsonObject.class);
+        if (root == null) {
+            return null;
+        }
+        JsonElement field = root.get(fieldName);
+        if (field == null || field.isJsonNull()) {
+            return null;
+        }
+        // a FunctionGraph 'body' is commonly a JSON-encoded string/primitive (HTTP-triggered functions),
+        // not always an object; return the raw value for primitives and the JSON text for objects/arrays
+        return field.isJsonPrimitive() ? field.getAsString() : field.toString();
     }
 
     /**
