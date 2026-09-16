@@ -606,7 +606,7 @@ And to replace all single quotes with double quotes:
 [source,xml]
 ----
 <setBody>
-  <simple>${replace(&apos; , &quot;)}</simple>
+  <simple>${replace(&amp;apos; , &amp;quot;)}</simple>
 </setBody>
 ----
 
@@ -615,7 +615,7 @@ Or to remove all double quotes:
 [source,xml]
 ----
 <setBody>
-  <simple>${replace(&quot; , &empty;)}</simple>
+  <simple>${replace(&amp;quot; , &amp;empty;)}</simple>
 </setBody>
 ----
 

@@ -176,9 +176,10 @@ Spring XML::
 ----
 <camelContext>
 
-    <threadPool id="nyPool" poolSize="20" maxPoolSize="50"/>
+    <threadPool id="myPool" threadName="myPool" poolSize="20" maxPoolSize="50"/>
 
     <route>
+       <from uri="direct:start"/>
        <multicast aggregationStrategy="myStrategy" executorService="myPool">
           ...
        </multicast>

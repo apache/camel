@@ -25,7 +25,7 @@ Spring XML::
 +
 [source,xml]
 ----
-<camelContext trace="true" xmlns="http://activemq.apache.org/camel/schema/spring">
+<camelContext trace="true" xmlns="http://camel.apache.org/schema/spring">
 ...
 </camelContext>
 ----
@@ -64,7 +64,7 @@ Spring XML::
 +
 [source,xml]
 ----
-<camelContext trace="standby" xmlns="http://activemq.apache.org/camel/schema/spring">
+<camelContext trace="standby" xmlns="http://camel.apache.org/schema/spring">
 ...
 </camelContext>
 ----

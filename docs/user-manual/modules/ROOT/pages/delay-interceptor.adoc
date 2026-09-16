@@ -21,7 +21,7 @@ Set the `delayer` attribute of the `<camelContext>` tag as shown below:
 .Spring XML
 [source,xml]
 --------------------------------------------------------------------------------------------------
-<camelContext id="camel" delayer="500" xmlns="http://activemq.apache.org/camel/schema/spring">
+<camelContext id="camel" delayer="500" xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start"/>
         <to uri="mock:result"/>

@@ -431,10 +431,10 @@ Spring XML
 [source,xml]
 ----
 <camelContext>
-    <properties>
-        <property key="http.proxyHost" value="172.168.18.9"/>
-        <property key="http.proxyPort" value="8080"/>
-   </properties>
+    <globalOptions>
+        <globalOption key="http.proxyHost" value="172.168.18.9"/>
+        <globalOption key="http.proxyPort" value="8080"/>
+    </globalOptions>
 </camelContext>
 ----
 
