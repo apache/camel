@@ -47,6 +47,16 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-health</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>${commons-compress-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.styra.opa</groupId>
+            <artifactId>opa-java-wasm</artifactId>
+            <version>${opa-wasm-version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.styra</groupId>

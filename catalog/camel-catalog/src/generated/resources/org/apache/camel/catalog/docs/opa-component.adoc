@@ -202,6 +202,82 @@ undoes the check that produced it.
 
 `OpaSecurityPolicy` takes the same option through `setIncludeProperties`.
 
+== Evaluation modes
+
+By default the component calls a running OPA server over its Data API (`evaluationMode=rest`). It can instead
+evaluate a WebAssembly bundle in-process:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .to("opa:authz/orders/allow?evaluationMode=wasm&policyBundle=classpath:bundle.tar.gz")
+------------------------------------------------------------
+
+Build the bundle with OPA's compiler — note that `-e` names an *entrypoint*, which is fixed at build time and is
+not the same thing as a data path:
+
+[source,sh]
+------------------------------------------------------------
+opa build -t wasm -e authz/orders/allow policy.rego
+------------------------------------------------------------
+
+`policyBundle` accepts a `file:`, `classpath:` or `http:` location holding either the `bundle.tar.gz` that
+`opa build` emits or a bare `.wasm`. `entrypoint` defaults to the endpoint's policy path, which is the name
+`opa build` gives it. `evaluationMode` accepts only `rest` and `wasm`; anything else is rejected when the
+endpoint is created, rather than quietly falling back to a server call that ignores `policyBundle`.
+
+Prefer the `bundle.tar.gz`. A policy that reads `data.*` decides from the *data document*, and `opa build`
+packs that beside the module as `data.json` — a bare `.wasm` carries the rules but not the data, so such a
+policy evaluates against an empty data document and typically denies everything. Given the bundle, the
+component applies its data to every evaluation, so the decision matches what a server loading the same bundle
+would return:
+
+[source,sh]
+------------------------------------------------------------
+# roles.rego reads data.admins, which lives in data.json next to it
+opa build -t wasm -e authz/orders/allow roles.rego data.json
+------------------------------------------------------------
+
+Data that is *not* part of the bundle — what a server would receive through its Data API at runtime — has no
+equivalent in `wasm` mode. A policy depending on it needs `evaluationMode=rest`.
+
+Prefer `classpath:` or `file:` for a bundle shipped with the application, which is what a build-time artefact
+usually is. The bundle is fetched when the endpoint starts, and Camel resolves an `http:` resource with no
+connect or read timeout (CAMEL-24756), so a policy server that accepts the connection and then does not answer
+stalls `CamelContext` startup rather than failing the one route.
+
+Which to choose:
+
+[cols="1,2,2"]
+|===
+| | `rest` | `wasm`
+
+| Policy source | a server, centrally managed | a bundle built with your application
+| Updates | bundle polling, live | rebuild and redeploy
+| Decision logs | yes | none
+| Latency | a network round-trip per exchange | in-process
+| Unreachable decision point | a real failure mode | cannot happen
+|===
+
+`serverUrl`, `bearerToken` and `failOpen` have no meaning in `wasm` mode — there is no server to address,
+authenticate to, or fail to reach — and no health check is registered, because there is nothing to probe. An
+absent health check is not a healthy one.
+
+The decision contract is identical in both modes: the same headers, the same `allowKey` handling, and an
+undefined decision fails closed the same way. A route does not need to know which engine evaluated it.
+
+Evaluation instances carry mutable state and are not thread-safe, so `wasm` mode pools them; `poolSize`
+(default 8) bounds how many exchanges evaluate at once. An exchange that arrives when all of them are busy waits
+for one, up to `borrowTimeout` (default 30s), and then fails rather than waiting indefinitely — an authorization
+decision that never arrives is not better than one that is denied, and it is much harder to diagnose. That
+failure is an evaluation failure, not a deny, so it fails closed or proceeds under `failOpen` like any other.
+
+Size `poolSize` for the concurrency the route actually sees. A policy that takes a long time to evaluate holds
+its instance for that whole time, so the two options trade against each other: raise `poolSize` when many
+exchanges evaluate at once, and `borrowTimeout` when a single evaluation is legitimately slow. A policy that can
+run long enough to matter is usually better served by `evaluationMode=rest`, where the decision point is a
+separate process that a timeout can abandon.
+
 == Failure handling
 
 The component fails closed. If the policy cannot be evaluated at all — the OPA server is unreachable, times out,

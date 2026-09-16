@@ -27,6 +27,11 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowKey": target.getConfiguration().setAllowKey(property(camelContext, java.lang.String.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "borrowtimeout":
+        case "borrowTimeout": target.getConfiguration().setBorrowTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "entrypoint": target.getConfiguration().setEntrypoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "evaluationmode":
+        case "evaluationMode": target.getConfiguration().setEvaluationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "failopen":
         case "failOpen": target.getConfiguration().setFailOpen(property(camelContext, boolean.class, value)); return true;
         case "includebody":
@@ -39,6 +44,10 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "opaclient":
         case "opaClient": target.getConfiguration().setOpaClient(property(camelContext, com.styra.opa.OPAClient.class, value)); return true;
+        case "policybundle":
+        case "policyBundle": target.getConfiguration().setPolicyBundle(property(camelContext, java.lang.String.class, value)); return true;
+        case "poolsize":
+        case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
         case "serverurl":
         case "serverUrl": target.getConfiguration().setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -57,6 +66,11 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowKey": return java.lang.String.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
+        case "borrowtimeout":
+        case "borrowTimeout": return long.class;
+        case "entrypoint": return java.lang.String.class;
+        case "evaluationmode":
+        case "evaluationMode": return java.lang.String.class;
         case "failopen":
         case "failOpen": return boolean.class;
         case "includebody":
@@ -69,6 +83,10 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return boolean.class;
         case "opaclient":
         case "opaClient": return com.styra.opa.OPAClient.class;
+        case "policybundle":
+        case "policyBundle": return java.lang.String.class;
+        case "poolsize":
+        case "poolSize": return int.class;
         case "serverurl":
         case "serverUrl": return java.lang.String.class;
         default: return null;
@@ -83,6 +101,11 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowKey": return target.getConfiguration().getAllowKey();
         case "bearertoken":
         case "bearerToken": return target.getConfiguration().getBearerToken();
+        case "borrowtimeout":
+        case "borrowTimeout": return target.getConfiguration().getBorrowTimeout();
+        case "entrypoint": return target.getConfiguration().getEntrypoint();
+        case "evaluationmode":
+        case "evaluationMode": return target.getConfiguration().getEvaluationMode();
         case "failopen":
         case "failOpen": return target.getConfiguration().isFailOpen();
         case "includebody":
@@ -95,6 +118,10 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "opaclient":
         case "opaClient": return target.getConfiguration().getOpaClient();
+        case "policybundle":
+        case "policyBundle": return target.getConfiguration().getPolicyBundle();
+        case "poolsize":
+        case "poolSize": return target.getConfiguration().getPoolSize();
         case "serverurl":
         case "serverUrl": return target.getConfiguration().getServerUrl();
         default: return null;

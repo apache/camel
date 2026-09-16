@@ -27,6 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Evaluate Open Policy Agent (Rego) policies against an Exchange and record the allow/deny decision on it.
@@ -35,6 +36,9 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "opa:policyPath", producerOnly = true, category = { Category.SECURITY },
              headersClass = OpaConstants.class)
 public class OpaEndpoint extends DefaultEndpoint {
+
+    private static final String WASM_MODE = "wasm";
+    private static final String REST_MODE = "rest";
 
     @UriPath(description = "Path of the Rego rule head to evaluate, relative to the OPA data document. For a rule"
                            + " named allow in a policy declaring package authz.orders, this is authz/orders/allow."
@@ -57,16 +61,54 @@ public class OpaEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        opaClient = configuration.getOpaClient() != null
-                ? configuration.getOpaClient()
-                : OpaPolicyEvaluator.createClient(configuration.getServerUrl(), configuration.getBearerToken());
-        evaluator = new OpaPolicyEvaluator(
-                opaClient, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
-                configuration.getIncludeProperties(), configuration.isIncludeBody(), configuration.isFailOpen());
+        String mode = configuration.getEvaluationMode();
+        if (WASM_MODE.equalsIgnoreCase(mode)) {
+            evaluator = createWasmEvaluator();
+        } else if (!REST_MODE.equalsIgnoreCase(mode)) {
+            // silently falling back to rest would leave a typo'd mode running against a server while quietly
+            // ignoring policyBundle, which is a miserable thing to debug in production
+            throw new IllegalArgumentException(
+                    "Unknown evaluationMode '" + mode + "'; expected one of " + REST_MODE + ", " + WASM_MODE);
+        } else {
+            opaClient = configuration.getOpaClient() != null
+                    ? configuration.getOpaClient()
+                    : OpaRestEvaluator.createClient(configuration.getServerUrl(), configuration.getBearerToken());
+            evaluator = new OpaRestEvaluator(
+                    opaClient, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
+                    configuration.getIncludeProperties(), configuration.isIncludeBody(), configuration.isFailOpen());
+        }
+    }
+
+    private OpaPolicyEvaluator createWasmEvaluator() throws Exception {
+        if (ObjectHelper.isEmpty(configuration.getPolicyBundle())) {
+            throw new IllegalArgumentException(
+                    "policyBundle is required when evaluationMode=wasm; build one with"
+                                               + " opa build -t wasm -e <entrypoint> <policy.rego>");
+        }
+        if (configuration.getPoolSize() < 1) {
+            // OpaPolicyPool.create rejects this too, but as "maxSize must be positive" - naming its own parameter
+            // rather than the option the operator set, on a component where poolSize is the only pool they see
+            throw new IllegalArgumentException(
+                    "poolSize must be at least 1 when evaluationMode=wasm, was " + configuration.getPoolSize());
+        }
+        // the entrypoint is fixed at build time and is not the same thing as a data path, but opa build names it
+        // after the rule, so the policy path is the right default
+        String entrypoint = ObjectHelper.isNotEmpty(configuration.getEntrypoint())
+                ? configuration.getEntrypoint() : policyPath;
+        OpaWasmEvaluator.Bundle bundle
+                = OpaWasmEvaluator.loadPolicy(getCamelContext(), configuration.getPolicyBundle());
+        return new OpaWasmEvaluator(
+                bundle.wasm(), bundle.data(), entrypoint, configuration.getPoolSize(),
+                configuration.getBorrowTimeout(), policyPath, configuration.getAllowKey(),
+                configuration.getIncludeHeaders(), configuration.getIncludeProperties(),
+                configuration.isIncludeBody(), configuration.isFailOpen());
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (evaluator instanceof AutoCloseable closeable) {
+            closeable.close();
+        }
         evaluator = null;
         opaClient = null;
         super.doStop();
