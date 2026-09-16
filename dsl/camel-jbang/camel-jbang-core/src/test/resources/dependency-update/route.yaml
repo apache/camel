@@ -22,5 +22,8 @@
         period: "1000"
       steps:
         - setBody:
-            simple: Hello Camel from my
-        - log: ${body}
+            expression:
+              simple:
+                expression: "Hello Camel from my"
+        - log:
+            message: "${body}"

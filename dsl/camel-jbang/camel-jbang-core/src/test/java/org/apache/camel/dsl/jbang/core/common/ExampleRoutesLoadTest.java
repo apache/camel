@@ -23,11 +23,13 @@ import java.nio.file.Path;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.Model;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -47,8 +49,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * fixture and the example's {@code application.properties} are required), whereas endpoints and their producers and
  * consumers are only created at start. Not starting therefore avoids opening external endpoints (JMS, Kafka, SQL, ...)
  * but also means endpoint wiring is not exercised.
+ *
+ * Every example is also validated against the canonical YAML schema: the examples are what a user or an AI agent starts
+ * from, so they must be written in the canonical format and not in the deprecated compact notation, which
+ * {@code camel run} warns about.
  */
 class ExampleRoutesLoadTest {
+
+    private static YamlValidator canonicalValidator;
+
+    @BeforeAll
+    static void setUpValidator() throws Exception {
+        canonicalValidator = new YamlValidator(true);
+        canonicalValidator.init();
+    }
 
     static Stream<Arguments> exampleRouteFiles() throws Exception {
         // resolve the examples from the classpath (target/classes/examples) so the test does not depend on the working
@@ -98,6 +112,13 @@ class ExampleRoutesLoadTest {
             assertTrue(modelElements > 0,
                     "Example parsed to an empty model (no routes, rests, templates or beans): " + file);
         }
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("exampleRouteFiles")
+    void shouldBeCanonicalYaml(Path file) throws Exception {
+        var report = canonicalValidator.validate(file.toFile());
+        assertTrue(report.isEmpty(), "Example is not in the canonical YAML format: " + file + "\n" + report);
     }
 
     private static void loadExampleProperties(DefaultCamelContext context, Path file) throws Exception {

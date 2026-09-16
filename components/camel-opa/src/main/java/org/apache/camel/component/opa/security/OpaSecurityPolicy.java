@@ -21,6 +21,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
+import org.apache.camel.component.opa.OpaRestEvaluator;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.util.ObjectHelper;
@@ -76,10 +77,11 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         if (evaluator == null) {
             StringHelper.notEmpty(policyPath, "policyPath", this);
             if (opaClient == null) {
-                opaClient = OpaPolicyEvaluator.createClient(serverUrl, bearerToken);
+                // createClient moved to OpaRestEvaluator when the evaluator became an abstract base
+                opaClient = OpaRestEvaluator.createClient(serverUrl, bearerToken);
                 ownsClient = true;
             }
-            evaluator = new OpaPolicyEvaluator(
+            evaluator = new OpaRestEvaluator(
                     opaClient, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
         }
         // after validation, so a policy that is missing its policyPath fails without leaving a ".../null" check

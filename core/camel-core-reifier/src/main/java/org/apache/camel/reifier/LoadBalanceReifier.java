@@ -47,6 +47,18 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
                     "To many outputs configured on " + definition.getLoadBalancerType() + ": " + size + " > " + max);
         }
 
+        Boolean inherit = parseBoolean(definition.getInheritErrorHandler());
+        Boolean childInherit = inherit;
+        if (definition.getLoadBalancerType() instanceof FailoverLoadBalancerDefinition failover) {
+            // special for failover load balancer where you can configure it to
+            // not inherit error handler for its children (so it fails over
+            // immediately on an error instead of waiting for the error handler
+            // to exhaust its redeliveries), but the load balancer itself should
+            // inherit so Camels error handler can react afterwards
+            childInherit = parseBoolean(failover.getInheritErrorHandler());
+            inherit = true;
+        }
+
         for (ProcessorDefinition<?> processorType : definition.getOutputs()) {
             // output must not be another load balancer
             // check for instanceof as the code below as there is
@@ -58,18 +70,10 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
                                                    + processorType);
             }
             Processor processor = createProcessor(processorType);
-            Channel channel = wrapChannel(processor, processorType);
+            Channel channel = wrapChannel(processor, processorType, childInherit);
             loadBalancer.addProcessor(channel);
         }
 
-        Boolean inherit = definition.getInheritErrorHandler();
-        if (definition.getLoadBalancerType() instanceof FailoverLoadBalancerDefinition) {
-            // special for failover load balancer where you can configure it to
-            // not inherit error handler for its children
-            // but the load balancer itself should inherit so Camels error
-            // handler can react afterwards
-            inherit = true;
-        }
         return wrapChannel(loadBalancer, definition, inherit);
     }
 

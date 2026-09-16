@@ -29,11 +29,11 @@ public class JoorPreCompileFalseTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                JoorLanguage joor = (JoorLanguage) context.resolveLanguage("joor");
+                JavaLanguage joor = (JavaLanguage) context.resolveLanguage("java");
                 joor.setPreCompile(false);
 
                 from("direct:start")
-                        .transform().joor("resource:file:target/update.joor")
+                        .transform().java("resource:file:target/update.joor")
                         .to("mock:result");
             }
         };

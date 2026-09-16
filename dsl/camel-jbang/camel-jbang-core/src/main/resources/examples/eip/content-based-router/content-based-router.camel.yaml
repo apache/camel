@@ -14,8 +14,9 @@
             type: int
         - choice:
             when:
-              - simple:
-                  expression: "${body} >= 30"
+              - expression:
+                  simple:
+                    expression: "${body} >= 30"
                 steps:
                   - setHeader:
                       name: level
@@ -24,8 +25,9 @@
                           expression: hot
                   - log:
                       message: "Hot alert: ${body} C"
-              - simple:
-                  expression: "${body} >= 15"
+              - expression:
+                  simple:
+                    expression: "${body} >= 15"
                 steps:
                   - setHeader:
                       name: level

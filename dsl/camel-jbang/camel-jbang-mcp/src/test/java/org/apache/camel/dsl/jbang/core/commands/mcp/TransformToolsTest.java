@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,12 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TransformToolsTest {
 
     private TransformTools createTools() {
-        CatalogService catalogService = new CatalogService();
-        catalogService.catalogRepos = Optional.empty();
-
-        TransformTools tools = new TransformTools();
-        tools.catalogService = catalogService;
-        return tools;
+        return new TransformTools();
     }
 
     @Test
@@ -164,34 +157,5 @@ class TransformToolsTest {
 
         assertThat(result.supported).isFalse();
         assertThat(result.note).contains("Unsupported");
-    }
-
-    @Test
-    void validateYamlDslAlsoRunsCatalogChecks() {
-        TransformTools tools = createTools();
-        // the structure is valid, the simple predicate is not: the answer is the one camel_validate_source gives
-        String yaml = """
-                - from:
-                    uri: timer:tick
-                    steps:
-                      - filter:
-                          simple: "${body contains 'critical'}"
-                          steps:
-                            - log: hi
-                """;
-        TransformTools.YamlDslValidationResult result = tools.camel_validate_yaml_dsl(yaml);
-        assertThat(result.valid()).isFalse();
-        assertThat(result.errors()).hasSize(1);
-        assertThat(result.errors().get(0).type()).isEqualTo("catalog");
-        assertThat(result.errors().get(0).error()).contains("Operators go outside the function");
-
-        // a schema error is still reported as before
-        result = tools.camel_validate_yaml_dsl("- from:\n    uri: timer:tick\n    steps:\n      - lgo: hi\n");
-        assertThat(result.valid()).isFalse();
-        assertThat(result.errors().get(0).type()).isNotEqualTo("catalog");
-
-        // a valid route
-        result = tools.camel_validate_yaml_dsl("- from:\n    uri: timer:tick\n    steps:\n      - log: hi\n");
-        assertThat(result.valid()).isTrue();
     }
 }

@@ -39,6 +39,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "fieldslength":
+        case "fieldsLength": target.getConfiguration().setFieldsLength(property(camelContext, java.lang.String.class, value)); return true;
         case "format": target.getConfiguration().setFormat(property(camelContext, org.apache.camel.component.jt400.Jt400Configuration.Format.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "guiavailable":
@@ -50,10 +52,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messageaction":
         case "messageAction": target.getConfiguration().setMessageAction(property(camelContext, org.apache.camel.component.jt400.Jt400Configuration.MessageAction.class, value)); return true;
-        case "outputfieldsidxarray":
-        case "outputFieldsIdxArray": target.getConfiguration().setOutputFieldsIdxArray(property(camelContext, java.lang.Integer[].class, value)); return true;
-        case "outputfieldslengtharray":
-        case "outputFieldsLengthArray": target.getConfiguration().setOutputFieldsLengthArray(property(camelContext, java.lang.Integer[].class, value)); return true;
+        case "outputfieldsidx":
+        case "outputFieldsIdx": target.getConfiguration().setOutputFieldsIdx(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "procedurename":
@@ -107,6 +107,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fieldslength":
+        case "fieldsLength": return java.lang.String.class;
         case "format": return org.apache.camel.component.jt400.Jt400Configuration.Format.class;
         case "greedy": return boolean.class;
         case "guiavailable":
@@ -118,10 +120,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return boolean.class;
         case "messageaction":
         case "messageAction": return org.apache.camel.component.jt400.Jt400Configuration.MessageAction.class;
-        case "outputfieldsidxarray":
-        case "outputFieldsIdxArray": return java.lang.Integer[].class;
-        case "outputfieldslengtharray":
-        case "outputFieldsLengthArray": return java.lang.Integer[].class;
+        case "outputfieldsidx":
+        case "outputFieldsIdx": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "procedurename":
@@ -176,6 +176,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "fieldslength":
+        case "fieldsLength": return target.getConfiguration().getFieldsLength();
         case "format": return target.getConfiguration().getFormat();
         case "greedy": return target.isGreedy();
         case "guiavailable":
@@ -187,10 +189,8 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "messageaction":
         case "messageAction": return target.getConfiguration().getMessageAction();
-        case "outputfieldsidxarray":
-        case "outputFieldsIdxArray": return target.getConfiguration().getOutputFieldsIdxArray();
-        case "outputfieldslengtharray":
-        case "outputFieldsLengthArray": return target.getConfiguration().getOutputFieldsLengthArray();
+        case "outputfieldsidx":
+        case "outputFieldsIdx": return target.getConfiguration().getOutputFieldsIdx();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "procedurename":

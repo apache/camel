@@ -309,4 +309,60 @@ class BeansTest extends YamlTestSupport {
         }
     }
 
+    // CAMEL-24709: a class that was not found names the built-in bean that was likely meant, from the bean metadata on the classpath
+    def "beans class not found in wrong package says did you mean"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myAgg
+                    type: com.foo.UseLatestAggregationStrategy
+            """
+
+        then:
+        def e = thrown(Exception)
+        def msg = messages(e)
+        msg.contains('Error creating bean: myAgg of type: #class:com.foo.UseLatestAggregationStrategy')
+        msg.contains('class com.foo.UseLatestAggregationStrategy was not found')
+        msg.contains('did you mean org.apache.camel.processor.aggregate.UseLatestAggregationStrategy (org.apache.camel.AggregationStrategy)?')
+        msg.contains('write: type: org.apache.camel.processor.aggregate.UseLatestAggregationStrategy')
+    }
+
+    def "beans class not found without package says did you mean"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myRepo
+                    type: MemoryAggregationRepository
+            """
+
+        then:
+        def e = thrown(Exception)
+        def msg = messages(e)
+        msg.contains('class MemoryAggregationRepository was not found')
+        msg.contains('did you mean org.apache.camel.processor.aggregate.MemoryAggregationRepository (org.apache.camel.spi.AggregationRepository)?')
+    }
+
+    def "beans class not found that is not a built-in bean keeps the generic hint"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myBean
+                    type: com.foo.MyBean
+            """
+
+        then:
+        def e = thrown(Exception)
+        def msg = messages(e)
+        msg.contains('class com.foo.MyBean was not found (check the package name; a class from another library needs its dependency added)')
+        !msg.contains('did you mean')
+    }
+
+    private static String messages(Throwable e) {
+        def sb = new StringBuilder()
+        for (Throwable t = e; t != null; t = t.cause) {
+            sb.append(t.message).append('\n')
+        }
+        return sb.toString()
+    }
+
 }

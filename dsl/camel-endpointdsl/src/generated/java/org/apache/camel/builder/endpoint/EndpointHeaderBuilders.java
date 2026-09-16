@@ -840,6 +840,20 @@ public class EndpointHeaderBuilders {
         return QueueEndpointBuilderFactory.QueueHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Box (camel-box)
+     * Upload, download and manage files, folders, groups, collaborations, etc.
+     * on box.com.
+     * 
+     * Category: cloud,file,api
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-box
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static BoxEndpointBuilderFactory.BoxHeaderNameBuilder box() {
+        return BoxEndpointBuilderFactory.BoxHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
      * 
@@ -1670,21 +1684,6 @@ public class EndpointHeaderBuilders {
      */
     public static HashicorpVaultEndpointBuilderFactory.HashicorpVaultHeaderNameBuilder hashicorpVault() {
         return HashicorpVaultEndpointBuilderFactory.HashicorpVaultHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * Hazelcast Atomic Number (camel-hazelcast)
-     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
-     * number).
-     * 
-     * Category: cache,clustering
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberHeaderNameBuilder hazelcastAtomicvalue() {
-        return HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberHeaderNameBuilder.INSTANCE;
     }
     /**
      * Hazelcast Instance (camel-hazelcast)
@@ -2790,6 +2789,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static MinioEndpointBuilderFactory.MinioHeaderNameBuilder minio() {
         return MinioEndpointBuilderFactory.MinioHeaderNameBuilder.INSTANCE;
     }

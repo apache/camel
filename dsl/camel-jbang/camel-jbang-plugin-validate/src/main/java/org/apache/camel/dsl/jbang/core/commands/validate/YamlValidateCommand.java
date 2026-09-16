@@ -28,7 +28,6 @@ import java.util.Stack;
 
 import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
@@ -42,13 +41,17 @@ public class YamlValidateCommand extends CamelCommand {
     private static final String IGNORE_FILE = "application";
 
     @CommandLine.Option(names = { "--canonical" }, defaultValue = "false",
-                        description = "Validate against the canonical schema (rejects shorthands and implicit expressions)")
+                        description = "Validate against the canonical schema: reports the deprecated compact notation (string shorthands,"
+                                      + " implicit expressions) with the canonical form to write")
     boolean canonical;
 
     @CommandLine.Option(names = { "--catalog" }, defaultValue = "true",
                         description = "Also check endpoint URIs and simple expressions against the Camel catalog"
                                       + " (use --catalog=false for the schema only)")
     boolean catalog = true;
+
+    @CommandLine.Mixin
+    CatalogVersionMixin catalogVersion;
 
     @CommandLine.Parameters(description = { "The Camel YAML source files to parse." },
                             arity = "1..9",
@@ -62,10 +65,11 @@ public class YamlValidateCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        YamlValidator validator = new YamlValidator(canonical);
-        validator.init();
+        // the catalog and schema of the Camel version and runtime asked for; the CLI's own without options
+        CatalogVersionMixin.Loaded loaded = catalogVersion.load();
+        YamlValidator validator = catalogVersion.yamlValidator(loaded, canonical);
 
-        CamelCatalog camelCatalog = catalog ? new DefaultCamelCatalog() : null;
+        CamelCatalog camelCatalog = catalog ? loaded.catalog() : null;
         Map<String, List<Error>> reports = new LinkedHashMap<>();
         for (String n : files) {
             if (matchFile(n)) {
@@ -81,7 +85,7 @@ public class YamlValidateCommand extends CamelCommand {
                         File parent = new File(n).getAbsoluteFile().getParentFile();
                         var declared = SourceValidator.BeanDeclarations.scan(parent != null ? parent.toPath() : null,
                                 new File(n).getName());
-                        for (String msg : SourceValidator.validateYamlBeanRefs(content, declared)) {
+                        for (String msg : SourceValidator.validateYamlBeanRefs(content, declared, camelCatalog)) {
                             report.add(catalogError(msg));
                         }
                         if (parent != null) {

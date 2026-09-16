@@ -272,6 +272,27 @@ public interface SqlComponentBuilderFactory {
             doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
+    
+        
+        /**
+         * Whether to allow overriding the endpoint-configured SQL query with
+         * the CamelSqlQuery header. Disabled by default; enable it only when
+         * the header source is trusted, since it lets a message choose the
+         * executed SQL. This is the default for all sql endpoints and can be
+         * overridden per endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowQueryFromHeader the value to set
+         * @return the dsl builder
+         */
+        default SqlComponentBuilder allowQueryFromHeader(boolean allowQueryFromHeader) {
+            doSetProperty("allowQueryFromHeader", allowQueryFromHeader);
+            return this;
+        }
     }
 
     class SqlComponentBuilderImpl
@@ -298,6 +319,7 @@ public interface SqlComponentBuilderFactory {
             case "usePlaceholder": ((SqlComponent) component).setUsePlaceholder((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((SqlComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((SqlComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "allowQueryFromHeader": ((SqlComponent) component).setAllowQueryFromHeader((boolean) value); return true;
             default: return false;
             }
         }

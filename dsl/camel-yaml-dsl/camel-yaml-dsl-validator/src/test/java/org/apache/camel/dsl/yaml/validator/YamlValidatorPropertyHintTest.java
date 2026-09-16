@@ -115,6 +115,21 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testIndentedDocumentMarkerIsText() throws Exception {
+        // a ... line in a script elides the rest of the code, it is text of the block scalar
+        assertThat(validator.validate("""
+                - beans:
+                  - name: myBean
+                    type: com.acme.MyBean
+                    scriptLanguage: groovy
+                    script: >
+                      bean = new com.acme.MyBean()
+                      ...
+                      return bean
+                """)).isEmpty();
+    }
+
+    @Test
     public void testMapWhereAListIsExpectedSaysHowToWriteIt() throws Exception {
         List<Error> errors = validator.validate("""
                 route:
@@ -328,7 +343,8 @@ public class YamlValidatorPropertyHintTest {
                           parameters: [1, 2]
                 """);
         assertThat(errors).anySatisfy(e -> assertThat(e.getMessage()).contains("property 'CamelNumberA' is not defined")
-                .contains("the name is a property: setHeader: {name: CamelNumberA, simple: \"...\"}"));
+                .contains(
+                        "the name is a property: setHeader: {name: CamelNumberA, expression: {simple: {expression: \"...\"}}}"));
         assertThat(errors).anySatisfy(e -> assertThat(e.getMessage()).contains("property 'parameters' is not defined")
                 .contains("arguments are written in the method call"));
     }
@@ -456,7 +472,7 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
                 .startsWith("groovy: ${...} is simple syntax, not groovy: write the expression in groovy (body.value < 1")
-                .contains("or use simple: \"${body.value} < 1\"");
+                .contains("or use simple: {expression: \"${body.value} < 1\"}");
     }
 
     @Test
@@ -589,7 +605,8 @@ public class YamlValidatorPropertyHintTest {
                           text: "println 'hi'"
                 """);
         assertThat(errors).anyMatch(
-                e -> e.getMessage().contains("the language as the key") && e.getMessage().contains("groovy: \"...\""));
+                e -> e.getMessage().contains("the language as the key")
+                        && e.getMessage().contains("groovy: {expression: \"...\"}"));
     }
 
     @Test

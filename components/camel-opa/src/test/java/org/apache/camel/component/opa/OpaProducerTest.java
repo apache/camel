@@ -91,6 +91,50 @@ class OpaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void readsAVerdictNestedInsideTheDecisionDocument() throws Exception {
+        givenDecision(Map.of("result", Map.of("allow", true)));
+
+        Exchange out = template.request(ENDPOINT + "&allowKey=result.allow", e -> {
+        });
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+    }
+
+    @Test
+    void prefersATopLevelKeyThatItselfContainsADot() throws Exception {
+        // walking "com.acme.allow" as a path would miss a document that has it as one key. Rego rule names cannot
+        // contain a dot, but a decision document is arbitrary JSON and may well come from elsewhere.
+        givenDecision(Map.of("com.acme.allow", true, "com", Map.of("acme", Map.of("allow", false))));
+
+        Exchange out = template.request(ENDPOINT + "&allowKey=com.acme.allow", e -> {
+        });
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+    }
+
+    @Test
+    void deniesWhenADottedPathDoesNotResolve() throws Exception {
+        givenDecision(Map.of("result", Map.of("permitted", true)));
+
+        Exchange out = template.request(ENDPOINT + "&allowKey=result.allow", e -> {
+        });
+
+        // fail closed, and the raw document stays available so the misconfiguration can be seen
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION)).isNotNull();
+    }
+
+    @Test
+    void deniesWhenADottedPathRunsPastANonMap() throws Exception {
+        givenDecision(Map.of("result", "not-a-map"));
+
+        Exchange out = template.request(ENDPOINT + "&allowKey=result.allow", e -> {
+        });
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+    }
+
+    @Test
     void deniesWhenTheDecisionObjectHasNoVerdictButKeepsTheRawDocument() throws Exception {
         Map<String, Object> decision = Map.of("deny", List.of("not an owner"));
         givenDecision(decision);
@@ -123,6 +167,39 @@ class OpaProducerTest extends CamelTestSupport {
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class)
                 .hasMessageContaining(PATH);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+    }
+
+    @Test
+    void doesNotLeaveAVerdictClaimedByTheMessageBehindWhenEvaluationFails() throws Exception {
+        // the decision headers used to be written only on a path that reached a verdict, so a claim carried by
+        // the message survived a failure. A route that handles the exception - doTry/doCatch, or
+        // onException().handled(true) - then read the sender's own "allowed" as though a policy had said it
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+
+        Exchange out = template.request(ENDPOINT, e -> {
+            e.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
+            e.getMessage().setHeader(OpaConstants.DECISION, Map.of("allow", true));
+            e.getMessage().setHeader(OpaConstants.POLICY_PATH, "authz/some-other-policy");
+        });
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION)).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.POLICY_PATH)).isNull();
+    }
+
+    @Test
+    void replacesAVerdictClaimedByTheMessageWithTheOneThePolicyGave() throws Exception {
+        givenDecision(Boolean.FALSE);
+
+        Exchange out = template.request(ENDPOINT, e -> {
+            e.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
+            e.getMessage().setHeader(OpaConstants.POLICY_PATH, "authz/some-other-policy");
+        });
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+        assertThat(out.getMessage().getHeader(OpaConstants.POLICY_PATH)).isEqualTo(PATH);
     }
 
     @Test

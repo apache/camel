@@ -90,8 +90,11 @@ class AuthoringToolsTest {
             assertTrue(ToolRegistry.findTool(reading).isReadOnly(), reading);
         }
         assertTrue(ToolRegistry.findTool("camel_control").isDestructive());
-        assertFalse(ToolRegistry.findTool("camel_catalog_find").isCore(), "not needed by a small model");
+        // the core subset is what a local model gets: find turns a product or protocol into a component, the first
+        // question of most tasks (CAMEL-24760); starting an integration is the TUI's own run form there
+        assertTrue(ToolRegistry.findTool("camel_catalog_find").isCore(), "a local model asks for mqtt, not paho-mqtt5");
         assertTrue(ToolRegistry.findTool("camel_write_file").isCore());
+        assertFalse(ToolRegistry.findTool("camel_run").isCore(), "not needed by a small model");
     }
 
     @Test

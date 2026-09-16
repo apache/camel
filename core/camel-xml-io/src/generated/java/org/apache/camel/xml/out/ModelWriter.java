@@ -593,9 +593,6 @@ public class ModelWriter extends BaseWriter {
     public void writeJavaScriptExpression(JavaScriptExpression def) throws IOException {
         doWriteJavaScriptExpression("js", def);
     }
-    public void writeJoorExpression(JoorExpression def) throws IOException {
-        doWriteJoorExpression("joor", def);
-    }
     public void writeJqExpression(JqExpression def) throws IOException {
         doWriteJqExpression("jq", def);
     }
@@ -905,7 +902,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("configuration", def.getConfiguration(), null);
-        doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
+        doWriteAttribute("inheritErrorHandler", def.getInheritErrorHandler(), "false");
         doWriteElement("resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteElement("faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
@@ -2786,7 +2783,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("namespace", def.getNamespaceRef(), null);
-        doWriteAttribute("xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute("xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES_256_GCM");
         doWriteAttribute("passPhrase", def.getPassPhrase(), null);
         doWriteAttribute("passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute("secureTag", def.getSecureTag(), null);
@@ -2962,14 +2959,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteJavaScriptExpression(String name, JavaScriptExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteValue(def.getExpression());
-        endElement(name);
-    }
-    protected void doWriteJoorExpression(String name, JoorExpression def) throws IOException {
-        startElement(name);
-        doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("preCompile", def.getPreCompile(), "true");
-        doWriteAttribute("singleQuotes", def.getSingleQuotes(), "true");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3166,7 +3155,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("roundRobin", def.getRoundRobin(), null);
         doWriteAttribute("sticky", def.getSticky(), null);
         doWriteAttribute("maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
-        doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
+        doWriteAttribute("inheritErrorHandler", def.getInheritErrorHandler(), "true");
         doWriteList(null, "exception", def.getExceptions(), this::doWriteString);
         endElement(name);
     }
@@ -3918,7 +3907,6 @@ public class ModelWriter extends BaseWriter {
                 case "JactlExpression" -> doWriteJactlExpression("jactl", (JactlExpression) v);
                 case "JavaExpression" -> doWriteJavaExpression("java", (JavaExpression) v);
                 case "JavaScriptExpression" -> doWriteJavaScriptExpression("js", (JavaScriptExpression) v);
-                case "JoorExpression" -> doWriteJoorExpression("joor", (JoorExpression) v);
                 case "JqExpression" -> doWriteJqExpression("jq", (JqExpression) v);
                 case "JsonPathExpression" -> doWriteJsonPathExpression("jsonpath", (JsonPathExpression) v);
                 case "LanguageExpression" -> doWriteLanguageExpression("language", (LanguageExpression) v);

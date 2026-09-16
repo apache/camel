@@ -37,9 +37,9 @@ YAML::
         blobName: hello.txt
         accountName: yourAccountName
         accessKey: yourAccessKey
-    steps:
-      - to:
-          uri: file://blobdirectory
+      steps:
+        - to:
+            uri: file://blobdirectory
 ----
 ====
 
@@ -77,9 +77,9 @@ YAML::
         accountName: yourAccountName
         accessKey: yourAccessKey
         fileDir: /var/to/awesome/dir
-    steps:
-      - to:
-          uri: mock:results
+      steps:
+        - to:
+            uri: mock:results
 ----
 ====
 
@@ -117,9 +117,9 @@ YAML::
         accountName: yourAccountName
         accessKey: yourAccessKey
         fileDir: /var/to/awesome/dir
-    steps:
-      - to:
-          uri: mock:results
+      steps:
+        - to:
+            uri: mock:results
 ----
 ====
 

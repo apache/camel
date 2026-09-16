@@ -51,10 +51,11 @@ The producer:
 
 [source,yaml]
 ----
-- to:
-    uri: a2a:http://remote-agent:8080
-    parameters:
-      oauthProfile: my-profile
+steps:
+  - to:
+      uri: a2a:http://remote-agent:8080
+      parameters:
+        oauthProfile: my-profile
 ----
 
 Acquires a token via client-credentials grant, caches it, and refreshes on expiry.
@@ -63,31 +64,34 @@ Acquires a token via client-credentials grant, caches it, and refreshes on expir
 
 [source,yaml]
 ----
-- to:
-    uri: a2a:http://remote-agent:8082
-    parameters:
-      apiKey: "{{my.api.key}}"
-      apiKeyHeader: X-API-Key
+steps:
+  - to:
+      uri: a2a:http://remote-agent:8082
+      parameters:
+        apiKey: "{{my.api.key}}"
+        apiKeyHeader: X-API-Key
 ----
 
 ==== Bearer Token
 
 [source,yaml]
 ----
-- to:
-    uri: a2a:http://remote-agent:8080
-    parameters:
-      bearerToken: "{{my.token}}"
+steps:
+  - to:
+      uri: a2a:http://remote-agent:8080
+      parameters:
+        bearerToken: "{{my.token}}"
 ----
 
 === JSON-RPC Producer
 
 [source,yaml]
 ----
-- to:
-    uri: a2a:http://remote-agent:8081
-    parameters:
-      protocolBinding: JSONRPC
+steps:
+  - to:
+      uri: a2a:http://remote-agent:8081
+      parameters:
+        protocolBinding: JSONRPC
 ----
 
 === Producer Streaming
@@ -104,24 +108,25 @@ YAML::
 +
 [source,yaml]
 ----
-- setHeader:
-    name: CamelA2AOperation
-    constant: MESSAGE_STREAM
-- to: a2a:https://agent.example.com
-- split:
-    simple: "${body}"
-    streaming: true
-    steps:
-      - choice:
-          when:
-            - simple: "${body.statusUpdate} != null"
-              steps:
-                - log:
-                    message: "Progress: ${body.statusUpdate.status.state}"
-            - simple: "${body.message} != null"
-              steps:
-                - log:
-                    message: "Final message received"
+steps:
+  - setHeader:
+      name: CamelA2AOperation
+      constant: MESSAGE_STREAM
+  - to: a2a:https://agent.example.com
+  - split:
+      simple: "${body}"
+      streaming: true
+      steps:
+        - choice:
+            when:
+              - simple: "${body.statusUpdate} != null"
+                steps:
+                  - log:
+                      message: "Progress: ${body.statusUpdate.status.state}"
+              - simple: "${body.message} != null"
+                steps:
+                  - log:
+                      message: "Final message received"
 ----
 
 Java::
@@ -143,9 +148,10 @@ To buffer all events into a `List<StreamResponse>`:
 
 [source,yaml]
 ----
-- to: a2a:https://agent.example.com
-- convertBodyTo:
-    type: java.util.List
+steps:
+  - to: a2a:https://agent.example.com
+  - convertBodyTo:
+      type: java.util.List
 ----
 
 ==== Raw Passthrough (RAW mode)
@@ -158,13 +164,14 @@ YAML::
 +
 [source,yaml]
 ----
-- to:
-    uri: a2a:https://agent.example.com?dataFormat=RAW
-    parameters:
-      operation: MESSAGE_STREAM
-- setHeader:
-    name: Content-Type
-    constant: text/event-stream
+steps:
+  - to:
+      uri: a2a:https://agent.example.com?dataFormat=RAW
+      parameters:
+        operation: MESSAGE_STREAM
+  - setHeader:
+      name: Content-Type
+      constant: text/event-stream
 ----
 
 Java::
@@ -183,19 +190,20 @@ Subscribe to ongoing task updates from a remote agent:
 
 [source,yaml]
 ----
-- setHeader:
-    name: CamelA2AOperation
-    constant: TASK_SUBSCRIBE
-- setHeader:
-    name: CamelA2ATaskId
-    simple: "${exchangeProperty.taskId}"
-- to: a2a:https://agent.example.com
-- split:
-    simple: "${body}"
-    streaming: true
-    steps:
-      - log:
-          message: "Task update: ${body.statusUpdate.status.state}"
+steps:
+  - setHeader:
+      name: CamelA2AOperation
+      constant: TASK_SUBSCRIBE
+  - setHeader:
+      name: CamelA2ATaskId
+      simple: "${exchangeProperty.taskId}"
+  - to: a2a:https://agent.example.com
+  - split:
+      simple: "${body}"
+      streaming: true
+      steps:
+        - log:
+            message: "Task update: ${body.statusUpdate.status.state}"
 ----
 
 Streaming requests use `asyncTimeout` (default 5 minutes) instead of the standard 60-second request timeout. SSE heartbeat comments from the remote agent are automatically filtered during parsing.
@@ -308,13 +316,17 @@ Call multiple agents concurrently using Camel's `multicast` EIP:
 
 [source,yaml]
 ----
-- multicast:
-    parallelProcessing: true
-    aggregationStrategy: "#class:MyAggregator"
-    steps:
-      - to: direct:call-weather
-      - to: direct:call-news
-      - to: direct:call-fortune
+- route:
+    from:
+      uri: direct:ask-agents
+      steps:
+        - multicast:
+            parallelProcessing: true
+            aggregationStrategy: "#class:MyAggregator"
+            steps:
+              - to: direct:call-weather
+              - to: direct:call-news
+              - to: direct:call-fortune
 
 - route:
     id: call-weather
@@ -342,7 +354,8 @@ Override the remote agent's URL from the card using `host`/`port`/`basePath` con
 
 [source,yaml]
 ----
-- to: a2a:https://agent.example.com?host=http://localhost&port=8080
+steps:
+  - to: a2a:https://agent.example.com?host=http://localhost&port=8080
 ----
 
 Priority without producer credentials: `host` config > card's `supportedInterfaces` URL > `agentCardSource` URL. When producer credentials are configured (`apiKey`, `bearerToken`, or `oauthProfile`) and `host` is not set, the producer sends credentialed requests only to the HTTP(S) `agentCardSource` origin. This avoids sending credentials to a URL supplied by the remote card's `supportedInterfaces` field. The `port` and `basePath` producer overrides are applied when `host` is configured. A `host` value without a scheme is treated as HTTPS.
@@ -355,7 +368,8 @@ By default, the producer does not follow HTTP redirects to prevent credential le
 
 [source,yaml]
 ----
-- to: a2a:https://agent.example.com?followRedirects=true
+steps:
+  - to: a2a:https://agent.example.com?followRedirects=true
 ----
 
 NOTE: `followRedirects` applies to operation requests only. Agent card discovery never follows redirects — a card URL that returns a redirect fails with an error.

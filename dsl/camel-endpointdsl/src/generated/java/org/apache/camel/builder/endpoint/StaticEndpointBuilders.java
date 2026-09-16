@@ -7094,50 +7094,6 @@ public class StaticEndpointBuilders {
         return HashicorpVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Hazelcast Atomic Number (camel-hazelcast)
-     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
-     * number).
-     * 
-     * Category: cache,clustering
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     * 
-     * @param path cacheName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String path) {
-        return hazelcastAtomicvalue("hazelcast-atomicvalue", path);
-    }
-    /**
-     * Hazelcast Atomic Number (camel-hazelcast)
-     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
-     * number).
-     * 
-     * Category: cache,clustering
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
-     * 
-     * Path parameter: cacheName (required)
-     * The name of the cache
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path cacheName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String componentName, String path) {
-        return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
@@ -11948,6 +11904,7 @@ public class StaticEndpointBuilders {
      * @param path bucketName
      * @return the dsl builder
      */
+    @Deprecated
     public static MinioEndpointBuilderFactory.MinioEndpointBuilder minio(String path) {
         return minio("minio", path);
     }
@@ -11969,6 +11926,7 @@ public class StaticEndpointBuilders {
      * @param path bucketName
      * @return the dsl builder
      */
+    @Deprecated
     public static MinioEndpointBuilderFactory.MinioEndpointBuilder minio(String componentName, String path) {
         return MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

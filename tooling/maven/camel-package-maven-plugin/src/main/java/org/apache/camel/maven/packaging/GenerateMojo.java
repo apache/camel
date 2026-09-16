@@ -63,6 +63,8 @@ public class GenerateMojo extends AbstractGenerateMojo {
         invoke(GenerateDataTypeTransformerMojo.class);
         // generate pojo-beans
         invoke(GeneratePojoBeanMojo.class);
+        // generate api-reference
+        invoke(GenerateApiReferenceMojo.class);
         // generate dev-console
         invoke(GenerateDevConsoleMojo.class);
         // prepare-components

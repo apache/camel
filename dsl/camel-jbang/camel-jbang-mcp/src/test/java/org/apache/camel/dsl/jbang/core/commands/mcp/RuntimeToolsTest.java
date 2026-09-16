@@ -75,22 +75,6 @@ class RuntimeToolsTest {
     }
 
     @Test
-    void evalRequiresLanguage() {
-        RuntimeTools tools = createTools();
-        assertThatThrownBy(() -> tools.camel_runtime_eval(null, null, "expr"))
-                .isInstanceOf(ToolCallException.class)
-                .hasMessageContaining("language is required");
-    }
-
-    @Test
-    void evalRequiresExpression() {
-        RuntimeTools tools = createTools();
-        assertThatThrownBy(() -> tools.camel_runtime_eval(null, "simple", null))
-                .isInstanceOf(ToolCallException.class)
-                .hasMessageContaining("expression is required");
-    }
-
-    @Test
     void traceRequiresAction() {
         RuntimeTools tools = createTools();
         assertThatThrownBy(() -> tools.camel_runtime_trace(null, null))

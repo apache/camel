@@ -86,6 +86,21 @@ public interface GoogleStorageComponentBuilderFactory {
         }
     
         /**
+         * The Object name inside the bucket.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
+         */
+        default GoogleStorageComponentBuilder objectName(java.lang.String objectName) {
+            doSetProperty("objectName", objectName);
+            return this;
+        }
+    
+        /**
          * The Service account key that can be used as credentials for the
          * Storage client. It can be loaded by default from classpath, but you
          * can prefix with classpath:, file:, or http: to load the resource from
@@ -356,21 +371,6 @@ public interface GoogleStorageComponentBuilderFactory {
         }
     
         /**
-         * The Object name inside the bucket.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param objectName the value to set
-         * @return the dsl builder
-         */
-        default GoogleStorageComponentBuilder objectName(java.lang.String objectName) {
-            doSetProperty("objectName", objectName);
-            return this;
-        }
-    
-        /**
          * Set the operation for the producer.
          * 
          * The option is a:
@@ -468,6 +468,7 @@ public interface GoogleStorageComponentBuilderFactory {
             switch (name) {
             case "autoCreateBucket": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((GoogleCloudStorageComponent) component).setConfiguration((org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration) value); return true;
+            case "objectName": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setObjectName((java.lang.String) value); return true;
             case "serviceAccountKey": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "storageClass": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageClass((com.google.cloud.storage.StorageClass) value); return true;
             case "storageClient": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setStorageClient((com.google.cloud.storage.Storage) value); return true;
@@ -482,7 +483,6 @@ public interface GoogleStorageComponentBuilderFactory {
             case "moveAfterRead": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setMoveAfterRead((boolean) value); return true;
             case "prefix": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setPrefix((java.lang.String) value); return true;
             case "lazyStartProducer": ((GoogleCloudStorageComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "objectName": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setObjectName((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((GoogleCloudStorageComponent) component).setOperation((org.apache.camel.component.google.storage.GoogleCloudStorageOperations) value); return true;
             case "autowiredEnabled": ((GoogleCloudStorageComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((GoogleCloudStorageComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;

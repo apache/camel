@@ -97,6 +97,12 @@ public class YamlValidatorSchemaGroupsTest {
         Assertions.assertTrue(report.isEmpty(), "Expected no errors but got: " + messages(report));
     }
 
+    @Test
+    public void testInheritErrorHandlerPlaceholder() throws Exception {
+        List<Error> report = validator.validate(new File("src/test/resources/inherit-error-handler-placeholder.yaml"));
+        Assertions.assertTrue(report.isEmpty(), "Expected no errors but got: " + messages(report));
+    }
+
     private static List<String> messages(List<Error> report) {
         return report.stream().map(Error::getMessage).toList();
     }

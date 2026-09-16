@@ -213,16 +213,16 @@ YAML::
 - route:
     from:
       uri: direct:createFunctionUrl
-    steps:
-      - setHeader:
-          name: CamelAwsLambdaFunctionUrlAuthType
-          constant: NONE
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: createFunctionUrlConfig
-      - to:
-          uri: mock:result
+      steps:
+        - setHeader:
+            name: CamelAwsLambdaFunctionUrlAuthType
+            constant: NONE
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: createFunctionUrlConfig
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -259,13 +259,13 @@ YAML::
 - route:
     from:
       uri: direct:getFunctionUrl
-    steps:
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: getFunctionUrlConfig
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: getFunctionUrlConfig
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -304,16 +304,16 @@ YAML::
 - route:
     from:
       uri: direct:updateFunctionUrl
-    steps:
-      - setHeader:
-          name: CamelAwsLambdaFunctionUrlAuthType
-          constant: AWS_IAM
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: updateFunctionUrlConfig
-      - to:
-          uri: mock:result
+      steps:
+        - setHeader:
+            name: CamelAwsLambdaFunctionUrlAuthType
+            constant: AWS_IAM
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: updateFunctionUrlConfig
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -348,13 +348,13 @@ YAML::
 - route:
     from:
       uri: direct:deleteFunctionUrl
-    steps:
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: deleteFunctionUrlConfig
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: deleteFunctionUrlConfig
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -389,13 +389,13 @@ YAML::
 - route:
     from:
       uri: direct:listFunctionUrls
-    steps:
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: listFunctionUrlConfigs
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: listFunctionUrlConfigs
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -434,13 +434,13 @@ YAML::
 - route:
     from:
       uri: direct:getFunctionConfiguration
-    steps:
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: getFunctionConfiguration
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: getFunctionConfiguration
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -487,22 +487,22 @@ YAML::
 - route:
     from:
       uri: direct:updateFunctionConfiguration
-    steps:
-      - setHeader:
-          name: CamelAwsLambdaFunctionMemorySize
-          constant: 512
-      - setHeader:
-          name: CamelAwsLambdaFunctionTimeout
-          constant: 60
-      - setHeader:
-          name: CamelAwsLambdaDescription
-          constant: Updated function description
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: updateFunctionConfiguration
-      - to:
-          uri: mock:result
+      steps:
+        - setHeader:
+            name: CamelAwsLambdaFunctionMemorySize
+            constant: 512
+        - setHeader:
+            name: CamelAwsLambdaFunctionTimeout
+            constant: 60
+        - setHeader:
+            name: CamelAwsLambdaDescription
+            constant: Updated function description
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: updateFunctionConfiguration
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -545,16 +545,16 @@ YAML::
 - route:
     from:
       uri: direct:putFunctionConcurrency
-    steps:
-      - setHeader:
-          name: CamelAwsLambdaReservedConcurrentExecutions
-          constant: "100"
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: putFunctionConcurrency
-      - to:
-          uri: mock:result
+      steps:
+        - setHeader:
+            name: CamelAwsLambdaReservedConcurrentExecutions
+            constant: "100"
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: putFunctionConcurrency
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -589,13 +589,13 @@ YAML::
 - route:
     from:
       uri: direct:deleteFunctionConcurrency
-    steps:
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: deleteFunctionConcurrency
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: deleteFunctionConcurrency
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -630,13 +630,13 @@ YAML::
 - route:
     from:
       uri: direct:getFunctionConcurrency
-    steps:
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: getFunctionConcurrency
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: getFunctionConcurrency
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -691,25 +691,25 @@ YAML::
 - route:
     from:
       uri: direct:addPermission
-    steps:
-      - setHeader:
-          name: CamelAwsLambdaStatementId
-          constant: s3-invoke
-      - setHeader:
-          name: CamelAwsLambdaAction
-          constant: "lambda:InvokeFunction"
-      - setHeader:
-          name: CamelAwsLambdaPrincipal
-          constant: s3.amazonaws.com
-      - setHeader:
-          name: CamelAwsLambdaSourceArn
-          constant: "arn:aws:s3:::my-bucket"
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: addPermission
-      - to:
-          uri: mock:result
+      steps:
+        - setHeader:
+            name: CamelAwsLambdaStatementId
+            constant: s3-invoke
+        - setHeader:
+            name: CamelAwsLambdaAction
+            constant: "lambda:InvokeFunction"
+        - setHeader:
+            name: CamelAwsLambdaPrincipal
+            constant: s3.amazonaws.com
+        - setHeader:
+            name: CamelAwsLambdaSourceArn
+            constant: "arn:aws:s3:::my-bucket"
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: addPermission
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -748,16 +748,16 @@ YAML::
 - route:
     from:
       uri: direct:removePermission
-    steps:
-      - setHeader:
-          name: CamelAwsLambdaStatementId
-          constant: s3-invoke
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: removePermission
-      - to:
-          uri: mock:result
+      steps:
+        - setHeader:
+            name: CamelAwsLambdaStatementId
+            constant: s3-invoke
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: removePermission
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -792,13 +792,13 @@ YAML::
 - route:
     from:
       uri: direct:getPolicy
-    steps:
-      - to:
-          uri: aws2-lambda://myFunction
-          parameters:
-            operation: getPolicy
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: aws2-lambda://myFunction
+            parameters:
+              operation: getPolicy
+        - to:
+            uri: mock:result
 ----
 ====
 

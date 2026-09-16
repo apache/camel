@@ -47,6 +47,7 @@ import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.SuggestionStrategy;
 import org.apache.camel.tooling.model.ApiMethodModel;
 import org.apache.camel.tooling.model.ApiModel;
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -136,6 +137,15 @@ public abstract class AbstractCamelCatalog {
 
     public String pojoBeanJSonSchema(String name) {
         return getJSonSchemaResolver().getPojoBeanJSonSchema(name);
+    }
+
+    public ApiReferenceModel apiReferenceModel(String name) {
+        String json = apiReferenceJSonSchema(name);
+        return json != null ? JsonMapper.generateApiReferenceModel(json) : null;
+    }
+
+    public String apiReferenceJSonSchema(String name) {
+        return getJSonSchemaResolver().getApiReferenceJSonSchema(name);
     }
 
     public String devConsoleJSonSchema(String name) {
@@ -294,8 +304,8 @@ public abstract class AbstractCamelCatalog {
                 boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
                 boolean lookup = value.startsWith("#") && value.length() > 1;
                 // we cannot evaluate multi values as strict as the others, as we don't know their expected types
-                boolean multiValue = prefix != null && originalName.startsWith(prefix)
-                        && row.isMultiValue();
+                boolean multiValue = (prefix != null && originalName.startsWith(prefix) && row.isMultiValue())
+                        || isMapEntry(row, originalName);
 
                 // default value
                 Object defaultValue = row.getDefaultValue();
@@ -1834,7 +1844,23 @@ public abstract class AbstractCamelCatalog {
                 return row.getName();
             }
         }
+        int dot = name.indexOf('.');
+        if (dot > 0) {
+            BaseOptionModel row = rows.get(name.substring(0, dot));
+            if (row != null && isMapEntry(row, name)) {
+                return row.getName();
+            }
+        }
         return null;
+    }
+
+    /**
+     * Whether the name sets an entry of a Map option (userMetadata.messageId=x fills the userMetadata map), as property
+     * binding does.
+     */
+    private static boolean isMapEntry(BaseOptionModel row, String name) {
+        String javaType = row.getJavaType();
+        return javaType != null && javaType.startsWith("java.util.Map") && name.startsWith(row.getName() + ".");
     }
 
     /**

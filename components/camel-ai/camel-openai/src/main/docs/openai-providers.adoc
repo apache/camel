@@ -48,12 +48,13 @@ YAML::
 +
 [source,yaml]
 ----
-- to:
-    uri: openai:chat-completion
-    parameters:
-      baseUrl: http://localhost:11434/v1
-      model: llama3.2
-      userMessage: What is Apache Camel?
+steps:
+  - to:
+      uri: openai:chat-completion
+      parameters:
+        baseUrl: http://localhost:11434/v1
+        model: llama3.2
+        userMessage: What is Apache Camel?
 ----
 ====
 
@@ -209,13 +210,14 @@ properties and adds them to the request body:
 
 [source,yaml]
 ----
-- to:
-    uri: openai:chat-completion
-    parameters:
-      baseUrl: https://openrouter.ai/api/v1
-      apiKey: "{{openrouter.api.key}}"
-      model: anthropic/claude-sonnet-4-20250514
-      additionalBodyProperty.provider: '{"order":["anthropic","google"],"allow_fallbacks":false}'
+steps:
+  - to:
+      uri: openai:chat-completion
+      parameters:
+        baseUrl: https://openrouter.ai/api/v1
+        apiKey: "{{openrouter.api.key}}"
+        model: anthropic/claude-sonnet-4-20250514
+        additionalBodyProperty.provider: '{"order":["anthropic","google"],"allow_fallbacks":false}'
 ----
 
 [NOTE]
@@ -242,9 +244,10 @@ are optional and do not affect chat completions.
 .Example using Ollama for local embeddings:
 [source,yaml]
 ----
-- to:
-    uri: openai:embeddings
-    parameters:
-      baseUrl: http://localhost:11434/v1
-      embeddingModel: nomic-embed-text
+steps:
+  - to:
+      uri: openai:embeddings
+      parameters:
+        baseUrl: http://localhost:11434/v1
+        embeddingModel: nomic-embed-text
 ----

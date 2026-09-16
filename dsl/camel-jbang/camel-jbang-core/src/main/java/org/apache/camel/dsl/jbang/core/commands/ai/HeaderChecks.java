@@ -40,7 +40,7 @@ final class HeaderChecks {
     }
 
     static final Pattern CAMEL_HEADER_REF_PATTERN = Pattern.compile(
-            "(?:\\$\\{headers?\\.|headers\\.|headers\\[['\"]|header\\(['\"]|name:\\s*['\"]?)(Camel[A-Z][A-Za-z0-9]*)");
+            "(?:\\$\\{headers?\\.|headers\\.|headers\\[['\"]|header\\(['\"]|(name):\\s*['\"]?)(Camel[A-Z][A-Za-z0-9]*(?:\\.[A-Za-z0-9_]+)*)");
 
     static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile("uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*):");
 
@@ -58,7 +58,7 @@ final class HeaderChecks {
 
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
-        if (content == null || catalog == null) {
+        if (content == null) {
             return msgs;
         }
         Set<String> known = new LinkedHashSet<>();
@@ -100,8 +100,12 @@ final class HeaderChecks {
         for (int i = 0; i < lines.length; i++) {
             Matcher m = CAMEL_HEADER_REF_PATTERN.matcher(lines[i]);
             while (m.find()) {
-                String name = m.group(1);
-                if (common.contains(name) || reported.contains(name)) {
+                if (m.group(1) != null && !isHeaderName(lines, i)) {
+                    // name: of a setProperty, setVariable, bean...: not a header
+                    continue;
+                }
+                String name = m.group(2);
+                if (common.contains(name) || reported.contains(name) || isKnown(name, known)) {
                     continue;
                 }
                 String propertyOwner = null;
@@ -117,7 +121,7 @@ final class HeaderChecks {
                              + ", not a header (the header would be null): write ${exchangeProperty." + name + "}");
                     continue;
                 }
-                if (known.contains(name) || !reported.add(name)) {
+                if (!reported.add(name)) {
                     continue;
                 }
                 String best = closestName(name, new ArrayList<>(known));
@@ -140,6 +144,48 @@ final class HeaderChecks {
             }
         }
         return msgs;
+    }
+
+    /**
+     * A header the metadata lists: as is (CamelBox.fileName), by a prefix the component documents with a trailing dot
+     * (CamelSolrField. for CamelSolrField.id), or as the head of an OGNL path (CamelFileName.length()).
+     */
+    static boolean isKnown(String name, Set<String> known) {
+        String candidate = name;
+        while (true) {
+            if (known.contains(candidate)) {
+                return true;
+            }
+            for (String k : known) {
+                if (k.endsWith(".") && candidate.startsWith(k)) {
+                    return true;
+                }
+            }
+            int dot = candidate.lastIndexOf('.');
+            if (dot < 0) {
+                return false;
+            }
+            candidate = candidate.substring(0, dot);
+        }
+    }
+
+    /** Whether the name: on this line belongs to a setHeader or removeHeader step, not a setProperty, a bean... */
+    static boolean isHeaderName(String[] lines, int index) {
+        int indent = YamlLines.countLeadingSpaces(lines[index]);
+        for (int j = index - 1; j >= 0; j--) {
+            String line = lines[j];
+            if (line.isBlank() || line.trim().startsWith("#")) {
+                continue;
+            }
+            if (YamlLines.countLeadingSpaces(line) < indent) {
+                String step = line.trim();
+                if (step.startsWith("- ")) {
+                    step = step.substring(2).trim();
+                }
+                return step.startsWith("setHeader:") || step.startsWith("removeHeader:");
+            }
+        }
+        return false;
     }
 
 }

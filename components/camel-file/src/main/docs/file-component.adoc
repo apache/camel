@@ -747,6 +747,9 @@ YAML::
     uri: file:bar
     parameters:
       doneFileName: done
+    steps:
+      - log:
+          message: "${header.CamelFileName}"
 ----
 ====
 
@@ -827,10 +830,14 @@ YAML::
 +
 [source,yaml]
 ----
-- to:
-    uri: file:bar
-    parameters:
-      doneFileName: done
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: file:bar
+            parameters:
+              doneFileName: done
 ----
 ====
 
@@ -946,7 +953,8 @@ Java::
 +
 [source,java]
 ----
-from("bean:myBean")
+from("seda:reports")
+    .to("bean:myBean")
     .to("file:/rootDirectory");
 ----
 
@@ -955,7 +963,8 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="bean:myBean"/>
+  <from uri="seda:reports"/>
+  <to uri="bean:myBean"/>
   <to uri="file:/rootDirectory"/>
 </route>
 ----
@@ -966,8 +975,10 @@ YAML::
 ----
 - route:
     from:
-      uri: bean:myBean
+      uri: seda:reports
       steps:
+        - to:
+            uri: bean:myBean
         - to:
             uri: file:/rootDirectory
 ----
@@ -1059,6 +1070,9 @@ YAML::
     uri: file://inbox
     parameters:
       idempotent: true
+    steps:
+      - log:
+          message: "${header.CamelFileName}"
 ----
 ====
 
@@ -1369,6 +1383,9 @@ YAML::
     uri: file://inbox
     parameters:
       antInclude: "**/*.txt"
+    steps:
+      - log:
+          message: "${header.CamelFileName}"
 ----
 ====
 

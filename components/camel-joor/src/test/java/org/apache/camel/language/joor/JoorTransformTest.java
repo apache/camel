@@ -29,7 +29,7 @@ public class JoorTransformTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().joor("'Hello ' + body")
+                        .transform().java("'Hello ' + body")
                         .to("mock:result");
             }
         };

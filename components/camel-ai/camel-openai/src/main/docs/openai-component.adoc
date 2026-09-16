@@ -262,12 +262,13 @@ YAML::
 +
 [source,yaml]
 ----
-- to:
-    uri: openai:chat-completion
-    parameters:
-      model: gpt-4o-mini
-      temperature: 0.1
-      topP: 1.0
+steps:
+  - to:
+      uri: openai:chat-completion
+      parameters:
+        model: gpt-4o-mini
+        temperature: 0.1
+        topP: 1.0
 ----
 
 Java::
@@ -1045,9 +1046,9 @@ Java::
 ----
 from("direct:chat")
     .to("openai:chat-completion?model=qwen3"
-        + "&additionalResponseHeader.reasoning_content=CamelMyReasoning"
-        + "&additionalResponseHeader.custom_field=CamelMyCustomField")
-    .log("Custom reasoning: ${header.CamelMyReasoning}");
+        + "&additionalResponseHeader.reasoning_content=MyReasoning"
+        + "&additionalResponseHeader.custom_field=MyCustomField")
+    .log("Custom reasoning: ${header.MyReasoning}");
 ----
 
 XML::
@@ -1056,8 +1057,8 @@ XML::
 ----
 <route>
   <from uri="direct:chat"/>
-  <to uri="openai:chat-completion?model=qwen3&amp;additionalResponseHeader.reasoning_content=CamelMyReasoning&amp;additionalResponseHeader.custom_field=CamelMyCustomField"/>
-  <log message="Custom reasoning: ${header.CamelMyReasoning}"/>
+  <to uri="openai:chat-completion?model=qwen3&amp;additionalResponseHeader.reasoning_content=MyReasoning&amp;additionalResponseHeader.custom_field=MyCustomField"/>
+  <log message="Custom reasoning: ${header.MyReasoning}"/>
 </route>
 ----
 
@@ -1073,10 +1074,10 @@ YAML::
             uri: openai:chat-completion
             parameters:
               model: qwen3
-              additionalResponseHeader.reasoning_content: CamelMyReasoning
-              additionalResponseHeader.custom_field: CamelMyCustomField
+              additionalResponseHeader.reasoning_content: MyReasoning
+              additionalResponseHeader.custom_field: MyCustomField
         - log:
-            message: "Custom reasoning: ${header.CamelMyReasoning}"
+            message: "Custom reasoning: ${header.MyReasoning}"
 ----
 ====
 

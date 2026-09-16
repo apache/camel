@@ -115,9 +115,9 @@ YAML::
 - route:
     from:
       uri: couchdb:http://localhost:9999
-    steps:
-      - process:
-          ref: someProcessor
+      steps:
+        - process:
+            ref: someProcessor
 ----
 ====
 
@@ -151,9 +151,9 @@ YAML::
       uri: couchdb:http://localhost:9999
       parameters:
         updates: false
-    steps:
-      - process:
-          ref: someProcessor
+      steps:
+        - process:
+            ref: someProcessor
 ----
 ====
 
@@ -186,11 +186,11 @@ YAML::
 - route:
     from:
       uri: someProducingEndpoint
-    steps:
-      - process:
-          ref: someProcessor
-      - to:
-          uri: couchdb:http://localhost:9999
+      steps:
+        - process:
+            ref: someProcessor
+        - to:
+            uri: couchdb:http://localhost:9999
 ----
 ====
 

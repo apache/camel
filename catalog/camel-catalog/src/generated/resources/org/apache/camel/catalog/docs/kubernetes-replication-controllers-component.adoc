@@ -73,14 +73,14 @@ YAML::
 - route:
     from:
       uri: direct:list
-    steps:
-      - to:
-          uri: kubernetes-replication-controllers:///
-          parameters:
-            kubernetesClient: "#kubernetesClient"
-            operation: listReplicationControllers
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: kubernetes-replication-controllers:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listReplicationControllers
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -133,9 +133,9 @@ YAML::
       uri: kubernetes-replication-controllers://{{kubernetes-host}}
       parameters:
         oauthToken: "{{kubernetes-token}}"
-    steps:
-      - to:
-          uri: log:result
+      steps:
+        - to:
+            uri: log:result
 ----
 ====
 

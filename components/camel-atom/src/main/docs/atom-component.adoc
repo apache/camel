@@ -80,7 +80,7 @@ Java::
 +
 [source,java]
 ----
-from("file://inbox?idempotent=false").to("...");
+from("atom://http://macstrac.blogspot.com/feeds/posts/default?idempotent=false").to("...");
 ----
 
 XML::
@@ -88,7 +88,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="file://inbox?idempotent=false"/>
+  <from uri="atom://http://macstrac.blogspot.com/feeds/posts/default?idempotent=false"/>
   <to uri="..."/>
 </route>
 ----
@@ -99,7 +99,7 @@ YAML::
 ----
 - route:
     from:
-      uri: file://inbox
+      uri: atom://http://macstrac.blogspot.com/feeds/posts/default
       parameters:
         idempotent: false
       steps:
@@ -121,7 +121,7 @@ Java::
 +
 [source,java]
 ----
-from("file://inbox?idempotentStrategy=#myIdempotentStrategy").to("...");
+from("atom://http://macstrac.blogspot.com/feeds/posts/default?idempotentStrategy=#myIdempotentStrategy").to("...");
 ----
 
 XML::
@@ -129,7 +129,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="file://inbox?idempotentStrategy=#myIdempotentStrategy"/>
+  <from uri="atom://http://macstrac.blogspot.com/feeds/posts/default?idempotentStrategy=#myIdempotentStrategy"/>
   <to uri="..."/>
 </route>
 ----
@@ -140,7 +140,7 @@ YAML::
 ----
 - route:
     from:
-      uri: file://inbox
+      uri: atom://http://macstrac.blogspot.com/feeds/posts/default
       parameters:
         idempotentStrategy: "#myIdempotentStrategy"
       steps:
@@ -158,7 +158,7 @@ Java::
 +
 [source,java]
 ----
-from("file://inbox?idempotentStrategy=repository").to("...");
+from("atom://http://macstrac.blogspot.com/feeds/posts/default?idempotentStrategy=repository").to("...");
 ----
 
 XML::
@@ -166,7 +166,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="file://inbox?idempotentStrategy=repository"/>
+  <from uri="atom://http://macstrac.blogspot.com/feeds/posts/default?idempotentStrategy=repository"/>
   <to uri="..."/>
 </route>
 ----
@@ -177,7 +177,7 @@ YAML::
 ----
 - route:
     from:
-      uri: file://inbox
+      uri: atom://http://macstrac.blogspot.com/feeds/posts/default
       parameters:
         idempotentStrategy: repository
       steps:

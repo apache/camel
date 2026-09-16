@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.util.Objects;
 
+import org.apache.camel.util.ArtifactUtils;
+
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
@@ -39,8 +41,26 @@ public class NoSuchEndpointException extends RuntimeCamelException {
      */
     public NoSuchEndpointException(String uri) {
         super("No endpoint could be found for: " + sanitizeUri(Objects.requireNonNull(uri, "uri"))
-              + ", please check your classpath contains the needed Camel component jar.");
+              + ", please check your classpath contains the needed Camel component jar"
+              + ArtifactUtils.componentHint(scheme(uri)) + ".");
         this.uri = sanitizeUri(uri);
+    }
+
+    /**
+     * The component scheme the endpoint would be resolved by: the text before the first colon or question mark, or the
+     * whole uri when it has neither.
+     */
+    private static String scheme(String uri) {
+        int pos1 = uri.indexOf(':');
+        int pos2 = uri.indexOf('?');
+        if (pos1 != -1 && pos2 != -1) {
+            return uri.substring(0, Math.min(pos1, pos2));
+        } else if (pos1 != -1) {
+            return uri.substring(0, pos1);
+        } else if (pos2 != -1) {
+            return uri.substring(0, pos2);
+        }
+        return uri;
     }
 
     /**

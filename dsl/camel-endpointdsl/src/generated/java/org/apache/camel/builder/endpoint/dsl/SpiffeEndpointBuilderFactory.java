@@ -47,11 +47,11 @@ public interface SpiffeEndpointBuilderFactory {
 
         /**
          * The comma-separated audience(s) to request for a JWT-SVID
-         * (fetchJwtSvid) or to validate against (validateJwtSvid). Can be
-         * overridden per-message with the CamelSpiffeAudience header. Note that
-         * validateJwtSvid validates against a single audience, so when several
-         * comma-separated audiences are given only the first one is used for
-         * validation; fetchJwtSvid requests all of them.
+         * (fetchJwtSvid) or to validate against (validateJwtSvid). fetchJwtSvid
+         * requests all of them and can be overridden per-message with the
+         * CamelSpiffeAudience header; validateJwtSvid ignores that header and
+         * uses this configuration only, accepting the token if it matches any
+         * of the configured audiences, trying each in turn.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -94,6 +94,44 @@ public interface SpiffeEndpointBuilderFactory {
          */
         default SpiffeEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Whether the CamelSpiffeOperation header may override the configured
+         * operation. Disabled by default: the operation decides whether this
+         * endpoint validates a token or mints one, so a message that can set it
+         * can turn a validator into an endpoint that hands out this workload's
+         * own JWT-SVID. Enable it only on routes whose input is trusted.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowOperationHeader the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder allowOperationHeader(boolean allowOperationHeader) {
+            doSetProperty("allowOperationHeader", allowOperationHeader);
+            return this;
+        }
+        /**
+         * Whether the CamelSpiffeOperation header may override the configured
+         * operation. Disabled by default: the operation decides whether this
+         * endpoint validates a token or mints one, so a message that can set it
+         * can turn a validator into an endpoint that hands out this workload's
+         * own JWT-SVID. Enable it only on routes whose input is trusted.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowOperationHeader the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder allowOperationHeader(String allowOperationHeader) {
+            doSetProperty("allowOperationHeader", allowOperationHeader);
             return this;
         }
         /**
@@ -274,7 +312,9 @@ public interface SpiffeEndpointBuilderFactory {
         public static final SpiffeHeaderNameBuilder INSTANCE = new SpiffeHeaderNameBuilder();
 
         /**
-         * Overrides the operation to be used by the producer.
+         * Overrides the operation to be used by the producer. Ignored unless
+         * the endpoint sets allowOperationHeader=true, because the operation
+         * decides whether the endpoint validates a token or mints one.
          * 
          * The option is a: {@code
          * org.apache.camel.component.spiffe.SpiffeOperation or String} type.
@@ -287,8 +327,10 @@ public interface SpiffeEndpointBuilderFactory {
             return "CamelSpiffeOperation";
         }
         /**
-         * The comma-separated audience(s) for the fetchJwtSvid and
-         * validateJwtSvid operations.
+         * The comma-separated audience(s) for the fetchJwtSvid operation.
+         * Ignored by validateJwtSvid, which always validates against the
+         * configured audience: there the audience is the check that binds the
+         * token to this workload, not a parameter.
          * 
          * The option is a: {@code String} type.
          * 

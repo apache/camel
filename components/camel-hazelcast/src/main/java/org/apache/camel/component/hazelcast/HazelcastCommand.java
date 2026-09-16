@@ -24,7 +24,6 @@ public enum HazelcastCommand {
     topic,
     seda,
     set,
-    atomicvalue,
     instance,
     list,
     replicatedmap,

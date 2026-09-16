@@ -93,6 +93,9 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             { "uploadenabled", INSECURE_DEV, "true" },
             { "downloadenabled", INSECURE_DEV, "true" },
             { "sendenabled", INSECURE_DEV, "true" },
+            // SpiffeSSLContextParameters is a bean referenced through sslContextParameters=#bean, not a component
+            // option, so its @Metadata never reaches a component JSON and the scan above cannot see it
+            { "acceptanyspiffeid", INSECURE_SSL, "true" },
     };
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/")

@@ -63,7 +63,9 @@ header to its SPIFFE ID.
 * `fetchJwtSvid` — fetches a JWT-SVID for the configured `audience` (or the `CamelSpiffeAudience` header). The
 message body is set to the JWT token string, with the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` headers.
 * `validateJwtSvid` — validates the JWT-SVID passed in the `CamelSpiffeToken` header (or the body) against the
-`audience`. The message body is set to the validated `io.spiffe.svid.jwtsvid.JwtSvid`.
+`audience`. When several audiences are configured the token is accepted if it matches *any* of them — the
+Workload API validates one audience at a time, so each is tried in turn. The message body is set to the validated
+`io.spiffe.svid.jwtsvid.JwtSvid`.
 
 [NOTE]
 ====
@@ -117,3 +119,22 @@ from("direct:start")
 ------------------------------------------------------------
 
 include::spring-boot:partial$starter.adoc[]
+
+== Security notes
+
+* *The operation comes from the endpoint.* `CamelSpiffeOperation` is ignored unless the endpoint sets
+  `allowOperationHeader=true`. The operation decides whether this endpoint *validates* a token or *mints* one, so a
+  message able to set it could turn a validator into an endpoint that hands out this workload's own JWT-SVID.
+* *A validation always uses the configured audience.* `CamelSpiffeAudience` is honoured by `fetchJwtSvid`, where the
+  audience is a genuine per-message parameter ("mint me a token for X"), and ignored by `validateJwtSvid`, where the
+  audience is the check that binds the token to this workload. Letting a message choose it would allow a JWT-SVID
+  minted for a different service to validate successfully.
+* *Strip the component's headers on untrusted ingress.* As with any Camel component, a consumer that does not apply
+  a `HeaderFilterStrategy` blocking `Camel*` lets a sender populate the header map. Call
+  `removeHeaders("CamelSpiffe*")` before the `spiffe:` endpoint when the message comes from an untrusted producer.
+* *Key material reaches the message.* `fetchX509Svid` places an `X509Svid` - which carries the private key - on the
+  body, and `fetchJwtSvid` places the bearer token. Do not log or trace the body for those operations.
+* *Constrain the peer.* `SpiffeSSLContextParameters` requires either an `acceptedSpiffeIds` allow-list or
+  `acceptAnySpiffeId=true`; it fails closed when neither is given. Prefer the allow-list -
+  `acceptAnySpiffeId` accepts any SVID that chains to the trust bundle, which authenticates the trust domain but not
+  the peer.

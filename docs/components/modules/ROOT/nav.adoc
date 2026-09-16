@@ -187,7 +187,6 @@
 ** xref:grpc-component.adoc[gRPC]
 ** xref:hashicorp-vault-component.adoc[HashiCorp Vault]
 ** xref:hazelcast-summary.adoc[Hazelcast]
-*** xref:hazelcast-atomicvalue-component.adoc[Hazelcast Atomic Number]
 *** xref:hazelcast-instance-component.adoc[Hazelcast Instance]
 *** xref:hazelcast-list-component.adoc[Hazelcast List]
 *** xref:hazelcast-map-component.adoc[Hazelcast Map]

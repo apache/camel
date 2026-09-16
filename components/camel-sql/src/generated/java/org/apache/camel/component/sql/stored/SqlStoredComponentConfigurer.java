@@ -23,6 +23,8 @@ public class SqlStoredComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqlStoredComponent target = (SqlStoredComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "datasource":
@@ -43,6 +45,8 @@ public class SqlStoredComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "datasource":
@@ -59,6 +63,8 @@ public class SqlStoredComponentConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SqlStoredComponent target = (SqlStoredComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "datasource":

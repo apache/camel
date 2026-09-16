@@ -34,6 +34,9 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam
     private String audience;
 
+    @UriParam(label = "security", defaultValue = "false", security = "insecure:dev")
+    private boolean allowOperationHeader;
+
     @UriParam(label = "advanced",
               description = "An existing WorkloadApiClient to use. When set, the component does not"
                             + " create or close its own client and spiffeSocketPath is ignored.")
@@ -65,9 +68,9 @@ public class SpiffeConfiguration implements Cloneable {
 
     /**
      * The comma-separated audience(s) to request for a JWT-SVID (fetchJwtSvid) or to validate against
-     * (validateJwtSvid). Can be overridden per-message with the {@code CamelSpiffeAudience} header. Note that
-     * validateJwtSvid validates against a single audience, so when several comma-separated audiences are given only the
-     * first one is used for validation; fetchJwtSvid requests all of them.
+     * (validateJwtSvid). fetchJwtSvid requests all of them and can be overridden per-message with the
+     * {@code CamelSpiffeAudience} header; validateJwtSvid ignores that header and uses this configuration only,
+     * accepting the token if it matches any of the configured audiences, trying each in turn.
      */
     public String getAudience() {
         return audience;
@@ -75,6 +78,21 @@ public class SpiffeConfiguration implements Cloneable {
 
     public void setAudience(String audience) {
         this.audience = audience;
+    }
+
+    public boolean isAllowOperationHeader() {
+        return allowOperationHeader;
+    }
+
+    /**
+     * Whether the {@code CamelSpiffeOperation} header may override the configured operation.
+     * <p/>
+     * Disabled by default: the operation decides whether this endpoint <em>validates</em> a token or <em>mints</em>
+     * one, so a message that can set it can turn a validator into an endpoint that hands out this workload's own
+     * JWT-SVID. Enable it only on routes whose input is trusted.
+     */
+    public void setAllowOperationHeader(boolean allowOperationHeader) {
+        this.allowOperationHeader = allowOperationHeader;
     }
 
     /**

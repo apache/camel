@@ -82,7 +82,8 @@ Java::
 [source,java]
 ----
 from("file:...")
-    .to("box://files/upload/inBody=fileUploadRequest");
+    .setHeader("CamelBox.fileName", header("CamelFileName"))
+    .to("box://files/upload?inBody=content&parentFolderId=0");
 ----
 
 XML::
@@ -91,7 +92,10 @@ XML::
 ----
 <route>
     <from uri="file:..."/>
-    <to uri="box://files/upload/inBody=fileUploadRequest"/>
+    <setHeader name="CamelBox.fileName">
+        <header>CamelFileName</header>
+    </setHeader>
+    <to uri="box://files/upload?inBody=content&amp;parentFolderId=0"/>
 </route>
 ----
 
@@ -102,9 +106,15 @@ YAML::
 - route:
     from:
       uri: file:...
-    steps:
-      - to:
-          uri: box://files/upload/inBody=fileUploadRequest
+      steps:
+        - setHeader:
+            name: CamelBox.fileName
+            header: CamelFileName
+        - to:
+            uri: box://files/upload
+            parameters:
+              inBody: content
+              parentFolderId: "0"
 ----
 ====
 
@@ -139,9 +149,9 @@ YAML::
       uri: box://events/listen
       parameters:
         startingPosition: -1
-    steps:
-      - to:
-          uri: bean:blah
+      steps:
+        - to:
+            uri: bean:blah
 ----
 ====
 

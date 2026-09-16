@@ -144,12 +144,12 @@ from("direct:init")
 - route:
     from:
       uri: direct:store
-    steps:
-      - setHeader:
-          name: CamelStateStoreKey
-          constant: myKey
-      - to:
-          uri: state-store:myStore?operation=put
+      steps:
+        - setHeader:
+            name: CamelStateStoreKey
+            constant: myKey
+        - to:
+            uri: state-store:myStore?operation=put
 ----
 
 == Backends

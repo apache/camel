@@ -69,24 +69,25 @@ public final class CatalogSamples {
             Map.entry("post", "rest"),
             Map.entry("aggregationStrategy", "aggregate"));
 
-    /** What a request is about, in the words a person or a model uses, to the EIP that does it. */
+    /**
+     * What a request is about, in the words a person or a model uses, to the EIP that does it. The names and aliases of
+     * the EIPs themselves (fan-out, dedup, rate-limit) come from the catalog's EIP models, so only what is not an alias
+     * is here: a task (read file, call service), a wording of the outcome (retry, batch) or a technology (json, cron).
+     */
     static final Map<String, String> INTENTS = Map.ofEntries(
             Map.entry("read file", "poll"), Map.entry("readfile", "poll"), Map.entry("load file", "poll"),
             Map.entry("read a file", "poll"), Map.entry("read", "poll"), Map.entry("fetch", "poll"),
             Map.entry("consume once", "poll"), Map.entry("poll once", "poll"),
             Map.entry("call service", "enrich"), Map.entry("call", "enrich"), Map.entry("http call", "enrich"),
-            Map.entry("enrich", "enrich"), Map.entry("lookup", "enrich"),
+            Map.entry("lookup", "enrich"),
             Map.entry("batch", "aggregate"), Map.entry("collect", "aggregate"), Map.entry("group", "aggregate"),
             Map.entry("retry", "onException"), Map.entry("error handling", "onException"),
             Map.entry("errorhandling", "onException"), Map.entry("exception", "onException"),
-            Map.entry("router", "choice"), Map.entry("route by content", "choice"), Map.entry("if", "choice"),
-            Map.entry("parallel", "multicast"), Map.entry("fan out", "multicast"), Map.entry("broadcast", "multicast"),
-            Map.entry("fallback", "circuitBreaker"), Map.entry("resilience", "circuitBreaker"),
+            Map.entry("route by content", "choice"), Map.entry("if", "choice"),
+            Map.entry("parallel", "multicast"), Map.entry("resilience", "circuitBreaker"),
             Map.entry("rest api", "rest"), Map.entry("http server", "rest"), Map.entry("endpoint", "rest"),
-            Map.entry("transform", "transform"), Map.entry("convert", "convertBodyTo"), Map.entry("json", "marshal"),
-            Map.entry("timer", "from"), Map.entry("schedule", "from"), Map.entry("cron", "from"),
-            Map.entry("split", "split"), Map.entry("loop", "loop"), Map.entry("delay", "delay"),
-            Map.entry("throttle", "throttle"), Map.entry("filter", "filter"), Map.entry("log", "log"));
+            Map.entry("convert", "convertBodyTo"), Map.entry("json", "marshal"),
+            Map.entry("timer", "from"), Map.entry("schedule", "from"), Map.entry("cron", "from"));
 
     private static volatile Map<String, List<Map<String, String>>> samples;
 
@@ -171,7 +172,7 @@ public final class CatalogSamples {
                     if (!yaml.stripLeading().startsWith("- ")) {
                         continue;
                     }
-                    if (SourceValidator.validateCamelYaml(yaml, null).isEmpty()) {
+                    if (SourceValidator.validateYamlSchema(yaml, catalog).isEmpty()) {
                         answer.add(Map.of("source", page + ".adoc (Camel " + catalog.getCatalogVersion() + ")", "yaml", yaml));
                     }
                 }
@@ -210,12 +211,20 @@ public final class CatalogSamples {
             return answer;
         }
         int max = Math.max(1, Math.min(MAX_LIMIT, limit <= 0 ? DEFAULT_LIMIT : limit));
-        String key = resolve(given);
+        String key = resolve(catalog, given);
         if (key == null) {
             answer.put("error", "No sample for '" + given + "'");
             answer.put("suggestions", new JsonArray(suggest(normalize(given))));
-            answer.put("hint", "camel_catalog_doc gives the options of an EIP; the sample tool covers the EIPs and file "
-                               + "entries documented with YAML examples");
+            // the name may still be an EIP (dedup is idempotentConsumer) whose page has no YAML example
+            List<String> eips = catalog != null ? catalog.suggestEipNames(given, 1) : List.of();
+            if (!eips.isEmpty()) {
+                answer.put("eip", eips.get(0));
+                answer.put("hint", "'" + given + "' is the " + eips.get(0) + " EIP, which has no YAML sample; "
+                                   + "camel_catalog_doc gives its options");
+            } else {
+                answer.put("hint", "camel_catalog_doc gives the options of an EIP; the sample tool covers the EIPs and file "
+                                   + "entries documented with YAML examples");
+            }
             return answer;
         }
         String partOf = PART_OF.get(normalize(given));
@@ -223,7 +232,7 @@ public final class CatalogSamples {
         if (partOf != null) {
             answer.put("partOf", partOf);
             answer.put("note", given + " is a part of " + partOf + "; the sample shows it in place");
-        } else if (!key.equals(normalize(given)) && INTENTS.containsKey(given.trim().toLowerCase(Locale.ROOT))) {
+        } else if (!key.equalsIgnoreCase(normalize(given))) {
             answer.put("note", "'" + given + "' is done with the " + key + " EIP");
         }
         answer.put("placement", placement(key));
@@ -252,6 +261,14 @@ public final class CatalogSamples {
 
     /** Resolves a user given name to a sample key: exact, case-insensitive, kebab-case, or a part of another EIP. */
     static String resolve(String given) {
+        return resolve(null, given);
+    }
+
+    /**
+     * Resolves a user given name to a sample key: exact, case-insensitive, kebab-case, a part of another EIP, an
+     * intent, or with a catalog an alias of an EIP model (fan-out, dedup, rate-limit) or a word of its title.
+     */
+    static String resolve(CamelCatalog catalog, String given) {
         String n = normalize(given);
         if (samples().containsKey(n)) {
             return n;
@@ -267,6 +284,18 @@ public final class CatalogSamples {
         for (String k : samples().keySet()) {
             if (k.equalsIgnoreCase(n)) {
                 return k;
+            }
+        }
+        if (catalog != null) {
+            // the aliases of the EIP models, then the EIP an aliased part belongs to (fallback is a part of circuitBreaker)
+            for (String eip : catalog.suggestEipNames(given, 3)) {
+                if (samples().containsKey(eip)) {
+                    return eip;
+                }
+                String whole = PART_OF.get(eip);
+                if (whole != null && samples().containsKey(whole)) {
+                    return whole;
+                }
             }
         }
         return null;

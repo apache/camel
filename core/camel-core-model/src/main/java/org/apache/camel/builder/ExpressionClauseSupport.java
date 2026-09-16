@@ -34,7 +34,6 @@ import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.model.language.JactlExpression;
 import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
-import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
@@ -409,31 +408,6 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T js(String text, Class<?> resultType) {
         JavaScriptExpression exp = new JavaScriptExpression(text);
-        exp.setResultType(resultType);
-        return expression(exp);
-    }
-
-    /**
-     * Evaluates an JOOR expression
-     *
-     * @param  text the expression to be evaluated
-     * @return      the builder to continue processing the DSL
-     */
-    @Deprecated(since = "4.3.0")
-    public T joor(String text) {
-        return expression(new JoorExpression(text));
-    }
-
-    /**
-     * Evaluates an JOOR expression
-     *
-     * @param  text       the expression to be evaluated
-     * @param  resultType the return type expected by the expression
-     * @return            the builder to continue processing the DSL
-     */
-    @Deprecated(since = "4.3.0")
-    public T joor(String text, Class<?> resultType) {
-        JoorExpression exp = new JoorExpression(text);
         exp.setResultType(resultType);
         return expression(exp);
     }

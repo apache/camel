@@ -77,6 +77,8 @@ public class GroovyExpressionBindingTest {
         assertEquals("myValue", evaluate("exchangeProperties.myProperty"));
         assertSame(exchange, evaluate("exchange"));
         assertSame(exchange.getIn(), evaluate("request"));
+        assertSame(exchange.getMessage(), evaluate("message"));
+        assertEquals("James", evaluate("message.getHeader('name')"));
         assertSame(context, evaluate("camelContext"));
         assertEquals(Boolean.TRUE, evaluate("attachments.isEmpty()"));
         assertEquals(Boolean.TRUE, evaluate("log != null"));
@@ -104,11 +106,20 @@ public class GroovyExpressionBindingTest {
     }
 
     @Test
+    public void testEveryVariableTheHintNamesExists() {
+        // the hint is hand-written; a name it lists must be one the binding exposes, so the next attempt succeeds
+        for (String name : GroovyExpression.SCRIPT_VARIABLES_HINT.replace(" and ", ", ").split(", ")) {
+            assertTrue(GroovyExpression.ExchangeBinding.EXCHANGE_VARIABLES.contains(name),
+                    "the hint names '" + name + "' but the binding does not expose it");
+        }
+    }
+
+    @Test
     public void testBindingVariables() {
         assertEquals(Boolean.TRUE, evaluate(
                 "binding.variables.keySet().containsAll(['body', 'header', 'headers', 'variable', 'variables', 'exception',"
-                                            + " 'in', 'request', 'exchange', 'exchangeProperty', 'exchangeProperties',"
-                                            + " 'camelContext', 'attachments', 'log'])"));
+                                            + " 'in', 'request', 'message', 'exchange', 'exchangeProperty',"
+                                            + " 'exchangeProperties', 'camelContext', 'attachments', 'log'])"));
         assertEquals("World", evaluate("binding.variables.body"));
         assertEquals("Bye", evaluate("body = 'Bye'; binding.variables.body"));
     }

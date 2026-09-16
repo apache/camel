@@ -230,19 +230,19 @@ YAML::
 - route:
     from:
       uri: direct:sign
-    steps:
-      - to:
-          uri: pqc:sign
-          parameters:
-            operation: sign
-      - to:
-          uri: mock:sign
-      - to:
-          uri: pqc:verify
-          parameters:
-            operation: verify
-      - to:
-          uri: mock:verify
+      steps:
+        - to:
+            uri: pqc:sign
+            parameters:
+              operation: sign
+        - to:
+            uri: mock:sign
+        - to:
+            uri: pqc:verify
+            parameters:
+              operation: verify
+        - to:
+            uri: mock:verify
 ----
 ====
 
@@ -299,21 +299,21 @@ YAML::
 - route:
     from:
       uri: direct:sign
-    steps:
-      - to:
-          uri: pqc:sign
-          parameters:
-            operation: sign
-            signatureAlgorithm: MLDSA
-      - to:
-          uri: mock:sign
-      - to:
-          uri: pqc:verify
-          parameters:
-            operation: verify
-            signatureAlgorithm: MLDSA
-      - to:
-          uri: mock:verify
+      steps:
+        - to:
+            uri: pqc:sign
+            parameters:
+              operation: sign
+              signatureAlgorithm: MLDSA
+        - to:
+            uri: mock:sign
+        - to:
+            uri: pqc:verify
+            parameters:
+              operation: verify
+              signatureAlgorithm: MLDSA
+        - to:
+            uri: mock:verify
 ----
 ====
 
@@ -470,21 +470,21 @@ YAML::
 - route:
     from:
       uri: direct:encapsulate
-    steps:
-      - to:
-          uri: pqc:keyenc
-          parameters:
-            operation: generateSecretKeyEncapsulation
-            symmetricKeyAlgorithm: AES
-      - to:
-          uri: mock:encapsulate
-      - to:
-          uri: pqc:keyenc
-          parameters:
-            operation: extractSecretKeyEncapsulation
-            symmetricKeyAlgorithm: AES
-      - to:
-          uri: mock:extract
+      steps:
+        - to:
+            uri: pqc:keyenc
+            parameters:
+              operation: generateSecretKeyEncapsulation
+              symmetricKeyAlgorithm: AES
+        - to:
+            uri: mock:encapsulate
+        - to:
+            uri: pqc:keyenc
+            parameters:
+              operation: extractSecretKeyEncapsulation
+              symmetricKeyAlgorithm: AES
+        - to:
+            uri: mock:extract
 ----
 ====
 
@@ -546,23 +546,23 @@ YAML::
 - route:
     from:
       uri: direct:encapsulate
-    steps:
-      - to:
-          uri: pqc:keyenc
-          parameters:
-            operation: generateSecretKeyEncapsulation
-            symmetricKeyAlgorithm: AES
-            keyEncapsulationAlgorithm: MLKEM
-      - to:
-          uri: mock:encapsulate
-      - to:
-          uri: pqc:keyenc
-          parameters:
-            operation: extractSecretKeyEncapsulation
-            symmetricKeyAlgorithm: AES
-            keyEncapsulationAlgorithm: MLKEM
-      - to:
-          uri: mock:extract
+      steps:
+        - to:
+            uri: pqc:keyenc
+            parameters:
+              operation: generateSecretKeyEncapsulation
+              symmetricKeyAlgorithm: AES
+              keyEncapsulationAlgorithm: MLKEM
+        - to:
+            uri: mock:encapsulate
+        - to:
+            uri: pqc:keyenc
+            parameters:
+              operation: extractSecretKeyEncapsulation
+              symmetricKeyAlgorithm: AES
+              keyEncapsulationAlgorithm: MLKEM
+        - to:
+            uri: mock:extract
 ----
 ====
 

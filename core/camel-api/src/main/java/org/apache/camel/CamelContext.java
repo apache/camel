@@ -40,6 +40,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.MessageSizeStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
@@ -96,6 +97,13 @@ import org.jspecify.annotations.Nullable;
  * @see ExtendedCamelContext
  * @see RoutesBuilder
  */
+@Metadata(label = "api",
+          description = "The runtime that owns the routes, the registry, the components and the templates; from "
+                        + "exchange.getContext() or injected. Create a ProducerTemplate, FluentProducerTemplate or "
+                        + "ConsumerTemplate once (a field, reused) and never per exchange. getVariable(name) is the global "
+                        + "variable repository, exchange.getVariable(name) the exchange's. getEndpoint(uri) creates the "
+                        + "endpoint when it is not yet known, hasEndpoint(uri) only looks. getRoute(id) is null when the "
+                        + "route is unknown.")
 public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 
     /**
@@ -119,6 +127,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the name
      */
+    @Metadata(label = "api", description = "The name of this CamelContext.")
     String getName();
 
     /**
@@ -179,6 +188,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the version
      */
+    @Metadata(label = "api", description = "The Camel version, e.g. 4.23.0.")
     String getVersion();
 
     /**
@@ -376,6 +386,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return               the component, or <tt>null</tt> if not found and could not be auto created
      */
     @Nullable
+    @Metadata(label = "api",
+              description = "A component by scheme, created when needed; getComponent(name, type) returns it typed.",
+              examples = { "context.getComponent(\"kafka\", KafkaComponent.class)" })
     Component getComponent(String componentName);
 
     /**
@@ -445,6 +458,10 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  uri the URI of the endpoint
      * @return     the endpoint
      */
+    @Metadata(label = "api",
+              description = "The endpoint of a URI, created together with its component when not yet known; hasEndpoint(uri) "
+                            + "only checks.",
+              examples = { "context.getEndpoint(\"direct:orders\")" })
     Endpoint getEndpoint(String uri);
 
     /**
@@ -484,6 +501,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return     the registered endpoint or <tt>null</tt> if not registered
      */
     @Nullable
+    @Metadata(label = "api", description = "The endpoint of the URI when it already exists, else null.")
     Endpoint hasEndpoint(String uri);
 
     /**
@@ -540,6 +558,10 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the route controller.
      */
+    @Metadata(label = "api",
+              description = "Starts, stops, suspends and resumes routes by id: startRoute(id), stopRoute(id), "
+                            + "getRouteStatus(id).",
+              examples = { "context.getRouteController().stopRoute(\"orders\")" })
     RouteController getRouteController();
 
     /**
@@ -547,6 +569,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the current routes
      */
+    @Metadata(label = "api",
+              description = "All routes: getRouteId(), getEndpoint() (the from), getRouteController() for their status.")
     List<Route> getRoutes();
 
     /**
@@ -591,6 +615,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return    the route or <tt>null</tt> if not found
      */
     @Nullable
+    @Metadata(label = "api", description = "The route with the id, null when unknown; getRoutes() lists them all.")
     Route getRoute(String id);
 
     /**
@@ -902,6 +927,10 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the converter
      */
+    @Metadata(label = "api",
+              description = "Converts between types the way getBody(type) does: convertTo(type, value), mandatoryConvertTo, "
+                            + "tryConvertTo.",
+              examples = { "context.getTypeConverter().convertTo(String.class, body)" })
     TypeConverter getTypeConverter();
 
     /**
@@ -924,6 +953,11 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the registry
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "The bean registry: lookupByName(name), lookupByNameAndType(name, type), findByType(type), "
+                            + "bind(name, bean).",
+              examples = { "context.getRegistry().lookupByNameAndType(\"myDataSource\", DataSource.class)" })
     Registry getRegistry();
 
     /**
@@ -967,6 +1001,10 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                         the resolved language
      * @throws NoSuchLanguageException is thrown if language could not be resolved
      */
+    @Metadata(label = "api",
+              description = "A language by name (simple, groovy, jsonpath) to build an Expression or Predicate in code: "
+                            + "createExpression(text), createPredicate(text).",
+              examples = { "context.resolveLanguage(\"simple\").createExpression(\"${body}\")" })
     Language resolveLanguage(String language) throws NoSuchLanguageException;
 
     /**
@@ -980,6 +1018,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws IllegalArgumentException is thrown if property placeholders was used and there was an error resolving
      *                                  them
      */
+    @Metadata(label = "api",
+              description = "Replaces the {{key}} placeholders in the text with the property values.",
+              examples = { "context.resolvePropertyPlaceholders(\"{{greeting}}\")" })
     String resolvePropertyPlaceholders(String text);
 
     /**
@@ -991,6 +1032,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @since       4.4
      */
     @Nullable
+    @Metadata(label = "api",
+              description = "A global variable (the global repository); exchange.getVariable(name) is the exchange's own.")
     Object getVariable(String name);
 
     /**
@@ -1019,6 +1062,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the properties component
      */
+    @Metadata(label = "api",
+              description = "The application properties: resolveProperty(key) returns an Optional<String>.")
     PropertiesComponent getPropertiesComponent();
 
     /**
@@ -1051,6 +1096,11 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                       the template
      * @throws RuntimeCamelException is thrown if error starting the template
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "Creates a ProducerTemplate to send to endpoints from code (sendBody, requestBody); create once "
+                            + "and reuse, not per exchange.",
+              examples = { "context.createProducerTemplate().sendBody(\"direct:audit\", body)" })
     ProducerTemplate createProducerTemplate();
 
     /**
@@ -1088,6 +1138,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws RuntimeCamelException is thrown if error starting the template
      * @since                        3.0
      */
+    @Metadata(label = "api",
+              description = "Creates a FluentProducerTemplate: to(uri).withBody(body).withHeader(name, value).send() or "
+                            + ".request(type); create once and reuse.")
     FluentProducerTemplate createFluentProducerTemplate();
 
     /**
@@ -1125,6 +1178,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                       the template
      * @throws RuntimeCamelException is thrown if error starting the template
      */
+    @Metadata(label = "api",
+              description = "Creates a ConsumerTemplate to poll an endpoint on demand: receiveBody(uri, timeout, type); "
+                            + "create once and reuse.")
     ConsumerTemplate createConsumerTemplate();
 
     /**
@@ -1150,6 +1206,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return      the resolved data format, or <tt>null</tt> if not found
      */
     @Nullable
+    @Metadata(label = "api",
+              description = "A data format by name (jackson, csv, xml-jackson) to marshal and unmarshal in code.")
     DataFormat resolveDataFormat(String name);
 
     /**
@@ -1245,6 +1303,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return the string value of the global option
      */
     @Nullable
+    @Metadata(label = "api", description = "A global option by key (camel.main.globalOptions or getGlobalOptions()).")
     String getGlobalOption(String key);
 
     /**

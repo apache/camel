@@ -26,12 +26,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.RuntimeProvider;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.YAML_URI_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.extractEipFromLine;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.findParentEip;
+import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.stripComment;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.unquote;
 
 /**
@@ -81,7 +84,8 @@ final class EndpointChecks {
             if (several.find()) {
                 // to: direct:a,direct:b : one endpoint per to:, several go through multicast or recipientList
                 errors.add(linePrefix(i) + "a to: takes one endpoint; \"" + uri + "\" names several: send to each with"
-                           + " multicast: {to: [...]} (all of them) or recipientList: {constant: \"" + uri + "\"}"
+                           + " multicast: {to: [...]} (all of them) or recipientList: {expression: {constant: {expression: \""
+                           + uri + "\"}}}"
                            + " (a list evaluated at runtime), or write one - to: step per endpoint");
                 continue;
             }
@@ -147,6 +151,9 @@ final class EndpointChecks {
                 String nextTrimmed = next.trim();
                 if (nextIndent == lineIndent && nextTrimmed.startsWith("parameters:")) {
                     int paramBlockIndent = nextIndent;
+                    int blockScalarIndent = -1;
+                    String mapKey = null;
+                    int mapIndent = -1;
                     for (int k = j + 1; k < lines.length; k++) {
                         String paramLine = lines[k];
                         if (paramLine.isBlank()) {
@@ -156,11 +163,33 @@ final class EndpointChecks {
                         if (paramIndent <= paramBlockIndent) {
                             break;
                         }
+                        if (blockScalarIndent >= 0 && paramIndent > blockScalarIndent) {
+                            // the lines of a block scalar (argSchema: | followed by JSON) are its value, not options
+                            continue;
+                        }
+                        blockScalarIndent = -1;
+                        if (mapKey != null && paramIndent <= mapIndent) {
+                            mapKey = null;
+                        }
                         String paramTrimmed = paramLine.trim();
                         int colonPos = paramTrimmed.indexOf(':');
                         if (colonPos > 0) {
-                            String key = paramTrimmed.substring(0, colonPos).trim();
-                            String val = unquote(paramTrimmed.substring(colonPos + 1).trim());
+                            String key = unquote(paramTrimmed.substring(0, colonPos).trim());
+                            String val = unquote(stripComment(paramTrimmed.substring(colonPos + 1).trim()));
+                            if (mapKey != null) {
+                                // headers: with foo: bar under it is the entry foo of the headers map option
+                                key = mapKey + "." + key;
+                            } else if (val.isEmpty() && k + 1 < lines.length
+                                    && countLeadingSpaces(lines[k + 1]) > paramIndent) {
+                                mapKey = key;
+                                mapIndent = paramIndent;
+                                continue;
+                            }
+                            if (YamlLines.isBlockScalarIndicator(val)) {
+                                // the option is checked by name; its value is the block that follows
+                                blockScalarIndent = paramIndent;
+                                val = "";
+                            }
                             char sep = hasParams ? '&' : '?';
                             uriBuilder.append(sep).append(key).append('=').append(val);
                             hasParams = true;
@@ -178,8 +207,15 @@ final class EndpointChecks {
             try {
                 EndpointValidationResult result
                         = catalog.validateEndpointProperties(fullUri, false, consumerOnly, producerOnly);
+                String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
+                if (result.getUnknownComponent() != null) {
+                    // a warning to the catalog, an error when the runtime is what lacks the component
+                    String missing = missingInRuntime(catalog, scheme);
+                    if (missing != null) {
+                        errors.add(linePrefix(i) + missing);
+                    }
+                }
                 if (!result.isSuccess()) {
-                    String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
                     collectEndpointErrors(errors, result, scheme, i, optionLineMap);
                 }
                 checkRegexOptions(errors, fullUri, i, optionLineMap);
@@ -188,6 +224,41 @@ final class EndpointChecks {
             }
         }
         return errors;
+    }
+
+    private static volatile CamelCatalog defaultCatalog;
+
+    /**
+     * The message for a component the catalog of a runtime (Camel Quarkus, Camel Spring Boot) does not have while Camel
+     * has it: the runtime has no extension or starter for it. Null for the default catalog, whose unknown components
+     * are not reported: a project can register a component of its own (CAMEL-24711).
+     */
+    static String missingInRuntime(CamelCatalog catalog, String scheme) {
+        RuntimeProvider provider = catalog.getRuntimeProvider();
+        String name = provider != null ? provider.getProviderName() : null;
+        if (name == null || "default".equals(name)) {
+            return null;
+        }
+        CamelCatalog plain = defaultCatalog;
+        if (plain == null) {
+            synchronized (EndpointChecks.class) {
+                plain = defaultCatalog;
+                if (plain == null) {
+                    plain = new DefaultCamelCatalog();
+                    defaultCatalog = plain;
+                }
+            }
+        }
+        if (plain.componentModel(scheme) == null) {
+            return null;
+        }
+        return switch (name) {
+            case "quarkus" -> scheme + ": Camel Quarkus has no extension for this component (no camel-quarkus-" + scheme
+                              + "); pick a component that has one, camel_catalog_find lists them";
+            case "springboot" -> scheme + ": Camel Spring Boot has no starter for this component (no camel-" + scheme
+                                 + "-starter)";
+            default -> scheme + ": the " + name + " runtime has no support for this component";
+        };
     }
 
     /** Options models write that the component does not have, and what the component does instead. */
@@ -205,9 +276,10 @@ final class EndpointChecks {
             Map.entry("timer:interval", "write period=<millis>"),
             Map.entry("timer:delayMs", "write delay=<millis>"),
             Map.entry("timer:repeat", "write repeatCount=<n>"),
-            Map.entry("timer:body", "a timer message has no body: set it with a setBody step (setBody: {constant: \"...\"})"),
-            Map.entry("timer:message",
-                    "a timer message has no body: set it with a setBody step (setBody: {constant: \"...\"})"),
+            Map.entry("timer:body", "a timer message has no body: set it with a setBody step"
+                                    + " (setBody: {expression: {constant: {expression: \"...\"}}})"),
+            Map.entry("timer:message", "a timer message has no body: set it with a setBody step"
+                                       + " (setBody: {expression: {constant: {expression: \"...\"}}})"),
             Map.entry("timer:cron", "a cron expression is the cron or quartz component: cron:tick?schedule=0/5+*+*+*+*+?"),
             Map.entry("timer:schedule", "a cron expression is the cron or quartz component: cron:tick?schedule=0/5+*+*+*+*+?"),
             Map.entry("log:message", "the message is the body; a text is set with a setBody step or the log EIP"),

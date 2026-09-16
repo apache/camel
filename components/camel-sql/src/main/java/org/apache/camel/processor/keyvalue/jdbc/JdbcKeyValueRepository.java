@@ -113,6 +113,13 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
     private String updateIfValueString = DEFAULT_UPDATE_IF_VALUE_STRING;
     @Metadata(label = "advanced", description = "SQL query to use for conditional delete (CAS delete)")
     private String deleteIfValueString = DEFAULT_DELETE_IF_VALUE_STRING;
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " values read back from the repository. When not set, the JVM-wide jdk.serialFilter is"
+                            + " used if present; otherwise a conservative default filter denying java.net.* and"
+                            + " otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen"
+                            + " this pattern when storing instances of your own classes in the repository.")
+    private String deserializationFilter;
 
     /**
      * Creates a new JDBC key-value repository. A {@link DataSource} or {@link JdbcTemplate} must be set before
@@ -373,7 +380,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
                     expired[0] = true;
                     return null;
                 }
-                return KeyValueRepositoryHelper.deserialize(bytes);
+                return KeyValueRepositoryHelper.deserialize(bytes, deserializationFilter);
             }, key);
             if (expired[0]) {
                 jdbcTemplate.update(getDeleteString(), key);
@@ -517,5 +524,19 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
 
     public void setDeleteIfValueString(String deleteIfValueString) {
         this.deleteIfValueString = deleteIfValueString;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing values read back from the repository. When not set, the JVM-wide {@code jdk.serialFilter} is used
+     * if present, otherwise a conservative default filter is applied. Widen this pattern when storing instances of your
+     * own classes in the repository.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 }

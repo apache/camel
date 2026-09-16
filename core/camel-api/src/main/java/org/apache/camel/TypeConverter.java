@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.Metadata;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -38,6 +39,11 @@ import org.jspecify.annotations.Nullable;
  * @see TypeConversionException
  * @see NoTypeConversionAvailableException
  */
+@Metadata(label = "api",
+          description = "Converts a value to a type with the registered converters (String, byte[], InputStream, "
+                        + "numbers, Document, JSON and POJOs through the data formats on the classpath): what "
+                        + "getBody(type), getHeader(name, type) and the bean parameter binding use. From "
+                        + "context.getTypeConverter().")
 public interface TypeConverter {
 
     /** Sentinel value indicating that no type converter was found, used internally for caching purposes. */
@@ -58,6 +64,10 @@ public interface TypeConverter {
      * @return                         the converted value, or <tt>null</tt> if not possible to convert
      * @throws TypeConversionException is thrown if error during type conversion
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "The value as the type; null when there is no conversion or the value is null.",
+              examples = { "converter.convertTo(String.class, body)" })
     <T> @Nullable T convertTo(Class<T> type, @Nullable Object value) throws TypeConversionException;
 
     /**
@@ -83,6 +93,8 @@ public interface TypeConverter {
      * @throws TypeConversionException            is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
      */
+    @Metadata(label = "api",
+              description = "Like convertTo but throws NoTypeConversionAvailableException when there is no conversion.")
     <T> T mandatoryConvertTo(Class<T> type, @Nullable Object value)
             throws TypeConversionException, NoTypeConversionAvailableException;
 
@@ -110,6 +122,7 @@ public interface TypeConverter {
      * @param  value the value to be converted
      * @return       the converted value, or <tt>null</tt> if not possible to convert
      */
+    @Metadata(label = "api", description = "Like convertTo but never throws: null when the conversion fails.")
     <T> @Nullable T tryConvertTo(Class<T> type, @Nullable Object value);
 
     /**

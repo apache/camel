@@ -48,7 +48,10 @@ public interface OpaEndpointBuilderFactory {
         /**
          * The key to read the allow/deny verdict from when the policy returns
          * an object rather than a plain boolean. For a policy returning {allow:
-         * true, reasons: } the default value of allow is what you want.
+         * true, reasons: } the default value of allow is what you want. A
+         * dotted path reaches a verdict nested inside the document: {code
+         * allowKey=result.allow} reads {result: {allow: true}}. A key with no
+         * dot is looked up directly at the top level.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -60,6 +63,44 @@ public interface OpaEndpointBuilderFactory {
          */
         default OpaEndpointBuilder allowKey(String allowKey) {
             doSetProperty("allowKey", allowKey);
+            return this;
+        }
+        /**
+         * The compiled entrypoint to evaluate in wasm mode. This is not the
+         * same thing as the policy path: an entrypoint is fixed when the bundle
+         * is built, with {code opa build -e}. Defaults to the endpoint's policy
+         * path, which is the name {code opa build} gives it.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param entrypoint the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder entrypoint(String entrypoint) {
+            doSetProperty("entrypoint", entrypoint);
+            return this;
+        }
+        /**
+         * How the policy is evaluated. rest (the default) calls a running OPA
+         * server over its Data API. wasm evaluates a WebAssembly bundle
+         * in-process, with no server involved - so there is no network hop and
+         * no unreachable decision point, at the cost of the policy being a
+         * build-time artefact rather than something a server distributes and
+         * updates. serverUrl, bearerToken and failOpen do not apply in wasm
+         * mode.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: rest
+         * Group: producer
+         * 
+         * @param evaluationMode the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder evaluationMode(String evaluationMode) {
+            doSetProperty("evaluationMode", evaluationMode);
             return this;
         }
         /**
@@ -102,9 +143,13 @@ public interface OpaEndpointBuilderFactory {
         }
         /**
          * Comma-separated list of message header names to send to OPA in the
-         * input document. The default of {code } sends every header. Narrow it
-         * when the policy only needs a few headers, or when the message carries
-         * headers that should not leave the JVM.
+         * input document. The default of {code } sends every header except
+         * those that carry a caller credential verbatim - Authorization, {code
+         * Proxy-Authorization}, Cookie and {code Set-Cookie} - which are
+         * withheld because OPA's decision logging ships the whole input
+         * document, often off the box. A policy that genuinely needs one can
+         * still have it by naming the header here. Narrow the list when the
+         * policy only needs a few headers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -140,6 +185,26 @@ public interface OpaEndpointBuilderFactory {
          */
         default OpaEndpointBuilder includeProperties(String includeProperties) {
             doSetProperty("includeProperties", includeProperties);
+            return this;
+        }
+        /**
+         * The WebAssembly policy to evaluate in wasm mode, as produced by {code
+         * opa build -t wasm}. Accepts a {code file:}, {code classpath:} or
+         * {code http:} location holding either the bundle.tar.gz that {code opa
+         * build} emits or a bare .wasm module. Required when {code
+         * evaluationMode=wasm}. Prefer the bundle: it also carries the data
+         * document the policy reads as {code data.}, which a bare module does
+         * not.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param policyBundle the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder policyBundle(String policyBundle) {
+            doSetProperty("policyBundle", policyBundle);
             return this;
         }
         /**
@@ -268,6 +333,46 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long an exchange waits for a free WebAssembly policy instance in
+         * wasm mode before the evaluation fails. An exchange that cannot get an
+         * instance is not denied by a policy, so it is reported as an
+         * evaluation failure and handled like any other: failing closed, or
+         * proceeding if failOpen is set. Raise it, or poolSize, for a route
+         * whose concurrency exceeds the pool.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param borrowTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder borrowTimeout(long borrowTimeout) {
+            doSetProperty("borrowTimeout", borrowTimeout);
+            return this;
+        }
+        /**
+         * How long an exchange waits for a free WebAssembly policy instance in
+         * wasm mode before the evaluation fails. An exchange that cannot get an
+         * instance is not denied by a policy, so it is reported as an
+         * evaluation failure and handled like any other: failing closed, or
+         * proceeding if failOpen is set. Raise it, or poolSize, for a route
+         * whose concurrency exceeds the pool.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param borrowTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder borrowTimeout(String borrowTimeout) {
+            doSetProperty("borrowTimeout", borrowTimeout);
+            return this;
+        }
+        /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
          * 
@@ -296,6 +401,42 @@ public interface OpaEndpointBuilderFactory {
          */
         default AdvancedOpaEndpointBuilder opaClient(String opaClient) {
             doSetProperty("opaClient", opaClient);
+            return this;
+        }
+        /**
+         * How many WebAssembly policy instances to pool in wasm mode. An
+         * instance carries mutable state and is not thread-safe, so each
+         * exchange borrows one; this bounds how many exchanges evaluate at
+         * once.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 8
+         * Group: advanced
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder poolSize(int poolSize) {
+            doSetProperty("poolSize", poolSize);
+            return this;
+        }
+        /**
+         * How many WebAssembly policy instances to pool in wasm mode. An
+         * instance carries mutable state and is not thread-safe, so each
+         * exchange borrows one; this bounds how many exchanges evaluate at
+         * once.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 8
+         * Group: advanced
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder poolSize(String poolSize) {
+            doSetProperty("poolSize", poolSize);
             return this;
         }
     }

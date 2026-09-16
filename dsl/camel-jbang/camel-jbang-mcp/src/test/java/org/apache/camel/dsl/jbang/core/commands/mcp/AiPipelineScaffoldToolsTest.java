@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,7 +29,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AiPipelineScaffoldToolsTest {
 
+    private static YamlValidator canonicalValidator;
+
     private AiPipelineScaffoldTools tools;
+
+    @BeforeAll
+    static void setUpValidator() throws Exception {
+        canonicalValidator = new YamlValidator(true);
+        canonicalValidator.init();
+    }
 
     @BeforeEach
     void setUp() {
@@ -74,6 +84,18 @@ class AiPipelineScaffoldToolsTest {
         assertThat(result.yamlRoute()).contains("aws-bedrock:");
         assertThat(result.applicationProperties()).isNotBlank();
         assertThat(result.description()).isNotBlank();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "summarization", "extraction", "rag", "classification" })
+    void shouldGenerateCanonicalYamlForEachPipelineType(String type) throws Exception {
+        AiPipelineScaffoldTools.ScaffoldResult result
+                = tools.camel_ai_pipeline_scaffold(type, "docling", "file", null, null);
+
+        // the scaffold is the starting point of a user or an AI agent: it must not be in the deprecated compact notation
+        assertThat(canonicalValidator.validate(result.yamlRoute()))
+                .as("canonical validation of the %s scaffold:%n%s", type, result.yamlRoute())
+                .isEmpty();
     }
 
     @Test

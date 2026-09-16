@@ -448,7 +448,7 @@ Netty producers.
 ====
 
 Then in the Camel routes we can refer to this worker pools by
-configuring the `workerPool` option in the URI as shown below:
+configuring the `workerGroup` option in the URI as shown below:
 
 [tabs]
 ====
@@ -456,7 +456,7 @@ Java::
 +
 [source,java]
 ----
-from("netty:tcp://0.0.0.0:5021?textline=true&sync=true&workerPool=#sharedPool&usingExecutorService=false")
+from("netty:tcp://0.0.0.0:5021?textline=true&sync=true&workerGroup=#sharedPool&usingExecutorService=false")
     .to("log:result");
 ----
 
@@ -465,7 +465,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="netty:tcp://0.0.0.0:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <from uri="netty:tcp://0.0.0.0:5021?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
 </route>
 ----
@@ -480,7 +480,7 @@ YAML::
       parameters:
         textline: true
         sync: true
-        workerPool: "#sharedPool"
+        workerGroup: "#sharedPool"
         usingExecutorService: false
       steps:
         - to:
@@ -496,7 +496,7 @@ Java::
 +
 [source,java]
 ----
-from("netty:tcp://0.0.0.0:5022?textline=true&sync=true&workerPool=#sharedPool&usingExecutorService=false")
+from("netty:tcp://0.0.0.0:5022?textline=true&sync=true&workerGroup=#sharedPool&usingExecutorService=false")
     .to("log:result");
 ----
 
@@ -505,7 +505,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="netty:tcp://0.0.0.0:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <from uri="netty:tcp://0.0.0.0:5022?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
 </route>
 ----
@@ -520,7 +520,7 @@ YAML::
       parameters:
         textline: true
         sync: true
-        workerPool: "#sharedPool"
+        workerGroup: "#sharedPool"
         usingExecutorService: false
       steps:
         - to:
@@ -668,9 +668,9 @@ YAML::
 - route:
     from:
       uri: netty:tcp://0.0.0.0:5150
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 

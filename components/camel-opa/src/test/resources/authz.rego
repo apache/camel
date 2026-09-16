@@ -54,3 +54,10 @@ decision := {"allow": true, "reasons": []} if {
 decision := {"allow": false, "reasons": ["not the owner"]} if {
 	input.headers.user != "alice"
 }
+
+# A rule with no default, so it is *undefined* rather than false when it does not match.
+# OPA reports an undefined decision as an evaluation error over REST, and as an empty result
+# array through the WebAssembly ABI; the component has to fail closed on both.
+strict_allow if {
+	input.headers.user == "alice"
+}

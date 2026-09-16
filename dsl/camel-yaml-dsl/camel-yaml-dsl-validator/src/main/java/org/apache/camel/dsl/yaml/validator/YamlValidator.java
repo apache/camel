@@ -73,6 +73,8 @@ public class YamlValidator {
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     private final boolean canonical;
+    private final String schemaJson;
+    private final CamelCatalog catalog;
     private Schema schema;
     private Map<String, OneOfGroup> oneOfGroups;
 
@@ -84,7 +86,22 @@ public class YamlValidator {
     }
 
     public YamlValidator(boolean canonical) {
+        this(canonical, null, null);
+    }
+
+    /**
+     * A validator for a schema document other than the one on the classpath: the schema of another Camel version, read
+     * from the {@code camel-yaml-dsl} jar of that version.
+     *
+     * @param canonical  whether the document is the canonical schema
+     * @param schemaJson the schema document as JSON; null for the schema on the classpath
+     * @param catalog    the catalog of the same Camel version, for the checks the schema cannot express; null for the
+     *                   catalog on the classpath
+     */
+    public YamlValidator(boolean canonical, String schemaJson, CamelCatalog catalog) {
         this.canonical = canonical;
+        this.schemaJson = schemaJson;
+        this.catalog = catalog;
     }
 
     public boolean isCanonical() {
@@ -245,7 +262,9 @@ public class YamlValidator {
         boolean seenContent = false;
         for (int i = 0; i < lines.length; i++) {
             String t = lines[i].trim();
-            if (t.equals("---") || t.equals("...")) {
+            // a marker starts at column 1; an indented --- or ... is text, such as a line of a block scalar
+            String marker = lines[i].stripTrailing();
+            if (marker.equals("---") || marker.equals("...")) {
                 if (seenContent) {
                     return Error.builder()
                             .messageKey("document")
@@ -265,10 +284,13 @@ public class YamlValidator {
     private List<Error> validate(JsonNode target) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
-        errors = withExpressionHints(errors);
-        errors = withPropertyHints(errors);
-        errors = withListHints(errors);
-        errors = withStepHints(errors);
+        if (canonical) {
+            errors = SchemaHints.apply(SchemaHints.COMPACT, errors, this);
+        }
+        errors = SchemaHints.apply(SchemaHints.EXPRESSION, errors, this);
+        errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this);
+        errors = SchemaHints.apply(SchemaHints.LIST, errors, this);
+        errors = SchemaHints.apply(SchemaHints.STEP, errors, this);
         // CAMEL-24707: the schema requires the expression, so a node without one fails its oneOf with "0 are valid"
         // plus one "required property <language> not found" per language; replace that with one line that says
         // what to write, at the node's own location
@@ -301,41 +323,14 @@ public class YamlValidator {
         return errors;
     }
 
-    /**
-     * "must have at most 1 properties" at a step: a step holds one EIP, and the second key is either an option that
-     * belongs under the EIP (indented one level more) or another step (its own - item).
-     */
-    static List<Error> withStepHints(List<Error> errors) {
-        List<Error> answer = new ArrayList<>(errors.size());
-        for (Error error : errors) {
-            String location = String.valueOf(error.getInstanceLocation());
-            if ("maxProperties".equals(error.getKeyword()) && location.matches("/\\d+")) {
-                // - beans:\n  myBean: ... : the second key was meant to be inside the first; it is not indented enough
-                answer.add(Error.builder()
-                        .keyword("maxProperties")
-                        .instanceLocation(error.getInstanceLocation())
-                        .messageKey("maxProperties")
-                        .format(new MessageFormat("{0}"))
-                        .arguments(error.getMessage() + " (a top-level entry is one key: - route:, - beans:, - rest:...;"
-                                   + " the lines that belong to it must be indented under it, a second key at the same"
-                                   + " level as the entry is read as a separate property)")
-                        .build());
-                continue;
-            }
-            if ("maxProperties".equals(error.getKeyword()) && location.matches(".*/steps/\\d+")) {
-                answer.add(Error.builder()
-                        .keyword("maxProperties")
-                        .instanceLocation(error.getInstanceLocation())
-                        .messageKey("maxProperties")
-                        .format(new MessageFormat("{0}"))
-                        .arguments(error.getMessage() + " (a step is one EIP: an option of that EIP is indented under"
-                                   + " its key, and the next EIP is its own - item)")
-                        .build());
-            } else {
-                answer.add(error);
-            }
-        }
-        return answer;
+    /** The canonical body of a language: its expression property, or token for tokenize, as key: "...". */
+    String languageForm(String language) {
+        JsonNode ref = model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties/"
+                                + language + "/$ref");
+        JsonNode properties = ref.isTextual() ? model.at(ref.asText().substring(1) + "/properties") : null;
+        String property = properties != null && properties.has("expression") ? "expression"
+                : properties != null && properties.has("token") ? "token" : "expression";
+        return property + ": \"...\"";
     }
 
     /**
@@ -343,29 +338,23 @@ public class YamlValidator {
      * written with only delimiter: "," (or a filter, setBody, when... with only options) fails when the route is
      * created with "Unsupported definition: null".
      */
-    private static final Set<String> LOG_COMPONENT_OPTIONS = Set.of(
-            "showAll", "showBody", "showBodyType", "showHeaders", "showExchangePattern", "showProperties",
-            "showAllProperties", "showVariables", "showExchangeId", "showException", "showCaughtException",
-            "showStackTrace", "showStreams", "showFiles", "showFuture", "showRouteId", "showRouteGroup", "multiline",
-            "maxChars", "skipBodyLineSeparator", "groupSize", "groupInterval", "groupDelay", "groupActiveOnly",
-            "level", "plain", "sourceLocationLoggerName", "style");
-
-    private static final Set<String> EXPRESSION_REQUIRED = Set.of(
+    static final Set<String> EXPRESSION_REQUIRED = Set.of(
             "split", "filter", "when", "setBody", "setHeader", "setProperty", "setVariable", "transform", "loop",
             "delay", "recipientList", "routingSlip", "dynamicRouter", "validate", "script", "throttle", "resequence",
             "idempotentConsumer");
 
     private static final Map<String, String> EXPRESSION_EXAMPLES = Map.of(
-            "split", "split: {tokenize: \",\"} or split: {simple: \"${body}\"} (delimiter only applies to the result of"
-                     + " the expression)",
-            "filter", "filter: {simple: \"${header.type} == 'urgent'\"}",
-            "when", "when: {simple: \"${body} contains 'x'\"}",
-            "setBody", "setBody: {simple: \"Hello ${body}\"} or setBody: {constant: \"Hello\"}",
-            "setHeader", "setHeader: {name: id, simple: \"${exchangeId}\"}",
-            "loop", "loop: {constant: \"3\"}",
-            "recipientList", "recipientList: {simple: \"${header.to}\"}",
-            "script", "script: {groovy: \"...\"}",
-            "delay", "delay: {constant: \"1000\"}");
+            "split", "split: {expression: {tokenize: {token: \",\"}}} or split: {expression: {simple: {expression:"
+                     + " \"${body}\"}}} (delimiter only applies to the result of the expression)",
+            "filter", "filter: {expression: {simple: {expression: \"${header.type} == 'urgent'\"}}}",
+            "when", "when: {expression: {simple: {expression: \"${body} contains 'x'\"}}}",
+            "setBody", "setBody: {expression: {simple: {expression: \"Hello ${body}\"}}} or setBody: {expression:"
+                       + " {constant: {expression: \"Hello\"}}}",
+            "setHeader", "setHeader: {name: id, expression: {simple: {expression: \"${exchangeId}\"}}}",
+            "loop", "loop: {expression: {constant: {expression: \"3\"}}}",
+            "recipientList", "recipientList: {expression: {simple: {expression: \"${header.to}\"}}}",
+            "script", "script: {expression: {groovy: {expression: \"...\"}}}",
+            "delay", "delay: {expression: {constant: {expression: \"1000\"}}}");
 
     private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel", "ognl",
             "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "wasm", "datasonnet");
@@ -419,7 +408,8 @@ public class YamlValidator {
                         .messageKey("type")
                         .format(new MessageFormat("{0}"))
                         .arguments(name + ": ${...} is simple syntax, not " + name + ": write the expression in " + name
-                                   + " (" + example + "), or use simple: \"" + text.replace("\"", "'") + "\"")
+                                   + " (" + example + "), or use simple: {expression: \"" + text.replace("\"", "'")
+                                   + "\"}")
                         .build());
             }
             checkSimpleSyntaxInScripts(value, path.append(name), errors);
@@ -463,7 +453,8 @@ public class YamlValidator {
             if (EXPRESSION_REQUIRED.contains(name) && (value == null || value.isNull() || value.isObject())
                     && !hasExpression(value)) {
                 String example = EXPRESSION_EXAMPLES.getOrDefault(name,
-                        name + ": {simple: \"...\"} or " + name + ": {constant: \"...\"}");
+                        name + ": {expression: {simple: {expression: \"...\"}}} or " + name
+                                                                        + ": {expression: {constant: {expression: \"...\"}}}");
                 errors.add(Error.builder()
                         .keyword("required")
                         .instanceLocation(path.append(name))
@@ -686,9 +677,9 @@ public class YamlValidator {
      * array-typed options (e.g. "outputs") use "oneOf" to mean "each element is one of these types", not "exactly one
      * of these sibling keys must be present".
      */
-    private static Map<String, OneOfGroup> loadOneOfGroups() {
+    private Map<String, OneOfGroup> loadOneOfGroups() {
         Map<String, OneOfGroup> groups = new HashMap<>();
-        CamelCatalog catalog = new DefaultCamelCatalog();
+        CamelCatalog catalog = this.catalog != null ? this.catalog : new DefaultCamelCatalog();
         for (String name : catalog.findModelNames()) {
             EipModel model = catalog.eipModel(name);
             if (model == null) {
@@ -721,9 +712,10 @@ public class YamlValidator {
      * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and strings
      * that do not parse as the expected type.
      * <p>
-     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The few model
-     * attributes that are still converted while deserializing (so a placeholder is never resolved for them) are not
-     * reachable from the schema today - see CAMEL-24696 before exposing one of them.
+     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The only model
+     * attribute that is still converted while deserializing (so a placeholder is never resolved for it) is
+     * {@code BeanConstructorDefinition.index}, which is a map key and is not reachable from the schema - see
+     * CAMEL-24696 before exposing it.
      */
     static boolean isRuntimeAcceptedScalar(Error error) {
         if (!"type".equals(error.getKeyword())) {
@@ -750,286 +742,30 @@ public class YamlValidator {
         return (instance.isNumber() || instance.isBoolean()) && isExpectedType(error, "string");
     }
 
-    /**
-     * Replaces the schema's "boolean found, object expected" for a plain value at an option that takes an expression
-     * (such as {@code handled: true} on onException, or {@code completionSizeExpression: 10} on aggregate) with a
-     * message that shows the expression form, and drops the duplicates the schema composition produces for it.
-     */
-    static List<Error> withExpressionHints(List<Error> errors) {
-        List<Error> answer = new ArrayList<>(errors.size());
-        Set<String> seen = new LinkedHashSet<>();
-        for (Error error : errors) {
-            Error hinted = withExpressionHint(error);
-            if (hinted == error || seen.add(hinted.getInstanceLocation() + " " + hinted.getMessage())) {
-                answer.add(hinted);
-            }
-        }
-        return answer;
-    }
-
-    static Error withExpressionHint(Error error) {
-        if (!"type".equals(error.getKeyword())) {
-            return error;
-        }
-        JsonNode instance = error.getInstanceNode();
-        if (instance == null || !instance.isValueNode()) {
-            return error;
-        }
-        String schemaLocation = String.valueOf(error.getSchemaLocation());
-        String evaluationPath = String.valueOf(error.getEvaluationPath());
-        if (!schemaLocation.contains(EXPRESSION_SUB_ELEMENT) && !evaluationPath.contains(EXPRESSION_SUB_ELEMENT)) {
-            return error;
-        }
-        String location = String.valueOf(error.getInstanceLocation());
-        String name = location.substring(location.lastIndexOf('/') + 1);
-        String value = instance.asText();
-        String message = String.format(
-                "a plain value (%s) found, an expression expected: write %s: {constant: \"%s\"} for a fixed value, or %s: {simple: \"...\"} for a dynamic one",
-                value, name, value, name);
-        // the message is not a MessageFormat pattern (it contains braces), so pass it as the single argument
-        return Error.builder()
-                .keyword("type")
-                .instanceLocation(error.getInstanceLocation())
-                .messageKey("expression")
-                .format(new MessageFormat("{0}"))
-                .arguments(message)
-                .build();
-    }
-
-    private static final String EXPRESSION_SUB_ELEMENT = "ExpressionSubElementDefinition";
-
     private JsonNode model;
     private Set<String> topLevelEntries = Set.of();
     private Set<String> languageKeys = Set.of();
     private Set<String> stepNames = Set.of();
     private Set<String> resilienceProperties = Set.of();
 
-    /**
-     * "object found, array expected" says what the schema wants, not how to write it: a list, each item starting with
-     * "- ". At the root of the file it also names the entries (route, from, beans, rest, onException).
-     */
-    static List<Error> withListHints(List<Error> errors) {
-        List<Error> answer = new ArrayList<>(errors.size());
-        for (Error error : errors) {
-            answer.add(withListHint(error));
-        }
-        return answer;
+    /** The keys of the file's entries (route, from, beans, rest, onException...), from the schema. */
+    Set<String> topLevelEntries() {
+        return topLevelEntries;
     }
 
-    static Error withListHint(Error error) {
-        if (!"type".equals(error.getKeyword()) || error.getMessage() == null) {
-            return error;
-        }
-        String location = String.valueOf(error.getInstanceLocation());
-        if (location.endsWith("/language") && error.getMessage().contains("object expected")) {
-            // script: {language: groovy, text: ...}: the language is the key of the expression, not a property
-            return Error.builder()
-                    .keyword("type")
-                    .instanceLocation(error.getInstanceLocation())
-                    .messageKey("type")
-                    .format(new MessageFormat("{0}"))
-                    .arguments(error.getMessage() + " (an expression is written with the language as the key, e.g."
-                               + " groovy: \"...\", simple: \"...\", constant: \"...\"; the language: form is"
-                               + " language: {language: groovy, expression: \"...\"})")
-                    .build();
-        }
-        if (error.getMessage().contains("object found, string expected")) {
-            // message: {simple: "..."}: a string property that is already an expression, or a plain option
-            String prop = location.substring(location.lastIndexOf('/') + 1);
-            return Error.builder()
-                    .keyword("type")
-                    .instanceLocation(error.getInstanceLocation())
-                    .messageKey("type")
-                    .format(new MessageFormat("{0}"))
-                    .arguments(error.getMessage() + " (" + prop + " is a plain string"
-                               + (location.endsWith("/log/message")
-                                       ? " that is already a simple expression: write message: \"... ${body} ...\""
-                                       : ": write " + prop + ": \"...\", not a language map")
-                               + ")")
-                    .build();
-        }
-        if (location.matches(
-                "/\\d+/(onException|onCompletion|intercept|interceptFrom|interceptSendToEndpoint|errorHandler|route|rest|restConfiguration)")
-                && error.getMessage().contains("array found, object expected")) {
-            // - onException: [ ... ]: the entry is a map; several handlers are several - onException: items
-            String entry = location.substring(location.lastIndexOf('/') + 1);
-            return Error.builder()
-                    .keyword("type")
-                    .instanceLocation(error.getInstanceLocation())
-                    .messageKey("type")
-                    .format(new MessageFormat("{0}"))
-                    .arguments(error.getMessage() + " (" + entry + " is a map, not a list: - " + entry + ": followed by its"
-                               + " properties indented" + (entry.equals("onException")
-                                       ? " (exception: [java.lang.Exception], handled: {constant: \"true\"}, steps: [...])"
-                                       : "")
-                               + "; several of them are several - " + entry + ": items)")
-                    .build();
-        }
-        if (location.matches(".*/(otherwise|doTry|doFinally|doCatch/\\d+)") && error.getMessage().contains("object expected")) {
-            // otherwise: [- log: ...]: the block is a map whose steps: holds the list
-            String eip = location.substring(location.lastIndexOf('/') + 1);
-            if (eip.matches("\\d+")) {
-                eip = "doCatch";
-            }
-            return Error.builder()
-                    .keyword("type")
-                    .instanceLocation(error.getInstanceLocation())
-                    .messageKey("type")
-                    .format(new MessageFormat("{0}"))
-                    .arguments(error.getMessage() + " (" + eip + " holds its EIPs under steps: " + eip
-                               + ": {steps: [- log: \"...\"]}" + (eip.equals("doCatch")
-                                       ? ", each - doCatch: item with"
-                                         + " exception: and steps:"
-                                       : "")
-                               + ")")
-                    .build();
-        }
-        if (!error.getMessage().contains("array expected")) {
-            return error;
-        }
-        String name = location.substring(location.lastIndexOf('/') + 1);
-        String hint;
-        if (location.isEmpty() || location.equals("/")) {
-            hint = "a Camel YAML file is a list of entries, each starting with \"- \": - route:, - from:, - beans:, - rest:,"
-                   + " - onException:";
-        } else if (name.equals("beans")) {
-            hint = "beans is a list: - name: myBean followed by type: \"#class:com.example.MyBean\" (indented under the -)";
-        } else if (name.equals("steps") || name.equals("when") || name.equals("get") || name.equals("post")
-                || name.equals("exception") || name.equals("doCatch")) {
-            hint = name + " is a list: each item starts with \"- \"";
-        } else {
-            hint = "write it as a list: each item starts with \"- \"";
-        }
-        return Error.builder()
-                .keyword("type")
-                .instanceLocation(error.getInstanceLocation())
-                .messageKey("type")
-                .format(new MessageFormat("{0}"))
-                .arguments(error.getMessage() + " (" + hint + ")")
-                .build();
+    /** The language keys of an expression (simple, constant, groovy...), from the schema. */
+    Set<String> languageKeys() {
+        return languageKeys;
     }
 
-    /**
-     * Adds a hint to "property 'x' is not defined in the schema": the closest property name of that node (did you mean
-     * 'logName'?), or, when the property is a top-level entry such as onException written inside a route, where it goes
-     * instead.
-     */
-    List<Error> withPropertyHints(List<Error> errors) {
-        List<Error> answer = new ArrayList<>(errors.size());
-        for (Error error : errors) {
-            answer.add(withPropertyHint(error));
-        }
-        return answer;
+    /** The names of the EIP steps, from the schema. */
+    Set<String> stepNames() {
+        return stepNames;
     }
 
-    Error withPropertyHint(Error error) {
-        if ("required".equals(error.getKeyword()) && error.getMessage() != null
-                && error.getMessage().contains("required property 'steps' not found")
-                && String.valueOf(error.getInstanceLocation()).matches(".*/route/from")) {
-            return Error.builder()
-                    .keyword("required")
-                    .instanceLocation(error.getInstanceLocation())
-                    .messageKey("required")
-                    .format(new MessageFormat("{0}"))
-                    .arguments(error.getMessage() + " (steps: is a property of from:, next to uri:; a steps: written at"
-                               + " the route level must be indented under from:)")
-                    .build();
-        }
-        if (!"additionalProperties".equals(error.getKeyword()) || error.getMessage() == null) {
-            return error;
-        }
-        String message = error.getMessage();
-        String unknown = between(message, "property '", "'");
-        if (unknown == null) {
-            return error;
-        }
-        String location = String.valueOf(error.getInstanceLocation());
-        String hint = null;
-        if (location.matches("/\\d+/beans/\\d+")
-                && (unknown.equals("id") || unknown.equals("ref") || unknown.equals("class"))) {
-            // - id: myBean / class: ... : the bean properties are name and type
-            hint = "a bean is - name: myBean followed by type: \"#class:com.example.MyBean\" (name instead of " + unknown
-                   + (unknown.equals("class") ? ", type instead of class" : "") + ")";
-        } else if (location.matches("/\\d+/beans/\\d+")) {
-            // - myBean: {type: ...} instead of - name: myBean / type: ...
-            hint = "a bean item is written as - name: " + unknown + " followed by type: \"#class:com.example.MyBean\" "
-                   + "(the name is a property, not the key)";
-        } else if (topLevelEntries.contains(unknown) && location.chars().filter(c -> c == '/').count() >= 2) {
-            hint = "'" + unknown + "' is a top-level entry: write it as a list item at the same level as the route, "
-                   + "not inside it";
-        } else if (location.matches(".*/(onException|doCatch/\\d+)") && unknown.matches("([a-z][\\w]*\\.)+[A-Z]\\w*")) {
-            // onException: {java.lang.Exception: ...}: the class is a list item under exception:
-            String eip = location.endsWith("/onException") ? "onException" : "doCatch";
-            hint = "the exception class is a list item under exception: (" + eip + ": {exception: [" + unknown
-                   + "], steps: [...]})";
-        } else if (location.endsWith("/circuitBreaker") && unknown.equals("name")) {
-            hint = "the circuit breaker's name is its id: circuitBreaker: {id: myBreaker, ...}";
-        } else if (location.endsWith("/circuitBreaker") && !resilienceProperties.isEmpty()
-                && (resilienceProperties.contains(unknown) || closest(unknown, resilienceProperties) != null
-                        || unknown.toLowerCase(Locale.ROOT).contains("threshold")
-                        || unknown.toLowerCase(Locale.ROOT).contains("timeout"))) {
-            // circuitBreaker: {failureThreshold: 5}: the thresholds and timeouts are resilience4j configuration
-            String best = resilienceProperties.contains(unknown) ? unknown : closest(unknown, resilienceProperties);
-            hint = "the thresholds, timeouts and the like are written under resilience4jConfiguration: (circuitBreaker:"
-                   + " {resilience4jConfiguration: {" + (best != null ? best : "failureRateThreshold") + ": ...}, steps:"
-                   + " [...], onFallback: {steps: [...]}})";
-        } else if (location.endsWith("/log") && (unknown.equals("level") || unknown.equals("logLevel"))) {
-            hint = "did you mean 'loggingLevel'?";
-        } else if (location.endsWith("/log") && LOG_COMPONENT_OPTIONS.contains(unknown)) {
-            // log: {message: ..., showHeaders: true}: those are options of the log component endpoint
-            hint = "'" + unknown + "' is an option of the log component, not of the log EIP: write a to: step with"
-                   + " uri: \"log:com.example?" + unknown + "=...\" (the log EIP has message, loggingLevel, logName,"
-                   + " marker)";
-        } else if (unknown.equals("steps") && location.matches(".*/route")) {
-            // - route: {from: {uri: ...}, steps: [...]}: steps belongs under from:
-            hint = "steps: goes under from:, indented at the same level as uri: (route: {from: {uri: ..., steps: [...]}})";
-        } else if (stepNames.contains(unknown) && !location.matches(".*/steps/\\d+")
-                && location.matches(".*/(otherwise|when/\\d+|doTry|doCatch/\\d+|doFinally|split|filter|loop|aggregate"
-                                    + "|circuitBreaker|onFallback|multicast|pipeline|saga|resequence|throttle|delay"
-                                    + "|onException|onCompletion|intercept|interceptFrom|interceptSendToEndpoint|route|from)")) {
-            // otherwise: {log: ...} or when: [- simple: ..., log: ...]: the EIPs go under steps:
-            String eip = location.substring(location.lastIndexOf('/') + 1);
-            if (eip.matches("\\d+")) {
-                String parent = location.substring(0, location.lastIndexOf('/'));
-                eip = parent.substring(parent.lastIndexOf('/') + 1);
-            }
-            hint = "'" + unknown + "' is a step: the steps of " + eip + " go under steps: (" + eip
-                   + ": {steps: [- " + unknown + ": ...]})";
-        } else if (unknown.equals("script") && !location.endsWith("/steps")
-                && (EXPRESSION_REQUIRED.contains(location.substring(location.lastIndexOf('/') + 1))
-                        || location.endsWith("/expression"))) {
-            // setBody: {script: ...}: script is an EIP; the language is the key of an expression
-            hint = "script is an EIP step, not a language: write the language as the key of the expression (groovy:"
-                   + " \"...\", simple: \"...\"), or run a script as its own step with - script: {groovy: \"...\"}";
-        } else if (unknown.equals("bean") && !location.endsWith("/steps")) {
-            // setBody: {bean: myBean} : the bean language is method:
-            hint = "the bean language is written as method: (method: {ref: myBean, method: process}), or call the bean"
-                   + " as a step with - bean: {ref: myBean, method: process}";
-        } else if (location.matches(".*/(setHeader|setProperty|setVariable|removeHeader|removeProperty|removeVariable)")
-                && closest(unknown, knownProperties(String.valueOf(error.getSchemaLocation()))) == null) {
-            // setHeader: {CamelNumberA: {simple: ...}} : the name is a property, not the key
-            String eip = location.substring(location.lastIndexOf('/') + 1);
-            hint = "the name is a property: " + eip + ": {name: " + unknown
-                   + (eip.startsWith("set") ? ", simple: \"...\"}" : "}") + " (" + unknown + " is not the key)";
-        } else if (location.endsWith("/bean")
-                && (unknown.equals("parameters") || unknown.equals("args") || unknown.equals("arguments"))) {
-            hint = "arguments are written in the method call: bean: {ref: myBean, method: \"process(${body}, 'x')\"}";
-        } else {
-            String best = closest(unknown, knownProperties(String.valueOf(error.getSchemaLocation())));
-            if (best != null) {
-                hint = "did you mean '" + best + "'?";
-            }
-        }
-        if (hint == null) {
-            return error;
-        }
-        return Error.builder()
-                .keyword("additionalProperties")
-                .instanceLocation(error.getInstanceLocation())
-                .messageKey("additionalProperties")
-                .format(new MessageFormat("{0}"))
-                .arguments(message + " (" + hint + ")")
-                .build();
+    /** The properties of resilience4jConfiguration, from the schema. */
+    Set<String> resilienceProperties() {
+        return resilienceProperties;
     }
 
     /** The property names the schema allows at the definition an additionalProperties error points to. */
@@ -1115,15 +851,6 @@ public class YamlValidator {
         return prev[b.length()];
     }
 
-    private static String between(String text, String start, String end) {
-        int i = text.indexOf(start);
-        if (i < 0) {
-            return null;
-        }
-        int j = text.indexOf(end, i + start.length());
-        return j < 0 ? null : text.substring(i + start.length(), j);
-    }
-
     private static boolean isBooleanText(String text) {
         String s = text.trim();
         return "true".equalsIgnoreCase(s) || "false".equalsIgnoreCase(s);
@@ -1173,7 +900,8 @@ public class YamlValidator {
 
     public void init() throws Exception {
         String location = canonical ? LOCATION_CANONICAL : LOCATION;
-        var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
+        var model = schemaJson != null
+                ? mapper.readTree(schemaJson) : mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         this.model = model;
         this.topLevelEntries = new LinkedHashSet<>();
         model.at("/items/properties").fieldNames().forEachRemaining(topLevelEntries::add);

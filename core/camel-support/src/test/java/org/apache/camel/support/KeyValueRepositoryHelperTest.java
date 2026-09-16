@@ -16,8 +16,10 @@
  */
 package org.apache.camel.support;
 
+import java.io.InvalidClassException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
@@ -269,6 +271,78 @@ class KeyValueRepositoryHelperTest {
         Object result = KeyValueRepositoryHelper.deserialize(bytes, 0, bytes.length);
 
         assertThat(result).isNull();
+    }
+
+    // -------------------------------------------------------------------------
+    // Deserialization filter
+    // -------------------------------------------------------------------------
+
+    @Test
+    void testDefaultFilterRejectsDeniedClass() {
+        // java.net.** is denied by the default filter as those classes may perform network I/O in hashCode/equals
+        byte[] bytes = KeyValueRepositoryHelper.serialize(URI.create("http://localhost:8080/camel"));
+
+        assertThatThrownBy(() -> KeyValueRepositoryHelper.deserialize(bytes))
+                .isInstanceOf(RuntimeCamelException.class)
+                .hasMessageContaining("Failed to deserialize value")
+                .hasRootCauseInstanceOf(InvalidClassException.class);
+    }
+
+    @Test
+    void testDefaultFilterAllowsCamelAndJavaClasses() {
+        ComplexPayload original = new ComplexPayload("order-1", 1, List.of("item-a"));
+
+        byte[] bytes = KeyValueRepositoryHelper.serialize(original);
+
+        assertThat(KeyValueRepositoryHelper.deserialize(bytes)).isEqualTo(original);
+    }
+
+    @Test
+    void testCustomFilterCanWidenTheAllowList() {
+        URI original = URI.create("http://localhost:8080/camel");
+        byte[] bytes = KeyValueRepositoryHelper.serialize(original);
+
+        Object result = KeyValueRepositoryHelper.deserialize(bytes, "java.net.**;java.**;!*");
+
+        assertThat(result).isEqualTo(original);
+    }
+
+    @Test
+    void testCustomFilterCanNarrowTheAllowList() {
+        // note: java.lang.String is written as TC_STRING and never passes through the filter, so use a boxed number
+        byte[] bytes = KeyValueRepositoryHelper.serialize(42);
+
+        assertThatThrownBy(() -> KeyValueRepositoryHelper.deserialize(bytes, "!*"))
+                .isInstanceOf(RuntimeCamelException.class)
+                .hasMessageContaining("Failed to deserialize value")
+                .hasRootCauseInstanceOf(InvalidClassException.class);
+    }
+
+    @Test
+    void testCustomFilterAppliedOnOffsetVariant() {
+        URI original = URI.create("http://localhost:8080/camel");
+        byte[] bytes = KeyValueRepositoryHelper.serialize(original);
+
+        assertThatThrownBy(() -> KeyValueRepositoryHelper.deserialize(bytes, 0, bytes.length))
+                .isInstanceOf(RuntimeCamelException.class)
+                .hasRootCauseInstanceOf(InvalidClassException.class);
+
+        assertThat(KeyValueRepositoryHelper.deserialize(bytes, 0, bytes.length, "java.net.**;java.**;!*"))
+                .isEqualTo(original);
+    }
+
+    @Test
+    void testCustomFilterAppliedOnByteBufferVariant() {
+        URI original = URI.create("http://localhost:8080/camel");
+
+        assertThatThrownBy(() -> KeyValueRepositoryHelper.deserialize(
+                KeyValueRepositoryHelper.serializeToByteBuffer(original)))
+                .isInstanceOf(RuntimeCamelException.class)
+                .hasRootCauseInstanceOf(InvalidClassException.class);
+
+        assertThat(KeyValueRepositoryHelper.deserialize(
+                KeyValueRepositoryHelper.serializeToByteBuffer(original), "java.net.**;java.**;!*"))
+                .isEqualTo(original);
     }
 
     // -------------------------------------------------------------------------

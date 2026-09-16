@@ -42,6 +42,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio", syntax = "minio:bucketName",
              category = { Category.CLOUD, Category.FILE }, headersClass = MinioConstants.class)
+@Deprecated(since = "4.23")
 public class MinioEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioEndpoint.class);

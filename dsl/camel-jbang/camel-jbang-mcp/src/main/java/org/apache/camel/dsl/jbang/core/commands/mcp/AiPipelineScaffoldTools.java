@@ -114,13 +114,13 @@ public class AiPipelineScaffoldTools {
         sb.append("    id: ai-summarization\n");
         sb.append("    from:\n");
         appendSourceEndpoint(sb, source);
-        sb.append("    steps:\n");
+        sb.append("      steps:\n");
         appendDocumentProcessing(sb, processor);
-        sb.append("      - process:\n");
-        sb.append("          ref: \"#buildSummarizationPrompt\"\n");
+        sb.append("        - process:\n");
+        sb.append("            ref: \"#buildSummarizationPrompt\"\n");
         appendBedrockConverse(sb, model, region);
-        sb.append("      - log:\n");
-        sb.append("          message: \"Summary generated: ${body}\"\n");
+        sb.append("        - log:\n");
+        sb.append("            message: \"Summary generated: ${body}\"\n");
         return sb.toString();
     }
 
@@ -132,16 +132,16 @@ public class AiPipelineScaffoldTools {
         sb.append("    id: ai-extraction\n");
         sb.append("    from:\n");
         appendSourceEndpoint(sb, source);
-        sb.append("    steps:\n");
+        sb.append("      steps:\n");
         appendDocumentProcessing(sb, processor);
-        sb.append("      - process:\n");
-        sb.append("          ref: \"#buildExtractionPrompt\"\n");
+        sb.append("        - process:\n");
+        sb.append("            ref: \"#buildExtractionPrompt\"\n");
         appendBedrockConverse(sb, model, region);
-        sb.append("      - unmarshal:\n");
-        sb.append("          json:\n");
-        sb.append("            unmarshalType: java.util.Map\n");
-        sb.append("      - log:\n");
-        sb.append("          message: \"Extracted data: ${body}\"\n");
+        sb.append("        - unmarshal:\n");
+        sb.append("            json:\n");
+        sb.append("              unmarshalType: java.util.Map\n");
+        sb.append("        - log:\n");
+        sb.append("            message: \"Extracted data: ${body}\"\n");
         return sb.toString();
     }
 
@@ -159,34 +159,40 @@ public class AiPipelineScaffoldTools {
         sb.append("    id: rag-ingestion\n");
         sb.append("    from:\n");
         appendSourceEndpoint(sb, source);
-        sb.append("    steps:\n");
+        sb.append("      steps:\n");
         appendDocumentProcessing(sb, processor);
-        sb.append("      # Chunk the extracted text for embedding\n");
-        sb.append("      - split:\n");
-        sb.append("          tokenize: \"\\n\\n\"\n");
-        sb.append("          streaming: true\n");
-        sb.append("        steps:\n");
-        sb.append("          - to:\n");
-        sb.append("              uri: \"langchain4j-embeddings:embed\"\n");
-        sb.append("              parameters:\n");
-        sb.append("                embeddingModelId: \"#bedrockEmbedding\"\n");
-        sb.append("          # TODO: Configure your vector store endpoint\n");
-        sb.append("          - to: \"log:ingested?showBody=false&showHeaders=true\"\n\n");
+        sb.append("        # Chunk the extracted text for embedding\n");
+        sb.append("        - split:\n");
+        sb.append("            expression:\n");
+        sb.append("              tokenize:\n");
+        sb.append("                token: \"\\n\\n\"\n");
+        sb.append("            streaming: true\n");
+        sb.append("            steps:\n");
+        sb.append("              - to:\n");
+        sb.append("                  uri: \"langchain4j-embeddings:embed\"\n");
+        sb.append("                  parameters:\n");
+        sb.append("                    embeddingModelId: \"#bedrockEmbedding\"\n");
+        sb.append("              # TODO: Configure your vector store endpoint\n");
+        sb.append("              - to:\n");
+        sb.append("                  uri: \"log:ingested\"\n");
+        sb.append("                  parameters:\n");
+        sb.append("                    showBody: false\n");
+        sb.append("                    showHeaders: true\n\n");
 
         // Query route
         sb.append("- route:\n");
         sb.append("    id: rag-query\n");
         sb.append("    from:\n");
         sb.append("      uri: \"direct:query\"\n");
-        sb.append("    steps:\n");
-        sb.append("      # TODO: Retrieve relevant chunks from vector store\n");
-        sb.append("      # - to: \"langchain4j-embeddings:embed\" # embed the query\n");
-        sb.append("      # - to: \"qdrant:search\"                # search vector store\n");
-        sb.append("      - process:\n");
-        sb.append("          ref: \"#buildRagPrompt\"\n");
+        sb.append("      steps:\n");
+        sb.append("        # TODO: Retrieve relevant chunks from vector store\n");
+        sb.append("        # - to: \"langchain4j-embeddings:embed\" # embed the query\n");
+        sb.append("        # - to: \"qdrant:search\"                # search vector store\n");
+        sb.append("        - process:\n");
+        sb.append("            ref: \"#buildRagPrompt\"\n");
         appendBedrockConverse(sb, model, region);
-        sb.append("      - log:\n");
-        sb.append("          message: \"RAG answer: ${body}\"\n");
+        sb.append("        - log:\n");
+        sb.append("            message: \"RAG answer: ${body}\"\n");
         return sb.toString();
     }
 
@@ -198,22 +204,29 @@ public class AiPipelineScaffoldTools {
         sb.append("    id: ai-classification\n");
         sb.append("    from:\n");
         appendSourceEndpoint(sb, source);
-        sb.append("    steps:\n");
+        sb.append("      steps:\n");
         appendDocumentProcessing(sb, processor);
-        sb.append("      - process:\n");
-        sb.append("          ref: \"#buildClassificationPrompt\"\n");
+        sb.append("        - process:\n");
+        sb.append("            ref: \"#buildClassificationPrompt\"\n");
         appendBedrockConverse(sb, model, region);
-        sb.append("      - choice:\n");
-        sb.append("          when:\n");
-        sb.append("            - simple: \"${body} contains 'invoice'\"\n");
+        sb.append("        - choice:\n");
+        sb.append("            when:\n");
+        sb.append("              - expression:\n");
+        sb.append("                  simple:\n");
+        sb.append("                    expression: \"${body} contains 'invoice'\"\n");
+        sb.append("                steps:\n");
+        sb.append("                  - to:\n");
+        sb.append("                      uri: \"direct:handle-invoice\"\n");
+        sb.append("              - expression:\n");
+        sb.append("                  simple:\n");
+        sb.append("                    expression: \"${body} contains 'contract'\"\n");
+        sb.append("                steps:\n");
+        sb.append("                  - to:\n");
+        sb.append("                      uri: \"direct:handle-contract\"\n");
+        sb.append("            otherwise:\n");
         sb.append("              steps:\n");
-        sb.append("                - to: \"direct:handle-invoice\"\n");
-        sb.append("            - simple: \"${body} contains 'contract'\"\n");
-        sb.append("              steps:\n");
-        sb.append("                - to: \"direct:handle-contract\"\n");
-        sb.append("          otherwise:\n");
-        sb.append("            steps:\n");
-        sb.append("              - to: \"direct:handle-other\"\n");
+        sb.append("                - to:\n");
+        sb.append("                    uri: \"direct:handle-other\"\n");
         return sb.toString();
     }
 
@@ -249,39 +262,39 @@ public class AiPipelineScaffoldTools {
             case "textract" -> appendTextractStep(sb);
             case "combined" -> {
                 appendDoclingStep(sb);
-                sb.append("      # Also extract tables/forms via Textract for structured data\n");
+                sb.append("        # Also extract tables/forms via Textract for structured data\n");
                 appendTextractStep(sb);
-                sb.append("      - process:\n");
-                sb.append("          ref: \"#mergeDoclingAndTextract\"\n");
+                sb.append("        - process:\n");
+                sb.append("            ref: \"#mergeDoclingAndTextract\"\n");
             }
             default -> appendDoclingStep(sb);
         }
     }
 
     private void appendDoclingStep(StringBuilder sb) {
-        sb.append("      - to:\n");
-        sb.append("          uri: \"docling:convert\"\n");
-        sb.append("          parameters:\n");
-        sb.append("            operation: CONVERT_TO_MARKDOWN\n");
-        sb.append("            useDoclingServe: true\n");
-        sb.append("            doclingServeUrl: \"{{docling.server.url}}\"\n");
+        sb.append("        - to:\n");
+        sb.append("            uri: \"docling:convert\"\n");
+        sb.append("            parameters:\n");
+        sb.append("              operation: CONVERT_TO_MARKDOWN\n");
+        sb.append("              useDoclingServe: true\n");
+        sb.append("              doclingServeUrl: \"{{docling.server.url}}\"\n");
     }
 
     private void appendTextractStep(StringBuilder sb) {
-        sb.append("      - to:\n");
-        sb.append("          uri: \"aws2-textract:detect\"\n");
-        sb.append("          parameters:\n");
-        sb.append("            operation: detectDocumentText\n");
-        sb.append("            region: \"{{aws.region}}\"\n");
+        sb.append("        - to:\n");
+        sb.append("            uri: \"aws2-textract:detect\"\n");
+        sb.append("            parameters:\n");
+        sb.append("              operation: detectDocumentText\n");
+        sb.append("              region: \"{{aws.region}}\"\n");
     }
 
     private void appendBedrockConverse(StringBuilder sb, String model, String region) {
-        sb.append("      - to:\n");
-        sb.append("          uri: \"aws-bedrock:label\"\n");
-        sb.append("          parameters:\n");
-        sb.append("            operation: converse\n");
-        sb.append("            modelId: \"").append(model).append("\"\n");
-        sb.append("            region: \"").append(region).append("\"\n");
+        sb.append("        - to:\n");
+        sb.append("            uri: \"aws-bedrock:label\"\n");
+        sb.append("            parameters:\n");
+        sb.append("              operation: converse\n");
+        sb.append("              modelId: \"").append(model).append("\"\n");
+        sb.append("              region: \"").append(region).append("\"\n");
     }
 
     // ---- Properties generation ----
