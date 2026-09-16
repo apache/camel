@@ -110,6 +110,7 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, path);
         exchange.getMessage().setHeader(Exchange.HTTP_METHOD, verb);
+        exchange.getMessage().setBody("request-payload");
         processor.process(exchange, done -> {
         });
         return exchange;

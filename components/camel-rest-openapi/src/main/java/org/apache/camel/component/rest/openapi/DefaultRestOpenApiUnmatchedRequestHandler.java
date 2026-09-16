@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 
 /**
  * Default {@link RestOpenApiUnmatchedRequestHandler} that returns empty body with the HTTP status code and, if
- * provided, the {@code Allow} header.
+ * provided, the {@code Allow} header. The payload in the incoming request message is removed.
  *
  * @since 4.23
  */
@@ -30,6 +30,7 @@ public class DefaultRestOpenApiUnmatchedRequestHandler implements RestOpenApiUnm
 
     @Override
     public void handle(Exchange exchange, int statusCode, List<String> allowedMethods) {
+        exchange.getMessage().setBody(null);
         exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, statusCode);
         if (!allowedMethods.isEmpty()) {
             exchange.getMessage().setHeader("Allow", String.join(", ", allowedMethods));
