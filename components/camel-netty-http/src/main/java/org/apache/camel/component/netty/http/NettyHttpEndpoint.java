@@ -75,6 +75,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private String httpMethodRestrict;
     @UriParam(label = "consumer,advanced")
     private NettySharedHttpServer nettySharedHttpServer;
+    @UriParam(label = "consumer,advanced", javaType = "org.apache.camel.component.netty.NettyServerBootstrapConfiguration")
     private NettyServerBootstrapConfiguration bootstrapConfiguration;
     @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;

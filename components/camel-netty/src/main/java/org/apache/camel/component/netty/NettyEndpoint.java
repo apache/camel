@@ -50,6 +50,8 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, End
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
+    @UriParam(label = "consumer,advanced", javaType = "org.apache.camel.component.netty.NettyServerBootstrapConfiguration")
+    private NettyServerBootstrapConfiguration bootstrapConfiguration;
 
     public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {
         super(endpointUri, component);
@@ -64,6 +66,20 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, End
     @Override
     public String getServiceProtocol() {
         return configuration.getProtocol();
+    }
+
+    public NettyServerBootstrapConfiguration getBootstrapConfiguration() {
+        return bootstrapConfiguration;
+    }
+
+    /**
+     * To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint. When set via URI
+     * (e.g. {@code ?bootstrapConfiguration=#myBean}), its properties are merged into the endpoint configuration by
+     * {@code NettyComponent.createEndpoint()}. Note: this parameter is URI-resolved by the component and is not applied
+     * when set programmatically via this setter.
+     */
+    public void setBootstrapConfiguration(NettyServerBootstrapConfiguration bootstrapConfiguration) {
+        this.bootstrapConfiguration = bootstrapConfiguration;
     }
 
     public boolean isSynchronous() {

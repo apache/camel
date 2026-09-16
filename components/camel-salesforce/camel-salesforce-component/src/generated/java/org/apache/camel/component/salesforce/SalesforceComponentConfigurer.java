@@ -40,6 +40,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "apexUrl": getOrCreateConfig(target).setApexUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "apiversion":
         case "apiVersion": getOrCreateConfig(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "approval": getOrCreateConfig(target).setApproval(property(camelContext, org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.class, value)); return true;
         case "authenticationtype":
         case "authenticationType": target.setAuthenticationType(property(camelContext, org.apache.camel.component.salesforce.AuthenticationType.class, value)); return true;
         case "autowiredenabled":
@@ -256,6 +257,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "apexUrl": return java.lang.String.class;
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
+        case "approval": return org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.class;
         case "authenticationtype":
         case "authenticationType": return org.apache.camel.component.salesforce.AuthenticationType.class;
         case "autowiredenabled":
@@ -473,6 +475,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "apexUrl": return getOrCreateConfig(target).getApexUrl();
         case "apiversion":
         case "apiVersion": return getOrCreateConfig(target).getApiVersion();
+        case "approval": return getOrCreateConfig(target).getApproval();
         case "authenticationtype":
         case "authenticationType": return target.getAuthenticationType();
         case "autowiredenabled":

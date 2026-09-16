@@ -1268,6 +1268,26 @@ public interface SalesforceComponentBuilderFactory {
         }
     
         /**
+         * The approval request for the Salesforce Approval API. Options
+         * approval.actionType, approval.comments, approval.contextActorId,
+         * approval.contextId, approval.nextApproverIds,
+         * approval.processDefinitionNameOrId, approval.skipEntryCriteria are
+         * bound as nested properties.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param approval the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder approval(org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest approval) {
+            doSetProperty("approval", approval);
+            return this;
+        }
+    
+        /**
          * Composite (raw) method.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2018,6 +2038,7 @@ public interface SalesforceComponentBuilderFactory {
             case "initialReplyIdTimeout": ((SalesforceComponent) component).setInitialReplyIdTimeout((int) value); return true;
             case "allOrNone": getOrCreateConfiguration((SalesforceComponent) component).setAllOrNone((boolean) value); return true;
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
+            case "approval": getOrCreateConfiguration((SalesforceComponent) component).setApproval((org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest) value); return true;
             case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
             case "eventName": getOrCreateConfiguration((SalesforceComponent) component).setEventName((java.lang.String) value); return true;
             case "eventSchemaFormat": getOrCreateConfiguration((SalesforceComponent) component).setEventSchemaFormat((org.apache.camel.component.salesforce.internal.dto.EventSchemaFormatEnum) value); return true;

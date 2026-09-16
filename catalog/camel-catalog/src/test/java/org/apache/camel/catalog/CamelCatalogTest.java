@@ -600,10 +600,14 @@ public class CamelCatalogTest {
                 "spring-ai-chat:assistant?chatModel=#myModel&userMetadata.messageId=abc&userMetadata.priority=high");
         assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
 
-        // the option before the dot must be a Map
+        // chatModel is a bean option: chatModel.foo=abc sets a property on the bean, as property binding does
         result = catalog.validateEndpointProperties("spring-ai-chat:assistant?chatModel=#myModel&chatModel.foo=abc");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the option before the dot must be a Map or a bean, not a plain value
+        result = catalog.validateEndpointProperties("spring-ai-chat:assistant?chatModel=#myModel&systemMessage.foo=abc");
         assertFalse(result.isSuccess());
-        assertTrue(result.getUnknown().contains("chatModel.foo"));
+        assertTrue(result.getUnknown().contains("systemMessage.foo"));
     }
 
     @Test
@@ -709,6 +713,42 @@ public class CamelCatalogTest {
         assertEquals(1, map.size());
 
         assertEquals("foo", map.get("destinationName"));
+    }
+
+    @Test
+    public void testValidateEndpointPropertiesNestedObjectOption() {
+        // approval is an object option: approval.actionType=x sets a property of the bean, as property binding does
+        EndpointValidationResult result = catalog.validateEndpointProperties(
+                "salesforce:approval?approval.actionType=Submit&approval.comments=this is a test&approval.skipEntryCriteria=true");
+        assertNull(result.getUnknown(), result.summaryErrorMessage(false));
+
+        result = catalog.validateEndpointProperties("salesforce:approval?approvals.actionType=Submit");
+        assertTrue(result.getUnknown().contains("approvals.actionType"));
+    }
+
+    @Test
+    public void testEndpointPropertiesXmpp() throws Exception {
+        // the port is optional, the participant follows the host
+        Map<String, String> map = catalog.endpointProperties("xmpp://superman@jabber.org/joker@jabber.org?password=secret");
+        assertNotNull(map);
+        assertEquals("superman", map.get("user"));
+        assertEquals("jabber.org", map.get("host"));
+        assertTrue(map.get("port") == null || map.get("port").isEmpty());
+        assertEquals("joker@jabber.org", map.get("participant"));
+        assertEquals("secret", map.get("password"));
+
+        map = catalog.endpointProperties("xmpp://superman@jabber.org:5223/joker@jabber.org");
+        assertEquals("5223", map.get("port"));
+        assertEquals("joker@jabber.org", map.get("participant"));
+
+        map = catalog.endpointProperties("xmpp://superman@jabber.org/?room=krypton@conference.jabber.org");
+        assertEquals("jabber.org", map.get("host"));
+        assertTrue(map.get("participant") == null || map.get("participant").isEmpty());
+        assertEquals("krypton@conference.jabber.org", map.get("room"));
+
+        EndpointValidationResult result
+                = catalog.validateEndpointProperties("xmpp://superman@jabber.org/joker@jabber.org?password=secret");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
     }
 
     @Test

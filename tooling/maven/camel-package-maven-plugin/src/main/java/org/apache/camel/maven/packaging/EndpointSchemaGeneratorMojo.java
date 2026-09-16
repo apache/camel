@@ -1292,11 +1292,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     }
 
                     // if the field type is a nested parameter then iterate
-                    // through its fields
+                    // through its fields (unless the option declares its javaType: then it is a
+                    // reference to such a bean, not a nested set of options)
                     Class<?> fieldTypeElement = fieldElement.getType();
                     String fieldTypeName = getTypeName(GenericsUtil.resolveType(orgClassElement, fieldElement));
                     UriParams fieldParams = fieldTypeElement.getAnnotation(UriParams.class);
-                    if (fieldParams != null) {
+                    if (fieldParams != null && Strings.isNullOrEmpty(param.javaType())) {
                         String nestedPrefix = prefix;
                         String extraPrefix = fieldParams.prefix();
                         if (!Strings.isNullOrEmpty(extraPrefix)) {

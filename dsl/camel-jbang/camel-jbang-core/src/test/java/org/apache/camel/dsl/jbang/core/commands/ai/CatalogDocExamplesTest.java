@@ -39,20 +39,16 @@ class CatalogDocExamplesTest {
     private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4}\\n(.*?)\\n-{4}", Pattern.DOTALL);
 
     /**
-     * Pages whose examples are right for the runtime but fail the catalog because the component metadata disagrees with
-     * the component (CAMEL-24748 and the notes on it); checked again when the metadata is fixed.
+     * Pages whose examples are right for the runtime but fail the catalog because the component metadata cannot
+     * describe what the component accepts (the rest of CAMEL-24748 is fixed).
      */
     private static final Map<String, String> PAGES_SKIPPED = Map.ofEntries(
-            Map.entry("netty-http-component", "CAMEL-24748: bootstrapConfiguration is not in the metadata"),
-            Map.entry("olingo2-component", "CAMEL-24748: the syntax is apiName/methodName, the runtime reads"
-                                           + " methodName/resourcePath with the api name implicit"),
-            Map.entry("olingo4-component", "CAMEL-24748: the syntax is apiName/methodName, the runtime reads"
-                                           + " methodName/resourcePath with the api name implicit"),
-            Map.entry("xmpp-component", "CAMEL-24748: port is required in the metadata, the runtime defaults it and"
-                                        + " takes a user@ prefix on the host"),
-            Map.entry("huggingface-component", "CAMEL-24748: task is an enum in the metadata, the runtime takes any"
-                                               + " name with predictorBean"),
-            Map.entry("salesforce-rest-api", "CAMEL-24748: approval.* has no @UriParam"));
+            Map.entry("olingo2-component", "deprecated; the syntax is apiName/methodName, the runtime reads"
+                                           + " methodName/resourcePath with the api name implicit, and any unknown"
+                                           + " option is an OData query parameter"),
+            Map.entry("olingo4-component", "deprecated; the syntax is apiName/methodName, the runtime reads"
+                                           + " methodName/resourcePath with the api name implicit, and any unknown"
+                                           + " option is an OData query parameter"));
 
     /** Examples that show what only the runtime knows, by page and a text found in the example. */
     private static final Map<String, String> EXAMPLES_SKIPPED = Map.of(

@@ -30,6 +30,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoappenddelimiter":
         case "autoAppendDelimiter": target.getConfiguration().setAutoAppendDelimiter(property(camelContext, boolean.class, value)); return true;
         case "backlog": target.getConfiguration().setBacklog(property(camelContext, int.class, value)); return true;
+        case "bootstrapconfiguration":
+        case "bootstrapConfiguration": target.setBootstrapConfiguration(property(camelContext, org.apache.camel.component.netty.NettyServerBootstrapConfiguration.class, value)); return true;
         case "bosscount":
         case "bossCount": target.getConfiguration().setBossCount(property(camelContext, int.class, value)); return true;
         case "bossgroup":
@@ -169,6 +171,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoappenddelimiter":
         case "autoAppendDelimiter": return boolean.class;
         case "backlog": return int.class;
+        case "bootstrapconfiguration":
+        case "bootstrapConfiguration": return org.apache.camel.component.netty.NettyServerBootstrapConfiguration.class;
         case "bosscount":
         case "bossCount": return int.class;
         case "bossgroup":
@@ -309,6 +313,8 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoappenddelimiter":
         case "autoAppendDelimiter": return target.getConfiguration().isAutoAppendDelimiter();
         case "backlog": return target.getConfiguration().getBacklog();
+        case "bootstrapconfiguration":
+        case "bootstrapConfiguration": return target.getBootstrapConfiguration();
         case "bosscount":
         case "bossCount": return target.getConfiguration().getBossCount();
         case "bossgroup":
