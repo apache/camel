@@ -35,6 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DependencyDownloaderPropertiesFunctionResolverTest {
 
     private static final String KUBERNETES = "org.apache.camel:camel-kubernetes";
+    private static final String BASE64 = "org.apache.camel:camel-base64";
+    private static final String AWS = "org.apache.camel:camel-aws-secrets-manager";
+    private static final String AZURE = "org.apache.camel:camel-azure-key-vault";
+    private static final String GCP = "org.apache.camel:camel-google-secret-manager";
+    private static final String HASHICORP = "org.apache.camel:camel-hashicorp-vault";
 
     @Test
     void runDownloadsKubernetesForSecretFunction() {
@@ -46,6 +51,36 @@ public class DependencyDownloaderPropertiesFunctionResolverTest {
     void runDownloadsKubernetesForConfigmapFunction() {
         assertTrue(resolveAndRecordDownloads(false, false, "configmap").contains(KUBERNETES),
                 "run must auto-download camel-kubernetes for the configmap function");
+    }
+
+    @Test
+    void runDownloadsCamelBase64ForBase64Function() {
+        assertTrue(resolveAndRecordDownloads(false, false, "base64").contains(BASE64),
+                "run must auto-download camel-base64 for the base64 function");
+    }
+
+    @Test
+    void runDownloadsAwsSecretsManagerForAwsFunction() {
+        assertTrue(resolveAndRecordDownloads(false, false, "aws").contains(AWS),
+                "run must auto-download camel-aws-secrets-manager for the aws function");
+    }
+
+    @Test
+    void runDownloadsAzureKeyVaultForAzureFunction() {
+        assertTrue(resolveAndRecordDownloads(false, false, "azure").contains(AZURE),
+                "run must auto-download camel-azure-key-vault for the azure function");
+    }
+
+    @Test
+    void runDownloadsGoogleSecretManagerForGcpFunction() {
+        assertTrue(resolveAndRecordDownloads(false, false, "gcp").contains(GCP),
+                "run must auto-download camel-google-secret-manager for the gcp function");
+    }
+
+    @Test
+    void runDownloadsHashicorpVaultForHashicorpFunction() {
+        assertTrue(resolveAndRecordDownloads(false, false, "hashicorp").contains(HASHICORP),
+                "run must auto-download camel-hashicorp-vault for the hashicorp function");
     }
 
     @Test
