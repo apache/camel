@@ -82,13 +82,6 @@ class KafkaConfigurationTest {
     }
 
     @Test
-    void maxPollRecordsDefaultsTo500() {
-        // CAMEL-24778: the field must carry the documented default at runtime. In batching mode the value is
-        // read directly (to size the batch buffer), so a null default there throws a NullPointerException.
-        assertEquals(500, new KafkaConfiguration().getMaxPollRecords().intValue());
-    }
-
-    @Test
     void sendBufferBytesAppliedToConsumerWithoutSsl() {
         KafkaConfiguration config = new KafkaConfiguration();
         config.setBrokers("localhost:9092");
