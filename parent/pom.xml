@@ -416,7 +416,7 @@
         <opa-version>2.1.1</opa-version>
         <opa-wasm-version>1.1.0</opa-wasm-version>
         <mcp-java-sdk-version>2.0.1</mcp-java-sdk-version>
-        <openai-java-version>4.55.0</openai-java-version>
+        <openai-java-version>4.63.1</openai-java-version>
         <openapi-generator-version>7.25.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.8.0</opensearch-rest-client-version>
