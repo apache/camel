@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class UserManualDocExamplesTest {
 
     private static final Path PAGES = Path.of("docs", "user-manual", "modules", "ROOT", "pages");
-    private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4}\\n(.*?)\\n-{4}", Pattern.DOTALL);
+    private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4,}\\n(.*?)\\n-{4,}", Pattern.DOTALL);
     private static final Pattern FIRST_KEY = Pattern.compile("^\\s*-\\s+([A-Za-z]+)\\s*:");
 
     private static YamlValidator validator;
@@ -126,6 +126,8 @@ class UserManualDocExamplesTest {
 
     /**
      * The pages of the user manual that document the current release, by name, or an empty map outside the source tree.
+     * The source tree is found as {@code UserManualPages.repositoryRoot()} in the camel-catalog tests finds it: the
+     * directory up the tree that holds both the user manual pages and the components; keep the two in step.
      */
     private static Map<String, String> currentPages() throws Exception {
         Map<String, String> answer = new TreeMap<>();

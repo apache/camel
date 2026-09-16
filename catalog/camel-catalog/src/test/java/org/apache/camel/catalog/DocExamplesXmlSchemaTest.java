@@ -160,6 +160,10 @@ class DocExamplesXmlSchemaTest {
 
     @Test
     void theCheckSeesWhatItIsFor() {
+        // the fragments are judged as the global elements of the schema; the set must be the real one
+        assertTrue(springGlobalElements.size() > 200 && springGlobalElements.contains("route")
+                && springGlobalElements.contains("onException") && springGlobalElements.contains("marshal"),
+                "global elements of camel-spring.xsd: " + springGlobalElements.size());
         // the classes of mistakes the check exists for
         assertTrue(validateBlock("<camelContext xmlns=\"http://activemq.apache.org/camel/schema/spring\">\n"
                                  + "<route><from uri=\"direct:a\"/><to uri=\"mock:b\"/></route></camelContext>")
@@ -365,12 +369,27 @@ class DocExamplesXmlSchemaTest {
         }
     }
 
-    /** The names of the global elements of a schema: the elements an example can start with. */
-    private static Set<String> globalElements(String xsd) {
+    /**
+     * The names of the global elements of a schema, the elements an example can start with: the {@code xs:element}
+     * children of the {@code xs:schema} root, read from the parsed schema so the formatting of the generated file does
+     * not matter.
+     */
+    private static Set<String> globalElements(String xsd) throws Exception {
         Set<String> answer = new HashSet<>();
-        Matcher m = Pattern.compile("\n  <xs:element name=\"([A-Za-z-]+)\"").matcher(xsd);
-        while (m.find()) {
-            answer.add(m.group(1));
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        Document schema = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xsd)));
+        NodeList children = schema.getDocumentElement().getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE && "element".equals(child.getLocalName())
+                    && XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(child.getNamespaceURI())) {
+                answer.add(((Element) child).getAttribute("name"));
+            }
+        }
+        if (answer.isEmpty()) {
+            throw new IllegalStateException("No global elements found in the schema, the fragments would not be judged");
         }
         return answer;
     }
