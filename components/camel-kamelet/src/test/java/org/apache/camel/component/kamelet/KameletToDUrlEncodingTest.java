@@ -18,6 +18,7 @@ package org.apache.camel.component.kamelet;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -57,6 +58,21 @@ class KameletToDUrlEncodingTest extends CamelTestSupport {
                 .isEqualTo(resultTo);
     }
 
+    /**
+     * Negative test: components that do NOT declare {@code useRawUri()=true} continue to receive the normalised URI
+     * via {@code toD}, proving that the fix is surgically scoped to {@code useRawUri} components only.
+     */
+    @Test
+    void toDNonRawUriComponentIsUnaffected() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("hello");
+
+        template.sendBody("direct:via-tod-mock", "hello");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -74,6 +90,10 @@ class KameletToDUrlEncodingTest extends CamelTestSupport {
                 // dynamic `toD` — was broken before the fix (CAMEL-24747)
                 from("direct:via-tod")
                         .toD("kamelet:echo-uri?uri=" + PARAM_WITH_SPECIAL_CHARS);
+
+                // non-useRawUri component via toD — must continue to work normally
+                from("direct:via-tod-mock")
+                        .toD("mock:result");
             }
         };
     }

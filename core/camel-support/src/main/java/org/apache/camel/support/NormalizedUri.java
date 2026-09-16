@@ -57,6 +57,8 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      * Returns the raw (un-normalized) URI that was used to create this instance. Components that declare
      * {@code useRawUri()=true} should receive this value so that parameter values are not URL-decoded before they reach
      * the component.
+     *
+     * @since 4.23
      */
     public String getRawUri() {
         return rawUri;
