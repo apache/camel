@@ -110,7 +110,8 @@ public class RestConfiguration {
     /**
      * Sets the name of the Camel component to use as the REST consumer
      *
-     * @param componentName the name of the component (such as netty-http, jetty, servlet, undertow, etc.)
+     * @param componentName the name of the component (such as platform-http, netty-http, jetty, servlet, undertow,
+     *                      etc.)
      */
     public void setComponent(String componentName) {
         this.component = Objects.requireNonNull(componentName, "componentName");

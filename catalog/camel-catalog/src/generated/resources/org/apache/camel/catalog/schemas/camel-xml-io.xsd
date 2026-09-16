@@ -14210,7 +14210,8 @@ Allows to configure custom validation levels when using camel-openapi-validator 
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow.
+The Camel Rest component to use for the REST transport (consumer), such as platform-http, netty-http, jetty, servlet,
+undertow.
 ]]>
         </xs:documentation>
       </xs:annotation>
