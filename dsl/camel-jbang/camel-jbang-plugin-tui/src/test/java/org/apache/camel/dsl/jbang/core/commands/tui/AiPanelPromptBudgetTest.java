@@ -130,4 +130,23 @@ class AiPanelPromptBudgetTest {
                 "system prompt grew to ~" + AiPanel.estimateTokens(prompt.length()) + " tokens");
         assertTrue(!prompt.contains("- tui_get_table:"), "system prompt must not list the tools again");
     }
+
+    @Test
+    void thePromptOnlyMentionsTheToolsOfTheActiveSet() {
+        // tui_set_log_level left the core set (CAMEL-24760): its prompt line goes with it, a local model must not be
+        // told about a tool it cannot call
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        panel.setToolModeForTesting(AiPanel.TOOL_MODE_CORE);
+        String core = panel.systemPromptForTesting();
+        panel.setToolModeForTesting(AiPanel.TOOL_MODE_FULL);
+        String full = panel.systemPromptForTesting();
+
+        assertTrue(full.contains("tui_set_log_level is the app's root logger"), "the full set has the tool");
+        assertTrue(!core.contains("tui_set_log_level"), "the core set has not");
+        // what both sets get: the file write rule and the canonical YAML shape
+        for (String prompt : List.of(core, full)) {
+            assertTrue(prompt.contains("camel_write_file"), "write files with the tool");
+        }
+    }
 }
