@@ -69,10 +69,11 @@ public class SpiffeSSLContextParameters extends SSLContextParameters {
               description = "Comma-separated allow-list of peer SPIFFE IDs to accept during the TLS handshake"
                             + " (for example spiffe://example.org/client). Mutually exclusive with acceptAnySpiffeId.")
     private String acceptedSpiffeIds;
-    @Metadata(label = "security", defaultValue = "false",
+    @Metadata(label = "security", defaultValue = "false", security = "insecure:ssl",
               description = "Accept any peer SPIFFE ID that validates against the trust bundle, instead of an"
-                            + " explicit acceptedSpiffeIds allow-list. Use with care; mutually exclusive with"
-                            + " acceptedSpiffeIds.")
+                            + " explicit acceptedSpiffeIds allow-list. This authenticates the trust domain but not"
+                            + " the peer, so it is the SPIFFE analogue of disabling hostname verification."
+                            + " Use with care; mutually exclusive with acceptedSpiffeIds.")
     private boolean acceptAnySpiffeId;
     @Metadata(label = "security", defaultValue = "30000",
               description = "Timeout in milliseconds to wait for the first SVID from the Workload API when creating"

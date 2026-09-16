@@ -23,6 +23,8 @@ public class CassandraKeyValueRepositoryConfigurer extends org.apache.camel.supp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.cassandra.CassandraKeyValueRepository target = (org.apache.camel.processor.keyvalue.cassandra.CassandraKeyValueRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "readconsistencylevel":
         case "readConsistencyLevel": target.setReadConsistencyLevel(property(camelContext, com.datastax.oss.driver.api.core.ConsistencyLevel.class, value)); return true;
         case "session": target.setSession(property(camelContext, com.datastax.oss.driver.api.core.CqlSession.class, value)); return true;
@@ -36,6 +38,8 @@ public class CassandraKeyValueRepositoryConfigurer extends org.apache.camel.supp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "readconsistencylevel":
         case "readConsistencyLevel": return com.datastax.oss.driver.api.core.ConsistencyLevel.class;
         case "session": return com.datastax.oss.driver.api.core.CqlSession.class;
@@ -50,6 +54,8 @@ public class CassandraKeyValueRepositoryConfigurer extends org.apache.camel.supp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.cassandra.CassandraKeyValueRepository target = (org.apache.camel.processor.keyvalue.cassandra.CassandraKeyValueRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "readconsistencylevel":
         case "readConsistencyLevel": return target.getReadConsistencyLevel();
         case "session": return target.getSession();

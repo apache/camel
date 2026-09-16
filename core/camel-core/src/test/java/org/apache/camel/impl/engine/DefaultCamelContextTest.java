@@ -139,7 +139,34 @@ public class DefaultCamelContextTest extends TestSupport {
                 () -> camelContext.getEndpoint("xxx", Endpoint.class));
 
         assertEquals(
-                "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
+                "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar"
+                     + " (not a built-in Camel component).",
+                e.getMessage());
+    }
+
+    @Test
+    public void testGetEndpointUnknownSchemeSaysWhatToAdd() {
+        DefaultCamelContext camelContext = new DefaultCamelContext();
+
+        // a built-in component whose jar is not on the classpath
+        NoSuchEndpointException e = assertThrows(NoSuchEndpointException.class,
+                () -> camelContext.getEndpoint("kafka:myTopic?brokers=localhost"));
+        assertEquals(
+                "No endpoint could be found for: kafka://myTopic?brokers=localhost, please check your classpath contains"
+                     + " the needed Camel component jar (the kafka component is in camel-kafka; add camel-kafka to the"
+                     + " classpath).",
+                e.getMessage());
+
+        // an alternative scheme is in the same jar as its main scheme
+        e = assertThrows(NoSuchEndpointException.class, () -> camelContext.getEndpoint("coaps://localhost/foo"));
+        assertTrue(e.getMessage().contains("the coaps component is in camel-coap; add camel-coap to the classpath"),
+                e.getMessage());
+
+        // a typo of a built-in scheme
+        e = assertThrows(NoSuchEndpointException.class, () -> camelContext.getEndpoint("kafak:myTopic"));
+        assertEquals(
+                "No endpoint could be found for: kafak://myTopic, please check your classpath contains the needed Camel"
+                     + " component jar (not a built-in Camel component; did you mean 'kafka'?).",
                 e.getMessage());
     }
 

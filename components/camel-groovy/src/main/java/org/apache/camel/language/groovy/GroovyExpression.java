@@ -44,6 +44,15 @@ public class GroovyExpression extends ExpressionSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroovyExpression.class);
 
+    /**
+     * The script variables named in the missing property hint: the ones a script reaches for, without the aliases
+     * (header, variable, in, exchangeProperty) and the out message that only exists on an InOut exchange. Every name
+     * must be in {@link ExchangeBinding#EXCHANGE_VARIABLES}.
+     */
+    static final String SCRIPT_VARIABLES_HINT
+            = "exchange, message, body, headers, variables, exchangeProperties, exception, camelContext, attachments"
+              + " and log";
+
     private final String text;
 
     // the language and shell factory of the CamelContext, resolved once instead of on every evaluation
@@ -90,8 +99,7 @@ public class GroovyExpression extends ExpressionSupport {
                     ? "'" + name + "' is a bean in the registry, not a script variable; use"
                       + " exchange.getContext().getRegistry().lookupByName('" + name + "'), or call it from the route with"
                       + " - bean: {ref: " + name + "}"
-                    : "the script variables are exchange, message, body, headers, variables, exchangeProperties,"
-                      + " camelContext, request and log";
+                    : "the script variables are " + SCRIPT_VARIABLES_HINT;
             throw new groovy.lang.MissingPropertyException(
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
         }
@@ -180,7 +188,7 @@ public class GroovyExpression extends ExpressionSupport {
 
     /**
      * Binding with the same variables as {@link ExchangeHelper#populateVariableMap(Exchange, Map, boolean)} plus
-     * attachments and log.
+     * message (the current message, the Camel 4 name of request), attachments and log.
      * <p>
      * The body, the headers, the exception and the out message are read when the binding is created. The values that
      * are costly to create (the copy of the exchange properties, the variable repository and the attachment message)
@@ -191,11 +199,12 @@ public class GroovyExpression extends ExpressionSupport {
      * A global variable of the {@link GroovyShellFactory} is hidden by the exchange variable with the same name, except
      * {@code out} and {@code response} when the exchange has no out message, as they are then not exposed.
      */
-    private static final class ExchangeBinding extends Binding {
+    static final class ExchangeBinding extends Binding {
 
-        private static final Set<String> EXCHANGE_VARIABLES = Set.of(
-                "body", "header", "headers", "variable", "variables", "exception", "in", "request", "exchange",
-                "exchangeProperty", "exchangeProperties", "out", "response", "camelContext", "attachments", "log");
+        static final Set<String> EXCHANGE_VARIABLES = Set.of(
+                "body", "header", "headers", "variable", "variables", "exception", "in", "request", "message",
+                "exchange", "exchangeProperty", "exchangeProperties", "out", "response", "camelContext", "attachments",
+                "log");
 
         private final Exchange exchange;
         private final Message in;
@@ -297,6 +306,7 @@ public class GroovyExpression extends ExpressionSupport {
                     return exception;
                 case "in":
                 case "request":
+                case "message":
                     return in;
                 case "exchange":
                     return exchange;

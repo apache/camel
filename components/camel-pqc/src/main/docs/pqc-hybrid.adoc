@@ -73,27 +73,27 @@ YAML::
 - route:
     from:
       uri: direct:sign
-    steps:
-      - to:
-          uri: pqc:hybrid
-          parameters:
-            operation: hybridSign
-            signatureAlgorithm: MLDSA
-            classicalSignatureAlgorithm: ECDSA_P256
-      - to:
-          uri: mock:signed
+      steps:
+        - to:
+            uri: pqc:hybrid
+            parameters:
+              operation: hybridSign
+              signatureAlgorithm: MLDSA
+              classicalSignatureAlgorithm: ECDSA_P256
+        - to:
+            uri: mock:signed
 - route:
     from:
       uri: direct:verify
-    steps:
-      - to:
-          uri: pqc:hybrid
-          parameters:
-            operation: hybridVerify
-            signatureAlgorithm: MLDSA
-            classicalSignatureAlgorithm: ECDSA_P256
-      - to:
-          uri: mock:verified
+      steps:
+        - to:
+            uri: pqc:hybrid
+            parameters:
+              operation: hybridVerify
+              signatureAlgorithm: MLDSA
+              classicalSignatureAlgorithm: ECDSA_P256
+        - to:
+            uri: mock:verified
 ----
 ====
 
@@ -182,31 +182,31 @@ YAML::
 - route:
     from:
       uri: direct:encapsulate
-    steps:
-      - to:
-          uri: pqc:hybridkem
-          parameters:
-            operation: hybridGenerateSecretKeyEncapsulation
-            keyEncapsulationAlgorithm: MLKEM
-            classicalKEMAlgorithm: X25519
-            symmetricKeyAlgorithm: AES
-            symmetricKeyLength: 256
-      - to:
-          uri: mock:encapsulated
+      steps:
+        - to:
+            uri: pqc:hybridkem
+            parameters:
+              operation: hybridGenerateSecretKeyEncapsulation
+              keyEncapsulationAlgorithm: MLKEM
+              classicalKEMAlgorithm: X25519
+              symmetricKeyAlgorithm: AES
+              symmetricKeyLength: 256
+        - to:
+            uri: mock:encapsulated
 - route:
     from:
       uri: direct:extract
-    steps:
-      - to:
-          uri: pqc:hybridkem
-          parameters:
-            operation: hybridExtractSecretKeyEncapsulation
-            keyEncapsulationAlgorithm: MLKEM
-            classicalKEMAlgorithm: X25519
-            symmetricKeyAlgorithm: AES
-            symmetricKeyLength: 256
-      - to:
-          uri: mock:extracted
+      steps:
+        - to:
+            uri: pqc:hybridkem
+            parameters:
+              operation: hybridExtractSecretKeyEncapsulation
+              keyEncapsulationAlgorithm: MLKEM
+              classicalKEMAlgorithm: X25519
+              symmetricKeyAlgorithm: AES
+              symmetricKeyLength: 256
+        - to:
+            uri: mock:extracted
 ----
 ====
 

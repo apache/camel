@@ -47,6 +47,7 @@ import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.SuggestionStrategy;
 import org.apache.camel.tooling.model.ApiMethodModel;
 import org.apache.camel.tooling.model.ApiModel;
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -136,6 +137,15 @@ public abstract class AbstractCamelCatalog {
 
     public String pojoBeanJSonSchema(String name) {
         return getJSonSchemaResolver().getPojoBeanJSonSchema(name);
+    }
+
+    public ApiReferenceModel apiReferenceModel(String name) {
+        String json = apiReferenceJSonSchema(name);
+        return json != null ? JsonMapper.generateApiReferenceModel(json) : null;
+    }
+
+    public String apiReferenceJSonSchema(String name) {
+        return getJSonSchemaResolver().getApiReferenceJSonSchema(name);
     }
 
     public String devConsoleJSonSchema(String name) {

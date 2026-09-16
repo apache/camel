@@ -39,6 +39,13 @@ class SecurityUtilsTest {
         // verify known entries
         assertNotNull(options.get("trustallcertificates"));
         assertEquals("insecure:ssl", options.get("trustallcertificates").category());
+
+        // acceptAnySpiffeId lives on a bean (SpiffeSSLContextParameters) rather than on a component option, so it
+        // only reaches this map through EXTRA_SECURITY_OPTIONS in UpdateSensitizeHelper; guard that it is not lost
+        assertNotNull(options.get("acceptanyspiffeid"),
+                "acceptAnySpiffeId must stay registered so camel.main.profile=prod can flag it");
+        assertEquals("insecure:ssl", options.get("acceptanyspiffeid").category());
+        assertEquals("true", options.get("acceptanyspiffeid").insecureValue());
     }
 
     @Test

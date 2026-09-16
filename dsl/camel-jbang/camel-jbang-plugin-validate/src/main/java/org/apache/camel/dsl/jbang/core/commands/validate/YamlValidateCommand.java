@@ -42,7 +42,8 @@ public class YamlValidateCommand extends CamelCommand {
     private static final String IGNORE_FILE = "application";
 
     @CommandLine.Option(names = { "--canonical" }, defaultValue = "false",
-                        description = "Validate against the canonical schema (rejects shorthands and implicit expressions)")
+                        description = "Validate against the canonical schema: reports the deprecated compact notation (string shorthands,"
+                                      + " implicit expressions) with the canonical form to write")
     boolean canonical;
 
     @CommandLine.Option(names = { "--catalog" }, defaultValue = "true",

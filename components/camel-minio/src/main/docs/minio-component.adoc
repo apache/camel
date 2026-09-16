@@ -1,10 +1,11 @@
-= Minio Component
+= Minio Component (deprecated)
 :doctitle: Minio
 :shortname: minio
 :artifactid: camel-minio
 :description: Store and retrieve objects from Minio Storage Service using Minio SDK.
 :since: 3.5
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 
@@ -295,14 +296,14 @@ YAML::
 - route:
     from:
       uri: direct:start
-    steps:
-      - to:
-          uri: minio://mycamelbucket
-          parameters:
-            minioClient: "#minioClient"
-            operation: listBuckets
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: listBuckets
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -339,14 +340,14 @@ YAML::
 - route:
     from:
       uri: direct:start
-    steps:
-      - to:
-          uri: minio://mycamelbucket
-          parameters:
-            minioClient: "#minioClient"
-            operation: deleteBucket
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: deleteBucket
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -383,14 +384,14 @@ YAML::
 - route:
     from:
       uri: direct:start
-    steps:
-      - to:
-          uri: minio://mycamelbucket
-          parameters:
-            minioClient: "#minioClient"
-            operation: listObjects
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: minio://mycamelbucket
+            parameters:
+              minioClient: "#minioClient"
+              operation: listObjects
+        - to:
+            uri: mock:result
 ----
 ====
 

@@ -171,6 +171,27 @@ public interface SpiffeComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether the CamelSpiffeOperation header may override the configured
+         * operation. Disabled by default: the operation decides whether this
+         * endpoint validates a token or mints one, so a message that can set it
+         * can turn a validator into an endpoint that hands out this workload's
+         * own JWT-SVID. Enable it only on routes whose input is trusted.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowOperationHeader the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder allowOperationHeader(boolean allowOperationHeader) {
+            doSetProperty("allowOperationHeader", allowOperationHeader);
+            return this;
+        }
+    
         /**
          * The address of the SPIFFE Workload API endpoint (for example {code
          * unix:///tmp/agent.sock} or {code tcp://127.0.0.1:8082}). When not
@@ -214,6 +235,7 @@ public interface SpiffeComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((SpiffeComponent) component).setOperation((org.apache.camel.component.spiffe.SpiffeOperation) value); return true;
             case "autowiredEnabled": ((SpiffeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "workloadApiClient": getOrCreateConfiguration((SpiffeComponent) component).setWorkloadApiClient((io.spiffe.workloadapi.WorkloadApiClient) value); return true;
+            case "allowOperationHeader": getOrCreateConfiguration((SpiffeComponent) component).setAllowOperationHeader((boolean) value); return true;
             case "spiffeSocketPath": getOrCreateConfiguration((SpiffeComponent) component).setSpiffeSocketPath((java.lang.String) value); return true;
             default: return false;
             }

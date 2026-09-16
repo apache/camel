@@ -116,6 +116,11 @@ from the exchange the first time the script uses them instead of being copied be
 changes a property or variable through `exchange` and then reads one of these variables for the first time now sees
 its own change where it previously saw the state from before the script ran.
 
+Groovy scripts now have a `message` variable for the current message (`exchange.getMessage()`), the name the other
+script languages and the Camel 4 API use; `request` and `in` stay as its older names. A `GroovyShellFactory` that
+provided its own global variable named `message` is now hidden by the exchange variable, like the other exchange
+variable names.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
@@ -179,6 +184,12 @@ The maven plugin was deprecated in 4.12. The catalog now has built-in suggestion
 
 The component camel-digitalocean was deprecated in 4.21. The java library used has been unmaintained for several years and there is no replacement.
 
+==== camel-hazelcast-atomicvalue
+
+The component `camel-hazelcast-atomicvalue` was deprecated in 4.19.0.
+
+In hazelcast 5.5+, the CP subsystem is only available in the enterprise edition of hazelcast. `hazelcast-pncounter` is a partial replacement.
+
 ==== camel-headersmap
 
 The component camel-headersmap was deprecated in 4.21. The default `CaseInsensitiveMap` in camel-core
@@ -200,6 +211,11 @@ The component camel-irc was deprecated in 4.21. The library used had no stable r
 The component camel-ironmq was deprecated in 4.21. The official library used has been unmaintained since 2017
 All the other client libraries (in other languages) are unmaintained since the same amount of time.
 The whole iron-io GitHub organization has almost no activity.
+
+==== camel-joor
+
+The language `joor` was deprecated in 4.3.
+The language `java` can be used in-place. It was a renaming. Joor is used underneath for `java` expression.
 
 ==== camel-json-patch
 
@@ -432,6 +448,16 @@ set here, because that would reject input that parses today. Routes that genuine
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
 
+=== Component deprecation
+
+==== camel-minio
+
+The Minio GitHub repository has been archived on the 25th April 2026.
+The container images were removed from Docker Hub on September 2026.
+
+MinIO is S3-compatible, so existing deployments can migrate to the `camel-aws2-s3` component by pointing it at the MinIO server, for example:
+`aws2-s3://mybucket?overrideEndpoint=true&uriEndpointOverride=http://localhost:9000&forcePathStyle=true&accessKey=...&secretKey=...`
+
 === camel-tika
 
 The Tika dependency has been upgraded from 3.x to 4.x. Tika 4 removed the `TikaConfig` class and XML
@@ -663,6 +689,16 @@ Running an existing Maven project (`camel run pom.xml`) is unchanged, and still 
 from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
 `camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
 
+The YAML that `camel init` writes (`camel init foo.yaml`, and the Integration and Kamelet templates), the
+bundled examples (`camel init --example`) and the routes the `camel_ai_pipeline_scaffold` and
+`camel_openapi_scaffold` MCP tools generate are now written in the canonical YAML DSL format, with an
+expression under `expression:` and a step as a map of its options
+(`setBody: {expression: {simple: {expression: "..."}}}`, `log: {message: "..."}`, `to: {uri: "..."}`).
+The compact notation they used to be written in (`setBody: {simple: "..."}`, `log: "..."`) is deprecated:
+`camel run` warns about it, `camel validate yaml --canonical` reports it, and `camel validate normalize`
+rewrites a file in the canonical format. Existing files keep working; only the generated starting point
+changed. Scripts that post-process the generated YAML by matching the old text need to be updated.
+
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the
@@ -684,6 +720,39 @@ the same JSON fields as before. The new file, run and control tools are hidden b
 level of the security layer; the server does not ask before writing a file, that is the MCP client's job.
 
 `camel-jbang-core` now depends on `camel-yaml-dsl-validator` for the source validation behind these tools.
+
+The older `camel mcp` tools that asked the same questions as the shared tools were removed, so a client no
+longer has two near-identical tools to pick from. Update MCP clients and prompts that name them:
+
+[cols="1,1",options="header"]
+|===
+| Removed tool | Use instead
+
+| `camel_catalog_component_doc`, `camel_catalog_dataformat_doc`, `camel_catalog_language_doc`, `camel_catalog_eip_doc`
+| `camel_catalog_doc` with the `kind` (`optionsFilter`, `includeOptions`, `includeHeaders`, `includeDoc`)
+
+| `camel_catalog_component_maven`
+| `camel_catalog_doc`, which returns the Maven coordinates
+
+| `camel_catalog_components`, `camel_catalog_dataformats`, `camel_catalog_languages`, `camel_catalog_eips`
+| `camel_catalog_find` with the `kind` (the EIP aliases such as `fan-out` and `dedup` match)
+
+| `camel_validate_yaml_dsl`, `camel_validate_route`
+| `camel_validate_source`; an endpoint URI alone is checked by `camel_catalog_doc` with `endpoint`
+
+| `camel_runtime_eval`
+| `camel_eval_expression`
+
+| `camel_runtime_errors`
+| `camel_get_errors`
+
+| `camel_runtime_stop`
+| `camel_control` with `action=stop`
+|===
+
+The shared catalog tools answer for the Camel version in use, or the `camelVersion` given; the `runtime`
+(`spring-boot`, `quarkus`) and `platformBom` arguments of the removed tools have no equivalent there. The
+`camel_build_integration` prompt names the shared tools now.
 
 === camel-jbang (TUI)
 
@@ -1979,6 +2048,71 @@ The accessors changed accordingly:
 
 The fluent builder `ParamDefinition.required(Boolean)` is unchanged, and a `required(String)` overload
 was added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change.
+
+=== camel-sql, camel-sql-stored - the query/template override headers are gated
+
+A message header could override the endpoint-configured SQL by default, letting an incoming message choose the
+executed statement:
+
+* `camel-sql`: the `CamelSqlQuery` header replaced the endpoint query.
+* `camel-sql-stored`: the `CamelSqlStoredTemplate` header replaced the endpoint template, and its value was
+  resolved through `SqlHelper.resolveQuery`, which resolves `file:`, `http:`, `https:` and `classpath:` resources.
+
+Both overrides are now disabled by default and must be opted into, matching the `allowTemplateFromHeader`
+convention already used by the template components (camel-freemarker, camel-velocity, camel-xslt, ...):
+
+* `camel-sql`: set `allowQueryFromHeader=true` to honour the `CamelSqlQuery` header again.
+* `camel-sql-stored`: set `allowTemplateFromHeader=true` to honour the `CamelSqlStoredTemplate` header again; a
+  header-supplied template is now resolved with property placeholders only, never as a `file:`, `http:`, `https:`
+  or `classpath:` resource.
+
+A route that relied on either header must set the corresponding option on the endpoint.
+
+Opting back in is not quite the previous behaviour. `SqlHelper.resolveQuery` applied placeholder resolution only to
+a value that had a scheme, so a schemeless header template used to reach the database untouched; it now always goes
+through `SqlHelper.resolvePlaceholders`, which drops `--` comment lines and blank lines and re-joins the rest with
+newlines. That is immaterial for the single-line call syntax a stored-procedure template normally uses, but a route
+passing a multi-line commented template through the header will see the comments stripped.
+
+Additionally, `camel-sql-stored` with `useMessageBodyForTemplate=true` now uses the message body verbatim as the
+stored-procedure template text and no longer resolves it through `SqlHelper.resolveQuery`. A body beginning with
+`file:`, `http:`, `https:` or `classpath:` is therefore treated as literal template text instead of being fetched
+as a resource, consistent with how `camel-sql` already treats the body under `useMessageBodyForSql=true`. A route
+that relied on the body being a resource location must resolve it to the template text before the `sql-stored`
+endpoint.
+=== camel-core - the inheritErrorHandler attribute on circuitBreaker and failoverLoadBalancer is now a String
+
+`CircuitBreakerDefinition.inheritErrorHandler` and `FailoverLoadBalancerDefinition.inheritErrorHandler` are now
+declared as `String` instead of `Boolean`, the same way nearly every other scalar attribute in the Camel model
+is declared. This allows a property placeholder to be used, which is resolved when the route starts:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - circuitBreaker:
+            inheritErrorHandler: "{{myInheritFlag}}"
+            steps:
+              - to:
+                  uri: mock:a
+----
+
+Before this change the value was converted to a `Boolean` while the route was being loaded, so
+`+inheritErrorHandler: "{{myInheritFlag}}"+` silently evaluated to `false` instead of resolving the placeholder.
+
+The accessors changed accordingly:
+
+* `ProcessorDefinition.getInheritErrorHandler()` and `setInheritErrorHandler(...)` now use `String` instead of
+  `Boolean`, and so do the overrides on `CircuitBreakerDefinition` and the accessors on
+  `FailoverLoadBalancerDefinition`. Use `CamelContextHelper.parseBoolean(camelContext, getInheritErrorHandler())`
+  where a `CamelContext` is available to resolve the value.
+
+The fluent builder `CircuitBreakerDefinition.inheritErrorHandler(boolean)` and the `failover(...)` methods on
+`LoadBalanceDefinition` are unchanged, and a `CircuitBreakerDefinition.inheritErrorHandler(String)` overload was
+added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change; the `inheritErrorHandler`
+attribute in the XML schema is now `xs:string` so a placeholder validates.
 
 === camel-weaviate - removed the unused vector field name header
 

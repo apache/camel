@@ -66,12 +66,12 @@ YAML::
 - route:
     from:
       uri: direct:createPod
-    steps:
-      - to:
-          uri: kubernetes-pods://{{kubernetes-host}}
-          parameters:
-            oauthToken: "{{kubernetes-token}}"
-            operation: createPod
+      steps:
+        - to:
+            uri: kubernetes-pods://{{kubernetes-host}}
+            parameters:
+              oauthToken: "{{kubernetes-token}}"
+              operation: createPod
 ----
 ====
 
@@ -106,12 +106,12 @@ YAML::
 - route:
     from:
       uri: direct:deletePod
-    steps:
-      - to:
-          uri: kubernetes-pods://{{kubernetes-host}}
-          parameters:
-            oauthToken: "{{kubernetes-token}}"
-            operation: deletePod
+      steps:
+        - to:
+            uri: kubernetes-pods://{{kubernetes-host}}
+            parameters:
+              oauthToken: "{{kubernetes-token}}"
+              operation: deletePod
 ----
 ====
 

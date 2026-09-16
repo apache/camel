@@ -260,6 +260,41 @@ repo.setCacheName("camel-kvr");  // optional
 
 Fully atomic CAS operations including `replace` with TTL in a single native call.
 
+== Serialization
+
+The persistent backends (JDBC, JPA, Cassandra, Kafka, Hazelcast, Redis and Infinispan) store values
+as bytes produced by plain Java serialization, via the shared `KeyValueRepositoryHelper`. Values must
+therefore implement `java.io.Serializable`.
+
+Because the byte store behind those backends is shared infrastructure -- a database table, a Kafka
+topic, a Redis instance, a data grid -- reading an entry back is a deserialization of data that Camel
+did not necessarily write. Every read therefore installs a JEP-290 `java.io.ObjectInputFilter`,
+exactly as the aggregation repositories do.
+
+By default the filter denies `java.net.*` and otherwise allows `java.*`, `javax.*` and
+`org.apache.camel.*`, with the JEP-290 graph-shape limits `maxdepth`, `maxrefs` and `maxbytes` applied
+as defense-in-depth. If the JVM-wide `jdk.serialFilter` system property is set, it takes precedence
+over the Camel default.
+
+This means that storing instances of your *own* classes requires widening the filter through the
+`deserializationFilter` option, which every persistent backend exposes:
+
+[source,java]
+----
+RedisKeyValueRepository repo = new RedisKeyValueRepository("localhost:6379");
+repo.setDeserializationFilter("com.mycompany.model.**;java.**;javax.**;org.apache.camel.**;!*");
+----
+
+The pattern uses the same syntax as `jdk.serialFilter`. Keep it as narrow as possible: a permissive
+pattern such as `*` re-opens the repository to arbitrary gadget classes.
+
+The same applies indirectly when a persistent backend is used through `KeyValueAggregationRepository`:
+the aggregated exchange is stored as a `DefaultExchangeHolder`, so the message body and any serialized
+header types must be covered by the filter as well.
+
+The in-memory backends (Memory, Caffeine, Ehcache, JCache) keep object references and do not
+serialize, so they have no `deserializationFilter` option.
+
 == Usage with Camel Patterns
 
 === Single backend, multiple patterns

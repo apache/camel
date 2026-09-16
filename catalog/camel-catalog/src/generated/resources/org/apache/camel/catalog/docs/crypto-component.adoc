@@ -417,29 +417,29 @@ from("direct:verify")
     id: sign-route
     from:
       uri: direct:sign
-    steps:
-      - to:
-          uri: crypto:sign:pqc
-          parameters:
-            algorithm: ML-DSA
-            provider: BC
-            privateKeyName: "#mlDsaPrivateKey"
-      - to:
-          uri: direct:verify
+      steps:
+        - to:
+            uri: crypto:sign:pqc
+            parameters:
+              algorithm: ML-DSA
+              provider: BC
+              privateKeyName: "#mlDsaPrivateKey"
+        - to:
+            uri: direct:verify
 
 - route:
     id: verify-route
     from:
       uri: direct:verify
-    steps:
-      - to:
-          uri: crypto:verify:pqc
-          parameters:
-            algorithm: ML-DSA
-            provider: BC
-            publicKeyName: "#mlDsaPublicKey"
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: crypto:verify:pqc
+            parameters:
+              algorithm: ML-DSA
+              provider: BC
+              publicKeyName: "#mlDsaPublicKey"
+        - to:
+            uri: mock:result
 ----
 
 ==== ML-DSA parameter sets
@@ -539,29 +539,29 @@ YAML DSL::
     id: hybrid-sign-route
     from:
       uri: direct:sign
-    steps:
-      - to:
-          uri: pqc:hybrid
-          parameters:
-            operation: hybridSign
-            signatureAlgorithm: MLDSA
-            classicalSignatureAlgorithm: ECDSA_P256
-      - to:
-          uri: direct:verify
+      steps:
+        - to:
+            uri: pqc:hybrid
+            parameters:
+              operation: hybridSign
+              signatureAlgorithm: MLDSA
+              classicalSignatureAlgorithm: ECDSA_P256
+        - to:
+            uri: direct:verify
 
 - route:
     id: hybrid-verify-route
     from:
       uri: direct:verify
-    steps:
-      - to:
-          uri: pqc:hybrid
-          parameters:
-            operation: hybridVerify
-            signatureAlgorithm: MLDSA
-            classicalSignatureAlgorithm: ECDSA_P256
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: pqc:hybrid
+            parameters:
+              operation: hybridVerify
+              signatureAlgorithm: MLDSA
+              classicalSignatureAlgorithm: ECDSA_P256
+        - to:
+            uri: mock:result
 ----
 ====
 

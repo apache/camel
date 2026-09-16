@@ -26,7 +26,7 @@ public class JoorCompileErrorTest extends LanguageTestSupport {
 
     @Override
     protected String getLanguageName() {
-        return "joor";
+        return "java";
     }
 
     @Test

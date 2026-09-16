@@ -75,6 +75,22 @@ class OpaInputDocumentTest extends CamelTestSupport {
     }
 
     @Test
+    void doesNotForwardAVerdictClaimedByTheMessageToTheDecisionPoint() throws Exception {
+        // includeHeaders defaults to *, so without the exclusion in buildInput a CamelOpaDecisionAllow carried by
+        // the message would be echoed into the input document - and from there into OPA's decision log
+        Map<String, Object> input = inputSentFor(ENDPOINT, e -> {
+            e.getMessage().setHeader("user", "alice");
+            e.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
+            e.getMessage().setHeader(OpaConstants.DECISION, Map.of("allow", true));
+            e.getMessage().setHeader(OpaConstants.POLICY_PATH, "authz/some-other-policy");
+        });
+
+        assertThat(headersOf(input)).containsEntry("user", "alice");
+        assertThat(headersOf(input)).doesNotContainKeys(
+                OpaConstants.DECISION_ALLOW, OpaConstants.DECISION, OpaConstants.POLICY_PATH);
+    }
+
+    @Test
     void sendsTheBodyWhenIncludeBodyIsEnabled() throws Exception {
         Map<String, Object> input = inputSentFor(ENDPOINT + "&includeBody=true",
                 e -> e.getMessage().setBody(Map.of("amount", 42)));
@@ -88,6 +104,38 @@ class OpaInputDocumentTest extends CamelTestSupport {
                 e -> e.getMessage().setBody("the payload".getBytes()));
 
         assertThat(input).containsEntry("body", "the payload");
+    }
+
+    @Test
+    void withholdsCredentialHeadersFromTheWildcard() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT, e -> {
+            e.getMessage().setHeader("user", "alice");
+            e.getMessage().setHeader("Authorization", "Bearer s3cr3t");
+            e.getMessage().setHeader("Cookie", "session=s3cr3t");
+            e.getMessage().setHeader("Proxy-Authorization", "Basic s3cr3t");
+            e.getMessage().setHeader("Set-Cookie", "session=abc; Path=/");
+        });
+
+        assertThat(headersOf(input)).containsOnlyKeys("user");
+    }
+
+    @Test
+    void matchesWithheldCredentialHeadersCaseInsensitively() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT,
+                e -> e.getMessage().setHeader("authorization", "Bearer s3cr3t"));
+
+        assertThat(headersOf(input)).doesNotContainKey("authorization");
+    }
+
+    @Test
+    void sendsACredentialHeaderWhenItIsNamedExplicitly() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeHeaders=Authorization,user", e -> {
+            e.getMessage().setHeader("user", "alice");
+            e.getMessage().setHeader("Authorization", "Bearer s3cr3t");
+        });
+
+        // naming it is the opt-in: a policy that must inspect the token can still get it
+        assertThat(headersOf(input)).containsEntry("Authorization", "Bearer s3cr3t");
     }
 
     @Test

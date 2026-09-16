@@ -23,6 +23,8 @@ public class JpaKeyValueRepositoryConfigurer extends org.apache.camel.support.co
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository target = (org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "entitymanagerfactory":
         case "entityManagerFactory": target.setEntityManagerFactory(property(camelContext, jakarta.persistence.EntityManagerFactory.class, value)); return true;
         case "jointransaction":
@@ -38,6 +40,8 @@ public class JpaKeyValueRepositoryConfigurer extends org.apache.camel.support.co
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "entitymanagerfactory":
         case "entityManagerFactory": return jakarta.persistence.EntityManagerFactory.class;
         case "jointransaction":
@@ -54,6 +58,8 @@ public class JpaKeyValueRepositoryConfigurer extends org.apache.camel.support.co
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository target = (org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "entitymanagerfactory":
         case "entityManagerFactory": return target.getEntityManagerFactory();
         case "jointransaction":

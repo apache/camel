@@ -378,22 +378,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * Returns a JOOR expression value builder
-     */
-    @Deprecated(since = "4.3.0")
-    public T joor(String value) {
-        return delegate.joor(value);
-    }
-
-    /**
-     * Returns a JOOR expression value builder
-     */
-    @Deprecated(since = "4.3.0")
-    public T joor(String value, Class<?> resultType) {
-        return delegate.joor(value, resultType);
-    }
-
-    /**
      * Returns a Java expression value builder
      */
     public T java(String value) {

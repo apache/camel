@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -226,6 +227,13 @@ public interface CamelCatalog {
     List<String> findBeansNames();
 
     /**
+     * Find all the API reference names (Exchange, Message, CamelContext, ...) from the Camel catalog
+     *
+     * @since 4.23
+     */
+    List<String> findApiReferenceNames();
+
+    /**
      * @param  kind the kind to look for
      * @return      the list of part names of the given {@link Kind} available in this {@link CamelCatalog}
      */
@@ -239,6 +247,7 @@ public interface CamelCatalog {
             case other -> findOtherNames();
             case eip, model -> findModelNames();
             case bean -> findBeansNames();
+            case api -> findApiReferenceNames();
         };
     }
 
@@ -310,6 +319,20 @@ public interface CamelCatalog {
      */
     default List<String> suggestLanguageNames(String term, int max) {
         return CatalogTermMatcher.suggestNames(findLanguageNames(), this::languageModel, term, max);
+    }
+
+    /**
+     * Finds EIP names that match a term that need not be the EIP name (for example {@code fan-out} finds
+     * {@code multicast} and {@code dedup} finds {@code idempotentConsumer}), best match first: the exact name, then
+     * declared aliases, words of the title, words of the name, and finally names containing the term.
+     *
+     * @param  term the pattern, alias, or EIP name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching EIP names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestEipNames(String term, int max) {
+        return CatalogTermMatcher.suggestNames(findModelNames(), this::eipModel, term, max);
     }
 
     /**
@@ -719,6 +742,17 @@ public interface CamelCatalog {
     PojoBeanModel pojoBeanModel(String name);
 
     /**
+     * The compact API reference of a core Camel class a route author's code touches (Exchange, Message, CamelContext,
+     * Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter): the methods
+     * that matter with their signatures, a one-line description, usage examples and the common mistakes.
+     *
+     * @param  name the simple class name (Exchange) to look up
+     * @return      the requested API reference or {@code null} in case it is not available in this {@link CamelCatalog}
+     * @since       4.23
+     */
+    ApiReferenceModel apiReferenceModel(String name);
+
+    /**
      * @return the requested main model or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     MainModel mainModel();
@@ -745,6 +779,7 @@ public interface CamelCatalog {
             case other -> otherModel(name);
             case eip, model -> eipModel(name);
             case bean -> pojoBeanModel(name);
+            case api -> apiReferenceModel(name);
         };
     }
 

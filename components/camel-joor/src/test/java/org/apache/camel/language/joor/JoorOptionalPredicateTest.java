@@ -31,7 +31,7 @@ public class JoorOptionalPredicateTest extends CamelTestSupport {
                 from("direct:start")
                         .choice()
                         .when()
-                        .joor("optionalBody.isPresent()")
+                        .java("optionalBody.isPresent()")
                         .to("mock:body")
                         .otherwise()
                         .to("mock:null");

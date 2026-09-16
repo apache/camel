@@ -270,7 +270,7 @@ class RouteTemplateTest extends YamlTestSupport {
         mock2.assertIsSatisfied()
     }
 
-    def "create template with joor"() {
+    def "create template with java"() {
         setup:
             loadRoutes """                
                     - routeTemplate:
@@ -278,7 +278,7 @@ class RouteTemplateTest extends YamlTestSupport {
                         beans:
                           - name: "myAgg"
                             type: "org.apache.camel.AggregationStrategy"
-                            scriptLanguage: "joor"
+                            scriptLanguage: "java"
                             script: "(e1, e2) -> { return e2.getMessage().getBody(); }"
                         from:
                           uri: "direct:route"

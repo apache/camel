@@ -656,7 +656,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child) throws Exception {
-        return wrapChannel(processor, child, definition.getInheritErrorHandler());
+        return wrapChannel(processor, child, parseBoolean(definition.getInheritErrorHandler()));
     }
 
     protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler)
@@ -934,7 +934,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public AggregationStrategy getConfiguredAggregationStrategy(AggregationStrategyAwareDefinition<?> definition) {
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
-            Object aggStrategy = lookupByName(definition.getAggregationStrategyRef());
+            Object aggStrategy = lookupByName(definition.getAggregationStrategyRef(), AggregationStrategy.class);
             if (aggStrategy == null) {
                 aggStrategy = lookupByNameAndType(definition.getAggregationStrategyRef(), AggregationStrategy.class);
             }

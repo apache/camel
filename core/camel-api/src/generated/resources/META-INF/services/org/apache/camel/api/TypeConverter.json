@@ -1,0 +1,15 @@
+{
+  "api": {
+    "kind": "api",
+    "name": "TypeConverter",
+    "title": "Type Converter",
+    "description": "Converts a value to a type with the registered converters (String, byte[], InputStream, numbers, Document, JSON and POJOs through the data formats on the classpath): what getBody(type), getHeader(name, type) and the bean parameter binding use. From context.getTypeConverter().",
+    "deprecated": false,
+    "javaType": "org.apache.camel.TypeConverter",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-api",
+    "version": "4.23.0-SNAPSHOT",
+    "methods": { "convertTo": { "index": 0, "signatures": [ "<T> T convertTo(Class<T> type, Object value) throws TypeConversionException", "<T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException" ], "javaType": "java.lang.Object", "important": true, "description": "The value as the type; null when there is no conversion or the value is null.", "examples": [ "converter.convertTo(String.class, body)" ] }, "mandatoryConvertTo": { "index": 1, "signatures": [ "<T> T mandatoryConvertTo(Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException", "<T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException, NoTypeConversionAvailableException" ], "javaType": "java.lang.Object", "description": "Like convertTo but throws NoTypeConversionAvailableException when there is no conversion." }, "tryConvertTo": { "index": 2, "signatures": [ "<T> T tryConvertTo(Class<T> type, Object value)", "<T> T tryConvertTo(Class<T> type, Exchange exchange, Object value)" ], "javaType": "java.lang.Object", "description": "Like convertTo but never throws: null when the conversion fails." } }
+  }
+}
+

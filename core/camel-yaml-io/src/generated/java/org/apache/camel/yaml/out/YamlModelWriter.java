@@ -586,9 +586,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeJavaScriptExpression(JavaScriptExpression def) {
         return wrapNode("js", doWriteJavaScriptExpression(def));
     }
-    public JsonObject writeJoorExpression(JoorExpression def) {
-        return wrapNode("joor", doWriteJoorExpression(def));
-    }
     public JsonObject writeJqExpression(JqExpression def) {
         return wrapNode("jq", doWriteJqExpression(def));
     }
@@ -900,7 +897,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "configuration", def.getConfiguration(), null);
-        doWriteAttribute(jo, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
+        doWriteAttribute(jo, "inheritErrorHandler", def.getInheritErrorHandler(), "false");
         doWriteChildElement(jo, "resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteChildElement(jo, "faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteChildElement(jo, "onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
@@ -2784,7 +2781,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "namespace", def.getNamespaceRef(), null);
-        doWriteAttribute(jo, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute(jo, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES_256_GCM");
         doWriteAttribute(jo, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(jo, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(jo, "secureTag", def.getSecureTag(), null);
@@ -2960,14 +2957,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteJavaScriptExpression(JavaScriptExpression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteValue(jo, def.getExpression());
-        return jo;
-    }
-    protected JsonObject doWriteJoorExpression(JoorExpression def) {
-        JsonObject jo = new JsonObject();
-        doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "preCompile", def.getPreCompile(), "true");
-        doWriteAttribute(jo, "singleQuotes", def.getSingleQuotes(), "true");
         doWriteValue(jo, def.getExpression());
         return jo;
     }
@@ -3164,7 +3153,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "roundRobin", def.getRoundRobin(), null);
         doWriteAttribute(jo, "sticky", def.getSticky(), null);
         doWriteAttribute(jo, "maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
-        doWriteAttribute(jo, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
+        doWriteAttribute(jo, "inheritErrorHandler", def.getInheritErrorHandler(), "true");
         doWriteStringList(jo, null, "exception", def.getExceptions());
         return jo;
     }
@@ -3948,7 +3937,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "JactlExpression" -> wrapNode("jactl", doWriteJactlExpression((JactlExpression) v));
                 case "JavaExpression" -> wrapNode("java", doWriteJavaExpression((JavaExpression) v));
                 case "JavaScriptExpression" -> wrapNode("js", doWriteJavaScriptExpression((JavaScriptExpression) v));
-                case "JoorExpression" -> wrapNode("joor", doWriteJoorExpression((JoorExpression) v));
                 case "JqExpression" -> wrapNode("jq", doWriteJqExpression((JqExpression) v));
                 case "JsonPathExpression" -> wrapNode("jsonpath", doWriteJsonPathExpression((JsonPathExpression) v));
                 case "LanguageExpression" -> wrapNode("language", doWriteLanguageExpression((LanguageExpression) v));

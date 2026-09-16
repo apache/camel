@@ -104,9 +104,9 @@ YAML::
         blobName: hello.txt
         credentialType: SHARED_ACCOUNT_KEY
         accessKey: RAW(yourAccessKey)
-    steps:
-      - to:
-          uri: file://blobdirectory
+      steps:
+        - to:
+            uri: file://blobdirectory
 ----
 ====
 
@@ -163,9 +163,9 @@ YAML::
       parameters:
         blobName: myblob
         serviceClient: "#client"
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 

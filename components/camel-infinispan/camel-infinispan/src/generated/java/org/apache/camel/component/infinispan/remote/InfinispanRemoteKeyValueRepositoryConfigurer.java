@@ -28,6 +28,8 @@ public class InfinispanRemoteKeyValueRepositoryConfigurer extends org.apache.cam
         case "cachename":
         case "cacheName": target.setCacheName(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -40,6 +42,8 @@ public class InfinispanRemoteKeyValueRepositoryConfigurer extends org.apache.cam
         case "cachename":
         case "cacheName": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         default: return null;
         }
     }
@@ -53,6 +57,8 @@ public class InfinispanRemoteKeyValueRepositoryConfigurer extends org.apache.cam
         case "cachename":
         case "cacheName": return target.getCacheName();
         case "configuration": return target.getConfiguration();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         default: return null;
         }
     }

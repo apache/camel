@@ -427,14 +427,14 @@ YAML::
 - route:
     from:
       uri: direct:projects
-    steps:
-      - setBody:
-          constant: ASF
-      - setProperty:
-          name: min
-          constant: "123"
-      - to:
-          uri: "sql:select * from projects where license = :#${body} and id > :#${exchangeProperty.min} order by id"
+      steps:
+        - setBody:
+            constant: ASF
+        - setProperty:
+            name: min
+            constant: "123"
+        - to:
+            uri: "sql:select * from projects where license = :#${body} and id > :#${exchangeProperty.min} order by id"
 ----
 ====
 

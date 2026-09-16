@@ -24,7 +24,8 @@ public class SqlStoredEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(10);
+        props.add("allowTemplateFromHeader");
         props.add("batch");
         props.add("dataSource");
         props.add("function");

@@ -47,7 +47,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
               description = "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.")
-    private Boolean inheritErrorHandler;
+    private String inheritErrorHandler;
     @XmlElement
     @Metadata(label = "advanced",
               description = "Configures the circuit breaker to use Resilience4j with the given configuration.")
@@ -149,12 +149,12 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     }
 
     @Override
-    public Boolean getInheritErrorHandler() {
+    public String getInheritErrorHandler() {
         return inheritErrorHandler;
     }
 
     @Override
-    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+    public void setInheritErrorHandler(String inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }
 
@@ -225,6 +225,22 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      * By default, Camel error handler is turned off.
      */
     public CircuitBreakerDefinition inheritErrorHandler(boolean inheritErrorHandler) {
+        return inheritErrorHandler(Boolean.toString(inheritErrorHandler));
+    }
+
+    /**
+     * To turn on or off Camel error handling during circuit breaker.
+     *
+     * If this is enabled then Camel error handler will first trigger if there is an error in the circuit breaker, which
+     * allows to let Camel handle redeliveries. If all attempts is failed, then after the circuit breaker is finished,
+     * then Camel error handler can handle the error as well such as the dead letter channel.
+     *
+     * By default, Camel error handler is turned off.
+     *
+     * @param inheritErrorHandler whether to inherit the error handler, can also be a property placeholder that is
+     *                            resolved when the route starts
+     */
+    public CircuitBreakerDefinition inheritErrorHandler(String inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
         return this;
     }

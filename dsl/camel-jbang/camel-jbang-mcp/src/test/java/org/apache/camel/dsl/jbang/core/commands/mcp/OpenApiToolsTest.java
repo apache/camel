@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -286,15 +287,45 @@ class OpenApiToolsTest {
     void scaffoldResponseCodesFromSpec() {
         OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(MINIMAL_SPEC, null, null);
 
-        assertThat(result.yaml()).contains("constant: 200");
-        assertThat(result.yaml()).contains("constant: 201");
+        assertThat(result.yaml()).contains("""
+                        - setHeader:
+                            name: CamelHttpResponseCode
+                            expression:
+                              constant:
+                                expression: 200
+                """);
+        assertThat(result.yaml()).contains("""
+                        - setHeader:
+                            name: CamelHttpResponseCode
+                            expression:
+                              constant:
+                                expression: 201
+                """);
     }
 
     @Test
     void scaffoldContentTypeHeaders() {
         OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(MINIMAL_SPEC, null, null);
 
-        assertThat(result.yaml()).contains("constant: application/json");
+        assertThat(result.yaml()).contains("""
+                        - setHeader:
+                            name: Content-Type
+                            expression:
+                              constant:
+                                expression: application/json
+                """);
+    }
+
+    @Test
+    void scaffoldIsCanonicalYaml() throws Exception {
+        OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(MINIMAL_SPEC, null, null);
+
+        // the scaffold is the starting point of a user or an AI agent: it must not be in the deprecated compact notation
+        YamlValidator canonicalValidator = new YamlValidator(true);
+        canonicalValidator.init();
+        assertThat(canonicalValidator.validate(result.yaml()))
+                .as("canonical validation of the scaffold:%n%s", result.yaml())
+                .isEmpty();
     }
 
     @Test

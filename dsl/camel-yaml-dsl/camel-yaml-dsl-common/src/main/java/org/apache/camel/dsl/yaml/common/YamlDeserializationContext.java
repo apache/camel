@@ -415,9 +415,10 @@ public class YamlDeserializationContext extends StandardConstructor implements C
                     ? e.getProblem().substring("Unsupported field: ".length()) : null;
             String hint = "";
             if ("bean".equals(field)) {
-                hint = " (the bean language is written as method: {ref: myBean, method: process})";
+                hint = " (the bean language is written as expression: {method: {ref: myBean, method: process}})";
             } else if ("expression".equals(field) || "language".equals(field)) {
-                hint = " (an expression is written with the language as the key: simple: \"...\", constant: \"...\")";
+                hint = " (an expression is written with the expression: wrapper and the language as the key: expression: {simple:"
+                       + " {expression: \"...\"}}, expression: {constant: {expression: \"...\"}})";
             }
             throw new YamlDeserializationException(
                     node, "Error constructing YAML node id: " + id + ": unsupported field: " + field + hint, e);

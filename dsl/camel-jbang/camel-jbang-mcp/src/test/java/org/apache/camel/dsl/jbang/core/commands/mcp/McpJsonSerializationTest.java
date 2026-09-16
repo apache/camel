@@ -18,8 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.RecordComponent;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -48,88 +47,33 @@ class McpJsonSerializationTest {
     }
 
     @Test
-    void componentInfoNullFieldsAreOmittedFromJson() throws Exception {
+    void transformResultNullFieldsAreOmittedFromJson() throws Exception {
         ObjectMapper mapper = newConfiguredObjectMapper();
 
-        CatalogTools.ComponentInfo info = new CatalogTools.ComponentInfo(
-                "timer", "Timer", null, false, null);
+        TransformTools.TransformResult result = new TransformTools.TransformResult();
+        result.fromFormat = "xml";
+        result.toFormat = "yaml";
+        result.supported = true;
+        result.result = "- from: {}";
 
-        String json = mapper.writeValueAsString(info);
+        String json = mapper.writeValueAsString(result);
 
-        assertThat(json).contains("\"name\":\"timer\"");
-        assertThat(json).contains("\"title\":\"Timer\"");
-        assertThat(json).contains("\"deprecated\":false");
-        assertThat(json).doesNotContain("\"description\"");
-        assertThat(json).doesNotContain("\"label\"");
-        assertThat(json).doesNotContain("\"supportLevel\"");
+        assertThat(json).contains("\"fromFormat\":\"xml\"");
+        assertThat(json).contains("\"supported\":true");
+        assertThat(json).doesNotContain("\"note\"");
     }
 
     @Test
-    void optionInfoNullGroupIsOmittedFromJson() throws Exception {
+    void docListResultSerializesItsFields() throws Exception {
         ObjectMapper mapper = newConfiguredObjectMapper();
 
-        // Matches the bug from CAMEL-23476: component options pass null for group while endpoint options populate it.
-        CatalogTools.OptionInfo opt = new CatalogTools.OptionInfo(
-                "bridgeErrorHandler", "Allows bridging the consumer", "boolean", false, "false", null);
+        CatalogTools.DocListResult docs = new CatalogTools.DocListResult(2, 1, List.of("kafka-component"));
 
-        String json = mapper.writeValueAsString(opt);
+        String json = mapper.writeValueAsString(docs);
 
-        assertThat(json).contains("\"name\":\"bridgeErrorHandler\"");
-        assertThat(json).contains("\"required\":false");
-        assertThat(json).doesNotContain("\"group\"");
-    }
-
-    @Test
-    void componentDetailNullCollectionsAreOmittedFromJson() throws Exception {
-        ObjectMapper mapper = newConfiguredObjectMapper();
-
-        CatalogTools.ComponentDetailResult detail = new CatalogTools.ComponentDetailResult(
-                "timer", "Timer", null, null, false, null, null,
-                false, false, false, null, null, null);
-
-        String json = mapper.writeValueAsString(detail);
-
-        assertThat(json).contains("\"name\":\"timer\"");
-        assertThat(json).contains("\"async\":false");
-        assertThat(json).doesNotContain("\"description\"");
-        assertThat(json).doesNotContain("\"supportLevel\"");
-        assertThat(json).doesNotContain("\"groupId\"");
-        assertThat(json).doesNotContain("\"componentOptions\"");
-        assertThat(json).doesNotContain("\"endpointOptions\"");
-        assertThat(json).doesNotContain("\"headers\"");
-    }
-
-    @Test
-    void listInfoRecordsCarryNoDescription() {
-        // CAMEL-23473: list result records must omit the verbose 'description' field. Callers
-        // that want the description should call the corresponding *_doc tool.
-        assertThat(Arrays.stream(CatalogTools.ComponentInfo.class.getRecordComponents())
-                .map(RecordComponent::getName))
-                .doesNotContain("description");
-        assertThat(Arrays.stream(CatalogTools.DataFormatInfo.class.getRecordComponents())
-                .map(RecordComponent::getName))
-                .doesNotContain("description");
-        assertThat(Arrays.stream(CatalogTools.LanguageInfo.class.getRecordComponents())
-                .map(RecordComponent::getName))
-                .doesNotContain("description");
-        assertThat(Arrays.stream(CatalogTools.EipInfo.class.getRecordComponents())
-                .map(RecordComponent::getName))
-                .doesNotContain("description");
-    }
-
-    @Test
-    void componentMavenResultSerializesNonNullFields() throws Exception {
-        ObjectMapper mapper = newConfiguredObjectMapper();
-
-        CatalogTools.ComponentMavenResult maven = new CatalogTools.ComponentMavenResult(
-                "kafka", "org.apache.camel", "camel-kafka", "4.21.0");
-
-        String json = mapper.writeValueAsString(maven);
-
-        assertThat(json).contains("\"name\":\"kafka\"");
-        assertThat(json).contains("\"groupId\":\"org.apache.camel\"");
-        assertThat(json).contains("\"artifactId\":\"camel-kafka\"");
-        assertThat(json).contains("\"version\":\"4.21.0\"");
+        assertThat(json).contains("\"total\":2");
+        assertThat(json).contains("\"returned\":1");
+        assertThat(json).contains("\"names\":[\"kafka-component\"]");
     }
 
     private static ObjectMapper newConfiguredObjectMapper() {

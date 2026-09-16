@@ -69,14 +69,14 @@ YAML::
 - route:
     from:
       uri: direct:list
-    steps:
-      - to:
-          uri: kubernetes-hpa:///
-          parameters:
-            kubernetesClient: "#kubernetesClient"
-            operation: listHPA
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: kubernetes-hpa:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listHPA
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -129,9 +129,9 @@ YAML::
       uri: kubernetes-hpa://{{kubernetes-host}}
       parameters:
         oauthToken: "{{kubernetes-token}}"
-    steps:
-      - to:
-          uri: log:result
+      steps:
+        - to:
+            uri: log:result
 ----
 ====
 

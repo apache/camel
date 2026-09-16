@@ -362,14 +362,14 @@ YAML::
 - route:
     from:
       uri: timer:tick
-    steps:
-      - setBody:
-          constant: Hello
-      - to:
-          uri: telegram:bots
-          parameters:
-            authorizationToken: "123456789:insertYourAuthorizationTokenHere"
-            chatId: "123456"
+      steps:
+        - setBody:
+            constant: Hello
+        - to:
+            uri: telegram:bots
+            parameters:
+              authorizationToken: "123456789:insertYourAuthorizationTokenHere"
+              chatId: "123456"
 ----
 ====
 
@@ -486,9 +486,9 @@ YAML::
       uri: webhook:telegram:bots
       parameters:
         authorizationToken: "123456789:insertYourAuthorizationTokenHere"
-    steps:
-      - to:
-          uri: log:info
+      steps:
+        - to:
+            uri: log:info
 ----
 ====
 

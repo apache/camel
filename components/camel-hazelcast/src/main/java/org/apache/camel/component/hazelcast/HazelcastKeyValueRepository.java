@@ -70,6 +70,13 @@ public class HazelcastKeyValueRepository extends ServiceSupport implements KeyVa
 
     @Metadata(description = "To use an existing Hazelcast instance instead of creating a local one")
     private HazelcastInstance hazelcastInstance;
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " values read back from the repository. When not set, the JVM-wide jdk.serialFilter is"
+                            + " used if present; otherwise a conservative default filter denying java.net.* and"
+                            + " otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen"
+                            + " this pattern when storing instances of your own classes in the repository.")
+    private String deserializationFilter;
 
     /**
      * Creates a new Hazelcast-backed key-value repository with default settings (local instance, default map name).
@@ -109,11 +116,25 @@ public class HazelcastKeyValueRepository extends ServiceSupport implements KeyVa
         this.hazelcastInstance = hazelcastInstance;
     }
 
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing values read back from the repository. When not set, the JVM-wide {@code jdk.serialFilter} is used
+     * if present, otherwise a conservative default filter is applied. Widen this pattern when storing instances of your
+     * own classes in the repository.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
+    }
+
     @Override
     @ManagedOperation(description = "Get value by key")
     public Object get(String key) {
         byte[] bytes = map.get(key);
-        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes, deserializationFilter) : null;
     }
 
     @Override
@@ -126,14 +147,14 @@ public class HazelcastKeyValueRepository extends ServiceSupport implements KeyVa
         } else {
             previous = map.put(key, serialized);
         }
-        return previous != null ? KeyValueRepositoryHelper.deserialize(previous) : null;
+        return previous != null ? KeyValueRepositoryHelper.deserialize(previous, deserializationFilter) : null;
     }
 
     @Override
     @ManagedOperation(description = "Delete a key")
     public Object delete(String key) {
         byte[] bytes = map.remove(key);
-        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes, deserializationFilter) : null;
     }
 
     @Override
@@ -162,7 +183,7 @@ public class HazelcastKeyValueRepository extends ServiceSupport implements KeyVa
         } else {
             existing = map.putIfAbsent(key, serialized);
         }
-        return existing != null ? KeyValueRepositoryHelper.deserialize(existing) : null;
+        return existing != null ? KeyValueRepositoryHelper.deserialize(existing, deserializationFilter) : null;
     }
 
     @Override

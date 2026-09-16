@@ -32,7 +32,6 @@ import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JavaExpression;
-import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -109,8 +108,6 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             return new DatasonnetExpressionReifier(camelContext, definition);
         } else if (definition instanceof JavaExpression) {
             return new JavaExpressionReifier(camelContext, definition);
-        } else if (definition instanceof JoorExpression) {
-            return new JoorExpressionReifier(camelContext, definition);
         } else if (definition instanceof JsonPathExpression) {
             return new JsonPathExpressionReifier(camelContext, definition);
         } else if (definition instanceof MethodCallExpression) {

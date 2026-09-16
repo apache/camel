@@ -48,8 +48,13 @@ spec:
         period: "{{period}}"
       steps:
         - setBody:
-            constant: "{{message}}"
+            expression:
+              constant:
+                expression: "{{message}}"
         - setHeader:
             name: "Content-Type"
-            constant: "text/plain"
-        - to: "kamelet:sink"
+            expression:
+              constant:
+                expression: "text/plain"
+        - to:
+            uri: "kamelet:sink"

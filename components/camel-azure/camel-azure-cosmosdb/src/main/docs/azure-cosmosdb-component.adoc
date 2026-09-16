@@ -200,9 +200,9 @@ YAML::
         leaseDatabaseName: myLeaseDB
         createLeaseDatabaseIfNotExists: true
         createLeaseContainerIfNotExists: true
-    steps:
-      - to:
-          uri: file://directory
+      steps:
+        - to:
+            uri: file://directory
 ----
 ====
 
@@ -870,9 +870,9 @@ YAML::
         leaseDatabaseName: myLeaseDb
         createLeaseDatabaseIfNotExists: true
         createLeaseContainerIfNotExists: true
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 

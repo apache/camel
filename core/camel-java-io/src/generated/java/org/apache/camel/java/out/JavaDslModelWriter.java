@@ -1300,13 +1300,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteJavaScriptExpression(sb, def);
         return sb.toString();
     }
-    public String writeJoorExpression(JoorExpression def) {
-        resetState();
-        StringBuilder sb = new StringBuilder();
-        beginStep(sb, "joor", def);
-        doWriteJoorExpression(sb, def);
-        return sb.toString();
-    }
     public String writeJqExpression(JqExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1850,7 +1843,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteCircuitBreakerDefinition(StringBuilder sb, CircuitBreakerDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "configuration", def.getConfiguration(), null);
-        doWriteAttribute(sb, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
+        doWriteAttribute(sb, "inheritErrorHandler", def.getInheritErrorHandler(), "false");
         doWriteChildElement(sb, "resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteChildElement(sb, "faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteChildElement(sb, "onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
@@ -3385,7 +3378,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteXMLSecurityDataFormat(StringBuilder sb, XMLSecurityDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "namespace", def.getNamespaceRef(), null);
-        doWriteAttribute(sb, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute(sb, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES_256_GCM");
         doWriteAttribute(sb, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(sb, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(sb, "secureTag", def.getSecureTag(), null);
@@ -3521,12 +3514,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteJavaScriptExpression(StringBuilder sb, JavaScriptExpression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
-        doWriteValue(sb, def.getExpression());
-    }
-    protected void doWriteJoorExpression(StringBuilder sb, JoorExpression def) {
-        doWriteTypedExpressionDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "preCompile", def.getPreCompile(), "true");
-        doWriteAttribute(sb, "singleQuotes", def.getSingleQuotes(), "true");
         doWriteValue(sb, def.getExpression());
     }
     protected void doWriteJqExpression(StringBuilder sb, JqExpression def) {
@@ -3677,7 +3664,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "roundRobin", def.getRoundRobin(), null);
         doWriteAttribute(sb, "sticky", def.getSticky(), null);
         doWriteAttribute(sb, "maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
-        doWriteAttribute(sb, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
+        doWriteAttribute(sb, "inheritErrorHandler", def.getInheritErrorHandler(), "true");
         doWriteStringList(sb, null, "exception", def.getExceptions());
     }
     protected void doWriteRandomLoadBalancerDefinition(StringBuilder sb, RandomLoadBalancerDefinition def) {
@@ -6359,11 +6346,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "js", v);
                     doWriteJavaScriptExpression(sb, (JavaScriptExpression) v);
                     endStep(sb, "js", v);
-                }
-                case "JoorExpression" -> {
-                    beginStep(sb, "joor", v);
-                    doWriteJoorExpression(sb, (JoorExpression) v);
-                    endStep(sb, "joor", v);
                 }
                 case "JqExpression" -> {
                     beginStep(sb, "jq", v);

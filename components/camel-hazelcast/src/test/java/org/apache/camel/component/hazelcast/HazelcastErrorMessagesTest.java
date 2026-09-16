@@ -22,25 +22,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
+class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
 
     @Test
-    public void testAtomicNumberConsumer() {
-        RouteBuilder builder = new RouteBuilder() {
-            public void configure() throws Exception {
-                from("hazelcast-atomicvalue:foo").to("seda:out");
-            }
-        };
-        Exception e = assertThrows(Exception.class, () -> {
-            context.addRoutes(builder);
-            context.start();
-        });
-        assertTrue(e.getCause().getMessage()
-                .contains("You cannot send messages to this endpoint: hazelcast-atomicvalue://foo"));
-    }
-
-    @Test
-    public void testPNCounterConsumer() {
+    void testPNCounterConsumer() {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {
                 from("hazelcast-pncounter:foo").to("seda:out");
@@ -55,7 +40,7 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    public void testInstanceProducer() {
+    void testInstanceProducer() {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:foo").to("hazelcast-instance:foo");

@@ -123,19 +123,19 @@ YAML::
 - route:
     from:
       uri: direct:projects
-    steps:
-      - setHeader:
-          name: lic
-          constant: ASF
-      - setHeader:
-          name: min
-          constant: "123"
-      - setBody:
-          constant: "select * from projects where license = :?lic and id > :?min order by id"
-      - to:
-          uri: jdbc:myDataSource
-          parameters:
-            useHeadersAsParameters: true
+      steps:
+        - setHeader:
+            name: lic
+            constant: ASF
+        - setHeader:
+            name: min
+            constant: "123"
+        - setBody:
+            constant: "select * from projects where license = :?lic and id > :?min order by id"
+        - to:
+            uri: jdbc:myDataSource
+            parameters:
+              useHeadersAsParameters: true
 ----
 ====
 
@@ -237,7 +237,7 @@ XML::
   <from uri="direct:hello"/>
   <to uri="jdbc:testdb?outputType=StreamList"/>
   <split streaming="true">
-    <body/>
+    <simple>${body}</simple>
     <to uri="mock:result"/>
   </split>
 </route>
@@ -250,18 +250,19 @@ YAML::
 - route:
     from:
       uri: direct:hello
-    steps:
-      - to:
-          uri: jdbc:testdb
-          parameters:
-            outputType: StreamList
-      - split:
-          expression:
-            body: {}
-          streaming: true
-          steps:
-            - to:
-                uri: mock:result
+      steps:
+        - to:
+            uri: jdbc:testdb
+            parameters:
+              outputType: StreamList
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            streaming: true
+            steps:
+              - to:
+                  uri: mock:result
 ----
 ====
 
@@ -307,13 +308,13 @@ YAML::
       uri: timer://foo
       parameters:
         period: "60000"
-    steps:
-      - setBody:
-          constant: "select * from customer"
-      - to:
-          uri: jdbc:testdb
-      - to:
-          uri: activemq:queue:customers
+      steps:
+        - setBody:
+            constant: "select * from customer"
+        - to:
+            uri: jdbc:testdb
+        - to:
+            uri: activemq:queue:customers
 ----
 ====
 

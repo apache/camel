@@ -17,14 +17,14 @@
 package org.apache.camel.language;
 
 import org.apache.camel.builder.LanguageBuilderFactory;
-import org.apache.camel.model.language.JoorExpression;
+import org.apache.camel.model.language.JavaExpression;
 
 /**
  * Ensures that the "joor" language is compliant with the typed language expectations.
  */
-class JoorLanguageTest extends AbstractTypedLanguageTest<JoorExpression.Builder, JoorExpression> {
+class JoorLanguageTest extends AbstractTypedLanguageTest<JavaExpression.Builder, JavaExpression> {
 
     JoorLanguageTest() {
-        super("return exchange.getIn().getBody();", LanguageBuilderFactory::joor);
+        super("return exchange.getIn().getBody();", LanguageBuilderFactory::java);
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Evaluates a binary <a href="https://camel.apache.org/predicate.html">predicate</a> on the message exchange.
  *
@@ -24,6 +26,10 @@ package org.apache.camel;
  * Any initialization logic should be done by the {@link #init(CamelContext)} method which allows to prepare the
  * predicate such as wiring in resources, pre-parsing and what else.
  */
+@Metadata(label = "api",
+          description = "A yes/no test of an exchange for filter, when, loopDoWhile and validate: matches(exchange). In "
+                        + "the DSL a predicate is usually a language expression (simple: ${header.foo} == 'bar'); write it "
+                        + "in Java when the test needs code, or use a bean method that returns boolean.")
 public interface Predicate {
 
     /**
@@ -32,6 +38,10 @@ public interface Predicate {
      * @param  exchange the message exchange
      * @return          true if the predicate matches
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "true when the exchange passes the test.",
+              examples = { "exchange -> exchange.getMessage().getBody(Order.class).getTotal() > 100" })
     boolean matches(Exchange exchange);
 
     /**

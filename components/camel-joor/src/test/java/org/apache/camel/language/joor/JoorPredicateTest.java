@@ -30,7 +30,7 @@ public class JoorPredicateTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                        .when().joor("((int) body) / 2 > 10")
+                        .when().java("((int) body) / 2 > 10")
                         .to("mock:high")
                         .otherwise()
                         .to("mock:low");

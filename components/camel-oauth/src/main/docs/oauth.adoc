@@ -134,12 +134,12 @@ Components reference a profile by name via the `oauthProfile` parameter:
 - route:
     from:
       uri: "direct:start"
-    steps:
-      - to:
-          uri: "openai:chat-completion"
-          parameters:
-            model: "gpt-4"
-            oauthProfile: "azure"
+      steps:
+        - to:
+            uri: "openai:chat-completion"
+            parameters:
+              model: "gpt-4"
+              oauthProfile: "azure"
 ----
 
 === Incoming Bearer Token Validation

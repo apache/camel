@@ -18,13 +18,16 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -37,10 +40,11 @@ import org.apache.camel.util.json.JsonObject;
 
 /**
  * The catalog documentation an AI agent authoring an integration asks for: a component, data format, language or EIP
- * with its options, the rules of an endpoint URI spelled out, the simple language's syntax, functions and operators,
- * and an endpoint URI checked against the catalog. Written for what a small model gets wrong most (a path option as a
- * query parameter, an operator inside a placeholder), and shared by the {@code camel_catalog_doc} tool of every Camel
- * MCP server.
+ * with its options, the rules of an endpoint URI spelled out, the simple language's syntax, functions and operators, an
+ * endpoint URI checked against the catalog, and the Java API a route author's code touches (Exchange, Message,
+ * CamelContext, ...) with the variables a script language binds. Written for what a small model gets wrong most (a path
+ * option as a query parameter, an operator inside a placeholder, a bean name used as a Groovy variable), and shared by
+ * the {@code camel_catalog_doc} tool of every Camel MCP server.
  */
 public final class CatalogDocs {
 
@@ -68,17 +72,20 @@ public final class CatalogDocs {
      * @param  catalog        the catalog of the Camel version to answer for
      * @param  name           the artifact name (kafka, json-jackson, simple, choice); ignored when endpoint is given
      * @param  endpoint       an endpoint URI to validate instead of documenting an artifact
-     * @param  kind           component, dataformat, language or eip; null to detect
+     * @param  kind           component, dataformat, language, eip, bean or api; null to detect
      * @param  optionsFilter  keyword to match in option names, descriptions and groups; also picks the simple functions
      *                        and operators to list in full
-     * @param  includeOptions whether to list the options
+     * @param  includeOptions which options to list: {@code common} (the default; without the deprecated and advanced
+     *                        ones), {@code required}, {@code all} or {@code false}; {@code true} is {@code common}. A
+     *                        filter searches all options
+     * @param  includeHeaders whether to list the message headers of a component (name, constant, type, group)
      * @param  includeDoc     whether to add the full AsciiDoc page
      * @param  docPage        a language doc sub-page (simple: functions, operators, ognl, advanced) to return as text
      * @return                the JSON result, an {@code error} object when nothing matches
      */
     public static JsonObject catalogDoc(
             CamelCatalog catalog, String name, String endpoint, String kind, String optionsFilter,
-            boolean includeOptions, boolean includeDoc, String docPage) {
+            String includeOptions, boolean includeHeaders, boolean includeDoc, String docPage) {
         if (endpoint != null && !endpoint.isBlank()) {
             return validateEndpoint(catalog, endpoint.trim());
         }
@@ -87,12 +94,16 @@ public final class CatalogDocs {
         }
         String page = docPage != null ? docPage.trim().toLowerCase(Locale.ROOT) : null;
         String lowerFilter = optionsFilter != null && !optionsFilter.isBlank() ? optionsFilter.toLowerCase() : null;
+        OptionScope scope = OptionScope.parse(includeOptions);
+        if (scope == null) {
+            return error("includeOptions must be common, required, all, true or false, got: " + includeOptions);
+        }
 
         if (kind == null || "component".equals(kind)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
                 String doc = includeDoc ? catalog.asciiDoc(name + "-component") : null;
-                return componentDoc(cm, lowerFilter, includeOptions, doc);
+                return componentDoc(cm, lowerFilter, scope, includeHeaders, doc);
             }
             JsonObject group = mainOptionsGroup(catalog, name);
             if (group != null) {
@@ -107,7 +118,7 @@ public final class CatalogDocs {
             DataFormatModel dm = catalog.dataFormatModel(name);
             if (dm != null) {
                 String doc = includeDoc ? catalog.asciiDoc(name + "-dataformat") : null;
-                return dataFormatDoc(dm, lowerFilter, includeOptions, doc);
+                return dataFormatDoc(dm, lowerFilter, scope, doc);
             }
             if (kind != null) {
                 return notFound("Data format", name, catalog.suggestDataFormatNames(name, 5));
@@ -128,7 +139,7 @@ public final class CatalogDocs {
                     doc = catalog.asciiDoc(name + "-language");
                 }
                 boolean docPageOnly = page != null && !page.isEmpty();
-                return languageDoc(lm, lowerFilter, includeOptions, doc, languageDocPages(catalog, name), docPageOnly);
+                return languageDoc(lm, lowerFilter, scope, doc, languageDocPages(catalog, name), docPageOnly);
             }
             if (kind != null) {
                 return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
@@ -137,11 +148,23 @@ public final class CatalogDocs {
         if (kind == null || "eip".equals(kind)) {
             EipModel em = catalog.eipModel(name);
             if (em != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-eip") : null;
-                return eipDoc(em, lowerFilter, includeOptions, doc);
+                return eipDoc(catalog, em, lowerFilter, scope, includeDoc, null);
             }
             if (kind != null) {
-                return error("EIP not found: " + name);
+                // an alias (fan-out, dedup, rate-limit) or a word of the title names the EIP as well
+                JsonObject byTerm = eipByTerm(catalog, name, lowerFilter, scope, includeDoc);
+                if (byTerm != null) {
+                    return byTerm;
+                }
+                return notFound("EIP", name, catalog.suggestEipNames(name, 5));
+            }
+        }
+        if (kind == null || "api".equals(kind)) {
+            // the API of a core class (Exchange, AggregationStrategy) before the beans: an exact card name is more
+            // specific than a bean implementing the interface, which the card lists anyway
+            JsonObject api = apiDoc(catalog, name, kind != null);
+            if (api != null) {
+                return api;
             }
         }
         if (kind == null || "bean".equals(kind)) {
@@ -166,11 +189,42 @@ public final class CatalogDocs {
         if (group != null) {
             return group;
         }
+        // nothing has the exact name: an EIP alias such as fan-out or dedup is the last thing the name can be
+        JsonObject eip = eipByTerm(catalog, name, lowerFilter, scope, includeDoc);
+        if (eip != null) {
+            return eip;
+        }
         List<String> suggestions = new ArrayList<>(catalog.suggestComponentNames(name, 5));
         suggestions.addAll(catalog.suggestDataFormatNames(name, 3));
         suggestions.addAll(catalog.suggestLanguageNames(name, 3));
+        suggestions.addAll(catalog.suggestEipNames(name, 3));
         suggestions.addAll(findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(3).toList());
         return notFound("Artifact", name, suggestions);
+    }
+
+    /**
+     * The documentation of the EIP a term such as an alias (fan-out, dedup, rate-limit) or a word of the title names,
+     * with the term the caller used; null when no EIP matches.
+     */
+    private static JsonObject eipByTerm(
+            CamelCatalog catalog, String term, String filter, OptionScope scope, boolean includeDoc) {
+        List<String> names = catalog.suggestEipNames(term, 1);
+        if (names.isEmpty()) {
+            return null;
+        }
+        EipModel em = catalog.eipModel(names.get(0));
+        return em == null ? null : eipDoc(catalog, em, filter, scope, includeDoc, term);
+    }
+
+    private static JsonObject eipDoc(
+            CamelCatalog catalog, EipModel model, String filter, OptionScope scope, boolean includeDoc,
+            String matchedTerm) {
+        String doc = includeDoc ? catalog.asciiDoc(model.getName() + "-eip") : null;
+        JsonObject result = eipDoc(model, filter, scope, doc);
+        if (matchedTerm != null) {
+            result.put("matchedTerm", matchedTerm);
+        }
+        return result;
     }
 
     /**
@@ -229,11 +283,12 @@ public final class CatalogDocs {
 
     /**
      * Finds the catalog artifacts matching a term that need not be a name: a protocol (mqtt, amqp), a product (s3,
-     * snowflake) or a word of the title. Best match first, with the title and description so the caller can pick.
+     * snowflake), an EIP alias (fan-out, dedup) or a word of the title. Best match first, with the title and
+     * description so the caller can pick.
      *
      * @param catalog the catalog
      * @param term    what to look for
-     * @param kind    component, dataformat or language; null for all three
+     * @param kind    component, dataformat, language, eip or bean; null for all
      * @param limit   maximum matches per kind
      */
     public static JsonObject find(CamelCatalog catalog, String term, String kind, int limit) {
@@ -267,6 +322,18 @@ public final class CatalogDocs {
                 LanguageModel m = catalog.languageModel(name);
                 if (m != null) {
                     matches.add(summary("language", m.getName(), m.getTitle(), m.getDescription(), m.getLabel()));
+                }
+            }
+        }
+        if (kind == null || "eip".equals(kind)) {
+            for (String name : catalog.suggestEipNames(term, max)) {
+                EipModel m = catalog.eipModel(name);
+                if (m != null) {
+                    JsonObject o = summary("eip", m.getName(), m.getTitle(), m.getDescription(), m.getLabel());
+                    if (m.getAliases() != null && !m.getAliases().isEmpty()) {
+                        o.put("aliases", new JsonArray(m.getAliases()));
+                    }
+                    matches.add(o);
                 }
             }
         }
@@ -341,6 +408,220 @@ public final class CatalogDocs {
             // an older catalog without bean metadata
         }
         return answer;
+    }
+
+    /** The languages whose script variables are documented, by their catalog name (js is javascript, java is joor). */
+    private static final List<String> SCRIPT_LANGUAGES
+            = List.of("groovy", "js", "python", "python3", "quickjs", "java", "template");
+
+    /** The template components that bind the same variable map, answered by the template card. */
+    private static final List<String> TEMPLATE_COMPONENTS
+            = List.of("velocity", "freemarker", "mvel", "mustache", "chunk", "stringtemplate", "thymeleaf", "jslt");
+
+    /**
+     * The compact API reference of a core Camel class (Exchange, Message, CamelContext, Registry, ProducerTemplate,
+     * Processor, AggregationStrategy, Predicate, Expression, TypeConverter) from the catalog, or the variables a script
+     * language binds; null when the name is neither. An older catalog that has no API reference answers from the CLI's
+     * own, the API is the same.
+     *
+     * @param catalog  the catalog
+     * @param name     a simple or qualified class name, or a script language (groovy, javascript, python, java)
+     * @param explicit whether kind=api was asked for, which makes a miss an error with the names that exist
+     */
+    static JsonObject apiDoc(CamelCatalog catalog, String name, boolean explicit) {
+        String n = name.trim();
+        String simple = n.substring(n.lastIndexOf('.') + 1);
+        CamelCatalog source = catalog.findApiReferenceNames().isEmpty() ? ownCatalog() : catalog;
+        List<String> names = source.findApiReferenceNames();
+        String match = names.stream().filter(c -> c.equalsIgnoreCase(simple)).findFirst().orElse(null);
+        if (match != null) {
+            ApiReferenceModel model = source.apiReferenceModel(match);
+            if (model != null && (n.equals(simple) || model.getJavaType().equalsIgnoreCase(n))) {
+                return apiReferenceDoc(catalog, model, names);
+            }
+        }
+        String lang = n.toLowerCase(Locale.ROOT);
+        if ("joor".equals(lang)) {
+            lang = "java";
+        } else if ("javascript".equals(lang)) {
+            lang = "js";
+        } else if (TEMPLATE_COMPONENTS.contains(lang)) {
+            // the mvel component is a template; the mvel language is asked for without kind and answers as a language
+            lang = "template";
+        }
+        JsonObject script = scriptVariables(lang);
+        if (script != null) {
+            script.put("apis", new JsonArray(apiNames(names)));
+            return script;
+        }
+        if (explicit) {
+            JsonObject err = error("No API reference for '" + name + "'");
+            err.put("apis", new JsonArray(apiNames(names)));
+            return err;
+        }
+        return null;
+    }
+
+    /** The names an api lookup answers: the class cards and the script languages. */
+    private static List<String> apiNames(List<String> classNames) {
+        List<String> answer = new ArrayList<>(classNames);
+        answer.addAll(SCRIPT_LANGUAGES);
+        return answer;
+    }
+
+    /** The catalog of the CLI's own Camel version, created on first use (the holder idiom, no locking needed). */
+    private static final class OwnCatalog {
+        static final CamelCatalog CATALOG = new DefaultCamelCatalog();
+    }
+
+    /** The catalog of the CLI's own Camel version, for the API reference an older catalog does not carry. */
+    private static CamelCatalog ownCatalog() {
+        return OwnCatalog.CATALOG;
+    }
+
+    /**
+     * The card of a core class: the class description with its common mistakes, then the methods, the important ones
+     * first, each with the signatures of its overloads, a one-line description and examples. For an interface the
+     * built-in implementations of the catalog come along, so AggregationStrategy also says which strategies exist.
+     */
+    private static JsonObject apiReferenceDoc(CamelCatalog catalog, ApiReferenceModel model, List<String> names) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "api");
+        result.put("name", model.getName());
+        result.put("javaType", model.getJavaType());
+        if (model.getDescription() != null) {
+            result.put("description", model.getDescription());
+        }
+        JsonArray methods = new JsonArray();
+        List<ApiReferenceModel.ApiMethodOptionModel> sorted = new ArrayList<>(model.getOptions());
+        sorted.sort(Comparator.comparing((ApiReferenceModel.ApiMethodOptionModel m) -> !m.isImportant())
+                .thenComparing(ApiReferenceModel.ApiMethodOptionModel::getName));
+        for (ApiReferenceModel.ApiMethodOptionModel m : sorted) {
+            JsonObject o = new JsonObject();
+            o.put("name", m.getName());
+            o.put("signatures", new JsonArray(m.getSignatures()));
+            if (m.getDescription() != null) {
+                o.put("description", m.getDescription());
+            }
+            if (!m.getExamples().isEmpty()) {
+                o.put("examples", new JsonArray(m.getExamples()));
+            }
+            if (m.isDeprecated()) {
+                o.put("deprecated", true);
+            }
+            methods.add(o);
+        }
+        result.put("methods", methods);
+        List<String> implementations = beansOfInterface(catalog, model.getJavaType());
+        if (!implementations.isEmpty()) {
+            result.put("implementations", new JsonArray(implementations));
+            result.put("implementationsHint", "built-in beans to declare and use instead of writing one; camel_catalog_doc"
+                                              + " kind=bean gives the options of each");
+        }
+        result.put("apis", new JsonArray(apiNames(names)));
+        return result;
+    }
+
+    /**
+     * The variables a script language binds, hand-written because each language binds its own set with its own names
+     * (the CamelContext is camelContext in groovy and context in javascript, the exchange properties exchangeProperties
+     * and properties), and how a script reaches the Camel API and a registry bean from them; null for a language that
+     * is not a script.
+     */
+    static JsonObject scriptVariables(String language) {
+        JsonObject variables = new JsonObject();
+        String note;
+        switch (language) {
+            case "groovy" -> {
+                variables.put("exchange", "the Exchange");
+                variables.put("message",
+                        "the message (exchange.getMessage()); request is an alias, in is an alias (older names)");
+                variables.put("body", "the message body");
+                variables.put("headers", "the message headers (Map); header is an alias");
+                variables.put("variables", "the exchange variables (Map); variable is an alias");
+                variables.put("exchangeProperties", "the exchange properties (Map); exchangeProperty is an alias");
+                variables.put("exception", "the exception when the exchange failed, else null");
+                variables.put("camelContext", "the CamelContext");
+                variables.put("attachments", "the message attachments (Map)");
+                variables.put("log", "an SLF4J logger");
+                variables.put("response", "the out message, only when one exists; out is an alias");
+                note = "The value of the last statement is the result. A registry bean is not a variable: use"
+                       + " camelContext.registry.lookupByName('myBean'). Setting body or headers in the script"
+                       + " does not change the message: use message.body = ... or message.setHeader(name, value)."
+                       + " Groovy property syntax works on the Camel API: message.body, exchange.context.registry.";
+            }
+            case "js", "python" -> {
+                variables.put("exchange", "the Exchange");
+                variables.put("context", "the CamelContext (not camelContext)");
+                variables.put("exchangeId", "the exchange id");
+                variables.put("message", "the message (exchange.getMessage())");
+                variables.put("headers", "the message headers (Map)");
+                variables.put("properties", "the exchange properties (Map)");
+                variables.put("body", "the message body");
+                note = "The value of the last expression is the result, converted to the expected type. A registry"
+                       + " bean is context.getRegistry().lookupByName('myBean'). To change the message call"
+                       + " message.setBody(...) or message.setHeader(name, value), not body = ...";
+            }
+            case "python3" -> {
+                variables.put("exchangeId", "the exchange id");
+                variables.put("headers", "the message headers (dict)");
+                variables.put("properties", "the exchange properties (dict)");
+                variables.put("body", "the message body");
+                variables.put("exchange", "the Exchange, only when the language was created with host access");
+                variables.put("message", "the message, only with host access");
+                variables.put("context", "the CamelContext, only with host access");
+                note = "The value of the last expression is the result. Without host access there are no Java"
+                       + " objects: work with body, headers and properties as values.";
+            }
+            case "quickjs" -> {
+                variables.put("body", "the message body as a JSON value");
+                variables.put("headers", "the message headers as a JSON object");
+                variables.put("properties", "the exchange properties as a JSON object");
+                variables.put("exchangeId", "the exchange id");
+                variables.put("variables", "the exchange variables as a JSON object");
+                variables.put("exception", "{type, message} when the exchange failed, else null");
+                note = "A sandboxed JavaScript: the values are JSON copies, there is no exchange, message or"
+                       + " context object and no Java API; the result of the script is the value.";
+            }
+            case "java" -> {
+                variables.put("context", "the CamelContext");
+                variables.put("exchange", "the Exchange");
+                variables.put("message", "the message (exchange.getMessage())");
+                variables.put("body", "the message body (Object)");
+                variables.put("optionalBody", "the body as Optional");
+                note = "The java (joor) language compiles the script as the body of a method with these parameters;"
+                       + " bodyAs(String.class) converts the body, #bean:myBean is replaced by the registry bean, and a"
+                       + " script without return returns its last expression.";
+            }
+            case "template" -> {
+                variables.put("body", "the message body");
+                variables.put("headers", "the message headers (Map); header is an alias");
+                variables.put("variables", "the exchange variables (Map); variable is an alias");
+                variables.put("exception", "the exception when the exchange failed, else null");
+                variables.put("exchange", "the Exchange, only with allowContextMapAll=true");
+                variables.put("request", "the message, only with allowContextMapAll=true; in is an alias");
+                variables.put("exchangeProperties", "the exchange properties (Map), only with allowContextMapAll=true;"
+                                                    + " exchangeProperty is an alias");
+                variables.put("camelContext", "the CamelContext, only with allowContextMapAll=true");
+                variables.put("response", "the out message, only with allowContextMapAll=true and when one exists;"
+                                          + " out is an alias");
+                note = "The variables of the template components (" + String.join(", ", TEMPLATE_COMPONENTS)
+                       + "): by default only"
+                       + " body, headers, variables and exception; allowContextMapAll=true on the endpoint adds the"
+                       + " exchange, the message, the properties and the CamelContext.";
+            }
+            default -> {
+                return null;
+            }
+        }
+        JsonObject result = new JsonObject();
+        result.put("kind", "api");
+        result.put("name", language);
+        result.put("title", "template".equals(language)
+                ? "Template variables" : ("js".equals(language) ? "javascript" : language) + " script variables");
+        result.put("variables", variables);
+        result.put("note", note);
+        return result;
     }
 
     /** The documentation of a built-in bean: type, interface, options, and how it is declared and used in YAML. */
@@ -640,7 +921,8 @@ public final class CatalogDocs {
                + " in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
     }
 
-    private static JsonObject componentDoc(ComponentModel model, String filter, boolean includeOptions, String doc) {
+    private static JsonObject componentDoc(
+            ComponentModel model, String filter, OptionScope scope, boolean includeHeaders, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -659,26 +941,60 @@ public final class CatalogDocs {
         result.put("remote", model.isRemote());
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
+        result.put("version", model.getVersion());
         addCommonModelFields(result, model);
 
-        if (includeOptions) {
+        if (scope != OptionScope.NONE) {
             JsonArray options = new JsonArray();
+            int omitted = 0;
             if (model.getComponentOptions() != null) {
                 for (BaseOptionModel opt : model.getComponentOptions()) {
                     if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, "component"));
+                        if (scope.accepts(opt, filter)) {
+                            options.add(optionToJson(opt, "component"));
+                        } else {
+                            omitted++;
+                        }
                     }
                 }
             }
             if (model.getEndpointOptions() != null) {
                 for (BaseOptionModel opt : model.getEndpointOptions()) {
                     if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, "endpoint"));
+                        if (scope.accepts(opt, filter)) {
+                            options.add(optionToJson(opt, "endpoint"));
+                        } else {
+                            omitted++;
+                        }
                     }
                 }
             }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
+            putOptions(result, options, omitted, scope);
+        }
+        if (includeHeaders && model.getEndpointHeaders() != null) {
+            // the CamelXxx headers the component reads and sets, with the constant to use from Java
+            JsonArray headers = new JsonArray();
+            for (ComponentModel.EndpointHeaderModel h : model.getEndpointHeaders()) {
+                JsonObject jo = new JsonObject();
+                jo.put("name", h.getName());
+                if (h.getConstantName() != null) {
+                    jo.put("constantName", h.getConstantName());
+                }
+                if (h.getJavaType() != null) {
+                    jo.put("javaType", h.getJavaType());
+                }
+                if (h.getGroup() != null) {
+                    jo.put("group", h.getGroup());
+                }
+                if (h.isRequired()) {
+                    jo.put("required", true);
+                }
+                if (h.getDescription() != null) {
+                    jo.put("description", h.getDescription());
+                }
+                headers.add(jo);
+            }
+            result.put("headers", headers);
         }
         if (doc != null) {
             result.put("doc", doc);
@@ -686,7 +1002,7 @@ public final class CatalogDocs {
         return result;
     }
 
-    private static JsonObject dataFormatDoc(DataFormatModel model, String filter, boolean includeOptions, String doc) {
+    private static JsonObject dataFormatDoc(DataFormatModel model, String filter, OptionScope scope, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "dataformat");
         result.put("name", model.getName());
@@ -698,9 +1014,8 @@ public final class CatalogDocs {
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
         addCommonModelFields(result, model);
-        if (includeOptions) {
-            result.put("options", filteredOptions(model.getOptions(), filter));
-            result.put("matchedOptions", ((JsonArray) result.get("options")).size());
+        if (scope != OptionScope.NONE) {
+            putOptions(result, model.getOptions(), filter, scope);
         }
         if (doc != null) {
             result.put("doc", doc);
@@ -719,7 +1034,7 @@ public final class CatalogDocs {
     }
 
     private static JsonObject languageDoc(
-            LanguageModel model, String filter, boolean includeOptions, String doc, List<String> docPages,
+            LanguageModel model, String filter, OptionScope scope, String doc, List<String> docPages,
             boolean docPageOnly) {
         JsonObject result = new JsonObject();
         result.put("kind", "language");
@@ -734,15 +1049,20 @@ public final class CatalogDocs {
         addCommonModelFields(result, model);
 
         // a requested doc page is the answer; the options, functions and operators would only add tokens around it
-        if (includeOptions && !docPageOnly) {
-            result.put("options", filteredOptions(model.getOptions(), filter));
-            result.put("matchedOptions", ((JsonArray) result.get("options")).size());
+        if (scope != OptionScope.NONE && !docPageOnly) {
+            putOptions(result, model.getOptions(), filter, scope);
         }
         if (!docPageOnly) {
             addLanguageFunctions(result, model, filter);
         }
         if ("simple".equals(model.getName()) || "csimple".equals(model.getName())) {
             result.put("syntax", SIMPLE_SYNTAX);
+        }
+        JsonObject script = scriptVariables(model.getName());
+        if (script != null) {
+            // the variables the script sees, and how to reach the Camel API from them
+            result.put("scriptVariables", script.get("variables"));
+            result.put("scriptNote", script.get("note"));
         }
         if (!docPages.isEmpty()) {
             result.put("docPages", new JsonArray(docPages));
@@ -872,7 +1192,7 @@ public final class CatalogDocs {
         return o;
     }
 
-    private static JsonObject eipDoc(EipModel model, String filter, boolean includeOptions, String doc) {
+    private static JsonObject eipDoc(EipModel model, String filter, OptionScope scope, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "eip");
         result.put("name", model.getName());
@@ -884,9 +1204,8 @@ public final class CatalogDocs {
         result.put("input", model.isInput());
         result.put("output", model.isOutput());
         addCommonModelFields(result, model);
-        if (includeOptions) {
-            result.put("options", filteredOptions(model.getOptions(), filter));
-            result.put("matchedOptions", ((JsonArray) result.get("options")).size());
+        if (scope != OptionScope.NONE) {
+            putOptions(result, model.getOptions(), filter, scope);
         }
         if (doc != null) {
             result.put("doc", doc);
@@ -894,16 +1213,74 @@ public final class CatalogDocs {
         return result;
     }
 
-    private static JsonArray filteredOptions(List<? extends BaseOptionModel> options, String filter) {
+    /**
+     * Which options a doc lists: the common ones by default, so the answer for a component such as kafka stays readable
+     * for a small model; the deprecated and advanced ones on request. A filter searches all options, as it names what
+     * it wants.
+     */
+    enum OptionScope {
+        NONE,
+        COMMON,
+        REQUIRED,
+        ALL;
+
+        /** The scope a caller named: common (also true, empty or null), required, all or false; null when unknown. */
+        static OptionScope parse(String value) {
+            if (value == null || value.isBlank()) {
+                return COMMON;
+            }
+            return switch (value.trim().toLowerCase(Locale.ROOT)) {
+                case "common", "true" -> COMMON;
+                case "required" -> REQUIRED;
+                case "all" -> ALL;
+                case "false", "none" -> NONE;
+                default -> null;
+            };
+        }
+
+        boolean accepts(BaseOptionModel opt, String filter) {
+            return switch (this) {
+                case NONE -> false;
+                case ALL -> true;
+                case REQUIRED -> opt.isRequired();
+                case COMMON -> filter != null || !(opt.isDeprecated() || isAdvanced(opt));
+            };
+        }
+
+        private static boolean isAdvanced(BaseOptionModel opt) {
+            return opt.getLabel() != null && opt.getLabel().contains("advanced");
+        }
+    }
+
+    private static void putOptions(
+            JsonObject result, List<? extends BaseOptionModel> options, String filter,
+            OptionScope scope) {
         JsonArray arr = new JsonArray();
+        int omitted = 0;
         if (options != null) {
             for (BaseOptionModel opt : options) {
                 if (matchesOptionFilter(opt, filter)) {
-                    arr.add(optionToJson(opt, null));
+                    if (scope.accepts(opt, filter)) {
+                        arr.add(optionToJson(opt, null));
+                    } else {
+                        omitted++;
+                    }
                 }
             }
         }
-        return arr;
+        putOptions(result, arr, omitted, scope);
+    }
+
+    /** The options with their count, and what the scope left out so the caller knows to ask for more. */
+    private static void putOptions(JsonObject result, JsonArray options, int omitted, OptionScope scope) {
+        result.put("options", options);
+        result.put("matchedOptions", options.size());
+        if (omitted > 0) {
+            result.put("omittedOptions", omitted);
+            result.put("optionsHint", scope == OptionScope.REQUIRED
+                    ? "the required options only; includeOptions=common or all lists the others"
+                    : "deprecated and advanced options left out; includeOptions=all lists them, optionsFilter finds one");
+        }
     }
 
     private static boolean matchesOptionFilter(BaseOptionModel opt, String filter) {

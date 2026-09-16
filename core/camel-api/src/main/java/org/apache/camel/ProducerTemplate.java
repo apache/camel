@@ -23,6 +23,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.spi.Metadata;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -59,6 +60,11 @@ import org.jspecify.annotations.Nullable;
  * @see FluentProducerTemplate
  * @see ConsumerTemplate
  */
+@Metadata(label = "api",
+          description = "Sends messages to endpoints from code outside a route: context.createProducerTemplate(), or "
+                        + "injected (@Produce, @Autowired). One instance created once and reused, it is a started service. "
+                        + "sendBody is InOnly (no reply), requestBody is InOut and returns the reply; a failure comes back "
+                        + "as CamelExecutionException with the cause.")
 public interface ProducerTemplate extends Service {
 
     /**
@@ -264,6 +270,10 @@ public interface ProducerTemplate extends Service {
      * @return                         the returned exchange
      * @throws CamelExecutionException if the processing of the exchange failed
      */
+    @Metadata(label = "api",
+              description = "Sends an exchange the processor fills in and returns it back: check getException() (send does "
+                            + "not throw) and getMessage().",
+              examples = { "template.send(\"direct:x\", e -> e.getMessage().setBody(body))" })
     Exchange send(String endpointUri, Processor processor);
 
     /**
@@ -363,6 +373,12 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload
      * @throws CamelExecutionException if the processing of the exchange failed
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "Sends the body to the endpoint and does not wait for a reply (InOnly).",
+              examples = {
+                      "template.sendBody(\"direct:audit\", body)",
+                      "template.sendBody(\"kafka:orders?brokers=localhost:9092\", json)" })
     void sendBody(String endpointUri, @Nullable Object body) throws CamelExecutionException;
 
     /**
@@ -412,6 +428,9 @@ public interface ProducerTemplate extends Service {
      * @param  headerValue             the header value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
+    @Metadata(label = "api",
+              description = "Sends the body with one header; sendBodyAndHeaders(uri, body, map) with several.",
+              examples = { "template.sendBodyAndHeader(\"file:out\", body, \"CamelFileName\", \"a.txt\")" })
     void sendBodyAndHeader(String endpointUri, @Nullable Object body, String header, @Nullable Object headerValue)
             throws CamelExecutionException;
 
@@ -746,6 +765,10 @@ public interface ProducerTemplate extends Service {
      * @return                         the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "Sends the body and returns the reply (InOut), converted to the type when one is given.",
+              examples = { "String reply = template.requestBody(\"direct:price\", order, String.class)" })
     <T> @Nullable T requestBody(String endpointUri, @Nullable Object body, Class<T> type) throws CamelExecutionException;
 
     /**
@@ -821,6 +844,9 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
+    @Metadata(label = "api",
+              description = "Sends the body with one header and returns the reply; requestBodyAndHeaders(uri, body, map) "
+                            + "with several.")
     Object requestBodyAndHeader(String endpointUri, @Nullable Object body, String header, @Nullable Object headerValue)
             throws CamelExecutionException;
 
@@ -972,6 +998,8 @@ public interface ProducerTemplate extends Service {
      * @param  body        the body to send
      * @return             a handle to be used to get the response in the future
      */
+    @Metadata(label = "api",
+              description = "Sends without blocking; asyncRequestBody(uri, body) returns a CompletableFuture of the reply.")
     CompletableFuture<Object> asyncSendBody(String endpointUri, @Nullable Object body);
 
     /**

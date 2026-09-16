@@ -63,7 +63,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         // (otherwise the default error handler would be used two times
         // because we inherit it on our own but only in case of a
         // non-transactional error handler)
-        ((ProcessorDefinition<?>) definition).setInheritErrorHandler(false);
+        ((ProcessorDefinition<?>) definition).setInheritErrorHandler("false");
     }
 
     public abstract void run(Runnable runnable) throws Throwable;
