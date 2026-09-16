@@ -71,10 +71,9 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     /**
      * Applies the entrypoint and data to a borrowed instance.
      * <p/>
-     * This has to happen on every borrow, not once when the instance is built: returning a {@link OpaPolicyPool.Loan}
-     * calls {@code OpaPolicy.reset()}, which clears the data and sets the entrypoint back to 0. An instance configured
-     * only at creation would therefore evaluate whatever rule happens to be entrypoint 0 from its second use onwards -
-     * a different policy deciding, silently.
+     * Done on every borrow rather than once at creation, so that a pooled instance always evaluates the configured
+     * rule against the bundle's data regardless of what a previous borrower left on it. See
+     * {@link OpaWasmPolicyPool.Lease#close()} for why nothing is reset on return.
      */
     private void prepare(OpaPolicy policy) {
         policy.entrypoint(entrypoint);
