@@ -2193,7 +2193,8 @@ class AiPanel {
         // couple of lines hidden below the visible area.
         MarkdownView.Builder viewBuilder = MarkdownView.builder()
                 .source(source)
-                .styles(Theme.chatMarkdownStyles());
+                .styles(Theme.chatMarkdownStyles())
+                .syntaxTheme(Theme.syntaxTheme());
         MarkdownView measure = viewBuilder.build();
         int totalLines = measure.computeHeight(mdArea.width());
 
