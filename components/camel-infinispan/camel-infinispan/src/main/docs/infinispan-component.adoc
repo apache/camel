@@ -422,8 +422,8 @@ XML::
 [source,xml]
 ----
 <bean id="infinispanRepo" class="org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository" destroy-method="stop">
-  <constructor-arg value="idempotent"/> <1>
-  <property name="configuration"> <2>
+  <constructor-arg value="idempotent"/> <!--1-->
+  <property name="configuration"> <!--2-->
     <bean class="org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration">
       <property name="hosts" value="localhost:11222"/>
     </bean>
@@ -433,7 +433,7 @@ XML::
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start" />
-        <idempotentConsumer idempotentRepository="infinispanRepo"> <3>
+        <idempotentConsumer idempotentRepository="infinispanRepo"> <!--3-->
             <header>MessageID</header>
             <to uri="mock:result" />
         </idempotentConsumer>
@@ -487,8 +487,8 @@ XML::
 [source,xml]
 ----
 <bean id="infinispanRepo" class="org.apache.camel.component.infinispan.remote.InfinispanRemoteAggregationRepository" destroy-method="stop">
-  <constructor-arg value="aggregation"/> <1>
-  <property name="configuration"> <2>
+  <constructor-arg value="aggregation"/> <!--1-->
+  <property name="configuration"> <!--2-->
     <bean class="org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration">
       <property name="hosts" value="localhost:11222"/>
     </bean>
@@ -500,7 +500,7 @@ XML::
         <from uri="direct:start" />
         <aggregate aggregationStrategy="myStrategy"   
                    completionSize="3"
-                   aggregationRepository="infinispanRepo"> <3>
+                   aggregationRepository="infinispanRepo"> <!--3-->
             <correlationExpression>
                 <header>MessageID</header>
             </correlationExpression>

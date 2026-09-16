@@ -58,9 +58,9 @@ In Spring the dataformat is configured first and then used in routes
     ...
   <route>
     <from uri="direct:basic-encryption" />
-    <marshal ref="basic" />
+    <marshal><custom ref="basic"/></marshal>
     <to uri="mock:encrypted" />
-    <unmarshal ref="basic" />
+    <unmarshal><custom ref="basic"/></unmarshal>
     <to uri="mock:unencrypted" />
   </route>
 </camelContext>

@@ -188,7 +188,7 @@ In XML and YAML DSL it is easier.
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-        <failoverLoadBalancer inheritErrorHandler="false" roundRobin="true" maximumFailoverAttempts="10" stickyMode="true"/>
+        <failoverLoadBalancer inheritErrorHandler="false" roundRobin="true" maximumFailoverAttempts="10" sticky="true"/>
         <to uri="http:service1"/>
         <to uri="http:service2"/>
         <to uri="http:service3"/>

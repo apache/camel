@@ -225,8 +225,8 @@ you can use
 ._Java-only: programmatic header and attachment manipulation_
 [source,java]
 ----
-exchange.getOut().getHeaders().put("myCustom", "myHeaderValue");
-exchange.getIn().addAttachment("myAttachment", new DataHandler(...));
+exchange.getMessage().setHeader("myCustom", "myHeaderValue");
+exchange.getMessage(AttachmentMessage.class).addAttachment("myAttachment", new DataHandler(...));
 ----
 
 [NOTE]
