@@ -279,7 +279,7 @@
         <java-spiffe-version>0.8.17</java-spiffe-version>
         <java-util-version>4.110.0</java-util-version>
         <jnats-version>2.26.3</jnats-version>
-        <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
+        <javacc-maven-plugin-version>3.2.1</javacc-maven-plugin-version>
         <javapoet-version>0.19.0</javapoet-version>
         <javassist-version>3.33.0-GA</javassist-version>
         <jakarta-el-api-version>6.0.1</jakarta-el-api-version>
