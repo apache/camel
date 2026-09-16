@@ -16,15 +16,15 @@
  */
 package org.apache.camel.main.download;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kamelet.KameletComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KameletOptimisedComponentResolverTest {
 
