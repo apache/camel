@@ -110,12 +110,10 @@ Or if you use Spring XML you can create the processor via `<bean>`:
     <bean id="myProcessor" class="com.foo.MyProcessor"/>
 
     <camelContext>
-        <routes>
-            <route>
-              <from uri="activemq:myQueue"/>
-              <process ref="myProcessor"/>
-            </route>
-        </routes>
+        <route>
+          <from uri="activemq:myQueue"/>
+          <process ref="myProcessor"/>
+        </route>
     </camelContext>
 
 </beans>
