@@ -59,8 +59,8 @@ class KameletToDUrlEncodingTest extends CamelTestSupport {
     }
 
     /**
-     * Negative test: components that do NOT declare {@code useRawUri()=true} continue to receive the normalised URI
-     * via {@code toD}, proving that the fix is surgically scoped to {@code useRawUri} components only.
+     * Negative test: components that do NOT declare {@code useRawUri()=true} continue to receive the normalised URI via
+     * {@code toD}, proving that the fix is surgically scoped to {@code useRawUri} components only.
      */
     @Test
     void toDNonRawUriComponentIsUnaffected() throws Exception {
