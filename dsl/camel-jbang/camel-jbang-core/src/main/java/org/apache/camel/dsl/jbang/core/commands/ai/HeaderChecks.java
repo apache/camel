@@ -58,7 +58,7 @@ final class HeaderChecks {
 
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
-        if (content == null || catalog == null) {
+        if (content == null) {
             return msgs;
         }
         Set<String> known = new LinkedHashSet<>();

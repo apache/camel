@@ -21,6 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -30,6 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * CAMEL-24698: a reference to a bean nothing declares is reported before the run, with how to declare it.
  */
 public class SourceValidatorBeanRefsTest {
+
+    private static final CamelCatalog CATALOG = new DefaultCamelCatalog();
 
     private static final String ROUTE = """
             - route:
@@ -53,7 +57,8 @@ public class SourceValidatorBeanRefsTest {
                 }
                 """);
         List<String> msgs
-                = SourceValidator.validateYamlBeanRefs(ROUTE, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"));
+                = SourceValidator.validateYamlBeanRefs(ROUTE, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"),
+                        CATALOG);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0))
                 .startsWith("Line 9: aggregationStrategy: bean 'myAggregator' is not declared")
@@ -68,14 +73,15 @@ public class SourceValidatorBeanRefsTest {
                     - name: myAggregator
                       type: "#class:com.example.MyAggregator"
                 """ + ROUTE;
-        assertThat(SourceValidator.validateYamlBeanRefs(declared, SourceValidator.BeanDeclarations.NONE)).isEmpty();
+        assertThat(SourceValidator.validateYamlBeanRefs(declared, SourceValidator.BeanDeclarations.NONE, CATALOG)).isEmpty();
 
         Files.writeString(dir.resolve("beans.camel.yaml"), """
                 - beans:
                     - name: myAggregator
                       type: "#class:com.example.MyAggregator"
                 """);
-        assertThat(SourceValidator.validateYamlBeanRefs(ROUTE, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml")))
+        assertThat(SourceValidator.validateYamlBeanRefs(ROUTE, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"),
+                CATALOG))
                 .isEmpty();
 
         Files.delete(dir.resolve("beans.camel.yaml"));
@@ -86,7 +92,8 @@ public class SourceValidatorBeanRefsTest {
                 public class MyAggregator {
                 }
                 """);
-        assertThat(SourceValidator.validateYamlBeanRefs(ROUTE, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml")))
+        assertThat(SourceValidator.validateYamlBeanRefs(ROUTE, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"),
+                CATALOG))
                 .isEmpty();
     }
 
@@ -94,24 +101,23 @@ public class SourceValidatorBeanRefsTest {
     void classReferencesPlaceholdersAndUnknownDirectoryAreLeftAlone(@TempDir Path dir) {
         String yaml = ROUTE.replace("aggregationStrategy: myAggregator",
                 "aggregationStrategy: \"#class:com.example.MyAggregator\"");
-        assertThat(SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.NONE)).isEmpty();
+        assertThat(SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.NONE, CATALOG)).isEmpty();
         yaml = ROUTE.replace("aggregationStrategy: myAggregator", "aggregationStrategy: \"{{strategy}}\"");
-        assertThat(SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.NONE)).isEmpty();
+        assertThat(SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.NONE, CATALOG)).isEmpty();
         yaml = ROUTE.replace("aggregationStrategy: myAggregator", "aggregationStrategy: com.example.MyAggregator");
-        assertThat(SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.NONE)).isEmpty();
+        assertThat(SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.NONE, CATALOG)).isEmpty();
         // no directory given: the check is not run at all by validate(...)
-        assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, null, null)).isEmpty();
+        assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null)).isEmpty();
     }
 
     @Test
     void theRequiredInterfaceComesFromTheEipModels(@TempDir Path dir) throws IOException {
-        // idempotentRepository is not in the static subset; the catalog's EIP model says what it needs
-        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
-        assertThat(BeanRefChecks.requiredType(catalog, "idempotentRepository"))
+        // the catalog's EIP model says what each option needs
+        assertThat(BeanRefChecks.requiredType(CATALOG, "idempotentRepository"))
                 .isEqualTo("org.apache.camel.spi.IdempotentRepository");
-        assertThat(BeanRefChecks.requiredType(catalog, "aggregationStrategy"))
+        assertThat(BeanRefChecks.requiredType(CATALOG, "aggregationStrategy"))
                 .isEqualTo("org.apache.camel.AggregationStrategy");
-        assertThat(BeanRefChecks.requiredType(catalog, "ref")).isNull();
+        assertThat(BeanRefChecks.requiredType(CATALOG, "ref")).isNull();
         Files.writeString(dir.resolve("MyRepo.java"), """
                 package com.example;
                 public class MyRepo {
@@ -131,7 +137,7 @@ public class SourceValidatorBeanRefsTest {
                             - log: hi
                 """;
         List<String> msgs = SourceValidator.validateYamlBeanRefs(yaml,
-                SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"), catalog);
+                SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"), CATALOG);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("com.example.MyRepo must implement org.apache.camel.spi.IdempotentRepository")
                 .contains("the built-in ones are");
@@ -150,13 +156,15 @@ public class SourceValidatorBeanRefsTest {
                       type: "#class:com.example.MyAggregator"
                 """ + ROUTE;
         List<String> msgs
-                = SourceValidator.validateYamlBeanRefs(declared, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"));
+                = SourceValidator.validateYamlBeanRefs(declared, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"),
+                        CATALOG);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("com.example.MyAggregator must implement org.apache.camel.AggregationStrategy");
 
         String direct = ROUTE.replace("aggregationStrategy: myAggregator",
                 "aggregationStrategy: \"#class:com.example.MyAggregator\"");
-        assertThat(SourceValidator.validateYamlBeanRefs(direct, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml")))
+        assertThat(SourceValidator.validateYamlBeanRefs(direct, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"),
+                CATALOG))
                 .hasSize(1);
 
         Files.writeString(dir.resolve("MyAggregator.java"), """
@@ -165,7 +173,8 @@ public class SourceValidatorBeanRefsTest {
                 public class MyAggregator implements AggregationStrategy {
                 }
                 """);
-        assertThat(SourceValidator.validateYamlBeanRefs(declared, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml")))
+        assertThat(SourceValidator.validateYamlBeanRefs(declared, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"),
+                CATALOG))
                 .isEmpty();
     }
 
@@ -182,7 +191,8 @@ public class SourceValidatorBeanRefsTest {
                       - log: "${bean:counter?method=count}"
                 """;
         List<String> msgs
-                = SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"));
+                = SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"),
+                        CATALOG);
         assertThat(msgs).hasSize(2);
         assertThat(msgs.get(0))
                 .startsWith("Line 5: ${bean:counter}: bean 'counter' is not declared: Counter.java is in the directory")
@@ -192,7 +202,8 @@ public class SourceValidatorBeanRefsTest {
                     - name: counter
                       type: "#class:com.example.Counter"
                 """ + yaml;
-        assertThat(SourceValidator.validateYamlBeanRefs(declared, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml")))
+        assertThat(SourceValidator.validateYamlBeanRefs(declared, SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"),
+                CATALOG))
                 .isEmpty();
     }
 
@@ -208,17 +219,17 @@ public class SourceValidatorBeanRefsTest {
                       - setBody:
                           simple: "${bean:counter:count}"
                 """;
-        List<String> msgs = SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.NONE);
+        List<String> msgs = SourceValidator.validateYamlBeanRefs(yaml, SourceValidator.BeanDeclarations.NONE, CATALOG);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("${bean:counter.count}").contains("${bean:counter?method=count}")
                 .contains("not with a single colon");
         assertThat(SourceValidator.validateYamlBeanRefs(yaml.replace("counter:count", "counter::count"),
-                SourceValidator.BeanDeclarations.NONE)).isEmpty();
+                SourceValidator.BeanDeclarations.NONE, CATALOG)).isEmpty();
     }
 
     @Test
     void unknownBeanWithoutAJavaFileSaysHowToDeclareIt() {
-        List<String> msgs = SourceValidator.validateYamlBeanRefs(ROUTE, SourceValidator.BeanDeclarations.NONE);
+        List<String> msgs = SourceValidator.validateYamlBeanRefs(ROUTE, SourceValidator.BeanDeclarations.NONE, CATALOG);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("not declared in this file or its directory").contains("- beans:");
     }
@@ -240,7 +251,7 @@ public class SourceValidatorBeanRefsTest {
                           uri: velocity:missing.vm
                       - to:
                           uri: xslt:http://example.com/x.xsl
-                """, null, null, dir);
+                """, CATALOG, null, dir);
         assertThat(msgs).hasSize(3);
         assertThat(msgs.get(0)).startsWith("Line 5: xslt: the file stylesheets/customers-to-html.xsl does not exist")
                 .contains("write xslt:customers-to-html.xsl");
@@ -263,7 +274,7 @@ public class SourceValidatorBeanRefsTest {
                     - name: myAggregator
                       type: "#class:MyAggregator"
                 """ + ROUTE;
-        assertThat(SourceValidator.validate("r.camel.yaml", declared, null, null, dir)).isEmpty();
+        assertThat(SourceValidator.validate("r.camel.yaml", declared, CATALOG, null, dir)).isEmpty();
 
         Files.writeString(dir.resolve("MyAggregator.java"), """
                 public class MyAggregator {
@@ -277,7 +288,7 @@ public class SourceValidatorBeanRefsTest {
                     }
                 }
                 """);
-        List<String> msgs = SourceValidator.validate("r.camel.yaml", declared, null, null, dir);
+        List<String> msgs = SourceValidator.validate("r.camel.yaml", declared, CATALOG, null, dir);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("has 2 public methods").contains("aggregationStrategyMethodName");
     }
@@ -307,7 +318,7 @@ public class SourceValidatorBeanRefsTest {
                           ref: leakSimulator
                           method: addObjects
                 """;
-        List<String> msgs = SourceValidator.validate("r.camel.yaml", route, null, null, dir);
+        List<String> msgs = SourceValidator.validate("r.camel.yaml", route, CATALOG, null, dir);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).startsWith("Line 8: bean leakSimulator has 2 public methods (addObjects, getLeakedObjectCount)")
                 .contains("add method: <name>");
@@ -332,7 +343,7 @@ public class SourceValidatorBeanRefsTest {
                           aggregationStrategy: "#class:org.apache.camel.processor.aggregate.StringAggregationStrategy"
                           steps:
                             - log: "${body}"
-                """, null, null, dir);
+                """, CATALOG, null, dir);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0))
                 .startsWith("Line 3: type: class org.apache.camel.support.StringAggregationStrategy was not found")
@@ -356,7 +367,7 @@ public class SourceValidatorBeanRefsTest {
                         return new MemoryLeakSimulator().count();
                     }
                 }
-                """, null, null, dir);
+                """, CATALOG, null, dir);
         assertThat(msgs).isNotEmpty();
         assertThat(msgs.get(0)).contains("cannot find symbol")
                 .contains("MemoryLeakSimulator is the class in MemoryLeakSimulator.java next to this file")
@@ -374,7 +385,7 @@ public class SourceValidatorBeanRefsTest {
                     uri: timer:tick
                     steps:
                       - log: "a"
-                """, null, null, dir);
+                """, CATALOG, null, dir);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("is an inner class of Sim").contains("Leak.java next to the route");
     }

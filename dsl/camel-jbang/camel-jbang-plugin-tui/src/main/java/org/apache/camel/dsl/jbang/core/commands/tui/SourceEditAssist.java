@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -53,6 +54,7 @@ final class SourceEditAssist {
 
     private final MonitorContext ctx;
     private final CatalogCache catalogCache = new CatalogCache();
+    private volatile CamelCatalog defaultCatalog;
     private Path rootDir;
 
     // ---- YAML DSL completion ----
@@ -116,6 +118,23 @@ final class SourceEditAssist {
 
     CamelCatalog getCatalog() {
         return catalogCache.get(ctx.findSelectedIntegration());
+    }
+
+    /**
+     * The catalog the validation checks run against: the one of the selected integration's Camel version, or the CLI's
+     * own when no integration is selected or that version's catalog could not be loaded (the checks need one).
+     */
+    CamelCatalog validationCatalog() {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            CamelCatalog fallback = defaultCatalog;
+            if (fallback == null) {
+                fallback = new DefaultCamelCatalog();
+                defaultCatalog = fallback;
+            }
+            catalog = fallback;
+        }
+        return catalog;
     }
 
     Map<Integer, List<SourceViewer.DocEntry>> provideCamelQuickDocs(List<JsonObject> codeData) {
@@ -1431,7 +1450,7 @@ final class SourceEditAssist {
     }
 
     String validatePropertyLine(String line) {
-        return SourceValidator.validatePropertyLine(line, getCatalog(), this::validateSpringBootPropertyLine);
+        return SourceValidator.validatePropertyLine(line, validationCatalog(), this::validateSpringBootPropertyLine);
     }
 
     String validateSpringBootPropertyLine(String line) {
@@ -1478,12 +1497,12 @@ final class SourceEditAssist {
      * empty when the source is valid.
      */
     List<String> validateCamelYaml(String content) {
-        return SourceValidator.validateCamelYaml(content, getCatalog());
+        return SourceValidator.validateCamelYaml(content, validationCatalog());
     }
 
     /** Validates a properties file (application.properties) line by line against the catalog, as the editor does. */
     List<String> validateProperties(String content) {
-        return SourceValidator.validateProperties(content, getCatalog(), this::validateSpringBootPropertyLine);
+        return SourceValidator.validateProperties(content, validationCatalog(), this::validateSpringBootPropertyLine);
     }
 
     /**
@@ -1491,7 +1510,7 @@ final class SourceEditAssist {
      * Camel and Spring Boot options for .properties files. Other file types have no validation and yield no messages.
      */
     List<String> validateSource(String fileName, String content) {
-        return SourceValidator.validate(fileName, content, getCatalog(), this::validateSpringBootPropertyLine);
+        return SourceValidator.validate(fileName, content, validationCatalog(), this::validateSpringBootPropertyLine);
     }
 
     static boolean isValidatableFile(String fileName) {
@@ -1499,19 +1518,11 @@ final class SourceEditAssist {
     }
 
     List<String> validateYamlEndpoints(String content) {
-        CamelCatalog catalog = getCatalog();
-        if (catalog == null) {
-            return List.of();
-        }
-        return SourceValidator.validateYamlEndpoints(content, catalog);
+        return SourceValidator.validateYamlEndpoints(content, validationCatalog());
     }
 
     List<String> validateYamlSimple(String content) {
-        CamelCatalog catalog = getCatalog();
-        if (catalog == null) {
-            return List.of();
-        }
-        return SourceValidator.validateYamlSimple(content, catalog);
+        return SourceValidator.validateYamlSimple(content, validationCatalog());
     }
 
     static String extractEipFromLine(String trimmed) {

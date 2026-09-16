@@ -106,18 +106,4 @@ class ChecksCatalogDriftTest {
         }
         assertThat(drifted).as("EXCHANGE_PROPERTIES entries the API or the catalog contradicts").isEmpty();
     }
-
-    /** The static fallback for a missing catalog must say what the catalog-derived map says. */
-    @Test
-    void requiredTypesFallbackMatchesTheCatalog() {
-        List<String> drifted = new ArrayList<>();
-        for (Map.Entry<String, String> entry : BeanRefChecks.REQUIRED_TYPES.entrySet()) {
-            String fromCatalog = BeanRefChecks.requiredType(catalog, entry.getKey());
-            if (!entry.getValue().equals(fromCatalog)) {
-                drifted.add(entry.getKey() + ": the fallback says " + entry.getValue() + ", the catalog "
-                            + (fromCatalog == null ? "has no such option" : "says " + fromCatalog));
-            }
-        }
-        assertThat(drifted).as("REQUIRED_TYPES entries the catalog contradicts").isEmpty();
-    }
 }

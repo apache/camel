@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -71,7 +72,8 @@ public final class SourceValidator {
      *
      * @param  fileName          the file name; its extension picks the checks
      * @param  content           the source
-     * @param  catalog           the catalog of the Camel version the source is for
+     * @param  catalog           the catalog of the Camel version the source is for (required: every check that is not
+     *                           the schema reads it)
      * @param  extraPropertyLine an extra check for a properties line the catalog does not know (Spring Boot
      *                           properties), returning the message or null; may be null
      * @return                   the messages, empty when the source is valid
@@ -99,6 +101,7 @@ public final class SourceValidator {
     public static List<String> validate(
             String fileName, String content, CamelCatalog catalog, Function<String, String> extraPropertyLine,
             Path directory, YamlValidator schemaValidator) {
+        Objects.requireNonNull(catalog, "catalog");
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator);
@@ -198,7 +201,7 @@ public final class SourceValidator {
      */
     public static List<String> validateYamlCatalog(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
-        if (content == null || content.isBlank() || catalog == null) {
+        if (content == null || content.isBlank()) {
             return msgs;
         }
         msgs.addAll(validateYamlEndpoints(content, catalog));
@@ -394,11 +397,10 @@ public final class SourceValidator {
         return BeanRefChecks.declaredBeans(content);
     }
 
-    public static List<String> validateYamlBeanRefs(String content, BeanDeclarations external) {
-        return BeanRefChecks.validateYamlBeanRefs(content, external);
-    }
-
-    /** As above, and with a catalog the messages about a strategy name the built-in implementations. */
+    /**
+     * Bean references in the YAML that nothing declares, each with how to declare it; a bean whose option needs a Camel
+     * interface (an aggregationStrategy, an onPrepare processor...) must implement it.
+     */
     public static List<String> validateYamlBeanRefs(String content, BeanDeclarations external, CamelCatalog catalog) {
         return BeanRefChecks.validateYamlBeanRefs(content, external, catalog);
     }
