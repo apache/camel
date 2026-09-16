@@ -218,8 +218,10 @@ The handler can also be registered using a factory finder on the classpath. This
 resource file `META-INF/services/org/apache/camel/rest-openapi-unmatched-request-handler-factory`
 with the content `class=com.example.MyHandler`.
 
-Regardless of how the handler is registered *only one* handler is supported: if two or more beans of this type
-are found in the registry, the default handler is used.
+A single handler bean in the registry takes precedence over a handler found via the factory finder, which in
+turn takes precedence over the default handler. Regardless of how the handler is registered *only one* handler
+is used: when two or more beans of this type are found in the registry, none of them is used, instead the
+handler from the factory finder is used instead (if present), otherwise the default handler is used.
 
 [source,java]
 ----
