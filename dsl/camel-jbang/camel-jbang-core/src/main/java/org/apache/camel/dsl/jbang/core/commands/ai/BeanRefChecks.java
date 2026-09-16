@@ -76,13 +76,11 @@ final class BeanRefChecks {
     }
 
     /**
-     * Without a catalog: the options whose bean must implement an interface, and which (a subset of the EIP models).
+     * Without a catalog: the options whose bean must implement an interface, and which (a subset of what
+     * {@link #requiredType(CamelCatalog, String)} reads from the EIP models; ChecksCatalogDriftTest keeps it one).
      */
     static final Map<String, String> REQUIRED_TYPES = Map.of(
-            "aggregationStrategy", "org.apache.camel.AggregationStrategy",
-            "strategyRef", "org.apache.camel.AggregationStrategy",
-            "processorRef", "org.apache.camel.Processor",
-            "processor", "org.apache.camel.Processor");
+            "aggregationStrategy", "org.apache.camel.AggregationStrategy");
 
     private static final Map<CamelCatalog, Map<String, String>> REQUIRED_TYPES_BY_CATALOG
             = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
