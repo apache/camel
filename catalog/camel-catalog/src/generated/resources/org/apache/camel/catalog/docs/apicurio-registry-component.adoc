@@ -82,6 +82,11 @@ configured rules without storing it. They do not validate application messages a
 stored schema. Authentication, connectivity, and other non-rule failures propagate as
 exceptions, rather than returning a negative validation result.
 
+Both operations set `CamelApicurioRegistryValidationErrors` to the rule violation details
+when a check fails and clear any previous value before checking. `testCompatibility` returns
+the boolean result in the body; `validate` preserves the body and sets
+`CamelApicurioRegistryValidationResult`.
+
 == Consumer
 
 The consumer polls the registry for new versions of the specified artifact. It tracks the last
@@ -91,6 +96,10 @@ interval (default: 500ms).
 On first start, all existing versions of the artifact are emitted as exchanges. Subsequent polls
 only deliver versions created after the consumer started. The watermark is held in memory and
 resets on route/context restart.
+
+If fetching content or invoking the processor throws an exception, the consumer releases
+the exchange and stops the current poll without advancing the watermark for that version.
+The failed version remains eligible for the next poll.
 
 When `fetchContent=true`, the consumer fetches the version content and sets it as a `byte[]` exchange body,
 closing the SDK response stream before processing the exchange.

@@ -45,7 +45,7 @@ public class ApicurioRegistryComponent extends DefaultComponent {
         String artifactId = null;
         if (remaining != null && !remaining.isEmpty()) {
             String[] parts = remaining.split("/", 2);
-            groupId = parts[0];
+            groupId = parts[0].isEmpty() ? null : parts[0];
             if (parts.length > 1 && !parts[1].isEmpty()) {
                 artifactId = parts[1];
             }

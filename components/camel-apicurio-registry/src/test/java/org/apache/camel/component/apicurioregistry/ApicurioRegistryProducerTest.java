@@ -280,8 +280,13 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .versions().post(any(CreateVersion.class), any()))
                 .thenReturn(mockVersion);
 
-        Object result = template.requestBody("direct:testCompatibility", "{\"test\":true}");
-        assertThat(result).isEqualTo(true);
+        var result = template.request("direct:testCompatibility", exchange -> {
+            exchange.getIn().setBody("{\"test\":true}");
+            exchange.getIn().setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS, "stale error");
+        });
+        assertThat(result.getException()).isNull();
+        assertThat(result.getIn().getBody()).isEqualTo(true);
+        assertThat(result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS)).isNull();
     }
 
     @Test
@@ -294,8 +299,10 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .versions().post(any(CreateVersion.class), any()))
                 .thenThrow(ruleViolation("incompatible"));
 
-        Object result = template.requestBody("direct:testCompatibility", "{\"bad\":true}");
-        assertThat(result).isEqualTo(false);
+        var result = template.request("direct:testCompatibility", exchange -> exchange.getIn().setBody("{\"bad\":true}"));
+        assertThat(result.getException()).isNull();
+        assertThat(result.getIn().getBody()).isEqualTo(false);
+        assertThat(result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS)).isEqualTo("incompatible");
     }
 
     @Test
