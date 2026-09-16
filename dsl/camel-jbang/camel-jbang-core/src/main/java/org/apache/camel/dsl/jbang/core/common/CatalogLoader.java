@@ -247,13 +247,13 @@ public final class CatalogLoader {
      * The YAML DSL JSON schema of a Camel version, read from the {@code org.apache.camel:camel-yaml-dsl} jar of that
      * version (every 4.x release ships {@code schema/camelYamlDsl.json}; the canonical schema exists from 4.22).
      *
-     * @param  repos       extra Maven repositories, comma separated; null for the defaults
-     * @param  version     the Camel version
-     * @param  canonical   whether to read the canonical schema
-     * @param  download    whether to download when the jar is not in the local repository
-     * @return             the schema document as JSON, or null when the version is the one of the CLI, whose schema is
-     *                     on the classpath
-     * @throws IOException when the jar cannot be downloaded or has no such schema
+     * @param  repos     extra Maven repositories, comma separated; null for the defaults
+     * @param  version   the Camel version
+     * @param  canonical whether to read the canonical schema
+     * @param  download  whether to download when the jar is not in the local repository
+     * @return           the schema document as JSON, or null when the version is the one of the CLI, whose schema is on
+     *                   the classpath
+     * @throws Exception when the jar cannot be downloaded or has no such schema
      */
     public static String loadYamlDslSchema(String repos, String version, boolean canonical, boolean download)
             throws Exception {
