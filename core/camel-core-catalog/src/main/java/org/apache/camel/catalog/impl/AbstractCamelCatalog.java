@@ -304,8 +304,8 @@ public abstract class AbstractCamelCatalog {
                 boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
                 boolean lookup = value.startsWith("#") && value.length() > 1;
                 // we cannot evaluate multi values as strict as the others, as we don't know their expected types
-                boolean multiValue = prefix != null && originalName.startsWith(prefix)
-                        && row.isMultiValue() || isMapEntry(row, originalName);
+                boolean multiValue = (prefix != null && originalName.startsWith(prefix) && row.isMultiValue())
+                        || isMapEntry(row, originalName);
 
                 // default value
                 Object defaultValue = row.getDefaultValue();

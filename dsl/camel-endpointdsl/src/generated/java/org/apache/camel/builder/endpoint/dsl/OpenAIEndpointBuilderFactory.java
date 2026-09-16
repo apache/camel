@@ -133,8 +133,8 @@ public interface OpenAIEndpointBuilderFactory {
          * Map additional fields from the response message to Camel headers. The
          * key is the field name in the API response, the value is the Camel
          * header name (e.g.
-         * additionalResponseHeader.reasoning_content=CamelMyReasoningHeader).
-         * This is a multi-value option with prefix: additionalResponseHeader.
+         * additionalResponseHeader.reasoning_content=MyReasoningHeader). This
+         * is a multi-value option with prefix: additionalResponseHeader.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -156,8 +156,8 @@ public interface OpenAIEndpointBuilderFactory {
          * Map additional fields from the response message to Camel headers. The
          * key is the field name in the API response, the value is the Camel
          * header name (e.g.
-         * additionalResponseHeader.reasoning_content=CamelMyReasoningHeader).
-         * This is a multi-value option with prefix: additionalResponseHeader.
+         * additionalResponseHeader.reasoning_content=MyReasoningHeader). This
+         * is a multi-value option with prefix: additionalResponseHeader.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.

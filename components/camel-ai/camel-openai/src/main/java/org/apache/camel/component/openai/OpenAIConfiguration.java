@@ -205,7 +205,7 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam(prefix = "additionalResponseHeader.", multiValue = true)
     @Metadata(description = "Map additional fields from the response message to Camel headers. "
                             + "The key is the field name in the API response, the value is the Camel header name "
-                            + "(e.g. additionalResponseHeader.reasoning_content=CamelMyReasoningHeader)")
+                            + "(e.g. additionalResponseHeader.reasoning_content=MyReasoningHeader)")
     private Map<String, Object> additionalResponseHeader;
 
     @UriParam(prefix = "mcpServer.", multiValue = true)

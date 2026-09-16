@@ -719,6 +719,32 @@ public interface SolrEndpointBuilderFactory {
         public String contentType() {
             return "Content-Type";
         }
+        /**
+         * The prefix of the headers that carry the fields of the document to
+         * insert: the header CamelSolrField.id holds the id field.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrField.}.
+         */
+        public String solrfield() {
+            return "CamelSolrField.";
+        }
+        /**
+         * The prefix of the headers that carry extra request parameters: the
+         * header CamelSolrParam.commit holds the commit parameter.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SolrParam.}.
+         */
+        public String solrparam() {
+            return "CamelSolrParam.";
+        }
     }
     static SolrEndpointBuilder endpointBuilder(String componentName, String path) {
         class SolrEndpointBuilderImpl extends AbstractEndpointBuilder implements SolrEndpointBuilder, AdvancedSolrEndpointBuilder {

@@ -840,6 +840,20 @@ public class EndpointHeaderBuilders {
         return QueueEndpointBuilderFactory.QueueHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Box (camel-box)
+     * Upload, download and manage files, folders, groups, collaborations, etc.
+     * on box.com.
+     * 
+     * Category: cloud,file,api
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-box
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static BoxEndpointBuilderFactory.BoxHeaderNameBuilder box() {
+        return BoxEndpointBuilderFactory.BoxHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
      * 
