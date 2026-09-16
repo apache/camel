@@ -73,6 +73,8 @@ public class YamlValidator {
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     private final boolean canonical;
+    private final String schemaJson;
+    private final CamelCatalog catalog;
     private Schema schema;
     private Map<String, OneOfGroup> oneOfGroups;
 
@@ -84,7 +86,22 @@ public class YamlValidator {
     }
 
     public YamlValidator(boolean canonical) {
+        this(canonical, null, null);
+    }
+
+    /**
+     * A validator for a schema document other than the one on the classpath: the schema of another Camel version, read
+     * from the {@code camel-yaml-dsl} jar of that version.
+     *
+     * @param canonical  whether the document is the canonical schema
+     * @param schemaJson the schema document as JSON; null for the schema on the classpath
+     * @param catalog    the catalog of the same Camel version, for the checks the schema cannot express; null for the
+     *                   catalog on the classpath
+     */
+    public YamlValidator(boolean canonical, String schemaJson, CamelCatalog catalog) {
         this.canonical = canonical;
+        this.schemaJson = schemaJson;
+        this.catalog = catalog;
     }
 
     public boolean isCanonical() {
@@ -778,9 +795,9 @@ public class YamlValidator {
      * array-typed options (e.g. "outputs") use "oneOf" to mean "each element is one of these types", not "exactly one
      * of these sibling keys must be present".
      */
-    private static Map<String, OneOfGroup> loadOneOfGroups() {
+    private Map<String, OneOfGroup> loadOneOfGroups() {
         Map<String, OneOfGroup> groups = new HashMap<>();
-        CamelCatalog catalog = new DefaultCamelCatalog();
+        CamelCatalog catalog = this.catalog != null ? this.catalog : new DefaultCamelCatalog();
         for (String name : catalog.findModelNames()) {
             EipModel model = catalog.eipModel(name);
             if (model == null) {
@@ -1270,7 +1287,8 @@ public class YamlValidator {
 
     public void init() throws Exception {
         String location = canonical ? LOCATION_CANONICAL : LOCATION;
-        var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
+        var model = schemaJson != null
+                ? mapper.readTree(schemaJson) : mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         this.model = model;
         this.topLevelEntries = new LinkedHashSet<>();
         model.at("/items/properties").fieldNames().forEachRemaining(topLevelEntries::add);

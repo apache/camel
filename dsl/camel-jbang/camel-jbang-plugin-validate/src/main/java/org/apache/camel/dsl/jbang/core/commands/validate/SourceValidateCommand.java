@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import picocli.CommandLine;
 
 /**
@@ -45,13 +45,19 @@ public class SourceValidateCommand extends CamelCommand {
                             parameterConsumer = FilesConsumer.class)
     List<String> files = new ArrayList<>();
 
+    @CommandLine.Mixin
+    CatalogVersionMixin catalogVersion;
+
     public SourceValidateCommand(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        CamelCatalog catalog = new DefaultCamelCatalog();
+        // the catalog and schema of the Camel version and runtime asked for; the CLI's own without options
+        CatalogVersionMixin.Loaded loaded = catalogVersion.load();
+        CamelCatalog catalog = loaded.catalog();
+        YamlValidator schemaValidator = loaded.camelVersion() != null ? catalogVersion.yamlValidator(loaded, false) : null;
         Map<String, List<String>> reports = new LinkedHashMap<>();
         for (String n : files) {
             File f = new File(n);
@@ -62,7 +68,7 @@ public class SourceValidateCommand extends CamelCommand {
             String content = Files.readString(f.toPath());
             File parent = f.getAbsoluteFile().getParentFile();
             reports.put(n, SourceValidator.validate(f.getName(), content, catalog, null,
-                    parent != null ? parent.toPath() : null));
+                    parent != null ? parent.toPath() : null, schemaValidator));
         }
         int count = reports.values().stream().mapToInt(List::size).sum();
         if (count > 0) {

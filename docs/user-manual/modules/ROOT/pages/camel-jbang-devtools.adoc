@@ -421,3 +421,37 @@ When all files pass:
 $ camel validate yaml cheese.yaml bad.yaml
 Validation success (files:2)
 ----
+
+`camel validate yaml` checks the YAML DSL schema, then the endpoint URIs, Simple expressions and bean references
+against the Camel catalog (`--catalog=false` for the schema only); `--canonical` validates against the canonical
+schema and reports the deprecated compact notation. `camel validate source` validates any file `camel run` would
+load: YAML routes, `.properties` files (the `camel.*` keys), Java (compiles it), XSLT and XML.
+
+=== Validating against another Camel version or runtime
+
+Both commands validate against the CLI's own Camel version. A project that runs another version, or Camel
+Spring Boot or Camel Quarkus, is validated against the catalog and the YAML DSL schema of that version with
+`--camel-version` and `--runtime`, the same options `camel catalog` and `camel doc` take:
+
+[source,bash]
+----
+$ camel validate yaml --camel-version=4.18.0 orders.yaml
+$ camel validate source --runtime=quarkus --quarkus-version=3.30.1 orders.yaml application.properties
+Validation error detected (errors:1)
+
+	File: orders.yaml
+		line 4: atmosphere-websocket: Camel Quarkus has no extension for this component (no camel-quarkus-atmosphere-websocket); pick a component that has one, camel_catalog_find lists them
+----
+
+The catalog of that version is downloaded as for `camel catalog`, and the schema is read from the
+`camel-yaml-dsl` jar of that version (`--repos` and `--download=false` apply to both). With `--runtime=quarkus`
+the Quarkus platform is resolved from the Camel version through the Quarkus extension registry (cached for a
+day under `~/.camel`), or given with `--quarkus-version`; a component of the route that has no Camel Quarkus
+extension, or no Camel Spring Boot starter with `--runtime=spring-boot`, is an error. `--canonical` needs Camel
+4.22 or later, the first version with the canonical schema.
+
+The Simple expressions are parsed by the CLI's own Simple language (the catalog of the other version supplies
+its functions), and the Java, XSLT and XML checks of `camel validate source` use the CLI's classpath.
+
+The `camel_validate_source` tool of the MCP servers (xref:camel-jbang-mcp.adoc[]) does the same when it is
+given a `camelVersion`: the catalog and the schema of that version.
