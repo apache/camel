@@ -310,7 +310,9 @@ project `directory` as an argument, the runtime tools take the integration `name
 | `camel_validate_source`
 | Validates Camel YAML DSL or `.properties` source without writing: the YAML DSL schema (a misspelled option
   such as `logLevel` instead of `loggingLevel`), endpoint URIs, simple expressions, and `camel.*` options.
-  Takes the content, or reads the file from the project directory.
+  Takes the content, or reads the file from the project directory. With `camelVersion` (or the version of the
+  selected integration in the TUI) the catalog and the YAML DSL schema of that Camel version answer, the schema
+  read from its `camel-yaml-dsl` jar; without it the CLI's own, with nothing to download.
 
 | `camel_get_files`
 | The source files of a project directory (name, size, type), or the content of one of them.
