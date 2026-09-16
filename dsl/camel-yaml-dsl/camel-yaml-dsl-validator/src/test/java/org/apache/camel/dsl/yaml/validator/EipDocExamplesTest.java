@@ -19,7 +19,6 @@ package org.apache.camel.dsl.yaml.validator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,13 +46,6 @@ class EipDocExamplesTest {
             "message-history", "message-router", "message-translator", "messaging-bridge", "normalizer",
             "point-to-point-channel", "publish-subscribe-channel", "return-address", "scatter-gather",
             "selective-consumer", "service-activator", "transactional-client");
-
-    /**
-     * The xmlSecurity examples write the cipher algorithms as the URIs the data format hands to XMLCipher, while the
-     * model's enums list the XMLCipher constant names, which XMLCipher rejects (CAMEL-24716). The page is checked again
-     * once the model accepts what the data format does.
-     */
-    private static final Set<String> DATA_FORMAT_PAGES_SKIPPED = Set.of("xmlSecurity-dataformat");
 
     private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4}\\n(.*?)\\n-{4}", Pattern.DOTALL);
 
@@ -100,8 +92,7 @@ class EipDocExamplesTest {
 
     @Test
     void everyYamlExampleOfTheDataFormatDocumentationValidates() throws Exception {
-        List<String> pages
-                = docNames(name -> name.endsWith("-dataformat") && !DATA_FORMAT_PAGES_SKIPPED.contains(name));
+        List<String> pages = docNames(name -> name.endsWith("-dataformat"));
 
         DocExamples result = validate(pages);
 
