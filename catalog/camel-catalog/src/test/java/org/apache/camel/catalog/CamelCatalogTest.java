@@ -712,6 +712,29 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testEndpointPropertiesJt400() throws Exception {
+        // the object path keeps its dots and slashes, and the suffix that selects the type is part of it
+        Map<String, String> map
+                = catalog.endpointProperties("jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ?keyed=true");
+        assertNotNull(map);
+        assertEquals(5, map.size());
+
+        assertEquals("GEORGE", map.get("userID"));
+        assertEquals("EGROEG", map.get("password"));
+        assertEquals("LIVERPOOL", map.get("systemName"));
+        assertEquals("QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ", map.get("objectPath"));
+        assertEquals("true", map.get("keyed"));
+
+        map = catalog.endpointProperties("jt400://username:password@system/lib.lib/MSGINQ.MSGQ");
+        assertNotNull(map);
+        assertEquals("lib.lib/MSGINQ.MSGQ", map.get("objectPath"));
+
+        EndpointValidationResult result = catalog.validateEndpointProperties(
+                "jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&outputFieldsIdx=2,3");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+    }
+
+    @Test
     public void testEndpointPropertiesJmsWithDotInName() throws Exception {
         Map<String, String> map = catalog.endpointProperties("jms:browse.me");
         assertNotNull(map);

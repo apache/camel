@@ -44,8 +44,6 @@ class CatalogDocExamplesTest {
      */
     private static final Map<String, String> PAGES_SKIPPED = Map.ofEntries(
             Map.entry("netty-http-component", "CAMEL-24748: bootstrapConfiguration is not in the metadata"),
-            Map.entry("jt400-component", "CAMEL-24748: the syntax has literal segments (QSYS.LIB, objectPath.type)"
-                                         + " the catalog reads as options"),
             Map.entry("olingo2-component", "CAMEL-24748: the syntax is apiName/methodName, the runtime reads"
                                            + " methodName/resourcePath with the api name implicit"),
             Map.entry("olingo4-component", "CAMEL-24748: the syntax is apiName/methodName, the runtime reads"

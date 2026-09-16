@@ -1831,6 +1831,15 @@ path segments before checking that the destination remains inside that directory
 symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
 as a pseudo-directory separator continue to work.
 
+=== camel-jt400
+
+The endpoint syntax in the component metadata is now `jt400:userID:password@systemName/objectPath`, which is what the
+component always parsed: `objectPath` is the whole path of the URI (`QSYS.LIB/MYLIB.LIB/MYQUEUE.DTAQ`, the `QSYS.LIB`
+prefix is not required), and the object suffix (`.DTAQ`, `.MSGQ`, `.PGM`, `.SRVPGM`) selects what the endpoint works
+with. The `type` path option has been removed from the metadata (catalog, documentation and the endpoint URI factory);
+it was never an option of its own, the component derives it from the object suffix. Endpoint URIs are unchanged.
+Tooling that built jt400 URIs from the `type` path option should put the suffix on the object path instead.
+
 === camel-alibaba-eventbridge
 
 ==== CloudEvents 1.0 specification validation enabled by default
