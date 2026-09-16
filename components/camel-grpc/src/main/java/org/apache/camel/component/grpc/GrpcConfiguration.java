@@ -100,10 +100,10 @@ public class GrpcConfiguration {
     @UriParam(label = "consumer", defaultValue = "PROPAGATION", enums = "AGGREGATION,PROPAGATION,DELEGATION")
     private GrpcConsumerStrategy consumerStrategy = GrpcConsumerStrategy.PROPAGATION;
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false")
     private boolean forwardOnCompleted;
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false")
     private boolean forwardOnError;
 
     @UriParam(defaultValue = "" + NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW)
