@@ -121,6 +121,12 @@ script languages and the Camel 4 API use; `request` and `in` stay as its older n
 provided its own global variable named `message` is now hidden by the exchange variable, like the other exchange
 variable names.
 
+=== camel-djl (Breaking change)
+
+DJL library dependency has been upgraded to 0.37+
+Object detection with this version is now reporting coordinates of spotted elements with absolute values instead of a value fraction between 0 and 1.
+If you do not manipulate the result directly you will be fine as the internal DJL Image converter has been updated. you are impacted if you use the provided result in your own code.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
