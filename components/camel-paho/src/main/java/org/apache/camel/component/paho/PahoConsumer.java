@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.paho;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -40,6 +43,7 @@ public class PahoConsumer extends DefaultConsumer {
     private volatile String clientId;
     private volatile boolean stopClient;
     private volatile MqttConnectOptions connectOptions;
+    private final AtomicBoolean restarting = new AtomicBoolean(false);
 
     public PahoConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -73,6 +77,66 @@ public class PahoConsumer extends DefaultConsumer {
             if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
                 client.setManualAcks(true);
 
+            MqttClient callbackClient = client;
+            boolean isOwnedClient = stopClient;
+            callbackClient.setCallback(new MqttCallbackExtended() {
+
+                @Override
+                public void connectComplete(boolean reconnect, String serverURI) {
+                    if (reconnect && isRunAllowed() && callbackClient == client) {
+                        try {
+                            callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+                        } catch (MqttException e) {
+                            if (isOwnedClient) {
+                                LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
+                                        e.getMessage(), e);
+                                restartRouteAsync();
+                            } else {
+                                LOG.error(
+                                        "MQTT resubscribe failed on reconnect with externally provided client,"
+                                          + " route will not be auto-restarted: {}",
+                                        e.getMessage(), e);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void connectionLost(Throwable cause) {
+                    LOG.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
+                }
+
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    LOG.debug("Message arrived on topic: {} -> {}", topic, message);
+                    Exchange exchange = createExchange(message, topic);
+
+                    // use default consumer callback
+                    AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                    getAsyncProcessor().process(exchange, cb);
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                    LOG.debug("Delivery complete. Token: {}", token);
+                }
+            });
+
+            LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
+            callbackClient.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+        } catch (Exception startException) {
+            MqttClient ownedClient = stopClient ? client : null;
+            if (ownedClient != null) {
+                client = null;
+                stopClient = false;
+                if (ownedClient.isConnected()) {
+                    try {
+                        ownedClient.disconnect();
+                    } catch (Exception disconnectException) {
+                        startException.addSuppressed(disconnectException);
+                    }
+                }
+                closeOwnedClient(ownedClient, startException);
             }
             client.connect(connectOptions);
         }
@@ -113,6 +177,50 @@ public class PahoConsumer extends DefaultConsumer {
 
         LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
         client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+    }
+
+    private void restartRouteAsync() {
+        if (!restarting.compareAndSet(false, true)) {
+            LOG.debug("Route restart already in progress, skipping duplicate restart");
+            return;
+        }
+        String threadName = "Paho-RestartRoute-" + getRouteId();
+        ExecutorService executor = null;
+        try {
+            executor
+                    = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, threadName);
+            ExecutorService restartExecutor = executor;
+            restartExecutor.submit(() -> {
+                try {
+                    if (!isRunAllowed() || !getEndpoint().getCamelContext().isRunAllowed()) {
+                        LOG.debug("Consumer or Camel context is stopping, skipping route restart");
+                        return;
+                    }
+                    String routeId = getRouteId();
+                    LOG.info("Stopping route {} for restart after resubscribe failure", routeId);
+                    getEndpoint().getCamelContext().getRouteController().stopRoute(routeId);
+                    if (!getEndpoint().getCamelContext().isRunAllowed()) {
+                        LOG.debug("Camel context is stopping, not restarting route {}", routeId);
+                        return;
+                    }
+                    LOG.info("Restarting route {}", routeId);
+                    getEndpoint().getCamelContext().getRouteController().startRoute(routeId);
+                } catch (Exception e) {
+                    getExceptionHandler().handleException(
+                            "Failed to restart route after resubscribe failure", e);
+                } finally {
+                    restarting.set(false);
+                    getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(restartExecutor);
+                }
+            });
+        } catch (RuntimeException e) {
+            restarting.set(false);
+            if (executor != null) {
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            }
+            getExceptionHandler().handleException(
+                    "Failed to schedule route restart after resubscribe failure", e);
+        }
     }
 
     @Override
