@@ -254,6 +254,11 @@ public class SalesforceEndpointConfig implements Cloneable {
     private Map<String, Long> initialReplayIdMap;
 
     // Approval API properties
+    @UriParam(label = "producer",
+              description = "The approval request for the Salesforce Approval API."
+                            + " Options approval.actionType, approval.comments, approval.contextActorId,"
+                            + " approval.contextId, approval.nextApproverIds, approval.processDefinitionNameOrId,"
+                            + " approval.skipEntryCriteria are bound as nested properties.")
     private ApprovalRequest approval;
 
     // RAW operation properties

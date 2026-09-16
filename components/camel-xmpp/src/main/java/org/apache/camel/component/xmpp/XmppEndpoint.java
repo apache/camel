@@ -72,7 +72,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @Metadata(required = true)
     private String host;
     @UriPath
-    @Metadata(required = true)
     private int port;
     @UriPath(label = "common")
     private String participant;

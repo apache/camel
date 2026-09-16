@@ -17,7 +17,6 @@
 package org.apache.camel.component.huggingface;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.huggingface.tasks.HuggingFaceTask;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -28,9 +27,12 @@ public class HuggingFaceConfiguration implements Cloneable {
 
     @UriPath(name = "task")
     @Metadata(required = true,
-              enums = "TEXT_CLASSIFICATION,TEXT_GENERATION,QUESTION_ANSWERING,SUMMARIZATION,SENTENCE_EMBEDDINGS,ZERO_SHOT_CLASSIFICATION,TEXT_TO_IMAGE,CHAT,AUTOMATIC_SPEECH_RECOGNITION,TEXT_TO_SPEECH",
-              description = "The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)")
-    private HuggingFaceTask task;
+              description = "The Hugging Face task to perform."
+                            + " Built-in tasks: TEXT_CLASSIFICATION, TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,"
+                            + " SENTENCE_EMBEDDINGS, ZERO_SHOT_CLASSIFICATION, TEXT_TO_IMAGE, CHAT, AUTOMATIC_SPEECH_RECOGNITION,"
+                            + " TEXT_TO_SPEECH."
+                            + " Custom task names are also accepted when predictorBean is set.")
+    private String task;
 
     @UriParam
     @Metadata(required = true, description = "Hugging Face model ID (e.g., distilbert-base-uncased-finetuned-sst-2-english)")
@@ -231,11 +233,11 @@ public class HuggingFaceConfiguration implements Cloneable {
         this.oauthProfile = oauthProfile;
     }
 
-    public HuggingFaceTask getTask() {
+    public String getTask() {
         return task;
     }
 
-    public void setTask(HuggingFaceTask task) {
+    public void setTask(String task) {
         this.task = task;
     }
 

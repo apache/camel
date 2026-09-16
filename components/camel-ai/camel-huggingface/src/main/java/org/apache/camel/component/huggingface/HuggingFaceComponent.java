@@ -42,7 +42,8 @@ public class HuggingFaceComponent extends HealthCheckComponent {
         if (remaining != null && !remaining.isEmpty()) {
             String normalized = remaining.toUpperCase().replace("-", "_");
             try {
-                configuration.setTask(HuggingFaceTask.valueOf(normalized));
+                // validate it's a known task when no custom predictor bean is provided
+                HuggingFaceTask.valueOf(normalized);
             } catch (IllegalArgumentException e) {
                 if (ObjectHelper.isEmpty(configuration.getPredictorBean())) {
                     throw new IllegalArgumentException(
@@ -50,6 +51,7 @@ public class HuggingFaceComponent extends HealthCheckComponent {
                                     normalized));
                 }
             }
+            configuration.setTask(normalized);
         }
         return endpoint;
     }

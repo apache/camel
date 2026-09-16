@@ -24,7 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 public class TaskPredictorFactory {
     public static TaskPredictor getPredictor(HuggingFaceEndpoint endpoint) {
         HuggingFaceConfiguration config = endpoint.getConfiguration();
-        HuggingFaceTask task = config.getTask();
+        HuggingFaceTask task = config.getTask() != null ? HuggingFaceTask.valueOf(config.getTask()) : null;
 
         if (ObjectHelper.isNotEmpty(config.getPredictorBean())) {
             // Use custom bean if specified

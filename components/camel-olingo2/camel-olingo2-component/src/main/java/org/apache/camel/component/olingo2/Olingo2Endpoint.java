@@ -45,8 +45,8 @@ import org.apache.camel.util.CaseInsensitiveMap;
 /**
  * Communicate with OData 2.0 services using Apache Olingo.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName",
-             apiSyntax = "apiName/methodName",
+@UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:methodName",
+             apiSyntax = "methodName",
              category = { Category.CLOUD }, headersClass = Olingo2Constants.class)
 @Deprecated(since = "4.18")
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration>
