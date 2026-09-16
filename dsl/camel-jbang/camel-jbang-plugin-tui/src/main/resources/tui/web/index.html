@@ -143,6 +143,7 @@
 
   <script src="/vendor/xterm.js"></script>
   <script src="/vendor/xterm-addon-fit.js"></script>
+  <script src="/vendor/xterm-addon-unicode11.js"></script>
   <script>
     (function () {
       'use strict';
@@ -198,6 +199,9 @@
 
           fitAddon = new FitAddon.FitAddon();
           term.loadAddon(fitAddon);
+          var unicode11Addon = new Unicode11Addon.Unicode11Addon();
+          term.loadAddon(unicode11Addon);
+          term.unicode.activeVersion = '11';
           term.open(document.getElementById('terminal-container'));
 
           function sendInit() {

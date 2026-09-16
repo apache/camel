@@ -3072,7 +3072,7 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
         String name = ctx != null && ctx.selectedPid != null ? ctx.selectedName() : null;
-        String title = name != null ? "Camel Monitor: " + name : "Camel Monitor";
+        String title = name != null ? "Camel TUI: " + name : "Camel TUI";
         if (!title.equals(lastWindowTitle)) {
             lastWindowTitle = title;
             runner.setWindowTitle(title);
