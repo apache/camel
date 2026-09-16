@@ -398,20 +398,21 @@ type, so the concat function works.
 == Using XPath on Headers
 
 Some users may have XML stored in a header. To apply an XPath to a
-header's value, you can do this by defining the 'headerName' attribute.
+header's value, you can do this by defining the `source` attribute with the `header:` prefix
+(`variable:` and `property:` work the same way for an exchange variable or property).
 
 [source,xml]
 ----
-<xpath headerName="invoiceDetails">/invoice/@orderType = 'premium'</xpath>
+<xpath source="header:invoiceDetails">/invoice/@orderType = 'premium'</xpath>
 ----
 
-And in Java DSL you specify the headerName as the second parameter as shown:
+And in Java DSL you specify the source with the fluent expression builder as shown:
 
 ._Java-only: XPath expression builder API_
 
 [source,java]
 ----
-xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
+expression().xpath("/invoice/@orderType = 'premium'").source("header:invoiceDetails").end()
 ----
 
 == Example

@@ -69,7 +69,7 @@ but you can use different implementation, you can reference your own
 </bean>
 
 <!-- ... and later -->
-<from>seda:array?queue=#arrayQueue</from>
+<from uri="seda:array?queue=#arrayQueue"/>
 ----
 
 You can also reference a `BlockingQueueFactory` implementation.
