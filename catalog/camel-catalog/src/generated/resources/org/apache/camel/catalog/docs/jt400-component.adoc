@@ -213,7 +213,7 @@ from("timer://foo?period=60000")
         };
         exchange.getIn().setBody(parms);
     })
-    .to("jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3")
+    .to("jt400://*CURRENT:*CURRENT@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3")
     .setBody(simple("${body[3]}"))
     .to("direct:foo");
 ----
