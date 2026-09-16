@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
@@ -30,16 +31,32 @@ import org.apache.camel.util.StringHelper;
  * Open Policy Agent component.
  */
 @Component("opa")
-public class OpaComponent extends HealthCheckComponent {
+public class OpaComponent extends HealthCheckComponent implements SSLContextParametersAware {
 
     @Metadata
     private OpaConfiguration configuration = new OpaConfiguration();
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public OpaComponent() {
     }
 
     public OpaComponent(final CamelContext context) {
         super(context);
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     @Override

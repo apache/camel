@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.opa;
 
+import javax.net.ssl.SSLContext;
+
 import com.styra.opa.OPAClient;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -27,6 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -72,11 +75,25 @@ public class OpaEndpoint extends DefaultEndpoint {
         } else {
             opaClient = configuration.getOpaClient() != null
                     ? configuration.getOpaClient()
-                    : OpaRestEvaluator.createClient(configuration.getServerUrl(), configuration.getBearerToken());
+                    : OpaRestEvaluator.createClient(
+                            configuration.getServerUrl(), configuration.getBearerToken(),
+                            configuration.getConnectionTimeout(), configuration.getRequestTimeout(),
+                            createSslContext());
             evaluator = new OpaRestEvaluator(
                     opaClient, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
                     configuration.getIncludeProperties(), configuration.isIncludeBody(), configuration.isFailOpen());
         }
+    }
+
+    /**
+     * Resolves the endpoint's TLS configuration, falling back to the context's global one when the component opts in.
+     */
+    private SSLContext createSslContext() throws Exception {
+        SSLContextParameters ssl = configuration.getSslContextParameters();
+        if (ssl == null) {
+            ssl = getComponent().retrieveGlobalSslContextParameters();
+        }
+        return ssl != null ? ssl.createSSLContext(getCamelContext()) : null;
     }
 
     private OpaPolicyEvaluator createWasmEvaluator() throws Exception {

@@ -18,6 +18,8 @@ package org.apache.camel.component.opa;
 
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import com.styra.opa.OPAClient;
 import org.apache.camel.util.ObjectHelper;
 
@@ -35,16 +37,21 @@ public class OpaRestEvaluator extends OpaPolicyEvaluator {
     }
 
     /**
-     * Creates a client for an OPA server, optionally authenticating with a bearer token.
+     * Creates a client for an OPA server, over a transport this component controls.
+     * <p/>
+     * The SDK's own default transport builds a fresh {@code HttpClient} per request with no timeouts at all; see
+     * {@link OpaHttpClient} for why neither is acceptable on the path that decides authorization.
      *
-     * @param serverUrl   base URL of the OPA server, without the /v1/data suffix
-     * @param bearerToken token for OPA API authentication, or null when OPA does not require one
+     * @param serverUrl         base URL of the OPA server, without the /v1/data suffix
+     * @param bearerToken       token for OPA API authentication, or null when OPA does not require one
+     * @param connectionTimeout how long to wait for the connection to be established, in milliseconds
+     * @param requestTimeout    how long to wait for the decision once connected, in milliseconds
+     * @param sslContext        TLS configuration for the connection, or null for the JVM default
      */
-    public static OPAClient createClient(String serverUrl, String bearerToken) {
-        if (ObjectHelper.isNotEmpty(bearerToken)) {
-            return new OPAClient(serverUrl, Map.of("Authorization", "Bearer " + bearerToken));
-        }
-        return new OPAClient(serverUrl);
+    public static OPAClient createClient(
+            String serverUrl, String bearerToken, long connectionTimeout, long requestTimeout, SSLContext sslContext) {
+        return new OPAClient(
+                serverUrl, new OpaHttpClient(connectionTimeout, requestTimeout, sslContext, bearerToken));
     }
 
     @Override
