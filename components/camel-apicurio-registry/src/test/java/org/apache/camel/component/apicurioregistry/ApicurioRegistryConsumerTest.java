@@ -30,9 +30,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -196,14 +199,72 @@ class ApicurioRegistryConsumerTest {
         verify(stream).close();
     }
 
-    @Test
-    void testMissingArtifactId() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "testGroup", "testGroup/", "/someArtifact" })
+    void testMissingIdentifier(String path) throws Exception {
         ApicurioRegistryEndpoint endpoint = context.getEndpoint(
-                "apicurio-registry:testGroup?registryUrl=http://localhost:8080/apis/registry/v3",
+                "apicurio-registry:" + path + "?registryUrl=http://localhost:8080/apis/registry/v3",
                 ApicurioRegistryEndpoint.class);
         ApicurioRegistryConsumer consumer = (ApicurioRegistryConsumer) endpoint.createConsumer(exchange -> {
         });
         assertThatThrownBy(consumer::poll).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Both groupId and artifactId are required for the consumer");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void testPooledExchangeReleasedOnFailureAndRetry(boolean fetchContent) throws Exception {
+        context.getCamelContextExtension().setExchangeFactory(new PooledExchangeFactory());
+        context.getCamelContextExtension().getExchangeFactory().setStatisticsEnabled(true);
+        context.getCamelContextExtension().getExchangeFactoryManager().setStatisticsEnabled(true);
+        context.start();
+        ApicurioRegistryEndpoint endpoint = context.getEndpoint(
+                ENDPOINT_URI + "&startScheduler=false&fetchContent=" + fetchContent, ApicurioRegistryEndpoint.class);
+        endpoint.setRegistryClient(mockClient);
+
+        SearchedVersion first = new SearchedVersion();
+        first.setGlobalId(1L);
+        first.setVersion("1");
+        SearchedVersion second = new SearchedVersion();
+        second.setGlobalId(2L);
+        second.setVersion("2");
+        VersionSearchResults results = new VersionSearchResults();
+        results.setVersions(List.of(second, first));
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().get()).thenReturn(results);
+        IllegalStateException failure = new IllegalStateException("failed first version");
+        if (fetchContent) {
+            when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                    .versions().byVersionExpression("1").content().get())
+                    .thenThrow(failure).thenReturn(new ByteArrayInputStream(new byte[] { 1 }));
+            when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                    .versions().byVersionExpression("2").content().get())
+                    .thenReturn(new ByteArrayInputStream(new byte[] { 2 }));
+        }
+        List<Long> delivered = new ArrayList<>();
+        List<Exchange> attempted = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = (ApicurioRegistryConsumer) endpoint.createConsumer(exchange -> {
+            attempted.add(exchange);
+            if (!fetchContent && attempted.size() == 1) {
+                throw failure;
+            }
+            delivered.add(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, Long.class));
+        });
+        consumer.start();
+        try {
+            var statistics = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
+            assertThatThrownBy(consumer::poll).isSameAs(failure);
+            assertThat(statistics.getReleasedCounter()).isEqualTo(1);
+            assertThat(delivered).isEmpty();
+
+            assertThat(consumer.poll()).isEqualTo(2);
+            assertThat(delivered).containsExactly(1L, 2L);
+            assertThat(statistics.getCreatedCounter()).isEqualTo(1);
+            assertThat(statistics.getAcquiredCounter()).isEqualTo(2);
+            assertThat(statistics.getReleasedCounter()).isEqualTo(3);
+            assertThat(consumer.poll()).isZero();
+        } finally {
+            consumer.stop();
+        }
     }
 }

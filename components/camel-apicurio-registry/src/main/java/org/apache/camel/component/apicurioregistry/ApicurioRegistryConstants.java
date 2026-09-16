@@ -60,7 +60,8 @@ public interface ApicurioRegistryConstants {
     @Metadata(description = "Whether validation passed", javaType = "Boolean")
     String HEADER_VALIDATION_RESULT = "CamelApicurioRegistryValidationResult";
 
-    @Metadata(description = "Validation error details", javaType = "String")
+    @Metadata(description = "Rule violation details from validate or testCompatibility. Cleared before each check.",
+              javaType = "String")
     String HEADER_VALIDATION_ERRORS = "CamelApicurioRegistryValidationErrors";
 
     String OPERATION_CREATE_ARTIFACT = "createArtifact";

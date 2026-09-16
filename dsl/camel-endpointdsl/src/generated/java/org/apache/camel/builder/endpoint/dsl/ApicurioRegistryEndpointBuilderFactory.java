@@ -1564,7 +1564,8 @@ public interface ApicurioRegistryEndpointBuilderFactory {
             return "CamelApicurioRegistryValidationResult";
         }
         /**
-         * Validation error details.
+         * Rule violation details from validate or testCompatibility. Cleared
+         * before each check.
          * 
          * The option is a: {@code String} type.
          * 
