@@ -107,9 +107,8 @@ final class BeanRefChecks {
     }
 
     /** The options whose value is a bean name whatever the catalog says: ref, bean and the *Ref options. */
-    private static final List<String> REF_OPTIONS = List.of("ref", "aggregationStrategy", "strategyRef", "processorRef",
-            "loadBalancerRef", "executorServiceRef", "onPrepareRef", "onRedeliveryRef", "aggregationRepositoryRef",
-            "comparatorRef", "bean", "processor");
+    private static final List<String> REF_OPTIONS = List.of("ref", "aggregationStrategy", "loadBalancerRef",
+            "executorServiceRef", "onPrepareRef", "onRedeliveryRef", "aggregationRepositoryRef", "comparatorRef", "bean");
 
     /**
      * The lines that reference a bean: option: name, for {@link #REF_OPTIONS} and every option the catalog's EIP models

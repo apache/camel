@@ -162,6 +162,7 @@ public final class SourceValidator {
      * know (a custom step, a header a component sets at runtime).
      */
     public static List<String> validateYamlSchema(String content, CamelCatalog catalog) {
+        Objects.requireNonNull(catalog, "catalog");
         List<String> msgs = new ArrayList<>();
         if (content != null && !content.isBlank()) {
             validateYamlSchema(content, catalog, null, msgs);
