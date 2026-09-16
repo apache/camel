@@ -74,7 +74,7 @@ class SourceValidatorVersionTest {
     @Test
     void theBuiltInCatalogUsesTheBuiltInSchema() throws Exception {
         YamlValidator v = SourceValidator.yamlValidator(new DefaultCamelCatalog());
-        assertThat(v).isSameAs(SourceValidator.yamlValidator(null));
+        assertThat(v).isSameAs(SourceValidator.yamlValidator());
     }
 
     @Test
@@ -85,7 +85,7 @@ class SourceValidatorVersionTest {
         assertThat(older.getCatalogVersion()).isEqualTo("4.18.0");
 
         YamlValidator v = SourceValidator.yamlValidator(older);
-        assertThat(v).isNotSameAs(SourceValidator.yamlValidator(null));
+        assertThat(v).isNotSameAs(SourceValidator.yamlValidator());
         assertThat(SourceValidator.yamlValidator(older)).as("one validator per version").isSameAs(v);
 
         // a route both versions accept validates; the schema read from the 4.18.0 jar is the one that answers
