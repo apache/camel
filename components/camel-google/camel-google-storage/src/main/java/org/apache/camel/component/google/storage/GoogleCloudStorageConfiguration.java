@@ -41,7 +41,7 @@ public class GoogleCloudStorageConfiguration implements Cloneable, GoogleCommonC
               enums = "copyObject,listObjects,deleteObject,deleteBucket,listBuckets,getObject,createDownloadLink")
     private GoogleCloudStorageOperations operation;
 
-    @UriParam(label = "producer", description = "The Object name inside the bucket")
+    @UriParam(label = "common", description = "The Object name inside the bucket")
     private String objectName;
 
     @UriParam(label = "common", defaultValue = "US-EAST1",
