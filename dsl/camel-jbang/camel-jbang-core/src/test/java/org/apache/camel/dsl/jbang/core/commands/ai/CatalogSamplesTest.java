@@ -59,6 +59,31 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void eipAliasesResolveThroughTheCatalog() {
+        // the aliases of the EIP models, so the intent map need not repeat them
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        JsonObject o = CatalogSamples.sample(catalog, "fan-out", 1);
+        assertThat(o.getString("name")).isEqualTo("multicast");
+        assertThat(o.getString("note")).contains("multicast EIP");
+        assertThat(CatalogSamples.sample(catalog, "broadcast", 1).getString("name")).isEqualTo("multicast");
+        assertThat(CatalogSamples.sample(catalog, "chunk", 1).getString("name")).isEqualTo("split");
+        // an alias of an EIP whose page has no YAML example still names the EIP
+        JsonObject dedup = CatalogSamples.sample(catalog, "dedup", 1);
+        assertThat(dedup.getString("error")).contains("dedup");
+        assertThat(dedup.getString("eip")).isEqualTo("idempotentConsumer");
+        assertThat(dedup.getString("hint")).contains("idempotentConsumer EIP");
+        assertThat(CatalogSamples.sample(catalog, "rate-limit", 1).getString("name")).isEqualTo("throttle");
+        assertThat(CatalogSamples.sample(catalog, "router", 1).getString("name")).isEqualTo("choice");
+        // an aliased part of an EIP shows the whole
+        assertThat(CatalogSamples.sample(catalog, "fallback", 1).getString("name")).isEqualTo("circuitBreaker");
+        // an exact name says nothing about a match
+        assertThat(CatalogSamples.sample(catalog, "multicast", 1).get("note")).isNull();
+        // without a catalog only the shipped names and intents resolve
+        assertThat(CatalogSamples.sample("fan-out", 1).getString("error")).contains("fan-out");
+        assertThat(CatalogSamples.INTENTS).doesNotContainKeys("fan out", "broadcast", "router", "fallback", "split");
+    }
+
+    @Test
     void unknownNameGetsSuggestions() {
         JsonObject o = CatalogSamples.sample("aggregat", 2);
         assertThat(o.getString("error")).contains("aggregat");

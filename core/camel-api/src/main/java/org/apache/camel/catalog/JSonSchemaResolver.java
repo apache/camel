@@ -118,4 +118,16 @@ public interface JSonSchemaResolver {
     @Nullable
     String getPojoBeanJSonSchema(String name);
 
+    /**
+     * Returns the API reference of a core Camel class (Exchange, Message, CamelContext, ...) as JSON format.
+     *
+     * @param  name the simple class name such as Exchange
+     * @return      the API reference in JSon, or null when there is none
+     * @since       4.23
+     */
+    @Nullable
+    default String getApiReferenceJSonSchema(String name) {
+        return null;
+    }
+
 }

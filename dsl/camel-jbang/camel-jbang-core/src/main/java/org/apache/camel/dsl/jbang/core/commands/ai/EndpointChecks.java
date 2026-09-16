@@ -26,7 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.RuntimeProvider;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.YAML_URI_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
@@ -179,8 +181,15 @@ final class EndpointChecks {
             try {
                 EndpointValidationResult result
                         = catalog.validateEndpointProperties(fullUri, false, consumerOnly, producerOnly);
+                String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
+                if (result.getUnknownComponent() != null) {
+                    // a warning to the catalog, an error when the runtime is what lacks the component
+                    String missing = missingInRuntime(catalog, scheme);
+                    if (missing != null) {
+                        errors.add(linePrefix(i) + missing);
+                    }
+                }
                 if (!result.isSuccess()) {
-                    String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
                     collectEndpointErrors(errors, result, scheme, i, optionLineMap);
                 }
                 checkRegexOptions(errors, fullUri, i, optionLineMap);
@@ -189,6 +198,41 @@ final class EndpointChecks {
             }
         }
         return errors;
+    }
+
+    private static volatile CamelCatalog defaultCatalog;
+
+    /**
+     * The message for a component the catalog of a runtime (Camel Quarkus, Camel Spring Boot) does not have while Camel
+     * has it: the runtime has no extension or starter for it. Null for the default catalog, whose unknown components
+     * are not reported: a project can register a component of its own (CAMEL-24711).
+     */
+    static String missingInRuntime(CamelCatalog catalog, String scheme) {
+        RuntimeProvider provider = catalog.getRuntimeProvider();
+        String name = provider != null ? provider.getProviderName() : null;
+        if (name == null || "default".equals(name)) {
+            return null;
+        }
+        CamelCatalog plain = defaultCatalog;
+        if (plain == null) {
+            synchronized (EndpointChecks.class) {
+                plain = defaultCatalog;
+                if (plain == null) {
+                    plain = new DefaultCamelCatalog();
+                    defaultCatalog = plain;
+                }
+            }
+        }
+        if (plain.componentModel(scheme) == null) {
+            return null;
+        }
+        return switch (name) {
+            case "quarkus" -> scheme + ": Camel Quarkus has no extension for this component (no camel-quarkus-" + scheme
+                              + "); pick a component that has one, camel_catalog_find lists them";
+            case "springboot" -> scheme + ": Camel Spring Boot has no starter for this component (no camel-" + scheme
+                                 + "-starter)";
+            default -> scheme + ": the " + name + " runtime has no support for this component";
+        };
     }
 
     /** Options models write that the component does not have, and what the component does instead. */

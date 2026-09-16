@@ -21,12 +21,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -41,6 +46,10 @@ class CatalogDocsTest {
         args.forEach((k, v) -> stringArgs.put(k, String.valueOf(v)));
         String json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), stringArgs));
         return (JsonObject) Jsoner.deserialize(json);
+    }
+
+    private static String json(Map<String, Object> args) throws Exception {
+        return catalogDoc(args).toJson();
     }
 
     @Test
@@ -181,7 +190,7 @@ class CatalogDocsTest {
         assertTrue(matches.stream().anyMatch(
                 m -> "StringAggregationStrategy".equals(((org.apache.camel.util.json.JsonObject) m).getString("name"))));
 
-        var doc = CatalogDocs.catalogDoc(catalog, "StringAggregationStrategy", null, "bean", null, true, false, null);
+        var doc = CatalogDocs.catalogDoc(catalog, "StringAggregationStrategy", null, "bean", null, null, false, false, null);
         assertEquals("org.apache.camel.processor.aggregate.StringAggregationStrategy", doc.getString("javaType"));
         assertTrue(doc.getString("declare")
                 .contains("type: \"#class:org.apache.camel.processor.aggregate.StringAggregationStrategy\""));
@@ -189,6 +198,91 @@ class CatalogDocsTest {
 
         assertTrue(CatalogDocs.beansOfInterface(catalog, "org.apache.camel.AggregationStrategy").stream()
                 .anyMatch(b -> b.startsWith("GroupedBodyAggregationStrategy (")));
+    }
+
+    @Test
+    void anEipAliasFindsTheEip() throws Exception {
+        // the aliases of the EIP models (fan-out, dedup, rate-limit) are what a model asks with; the former
+        // camel_catalog_eips tool matched them, now camel_catalog_find and camel_catalog_doc do
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        var result = CatalogDocs.find(catalog, "fan-out", "eip", 5);
+        var matches = (org.apache.camel.util.json.JsonArray) result.get("matches");
+        var first = (org.apache.camel.util.json.JsonObject) matches.get(0);
+        assertEquals("eip", first.getString("kind"));
+        assertEquals("multicast", first.getString("name"));
+        assertTrue(first.getCollection("aliases").contains("fan-out"));
+
+        // without a kind the EIPs are searched with the rest
+        result = CatalogDocs.find(catalog, "dedup", null, 5);
+        matches = (org.apache.camel.util.json.JsonArray) result.get("matches");
+        assertTrue(matches.stream().anyMatch(
+                m -> "idempotentConsumer".equals(((org.apache.camel.util.json.JsonObject) m).getString("name"))));
+
+        // the doc of an alias is the doc of the EIP, saying which term it matched
+        JsonObject doc = catalogDoc(Map.of("name", "rate-limit", "kind", "eip"));
+        assertEquals("throttle", doc.getString("name"));
+        assertEquals("rate-limit", doc.getString("matchedTerm"));
+        doc = catalogDoc(Map.of("name", "fan-out"));
+        assertEquals("multicast", doc.getString("name"));
+        assertEquals("fan-out", doc.getString("matchedTerm"));
+        assertNull(catalogDoc(Map.of("name", "multicast")).get("matchedTerm"), "an exact name matched no term");
+
+        JsonObject missing = catalogDoc(Map.of("name", "no-such-pattern", "kind", "eip"));
+        assertTrue(missing.getString("error").contains("no-such-pattern"));
+    }
+
+    @Test
+    void aComponentListsItsHeadersOnRequest() throws Exception {
+        JsonObject doc = catalogDoc(Map.of("name", "kafka", "kind", "component"));
+        assertNull(doc.get("headers"), "headers only on request, they are many");
+        assertEquals("org.apache.camel", doc.getString("groupId"));
+        assertEquals("camel-kafka", doc.getString("artifactId"));
+        assertFalse(doc.getString("version").isBlank(), "the Maven coordinates are complete");
+
+        doc = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeHeaders", true, "includeOptions", false));
+        assertNull(doc.get("options"));
+        var headers = (org.apache.camel.util.json.JsonArray) doc.get("headers");
+        var key = headers.stream().map(h -> (org.apache.camel.util.json.JsonObject) h)
+                .filter(h -> "CamelKafkaKey".equals(h.getString("name"))).findFirst().orElseThrow();
+        assertEquals("org.apache.camel.component.kafka.KafkaConstants#KEY", key.getString("constantName"));
+        assertEquals("Object", key.getString("javaType"));
+        assertEquals("common", key.getString("group"));
+        assertTrue(key.getBoolean("required"));
+        assertTrue(key.getString("description").contains("key"));
+    }
+
+    @Test
+    void theCommonOptionsAreTheDefaultAndTheScopeWidensThem() throws Exception {
+        // the answer for kafka stays readable: deprecated and advanced options only on request, said in the answer
+        JsonObject common = catalogDoc(Map.of("name", "kafka", "kind", "component"));
+        int matched = common.getInteger("matchedOptions");
+        int omitted = common.getInteger("omittedOptions");
+        assertTrue(omitted > 10, "kafka has many advanced options, omitted " + omitted);
+        assertTrue(common.getString("optionsHint").contains("includeOptions=all"));
+        assertTrue(common.getCollection("options").stream()
+                .noneMatch(o -> "isolationLevel".equals(((JsonObject) o).getString("name"))), "advanced");
+
+        JsonObject all = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", "all"));
+        assertEquals(matched + omitted, all.getInteger("matchedOptions"));
+        assertNull(all.get("omittedOptions"));
+        assertTrue(all.getCollection("options").stream()
+                .anyMatch(o -> "isolationLevel".equals(((JsonObject) o).getString("name"))));
+
+        JsonObject required = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", "required"));
+        assertTrue(required.getInteger("matchedOptions") < 5);
+        assertTrue(required.getCollection("options").stream().allMatch(o -> ((JsonObject) o).getBoolean("required")));
+        assertTrue(required.getString("optionsHint").contains("required options only"));
+
+        // a filter names what it wants, so it searches the advanced options too
+        JsonObject filtered = catalogDoc(Map.of("name", "kafka", "kind", "component", "optionsFilter", "isolationLevel"));
+        assertTrue(filtered.getInteger("matchedOptions") >= 1);
+        assertNull(filtered.get("omittedOptions"));
+
+        // the other kinds scope the same way, true is common and a wrong value is an error
+        assertNotNull(catalogDoc(Map.of("name", "split", "kind", "eip", "includeOptions", "true")).get("options"));
+        assertNull(catalogDoc(Map.of("name", "split", "kind", "eip", "includeOptions", "false")).get("options"));
+        assertTrue(catalogDoc(Map.of("name", "split", "includeOptions", "some")).getString("error")
+                .contains("includeOptions"));
     }
 
     @Test
@@ -216,5 +310,100 @@ class CatalogDocsTest {
         args.put("name", "nosuchthing");
         json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), args));
         assertTrue(json.contains("not found"), json);
+    }
+
+    @Test
+    void apiKindIsTheCompactReferenceOfACoreClass() throws Exception {
+        JsonObject exchange = catalogDoc(Map.of("name", "Exchange", "kind", "api"));
+
+        assertEquals("api", exchange.getString("kind"));
+        assertEquals("org.apache.camel.Exchange", exchange.getString("javaType"));
+        // the Camel 4 changes for a model trained on older Camel
+        assertTrue(exchange.getString("description").contains("getOut() is deprecated"), exchange.getString("description"));
+        List<JsonObject> methods = exchange.getCollection("methods").stream().map(JsonObject.class::cast).toList();
+        // the important methods first
+        assertEquals("getMessage", methods.get(0).getString("name"));
+        assertTrue(methods.get(0).getCollection("signatures").contains("Message getMessage()"));
+        assertTrue(methods.get(0).getCollection("examples").contains("exchange.getMessage().getBody(String.class)"));
+        // the overloads of an annotated method come from the compiled class
+        JsonObject getProperty = methods.stream().filter(m -> "getProperty".equals(m.getString("name"))).findFirst()
+                .orElseThrow();
+        assertTrue(getProperty.getCollection("signatures").contains("<T> T getProperty(String name, Class<T> type)"));
+        assertTrue(methods.stream().noneMatch(m -> "getOut".equals(m.getString("name"))), "deprecated is left out");
+        // the other cards, so a model can navigate
+        Collection<?> apis = exchange.getCollection("apis");
+        assertTrue(apis.contains("Message") && apis.contains("CamelContext") && apis.contains("groovy"), apis.toString());
+        assertNull(exchange.get("implementations"), "Exchange has no built-in implementations");
+
+        // a qualified name and a lower case name work too, and the kind is detected
+        assertEquals("api", catalogDoc(Map.of("name", "org.apache.camel.Message")).getString("kind"));
+        assertEquals("Message", catalogDoc(Map.of("name", "message", "kind", "api")).getString("name"));
+        assertTrue(json(Map.of("name", "message", "kind", "api")).contains("<T> T getHeader(String name, Class<T> type)"));
+
+        // an interface lists the catalog beans that implement it: the strategies exist, no need to write one
+        JsonObject strategy = catalogDoc(Map.of("name", "AggregationStrategy"));
+        assertEquals("api", strategy.getString("kind"), "the api card wins over a bean implementing the interface");
+        assertTrue(strategy.getString("description").contains("oldExchange is null"));
+        assertTrue(strategy.getCollection("implementations").stream()
+                .anyMatch(i -> i.toString().startsWith("GroupedBodyAggregationStrategy (")), strategy.toJson());
+        // the registry card carries the methods inherited from BeanRepository
+        assertTrue(json(Map.of("name", "Registry", "kind", "api")).contains("lookupByNameAndType"));
+
+        // a miss says which cards exist
+        JsonObject miss = catalogDoc(Map.of("name", "Nope", "kind", "api"));
+        assertTrue(miss.getString("error").contains("No API reference"));
+        assertTrue(miss.getCollection("apis").contains("Exchange"));
+        // and without the kind the usual not found
+        assertTrue(json(Map.of("name", "Nope")).contains("not found"));
+    }
+
+    @Test
+    void scriptVariablesAreACardOfTheirOwnAndComeWithTheLanguageDoc() throws Exception {
+        JsonObject groovy = catalogDoc(Map.of("name", "groovy", "kind", "api"));
+        assertEquals("api", groovy.getString("kind"));
+        JsonObject vars = groovy.getMap("variables");
+        assertTrue(vars.containsKey("camelContext") && vars.containsKey("message") && vars.containsKey("log"));
+        assertTrue(vars.getString("message").contains("request"), "the older name is given as an alias");
+        assertTrue(groovy.getString("note").contains("lookupByName('myBean')"), "a bean name is not a variable");
+        assertTrue(groovy.getCollection("apis").contains("Exchange"));
+
+        // javascript has context and message, not camelContext; joor and javascript are aliases
+        JsonObject js = catalogDoc(Map.of("name", "javascript", "kind", "api"));
+        assertEquals("js", js.getString("name"));
+        assertTrue(js.getMap("variables").containsKey("context"));
+        assertFalse(js.getMap("variables").containsKey("camelContext"));
+        assertTrue(catalogDoc(Map.of("name", "joor", "kind", "api")).getMap("variables").containsKey("optionalBody"));
+        // the template components share one card
+        assertEquals("template", catalogDoc(Map.of("name", "velocity", "kind", "api")).getString("name"));
+
+        // the language doc carries the same variables, so no kind is needed to find them
+        JsonObject lang = catalogDoc(Map.of("name", "groovy", "kind", "language"));
+        assertEquals("language", lang.getString("kind"));
+        assertTrue(lang.getMap("scriptVariables").containsKey("camelContext"));
+        assertTrue(lang.getString("scriptNote").contains("lookupByName('myBean')"));
+        assertNull(catalogDoc(Map.of("name", "simple", "kind", "language")).get("scriptVariables"));
+    }
+
+    @Test
+    void scriptVariableCardsDoNotDriftFromTheVariableMapCamelBinds() throws Exception {
+        // groovy and the template components bind ExchangeHelper.populateVariableMap (groovy adds attachments and log)
+        try (var context = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("hi");
+            Map<String, Object> bound = new HashMap<>();
+            ExchangeHelper.populateVariableMap(exchange, bound, true);
+            assertTrue(bound.size() > 10);
+            for (String card : List.of("groovy", "template")) {
+                JsonObject vars = CatalogDocs.scriptVariables(card).getMap("variables");
+                String text = vars.toJson();
+                for (String name : bound.keySet()) {
+                    assertTrue(vars.containsKey(name) || text.contains(name + " is an alias"),
+                            card + " card misses the variable " + name);
+                }
+            }
+            JsonObject groovy = CatalogDocs.scriptVariables("groovy").getMap("variables");
+            assertTrue(groovy.containsKey("message") && groovy.containsKey("attachments") && groovy.containsKey("log"),
+                    "the groovy extras");
+        }
     }
 }

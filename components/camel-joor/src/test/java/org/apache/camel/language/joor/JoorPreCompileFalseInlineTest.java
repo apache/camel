@@ -33,11 +33,11 @@ public class JoorPreCompileFalseInlineTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                JoorLanguage joor = (JoorLanguage) context.resolveLanguage("joor");
+                JavaLanguage joor = (JavaLanguage) context.resolveLanguage("java");
                 joor.setPreCompile(false);
 
                 from("direct:start")
-                        .transform().joor("'Hello ' + body")
+                        .transform().java("'Hello ' + body")
                         .to("mock:result");
             }
         };
@@ -45,7 +45,7 @@ public class JoorPreCompileFalseInlineTest extends CamelTestSupport {
 
     @Test
     public void testInlineScriptCompiledOnce() throws Exception {
-        JoorCompiler compiler = ((JoorLanguage) context.resolveLanguage("joor")).getCompiler();
+        JoorCompiler compiler = ((JavaLanguage) context.resolveLanguage("java")).getCompiler();
         // not pre-compiled, so nothing has been compiled before the first message
         assertEquals(0, compiler.getCounter());
 

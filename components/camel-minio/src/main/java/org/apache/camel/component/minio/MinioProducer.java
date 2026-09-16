@@ -59,6 +59,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * A Producer which sends messages to the Minio Simple Storage
  */
+@Deprecated(since = "4.23")
 public class MinioProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioProducer.class);

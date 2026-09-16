@@ -28,7 +28,6 @@ import java.util.Stack;
 
 import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
@@ -51,6 +50,9 @@ public class YamlValidateCommand extends CamelCommand {
                                       + " (use --catalog=false for the schema only)")
     boolean catalog = true;
 
+    @CommandLine.Mixin
+    CatalogVersionMixin catalogVersion;
+
     @CommandLine.Parameters(description = { "The Camel YAML source files to parse." },
                             arity = "1..9",
                             paramLabel = "<files>",
@@ -63,10 +65,11 @@ public class YamlValidateCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        YamlValidator validator = new YamlValidator(canonical);
-        validator.init();
+        // the catalog and schema of the Camel version and runtime asked for; the CLI's own without options
+        CatalogVersionMixin.Loaded loaded = catalogVersion.load();
+        YamlValidator validator = catalogVersion.yamlValidator(loaded, canonical);
 
-        CamelCatalog camelCatalog = catalog ? new DefaultCamelCatalog() : null;
+        CamelCatalog camelCatalog = catalog ? loaded.catalog() : null;
         Map<String, List<Error>> reports = new LinkedHashMap<>();
         for (String n : files) {
             if (matchFile(n)) {

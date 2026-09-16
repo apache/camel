@@ -655,14 +655,6 @@
         "description" : "Evaluates a Java (Java compiled once at runtime) expression",
         "label" : "language"
       }, {
-        "name" : "joor",
-        "type" : "object",
-        "ref" : "joor",
-        "title" : "jOOR",
-        "description" : "Evaluates a jOOR (Java compiled once at runtime) expression",
-        "label" : "language",
-        "deprecated" : true
-      }, {
         "name" : "jq",
         "type" : "object",
         "ref" : "jq",
@@ -2727,10 +2719,6 @@
         "name" : "java",
         "type" : "object",
         "ref" : "java"
-      }, {
-        "name" : "joor",
-        "type" : "object",
-        "ref" : "joor"
       }, {
         "name" : "jq",
         "type" : "object",
@@ -14046,7 +14034,7 @@
         "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ],
         "description" : "The cipher algorithm to be used for encryption/decryption of the XML message content.",
         "title" : "Xml Cipher Algorithm",
-        "default" : "AES-256-GCM"
+        "default" : "AES_256_GCM"
       } ]
     },
     "yAML" : {
@@ -15260,74 +15248,6 @@
         "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
         "title" : "Trim",
         "default" : "true"
-      } ]
-    },
-    "joor" : {
-      "title" : "jOOR",
-      "description" : "Evaluates a jOOR (Java compiled once at runtime) expression",
-      "deprecated" : true,
-      "label" : "language",
-      "children" : [ {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node.",
-        "title" : "Id",
-        "displayName" : "Id",
-        "kind" : "attribute",
-        "index" : 0,
-        "group" : "common"
-      }, {
-        "name" : "expression",
-        "type" : "string",
-        "description" : "The expression value in your chosen language syntax.",
-        "title" : "Expression",
-        "required" : true,
-        "displayName" : "Expression",
-        "kind" : "value",
-        "index" : 1,
-        "group" : "common"
-      }, {
-        "name" : "preCompile",
-        "type" : "boolean",
-        "description" : "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.",
-        "title" : "Pre Compile",
-        "default" : "true",
-        "displayName" : "Pre Compile",
-        "kind" : "attribute",
-        "index" : 2,
-        "group" : "advanced",
-        "label" : "advanced"
-      }, {
-        "name" : "singleQuotes",
-        "type" : "boolean",
-        "description" : "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.",
-        "title" : "Single Quotes",
-        "default" : "true",
-        "displayName" : "Single Quotes",
-        "kind" : "attribute",
-        "index" : 3,
-        "group" : "advanced",
-        "label" : "advanced"
-      }, {
-        "name" : "resultType",
-        "type" : "string",
-        "description" : "The class of the result type (type from output).",
-        "title" : "Result Type",
-        "displayName" : "Result Type",
-        "kind" : "attribute",
-        "index" : 4,
-        "group" : "common"
-      }, {
-        "name" : "trim",
-        "type" : "boolean",
-        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-        "title" : "Trim",
-        "default" : "true",
-        "displayName" : "Trim",
-        "kind" : "attribute",
-        "index" : 5,
-        "group" : "advanced",
-        "label" : "advanced"
       } ]
     },
     "jq" : {

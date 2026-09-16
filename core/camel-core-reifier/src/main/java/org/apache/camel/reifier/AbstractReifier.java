@@ -38,6 +38,7 @@ import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PojoBeanHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public abstract class AbstractReifier implements BeanRepository {
@@ -178,7 +179,10 @@ public abstract class AbstractReifier implements BeanRepository {
 
         Object obj = lookupByNameAndType(name, type);
         if (obj == null) {
-            throw new NoSuchBeanException(name, type.getName());
+            // a #class: whose class was not found: say which built-in bean was likely meant
+            // (a plain bean name that is not in the registry gets no hint as it is not a class)
+            String hint = name.startsWith("#class:") ? PojoBeanHelper.classNotFoundHint(camelContext, name, type) : null;
+            throw new NoSuchBeanException(name, type.getName(), hint);
         }
         return type.cast(obj);
     }
@@ -197,6 +201,24 @@ public abstract class AbstractReifier implements BeanRepository {
         if (answer == null) {
             // fallback to use registry which allows tooling to influence reifier that uses beans or classes
             return getRegistry().lookupByName(name);
+        }
+        return answer;
+    }
+
+    /**
+     * Looks up a bean by name as {@link #lookupByName(String)} does; the bean may be of any type (such as a POJO that
+     * is adapted afterwards). A <tt>#class:</tt> whose class does not exist fails here, with the built-in bean of the
+     * expected type that was likely meant, instead of answering <tt>null</tt>.
+     *
+     * @param name         the bean name or <tt>#class:</tt> reference
+     * @param expectedType the type the bean is expected to be, for the error message only
+     */
+    public Object lookupByName(String name, Class<?> expectedType) {
+        Object answer = lookupByName(name);
+        if (answer == null && name != null && parseString(name).startsWith("#class:")) {
+            name = parseString(name);
+            throw new NoSuchBeanException(
+                    name, expectedType.getName(), PojoBeanHelper.classNotFoundHint(camelContext, name, expectedType));
         }
         return answer;
     }

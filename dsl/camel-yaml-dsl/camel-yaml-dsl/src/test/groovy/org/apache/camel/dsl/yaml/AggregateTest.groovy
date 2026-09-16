@@ -121,4 +121,49 @@ class AggregateTest extends YamlTestSupport {
         then:
         MockEndpoint.assertIsSatisfied(context)
     }
+
+    // CAMEL-24709: a #class: whose class does not exist says which built-in strategy was likely meant
+    def 'aggregate (strategy-ref class not found)'() {
+        when:
+        loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - aggregate:
+                          aggregationStrategy: "#class:com.foo.UseLatestAggregationStrategy"
+                          completionSize: 2
+                          correlationExpression:
+                            simple: "${header.StockSymbol}"
+                          steps:
+                            - to: "mock:route"
+            '''
+
+        then:
+        def e = thrown(FailedToCreateRouteException)
+        def msg = e.message + '\n' + e.cause?.message
+        msg.contains('No bean could be found in the registry for: #class:com.foo.UseLatestAggregationStrategy of type: org.apache.camel.AggregationStrategy')
+        msg.contains('did you mean org.apache.camel.processor.aggregate.UseLatestAggregationStrategy (org.apache.camel.AggregationStrategy)?')
+    }
+
+    def 'aggregate (strategy-ref unknown class lists the built-in strategies)'() {
+        when:
+        loadRoutes '''
+                - from:
+                    uri: "direct:route"
+                    steps:
+                      - aggregate:
+                          aggregationStrategy: "#class:com.foo.MyStrategy"
+                          completionSize: 2
+                          correlationExpression:
+                            simple: "${header.StockSymbol}"
+                          steps:
+                            - to: "mock:route"
+            '''
+
+        then:
+        def e = thrown(FailedToCreateRouteException)
+        def msg = e.message + '\n' + e.cause?.message
+        msg.contains('the built-in AggregationStrategy beans are')
+        msg.contains('UseLatestAggregationStrategy (org.apache.camel.processor.aggregate.UseLatestAggregationStrategy)')
+    }
 }

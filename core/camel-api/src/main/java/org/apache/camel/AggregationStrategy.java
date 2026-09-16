@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.Metadata;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,13 @@ import org.slf4j.LoggerFactory;
  *
  * @since 3.0
  */
+@Metadata(label = "api",
+          description = "Merges the incoming exchange into the aggregated one, in aggregate, split, multicast, "
+                        + "recipientList, enrich and pollEnrich. On the first call oldExchange is null: return "
+                        + "newExchange, do not touch oldExchange. Return the exchange to keep, usually oldExchange with "
+                        + "the merged body; do not create a new one. The built-in strategies "
+                        + "(GroupedBodyAggregationStrategy, StringAggregationStrategy, ...) are catalog beans "
+                        + "(camel_catalog_find kind=bean term=AggregationStrategy).")
 public interface AggregationStrategy {
 
     /**
@@ -68,6 +76,15 @@ public interface AggregationStrategy {
      *                     input parameters; favor returning the old exchange whenever possible)
      */
     @Nullable
+    @Metadata(label = "api",
+              important = true,
+              description = "The aggregated exchange: when oldExchange is null (first message) return newExchange, else "
+                            + "merge newExchange into oldExchange and return oldExchange. A failed newExchange has its error "
+                            + "in newExchange.getException().",
+              examples = {
+                      "if (oldExchange == null) { return newExchange; } "
+                           + "oldExchange.getMessage().setBody(oldExchange.getMessage().getBody(String.class) "
+                           + "+ newExchange.getMessage().getBody(String.class)); return oldExchange;" })
     Exchange aggregate(@Nullable Exchange oldExchange, @Nullable Exchange newExchange);
 
     /**

@@ -1,1 +1,0 @@
-../../../../../components/camel-joor/src/main/docs/joor-language.adoc

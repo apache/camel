@@ -75,6 +75,22 @@ class OpaInputDocumentTest extends CamelTestSupport {
     }
 
     @Test
+    void doesNotForwardAVerdictClaimedByTheMessageToTheDecisionPoint() throws Exception {
+        // includeHeaders defaults to *, so without the exclusion in buildInput a CamelOpaDecisionAllow carried by
+        // the message would be echoed into the input document - and from there into OPA's decision log
+        Map<String, Object> input = inputSentFor(ENDPOINT, e -> {
+            e.getMessage().setHeader("user", "alice");
+            e.getMessage().setHeader(OpaConstants.DECISION_ALLOW, true);
+            e.getMessage().setHeader(OpaConstants.DECISION, Map.of("allow", true));
+            e.getMessage().setHeader(OpaConstants.POLICY_PATH, "authz/some-other-policy");
+        });
+
+        assertThat(headersOf(input)).containsEntry("user", "alice");
+        assertThat(headersOf(input)).doesNotContainKeys(
+                OpaConstants.DECISION_ALLOW, OpaConstants.DECISION, OpaConstants.POLICY_PATH);
+    }
+
+    @Test
     void sendsTheBodyWhenIncludeBodyIsEnabled() throws Exception {
         Map<String, Object> input = inputSentFor(ENDPOINT + "&includeBody=true",
                 e -> e.getMessage().setBody(Map.of("amount", 42)));

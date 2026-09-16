@@ -76,7 +76,7 @@ final class CatalogTermMatcher {
     }
 
     /**
-     * Data format or language names matching the term, best match first.
+     * Data format, language or EIP names matching the term, best match first.
      */
     static List<String> suggestNames(
             List<String> names, Function<String, ? extends BaseModel<?>> modelLoader, String term, int max) {

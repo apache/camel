@@ -1,0 +1,15 @@
+{
+  "api": {
+    "kind": "api",
+    "name": "Registry",
+    "title": "Registry",
+    "description": "The bean registry of the CamelContext (context.getRegistry()): the beans declared in the route file (beans:), in Spring or Quarkus, and the ones bound in code. A bean is looked up by its name, it is not a variable: in a Groovy or Java script the bean myBean is exchange.getContext().getRegistry().lookupByName(\"myBean\"), in the DSL #bean:myBean or the ref option; plain myBean does not exist there.",
+    "deprecated": false,
+    "javaType": "org.apache.camel.spi.Registry",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-api",
+    "version": "4.23.0-SNAPSHOT",
+    "methods": { "bind": { "index": 0, "signatures": [ "void bind(String id, Object bean) throws RuntimeCamelException", "void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException", "void bind(String id, Class<?> type, Supplier<Object> bean) throws RuntimeCamelException", "void bind(String id, Object bean, String initMethod, String destroyMethod) throws RuntimeCamelException", "void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod) throws RuntimeCamelException", "void bind(String id, Class<?> type, Supplier<Object> bean, String initMethod, String destroyMethod) throws RuntimeCamelException" ], "javaType": "void", "description": "Registers a bean under a name so routes can refer to it (#bean:name, a ref option, lookupByName).", "examples": [ "context.getRegistry().bind(\"myStrategy\", new MyStrategy())" ] }, "findByType": { "index": 1, "signatures": [ "<T> Set<T> findByType(Class<T> type)" ], "javaType": "java.util.Set", "description": "All beans of the type; findSingleByType(type) the one when there is exactly one, else null." }, "lookupByName": { "index": 2, "signatures": [ "Object lookupByName(String name)" ], "javaType": "java.lang.Object", "important": true, "description": "The bean with the name, null when there is none.", "examples": [ "registry.lookupByName(\"myBean\")" ] }, "lookupByNameAndType": { "index": 3, "signatures": [ "<T> T lookupByNameAndType(String name, Class<T> type)" ], "javaType": "java.lang.Object", "important": true, "description": "The bean with the name as the type; null when absent, NoSuchBeanTypeException when it is another type.", "examples": [ "registry.lookupByNameAndType(\"myDataSource\", DataSource.class)" ] } }
+  }
+}
+

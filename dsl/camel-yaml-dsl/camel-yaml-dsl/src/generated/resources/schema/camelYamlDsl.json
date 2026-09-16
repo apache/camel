@@ -820,7 +820,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -1324,7 +1323,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -1419,7 +1417,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -1557,7 +1554,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -1697,8 +1693,6 @@
               }, {
                 "required" : [ "java" ]
               }, {
-                "required" : [ "joor" ]
-              }, {
                 "required" : [ "jq" ]
               }, {
                 "required" : [ "js" ]
@@ -1792,14 +1786,6 @@
             "properties" : {
               "java" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
-              }
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "joor" ],
-            "properties" : {
-              "joor" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
               }
             }
           }, {
@@ -1965,7 +1951,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -2125,7 +2110,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -2334,7 +2318,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -2836,7 +2819,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -3706,7 +3688,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -4171,7 +4152,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -4282,7 +4262,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -4447,7 +4426,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -4913,7 +4891,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -5591,7 +5568,6 @@
             "hl7terser" : { },
             "jactl" : { },
             "java" : { },
-            "joor" : { },
             "jq" : { },
             "js" : { },
             "jsonpath" : { },
@@ -5786,7 +5762,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -5859,7 +5834,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -5977,7 +5951,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6093,7 +6066,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6172,7 +6144,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6262,8 +6233,6 @@
               }, {
                 "required" : [ "java" ]
               }, {
-                "required" : [ "joor" ]
-              }, {
                 "required" : [ "jq" ]
               }, {
                 "required" : [ "js" ]
@@ -6350,7 +6319,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6534,7 +6502,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6913,7 +6880,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -7354,7 +7320,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -7978,7 +7943,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -8074,7 +8038,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -11302,7 +11265,7 @@
             "type" : "string",
             "title" : "Xml Cipher Algorithm",
             "description" : "The cipher algorithm to be used for encryption/decryption of the XML message content.",
-            "default" : "AES-256-GCM",
+            "default" : "AES_256_GCM",
             "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ]
           }
         }
@@ -12006,14 +11969,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "joor" ],
-            "properties" : {
-              "joor" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "jq" ],
             "properties" : {
               "jq" : {
@@ -12175,7 +12130,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -12402,53 +12356,6 @@
               "type" : "string",
               "title" : "Result Type",
               "description" : "The class of the result type (type from output)."
-            },
-            "trim" : {
-              "type" : "boolean",
-              "title" : "Trim",
-              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-              "default" : true
-            }
-          }
-        } ],
-        "required" : [ "expression" ]
-      },
-      "org.apache.camel.model.language.JoorExpression" : {
-        "title" : "jOOR",
-        "description" : "Evaluates a jOOR (Java compiled once at runtime) expression",
-        "deprecated" : true,
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "additionalProperties" : false,
-          "properties" : {
-            "expression" : {
-              "type" : "string",
-              "title" : "Expression",
-              "description" : "The expression value in your chosen language syntax."
-            },
-            "id" : {
-              "type" : "string",
-              "title" : "Id",
-              "description" : "The id of this node."
-            },
-            "preCompile" : {
-              "type" : "boolean",
-              "title" : "Pre Compile",
-              "description" : "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.",
-              "default" : true
-            },
-            "resultType" : {
-              "type" : "string",
-              "title" : "Result Type",
-              "description" : "The class of the result type (type from output)."
-            },
-            "singleQuotes" : {
-              "type" : "boolean",
-              "title" : "Single Quotes",
-              "description" : "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.",
-              "default" : true
             },
             "trim" : {
               "type" : "boolean",
@@ -16388,14 +16295,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "joor" ],
-            "properties" : {
-              "joor" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "jq" ],
             "properties" : {
               "jq" : {
@@ -16557,7 +16456,6 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
-          "joor" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },

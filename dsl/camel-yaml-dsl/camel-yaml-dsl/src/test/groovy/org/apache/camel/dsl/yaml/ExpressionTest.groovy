@@ -171,4 +171,24 @@ class ExpressionTest extends YamlTestSupport {
         context.routeDefinitions.size() == 1
     }
 
+    // CAMEL-24752: an unknown expression id says which built-in language was likely meant
+    def "Error: explicit not existing says did you mean"() {
+        when:
+        loadRoutesNoValidate('''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - setBody:
+                          expression:
+                            simpel: "${body}"
+            ''')
+        then:
+        def e = thrown(Exception)
+        def messages = []
+        for (Throwable t = e; t != null; t = t.cause) {
+            messages << t.message
+        }
+        messages.any { it != null && it.contains("Unknown expression with id: simpel (not a built-in Camel language; did you mean 'simple'?)") }
+    }
+
 }

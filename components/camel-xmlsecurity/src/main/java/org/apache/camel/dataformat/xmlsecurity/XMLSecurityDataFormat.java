@@ -73,6 +73,53 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLSecurityDataFormat.class);
 
+    /**
+     * Maps the Java constant names exposed in the model (e.g. {@code "AES_256_GCM"}, {@code "RSA_OAEP"},
+     * {@code "SHA1"}, {@code "MGF1_SHA1"}) to the W3C algorithm URIs expected by {@link XMLCipher#getInstance(String)}.
+     * A value that is already a URI (i.e. not present in the map) is passed through unchanged, so existing routes that
+     * use URIs directly continue to work.
+     */
+    private static final Map<String, String> ALGORITHM_NAME_TO_URI;
+
+    static {
+        ALGORITHM_NAME_TO_URI = Map.ofEntries(
+                // XMLCipher data-encryption algorithms
+                Map.entry("TRIPLEDES", XMLCipher.TRIPLEDES),
+                Map.entry("AES_128", XMLCipher.AES_128),
+                Map.entry("AES_128_GCM", XMLCipher.AES_128_GCM),
+                Map.entry("AES_192", XMLCipher.AES_192),
+                Map.entry("AES_192_GCM", XMLCipher.AES_192_GCM),
+                Map.entry("AES_256", XMLCipher.AES_256),
+                Map.entry("AES_256_GCM", XMLCipher.AES_256_GCM),
+                Map.entry("SEED_128", XMLCipher.SEED_128),
+                Map.entry("CAMELLIA_128", XMLCipher.CAMELLIA_128),
+                Map.entry("CAMELLIA_192", XMLCipher.CAMELLIA_192),
+                Map.entry("CAMELLIA_256", XMLCipher.CAMELLIA_256),
+                // XMLCipher key-encryption algorithms
+                Map.entry("RSA_v1dot5", XMLCipher.RSA_v1dot5),
+                Map.entry("RSA_OAEP", XMLCipher.RSA_OAEP),
+                Map.entry("RSA_OAEP_11", XMLCipher.RSA_OAEP_11),
+                // Digest algorithms (used with RSA-OAEP)
+                Map.entry("SHA1", XMLCipher.SHA1),
+                Map.entry("SHA256", XMLCipher.SHA256),
+                Map.entry("SHA512", XMLCipher.SHA512),
+                // MGF algorithms (used with RSA-OAEP)
+                Map.entry("MGF1_SHA1", EncryptionConstants.MGF1_SHA1),
+                Map.entry("MGF1_SHA256", EncryptionConstants.MGF1_SHA256),
+                Map.entry("MGF1_SHA512", EncryptionConstants.MGF1_SHA512));
+    }
+
+    /**
+     * Resolves a constant name (e.g. {@code "AES_256_GCM"}) to its W3C URI. If the value is already a URI or
+     * {@code null}, it is returned unchanged.
+     */
+    static String resolveAlgorithm(String nameOrUri) {
+        if (nameOrUri == null) {
+            return null;
+        }
+        return ALGORITHM_NAME_TO_URI.getOrDefault(nameOrUri, nameOrUri);
+    }
+
     private String xmlCipherAlgorithm;
     private String keyCipherAlgorithm;
 
@@ -793,7 +840,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     }
 
     public void setXmlCipherAlgorithm(String xmlCipherAlgorithm) {
-        this.xmlCipherAlgorithm = xmlCipherAlgorithm;
+        this.xmlCipherAlgorithm = resolveAlgorithm(xmlCipherAlgorithm);
     }
 
     public String getKeyCipherAlgorithm() {
@@ -801,7 +848,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     }
 
     public void setKeyCipherAlgorithm(String keyCipherAlgorithm) {
-        this.keyCipherAlgorithm = keyCipherAlgorithm;
+        this.keyCipherAlgorithm = resolveAlgorithm(keyCipherAlgorithm);
     }
 
     public String getRecipientKeyAlias() {
@@ -861,7 +908,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     }
 
     public void setDigestAlgorithm(String digestAlgorithm) {
-        this.digestAlgorithm = digestAlgorithm;
+        this.digestAlgorithm = resolveAlgorithm(digestAlgorithm);
     }
 
     public String getMgfAlgorithm() {
@@ -869,7 +916,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     }
 
     public void setMgfAlgorithm(String mgfAlgorithm) {
-        this.mgfAlgorithm = mgfAlgorithm;
+        this.mgfAlgorithm = resolveAlgorithm(mgfAlgorithm);
     }
 
     public boolean isAddKeyValueForEncryptedKey() {

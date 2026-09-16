@@ -185,7 +185,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                 .addStatement("ExpressionDefinition answer = constructExpressionType(key, val)")
                                 .beginControlFlow("if (answer == null)")
                                 .addStatement(
-                                        "throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, \"Unknown expression with id: \" + key + (\"bean\".equals(key) ? \" (the bean language is written as method: {ref: myBean, method: process})\" : \"\"))")
+                                        "throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, \"Unknown expression with id: \" + key + (\"bean\".equals(key) ? \" (the bean language is written as method: {ref: myBean, method: process})\" : org.apache.camel.util.ArtifactUtils.languageHint(key)))")
                                 .endControlFlow()
                                 .addStatement("return answer")
                                 .build())

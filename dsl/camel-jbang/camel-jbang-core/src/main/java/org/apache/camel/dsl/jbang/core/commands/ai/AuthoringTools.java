@@ -61,13 +61,15 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Catalog documentation of a component, data format, language, EIP or built-in bean: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
-                .param("name", "string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split", false)
+                "Catalog documentation of a component, data format, language, EIP, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
+                .param("name", "string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange", false)
                 .param("endpoint", "string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092", false)
                 .param("kind", "string",
-                        "component, dataformat, language, eip or bean (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it)",
+                        "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                         false)
-                .param("includeOptions", "boolean", "Include the options (default true)", false)
+                .param("includeOptions", "string",
+                        "common (default: no deprecated or advanced), required, all or false", false)
+                .param("includeHeaders", "boolean", "Include the message headers of a component (default false)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
                 .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
                         false)
@@ -77,20 +79,23 @@ public final class AuthoringTools {
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
-                            args.get("kind"), args.get("optionsFilter"), bool(args, "includeOptions", true),
-                            bool(args, "includeDoc", false), args.get("docPage")).toJson();
+                            args.get("kind"), args.get("optionsFilter"), args.get("includeOptions"),
+                            bool(args, "includeHeaders", false), bool(args, "includeDoc", false),
+                            args.get("docPage")).toJson();
                 }));
 
         registry.accept(tool("camel_catalog_find",
-                "Finds Camel components, data formats and languages by a protocol, product or other term that is not "
-                                                   + "the exact name (mqtt, s3, snowflake, csv): best match first with title and "
-                                                   + "description. camel_catalog_doc then gives the options of one.")
-                .param("term", "string", "What to look for, e.g. mqtt, s3, database, csv", true)
+                "Finds Camel components, data formats, languages and EIPs by a protocol, product, alias or other term "
+                                                   + "that is not the exact name (mqtt, s3, snowflake, csv, fan-out, dedup): best "
+                                                   + "match first with title and description. camel_catalog_doc then gives the "
+                                                   + "options of one.")
+                .param("term", "string", "What to look for, e.g. mqtt, s3, database, csv, fan-out", true)
                 .param("kind", "string",
-                        "component, dataformat, language or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
+                        "component, dataformat, language, eip or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
                         false)
                 .param("limit", "integer", "Maximum matches per kind (default 10)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
+                .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.find(ctx.catalog(), args.get("term"), args.get("kind"),

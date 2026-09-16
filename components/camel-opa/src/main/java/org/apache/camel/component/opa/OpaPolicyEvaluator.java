@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +55,7 @@ public abstract class OpaPolicyEvaluator {
     private final Set<String> includedProperties;
     private final boolean includeBody;
     private final boolean failOpen;
+    private final AtomicBoolean unreadableVerdictWarned = new AtomicBoolean();
 
     protected OpaPolicyEvaluator(String policyPath, String allowKey, String includeHeaders,
                                  String includeProperties, boolean includeBody, boolean failOpen) {
@@ -74,6 +77,11 @@ public abstract class OpaPolicyEvaluator {
      * @throws OpaPolicyEvaluationException when the policy could not be evaluated and {@code failOpen} is false
      */
     public boolean evaluate(Exchange exchange) throws OpaPolicyEvaluationException {
+        // a verdict the message arrived with is a claim, not evidence. Clear it before deciding anything, so that
+        // every way out of this method - allowed, denied, or a failure the route goes on to handle - leaves only
+        // what this component decided. Overwriting at the end is not enough: the paths that throw never get there,
+        // and a route that handles the exception would resume routing with the sender's own verdict still on it
+        clearDecisionHeaders(exchange);
         Object decision;
         try {
             decision = evaluateDecision(buildInput(exchange));
@@ -178,12 +186,53 @@ public abstract class OpaPolicyEvaluator {
         if (decision instanceof Boolean b) {
             return b;
         }
-        if (decision instanceof Map<?, ?> map && map.get(allowKey) instanceof Boolean b) {
+        if (readVerdict(decision) instanceof Boolean b) {
             return b;
         }
-        LOG.debug("Policy {} returned a decision with no boolean '{}' verdict, denying. Decision: {}",
-                policyPath, allowKey, decision);
+        // a decision document we cannot read a verdict from is a configuration problem, not a routine deny, and the
+        // route cannot tell the two apart from the verdict header alone - so say so at WARN. Once only: a policy
+        // written as deny[msg] without a `default allow := false` reaches this on every legitimate deny, which on a
+        // busy route would be a log flood carrying a whole decision document per message.
+        if (unreadableVerdictWarned.compareAndSet(false, true)) {
+            LOG.warn("Policy {} returned a decision with no boolean '{}' verdict, denying. Check that allowKey"
+                     + " matches the shape the policy returns; the raw document is on the {} header. Logged once"
+                     + " per evaluator - later occurrences are at DEBUG.",
+                    policyPath, allowKey, OpaConstants.DECISION);
+        }
+        LOG.debug("Policy {} returned no boolean '{}' verdict, denying. Decision: {}", policyPath, allowKey, decision);
         return false;
+    }
+
+    /**
+     * Reads {@code allowKey} out of the decision document, walking a dotted path so a verdict nested inside the result
+     * - {@code allowKey=result.allow} against <code>{"result": {"allow": true}}</code> - can be reached. A key with no
+     * dot is looked up directly, exactly as before.
+     */
+    private Object readVerdict(Object decision) {
+        if (!(decision instanceof Map<?, ?> top)) {
+            return null;
+        }
+        // a top-level entry under the whole key wins over walking it as a path, so an allowKey that itself
+        // contains a dot resolves exactly as it did before dotted paths were understood
+        Object direct = top.get(allowKey);
+        if (direct != null) {
+            return direct;
+        }
+        Object current = decision;
+        for (String segment : allowKey.split("\\.", -1)) {
+            if (!(current instanceof Map<?, ?> map)) {
+                return null;
+            }
+            current = map.get(segment);
+        }
+        return current;
+    }
+
+    private static void clearDecisionHeaders(Exchange exchange) {
+        Message message = exchange.getMessage();
+        message.removeHeader(OpaConstants.DECISION_ALLOW);
+        message.removeHeader(OpaConstants.DECISION);
+        message.removeHeader(OpaConstants.POLICY_PATH);
     }
 
     private void setDecisionHeaders(Exchange exchange, Object decision, boolean allowed) {

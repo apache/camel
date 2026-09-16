@@ -68,9 +68,9 @@ public class SpiffeConfiguration implements Cloneable {
 
     /**
      * The comma-separated audience(s) to request for a JWT-SVID (fetchJwtSvid) or to validate against
-     * (validateJwtSvid). Can be overridden per-message with the {@code CamelSpiffeAudience} header. Note that
-     * validateJwtSvid validates against a single audience, so when several comma-separated audiences are given only the
-     * first one is used for validation; fetchJwtSvid requests all of them.
+     * (validateJwtSvid). fetchJwtSvid requests all of them and can be overridden per-message with the
+     * {@code CamelSpiffeAudience} header; validateJwtSvid ignores that header and uses this configuration only,
+     * accepting the token if it matches any of the configured audiences, trying each in turn.
      */
     public String getAudience() {
         return audience;

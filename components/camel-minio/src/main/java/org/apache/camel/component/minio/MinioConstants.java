@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Constants used in Camel Minio module
  */
+@Deprecated(since = "4.23")
 public interface MinioConstants {
 
     int BYTE_ARRAY_LENGTH = 1024;

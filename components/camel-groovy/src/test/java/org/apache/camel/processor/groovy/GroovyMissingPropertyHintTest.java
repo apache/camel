@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,6 +51,12 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
                 cause.getMessage());
     }
 
+    @Test
+    public void messageIsAScriptVariableAsTheHintSays() {
+        String out = template.requestBodyAndHeader("direct:message", "World", "name", "Hello", String.class);
+        assertEquals("Hello World", out);
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -57,6 +64,7 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
             public void configure() {
                 from("direct:bean").transform().groovy("formatter.append(body)");
                 from("direct:unknown").transform().groovy("nosuch.toUpperCase()");
+                from("direct:message").transform().groovy("message.getHeader('name') + ' ' + message.body");
             }
         };
     }

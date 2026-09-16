@@ -53,6 +53,10 @@ public interface BeanRepository {
      * @return      the bean from the registry or <tt>null</tt> if it could not be found
      */
     @Nullable
+    @Metadata(label = "api",
+              important = true,
+              description = "The bean with the name, null when there is none.",
+              examples = { "registry.lookupByName(\"myBean\")" })
     Object lookupByName(String name);
 
     /**
@@ -62,6 +66,11 @@ public interface BeanRepository {
      * @param  type the type of the required bean
      * @return      the bean from the registry or <tt>null</tt> if it could not be found
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "The bean with the name as the type; null when absent, NoSuchBeanTypeException when it is "
+                            + "another type.",
+              examples = { "registry.lookupByNameAndType(\"myDataSource\", DataSource.class)" })
     <T> @Nullable T lookupByNameAndType(String name, Class<T> type);
 
     /**
@@ -78,6 +87,8 @@ public interface BeanRepository {
      * @param  type the type of the beans
      * @return      the types found. Returns an empty Set if none found.
      */
+    @Metadata(label = "api",
+              description = "All beans of the type; findSingleByType(type) the one when there is exactly one, else null.")
     <T> Set<T> findByType(Class<T> type);
 
     /**
