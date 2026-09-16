@@ -133,6 +133,24 @@ class RouteTemplateTest extends YamlTestSupport {
                             steps:
                               - to: "direct:myId"
                               - to: "mock:result"
+                    """),
+                asResource('script-without-type', """
+                        - routeTemplate:
+                            id: "myTemplate"
+                            beans:
+                              - name: "myProcessor"
+                                scriptLanguage: "groovy"
+                                script: "new ${MyUppercaseProcessor.class.name}()"
+                            from:
+                              uri: "direct:{{directName}}"
+                              steps:
+                                - process:
+                                    ref: "{{myProcessor}}"
+                        - from:
+                            uri: "direct:start"
+                            steps:
+                              - to: "direct:myId"
+                              - to: "mock:result"
                     """)
         ]
     }

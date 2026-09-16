@@ -2936,11 +2936,12 @@ The name of the bean (bean id).
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="type" type="xs:string" use="required">
+    <xs:attribute name="type" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-The class name (fully qualified) of the bean.
+The class name (fully qualified) of the bean. Required unless the bean is created by a script (scriptLanguage) or a
+builder (builderClass), where the type is optional and is then the type the bean is registered as.
 ]]>
         </xs:documentation>
       </xs:annotation>

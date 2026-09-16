@@ -56,8 +56,9 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     @XmlAttribute(required = true)
     @Metadata(description = "The name of the bean (bean id).")
     private String name;
-    @XmlAttribute(required = true)
-    @Metadata(description = "The class name (fully qualified) of the bean.")
+    @XmlAttribute
+    @Metadata(description = "The class name (fully qualified) of the bean. Required unless the bean is created by a script (scriptLanguage)"
+                            + " or a builder (builderClass), where the type is optional and is then the type the bean is registered as.")
     private String type;
     @XmlAttribute
     @Metadata(label = "advanced",

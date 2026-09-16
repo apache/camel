@@ -742,10 +742,10 @@
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "The class name (fully qualified) of the bean."
+            "description" : "The class name (fully qualified) of the bean. Required unless the bean is created by a script (scriptLanguage) or a builder (builderClass), where the type is optional and is then the type the bean is registered as."
           }
         },
-        "required" : [ "name", "type" ]
+        "required" : [ "name" ]
       },
       "org.apache.camel.model.CacheDefinition" : {
         "title" : "Cache",

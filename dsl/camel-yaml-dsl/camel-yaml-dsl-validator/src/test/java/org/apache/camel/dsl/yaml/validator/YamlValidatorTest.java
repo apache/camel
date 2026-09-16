@@ -59,6 +59,15 @@ public class YamlValidatorTest {
     }
 
     @Test
+    public void testScriptAndBuilderBeanWithoutType() throws Exception {
+        // CAMEL-24775: the type (class name) is optional for a bean created by a script or a builder, in the
+        // registry beans and in a route template, as it is for the runtime and the Java DSL
+        var report = validator.validate(new File("src/test/resources/script-bean-without-type.yaml"));
+        Assertions.assertTrue(report.isEmpty(), "A scripted or built bean needs no type but got: "
+                                                + report.stream().map(e -> e.getMessage()).toList());
+    }
+
+    @Test
     public void testTypeMismatchFiltersOneOfNoise() throws Exception {
         var report = validator.validate(new File("src/test/resources/type-mismatch.yaml"));
         // should filter dozens of "required property 'X' not found" noise down to the real error
