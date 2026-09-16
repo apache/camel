@@ -215,8 +215,13 @@ final class EndpointChecks {
         }
         CamelCatalog plain = defaultCatalog;
         if (plain == null) {
-            plain = new DefaultCamelCatalog();
-            defaultCatalog = plain;
+            synchronized (EndpointChecks.class) {
+                plain = defaultCatalog;
+                if (plain == null) {
+                    plain = new DefaultCamelCatalog();
+                    defaultCatalog = plain;
+                }
+            }
         }
         if (plain.componentModel(scheme) == null) {
             return null;
