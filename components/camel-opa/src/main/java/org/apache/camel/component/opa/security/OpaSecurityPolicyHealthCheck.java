@@ -14,31 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.opa;
+package org.apache.camel.component.opa.security;
 
 import java.util.Map;
 
+import org.apache.camel.component.opa.OpaHealthProbe;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.URISupport;
 
 /**
- * Readiness check for the OPA server a producer sends its decisions to.
+ * Readiness check for the OPA server behind an {@link OpaSecurityPolicy}.
  * <p/>
- * The component fails closed, so an OPA server that cannot be reached fails every exchange through the route. This
- * check probes the server's {@code /health} endpoint so that an unavailable policy decision point is visible before
- * traffic starts failing, rather than only in the error logs afterwards.
+ * The policy is the stricter of the component's two paths: a denied producer merely records a verdict the route can
+ * inspect, while this one throws {@link org.apache.camel.CamelAuthorizationException} and stops the exchange. So an
+ * unreachable server here fails every message outright, which is exactly the condition worth surfacing before traffic
+ * arrives rather than after.
  */
-public class OpaProducerHealthCheck extends AbstractHealthCheck {
+public class OpaSecurityPolicyHealthCheck extends AbstractHealthCheck {
 
     private final String serverUrl;
     private final String bearerToken;
     private final String policyPath;
 
-    public OpaProducerHealthCheck(String serverUrl, String bearerToken, String policyPath, String id) {
-        // the id is built from the endpoint URI so that two endpoints sharing a policy path stay distinct, but that
-        // URI carries the bearerToken in the clear and the id is published in the health output, so sanitize it
-        super("camel", "producer:opa-" + URISupport.sanitizeUri(id));
+    public OpaSecurityPolicyHealthCheck(String serverUrl, String bearerToken, String policyPath) {
+        // serverUrl and policyPath together identify the decision this policy enforces, so two policies pointing at
+        // different servers stay distinct; sanitized because the id is published in the health output
+        super("camel", "security-policy:opa-" + URISupport.sanitizeUri(serverUrl + "/" + policyPath));
         this.serverUrl = serverUrl;
         this.bearerToken = bearerToken;
         this.policyPath = policyPath;
