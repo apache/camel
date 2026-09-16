@@ -721,6 +721,39 @@ level of the security layer; the server does not ask before writing a file, that
 
 `camel-jbang-core` now depends on `camel-yaml-dsl-validator` for the source validation behind these tools.
 
+The older `camel mcp` tools that asked the same questions as the shared tools were removed, so a client no
+longer has two near-identical tools to pick from. Update MCP clients and prompts that name them:
+
+[cols="1,1",options="header"]
+|===
+| Removed tool | Use instead
+
+| `camel_catalog_component_doc`, `camel_catalog_dataformat_doc`, `camel_catalog_language_doc`, `camel_catalog_eip_doc`
+| `camel_catalog_doc` with the `kind` (`optionsFilter`, `includeOptions`, `includeHeaders`, `includeDoc`)
+
+| `camel_catalog_component_maven`
+| `camel_catalog_doc`, which returns the Maven coordinates
+
+| `camel_catalog_components`, `camel_catalog_dataformats`, `camel_catalog_languages`, `camel_catalog_eips`
+| `camel_catalog_find` with the `kind` (the EIP aliases such as `fan-out` and `dedup` match)
+
+| `camel_validate_yaml_dsl`, `camel_validate_route`
+| `camel_validate_source`; an endpoint URI alone is checked by `camel_catalog_doc` with `endpoint`
+
+| `camel_runtime_eval`
+| `camel_eval_expression`
+
+| `camel_runtime_errors`
+| `camel_get_errors`
+
+| `camel_runtime_stop`
+| `camel_control` with `action=stop`
+|===
+
+The shared catalog tools answer for the Camel version in use, or the `camelVersion` given; the `runtime`
+(`spring-boot`, `quarkus`) and `platformBom` arguments of the removed tools have no equivalent there. The
+`camel_build_integration` prompt names the shared tools now.
+
 === camel-jbang (TUI)
 
 The F8 AI panel now sends only a core subset of its `tui_*` tools to local providers (Ollama, or any

@@ -68,17 +68,17 @@ class AuthoringToolsTest {
 
     @Test
     void catalogDocAnswersWithOptionsAndUriRules() {
-        JsonObject timer = tools.camel_catalog_doc("timer", null, "component", null, null, null, null, null);
+        JsonObject timer = tools.camel_catalog_doc("timer", null, "component", null, null, null, null, null, null);
         assertThat(timer.getString("kind")).isEqualTo("component");
         assertThat(timer.getString("uriSyntax")).contains("(timerName) go in the path");
         assertThat(timer.getInteger("matchedOptions")).isGreaterThan(5);
-        JsonObject check = tools.camel_catalog_doc(null, "timer:tick?periodd=5s", null, null, null, null, null, null);
+        JsonObject check = tools.camel_catalog_doc(null, "timer:tick?periodd=5s", null, null, null, null, null, null, null);
         assertThat(check.getBoolean("valid")).isFalse();
         assertThat(List.copyOf(check.getCollection("problems")).get(0).toString()).contains("periodd");
         // a lookup that finds nothing answers with an error field and suggestions, as the TUI does, not an exception
-        assertThat(tools.camel_catalog_doc(null, null, null, null, null, null, null, null).getString("error"))
+        assertThat(tools.camel_catalog_doc(null, null, null, null, null, null, null, null, null).getString("error"))
                 .contains("required");
-        JsonObject mqtt = tools.camel_catalog_doc("mqtt", null, "component", null, null, null, null, null);
+        JsonObject mqtt = tools.camel_catalog_doc("mqtt", null, "component", null, null, null, null, null, null);
         assertThat(mqtt.getString("error")).contains("mqtt");
         assertThat(List.copyOf(mqtt.getCollection("suggestions")).toString()).contains("paho-mqtt5");
     }
@@ -138,7 +138,7 @@ class AuthoringToolsTest {
         Map<String, String> args = AuthoringTools.args("name", "timer", "kind", "", "limit", 3, "dev", true, "x", null);
         assertThat(args).containsExactly(Map.entry("name", "timer"), Map.entry("limit", "3"), Map.entry("dev", "true"));
         // a blank kind means auto-detect, not "a kind called nothing"
-        assertThat(tools.camel_catalog_doc("timer", "", "", null, null, "", "period", "").getString("kind"))
+        assertThat(tools.camel_catalog_doc("timer", "", "", null, null, null, "", "period", "").getString("kind"))
                 .isEqualTo("component");
         assertThat(tools.camel_catalog_find("mqtt", "", null, "").getInteger("count")).isGreaterThan(0);
     }

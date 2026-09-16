@@ -75,14 +75,17 @@ public final class CatalogDocs {
      * @param  kind           component, dataformat, language, eip, bean or api; null to detect
      * @param  optionsFilter  keyword to match in option names, descriptions and groups; also picks the simple functions
      *                        and operators to list in full
-     * @param  includeOptions whether to list the options
+     * @param  includeOptions which options to list: {@code common} (the default; without the deprecated and advanced
+     *                        ones), {@code required}, {@code all} or {@code false}; {@code true} is {@code common}. A
+     *                        filter searches all options
+     * @param  includeHeaders whether to list the message headers of a component (name, constant, type, group)
      * @param  includeDoc     whether to add the full AsciiDoc page
      * @param  docPage        a language doc sub-page (simple: functions, operators, ognl, advanced) to return as text
      * @return                the JSON result, an {@code error} object when nothing matches
      */
     public static JsonObject catalogDoc(
             CamelCatalog catalog, String name, String endpoint, String kind, String optionsFilter,
-            boolean includeOptions, boolean includeDoc, String docPage) {
+            String includeOptions, boolean includeHeaders, boolean includeDoc, String docPage) {
         if (endpoint != null && !endpoint.isBlank()) {
             return validateEndpoint(catalog, endpoint.trim());
         }
@@ -91,12 +94,16 @@ public final class CatalogDocs {
         }
         String page = docPage != null ? docPage.trim().toLowerCase(Locale.ROOT) : null;
         String lowerFilter = optionsFilter != null && !optionsFilter.isBlank() ? optionsFilter.toLowerCase() : null;
+        OptionScope scope = OptionScope.parse(includeOptions);
+        if (scope == null) {
+            return error("includeOptions must be common, required, all, true or false, got: " + includeOptions);
+        }
 
         if (kind == null || "component".equals(kind)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
                 String doc = includeDoc ? catalog.asciiDoc(name + "-component") : null;
-                return componentDoc(cm, lowerFilter, includeOptions, doc);
+                return componentDoc(cm, lowerFilter, scope, includeHeaders, doc);
             }
             JsonObject group = mainOptionsGroup(catalog, name);
             if (group != null) {
@@ -111,7 +118,7 @@ public final class CatalogDocs {
             DataFormatModel dm = catalog.dataFormatModel(name);
             if (dm != null) {
                 String doc = includeDoc ? catalog.asciiDoc(name + "-dataformat") : null;
-                return dataFormatDoc(dm, lowerFilter, includeOptions, doc);
+                return dataFormatDoc(dm, lowerFilter, scope, doc);
             }
             if (kind != null) {
                 return notFound("Data format", name, catalog.suggestDataFormatNames(name, 5));
@@ -132,7 +139,7 @@ public final class CatalogDocs {
                     doc = catalog.asciiDoc(name + "-language");
                 }
                 boolean docPageOnly = page != null && !page.isEmpty();
-                return languageDoc(lm, lowerFilter, includeOptions, doc, languageDocPages(catalog, name), docPageOnly);
+                return languageDoc(lm, lowerFilter, scope, doc, languageDocPages(catalog, name), docPageOnly);
             }
             if (kind != null) {
                 return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
@@ -141,11 +148,15 @@ public final class CatalogDocs {
         if (kind == null || "eip".equals(kind)) {
             EipModel em = catalog.eipModel(name);
             if (em != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-eip") : null;
-                return eipDoc(em, lowerFilter, includeOptions, doc);
+                return eipDoc(catalog, em, lowerFilter, scope, includeDoc, null);
             }
             if (kind != null) {
-                return error("EIP not found: " + name);
+                // an alias (fan-out, dedup, rate-limit) or a word of the title names the EIP as well
+                JsonObject byTerm = eipByTerm(catalog, name, lowerFilter, scope, includeDoc);
+                if (byTerm != null) {
+                    return byTerm;
+                }
+                return notFound("EIP", name, catalog.suggestEipNames(name, 5));
             }
         }
         if (kind == null || "api".equals(kind)) {
@@ -178,11 +189,42 @@ public final class CatalogDocs {
         if (group != null) {
             return group;
         }
+        // nothing has the exact name: an EIP alias such as fan-out or dedup is the last thing the name can be
+        JsonObject eip = eipByTerm(catalog, name, lowerFilter, scope, includeDoc);
+        if (eip != null) {
+            return eip;
+        }
         List<String> suggestions = new ArrayList<>(catalog.suggestComponentNames(name, 5));
         suggestions.addAll(catalog.suggestDataFormatNames(name, 3));
         suggestions.addAll(catalog.suggestLanguageNames(name, 3));
+        suggestions.addAll(catalog.suggestEipNames(name, 3));
         suggestions.addAll(findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(3).toList());
         return notFound("Artifact", name, suggestions);
+    }
+
+    /**
+     * The documentation of the EIP a term such as an alias (fan-out, dedup, rate-limit) or a word of the title names,
+     * with the term the caller used; null when no EIP matches.
+     */
+    private static JsonObject eipByTerm(
+            CamelCatalog catalog, String term, String filter, OptionScope scope, boolean includeDoc) {
+        List<String> names = catalog.suggestEipNames(term, 1);
+        if (names.isEmpty()) {
+            return null;
+        }
+        EipModel em = catalog.eipModel(names.get(0));
+        return em == null ? null : eipDoc(catalog, em, filter, scope, includeDoc, term);
+    }
+
+    private static JsonObject eipDoc(
+            CamelCatalog catalog, EipModel model, String filter, OptionScope scope, boolean includeDoc,
+            String matchedTerm) {
+        String doc = includeDoc ? catalog.asciiDoc(model.getName() + "-eip") : null;
+        JsonObject result = eipDoc(model, filter, scope, doc);
+        if (matchedTerm != null) {
+            result.put("matchedTerm", matchedTerm);
+        }
+        return result;
     }
 
     /**
@@ -241,11 +283,12 @@ public final class CatalogDocs {
 
     /**
      * Finds the catalog artifacts matching a term that need not be a name: a protocol (mqtt, amqp), a product (s3,
-     * snowflake) or a word of the title. Best match first, with the title and description so the caller can pick.
+     * snowflake), an EIP alias (fan-out, dedup) or a word of the title. Best match first, with the title and
+     * description so the caller can pick.
      *
      * @param catalog the catalog
      * @param term    what to look for
-     * @param kind    component, dataformat or language; null for all three
+     * @param kind    component, dataformat, language, eip or bean; null for all
      * @param limit   maximum matches per kind
      */
     public static JsonObject find(CamelCatalog catalog, String term, String kind, int limit) {
@@ -279,6 +322,18 @@ public final class CatalogDocs {
                 LanguageModel m = catalog.languageModel(name);
                 if (m != null) {
                     matches.add(summary("language", m.getName(), m.getTitle(), m.getDescription(), m.getLabel()));
+                }
+            }
+        }
+        if (kind == null || "eip".equals(kind)) {
+            for (String name : catalog.suggestEipNames(term, max)) {
+                EipModel m = catalog.eipModel(name);
+                if (m != null) {
+                    JsonObject o = summary("eip", m.getName(), m.getTitle(), m.getDescription(), m.getLabel());
+                    if (m.getAliases() != null && !m.getAliases().isEmpty()) {
+                        o.put("aliases", new JsonArray(m.getAliases()));
+                    }
+                    matches.add(o);
                 }
             }
         }
@@ -866,7 +921,8 @@ public final class CatalogDocs {
                + " in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
     }
 
-    private static JsonObject componentDoc(ComponentModel model, String filter, boolean includeOptions, String doc) {
+    private static JsonObject componentDoc(
+            ComponentModel model, String filter, OptionScope scope, boolean includeHeaders, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -885,26 +941,60 @@ public final class CatalogDocs {
         result.put("remote", model.isRemote());
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
+        result.put("version", model.getVersion());
         addCommonModelFields(result, model);
 
-        if (includeOptions) {
+        if (scope != OptionScope.NONE) {
             JsonArray options = new JsonArray();
+            int omitted = 0;
             if (model.getComponentOptions() != null) {
                 for (BaseOptionModel opt : model.getComponentOptions()) {
                     if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, "component"));
+                        if (scope.accepts(opt, filter)) {
+                            options.add(optionToJson(opt, "component"));
+                        } else {
+                            omitted++;
+                        }
                     }
                 }
             }
             if (model.getEndpointOptions() != null) {
                 for (BaseOptionModel opt : model.getEndpointOptions()) {
                     if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, "endpoint"));
+                        if (scope.accepts(opt, filter)) {
+                            options.add(optionToJson(opt, "endpoint"));
+                        } else {
+                            omitted++;
+                        }
                     }
                 }
             }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
+            putOptions(result, options, omitted, scope);
+        }
+        if (includeHeaders && model.getEndpointHeaders() != null) {
+            // the CamelXxx headers the component reads and sets, with the constant to use from Java
+            JsonArray headers = new JsonArray();
+            for (ComponentModel.EndpointHeaderModel h : model.getEndpointHeaders()) {
+                JsonObject jo = new JsonObject();
+                jo.put("name", h.getName());
+                if (h.getConstantName() != null) {
+                    jo.put("constantName", h.getConstantName());
+                }
+                if (h.getJavaType() != null) {
+                    jo.put("javaType", h.getJavaType());
+                }
+                if (h.getGroup() != null) {
+                    jo.put("group", h.getGroup());
+                }
+                if (h.isRequired()) {
+                    jo.put("required", true);
+                }
+                if (h.getDescription() != null) {
+                    jo.put("description", h.getDescription());
+                }
+                headers.add(jo);
+            }
+            result.put("headers", headers);
         }
         if (doc != null) {
             result.put("doc", doc);
@@ -912,7 +1002,7 @@ public final class CatalogDocs {
         return result;
     }
 
-    private static JsonObject dataFormatDoc(DataFormatModel model, String filter, boolean includeOptions, String doc) {
+    private static JsonObject dataFormatDoc(DataFormatModel model, String filter, OptionScope scope, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "dataformat");
         result.put("name", model.getName());
@@ -924,9 +1014,8 @@ public final class CatalogDocs {
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());
         addCommonModelFields(result, model);
-        if (includeOptions) {
-            result.put("options", filteredOptions(model.getOptions(), filter));
-            result.put("matchedOptions", ((JsonArray) result.get("options")).size());
+        if (scope != OptionScope.NONE) {
+            putOptions(result, model.getOptions(), filter, scope);
         }
         if (doc != null) {
             result.put("doc", doc);
@@ -945,7 +1034,7 @@ public final class CatalogDocs {
     }
 
     private static JsonObject languageDoc(
-            LanguageModel model, String filter, boolean includeOptions, String doc, List<String> docPages,
+            LanguageModel model, String filter, OptionScope scope, String doc, List<String> docPages,
             boolean docPageOnly) {
         JsonObject result = new JsonObject();
         result.put("kind", "language");
@@ -960,9 +1049,8 @@ public final class CatalogDocs {
         addCommonModelFields(result, model);
 
         // a requested doc page is the answer; the options, functions and operators would only add tokens around it
-        if (includeOptions && !docPageOnly) {
-            result.put("options", filteredOptions(model.getOptions(), filter));
-            result.put("matchedOptions", ((JsonArray) result.get("options")).size());
+        if (scope != OptionScope.NONE && !docPageOnly) {
+            putOptions(result, model.getOptions(), filter, scope);
         }
         if (!docPageOnly) {
             addLanguageFunctions(result, model, filter);
@@ -1104,7 +1192,7 @@ public final class CatalogDocs {
         return o;
     }
 
-    private static JsonObject eipDoc(EipModel model, String filter, boolean includeOptions, String doc) {
+    private static JsonObject eipDoc(EipModel model, String filter, OptionScope scope, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "eip");
         result.put("name", model.getName());
@@ -1116,9 +1204,8 @@ public final class CatalogDocs {
         result.put("input", model.isInput());
         result.put("output", model.isOutput());
         addCommonModelFields(result, model);
-        if (includeOptions) {
-            result.put("options", filteredOptions(model.getOptions(), filter));
-            result.put("matchedOptions", ((JsonArray) result.get("options")).size());
+        if (scope != OptionScope.NONE) {
+            putOptions(result, model.getOptions(), filter, scope);
         }
         if (doc != null) {
             result.put("doc", doc);
@@ -1126,16 +1213,74 @@ public final class CatalogDocs {
         return result;
     }
 
-    private static JsonArray filteredOptions(List<? extends BaseOptionModel> options, String filter) {
+    /**
+     * Which options a doc lists: the common ones by default, so the answer for a component such as kafka stays readable
+     * for a small model; the deprecated and advanced ones on request. A filter searches all options, as it names what
+     * it wants.
+     */
+    enum OptionScope {
+        NONE,
+        COMMON,
+        REQUIRED,
+        ALL;
+
+        /** The scope a caller named: common (also true, empty or null), required, all or false; null when unknown. */
+        static OptionScope parse(String value) {
+            if (value == null || value.isBlank()) {
+                return COMMON;
+            }
+            return switch (value.trim().toLowerCase(Locale.ROOT)) {
+                case "common", "true" -> COMMON;
+                case "required" -> REQUIRED;
+                case "all" -> ALL;
+                case "false", "none" -> NONE;
+                default -> null;
+            };
+        }
+
+        boolean accepts(BaseOptionModel opt, String filter) {
+            return switch (this) {
+                case NONE -> false;
+                case ALL -> true;
+                case REQUIRED -> opt.isRequired();
+                case COMMON -> filter != null || !(opt.isDeprecated() || isAdvanced(opt));
+            };
+        }
+
+        private static boolean isAdvanced(BaseOptionModel opt) {
+            return opt.getLabel() != null && opt.getLabel().contains("advanced");
+        }
+    }
+
+    private static void putOptions(
+            JsonObject result, List<? extends BaseOptionModel> options, String filter,
+            OptionScope scope) {
         JsonArray arr = new JsonArray();
+        int omitted = 0;
         if (options != null) {
             for (BaseOptionModel opt : options) {
                 if (matchesOptionFilter(opt, filter)) {
-                    arr.add(optionToJson(opt, null));
+                    if (scope.accepts(opt, filter)) {
+                        arr.add(optionToJson(opt, null));
+                    } else {
+                        omitted++;
+                    }
                 }
             }
         }
-        return arr;
+        putOptions(result, arr, omitted, scope);
+    }
+
+    /** The options with their count, and what the scope left out so the caller knows to ask for more. */
+    private static void putOptions(JsonObject result, JsonArray options, int omitted, OptionScope scope) {
+        result.put("options", options);
+        result.put("matchedOptions", options.size());
+        if (omitted > 0) {
+            result.put("omittedOptions", omitted);
+            result.put("optionsHint", scope == OptionScope.REQUIRED
+                    ? "the required options only; includeOptions=common or all lists the others"
+                    : "deprecated and advanced options left out; includeOptions=all lists them, optionsFilter finds one");
+        }
     }
 
     private static boolean matchesOptionFilter(BaseOptionModel opt, String filter) {

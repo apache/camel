@@ -240,6 +240,15 @@ public class CamelCatalogTest {
         List<String> path = catalog.suggestLanguageNames("path", 0);
         assertTrue(path.contains("xpath"), "path should suggest xpath, was: " + path);
         assertTrue(path.contains("jsonpath"), "path should suggest jsonpath, was: " + path);
+
+        // an EIP by its alias, with dash and case normalization, before the ones that merely contain the term
+        assertEquals("multicast", catalog.suggestEipNames("fan-out", 0).get(0));
+        assertEquals("multicast", catalog.suggestEipNames("fanOut", 0).get(0));
+        assertEquals("idempotentConsumer", catalog.suggestEipNames("dedup", 0).get(0));
+        assertEquals("throttle", catalog.suggestEipNames("rate-limit", 0).get(0));
+        assertEquals("split", catalog.suggestEipNames("split", 0).get(0));
+        assertEquals(List.of("circuitBreaker"), catalog.suggestEipNames("circuit breaker", 1));
+        assertTrue(catalog.suggestEipNames("no-such-pattern", 0).isEmpty());
     }
 
     @Test
