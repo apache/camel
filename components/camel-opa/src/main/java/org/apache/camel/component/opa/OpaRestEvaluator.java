@@ -26,14 +26,30 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Evaluates the policy by calling a running OPA server over its REST Data API.
  */
-public class OpaRestEvaluator extends OpaPolicyEvaluator {
+public class OpaRestEvaluator extends OpaPolicyEvaluator implements AutoCloseable {
 
     private final OPAClient client;
+    private final OpaHttpClient transport;
 
-    public OpaRestEvaluator(OPAClient client, String policyPath, String allowKey, String includeHeaders,
+    public OpaRestEvaluator(OPAClient client, OpaHttpClient transport, String policyPath, String allowKey,
+                            String includeHeaders,
                             String includeProperties, boolean includeBody, boolean failOpen) {
         super(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
         this.client = ObjectHelper.notNull(client, "client");
+        this.transport = transport;
+    }
+
+    /**
+     * Creates the HTTP transport for an OPA server connection.
+     *
+     * @param bearerToken       token for OPA API authentication, or null when OPA does not require one
+     * @param connectionTimeout how long to wait for the connection to be established, in milliseconds
+     * @param requestTimeout    how long to wait for the decision once connected, in milliseconds
+     * @param sslContext        TLS configuration for the connection, or null for the JVM default
+     */
+    public static OpaHttpClient createTransport(
+            String bearerToken, long connectionTimeout, long requestTimeout, SSLContext sslContext) {
+        return new OpaHttpClient(connectionTimeout, requestTimeout, sslContext, bearerToken);
     }
 
     /**
@@ -43,15 +59,17 @@ public class OpaRestEvaluator extends OpaPolicyEvaluator {
      * {@link OpaHttpClient} for why neither is acceptable on the path that decides authorization.
      *
      * @param serverUrl         base URL of the OPA server, without the /v1/data suffix
-     * @param bearerToken       token for OPA API authentication, or null when OPA does not require one
-     * @param connectionTimeout how long to wait for the connection to be established, in milliseconds
-     * @param requestTimeout    how long to wait for the decision once connected, in milliseconds
-     * @param sslContext        TLS configuration for the connection, or null for the JVM default
+     * @param transport         the HTTP transport to use for all requests
      */
-    public static OPAClient createClient(
-            String serverUrl, String bearerToken, long connectionTimeout, long requestTimeout, SSLContext sslContext) {
-        return new OPAClient(
-                serverUrl, new OpaHttpClient(connectionTimeout, requestTimeout, sslContext, bearerToken));
+    public static OPAClient createClient(String serverUrl, OpaHttpClient transport) {
+        return new OPAClient(serverUrl, transport);
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (transport != null) {
+            transport.close();
+        }
     }
 
     @Override

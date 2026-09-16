@@ -18,7 +18,6 @@ package org.apache.camel.component.opa;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,8 +63,7 @@ public class OpaRestTransportTest extends CamelTestSupport {
         open.add(listener::close);
         Thread accepter = new Thread(() -> {
             try {
-                Socket accepted = listener.accept();
-                open.add(accepted::close);
+                listener.accept();
                 // hold it: no read, no write, no close. Ends when the test closes the listener.
             } catch (IOException e) {
                 // the listener was closed as the test finished

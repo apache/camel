@@ -273,6 +273,10 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     /**
      * TLS configuration for the connection to the OPA server. Needed to trust a server whose certificate comes from a
      * private CA, and to present a client certificate to a server requiring mutual TLS.
+     * <p/>
+     * Note: {@code useGlobalSslContextParameters} on the {@link org.apache.camel.component.opa.OpaComponent} has no
+     * effect here. {@code OpaSecurityPolicy} is a standalone bean and is not bound to any component instance, so the
+     * global SSL context cannot be resolved automatically. Set this field explicitly when TLS is required.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;

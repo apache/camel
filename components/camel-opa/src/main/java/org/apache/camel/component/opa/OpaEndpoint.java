@@ -73,15 +73,24 @@ public class OpaEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(
                     "Unknown evaluationMode '" + mode + "'; expected one of " + REST_MODE + ", " + WASM_MODE);
         } else {
-            opaClient = configuration.getOpaClient() != null
-                    ? configuration.getOpaClient()
-                    : OpaRestEvaluator.createClient(
-                            configuration.getServerUrl(), configuration.getBearerToken(),
-                            configuration.getConnectionTimeout(), configuration.getRequestTimeout(),
-                            createSslContext());
-            evaluator = new OpaRestEvaluator(
-                    opaClient, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
-                    configuration.getIncludeProperties(), configuration.isIncludeBody(), configuration.isFailOpen());
+            if (configuration.getOpaClient() != null) {
+                opaClient = configuration.getOpaClient();
+                evaluator = new OpaRestEvaluator(
+                        opaClient, null, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
+                        configuration.getIncludeProperties(), configuration.isIncludeBody(),
+                        configuration.isFailOpen());
+            } else {
+                OpaHttpClient transport = OpaRestEvaluator.createTransport(
+                        configuration.getBearerToken(),
+                        configuration.getConnectionTimeout(), configuration.getRequestTimeout(),
+                        createSslContext());
+                opaClient = OpaRestEvaluator.createClient(configuration.getServerUrl(), transport);
+                evaluator = new OpaRestEvaluator(
+                        opaClient, transport, policyPath, configuration.getAllowKey(),
+                        configuration.getIncludeHeaders(),
+                        configuration.getIncludeProperties(), configuration.isIncludeBody(),
+                        configuration.isFailOpen());
+            }
         }
     }
 

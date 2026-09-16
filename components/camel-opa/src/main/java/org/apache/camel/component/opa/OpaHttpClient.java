@@ -41,7 +41,7 @@ import javax.net.ssl.SSLContext;
  * </ul>
  * One client is built here per evaluator and reused, and every request is re-issued carrying a timeout.
  */
-class OpaHttpClient implements com.styra.opa.openapi.utils.HTTPClient {
+class OpaHttpClient implements com.styra.opa.openapi.utils.HTTPClient, AutoCloseable {
 
     private static final String AUTHORIZATION = "Authorization";
 
@@ -60,6 +60,13 @@ class OpaHttpClient implements com.styra.opa.openapi.utils.HTTPClient {
         // the SDK has no constructor taking a transport and headers together, so the token is applied here
         // instead of through OPAClient(String, Map) - the request that goes out is the same either way
         this.bearerToken = bearerToken;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (client instanceof AutoCloseable c) {
+            c.close();
+        }
     }
 
     @Override
