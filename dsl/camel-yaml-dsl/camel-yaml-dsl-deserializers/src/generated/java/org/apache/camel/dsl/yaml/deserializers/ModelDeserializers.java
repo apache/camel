@@ -1293,7 +1293,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "script", type = "string", description = "The script to execute that creates the bean when using scripting languages.", displayName = "Script"),
                     @YamlProperty(name = "scriptLanguage", type = "string", description = "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc.", displayName = "Script Language"),
                     @YamlProperty(name = "scriptPropertyPlaceholders", type = "boolean", defaultValue = "true", description = "Whether the script should support using Camel property placeholder syntax {{ }}.", displayName = "Script Property Placeholders"),
-                    @YamlProperty(name = "type", type = "string", required = true, description = "The class name (fully qualified) of the bean.", displayName = "Type")
+                    @YamlProperty(name = "type", type = "string", description = "The class name (fully qualified) of the bean. Required unless the bean is created by a script (scriptLanguage) or a builder (builderClass), where the type is optional and is then the type the bean is registered as.", displayName = "Type")
             }
     )
     public static class BeanFactoryDefinitionDeserializer extends YamlDeserializerBase<BeanFactoryDefinition> {

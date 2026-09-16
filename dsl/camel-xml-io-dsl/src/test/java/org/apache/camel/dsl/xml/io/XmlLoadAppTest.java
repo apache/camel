@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlLoadAppTest {
@@ -256,6 +257,76 @@ public class XmlLoadAppTest {
             y9.expectedBodiesReceived("Hi World from groovy Uranus");
             context.createProducerTemplate().sendBody("direct:x9", "I'm Uranus");
             y9.assertIsSatisfied();
+
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanScriptWithoutType() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app16.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r16"), "Loaded r16 route should be there");
+
+            // the script created the bean without a type being declared
+            MockEndpoint y16 = context.getEndpoint("mock:y16", MockEndpoint.class);
+            y16.expectedBodiesReceived("Hi World from groovy Uranus");
+            context.createProducerTemplate().sendBody("direct:x16", "I'm Uranus");
+            y16.assertIsSatisfied();
+
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanBuilderClassWithoutType() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app17.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("r17"), "Loaded r17 route should be there");
+
+            // the builder created the bean without a type being declared
+            MockEndpoint y17 = context.getEndpoint("mock:y17", MockEndpoint.class);
+            y17.expectedBodiesReceived("Hi World. I am Camel and 44 years old!");
+            context.createProducerTemplate().sendBody("direct:x17", "Hi");
+            y17.assertIsSatisfied();
+
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithBeanWithoutTypeFails() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app18.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+
+            // a bean that is neither scripted nor built has nothing to create it from
+            Exception e = assertThrows(Exception.class, () -> routesLoader.loadRoutes(resource));
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            assertTrue(cause instanceof IllegalArgumentException, "Expected IllegalArgumentException but was " + cause);
+            assertEquals("Bean xml-bean-from-registry must have a type (class name) unless created by a script or a builder",
+                    cause.getMessage());
 
             context.stop();
         }

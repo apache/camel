@@ -834,6 +834,42 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
     }
 
     @Test
+    public void testLocalBeanBuilderClassWithoutType() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("myTemplate").templateParameter("foo").templateParameter("bar")
+                        .templateBean("myBar")
+                        // a bean created by a builder needs no type (class name)
+                        .builderClass("org.apache.camel.builder.RouteTemplateLocalBeanTest$BuilderThreeProcessorBuilder")
+                        .builderMethod("createProcessor")
+                        .property("prefix", "MyPrefix ")
+                        .end()
+                        .from("direct:{{foo}}")
+                        .to("bean:{{bar}}");
+            }
+        });
+
+        context.start();
+
+        TemplatedRouteBuilder.builder(context, "myTemplate")
+                .parameter("foo", "one")
+                .parameter("bar", "myBar")
+                .routeId("myRoute")
+                .add();
+
+        assertEquals(1, context.getRoutes().size());
+
+        Object out = template.requestBody("direct:one", "World");
+        assertEquals("MyPrefix Builder3 World", out);
+
+        // should not be a global bean
+        assertNull(context.getRegistry().lookupByName("myBar"));
+
+        context.stop();
+    }
+
+    @Test
     public void testLocalBeanConstructorParameterInType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -933,6 +969,21 @@ public class RouteTemplateLocalBeanTest extends ContextTestSupport {
             exchange.getMessage().setHeader("counter", counter);
         }
 
+    }
+
+    public static class BuilderThreeProcessorBuilder {
+
+        private String prefix = "";
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public BuilderThreeProcessor createProcessor() {
+            BuilderThreeProcessor answer = new BuilderThreeProcessor();
+            answer.setPrefix(prefix);
+            return answer;
+        }
     }
 
     public Processor createBuilderProcessor() {

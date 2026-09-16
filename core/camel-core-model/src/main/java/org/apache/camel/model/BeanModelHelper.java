@@ -58,31 +58,44 @@ public final class BeanModelHelper {
     public static Object newInstance(BeanFactoryDefinition def, CamelContext context) throws Exception {
         Object target;
 
+        boolean script = def.getScriptLanguage() != null && def.getScript() != null;
+        boolean viaBuilder = def.getBuilderClass() != null;
+
+        // the type (class name) is optional for a bean created by a script or a builder
         String type = def.getType();
-        if (!type.startsWith("#")) {
+        if (type == null && !script && !viaBuilder) {
+            throw new IllegalArgumentException(
+                    "Bean " + def.getName() + " must have a type (class name) unless created by a script or a builder");
+        }
+        if (type != null && !type.startsWith("#")) {
             type = "#class:" + type;
         }
 
         // script bean
-        if (def.getScriptLanguage() != null && def.getScript() != null) {
-            String script = resolveScript(context, def);
+        if (script) {
+            String text = resolveScript(context, def);
             // create bean via the script
             final Language lan = context.resolveLanguage(def.getScriptLanguage());
             final ScriptingLanguage slan = lan instanceof ScriptingLanguage sl ? sl : null;
-            String fqn = def.getType();
-            if (fqn.startsWith("#class:")) {
-                fqn = fqn.substring(7);
+            final Class<?> clazz;
+            if (def.getType() != null) {
+                String fqn = def.getType();
+                if (fqn.startsWith("#class:")) {
+                    fqn = fqn.substring(7);
+                }
+                clazz = context.getClassResolver().resolveMandatoryClass(fqn);
+            } else {
+                clazz = Object.class;
             }
-            final Class<?> clazz = context.getClassResolver().resolveMandatoryClass(fqn);
             if (slan != null) {
                 // scripting language should be evaluated with context as binding
                 Map<String, Object> bindings = new HashMap<>();
                 bindings.put("context", context);
-                target = slan.evaluate(script, bindings, clazz);
+                target = slan.evaluate(text, bindings, clazz);
             } else {
                 Exchange dummy = ExchangeHelper.getDummy(context);
-                String text = ScriptHelper.resolveOptionalExternalScript(context, dummy, script);
-                Expression exp = lan.createExpression(text);
+                String external = ScriptHelper.resolveOptionalExternalScript(context, dummy, text);
+                Expression exp = lan.createExpression(external);
                 target = exp.evaluate(dummy, clazz);
             }
 
@@ -90,7 +103,7 @@ public final class BeanModelHelper {
             if (target == null) {
                 throw new NoSuchBeanException(def.getName(), "Creating bean using script returned null");
             }
-        } else if (def.getBuilderClass() != null) {
+        } else if (viaBuilder) {
             // builder class and method
             Class<?> clazz = context.getClassResolver().resolveMandatoryClass(def.getBuilderClass());
             Object builder = context.getInjector().newInstance(clazz);
@@ -129,7 +142,7 @@ public final class BeanModelHelper {
         }
 
         // do not set properties when using #type as it uses an existing shared bean
-        boolean setProps = !type.startsWith("#type");
+        boolean setProps = type == null || !type.startsWith("#type");
         if (setProps) {
             // set optional properties on created bean
             if (def.getProperties() != null && !def.getProperties().isEmpty()) {
@@ -240,6 +253,51 @@ public final class BeanModelHelper {
                     }
                 }));
             }
+        } else if (def.getBuilderClass() != null) {
+            // builder class and method, the type (class name) is optional
+            final CamelContext camelContext = routeTemplateContext.getCamelContext();
+            final Class<?> clazz;
+            if (def.getBeanClass() != null) {
+                clazz = def.getBeanClass();
+            } else if (def.getType() != null) {
+                String fqn = def.getType();
+                if (fqn.contains(":")) {
+                    fqn = StringHelper.after(fqn, ":");
+                }
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(fqn);
+            } else {
+                clazz = Object.class;
+            }
+            // memorize so the bean is only created once and the local bean is the same
+            // if a route template refers to the local bean multiple times
+            routeTemplateContext.bind(def.getName(), clazz, Suppliers.memorize(() -> {
+                try {
+                    Class<?> builderClass = camelContext.getClassResolver().resolveMandatoryClass(def.getBuilderClass());
+                    Object builder = camelContext.getInjector().newInstance(builderClass);
+                    String bm = def.getBuilderMethod() != null ? def.getBuilderMethod() : "build";
+                    // create bean via builder and assign as target output
+                    Object local = PropertyBindingSupport.build()
+                            .withCamelContext(camelContext)
+                            .withTarget(builder)
+                            .withRemoveParameters(true)
+                            .withProperties(props)
+                            .build(Object.class, bm);
+                    // set the optional properties the builder did not take on the created bean
+                    if (!props.isEmpty()) {
+                        PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
+                    }
+                    if (def.getInitMethod() != null) {
+                        ObjectHelper.invokeMethodSafe(def.getInitMethod(), local);
+                    }
+                    if (def.getDestroyMethod() != null) {
+                        routeTemplateContext.registerDestroyMethod(def.getName(), def.getDestroyMethod());
+                    }
+                    return local;
+                } catch (Exception e) {
+                    throw new IllegalStateException(
+                            "Cannot create bean: " + def.getName() + " using builder: " + def.getBuilderClass(), e);
+                }
+            }));
         } else if (def.getBeanClass() != null || def.getType() != null) {
             String type = def.getType();
             if (type == null) {

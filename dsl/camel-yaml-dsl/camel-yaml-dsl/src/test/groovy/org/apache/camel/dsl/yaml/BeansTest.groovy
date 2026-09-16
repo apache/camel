@@ -230,6 +230,22 @@ class BeansTest extends YamlTestSupport {
         }
     }
 
+    def "beans with script without type"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: myBean
+                    scriptLanguage: groovy
+                    script: "var b = new ${MyBean.class.name}(); b.field1 = 'script1'; b.field2 = 'script2'; return b"
+            """
+
+        then:
+        with(context.registry.lookupByName('myBean'), MyBean) {
+            it.field1 == 'script1'
+            it.field2 == 'script2'
+        }
+    }
+
     def "beans with script property placeholder default"() {
         when:
         context.getPropertiesComponent().addInitialProperty("cheese", "gauda")

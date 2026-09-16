@@ -69,13 +69,17 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             }
 
             ObjectHelper.notNull(bean.getName(), "The bean name must be set");
-            ObjectHelper.notNull(bean.getType(), "The bean type must be set");
-            if (!bean.getType().startsWith("#class:")) {
-                bean.setType("#class:" + bean.getType());
-            }
             if (bean.getScriptLanguage() != null || bean.getScript() != null) {
                 ObjectHelper.notNull(bean.getScriptLanguage(), "The bean script language must be set");
                 ObjectHelper.notNull(bean.getScript(), "The bean script must be set");
+            }
+            boolean script = bean.getScriptLanguage() != null && bean.getScript() != null;
+            // the type (class name) is optional for a bean created by a script or a builder
+            if (!script && bean.getBuilderClass() == null) {
+                ObjectHelper.notNull(bean.getType(), "The bean type must be set");
+            }
+            if (bean.getType() != null && !bean.getType().startsWith("#class:")) {
+                bean.setType("#class:" + bean.getType());
             }
 
             // due to yaml-dsl is pre parsing beans which gets created eager

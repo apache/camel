@@ -454,6 +454,20 @@ set here, because that would reject input that parses today. Routes that genuine
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
 
+=== camel-core - the type of a bean created by a script or a builder is optional
+
+The `type` (class name) of a bean definition — `bean` under `beans`, `templateBean` of a route
+template, `bean` of a templated route — is no longer declared as required. It was required since the
+attribute also selected how the bean is created; that moved to `scriptLanguage` in Camel 4.1, and
+a bean created by a script (`scriptLanguage` and `script`) or a builder (`builderClass`) needs no
+class name: the runtime registers it as the type of the object the script or builder returns, as
+the Java DSL `templateBean(name, language, script)` always did.
+
+The XML schemas (`camel-spring.xsd`, `camel-xml-io.xsd`) and the YAML schema no longer require
+`type`, so Spring XML and the YAML validator (`camel validate`) now accept what the runtime already
+ran. A bean that is neither scripted nor built still needs a `type`, and the error for a missing one
+is now an `IllegalArgumentException` naming the bean instead of a `NullPointerException`.
+
 === Component deprecation
 
 ==== camel-minio
