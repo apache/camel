@@ -452,13 +452,16 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 = new KafkaProducerCallBack(exchange, callback, workerPool, configuration.isRecordMetadata());
 
         Message message = exchange.getMessage();
-        Object body = message.getBody();
-
-        if (transactionId != null) {
-            startKafkaTransaction(exchange);
-        }
 
         try {
+            Object body = message.getBody();
+
+            // Start the transaction inside the try so that a failure to begin it (or a failing lazy body
+            // conversion) still completes the async callback instead of escaping process() (CAMEL-24780).
+            if (transactionId != null) {
+                startKafkaTransaction(exchange);
+            }
+
             // is the message body a list or something that contains multiple values
             if (endpoint.getConfiguration().isUseIterator() && isIterable(body)) {
                 processIterableAsync(exchange, producerCallBack, message);
@@ -521,8 +524,11 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
         if (!uow.isTransactedBy(transactionId)) {
             LOG.debug("Starting kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
-            uow.beginTransactedBy(transactionId);
+            // Begin the broker transaction first, then mark the unit of work and register the
+            // synchronization. This way a failure in beginTransaction() does not leave the unit of work
+            // flagged as transacted without a synchronization to commit or roll it back (CAMEL-24780).
             kafkaProducer.beginTransaction();
+            uow.beginTransactedBy(transactionId);
             uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
         } else {
             LOG.debug("Using existing kafka transaction {} with exchange {}.",
