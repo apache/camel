@@ -180,6 +180,39 @@ class CatalogDocsTest {
     }
 
     @Test
+    void aGroupNameReturnsTheGroupOnlyAndAFunctionNameComesFirst() throws Exception {
+        // CAMEL-24804: date is a group of two functions, and two more mention a date in their description
+        JsonObject dates = catalogDoc(Map.of("name", "simple", "kind", "language", "optionsFilter", "date"));
+        assertEquals("date", dates.getString("functionGroup"));
+        assertEquals(2, dates.getInteger("matchedFunctions"));
+        dates.getCollection("functions").forEach(fn -> assertEquals("date", ((JsonObject) fn).getString("group")));
+
+        // string is a group of a dozen or so, while most descriptions say "string" somewhere
+        JsonObject strings = catalogDoc(Map.of("name", "simple", "kind", "language", "optionsFilter", "string"));
+        assertEquals("string", strings.getString("functionGroup"));
+        assertTrue(strings.getInteger("matchedFunctions") < 25,
+                "the group, not the catalog: " + strings.getInteger("matchedFunctions"));
+        strings.getCollection("functions").forEach(fn -> assertEquals("string", ((JsonObject) fn).getString("group")));
+
+        // a function name comes first, with or without its parameters, then the word matches
+        for (String name : List.of("random", "RANDOM", "random(min,max)")) {
+            JsonObject random = catalogDoc(Map.of("name", "simple", "kind", "language", "optionsFilter", name));
+            assertNull(random.get("functionGroup"));
+            JsonObject first = (JsonObject) random.getCollection("functions").iterator().next();
+            assertEquals("random(min,max)", first.getString("name"), name);
+        }
+
+        // an operator kind is that kind only, and an operator itself comes first
+        JsonObject logical = catalogDoc(Map.of("name", "simple", "kind", "language", "optionsFilter", "logical"));
+        assertEquals("logical", logical.getString("operatorKind"));
+        assertTrue(logical.getInteger("matchedOperators") >= 2);
+        logical.getCollection("operators").forEach(op -> assertEquals("logical", ((JsonObject) op).getString("kind")));
+        JsonObject eq = catalogDoc(Map.of("name", "simple", "kind", "language", "optionsFilter", "=="));
+        assertNull(eq.get("operatorKind"));
+        assertEquals("==", ((JsonObject) eq.getCollection("operators").iterator().next()).getString("name"));
+    }
+
+    @Test
     void anInterfaceNameFindsTheBuiltInBeans() {
         org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
         var result = CatalogDocs.find(catalog, "AggregationStrategy", "bean", 20);
