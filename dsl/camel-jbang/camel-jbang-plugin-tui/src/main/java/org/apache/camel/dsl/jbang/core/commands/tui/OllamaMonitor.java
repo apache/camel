@@ -703,6 +703,21 @@ final class OllamaMonitor {
         }
     }
 
+    /**
+     * Releases the HTTP client at TUI shutdown. {@code HttpClient} is closeable from Java 21 on, while this module
+     * compiles for Java 17, so the close happens when the running JVM offers it and is a no-op otherwise; the client's
+     * threads are daemons either way.
+     */
+    void close() {
+        if (http instanceof AutoCloseable closeable) {
+            try {
+                closeable.close();
+            } catch (Exception e) {
+                LOG.debug("Closing the Ollama HTTP client failed", e);
+            }
+        }
+    }
+
     // ---- polling ----
 
     /** One refresh cycle; safe to call every few hundred milliseconds, each source keeps its own interval. */

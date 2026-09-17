@@ -259,6 +259,15 @@ class OllamaMonitorTest {
     }
 
     @Test
+    void closeReleasesTheClientAndCanBeCalledTwice() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.close();
+        monitor.close();
+        // the in-memory state stays usable for a last snapshot
+        assertFalse(monitor.snapshot().connected());
+    }
+
+    @Test
     void availabilityFollowsTheServer() {
         OllamaMonitor monitor = new OllamaMonitor();
         assertFalse(monitor.isAvailable());

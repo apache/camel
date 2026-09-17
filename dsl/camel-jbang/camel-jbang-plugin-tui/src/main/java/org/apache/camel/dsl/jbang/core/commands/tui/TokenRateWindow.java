@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 
 /**
  * Turns a monotonically increasing token counter, sampled at irregular intervals, into a tokens-per-second rate over a
@@ -46,8 +47,10 @@ final class TokenRateWindow {
         // keep exactly one sample at or before the window start as the baseline
         long cutoff = nowMillis - windowMillis;
         while (samples.size() > 2) {
-            long[] first = samples.peekFirst();
-            long[] second = samples.stream().skip(1).findFirst().orElse(first);
+            // the second sample decides whether the first is still needed as the baseline
+            Iterator<long[]> it = samples.iterator();
+            it.next();
+            long[] second = it.next();
             if (second[0] <= cutoff) {
                 samples.pollFirst();
             } else {

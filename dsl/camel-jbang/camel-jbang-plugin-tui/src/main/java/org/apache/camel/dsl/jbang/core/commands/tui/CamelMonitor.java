@@ -1042,6 +1042,9 @@ public class CamelMonitor extends CamelCommand {
             shellPanel.destroy();
             aiPanel.destroy();
             ctx.backgroundExecutor.shutdownNow();
+            if (ollamaMonitor != null) {
+                ollamaMonitor.close();
+            }
             if (mcpServer != null) {
                 mcpServer.stop();
             }
