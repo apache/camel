@@ -28,6 +28,7 @@ import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PooledExchangeSplitLeakTest extends ContextTestSupport {
@@ -51,6 +52,9 @@ public class PooledExchangeSplitLeakTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
+        // the child of the first message carries the state set by the processor
+        assertEquals("from-first", mock.getExchanges().get(0).getProperty("leakProp"));
+        assertEquals("from-first", mock.getExchanges().get(0).getVariable("leak"));
         // the child of the second message is a reused pooled exchange; it must not carry the first child's state
         assertNull(mock.getExchanges().get(1).getProperty("leakProp"));
         assertNull(mock.getExchanges().get(1).getVariable("leak"));
