@@ -149,6 +149,11 @@ public class Run extends CamelCommand {
 
     private static final String OPENAPI_GENERATED_FILE = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/generated-openapi.yaml";
     private static final String CLIPBOARD_GENERATED_FILE = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/generated-clipboard";
+    // the same layout as the camel-jbang console logging, so the log file reads the same for every runtime
+    static final String QUARKUS_LOG_FILE_FORMAT
+            = "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n";
+    // the file with the log4j2 configuration that an existing Camel Main project is run with
+    static final String CAMEL_MAIN_RUN_LOG_CONFIG = "camel-jbang-run-log4j2.properties";
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
@@ -1572,7 +1577,7 @@ public class Run extends CamelCommand {
             content += "\n# logging to file\n"
                        + "quarkus.log.file.enabled=true\n"
                        + "quarkus.log.file.path=${user.home}/.camel/" + eq.name + ".log\n"
-                       + "quarkus.log.file.format=%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n\n";
+                       + "quarkus.log.file.format=" + QUARKUS_LOG_FILE_FORMAT + "\n";
             Files.writeString(appProps, content);
         }
 
@@ -1833,18 +1838,89 @@ public class Run extends CamelCommand {
     }
 
     /**
+     * The application name of an existing Maven project: {@code camel.main.name} from its application.properties, or
+     * else the Maven artifactId (or the project directory name). The name is also passed to the application as
+     * {@code camel.main.name}, so the name it reports to the CLI and the TUI matches the {@code <name>.log} file that
+     * {@code camel log} and the TUI read when there is no {@code <pid>.log}.
+     */
+    static String resolveExistingProjectAppName(Path projectDir, Model model) {
+        String name = resolveExportedAppName(projectDir, null);
+        if (name == null && model != null && model.getArtifactId() != null && !model.getArtifactId().isBlank()) {
+            name = model.getArtifactId().trim();
+        }
+        if (name == null) {
+            name = projectDir.getFileName().toString();
+        }
+        return name;
+    }
+
+    /**
+     * The {@code -D} system properties an existing Maven project is run with: the HTTP port ({@code --port}, as the
+     * given property), the execution limits ({@code --max-seconds}, {@code --max-messages} and
+     * {@code --max-idle-seconds}) and the additional properties ({@code --prop}).
+     */
+    List<String> buildExistingProjectSystemProperties(String portKey) {
+        List<String> args = new ArrayList<>();
+        if (serverOptions.port != -1) {
+            args.add("-D" + portKey + "=" + serverOptions.port);
+        }
+        if (executionLimitOptions.maxSeconds > 0) {
+            args.add("-Dcamel.main.durationMaxSeconds=" + executionLimitOptions.maxSeconds);
+        }
+        if (executionLimitOptions.maxMessages > 0) {
+            args.add("-Dcamel.main.durationMaxMessages=" + executionLimitOptions.maxMessages);
+        }
+        if (executionLimitOptions.maxIdleSeconds > 0) {
+            args.add("-Dcamel.main.durationMaxIdleSeconds=" + executionLimitOptions.maxIdleSeconds);
+        }
+        if (property != null) {
+            for (String p : property) {
+                String s = p.trim();
+                if (!s.isEmpty()) {
+                    args.add(s.startsWith("-D") ? s : "-D" + s);
+                }
+            }
+        }
+        return args;
+    }
+
+    /**
+     * The Quarkus logging properties that make an existing Quarkus project also log to the {@code <name>.log} file in
+     * the {@code ~/.camel} directory (the same as the exported project does via its application.properties).
+     */
+    static List<String> buildQuarkusLogFileJvmArgs(String appName) {
+        Path logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log");
+        String fileName = logFile.toAbsolutePath().toString().replace("\\", "/");
+        List<String> args = new ArrayList<>();
+        args.add("-Dquarkus.log.file.enabled=true");
+        args.add("-Dquarkus.log.file.path=" + fileName);
+        // quoted as the format has spaces (quarkus:dev parses jvm.args as a command line)
+        args.add("-Dquarkus.log.file.format=\"" + QUARKUS_LOG_FILE_FORMAT + "\"");
+        return args;
+    }
+
+    /**
      * Writes a log4j2 configuration to the exported Camel Main project that logs to the console, and to the
      * {@code <name>.log} file in the {@code ~/.camel} directory.
      */
     private void writeCamelMainRunLogConfig(Path runDirPath, String appName) throws IOException {
+        writeCamelMainRunLogConfig(runDirPath.resolve("src/main/resources/log4j2.properties"), appName,
+                loggingOptions.loggingLevel);
+    }
+
+    /**
+     * Writes the log4j2 configuration used by {@code camel run --runtime=main} to the given file. It logs to the
+     * console, and to the {@code <name>.log} file in the {@code ~/.camel} directory (which is deleted first, so it does
+     * not start with the output of a previous run).
+     */
+    static void writeCamelMainRunLogConfig(Path target, String appName, String loggingLevel) throws IOException {
         Path logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log");
         Files.deleteIfExists(logFile);
         String fileName = logFile.toAbsolutePath().toString().replace("\\", "/");
         try (InputStream is = Run.class.getClassLoader().getResourceAsStream("camel-main-run-log4j2.properties")) {
             String content = new String(is.readAllBytes(), StandardCharsets.UTF_8)
                     .replace("{{logFile}}", fileName)
-                    .replace("{{level}}", loggingOptions.loggingLevel != null ? loggingOptions.loggingLevel : "info");
-            Path target = runDirPath.resolve("src/main/resources/log4j2.properties");
+                    .replace("{{level}}", loggingLevel != null ? loggingLevel : "info");
             Files.createDirectories(target.getParent());
             Files.writeString(target, content);
         }
@@ -1937,6 +2013,11 @@ public class Run extends CamelCommand {
             w.write(fos, model);
         }
 
+        // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
+        String appName = resolveExistingProjectAppName(projectDir, model);
+        Path logConfig = projectDir.resolve("target").resolve(CAMEL_MAIN_RUN_LOG_CONFIG);
+        writeCamelMainRunLogConfig(logConfig, appName, loggingOptions.loggingLevel);
+
         // shutdown hook to clean up temp files
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
@@ -1955,6 +2036,7 @@ public class Run extends CamelCommand {
                     }
                 }
                 Files.deleteIfExists(tempPom);
+                Files.deleteIfExists(logConfig);
             } catch (Exception e) {
                 // ignore
             }
@@ -1970,27 +2052,11 @@ public class Run extends CamelCommand {
         cmd.add("--quiet");
         cmd.add("--file");
         cmd.add(tempPom.toString());
-        StringBuilder camelJvmArgs = new StringBuilder();
-        if (profile != null && !"prod".equals(profile)) {
-            camelJvmArgs.append("-Dcamel.main.profile=").append(profile);
-        }
-        String camelJfrArg = buildJfrJvmArgs();
-        if (camelJfrArg != null) {
-            if (!camelJvmArgs.isEmpty()) {
-                camelJvmArgs.append(" ");
-            }
-            camelJvmArgs.append(camelJfrArg);
-        }
-        if (jvmArgs != null && !jvmArgs.isBlank()) {
-            if (!camelJvmArgs.isEmpty()) {
-                camelJvmArgs.append(" ");
-            }
-            camelJvmArgs.append(jvmArgs.trim());
-        }
-        if (!camelJvmArgs.isEmpty()) {
-            cmd.add("-Dcamel.jvmArgs=" + camelJvmArgs);
-        }
+        // camel:run runs Camel inside the Maven JVM, so the system properties go directly on the Maven command line
+        cmd.addAll(buildExistingCamelMainSystemProperties(appName, logConfig));
         cmd.add("-DskipTests");
+        // camel:run does not compile the project itself
+        cmd.add("compile");
         cmd.add("camel:run");
 
         printer().println("Running Camel Main project: " + projectDir);
@@ -1999,10 +2065,30 @@ public class Run extends CamelCommand {
         pb.command(cmd);
         pb.directory(projectDir.toFile());
         pb.inheritIO();
+        // JVM options (--jvm-args and --jfr) must be set on the Maven JVM as Camel runs inside it
+        String mavenOpts = mergeJvmArgs(jvmArgs, buildJfrJvmArgs());
+        if (mavenOpts != null && !mavenOpts.isBlank()) {
+            pb.environment().merge("MAVEN_OPTS", mavenOpts.trim(), (existing, extra) -> existing + " " + extra);
+        }
         Process p = pb.start();
         processRef.set(p);
         this.spawnPid = p.pid();
         return p.waitFor();
+    }
+
+    /**
+     * The {@code -D} system properties an existing Camel Main project is run with (Camel runs inside the Maven JVM so
+     * they go on the Maven command line): the log4j2 configuration, the profile, the name, the port and properties.
+     */
+    List<String> buildExistingCamelMainSystemProperties(String appName, Path logConfig) {
+        List<String> args = new ArrayList<>();
+        args.add("-Dlog4j2.configurationFile=" + logConfig.toAbsolutePath());
+        if (profile != null && !"prod".equals(profile)) {
+            args.add("-Dcamel.main.profile=" + profile);
+        }
+        args.add("-Dcamel.main.name=" + appName);
+        args.addAll(buildExistingProjectSystemProperties("camel.server.port"));
+        return args;
     }
 
     private int runExistingQuarkusProject(AtomicReference<Process> processRef) throws Exception {
@@ -2070,31 +2156,16 @@ public class Run extends CamelCommand {
         Path mvnwPath = projectDir.resolve(mvnw);
         String mvnCmd = Files.isExecutable(mvnwPath) ? mvnwPath.toString() : "mvn";
 
+        // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
+        String appName = resolveExistingProjectAppName(projectDir, model);
+        Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
+
         List<String> cmd = new ArrayList<>();
         cmd.add(mvnCmd);
         cmd.add("--quiet");
         cmd.add("--file");
         cmd.add(tempPom.toString());
-        StringBuilder quarkusJvmArgs = new StringBuilder();
-        if (profile != null && !"prod".equals(profile)) {
-            quarkusJvmArgs.append("-Dcamel.main.profile=").append(profile);
-        }
-        String quarkusJfrArg = buildJfrJvmArgs();
-        if (quarkusJfrArg != null) {
-            if (!quarkusJvmArgs.isEmpty()) {
-                quarkusJvmArgs.append(" ");
-            }
-            quarkusJvmArgs.append(quarkusJfrArg);
-        }
-        if (jvmArgs != null && !jvmArgs.isBlank()) {
-            if (!quarkusJvmArgs.isEmpty()) {
-                quarkusJvmArgs.append(" ");
-            }
-            quarkusJvmArgs.append(jvmArgs.trim());
-        }
-        if (!quarkusJvmArgs.isEmpty()) {
-            cmd.add("-Djvm.args=" + quarkusJvmArgs);
-        }
+        cmd.add("-Djvm.args=" + String.join(" ", buildExistingQuarkusJvmArgs(appName)));
         cmd.add("-DskipTests");
         cmd.add("package");
         cmd.add("quarkus:" + (dev ? "dev" : "run"));
@@ -2109,6 +2180,27 @@ public class Run extends CamelCommand {
         processRef.set(p);
         this.spawnPid = p.pid();
         return p.waitFor();
+    }
+
+    /**
+     * The JVM arguments ({@code jvm.args}) an existing Quarkus project is run with: logging to file, the profile, the
+     * name, the port and properties, the flight recording and {@code --jvm-args}.
+     */
+    List<String> buildExistingQuarkusJvmArgs(String appName) {
+        List<String> args = new ArrayList<>(buildQuarkusLogFileJvmArgs(appName));
+        if (profile != null && !"prod".equals(profile)) {
+            args.add("-Dcamel.main.profile=" + profile);
+        }
+        args.add("-Dcamel.main.name=" + appName);
+        args.addAll(buildExistingProjectSystemProperties("quarkus.http.port"));
+        String jfrArg = buildJfrJvmArgs();
+        if (jfrArg != null) {
+            args.add(jfrArg);
+        }
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            args.add(jvmArgs.trim());
+        }
+        return args;
     }
 
     protected int runSpringBoot() throws Exception {
@@ -2251,6 +2343,27 @@ public class Run extends CamelCommand {
         return p.waitFor();
     }
 
+    /**
+     * The JVM arguments ({@code spring-boot.run.jvmArguments}) an existing Spring Boot project is run with: logging to
+     * file, the profile, the port and properties, the flight recording and {@code --jvm-args}.
+     */
+    List<String> buildExistingSpringBootJvmArgs() {
+        List<String> args = new ArrayList<>();
+        args.add("-Dlogging.config=classpath:logback-camel-jbang.xml");
+        if (profile != null && !"prod".equals(profile)) {
+            args.add("-Dcamel.main.profile=" + profile);
+        }
+        args.addAll(buildExistingProjectSystemProperties("server.port"));
+        String jfrArg = buildJfrJvmArgs();
+        if (jfrArg != null) {
+            args.add(jfrArg);
+        }
+        if (jvmArgs != null && !jvmArgs.isBlank()) {
+            args.add(jvmArgs.trim());
+        }
+        return args;
+    }
+
     private int runExistingSpringBootProject(AtomicReference<Process> processRef) throws Exception {
         Path pomPath = Path.of(files.get(0)).toAbsolutePath();
         Path projectDir = pomPath.getParent();
@@ -2330,18 +2443,7 @@ public class Run extends CamelCommand {
         cmd.add("--quiet");
         cmd.add("--file");
         cmd.add(tempPom.toString());
-        StringBuilder sbJvmArgs = new StringBuilder("-Dlogging.config=classpath:logback-camel-jbang.xml");
-        if (profile != null && !"prod".equals(profile)) {
-            sbJvmArgs.append(" -Dcamel.main.profile=").append(profile);
-        }
-        String sbJfrArg = buildJfrJvmArgs();
-        if (sbJfrArg != null) {
-            sbJvmArgs.append(" ").append(sbJfrArg);
-        }
-        if (jvmArgs != null && !jvmArgs.isBlank()) {
-            sbJvmArgs.append(" ").append(jvmArgs.trim());
-        }
-        cmd.add("-Dspring-boot.run.jvmArguments=" + sbJvmArgs);
+        cmd.add("-Dspring-boot.run.jvmArguments=" + String.join(" ", buildExistingSpringBootJvmArgs()));
         cmd.add("-DskipTests");
         cmd.add("package");
         cmd.add("spring-boot:run");
