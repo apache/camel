@@ -429,6 +429,15 @@ final class TuiToolDefinitions {
                         "Absolute path to the project directory to open")),
                 List.of("directory"))));
         tools.add(toToolDef(toolDef(
+                "tui_get_ollama",
+                "Performance of the Ollama server the TUI watches (same data as the Ollama tab, with or without "
+                                  + "a running integration): version and host, loaded models (size, GPU share, "
+                                  + "context length, unload time, architecture, layers, experts), live decode and "
+                                  + "prefill tokens per second and context fill from the local runner, GPU and "
+                                  + "process load on this host, session totals, and the recent requests with "
+                                  + "Ollama's per-request timings (prefill, decode, load, total, tokens, cache).",
+                Map.of("limit", propDef("integer", "Maximum number of requests to return (default 50)")))));
+        tools.add(toToolDef(toolDef(
                 "tui_get_spans",
                 "OpenTelemetry spans of the selected integration (traceId, spanId, parentSpanId, name, kind, "
                                  + "status, start/end nanos, durationMs, routeId, processorId, attributes); the "

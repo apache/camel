@@ -298,6 +298,8 @@ class AiPanel {
     private final List<AiUsageEntry> usageHistory = new CopyOnWriteArrayList<>();
     /** Sequence number of the current question; tags the usage entries recorded while answering it. */
     private volatile int questionCounter;
+    /** The question the current turn answers, for grouping its requests on the Ollama tab. */
+    private volatile String currentQuestion;
     /** Route usage (GenAI spans) recorded before this instant is left out after a {@code /usage reset}. */
     private volatile Instant usageResetAt = Instant.EPOCH;
     private AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
@@ -1170,6 +1172,7 @@ class AiPanel {
                 // the waiting camel_write_file call returns with the question and the model answers in this turn
                 conversation.add(new ConversationEntry(AiRole.USER, input));
                 questionCounter++;
+                currentQuestion = input;
                 log(LogLevel.QUESTION, "Question about the edit", input);
                 return;
             }
@@ -1354,6 +1357,7 @@ class AiPanel {
         }
         conversation.add(new ConversationEntry(AiRole.USER, question));
         questionCounter++;
+        currentQuestion = question;
         log(LogLevel.QUESTION, "Question", question);
         thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
         thinkingStartTime = System.currentTimeMillis();
@@ -1992,6 +1996,12 @@ class AiPanel {
                 response.usage().totalTokens(), latencyMs,
                 response.stopReason(), Instant.now(),
                 AiUsageSource.TUI, null, questionCounter));
+        if (ctx != null && ctx.ollamaMonitor != null && client.apiType() == LlmClient.ApiType.ollama) {
+            // the Ollama tab shows this request with the timings Ollama returned
+            ctx.ollamaMonitor.adoptEndpoint(client.endpointUrl());
+            ctx.ollamaMonitor.recordRequest(model, response.usage(), latencyMs, response.stopReason(),
+                    questionCounter, currentQuestion);
+        }
     }
 
     void render(Frame frame, Rect area) {

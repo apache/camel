@@ -165,6 +165,7 @@ public class CamelMonitor extends CamelCommand {
     // selectedPid is stored on ctx (MonitorContext) so tabs can access it
 
     private DataRefreshService dataService;
+    private OllamaMonitor ollamaMonitor;
     private String monitorNotification;
     private boolean monitorNotificationError;
     private long monitorNotificationExpiry;
@@ -311,6 +312,8 @@ public class CamelMonitor extends CamelCommand {
         createDataService();
         ctx = new MonitorContext(dataService.data(), dataService.infraData());
         dataService.setContext(ctx);
+        ollamaMonitor = new OllamaMonitor();
+        ctx.ollamaMonitor = ollamaMonitor;
 
         // popups, tabs and their cross-wiring
         createActionsPopup();
@@ -1039,6 +1042,9 @@ public class CamelMonitor extends CamelCommand {
             shellPanel.destroy();
             aiPanel.destroy();
             ctx.backgroundExecutor.shutdownNow();
+            if (ollamaMonitor != null) {
+                ollamaMonitor.close();
+            }
             if (mcpServer != null) {
                 mcpServer.stop();
             }
@@ -2937,6 +2943,19 @@ public class CamelMonitor extends CamelCommand {
                 && ctx.selectedPid != null && aiPanel.spanRefreshRequested) {
             aiPanel.spanRefreshRequested = false;
             dataService.refreshSpanData();
+        }
+        if (ollamaMonitor != null) {
+            // cheap and throttled: keeps the More menu's Ollama entry in step with whether a server answers
+            ollamaMonitor.probe();
+        }
+        if (tabRegistry.selectedTabIndex() == TAB_MORE
+                && tabRegistry.getActiveMoreTab() == tabRegistry.ollamaTab() && ollamaMonitor != null) {
+            ollamaMonitor.poll();
+            // route calls to Ollama come from the GenAI spans of the selected integration, refreshed sparingly
+            if (ctx.selectedPid != null && ollamaMonitor.wantsSpans()) {
+                dataService.refreshSpanData();
+                ollamaMonitor.ingestSpans(dataService.otelSpans().get());
+            }
         }
     }
 

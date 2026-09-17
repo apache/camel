@@ -51,15 +51,37 @@ final class DocHelper {
         return cached;
     }
 
+    /**
+     * Reads a resource of this plugin. Under the {@code camel} launcher the plugin jar lives in its own classloader
+     * with camel-jbang-core in the parent, so the lookup must start from a class of this jar; the context classloader
+     * and the core's loader are fallbacks for other setups (tests, a flat classpath).
+     */
     static String loadResourceContent(String resourcePath) {
-        try (InputStream is = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
-            if (is != null) {
-                return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-            }
-        } catch (IOException e) {
-            // ignore
+        InputStream is = null;
+        ClassLoader own = DocHelper.class.getClassLoader();
+        if (own != null) {
+            is = own.getResourceAsStream(resourcePath);
         }
-        return null;
+        if (is == null) {
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            if (tccl != null) {
+                is = tccl.getResourceAsStream(resourcePath);
+            }
+        }
+        if (is == null) {
+            ClassLoader core = ExampleHelper.class.getClassLoader();
+            if (core != null) {
+                is = core.getResourceAsStream(resourcePath);
+            }
+        }
+        if (is == null) {
+            return null;
+        }
+        try (InputStream in = is) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     static String downloadContent(String url) {

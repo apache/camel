@@ -173,7 +173,8 @@ class TuiToolRegistry {
     /** The TUI's own read-only tools; the shared tools add those flagged read-only in the registry. */
     private static final Set<String> READ_ONLY_TUI_TOOLS = Set.of(
             "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
-            "tui_get_options", "tui_get_processor_detail", "tui_get_readme", "tui_get_screen", "tui_get_spans",
+            "tui_get_ollama", "tui_get_options", "tui_get_processor_detail", "tui_get_readme", "tui_get_screen",
+            "tui_get_spans",
             "tui_get_state", "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology",
             "tui_list_examples", "tui_locate", "tui_wait_for_idle");
 
@@ -248,6 +249,7 @@ class TuiToolRegistry {
             case "tui_infra" -> callInfra(args);
             case "tui_open_project" -> callOpenProject(args);
             case "tui_get_spans" -> callGetSpans(args);
+            case "tui_get_ollama" -> callGetOllama(args);
             case "tui_locate" -> callLocate(args);
             case "tui_draw_shape" -> callDrawShape(args);
             case "tui_canvas_open" -> callCanvasOpen(args);
@@ -1167,6 +1169,14 @@ class TuiToolRegistry {
             return "No topology data available. The Diagram tab may not have loaded yet.";
         }
         return Jsoner.serialize(data);
+    }
+
+    private String callGetOllama(Map<String, Object> args) {
+        int limit = 50;
+        if (args.get("limit") instanceof Number n) {
+            limit = Math.max(1, n.intValue());
+        }
+        return Jsoner.serialize(facade.getOllamaData(limit));
     }
 
     private String callGetSpans(Map<String, Object> args) {

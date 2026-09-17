@@ -125,18 +125,25 @@ public class LlmClient {
     }
 
     /**
-     * Token usage of one request, plus whatever the provider reveals about its prompt cache: hosted APIs report how
-     * many input tokens were served from cache ({@code cachedTokens}: OpenAI {@code cached_tokens}, Anthropic
-     * {@code cache_read_input_tokens}, Gemini {@code cachedContentTokenCount}), while Ollama reports no cache figure
-     * but does report how long prompt processing and generation took ({@code prefillMillis}, {@code generationMillis}),
-     * and a prompt served from its KV cache shows as a near-zero prefill. Zero means not reported.
+     * Token usage of one request, plus whatever the provider reveals about its prompt cache and timing: hosted APIs
+     * report how many input tokens were served from cache ({@code cachedTokens}: OpenAI {@code cached_tokens},
+     * Anthropic {@code cache_read_input_tokens}, Gemini {@code cachedContentTokenCount}). Ollama reports the prompt
+     * tokens served from its KV cache ({@code prompt_eval_cached_count}) and how long each phase took: prompt
+     * processing ({@code prefillMillis}), generation ({@code generationMillis}), loading the model into memory
+     * ({@code loadMillis}, near zero for a warm model), and the whole request wall time ({@code totalMillis}, Ollama's
+     * {@code total_duration}). Zero means not reported.
      */
     public record TokenUsage(int inputTokens, int outputTokens, int totalTokens,
-            int cachedTokens, long prefillMillis, long generationMillis) {
+            int cachedTokens, long prefillMillis, long generationMillis, long loadMillis, long totalMillis) {
         public static final TokenUsage EMPTY = new TokenUsage(0, 0, 0);
 
         public TokenUsage(int inputTokens, int outputTokens, int totalTokens) {
-            this(inputTokens, outputTokens, totalTokens, 0, 0, 0);
+            this(inputTokens, outputTokens, totalTokens, 0, 0, 0, 0, 0);
+        }
+
+        public TokenUsage(int inputTokens, int outputTokens, int totalTokens,
+                          int cachedTokens, long prefillMillis, long generationMillis) {
+            this(inputTokens, outputTokens, totalTokens, cachedTokens, prefillMillis, generationMillis, 0, 0);
         }
 
         public TokenUsage add(TokenUsage other) {
@@ -146,7 +153,9 @@ public class LlmClient {
                     totalTokens + other.totalTokens,
                     cachedTokens + other.cachedTokens,
                     prefillMillis + other.prefillMillis,
-                    generationMillis + other.generationMillis);
+                    generationMillis + other.generationMillis,
+                    loadMillis + other.loadMillis,
+                    totalMillis + other.totalMillis);
         }
 
         /** Whether the provider reported a prompt-cache figure or a timing split. */
@@ -1059,8 +1068,8 @@ public class LlmClient {
             StringBuilder fullText = new StringBuilder();
             List<ToolCall> toolCalls = new ArrayList<>();
             String[] doneReasonHolder = { null };
-            int[] tokenHolder = { 0, 0 };
-            long[] durationHolder = { 0, 0 };
+            int[] tokenHolder = { 0, 0, 0 };
+            long[] durationHolder = { 0, 0, 0, 0 };
 
             response.body().forEach(line -> {
                 if (line.isBlank()) {
@@ -1112,8 +1121,11 @@ public class LlmClient {
                         doneReasonHolder[0] = chunk.getString("done_reason");
                         tokenHolder[0] = getIntValue(chunk, "prompt_eval_count");
                         tokenHolder[1] = getIntValue(chunk, "eval_count");
+                        tokenHolder[2] = getIntValue(chunk, "prompt_eval_cached_count");
                         durationHolder[0] = getLongValue(chunk, "prompt_eval_duration") / 1_000_000;
                         durationHolder[1] = getLongValue(chunk, "eval_duration") / 1_000_000;
+                        durationHolder[2] = getLongValue(chunk, "load_duration") / 1_000_000;
+                        durationHolder[3] = getLongValue(chunk, "total_duration") / 1_000_000;
                     }
                 } catch (Exception e) {
                     // skip malformed chunks
@@ -1129,8 +1141,8 @@ public class LlmClient {
                     = !toolCalls.isEmpty() ? "tool_calls" : (doneReasonHolder[0] != null ? doneReasonHolder[0] : "stop");
 
             TokenUsage usage = new TokenUsage(
-                    tokenHolder[0], tokenHolder[1], tokenHolder[0] + tokenHolder[1], 0,
-                    durationHolder[0], durationHolder[1]);
+                    tokenHolder[0], tokenHolder[1], tokenHolder[0] + tokenHolder[1], tokenHolder[2],
+                    durationHolder[0], durationHolder[1], durationHolder[2], durationHolder[3]);
             if (verbose) {
                 printer.println("[verbose] Streamed Ollama: text=" + (text != null ? truncateVerbose(text) : "null")
                                 + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReasonHolder[0]
@@ -1479,9 +1491,12 @@ public class LlmClient {
         int inputTokens = getIntValue(response, "prompt_eval_count");
         int outputTokens = getIntValue(response, "eval_count");
         TokenUsage usage = new TokenUsage(
-                inputTokens, outputTokens, inputTokens + outputTokens, 0,
+                inputTokens, outputTokens, inputTokens + outputTokens,
+                getIntValue(response, "prompt_eval_cached_count"),
                 getLongValue(response, "prompt_eval_duration") / 1_000_000,
-                getLongValue(response, "eval_duration") / 1_000_000);
+                getLongValue(response, "eval_duration") / 1_000_000,
+                getLongValue(response, "load_duration") / 1_000_000,
+                getLongValue(response, "total_duration") / 1_000_000);
 
         if (verbose) {
             printer.println("[verbose] Parsed Ollama: text=" + (content != null ? truncateVerbose(content) : "null")

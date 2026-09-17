@@ -642,6 +642,18 @@ class McpFacade {
         return tabRegistry.diagramTab().getTopologyDataAsJson();
     }
 
+    /** Snapshot of the Ollama monitor for the tui_get_ollama tool; polls first so the caller sees current data. */
+    JsonObject getOllamaData(int limit) {
+        OllamaMonitor monitor = ctx.ollamaMonitor;
+        if (monitor == null) {
+            JsonObject none = new JsonObject();
+            none.put("connected", false);
+            return none;
+        }
+        monitor.poll();
+        return monitor.toJson(limit);
+    }
+
     JsonObject getSpanData(String traceId, int limit) {
         String pid = ctx.selectedPid;
         if (pid == null) {
