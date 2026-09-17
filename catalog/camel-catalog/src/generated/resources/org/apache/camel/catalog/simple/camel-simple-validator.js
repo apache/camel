@@ -62,6 +62,7 @@ const FUNCTIONS = {
   'distinct': true,
   'empty': true,
   'env': true,
+  'escape': true,
   'exchange': true,
   'exchangeId': true,
   'exchangeProperty': true,

@@ -513,6 +513,8 @@ The string functions is various functions to work with values that are String an
 |`capitalize()` | `String` | Capitalizes the message body as a String value (upper case every words)
 |`capitalize(exp)` | `String` | Capitalizes the expression as a String value (upper case every words)
 |`concat(exp,exp,separator)` | `String` | Performs a string concat using two expressions (message body as default) with optional separator.
+|`escape(kind)` | `String` | Escapes special characters in the message body so it can be safely embedded in HTML, XML, JSON, JavaScript, SQL, or a URL. The kind is one of `html`, `xml`, `json`, `js`, `sql`, or `url`.
+|`escape(kind,exp)` | `String` | Escapes special characters in the expression so it can be safely embedded in HTML, XML, JSON, JavaScript, SQL, or a URL. The kind is one of `html`, `xml`, `json`, `js`, `sql`, or `url`.
 |`join(separator,prefix,exp)` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
 |`lowercase()` | `String` | Lowercases the message body
 |`lowercase(exp)` | `String` | Lowercases the expression
@@ -555,6 +557,26 @@ The `join` function is a more complex function to join together a set of values,
 For example if the message body contains a list of [A, B, C] then `${join()}` would return `A,B,C`.
 To use semicolon as separator you would use `${join(;)}`. The `prefix` argument can be used to prefix each value, so for example
 `${join(&,id=)}` would return `id=A&id=B&id=C`.
+
+The `escape` function escapes special characters so a value can be safely embedded in another format,
+instead of chaining multiple `replace` calls or using a custom bean. The first argument is the kind of escaping:
+
+[width="100%",cols="10%,45%,45%",options="header",]
+|====
+|Kind |Escaping |Example
+|`html` | `&` `<` `>` `"` `'` are replaced with HTML entities | `${escape(html, 'Tom & Jerry')}` returns `Tom &amp; Jerry`
+|`xml` | `&` `<` `>` `"` `'` are replaced with the five predefined XML entities | `${escape(xml, $\{header.title})}`
+|`json` | quotes, backslashes and control characters are backslash-escaped for use inside a JSON string (surrounding quotes are not added) | `${escape(json, $\{body})}`
+|`js` | as `json`, and also single quotes and `</` so the value can be used inside a JavaScript string literal | `${escape(js, $\{header.msg})}`
+|`sql` | single quotes are doubled for use inside an SQL string literal | `${escape(sql, $\{header.name})}`
+|`url` | percent-encoding (RFC 3986) for use as a URL query parameter or path segment; a space becomes `%20` | `${escape(url, 'Camel in Action')}` returns `Camel%20in%20Action`
+|====
+
+Without a second argument the function operates on the message body, so if the body is `Monday & Tuesday`
+then `${escape(html)}` returns `Monday &amp; Tuesday`. The kind is case-insensitive, and `javascript` can be used instead of `js`.
+
+TIP: Prefer parameterized queries over `escape(sql)`; the SQL kind is meant as a last resort for
+components where parameters cannot be used.
 
 The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
 So `${lowercase('Hello World')}` returns `hello world` and `${uppercase('Hello World')}` returns `HELLO WORLD`.
