@@ -136,6 +136,37 @@ class OllamaMonitorTest {
         assertEquals(4100, e.totalMs());
         assertFalse(e.hasTimings());
         assertEquals(0, e.ttftMs());
+        // no runner slot and no model polled yet: the window is unknown
+        assertEquals(0, e.contextSize());
+        assertEquals(-1, e.contextPercent());
+    }
+
+    @Test
+    void contextFillComesFromTheSlotOrTheLoadedModelAndCompactionsAreCounted() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.updateServer(new ServerInfo("http://localhost:11434", "0.33.3", true));
+        monitor.updateModels(List.of(new OllamaMonitor.LoadedModel(
+                "m", "f", "35.5B", "Q4_K_M", 1, 1, 32_768, null, null)));
+        monitor.recordRequest("m", new LlmClient.TokenUsage(4_000, 60, 4_060, 500, 900, 800, 0, 1800), 0, "stop");
+        RequestEntry first = monitor.snapshot().lastRequest();
+        assertEquals(32_768, first.contextSize());
+        assertEquals(4_500, first.promptTokens());
+        assertEquals(13, first.contextPercent());
+
+        // the runner's slot wins over the model list when present
+        monitor.updateSlot(slot(false, 0, System.currentTimeMillis()));
+        monitor.recordRequest("m", new LlmClient.TokenUsage(20_000, 60, 20_060, 0, 900, 800, 0, 1800), 0, "stop");
+        assertEquals(262144, monitor.snapshot().lastRequest().contextSize());
+        assertEquals(7, monitor.snapshot().lastRequest().contextPercent());
+        assertEquals(13, monitor.snapshot().totals().peakContextPercent());
+        assertEquals(0, monitor.snapshot().totals().compactions());
+
+        // a prompt a fifth smaller than the previous turn counts as a compaction
+        monitor.recordRequest("m", new LlmClient.TokenUsage(9_000, 60, 9_060, 0, 900, 800, 0, 1800), 0, "stop");
+        assertEquals(1, monitor.snapshot().totals().compactions());
+        JsonObject last = (JsonObject) ((JsonArray) monitor.toJson(1).get("requests")).get(0);
+        assertEquals(9_000L, last.get("promptTokens"));
+        assertEquals(3, last.get("contextPercent"));
     }
 
     @Test

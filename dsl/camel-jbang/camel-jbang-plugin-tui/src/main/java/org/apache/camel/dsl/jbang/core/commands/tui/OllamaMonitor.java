@@ -140,10 +140,26 @@ final class OllamaMonitor {
         ROUTE
     }
 
-    /** One request as Ollama reported it (TUI) or as the GenAI span of a route recorded it (no phase timings). */
+    /**
+     * One request as Ollama reported it (TUI) or as the GenAI span of a route recorded it (no phase timings).
+     * {@code contextSize} is the context window of the runner that served it, 0 when unknown.
+     */
     record RequestEntry(Instant timestamp, RequestSource source, String routeId, String model, int inputTokens,
             int outputTokens, int cachedTokens, long prefillMs, long decodeMs, long loadMs, long totalMs,
-            String doneReason) {
+            String doneReason, long contextSize) {
+
+        /** Everything the model had in front of it: prompt tokens evaluated plus those served from cache. */
+        long promptTokens() {
+            return (long) inputTokens + cachedTokens;
+        }
+
+        /** Share of the context window the prompt filled, or -1 when the window is unknown. */
+        int contextPercent() {
+            if (contextSize <= 0) {
+                return -1;
+            }
+            return (int) Math.min(100, promptTokens() * 100 / contextSize);
+        }
 
         double prefillTokensPerSecond() {
             return prefillMs > 0 ? inputTokens * 1000.0 / prefillMs : 0;
@@ -169,15 +185,16 @@ final class OllamaMonitor {
     }
 
     record SessionTotals(int requests, long inputTokens, long outputTokens, long cachedTokens, long prefillMs,
-            long decodeMs, long loadMs, int coldStarts) {
+            long decodeMs, long loadMs, int coldStarts, int peakContextPercent, int compactions) {
 
-        static final SessionTotals EMPTY = new SessionTotals(0, 0, 0, 0, 0, 0, 0, 0);
+        static final SessionTotals EMPTY = new SessionTotals(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-        SessionTotals plus(RequestEntry e) {
+        SessionTotals plus(RequestEntry e, boolean compaction) {
             return new SessionTotals(
                     requests + 1, inputTokens + e.inputTokens(), outputTokens + e.outputTokens(),
                     cachedTokens + e.cachedTokens(), prefillMs + e.prefillMs(), decodeMs + e.decodeMs(),
-                    loadMs + e.loadMs(), coldStarts + (e.coldStart() ? 1 : 0));
+                    loadMs + e.loadMs(), coldStarts + (e.coldStart() ? 1 : 0),
+                    Math.max(peakContextPercent, e.contextPercent()), compactions + (compaction ? 1 : 0));
         }
 
         double avgDecodeTokensPerSecond() {
@@ -227,6 +244,7 @@ final class OllamaMonitor {
     private final Deque<RequestEntry> requests = new ArrayDeque<>();
     private final LinkedHashSet<String> seenSpanIds = new LinkedHashSet<>();
     private SessionTotals totals = SessionTotals.EMPTY;
+    private long lastTuiPromptTokens;
     private final TokenRateWindow decodeWindow = new TokenRateWindow(RATE_WINDOW_MS);
     private final TokenRateWindow prefillWindow = new TokenRateWindow(RATE_WINDOW_MS);
     private final long[] decodeHistory = new long[HISTORY_POINTS];
@@ -272,9 +290,50 @@ final class OllamaMonitor {
         RequestEntry entry = new RequestEntry(
                 Instant.now(), RequestSource.TUI, null, model != null ? model : "unknown",
                 usage.inputTokens(), usage.outputTokens(), usage.cachedTokens(),
-                usage.prefillMillis(), usage.generationMillis(), usage.loadMillis(), total, doneReason);
+                usage.prefillMillis(), usage.generationMillis(), usage.loadMillis(), total, doneReason,
+                contextSizeForNewRequest());
         synchronized (lock) {
             addRequest(entry);
+        }
+    }
+
+    /**
+     * The context window that served a request that just finished: the runner's slot size when known, else the
+     * allocated context of the loaded model, fetched on the spot when the tab has not polled yet. A request with a
+     * different {@code num_ctx} makes Ollama reload before answering, so what is loaded after the reply is what served
+     * it.
+     */
+    private long contextSizeForNewRequest() {
+        long known = knownContextSize();
+        if (known > 0) {
+            return known;
+        }
+        String base = baseUrl;
+        if (base != null) {
+            JsonObject ps = getJsonObject(base + "/api/ps");
+            if (ps != null) {
+                List<LoadedModel> loaded = OllamaParsers.parsePs(ps);
+                if (!loaded.isEmpty()) {
+                    synchronized (lock) {
+                        List<LoadedModel> withShapes = new ArrayList<>();
+                        for (LoadedModel m : loaded) {
+                            withShapes.add(m.withShape(shapes.get(m.name())));
+                        }
+                        models = List.copyOf(withShapes);
+                    }
+                    return loaded.get(0).contextLength();
+                }
+            }
+        }
+        return 0;
+    }
+
+    private long knownContextSize() {
+        synchronized (lock) {
+            if (slot != null && slot.contextSize() > 0) {
+                return slot.contextSize();
+            }
+            return models.isEmpty() ? 0 : models.get(0).contextLength();
         }
     }
 
@@ -313,7 +372,7 @@ final class OllamaMonitor {
                         (int) OllamaParsers.num(attrs, GenAiAttributes.INPUT_TOKENS),
                         (int) OllamaParsers.num(attrs, GenAiAttributes.OUTPUT_TOKENS),
                         0, 0, 0, 0, Math.max(0, span.durationMs()),
-                        OllamaParsers.str(attrs, GenAiAttributes.FINISH_REASONS)));
+                        OllamaParsers.str(attrs, GenAiAttributes.FINISH_REASONS), knownContextSizeLocked()));
             }
             // spans arrive oldest first; keep the log newest first
             fresh.sort((a, b) -> a.timestamp().compareTo(b.timestamp()));
@@ -341,18 +400,36 @@ final class OllamaMonitor {
         synchronized (lock) {
             requests.clear();
             totals = SessionTotals.EMPTY;
+            lastTuiPromptTokens = 0;
             Arrays.fill(decodeHistory, 0);
             decodeWindow.clear();
             prefillWindow.clear();
         }
     }
 
+    /** As {@link #knownContextSize()} for callers already holding the lock. */
+    private long knownContextSizeLocked() {
+        if (slot != null && slot.contextSize() > 0) {
+            return slot.contextSize();
+        }
+        return models.isEmpty() ? 0 : models.get(0).contextLength();
+    }
+
     private void addRequest(RequestEntry entry) {
+        // an AI panel prompt that shrinks by a fifth or more against the previous turn means the history was
+        // compacted (or a new conversation started); either way the context was freed
+        boolean compaction = false;
+        if (entry.source() == RequestSource.TUI) {
+            if (lastTuiPromptTokens > 0 && entry.promptTokens() < lastTuiPromptTokens * 0.8) {
+                compaction = true;
+            }
+            lastTuiPromptTokens = entry.promptTokens();
+        }
         requests.addFirst(entry);
         while (requests.size() > MAX_REQUESTS) {
             requests.removeLast();
         }
-        totals = totals.plus(entry);
+        totals = totals.plus(entry, compaction);
     }
 
     // ---- state updates (also the test seam) ----
@@ -870,6 +947,8 @@ final class OllamaMonitor {
         session.put("avgDecodeTokensPerSecond", round1(s.totals().avgDecodeTokensPerSecond()));
         session.put("avgPrefillTokensPerSecond", round1(s.totals().avgPrefillTokensPerSecond()));
         session.put("coldStarts", s.totals().coldStarts());
+        session.put("peakContextPercent", s.totals().peakContextPercent());
+        session.put("compactions", s.totals().compactions());
         root.put("session", session);
 
         JsonArray reqs = new JsonArray();
@@ -906,6 +985,9 @@ final class OllamaMonitor {
         r.put("decodeTokensPerSecond", round1(e.decodeTokensPerSecond()));
         r.put("ttftMs", e.ttftMs());
         r.put("coldStart", e.coldStart());
+        r.put("promptTokens", e.promptTokens());
+        r.put("contextSize", e.contextSize());
+        r.put("contextPercent", e.contextPercent());
         if (e.doneReason() != null) {
             r.put("doneReason", e.doneReason());
         }

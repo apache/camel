@@ -79,6 +79,13 @@ loads on the first request.
 - **speculative** — the speculative decoding method the runner uses
   (`draft-mtp` is multi-token prediction), which is why decode can
   exceed one token per step.
+- **turns** — one bar per AI panel turn, oldest first, scaled to the
+  whole context window: how much of the window each turn's prompt
+  filled (system prompt, tool definitions, history, question). The
+  bars grow as a conversation continues and drop when the history is
+  compacted; the line ends with the latest fill, the session peak and
+  the number of compactions seen. Yellow from 50%, red from 80%: that is
+  when `/compact` in the AI panel, or a smaller toolset, pays off.
 
 Without the local runner the panel falls back to the last request's
 tokens against the model's context length.
@@ -106,6 +113,7 @@ One line per request, newest first:
 | IN | Prompt tokens evaluated |
 | OUT | Tokens generated |
 | CACHED | Prompt tokens served from Ollama's cache (`-` when none) |
+| CTX | Share of the context window the prompt filled (IN plus CACHED against the window that served it) |
 | PREFILL | Prompt tokens per second |
 | DECODE | Generated tokens per second |
 | TTFT | Time to first token (load plus prefill), shown in yellow after a cold start |

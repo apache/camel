@@ -110,6 +110,7 @@ class OllamaTabRenderTest {
         assertTrue(rendered.contains("ollama serve"), rendered);
         // request log
         assertTrue(rendered.contains("Requests (1)"), rendered);
+        assertTrue(rendered.contains("CTX"), rendered);
         assertTrue(rendered.contains("PREFILL"), rendered);
         assertTrue(rendered.contains("DECODE"), rendered);
         assertTrue(rendered.contains("tui"), rendered);
@@ -170,6 +171,24 @@ class OllamaTabRenderTest {
     }
 
     @Test
+    void contextTrendShowsTurnsPeakAndCompactions() {
+        localServerWithModel(); // ctx 262,144
+        // four turns: the prompt grows, then a compaction frees most of it
+        monitor.recordRequest("m", usage(26_000), 0, "stop");
+        monitor.recordRequest("m", usage(52_000), 0, "stop");
+        monitor.recordRequest("m", usage(131_000), 0, "stop");
+        monitor.recordRequest("m", usage(39_000), 0, "stop");
+
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertTrue(rendered.contains("turns"), rendered);
+        assertTrue(rendered.contains("14% (peak 49%) · 1 compaction"), rendered);
+        // the CTX column of the biggest turn
+        assertTrue(rendered.contains("49%"), rendered);
+        assertEquals(49, monitor.snapshot().totals().peakContextPercent());
+        assertEquals(1, monitor.snapshot().totals().compactions());
+    }
+
+    @Test
     void helpTextExplainsThePhasesAndColumns() {
         String help = new OllamaTab(ctx, monitor).getHelpText();
         assertTrue(help != null && help.contains("TTFT"), help);
@@ -197,6 +216,7 @@ class OllamaTabRenderTest {
         assertEquals("  ▁▄█", OllamaTab.sparkline(new long[] { 10, 40, 80 }, 5));
         assertEquals("    ", OllamaTab.sparkline(new long[] { 0, 0 }, 4));
         assertEquals("▁█", OllamaTab.sparkline(new long[] { 1, 2, 3, 20 }, 2));
+        assertEquals("▁▄█", OllamaTab.sparkline(new long[] { 10, 50, 100 }, 3, 100));
         Instant now = Instant.parse("2026-09-17T09:18:12Z");
         assertEquals("unloads in 4m32s", OllamaTab.formatCountdown(Instant.parse("2026-09-17T09:22:44Z"), now));
         assertEquals("unloads in 2h5m", OllamaTab.formatCountdown(now.plusSeconds(2 * 3600 + 300), now));
@@ -219,6 +239,10 @@ class OllamaTabRenderTest {
         monitor.updateModels(List.of(model()));
     }
 
+    private static LlmClient.TokenUsage usage(int promptTokens) {
+        return new LlmClient.TokenUsage(promptTokens, 50, promptTokens + 50, 0, 900, 800, 10, 1800);
+    }
+
     private static LoadedModel model() {
         return new LoadedModel(
                 "qwen3.6:35b-a3b", "qwen35moe", "35.5B", "Q4_K_M", 23567972432L, 23567972432L, 262144,
@@ -231,7 +255,7 @@ class OllamaTabRenderTest {
     private static RequestEntry request(int decodeTokensPerSecond) {
         return new RequestEntry(
                 Instant.now(), RequestSource.TUI, null, "m", 10, decodeTokensPerSecond, 0, 100, 1000,
-                0, 1100, "stop");
+                0, 1100, "stop", 0);
     }
 
     private static SpanEntry routeSpan() {

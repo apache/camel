@@ -427,11 +427,13 @@ or at the endpoint the AI panel (*F8*) is using.
   otherwise from the last request; time to first token and load time (a load of a second or more
   is a cold start); session averages and a sparkline of the decode rate.
 * *Context* -- how full the context window is, the share of the prompt served from Ollama's cache,
-  whether the model is working or idle, and the speculative decoding method in use.
+  whether the model is working or idle, the speculative decoding method in use, and a per-turn trend
+  of how much of the window each AI panel prompt filled, with the session peak and the compactions seen.
 * *Host* -- GPU utilization and memory (Apple silicon through `ioreg`, NVIDIA through `nvidia-smi`),
   and CPU and memory of the Ollama server and its model runner.
-* *Requests* -- one line per request with input, output and cached tokens, prefill and decode
-  tokens per second, time to first token, total time and the stop reason.
+* *Requests* -- one line per request with input, output and cached tokens, the share of the context
+  window the prompt filled, prefill and decode tokens per second, time to first token, total time and
+  the stop reason.
 
 Two kinds of requests appear in the log. Questions asked in the AI panel with Ollama as the provider
 come with the timings Ollama reports for each request (prompt evaluation, generation, model load,

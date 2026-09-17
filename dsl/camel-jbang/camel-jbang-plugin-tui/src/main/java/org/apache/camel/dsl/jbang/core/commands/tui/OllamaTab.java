@@ -337,6 +337,10 @@ class OllamaTab extends AbstractTab {
                 state.add(Span.styled(" · speculative " + slot.speculative(), Theme.muted()));
             }
             lines.add(Line.from(state));
+            Line trend = contextTrendLine(s, block.inner(area).width());
+            if (trend != null) {
+                lines.add(trend);
+            }
         } else {
             RequestEntry last = s.lastRequest();
             long ctx = model != null ? model.contextLength() : 0;
@@ -357,8 +361,45 @@ class OllamaTab extends AbstractTab {
             lines.add(Line.from(Span.styled(s.local()
                     ? " live state appears once the runner is found"
                     : " live state needs the runner on this machine", Theme.muted().dim())));
+            Line trend = contextTrendLine(s, block.inner(area).width());
+            if (trend != null) {
+                lines.add(trend);
+            }
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).block(block).build(), area);
+    }
+
+    /**
+     * How full the context was on each of the last AI panel turns, oldest first, scaled to the whole window so the bars
+     * are comparable across turns; a drop between bars is a compaction. Null when no turn has a known window.
+     */
+    static Line contextTrendLine(Snapshot s, int width) {
+        List<RequestEntry> turns = new ArrayList<>();
+        for (RequestEntry e : s.requests()) {
+            if (e.source() == RequestSource.TUI && e.contextPercent() >= 0) {
+                turns.add(e);
+            }
+        }
+        if (turns.isEmpty()) {
+            return null;
+        }
+        int last = turns.get(0).contextPercent();
+        SessionTotals t = s.totals();
+        String suffix = " " + last + "%" + (t.peakContextPercent() > last ? " (peak " + t.peakContextPercent() + "%)" : "")
+                        + (t.compactions() > 0
+                                ? " · " + t.compactions() + (t.compactions() == 1 ? " compaction" : " compactions")
+                                : "");
+        int barWidth = Math.max(4, Math.min(24, width - 8 - suffix.length()));
+        int n = Math.min(barWidth, turns.size());
+        long[] data = new long[n];
+        for (int i = 0; i < n; i++) {
+            data[n - 1 - i] = turns.get(i).contextPercent();
+        }
+        Style level = last >= 80 ? Theme.error() : last >= 50 ? Theme.warning() : Theme.info();
+        return Line.from(
+                Span.styled(" turns ", Theme.muted()),
+                Span.styled(sparkline(data, barWidth, 100), level),
+                Span.styled(suffix, level));
     }
 
     private void renderHost(Frame frame, Rect area, Snapshot s) {
@@ -419,6 +460,9 @@ class OllamaTab extends AbstractTab {
                     rightCell(formatTokens(e.inputTokens()), 6),
                     rightCell(formatTokens(e.outputTokens()), 6),
                     rightCell(e.cachedTokens() > 0 ? formatTokens(e.cachedTokens()) : "-", 6, Theme.muted()),
+                    rightCell(e.contextPercent() >= 0 ? e.contextPercent() + "%" : "-", 5,
+                            e.contextPercent() >= 80 ? Theme.error() : e.contextPercent() >= 50 ? Theme.warning()
+                                    : Style.EMPTY),
                     rightCell(e.prefillMs() > 0 ? formatRate(e.prefillTokensPerSecond()) : "-", 8, Theme.info()),
                     rightCell(e.decodeMs() > 0 ? formatRate(e.decodeTokensPerSecond()) : "-", 8, Theme.success()),
                     rightCell(e.hasTimings() ? formatSeconds(e.ttftMs()) : "-", 7,
@@ -448,6 +492,7 @@ class OllamaTab extends AbstractTab {
                         rightCell("IN", 6, Style.EMPTY.bold()),
                         rightCell("OUT", 6, Style.EMPTY.bold()),
                         rightCell("CACHED", 6, Style.EMPTY.bold()),
+                        rightCell("CTX", 5, Style.EMPTY.bold()),
                         rightCell("PREFILL", 8, Style.EMPTY.bold()),
                         rightCell("DECODE", 8, Style.EMPTY.bold()),
                         rightCell("TTFT", 7, Style.EMPTY.bold()),
@@ -460,6 +505,7 @@ class OllamaTab extends AbstractTab {
                         Constraint.length(6),
                         Constraint.length(6),
                         Constraint.length(6),
+                        Constraint.length(5),
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(7),
@@ -468,7 +514,9 @@ class OllamaTab extends AbstractTab {
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Requests (" + requests.size() + ")  tok/s for prefill and decode ").build())
+                        .title(" Requests (" + requests.size()
+                               + ")  tok/s for prefill and decode · CTX = prompt share of the context window ")
+                        .build())
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
@@ -635,12 +683,20 @@ class OllamaTab extends AbstractTab {
 
     /** Right-aligned one-row sparkline scaled to the largest value; an all-zero series renders as spaces. */
     static String sparkline(long[] data, int width) {
-        if (data == null || width <= 0) {
+        if (data == null) {
             return "";
         }
         long max = 0;
         for (long v : data) {
             max = Math.max(max, v);
+        }
+        return sparkline(data, width, max);
+    }
+
+    /** As {@link #sparkline(long[], int)} with a fixed scale, so bars stay comparable across renders. */
+    static String sparkline(long[] data, int width, long max) {
+        if (data == null || width <= 0) {
+            return "";
         }
         StringBuilder sb = new StringBuilder();
         int start = Math.max(0, data.length - width);
