@@ -484,9 +484,16 @@ public final class AuthoringTools {
         String s = source.trim();
         int line = 0;
         int colon = s.lastIndexOf(':');
-        if (colon > 0 && colon < s.length() - 1 && s.substring(colon + 1).chars().allMatch(Character::isDigit)) {
-            line = Integer.parseInt(s.substring(colon + 1));
-            s = s.substring(0, colon);
+        if (colon > 0 && colon < s.length() - 1) {
+            String suffix = s.substring(colon + 1);
+            if (suffix.chars().allMatch(Character::isDigit)) {
+                try {
+                    line = Integer.parseInt(suffix);
+                    s = s.substring(0, colon);
+                } catch (NumberFormatException e) {
+                    // too many digits for a line number: leave the location as it is
+                }
+            }
         }
         String rel;
         int bang = s.lastIndexOf("!/");

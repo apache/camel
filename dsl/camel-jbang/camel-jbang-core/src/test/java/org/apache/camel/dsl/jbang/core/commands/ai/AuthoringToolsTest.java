@@ -266,6 +266,12 @@ class AuthoringToolsTest {
                 List.of(Map.of("source", "file:" + dir.resolve("flat.camel.yaml"))), dir).get(0);
         assertEquals("flat.camel.yaml", anonymous.getString("file"));
         assertFalse(anonymous.containsKey("routeId"));
+        // a digit suffix too long for a line number is not one: no exception, no line
+        JsonObject overflow = (JsonObject) AuthoringTools.routeSources(
+                List.of(Map.of("routeId", "big", "source", "file:flat.camel.yaml:2147483648")), dir).get(0);
+        assertEquals("flat.camel.yaml:2147483648", overflow.getString("file"));
+        assertFalse(overflow.containsKey("line"));
+        assertEquals(Boolean.TRUE, overflow.get("missing"));
     }
 
     @Test
