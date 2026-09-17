@@ -503,25 +503,7 @@ class OllamaTab extends AbstractTab {
 
     @Override
     public String getHelpText() {
-        return """
-                # Ollama
-
-                Performance of the model Ollama is serving, in the spirit of an LLM dashboard.
-
-                - **Header**: the loaded model with its family, parameters, quantization, layers, experts, \
-                how much of it sits in GPU memory, its context length and when it unloads.
-                - **Throughput**: decode and prefill tokens per second. *live* while the runner on this machine \
-                is generating, otherwise the figures of the last request; time to first token and load time \
-                (a load of a second or more means a cold start); session averages and a decode-rate history.
-                - **Context**: context window fill, cache hit ratio and whether the runner is working, from the \
-                runner's live state on this machine; the last request's tokens otherwise.
-                - **Host** (same machine only): GPU utilization and memory, CPU and memory of the runner and \
-                the Ollama server.
-                - **Requests**: every request the AI panel (F8) made through Ollama with Ollama's own timings, \
-                plus calls made by Camel routes when GenAI observability is on (tokens and duration only).
-
-                Keys: **↑/↓** select a request, **r** reset the log and session totals, **F5** refresh now.
-                """;
+        return DocHelper.loadHelpText("ollama");
     }
 
     // ---- formatting helpers (package-private for tests) ----

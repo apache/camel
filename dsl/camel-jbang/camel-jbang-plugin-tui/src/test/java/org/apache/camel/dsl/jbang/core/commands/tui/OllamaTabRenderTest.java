@@ -170,6 +170,15 @@ class OllamaTabRenderTest {
     }
 
     @Test
+    void helpTextExplainsThePhasesAndColumns() {
+        String help = new OllamaTab(ctx, monitor).getHelpText();
+        assertTrue(help != null && help.contains("TTFT"), help);
+        for (String term : List.of("Prefill", "Decode", "cold", "cache hit", "speculative", "CACHED", "REASON")) {
+            assertTrue(help.contains(term), "help should explain " + term);
+        }
+    }
+
+    @Test
     void formattingHelpers() {
         assertEquals("54", OllamaTab.formatRate(54.04));
         assertEquals("7.5", OllamaTab.formatRate(7.49));
