@@ -77,6 +77,7 @@ class OllamaMonitorTest {
                 "stop");
         RequestEntry e = monitor.snapshot().lastRequest();
         assertEquals(150, e.evaluatedTokens());
+        assertEquals(98, e.cacheHitPercent());
         assertEquals(150 * 1000.0 / 532, e.prefillTokensPerSecond(), 0.1);
         assertEquals(12_774, e.promptTokens());
         assertEquals(150 * 1000.0 / 532, monitor.snapshot().totals().avgPrefillTokensPerSecond(), 0.1);

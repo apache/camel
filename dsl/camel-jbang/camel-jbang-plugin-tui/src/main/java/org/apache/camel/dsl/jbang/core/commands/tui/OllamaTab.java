@@ -317,9 +317,16 @@ class OllamaTab extends AbstractTab {
                     Span.styled(" " + gaugeBar(pct, gaugeWidth) + " ", pct >= 90 ? Theme.error() : Theme.info()),
                     Span.styled(formatTokens(used) + " / " + formatTokens(size), Theme.label()),
                     Span.styled(" (" + pct + "%)", Theme.muted())));
-            lines.add(Line.from(Span.styled(" prompt " + formatTokens(slot.promptTokens()) + " · cache hit "
-                                            + slot.cacheHitPercent() + "%"
-                                            + (slot.slots() > 1 ? " · " + slot.slots() + " slots" : ""),
+            // the runner clears its cache count once a request is done, so when idle the last request tells
+            RequestEntry last = s.lastRequest();
+            String promptLine;
+            if (slot.processing() || last == null) {
+                promptLine = " prompt " + formatTokens(slot.promptTokens()) + " · cache hit " + slot.cacheHitPercent() + "%";
+            } else {
+                promptLine = " prompt " + formatTokens(last.promptTokens()) + " · cache hit " + last.cacheHitPercent()
+                             + "% (last request)";
+            }
+            lines.add(Line.from(Span.styled(promptLine + (slot.slots() > 1 ? " · " + slot.slots() + " slots" : ""),
                     Theme.muted())));
             List<Span> state = new ArrayList<>();
             if (slot.processing()) {
@@ -396,9 +403,10 @@ class OllamaTab extends AbstractTab {
             data[n - 1 - i] = turns.get(i).contextPercent();
         }
         Style level = last >= 80 ? Theme.error() : last >= 50 ? Theme.warning() : Theme.info();
+        // bars start right after the label and grow to the right as turns are added
         return Line.from(
                 Span.styled(" turns ", Theme.muted()),
-                Span.styled(sparkline(data, barWidth, 100), level),
+                Span.styled(sparkline(data, n, 100), level),
                 Span.styled(suffix, level));
     }
 

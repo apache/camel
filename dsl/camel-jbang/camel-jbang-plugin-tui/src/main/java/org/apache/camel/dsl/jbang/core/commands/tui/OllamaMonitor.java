@@ -161,6 +161,14 @@ final class OllamaMonitor {
             return Math.max(0, (long) inputTokens - cachedTokens);
         }
 
+        /** Share of the prompt Ollama served from its cache. */
+        int cacheHitPercent() {
+            if (inputTokens <= 0) {
+                return 0;
+            }
+            return (int) Math.min(100, (long) cachedTokens * 100 / inputTokens);
+        }
+
         /** Share of the context window the prompt filled, or -1 when the window is unknown. */
         int contextPercent() {
             if (contextSize <= 0) {

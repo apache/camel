@@ -100,7 +100,8 @@ class OllamaTabRenderTest {
         assertTrue(rendered.contains("prefill"), rendered);
         assertTrue(rendered.contains("TTFT 0.20s"), rendered);
         assertTrue(rendered.contains("Context"), rendered);
-        assertTrue(rendered.contains("cache hit 36%"), rendered);
+        // idle runner: the cache figure comes from the last request (none cached there), not the cleared slot
+        assertTrue(rendered.contains("cache hit 0% (last request)"), rendered);
         assertTrue(rendered.contains("idle"), rendered);
         assertTrue(rendered.contains("speculative draft-mtp"), rendered);
         assertTrue(rendered.contains("Host"), rendered);
@@ -115,6 +116,18 @@ class OllamaTabRenderTest {
         assertTrue(rendered.contains("DECODE"), rendered);
         assertTrue(rendered.contains("tui"), rendered);
         assertTrue(rendered.contains("stop"), rendered);
+    }
+
+    @Test
+    void workingRunnerShowsTheSlotCacheFigure() {
+        localServerWithModel();
+        monitor.updateRunner(new RunnerInfo(23629, 58237, 262144, 1, "/blob", "llama-server"));
+        monitor.updateSlot(new SlotState(true, 25, 25, 9, 6, 262144, "draft-mtp", 1, Instant.now()));
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(16, 6, 22, 0, 188, 81, 12, 300), 0, "stop");
+
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 180, 40);
+        assertTrue(rendered.contains("cache hit 36%"), rendered);
+        assertTrue(rendered.contains("working"), rendered);
     }
 
     @Test
