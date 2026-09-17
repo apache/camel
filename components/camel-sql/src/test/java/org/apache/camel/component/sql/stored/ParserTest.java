@@ -113,6 +113,36 @@ class ParserTest extends CamelTestSupport {
     }
 
     @Test
+    public void simpleFunctionWithParentheses() {
+        Exchange exchange = createExchangeWithBody(42);
+        exchange.getIn().setHeader("bar", 3);
+        Template template = parser.parseTemplate(
+                "ADDNUMBERS2(INTEGER ${val(1)},VARCHAR ${bodyAs(String)},INOUT INTEGER ${val(7)} inout1,OUT INTEGER out1)");
+
+        assertEquals(4, template.getParameterList().size());
+        assertEquals("1", ((InParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
+        assertEquals("42", ((InParameter) template.getParameterList().get(1)).getValueExtractor().eval(exchange, null));
+        assertEquals("7", ((InOutParameter) template.getParameterList().get(2)).getValueExtractor().eval(exchange, null));
+        assertEquals("out1", ((OutParameter) template.getParameterList().get(3)).getOutValueMapKey());
+    }
+
+    @Test
+    public void simpleFunctionAsLastParameter() {
+        // the closing parenthesis of the function must not be confused with the end of the procedure
+        Exchange exchange = createExchangeWithBody(1);
+        Template template = parser.parseTemplate("ADDNUMBERS2(INTEGER ${val(1)} )");
+        assertEquals(1, template.getParameterList().size());
+        assertEquals("1", ((InParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
+    }
+
+    @Test
+    public void multiArgFunctionShouldFail() {
+        // the comma separates the procedure parameters, so functions with several arguments are not supported
+        assertThrows(ParseRuntimeException.class,
+                () -> parser.parseTemplate("ADDNUMBERS2(VARCHAR ${replace(a,b)})"));
+    }
+
+    @Test
     public void vendorSpecificPositiveSqlType() {
         Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${header.foo})");
         assertEquals(1342, ((InParameter) template.getParameterList().get(0)).getSqlType());
