@@ -18,10 +18,14 @@ package org.apache.camel.language.simple.functions;
 
 import java.util.List;
 
+import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
@@ -198,5 +202,82 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
     public void testNormalizeWhitespace() {
         exchange.getIn().setBody("  hello   world  ");
         assertEquals("hello world", evaluate("normalizeWhitespace()", String.class));
+    }
+
+    // --- escape ---
+
+    @Test
+    public void testEscapeHtmlBody() {
+        exchange.getIn().setBody("Monday & Tuesday <b>\"quoted\"</b>");
+        assertEquals("Monday &amp; Tuesday &lt;b&gt;&quot;quoted&quot;&lt;/b&gt;", evaluate("escape(html)", String.class));
+    }
+
+    @Test
+    public void testEscapeXmlHeader() {
+        exchange.getIn().setHeader("title", "Tom & Jerry's <Show>");
+        assertEquals("Tom &amp; Jerry&apos;s &lt;Show&gt;", evaluate("escape(xml, ${header.title})", String.class));
+    }
+
+    @Test
+    public void testEscapeJson() {
+        exchange.getIn().setBody("say \"hi\"\nbye");
+        assertEquals("say \\\"hi\\\"\\nbye", evaluate("escape(json)", String.class));
+    }
+
+    @Test
+    public void testEscapeJs() {
+        exchange.getIn().setBody("it's </script>");
+        assertEquals("it\\'s <\\/script>", evaluate("escape(js)", String.class));
+        assertEquals("it\\'s <\\/script>", evaluate("escape(javascript)", String.class));
+    }
+
+    @Test
+    public void testEscapeSql() {
+        exchange.getIn().setHeader("name", "O'Reilly");
+        assertEquals("O''Reilly", evaluate("escape(sql,${header.name})", String.class));
+    }
+
+    @Test
+    public void testEscapeUrl() {
+        assertEquals("Camel%20in%20Action%3F", evaluate("escape(url, 'Camel in Action?')", String.class));
+        exchange.getIn().setBody("a&b=c");
+        assertEquals("a%26b%3Dc", evaluate("escape(url)", String.class));
+    }
+
+    @Test
+    public void testEscapeKindCaseInsensitive() {
+        exchange.getIn().setBody("a & b");
+        assertEquals("a &amp; b", evaluate("escape(HTML)", String.class));
+    }
+
+    @Test
+    public void testEscapeNestedFunctionWithComma() {
+        exchange.getIn().setBody("<a>");
+        assertEquals("&lt;a&gt;-&lt;a&gt;", evaluate("escape(html, ${concat(${body},${body},-)})", String.class));
+    }
+
+    @Test
+    public void testEscapeNonStringBody() {
+        exchange.getIn().setBody(42);
+        assertEquals("42", evaluate("escape(html)", String.class));
+    }
+
+    @Test
+    public void testEscapeNullBody() {
+        exchange.getIn().setBody(null);
+        assertNull(evaluate("escape(html)", String.class));
+    }
+
+    @Test
+    public void testEscapeUnknownKind() {
+        SimpleParserException e = assertThrows(SimpleParserException.class,
+                () -> createFactory().createFunction(context, "escape(csv)", 0));
+        assertTrue(e.getMessage().contains("Unknown escape kind: csv"));
+    }
+
+    @Test
+    public void testEscapeMissingKind() {
+        assertThrows(SimpleParserException.class,
+                () -> createFactory().createFunction(context, "escape()", 0));
     }
 }

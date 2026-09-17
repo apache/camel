@@ -61,6 +61,7 @@ public class SimpleUtils {
                     "distinct",
                     "empty",
                     "env",
+                    "escape",
                     "exception",
                     "exchange",
                     "exchangeid",
