@@ -9,12 +9,12 @@
     "vendor": "Community"
   },
   {
-    "name": "camel-kit",
+    "name": "kit",
     "command": "kit",
     "description": "Design Apache Camel Integrations with AI",
     "firstVersion": "4.10.0",
     "groupId": "io.github.luigidemasi",
-    "artifactId": "camel-kit-jbang-plugin",
+    "artifactId": "camel-jbang-plugin-kit",
     "vendor": "Community"
   }
 ]
