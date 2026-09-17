@@ -109,7 +109,7 @@ pipeline {
                     def nativeExe = env.BRANCH_NAME in ['main', 'camel-4.22.x']
                     def exeParams = nativeExe ? '-Dcamel.exe.build=true ' : ''
                     def pathPrefix = nativeExe ? "PATH=\"${env.LLVM_MINGW_BIN}:\$PATH\" " : ''
-                    sh "${pathPrefix}./mvnw $MAVEN_PARAMS ${exeParams}-Pdeploy,apache-snapshots -Dquickly clean deploy"
+                    sh "${pathPrefix}./mvnw $MAVEN_PARAMS ${exeParams}-Pdeploy,apache-snapshots -Dquickly -Dmaven.install.skip=true clean deploy"
                 }
             }
         }
