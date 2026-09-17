@@ -315,7 +315,12 @@ project `directory` as an argument, the runtime tools take the integration `name
   read from its `camel-yaml-dsl` jar; without it the CLI's own, with nothing to download.
 
 | `camel_get_files`
-| The source files of a project directory (name, size, type), or the content of one of them.
+| The source files of a project directory, subdirectories included (`target`, `.git` and the like skipped). The
+  list says whether the directory is a Maven project or a flat folder, names the route files and the configuration
+  files up front (`routeFiles`, `configFiles`) and, when an integration is selected, which file and line each of its
+  routes was loaded from, mapped from the runtime's location (a jar entry of an exported project, a classpath or
+  file resource) onto the source under `src/main`. With `file`, a path relative to the directory as the list names
+  it, the content of that file.
 
 | `camel_write_file`
 | Writes the complete content of a file in the project directory. YAML and `.properties` content is validated

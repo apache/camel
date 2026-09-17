@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -91,8 +92,17 @@ class TuiToolRegistry {
      * camel_control knows the TUI's own actions, camel_get_log also reads an infra service log.
      */
     private String executeSharedWithTuiExtras(String name, Map<String, Object> args) {
+        if (facade != null && args.get("directory") instanceof String d && !d.isBlank() && !d.contains("/")
+                && !d.contains("\\") && facade.hasIntegration(d)) {
+            // a model often passes the integration's name where the tool asks for its directory
+            Map<String, Object> byName = new HashMap<>(args);
+            byName.remove("directory");
+            byName.put("name", d);
+            args = byName;
+        }
         boolean hasDirectory = args.get("directory") instanceof String d && !d.isBlank();
-        boolean facadeSelection = facade != null && facade.getSelectedIntegrationName() != null;
+        boolean named = args.get("name") instanceof String n && !n.isBlank();
+        boolean facadeSelection = facade != null && (named || facade.getSelectedIntegrationName() != null);
         return switch (name) {
             case CONTROL_TOOL -> facade != null ? callControl(args) : executeShared(name, args);
             case LOG_TOOL -> facade != null ? callGetLog(args) : executeShared(name, args);

@@ -247,6 +247,7 @@ final class StatusParser {
                 RouteInfo ri = new RouteInfo();
                 ri.routeId = rj.getString("routeId");
                 ri.description = rj.getString("description");
+                ri.source = rj.getString("source");
                 ri.group = rj.getString("group");
                 ri.from = rj.getString("from");
                 ri.state = rj.getString("state");

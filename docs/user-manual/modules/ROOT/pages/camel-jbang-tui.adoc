@@ -1274,6 +1274,13 @@ sense: `devMode` (changes are reloaded automatically), `temporary` (a copy that 
 integration stops) and an `editing` hint. `camel_write_file` then writes the complete new content of
 a file in that directory.
 
+An integration started with `--runtime=spring-boot` or `--runtime=quarkus` runs from an exported Maven
+project, where the routes sit under `src/main/resources/camel` rather than next to a `pom.xml`. The
+listing understands that layout: it names the route and configuration files first, lists every file
+with its path relative to the project (build output skipped), and maps each running route to its file
+and line, so the agent reads the right file in one call instead of guessing names. File paths given to
+`camel_get_files` and `camel_write_file` are relative to that directory and may name a subdirectory.
+
 Every write is confirmed in the TUI first: a dialog names the file, the directory and the size of the
 change (`+3 -1` lines); press *d* to see the change as a unified diff, with removed lines on red and
 added lines on green like the Source tab's *F7* diff, and scroll it with the arrow keys; *Enter*, *Esc* or

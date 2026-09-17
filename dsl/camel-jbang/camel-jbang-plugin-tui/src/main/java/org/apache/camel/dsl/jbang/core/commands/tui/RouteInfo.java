@@ -22,6 +22,8 @@ import java.util.List;
 class RouteInfo {
     String routeId;
     String description;
+    /** Where the runtime loaded the route from (a file, classpath resource or jar entry, with the line). */
+    String source;
     String group;
     String from;
     String state;

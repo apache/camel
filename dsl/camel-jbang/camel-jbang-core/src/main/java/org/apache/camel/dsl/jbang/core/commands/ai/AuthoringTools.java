@@ -18,14 +18,23 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
+import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -53,7 +62,18 @@ public final class AuthoringTools {
     static final String DIRECTORY_DESC = "Project directory with the source files (default: the selected integration's)";
 
     /** Files listed and read by the file tools; more than that and a directory is not an integration's sources. */
+    static final String FILE_PATH_DESC = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml";
     private static final int MAX_FILES = 99;
+    /** How many files a listing looks at before it stops; the route and configuration files are found among them. */
+    private static final int SCAN_LIMIT = 2000;
+    private static final int MAX_DEPTH = 8;
+    /** Build output, tooling and VCS directories: never sources. */
+    private static final Set<String> SKIPPED_DIRS = Set.of(
+            "target", "build", "out", "node_modules", ".git", ".mvn", ".idea", ".vscode", ".gradle", ".settings",
+            ".camel-jbang");
+    private static final Pattern YAML_ROUTE = Pattern.compile(
+            "(?m)^\\s*-\\s*(route|from|rest|routeTemplate|route-template|templatedRoute|templated-route"
+                                                              + "|routeConfiguration|route-configuration|kamelet)\\s*:");
 
     private AuthoringTools() {
     }
@@ -145,11 +165,12 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_get_files",
-                "The source files of a project directory: without file the list (name, size, type), with file its "
-                                                + "content. Use before editing to see the routes, configuration and other "
-                                                + "files of the integration.")
+                "The source files of a project directory, subdirectories included: without file the list, with "
+                                                + "the route and configuration files named first (routeFiles, configFiles) "
+                                                + "and, for a running integration, which file and line each route comes "
+                                                + "from; with file (a path relative to the directory, as listed) its content.")
                 .param("directory", "string", DIRECTORY_DESC, false)
-                .param("file", "string", "File name to read; omitted lists the files", false)
+                .param("file", "string", FILE_PATH_DESC + " to read; omitted lists the files", false)
                 .core(true)
                 .executor((ctx, args) -> {
                     Path dir = ctx.resolveDirectory(args.get("directory"));
@@ -157,7 +178,17 @@ public final class AuthoringTools {
                     if (file != null && !file.isBlank()) {
                         return readFile(dir, file).toJson();
                     }
-                    return listFiles(dir).toJson();
+                    JsonObject result = listFiles(dir);
+                    if (ctx.hasProcess()) {
+                        // the selected integration's routes, when they come from this directory
+                        JsonObject status = ctx.readFullStatus();
+                        JsonArray routes = routeSources(
+                                status != null && status.get("routes") instanceof Collection<?> c ? c : null, dir);
+                        if (routes.stream().anyMatch(r -> !((JsonObject) r).containsKey("missing"))) {
+                            result.put("routes", routes);
+                        }
+                    }
+                    return result.toJson();
                 }));
 
         registry.accept(tool("camel_write_file",
@@ -166,7 +197,7 @@ public final class AuthoringTools {
                                                  + "An integration running in dev mode reloads the change, otherwise restart it "
                                                  + "with camel_control.")
                 .param("directory", "string", DIRECTORY_DESC, false)
-                .param("file", "string", "File name, no path", true)
+                .param("file", "string", FILE_PATH_DESC + " (subdirectories are created)", true)
                 .param("content", "string", "The complete new content", true)
                 .param("validate", "boolean", "Validate before writing (default true)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
@@ -323,6 +354,7 @@ public final class AuthoringTools {
             }
         }
         try {
+            Files.createDirectories(path.getParent());
             Files.writeString(path, content, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new ToolExecutionException("Failed to write " + path + ": " + e.getMessage());
@@ -338,29 +370,55 @@ public final class AuthoringTools {
         return result;
     }
 
-    /** The files of a project directory, as {@code camel_get_files} lists them. */
+    /**
+     * The files of a project directory, subdirectories included, as {@code camel_get_files} lists them. A human answers
+     * "which file has the route" with one {@code ls -R}; this gives a model the same in one call: the layout
+     * ({@code maven} when the directory is a Maven project, else {@code flat}), the route files and the configuration
+     * files named up front, then every file with its path relative to the directory (build output and tooling
+     * directories skipped), capped at {@value #MAX_FILES} entries.
+     */
     public static JsonObject listFiles(Path dir) {
+        List<Path> all = projectFiles(dir);
+        boolean maven = Files.isRegularFile(dir.resolve("pom.xml")) && Files.isDirectory(dir.resolve("src/main"));
+        JsonArray routeFiles = new JsonArray();
+        JsonArray configFiles = new JsonArray();
         JsonArray files = new JsonArray();
-        try (Stream<Path> stream = Files.list(dir)) {
-            stream.filter(Files::isRegularFile)
-                    .sorted((a, b) -> a.getFileName().toString().compareToIgnoreCase(b.getFileName().toString()))
-                    .limit(MAX_FILES)
-                    .forEach(p -> {
-                        JsonObject entry = new JsonObject();
-                        entry.put("name", p.getFileName().toString());
-                        entry.put("size", formatSize(size(p)));
-                        entry.put("type", fileType(p.getFileName().toString()));
-                        files.add(entry);
-                    });
-        } catch (IOException e) {
-            throw new ToolExecutionException("Cannot list " + dir + ": " + e.getMessage());
+        for (Path p : all) {
+            String rel = relativePath(dir, p);
+            String type = fileType(rel);
+            String kind = fileKind(p, rel, type);
+            if ("route".equals(kind)) {
+                routeFiles.add(rel);
+            } else if ("config".equals(kind)) {
+                configFiles.add(rel);
+            }
+            if (files.size() < MAX_FILES) {
+                JsonObject entry = new JsonObject();
+                entry.put("name", rel);
+                entry.put("size", formatSize(size(p)));
+                entry.put("type", type);
+                if (kind != null) {
+                    entry.put("kind", kind);
+                }
+                files.add(entry);
+            }
         }
         JsonObject result = new JsonObject();
         result.put("directory", dir.toString());
+        result.put("layout", maven ? "maven" : "flat");
+        result.put("routeFiles", routeFiles);
+        result.put("configFiles", configFiles);
         result.put("files", files);
-        result.put("totalFiles", files.size());
-        if (files.isEmpty()) {
+        result.put("totalFiles", all.size());
+        if (all.isEmpty()) {
             result.put("message", "The directory has no files");
+        } else if (all.size() > MAX_FILES) {
+            result.put("message", "Listing the first " + MAX_FILES + " of " + all.size()
+                                  + " files; routeFiles and configFiles name every route and configuration file");
+        }
+        if (maven) {
+            result.put("hint", "Maven project: routes live under src/main/resources/camel or src/main/java and the"
+                               + " configuration under src/main/resources; pass file as the path listed here");
         }
         return result;
     }
@@ -369,7 +427,9 @@ public final class AuthoringTools {
     public static JsonObject readFile(Path dir, String file) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
-            throw new ToolExecutionException("No such file in the directory: " + file);
+            throw new ToolExecutionException(
+                    "No such file: " + file + " in " + dir
+                                             + "; call camel_get_files without file to list them (routeFiles names the routes)");
         }
         JsonObject result = new JsonObject();
         result.put("file", file);
@@ -380,14 +440,216 @@ public final class AuthoringTools {
         return result;
     }
 
-    /** A plain file name inside the directory; anything else (a path, a parent reference) is refused. */
-    static Path resolveFile(Path dir, String file) {
+    /**
+     * Where each route of a running integration comes from, mapped onto the files of the project directory. The status
+     * document's {@code routes[].source} names what the runtime loaded: a jar entry for an exported project
+     * ({@code nested:.../target/app.jar/!BOOT-INF/classes/!/camel/foo.camel.yaml:4}), a {@code classpath:} or
+     * {@code file:} resource, or a Java class; the answer is the path a model can read and edit
+     * ({@code src/main/resources/camel/foo.camel.yaml}) with the line, or the location as given with {@code missing}
+     * when no such file exists under the directory.
+     *
+     * @param routes the status document's routes (maps with {@code routeId} and {@code source}), may be null
+     */
+    public static JsonArray routeSources(Collection<?> routes, Path dir) {
+        JsonArray out = new JsonArray();
+        if (routes == null) {
+            return out;
+        }
+        for (Object o : routes) {
+            if (!(o instanceof Map<?, ?> r) || !(r.get("source") instanceof String source) || source.isBlank()) {
+                continue;
+            }
+            SourceLocation loc = sourceLocation(source, dir);
+            JsonObject e = new JsonObject();
+            if (r.get("routeId") != null) {
+                e.put("routeId", String.valueOf(r.get("routeId")));
+            }
+            e.put("file", loc.file());
+            if (loc.line() > 0) {
+                e.put("line", loc.line());
+            }
+            if (!loc.exists()) {
+                e.put("missing", true);
+            }
+            out.add(e);
+        }
+        return out;
+    }
+
+    record SourceLocation(String file, int line, boolean exists) {
+    }
+
+    /** Maps one route source location onto a file under the directory; see {@link #routeSources}. */
+    static SourceLocation sourceLocation(String source, Path dir) {
+        String s = source.trim();
+        int line = 0;
+        int colon = s.lastIndexOf(':');
+        if (colon > 0 && colon < s.length() - 1) {
+            String suffix = s.substring(colon + 1);
+            if (suffix.chars().allMatch(Character::isDigit)) {
+                try {
+                    line = Integer.parseInt(suffix);
+                    s = s.substring(0, colon);
+                } catch (NumberFormatException e) {
+                    // too many digits for a line number: leave the location as it is
+                }
+            }
+        }
+        String rel;
+        int bang = s.lastIndexOf("!/");
+        if (bang >= 0) {
+            rel = s.substring(bang + 2);
+        } else if (s.startsWith("classpath:")) {
+            rel = s.substring("classpath:".length());
+        } else if (s.startsWith("file:")) {
+            rel = s.substring("file:".length());
+        } else {
+            rel = s;
+        }
+        rel = rel.replace('\\', '/');
+        try {
+            Path abs = Path.of(rel);
+            if (abs.isAbsolute() && Files.isRegularFile(abs)) {
+                return new SourceLocation(abs.startsWith(dir) ? relativePath(dir, abs) : abs.toString(), line, true);
+            }
+        } catch (InvalidPathException e) {
+            // not a path on this system; try it as a relative location below
+        }
+        while (rel.startsWith("/")) {
+            rel = rel.substring(1);
+        }
+        List<String> candidates = new ArrayList<>();
+        candidates.add("src/main/resources/" + rel);
+        candidates.add("src/main/java/" + rel);
+        if (!rel.contains("/") && !rel.contains(".java") && rel.contains(".")) {
+            // a Java route named by its class: org.acme.MyRoute
+            candidates.add("src/main/java/" + rel.replace('.', '/') + ".java");
+        }
+        candidates.add(rel);
+        for (String c : candidates) {
+            try {
+                Path p = dir.resolve(c).normalize();
+                if (p.startsWith(dir) && Files.isRegularFile(p)) {
+                    return new SourceLocation(c, line, true);
+                }
+            } catch (InvalidPathException e) {
+                // skip
+            }
+        }
+        // last resort: a file of that name anywhere in the project (a flat layout, a file that moved)
+        String leaf = rel.substring(rel.lastIndexOf('/') + 1);
+        if (!leaf.isEmpty()) {
+            for (Path p : projectFiles(dir)) {
+                if (p.getFileName().toString().equals(leaf)) {
+                    return new SourceLocation(relativePath(dir, p), line, true);
+                }
+            }
+        }
+        return new SourceLocation(rel, line, false);
+    }
+
+    /** The regular files under the directory, sorted by path, build and tooling directories skipped. */
+    private static List<Path> projectFiles(Path dir) {
+        List<Path> files = new ArrayList<>();
+        try {
+            Files.walkFileTree(dir, EnumSet.noneOf(FileVisitOption.class), MAX_DEPTH, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) {
+                    if (d.equals(dir)) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                    String name = d.getFileName().toString();
+                    return SKIPPED_DIRS.contains(name) || name.startsWith(".")
+                            ? FileVisitResult.SKIP_SUBTREE : FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path f, BasicFileAttributes attrs) {
+                    if (attrs.isRegularFile() && !f.getFileName().toString().startsWith(".")) {
+                        files.add(f);
+                    }
+                    return files.size() >= SCAN_LIMIT ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path f, IOException e) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new ToolExecutionException("Cannot list " + dir + ": " + e.getMessage());
+        }
+        files.sort(Comparator.comparing((Path p) -> relativePath(dir, p), String.CASE_INSENSITIVE_ORDER));
+        return files;
+    }
+
+    static String relativePath(Path dir, Path p) {
+        return dir.relativize(p).toString().replace('\\', '/');
+    }
+
+    /**
+     * What a file is to Camel: {@code route} (a YAML, XML or Java file that defines routes, judged by its first lines),
+     * {@code config} ({@code application*.properties} or {@code .yaml}), {@code pom}, or null for anything else.
+     */
+    static String fileKind(Path p, String rel, String type) {
+        String leaf = rel.substring(rel.lastIndexOf('/') + 1).toLowerCase(Locale.ROOT);
+        if (leaf.equals("pom.xml")) {
+            return "pom";
+        }
+        if (leaf.startsWith("application") && ("properties".equals(type) || "yaml".equals(type))) {
+            return "config";
+        }
+        if (leaf.endsWith(".camel.yaml") || leaf.endsWith(".camel.xml")) {
+            return "route";
+        }
+        if ("yaml".equals(type) || "xml".equals(type) || "java".equals(type)) {
+            String head = head(p);
+            if (head != null && isRouteSource(type, head)) {
+                return "route";
+            }
+        }
+        return null;
+    }
+
+    static boolean isRouteSource(String type, String head) {
+        return switch (type) {
+            case "yaml" -> YAML_ROUTE.matcher(head).find();
+            case "xml" -> head.contains("<routes") || head.contains("<route ") || head.contains("<route>")
+                    || head.contains("<camelContext") || head.contains("<routeTemplates") || head.contains("<rests")
+                    || head.contains("<routeConfigurations");
+            case "java" -> head.contains("RouteBuilder");
+            default -> false;
+        };
+    }
+
+    /** The first bytes of a file, enough to tell what it defines; null when it cannot be read. */
+    private static String head(Path p) {
+        try (var in = Files.newInputStream(p)) {
+            return new String(in.readNBytes(8192), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * A file path relative to the directory (subdirectories allowed, as {@code camel_get_files} lists them); an
+     * absolute path or one that escapes the directory is refused.
+     */
+    public static Path resolveFile(Path dir, String file) {
         if (file == null || file.isBlank()) {
             throw new ToolExecutionException("file is required");
         }
-        Path path = dir.resolve(file).normalize();
-        if (!path.startsWith(dir) || !dir.equals(path.getParent())) {
-            throw new ToolExecutionException("file must be a plain file name in the directory " + dir);
+        Path path;
+        try {
+            if (Path.of(file).isAbsolute()) {
+                throw new ToolExecutionException("file must be a path relative to the directory " + dir + ", not " + file);
+            }
+            path = dir.resolve(file).normalize();
+        } catch (InvalidPathException e) {
+            throw new ToolExecutionException("Not a valid file path: " + file);
+        }
+        if (!path.startsWith(dir) || path.equals(dir)) {
+            throw new ToolExecutionException("file must stay inside the directory " + dir + ": " + file);
         }
         return path;
     }
