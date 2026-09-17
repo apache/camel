@@ -56,6 +56,21 @@ public class PublishTextMessageOperationViaPropertyTest extends CamelTestSupport
                             + "&ignoreSslVerification=true"
                             + "&smnClient=#smnClient")
                         .to("mock:result");
+
+                from("direct:templated_endpoint_text_property")
+                        .setProperty(SmnProperties.NOTIFICATION_SUBJECT, constant("Dummy Subject Line"))
+                        .setProperty(SmnProperties.NOTIFICATION_TOPIC_NAME, constant(testConfiguration.getProperty("topic")))
+                        .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
+                        // endpoint operation is templated, but the property overrides it to text
+                        .setProperty(SmnProperties.SMN_OPERATION, constant(SmnOperations.PUBLISH_AS_TEXT_MESSAGE))
+                        .to("hwcloud-smn:publishMessageService?operation=" + SmnOperations.PUBLISH_AS_TEMPLATED_MESSAGE
+                            + "&accessKey=" + testConfiguration.getProperty("accessKey") + "&secretKey="
+                            + testConfiguration.getProperty("secretKey") + "&projectId="
+                            + testConfiguration.getProperty("projectId") + "&region="
+                            + testConfiguration.getProperty("region")
+                            + "&ignoreSslVerification=true"
+                            + "&smnClient=#smnClient")
+                        .to("mock:result");
             }
         };
     }
@@ -78,5 +93,25 @@ public class PublishTextMessageOperationViaPropertyTest extends CamelTestSupport
         assertTrue(clearError,
                 "expected a clear 'exchange body cannot be null / empty' IllegalArgumentException, got: "
                                + result.getException());
+    }
+
+    @Test
+    public void propertyOverridingTemplatedEndpointToTextRejectsEmptyBody() {
+        // endpoint operation is publishAsTemplatedMessage but the property overrides to publishAsTextMessage;
+        // the guard must test the RESOLVED operation, otherwise an empty text message is silently published
+        Exchange result = template.request("direct:templated_endpoint_text_property", e -> e.getIn().setBody(null));
+
+        Throwable cause = result.getException();
+        assertNotNull(cause, "an empty text-message body was expected to fail");
+        boolean clearError = false;
+        while (cause != null) {
+            if (cause instanceof IllegalArgumentException && cause.getMessage() != null
+                    && cause.getMessage().contains("exchange body cannot be null / empty")) {
+                clearError = true;
+                break;
+            }
+            cause = cause.getCause();
+        }
+        assertTrue(clearError, "expected 'exchange body cannot be null / empty', got: " + result.getException());
     }
 }
