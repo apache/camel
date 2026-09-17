@@ -95,7 +95,7 @@ class OllamaTabRenderTest {
         assertTrue(rendered.contains("41 layers"), rendered);
         assertTrue(rendered.contains("256 experts (8 active)"), rendered);
         assertTrue(rendered.contains("100% GPU"), rendered);
-        assertTrue(rendered.contains("ctx 262,144"), rendered);
+        assertTrue(rendered.contains("ctx 256k"), rendered);
         // panels
         assertTrue(rendered.contains("Throughput"), rendered);
         assertTrue(rendered.contains("decode"), rendered);
@@ -223,7 +223,7 @@ class OllamaTabRenderTest {
         localServerWithModel();
         monitor.setPanelContext(65_536, 32_768);
         String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
-        assertTrue(rendered.contains("AI panel asks 65k, compacts above 32k"), rendered);
+        assertTrue(rendered.contains("AI panel asks 64k, compacts above 32k"), rendered);
     }
 
     @Test
@@ -261,7 +261,10 @@ class OllamaTabRenderTest {
         assertEquals("0", OllamaTab.formatRate(0));
         assertEquals("999", OllamaTab.formatTokens(999));
         assertEquals("1.2k", OllamaTab.formatTokens(1203));
-        assertEquals("262k", OllamaTab.formatTokens(262144));
+        assertEquals("256k", OllamaTab.formatTokens(262144));
+        assertEquals("64k", OllamaTab.formatTokens(65536));
+        assertEquals("32k", OllamaTab.formatTokens(32768));
+        assertEquals("250k", OllamaTab.formatTokens(250_000));
         assertEquals("1.5M", OllamaTab.formatTokens(1_500_000));
         assertEquals("0.14s", OllamaTab.formatSeconds(138));
         assertEquals("2.8s", OllamaTab.formatSeconds(2829));

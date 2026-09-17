@@ -249,7 +249,9 @@ class OllamaMonitorTest {
         assertEquals("stop", q7.doneReason());
         // evaluated 4,500 + 200 + 2,300 tokens over 9.2 s of prefill
         assertEquals(7_000 * 1000.0 / 9_200, q7.prefillTokensPerSecond(), 0.5);
-        assertTrue(q7.wallMs() >= 5_500);
+        // the three replies arrived within the same millisecond in this test, so the wall time is the first
+        // request's own duration plus nothing: at least as long as the first step, never shorter than the last
+        assertTrue(q7.wallMs() >= 6_900, "wall " + q7.wallMs());
 
         JsonArray questions = (JsonArray) monitor.toJson(10).get("questions");
         assertEquals(3, questions.size());

@@ -304,10 +304,13 @@ final class OllamaMonitor {
             return false;
         }
 
-        /** From the first request starting to the last one finishing. */
+        /**
+         * From the first request starting to the last one finishing. A request is stamped when its reply arrives, so
+         * its start is that stamp less its own total.
+         */
         long wallMs() {
-            long start = first().timestamp().toEpochMilli();
-            long end = last().timestamp().toEpochMilli() + last().totalMs();
+            long start = first().timestamp().toEpochMilli() - first().totalMs();
+            long end = last().timestamp().toEpochMilli();
             return Math.max(end - start, last().totalMs());
         }
 

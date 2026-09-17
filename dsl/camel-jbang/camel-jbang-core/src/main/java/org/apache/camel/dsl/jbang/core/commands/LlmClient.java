@@ -180,6 +180,10 @@ public class LlmClient {
     }
 
     public static String formatTokens(int tokens) {
+        // context windows are powers of two and known by their binary names: 32k, 64k, 256k
+        if (tokens >= 1024 && tokens % 1024 == 0 && tokens < 1_048_576) {
+            return (tokens / 1024) + "k";
+        }
         if (tokens >= 1000) {
             double k = tokens / 1000.0;
             if (k == (int) k) {

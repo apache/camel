@@ -735,9 +735,9 @@ class OllamaTab extends AbstractTab {
             sb.append(", ").append(gpu >= 100 ? "100% GPU" : gpu > 0 ? gpu + "% GPU" : "CPU only");
         }
         if (m.contextLength() > 0) {
-            sb.append(" · ctx ").append(String.format(Locale.ROOT, "%,d", m.contextLength()));
+            sb.append(" · ctx ").append(formatTokens(m.contextLength()));
             if (m.shape() != null && m.shape().maxContext() > m.contextLength()) {
-                sb.append(" of ").append(String.format(Locale.ROOT, "%,d", m.shape().maxContext()));
+                sb.append(" of ").append(formatTokens(m.shape().maxContext()));
             }
         }
         if (m.expiresAt() != null) {
@@ -784,6 +784,10 @@ class OllamaTab extends AbstractTab {
     static String formatTokens(long tokens) {
         if (tokens < 1000) {
             return Long.toString(tokens);
+        }
+        // context windows are powers of two and are known by their binary names: 32k, 64k, 256k
+        if (tokens % 1024 == 0 && tokens < 1_048_576) {
+            return (tokens / 1024) + "k";
         }
         if (tokens < 10_000) {
             return String.format(Locale.ROOT, "%.1fk", tokens / 1000.0);
