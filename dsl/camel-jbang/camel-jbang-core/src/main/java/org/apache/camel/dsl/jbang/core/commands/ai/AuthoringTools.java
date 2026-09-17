@@ -461,7 +461,9 @@ public final class AuthoringTools {
             }
             SourceLocation loc = sourceLocation(source, dir);
             JsonObject e = new JsonObject();
-            e.put("routeId", String.valueOf(r.get("routeId")));
+            if (r.get("routeId") != null) {
+                e.put("routeId", String.valueOf(r.get("routeId")));
+            }
             e.put("file", loc.file());
             if (loc.line() > 0) {
                 e.put("line", loc.line());

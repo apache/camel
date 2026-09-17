@@ -261,6 +261,11 @@ class AuthoringToolsTest {
         assertEquals("camel/nowhere.yaml", gone.getString("file"));
         assertEquals(Boolean.TRUE, gone.get("missing"));
         assertTrue(AuthoringTools.routeSources(null, dir).isEmpty());
+        // a route without an id is listed by its file alone, not as "null"
+        JsonObject anonymous = (JsonObject) AuthoringTools.routeSources(
+                List.of(Map.of("source", "file:" + dir.resolve("flat.camel.yaml"))), dir).get(0);
+        assertEquals("flat.camel.yaml", anonymous.getString("file"));
+        assertFalse(anonymous.containsKey("routeId"));
     }
 
     @Test
