@@ -458,9 +458,11 @@ final class OllamaMonitor {
             return;
         }
         String normalized = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
-        if (!normalized.equals(baseUrl)) {
-            baseUrl = normalized;
-            synchronized (lock) {
+        // the URL switch and the reset of what was known about the old server happen under one lock, so a
+        // concurrent poll never sees the new URL together with the old server still flagged as connected
+        synchronized (lock) {
+            if (!normalized.equals(baseUrl)) {
+                baseUrl = normalized;
                 server = null;
                 lastVersion = 0;
                 runner = null;

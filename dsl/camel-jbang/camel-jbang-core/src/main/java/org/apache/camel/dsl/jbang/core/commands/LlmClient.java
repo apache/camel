@@ -130,8 +130,8 @@ public class LlmClient {
      * Anthropic {@code cache_read_input_tokens}, Gemini {@code cachedContentTokenCount}). Ollama reports the prompt
      * tokens served from its KV cache ({@code prompt_eval_cached_count}) and how long each phase took: prompt
      * processing ({@code prefillMillis}), generation ({@code generationMillis}), loading the model into memory
-     * ({@code loadMillis}, near zero for a warm model) and the whole request ({@code totalMillis}). Zero means not
-     * reported.
+     * ({@code loadMillis}, near zero for a warm model), and the whole request wall time ({@code totalMillis}, Ollama's
+     * {@code total_duration}). Zero means not reported.
      */
     public record TokenUsage(int inputTokens, int outputTokens, int totalTokens,
             int cachedTokens, long prefillMillis, long generationMillis, long loadMillis, long totalMillis) {
