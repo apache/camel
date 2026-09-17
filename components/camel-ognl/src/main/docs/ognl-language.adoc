@@ -11,7 +11,7 @@
 *Since Camel {since}*
 
 Camel allows https://en.wikipedia.org/wiki/OGNL[OGNL],
-supported by http://commons.apache.org/proper/commons-ognl/[(Apache Commons OGNL)], to be
+supported by https://commons.apache.org/dormant/commons-ognl/[(Apache Commons OGNL)], to be
 used as an xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate]
 in Camel routes.
 
