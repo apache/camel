@@ -46,10 +46,12 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ActiveQuestion;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.HostStats;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.LoadedModel;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ModelShape;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.QuestionGroup;
+import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.QuestionSummary;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestEntry;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestSource;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.SessionTotals;
@@ -264,7 +266,15 @@ class OllamaTab extends AbstractTab {
                 LoadedModel m = s.models().get(i);
                 lines.add(Line.from(Span.styled("  " + m.name(), Style.EMPTY.fg(Theme.accent()).bold()),
                         Span.styled("   " + describeShape(m), Theme.muted())));
-                lines.add(Line.from(Span.styled("  " + describeResidency(m, Instant.now()), Theme.label())));
+                String residency = describeResidency(m, Instant.now());
+                if (i == 0 && s.panelWindow() > 0) {
+                    // the panel adopts the loaded window, so it only needs naming when the two differ
+                    if (s.panelWindow() != m.contextLength()) {
+                        residency += " · AI panel asks " + formatTokens(s.panelWindow());
+                    }
+                    residency += " · AI panel compacts above " + formatTokens(s.panelBudget());
+                }
+                lines.add(Line.from(Span.styled("  " + residency, Theme.label())));
             }
         }
         frame.renderWidget(Paragraph.builder()
@@ -455,7 +465,10 @@ class OllamaTab extends AbstractTab {
         for (int i = 0; i < n; i++) {
             data[n - 1 - i] = turns.get(i).contextPercent();
         }
-        Style level = last >= 80 ? Theme.error() : last >= 50 ? Theme.warning() : Theme.info();
+        // colour against the panel's compaction budget when known, else against the window
+        long lastPrompt = turns.get(0).promptTokens();
+        int pressure = s.panelBudget() > 0 ? (int) Math.min(100, lastPrompt * 100 / s.panelBudget()) : last;
+        Style level = pressure >= 100 ? Theme.error() : pressure >= 75 ? Theme.warning() : Theme.info();
         // bars start right after the label and grow to the right as turns are added
         return Line.from(
                 Span.styled(" turns ", Theme.muted()),
@@ -510,7 +523,8 @@ class OllamaTab extends AbstractTab {
 
     private void renderRequests(Frame frame, Rect area, Snapshot s) {
         List<RequestEntry> requests = s.requests();
-        if (requests.isEmpty()) {
+        ActiveQuestion active = s.activeQuestion();
+        if (requests.isEmpty() && active == null) {
             rowRefs = List.of();
             lastTableArea = area;
             frame.renderWidget(Paragraph.builder()
@@ -530,10 +544,16 @@ class OllamaTab extends AbstractTab {
         int questionWidth = Math.max(12, area.width() - FIXED_COLUMNS_WIDTH);
         List<Row> rows = new ArrayList<>();
         List<Object> refs = new ArrayList<>();
+        if (active != null && groups.stream().noneMatch(active::matches)) {
+            // asked, but the first request has not returned yet
+            rows.add(activeRow(active, questionWidth));
+            refs.add(active);
+        }
         for (QuestionGroup g : groups) {
             boolean multi = g.steps().size() > 1;
             boolean expanded = multi && expandedGroups.contains(g.key());
-            rows.add(questionRow(g, multi, expanded, questionWidth));
+            rows.add(questionRow(g, multi, expanded, questionWidth,
+                    active != null && active.matches(g) ? active : null));
             refs.add(g);
             if (expanded) {
                 int n = 1;
@@ -546,10 +566,16 @@ class OllamaTab extends AbstractTab {
         rowRefs = refs;
 
         String title = " Requests (" + groups.size() + (groups.size() == 1 ? " question, " : " questions, ")
-                       + requests.size() + (requests.size() == 1 ? " request)" : " requests)")
+                       + requests.size() + (requests.size() == 1 ? " request" : " requests")
+                       + (active != null ? ", 1 in progress" : "") + ")"
                        + "  tok/s for prefill and decode · CTX = prompt share of the context window ";
-        Table table = Table.builder()
-                .rows(rows)
+        QuestionSummary summary = QuestionSummary.of(groups);
+        Table.Builder builder = Table.builder()
+                .rows(rows);
+        if (summary.questions() >= 2) {
+            builder.footer(summaryRow(summary, questionWidth));
+        }
+        Table table = builder
                 .header(Row.from(
                         Cell.from(Span.styled(" TIME", Style.EMPTY.bold())),
                         Cell.from(Span.styled("SOURCE", Style.EMPTY.bold())),
@@ -587,8 +613,61 @@ class OllamaTab extends AbstractTab {
 
     private static final int FIXED_COLUMNS_WIDTH = 10 + 18 + 6 + 6 + 6 + 5 + 8 + 8 + 7 + 7 + 12 + 6;
 
-    /** One question (or route call) on one line: the question text cut to fit, then the whole-question figures. */
-    private static Row questionRow(QuestionGroup g, boolean multi, boolean expanded, int questionWidth) {
+    /**
+     * The footer under the questions, spreadsheet style: the session's average per question in every column that is per
+     * question above, pooled rates and cache hit, the peak context fill, and the tool-call limit count.
+     */
+    private static Row summaryRow(QuestionSummary s, int questionWidth) {
+        Style dim = Theme.muted();
+        String text = s.questions() + " questions · " + s.requests() + " requests · " + formatSeconds(s.totalWallMs());
+        return Row.from(
+                Cell.from(Span.styled("", dim)),
+                Cell.from(Span.styled("avg/question", dim)),
+                Cell.from(Span.styled(TuiHelper.truncate(text, questionWidth), dim)),
+                rightCell(formatTokens(s.avgPromptTokens()), 6, dim),
+                rightCell(formatTokens(s.avgOutputTokens()), 6, dim),
+                rightCell(s.cacheHitPercent() + "%", 6, dim),
+                rightCell(s.peakContextPercent() >= 0 ? s.peakContextPercent() + "%" : "-", 5, dim),
+                rightCell(s.prefillTokensPerSecond() > 0 ? formatRate(s.prefillTokensPerSecond()) : "-", 8, dim),
+                rightCell(s.decodeTokensPerSecond() > 0 ? formatRate(s.decodeTokensPerSecond()) : "-", 8, dim),
+                rightCell(s.avgTtftMs() > 0 ? formatSeconds(s.avgTtftMs()) : "-", 7, dim),
+                rightCell(formatSeconds(s.avgWallMs()), 7, Style.EMPTY.fg(Theme.accent()).bold()),
+                Cell.from(Span.styled(s.limitHits() > 0 ? " " + s.limitHits() + " limit" : "",
+                        s.limitHits() > 0 ? Theme.error() : dim)));
+    }
+
+    private static final String[] SPINNER = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };
+
+    private static Span workingSpan() {
+        String frame = SPINNER[(int) ((System.currentTimeMillis() / 100) % SPINNER.length)];
+        return Span.styled(" " + frame + " working", Theme.info());
+    }
+
+    /** The question the AI panel is working on before its first request has returned: text and a clock, no figures. */
+    private static Row activeRow(ActiveQuestion a, int questionWidth) {
+        String text = a.text() != null ? firstLine(a.text()) : "";
+        return Row.from(
+                Cell.from(Span.styled(" " + TIME.format(a.startedAt()), Theme.muted())),
+                Cell.from(Span.styled("#" + a.question(), Theme.info())),
+                Cell.from(Span.styled(TuiHelper.truncate(text, questionWidth), Theme.label())),
+                rightCell("-", 6),
+                rightCell("-", 6),
+                rightCell("-", 6, Theme.muted()),
+                rightCell("-", 5),
+                rightCell("-", 8, Theme.info()),
+                rightCell("-", 8, Theme.success()),
+                rightCell("-", 7),
+                rightCell(formatSeconds(a.elapsedMs()), 7, Theme.info()),
+                Cell.from(workingSpan()));
+    }
+
+    /**
+     * One question (or route call) on one line: the question text cut to fit, then the whole-question figures.
+     * {@code active} is set while the AI panel is still working on it: the clock keeps running and the reason reads
+     * {@code working} instead of the last step's {@code tool_calls}.
+     */
+    private static Row questionRow(
+            QuestionGroup g, boolean multi, boolean expanded, int questionWidth, ActiveQuestion active) {
         String marker = multi ? (expanded ? TuiIcons.MORE_CHEVRON : TuiIcons.ARROW_RIGHT) : " ";
         String source;
         Style sourceStyle;
@@ -597,7 +676,7 @@ class OllamaTab extends AbstractTab {
             sourceStyle = Theme.notice();
         } else {
             source = (g.question() > 0 ? "#" + g.question() : "tui") + (multi ? " ×" + g.steps().size() : "");
-            sourceStyle = Theme.info();
+            sourceStyle = requestCountStyle(g.steps().size(), g.doneReason());
         }
         String text = g.questionText() != null && !g.questionText().isBlank()
                 ? firstLine(g.questionText())
@@ -618,8 +697,40 @@ class OllamaTab extends AbstractTab {
                         Theme.success()),
                 rightCell(g.hasTimings() ? formatSeconds(g.ttftMs()) : "-", 7,
                         g.coldStart() ? Theme.warning() : Style.EMPTY),
-                rightCell(g.wallMs() > 0 ? formatSeconds(g.wallMs()) : "-", 7),
-                Cell.from(Span.styled(" " + (g.doneReason() != null ? g.doneReason() : ""), Theme.muted())));
+                active != null
+                        ? rightCell(formatSeconds(Math.max(g.wallMs(), active.elapsedMs())), 7, Theme.info())
+                        : rightCell(g.wallMs() > 0 ? formatSeconds(g.wallMs()) : "-", 7, totalTimeStyle(g.wallMs())),
+                Cell.from(active != null
+                        ? workingSpan()
+                        : Span.styled(" " + (g.doneReason() != null ? g.doneReason() : ""),
+                                reasonStyle(g.doneReason()))));
+    }
+
+    /**
+     * A question's request count is the number of times the whole prompt was sent: yellow from {@value #MANY_REQUESTS}
+     * requests, red when it ended at the AI panel's tool-call limit.
+     */
+    static final int MANY_REQUESTS = 10;
+
+    /**
+     * A question that made you wait: yellow from {@value #SLOW_QUESTION_MS} ms, orange from
+     * {@value #VERY_SLOW_QUESTION_MS} ms.
+     */
+    static final long SLOW_QUESTION_MS = 30_000;
+    static final long VERY_SLOW_QUESTION_MS = 60_000;
+
+    static Style requestCountStyle(int requests, String doneReason) {
+        if ("limit".equals(doneReason)) {
+            return Theme.error().bold();
+        }
+        return requests >= MANY_REQUESTS ? Theme.warning() : Theme.info();
+    }
+
+    static Style totalTimeStyle(long wallMs) {
+        if (wallMs >= VERY_SLOW_QUESTION_MS) {
+            return Style.EMPTY.fg(Theme.accent()).bold();
+        }
+        return wallMs >= SLOW_QUESTION_MS ? Theme.warning() : Style.EMPTY;
     }
 
     /** One request of an unfolded question: step number, the model, and that request's own figures. */
@@ -638,7 +749,13 @@ class OllamaTab extends AbstractTab {
                 rightCell(e.hasTimings() ? formatSeconds(e.ttftMs()) : "-", 7,
                         e.coldStart() ? Theme.warning() : Theme.muted()),
                 rightCell(e.totalMs() > 0 ? formatSeconds(e.totalMs()) : "-", 7, Theme.muted()),
-                Cell.from(Span.styled(" " + (e.doneReason() != null ? e.doneReason() : ""), Theme.muted().dim())));
+                Cell.from(Span.styled(" " + (e.doneReason() != null ? e.doneReason() : ""),
+                        "limit".equals(e.doneReason()) ? Theme.warning() : Theme.muted().dim())));
+    }
+
+    /** "limit" (the AI panel's tool-call limit ended the question) and "length" (the token limit) stand out. */
+    private static Style reasonStyle(String reason) {
+        return "limit".equals(reason) || "length".equals(reason) ? Theme.warning() : Theme.muted();
     }
 
     static String firstLine(String text) {
@@ -704,6 +821,9 @@ class OllamaTab extends AbstractTab {
                 parts.add(shape.experts() + " experts"
                           + (shape.expertsUsed() > 0 ? " (" + shape.expertsUsed() + " active)" : ""));
             }
+            if (shape.maxContext() > 0) {
+                parts.add("max ctx " + formatTokens(shape.maxContext()));
+            }
             if (shape.capabilities() != null && !shape.capabilities().isEmpty()) {
                 List<String> caps = new ArrayList<>();
                 for (String c : shape.capabilities()) {
@@ -727,10 +847,7 @@ class OllamaTab extends AbstractTab {
             sb.append(", ").append(gpu >= 100 ? "100% GPU" : gpu > 0 ? gpu + "% GPU" : "CPU only");
         }
         if (m.contextLength() > 0) {
-            sb.append(" · ctx ").append(String.format(Locale.ROOT, "%,d", m.contextLength()));
-            if (m.shape() != null && m.shape().maxContext() > m.contextLength()) {
-                sb.append(" of ").append(String.format(Locale.ROOT, "%,d", m.shape().maxContext()));
-            }
+            sb.append(" · ctx ").append(formatTokens(m.contextLength()));
         }
         if (m.expiresAt() != null) {
             sb.append(" · ").append(formatCountdown(m.expiresAt(), now));
@@ -776,6 +893,10 @@ class OllamaTab extends AbstractTab {
     static String formatTokens(long tokens) {
         if (tokens < 1000) {
             return Long.toString(tokens);
+        }
+        // context windows are powers of two and are known by their binary names: 32k, 64k, 256k
+        if (tokens % 1024 == 0 && tokens < 1_048_576) {
+            return (tokens / 1024) + "k";
         }
         if (tokens < 10_000) {
             return String.format(Locale.ROOT, "%.1fk", tokens / 1000.0);

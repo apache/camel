@@ -249,7 +249,9 @@ class OllamaMonitorTest {
         assertEquals("stop", q7.doneReason());
         // evaluated 4,500 + 200 + 2,300 tokens over 9.2 s of prefill
         assertEquals(7_000 * 1000.0 / 9_200, q7.prefillTokensPerSecond(), 0.5);
-        assertTrue(q7.wallMs() >= 5_500);
+        // the three replies arrived within the same millisecond in this test, so the wall time is the first
+        // request's own duration plus nothing: at least as long as the first step, never shorter than the last
+        assertTrue(q7.wallMs() >= 6_900, "wall " + q7.wallMs());
 
         JsonArray questions = (JsonArray) monitor.toJson(10).get("questions");
         assertEquals(3, questions.size());
@@ -265,6 +267,110 @@ class OllamaMonitorTest {
         monitor.close();
         // the in-memory state stays usable for a last snapshot
         assertFalse(monitor.snapshot().connected());
+    }
+
+    @Test
+    void theQuestionBeingAnsweredIsListedUntilTheTurnEnds() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.questionStarted(9, "what's the name of the source file that has the route");
+
+        // asked, nothing back yet: a question with no steps
+        JsonArray questions = (JsonArray) monitor.toJson(10).get("questions");
+        assertEquals(1, questions.size());
+        JsonObject q = (JsonObject) questions.get(0);
+        assertEquals(9, q.get("question"));
+        assertEquals(0, q.get("steps"));
+        assertEquals(true, q.get("inProgress"));
+        assertNotNull(q.get("elapsedMs"));
+        assertNotNull(monitor.snapshot().activeQuestion());
+
+        // the first tool call returned: the same question, now with a step, still in progress
+        monitor.recordRequest("m", new LlmClient.TokenUsage(9_000, 40, 9_040, 0, 5_000, 700, 0, 5_800), 0,
+                "tool_calls", 9, "what's the name of the source file that has the route");
+        questions = (JsonArray) monitor.toJson(10).get("questions");
+        assertEquals(1, questions.size());
+        q = (JsonObject) questions.get(0);
+        assertEquals(1, q.get("steps"));
+        assertEquals(true, q.get("inProgress"));
+
+        // the answer landed
+        monitor.recordRequest("m", new LlmClient.TokenUsage(9_400, 120, 9_520, 9_000, 300, 2_000, 0, 2_400), 0,
+                "stop", 9, "what's the name of the source file that has the route");
+        monitor.questionFinished();
+        q = (JsonObject) ((JsonArray) monitor.toJson(10).get("questions")).get(0);
+        assertEquals(2, q.get("steps"));
+        assertNull(q.get("inProgress"));
+        assertNull(monitor.snapshot().activeQuestion());
+    }
+
+    @Test
+    void theQuestionSummaryAveragesPerQuestionAndLeavesRoutesOut() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.updateModels(List.of(new OllamaMonitor.LoadedModel(
+                "m", "f", "35.5B", "Q4_K_M", 1, 1, 65_536, null, null)));
+        // question 1: two steps, 4 s of wall time, ended at the tool-call limit
+        monitor.recordRequest("m", new LlmClient.TokenUsage(5_000, 40, 5_040, 4_000, 500, 1_000, 0, 1_500), 0,
+                "tool_calls", 1, "one");
+        monitor.recordRequest("m", new LlmClient.TokenUsage(5_200, 160, 5_360, 5_000, 200, 2_300, 0, 2_500), 0,
+                "limit", 1, "one");
+        // question 2: one step of 2 s
+        monitor.recordRequest("m", new LlmClient.TokenUsage(5_400, 100, 5_500, 5_200, 200, 1_800, 0, 2_000), 0,
+                "stop", 2, "two");
+        // a route call is not a question
+        monitor.ingestSpans(List.of(genAiSpan("s1", "ollama", "m", "chat-route", 412, 180, 9_000)));
+
+        OllamaMonitor.QuestionSummary s
+                = OllamaMonitor.QuestionSummary.of(OllamaMonitor.groupByQuestion(monitor.snapshot().requests()));
+        assertEquals(2, s.questions());
+        assertEquals(3, s.requests());
+        assertEquals(5_300, s.avgPromptTokens(), "average of each question's largest prompt");
+        assertEquals(150, s.avgOutputTokens());
+        assertEquals(91, s.cacheHitPercent(), "14.2k cached of 15.6k prompt tokens");
+        assertEquals(8, s.peakContextPercent());
+        assertEquals(1, s.limitHits());
+        // the fake requests land at once, so a question's wall time is its first step's total plus the rest:
+        // (1.5 s + 1 s) and 2 s, averaged
+        assertTrue(s.avgWallMs() >= 2_250 && s.avgWallMs() < 2_400, "was " + s.avgWallMs());
+        assertEquals(350, s.avgTtftMs());
+        assertEquals(59, Math.round(s.decodeTokensPerSecond()), "300 tokens over 5.1 s of decode");
+        assertEquals(1556, Math.round(s.prefillTokensPerSecond()), "1.4k evaluated tokens over 0.9 s");
+
+        JsonObject js = (JsonObject) monitor.toJson(10).get("questionSummary");
+        assertEquals(2, js.get("questions"));
+        assertEquals(1, js.get("limitHits"));
+        assertEquals(s.avgWallMs(), js.get("avgWallMs"));
+
+        assertEquals(OllamaMonitor.QuestionSummary.EMPTY, OllamaMonitor.QuestionSummary.of(List.of()));
+    }
+
+    @Test
+    void panelContextAppearsInTheJsonOnceKnown() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        assertNull(monitor.toJson(1).get("aiPanel"));
+        monitor.setPanelContext(32_768, 16_384);
+        JsonObject panel = (JsonObject) monitor.toJson(1).get("aiPanel");
+        assertEquals(32_768, panel.get("contextWindow"));
+        assertEquals(16_384, panel.get("compactsAbove"));
+    }
+
+    @Test
+    void aSmallerStepWithinAQuestionIsNotACompactionButASmallerNextQuestionIs() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.updateModels(List.of(new OllamaMonitor.LoadedModel(
+                "m", "f", "35.5B", "Q4_K_M", 1, 1, 32_768, null, null)));
+        // question 3 grows over its steps, then the wrap-up after the tool-call limit is smaller: no compaction
+        monitor.recordRequest("m", new LlmClient.TokenUsage(20_000, 40, 20_040, 19_000, 300, 700, 0, 1_000), 0,
+                "tool_calls", 3, "q3");
+        monitor.recordRequest("m", new LlmClient.TokenUsage(24_000, 40, 24_040, 23_000, 300, 700, 0, 1_000), 0,
+                "tool_calls", 3, "q3");
+        monitor.recordRequest("m", new LlmClient.TokenUsage(15_000, 200, 15_200, 0, 20_000, 3_000, 0, 23_000), 0,
+                "limit", 3, "q3");
+        assertEquals(0, monitor.snapshot().totals().compactions());
+        // the next question starts far below where the previous one ended: that is a compaction
+        monitor.recordRequest("m", new LlmClient.TokenUsage(9_000, 40, 9_040, 0, 900, 700, 0, 1_600), 0,
+                "stop", 4, "q4");
+        assertEquals(1, monitor.snapshot().totals().compactions());
+        assertEquals("limit", OllamaMonitor.groupByQuestion(monitor.snapshot().requests()).get(1).doneReason());
     }
 
     @Test

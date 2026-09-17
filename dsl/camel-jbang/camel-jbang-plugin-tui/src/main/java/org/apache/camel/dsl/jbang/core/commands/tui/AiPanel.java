@@ -112,15 +112,24 @@ class AiPanel {
      */
     static final int MAX_HISTORY_TURNS = 20;
     /**
-     * With a local endpoint the history is left untouched until it is estimated to exceed this many tokens. A local
-     * server (Ollama) keeps the KV cache of the previous request, so a request that merely extends the conversation
-     * only pays for its new tokens, whereas rewriting an earlier message forces the whole tail from that point to be
-     * processed again (measured at one to two seconds per question with a 35B MoE model on Apple silicon, against 0.2s
-     * when the history is untouched). Compacting saves counted tokens, which is what a hosted API bills for, but costs
-     * time locally, so it is deferred until the context actually needs the room: half of the 32k window the client
-     * requests from Ollama, leaving space for the static prefix and the current turn's tool results.
+     * With a local endpoint the history is left untouched until the prompt exceeds a budget. A local server (Ollama)
+     * keeps the KV cache of the previous request, so a request that merely extends the conversation only pays for its
+     * new tokens, whereas rewriting an earlier message forces the whole prompt to be processed again: measured at 40
+     * seconds for a 21k-token prompt with a 35B MoE model on Apple silicon, against half a second for a cached step.
+     * Compacting saves counted tokens, which is what a hosted API bills for, but costs time locally, so it happens
+     * rarely and then thoroughly (see {@link #compactLocalHistory}). The budget is half the context window Ollama
+     * serves, capped at {@link #LOCAL_HISTORY_MAX_WINDOW_TOKENS}, and is compared with the prompt size Ollama measured
+     * for the last request; this constant is the fallback when the window is unknown (another local server) and the
+     * decision must rest on the character estimate.
      */
     static final int LOCAL_HISTORY_BUDGET_TOKENS = 16_000;
+    /**
+     * The panel budgets its history as if the window were at most this large, even when Ollama serves a larger one:
+     * every token of history is prefill time again after a cache loss (idle unload, another client, a restart).
+     */
+    static final int LOCAL_HISTORY_MAX_WINDOW_TOKENS = 65_536;
+    /** Prefill speed assumed for the compaction notice until a cold request has been measured. */
+    static final double ASSUMED_COLD_PREFILL_TOKENS_PER_SECOND = 600;
     private static final int MAX_LOG_ENTRIES = 200;
     private static final DateTimeFormatter TIME_FMT
             = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
@@ -195,6 +204,12 @@ class AiPanel {
     private long thinkingStartTime;
     private volatile String thinkingVerb;
     private volatile int sessionTotalTokens;
+    /** Prompt size Ollama reported for the most recent request, 0 when unknown or after a compaction. */
+    private volatile int lastMeasuredPromptTokens;
+    /** Context window the current local provider serves, as the client resolved it; 0 when not Ollama. */
+    private volatile int knownContextWindow;
+    /** Prefill speed measured on requests that hit no cache, for the compaction notice. */
+    private volatile double coldPrefillTokensPerSecond;
     /** What the ACP agent last reported in its context window, and how big that window is (0 = not reported). */
     private volatile long acpContextUsed;
     private volatile long acpContextSize;
@@ -319,9 +334,14 @@ class AiPanel {
      * {@code toolCalls} TUI tool calls the model made.
      */
     record ConversationEntry(AiRole role, String text, long elapsedMs, long aiMs, long toolMs, int toolCalls,
-            int totalTokens) {
+            int totalTokens, int requests, boolean limitReached, int contextPercent) {
         ConversationEntry(AiRole role, String text) {
-            this(role, text, -1, 0, 0, 0, 0);
+            this(role, text, -1, 0, 0, 0, 0, 0, false, 0);
+        }
+
+        ConversationEntry(AiRole role, String text, long elapsedMs, long aiMs, long toolMs, int toolCalls,
+                          int totalTokens) {
+            this(role, text, elapsedMs, aiMs, toolMs, toolCalls, totalTokens, 0, false, 0);
         }
 
         /** "5.2s" or, when tools were called, "5.2s, ai 4.1s, tools 1.1s/3". */
@@ -332,6 +352,36 @@ class AiPanel {
             }
             return t;
         }
+
+        /**
+         * The line under an answer: what the question cost in plain words. "61.1s · 25 tool calls, limit reached · 26
+         * requests · 231.3k tokens · ctx 18%". The requests are the model round trips, which is what a local model pays
+         * for and what the Ollama tab counts per question; the tool time is named only when it mattered.
+         */
+        String byline() {
+            StringBuilder sb = new StringBuilder(formatSeconds(elapsedMs));
+            if (toolCalls > 0) {
+                sb.append(" · ").append(toolCalls).append(toolCalls == 1 ? " tool call" : " tool calls");
+                if (limitReached) {
+                    sb.append(", limit reached");
+                }
+                if (toolMs >= 1000) {
+                    sb.append(" (").append(formatSeconds(toolMs)).append(" in tools)");
+                }
+            } else if (limitReached) {
+                sb.append(" · limit reached");
+            }
+            if (requests > 1) {
+                sb.append(" · ").append(requests).append(" requests");
+            }
+            if (totalTokens > 0) {
+                sb.append(" · ").append(LlmClient.formatTokens(totalTokens)).append(" tokens");
+            }
+            if (contextPercent > 0) {
+                sb.append(" · ctx ").append(contextPercent).append('%');
+            }
+            return sb.toString();
+        }
     }
 
     /**
@@ -339,6 +389,25 @@ class AiPanel {
      * question takes several round trips when the model calls tools), so usage can be grouped per question; it is 0 for
      * route requests, which belong to no question.
      */
+    /**
+     * How many questions the panel's own requests were made for: a question takes one request per model round trip, and
+     * consecutive requests with the same question number belong to one question. Route calls do not count.
+     */
+    static int countQuestions(List<AiUsageEntry> entries) {
+        int questions = 0;
+        int lastQuestion = -1;
+        for (AiUsageEntry e : entries) {
+            if (e.source() == AiUsageSource.ROUTE) {
+                continue;
+            }
+            if (questions == 0 || e.question() != lastQuestion) {
+                questions++;
+                lastQuestion = e.question();
+            }
+        }
+        return questions;
+    }
+
     record AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
             int totalTokens, long latencyMs, String stopReason, Instant timestamp,
             AiUsageSource source, String routeId, int question) {
@@ -528,6 +597,8 @@ class AiPanel {
                 return;
             }
             initError = null;
+            // know the Ollama window before the first question instead of resolving it in front of the first request
+            client.resolveOllamaContextWindowInBackground();
             messages = new ArrayList<>();
             tools = buildTuiToolDefinitions();
         } catch (Exception e) {
@@ -1173,6 +1244,7 @@ class AiPanel {
                 conversation.add(new ConversationEntry(AiRole.USER, input));
                 questionCounter++;
                 currentQuestion = input;
+                noteQuestionStarted(input);
                 log(LogLevel.QUESTION, "Question about the edit", input);
                 return;
             }
@@ -1358,6 +1430,7 @@ class AiPanel {
         conversation.add(new ConversationEntry(AiRole.USER, question));
         questionCounter++;
         currentQuestion = question;
+        noteQuestionStarted(question);
         log(LogLevel.QUESTION, "Question", question);
         thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
         thinkingStartTime = System.currentTimeMillis();
@@ -1382,11 +1455,29 @@ class AiPanel {
                 if (agentThread == Thread.currentThread()) {
                     thinking.set(false);
                     agentThread = null;
+                    noteQuestionFinished();
                 }
             }
         }, "tui-ai-agent");
         agentThread.setDaemon(true);
         agentThread.start();
+    }
+
+    /**
+     * Tells the Ollama tab which question the panel is working on, so it lists it as in progress from the moment it was
+     * asked until the turn ends: answered, failed or cancelled. Only for Ollama; the tab is about that server.
+     */
+    private void noteQuestionStarted(String question) {
+        if (ctx != null && ctx.ollamaMonitor != null && client != null
+                && client.apiType() == LlmClient.ApiType.ollama) {
+            ctx.ollamaMonitor.questionStarted(questionCounter, question);
+        }
+    }
+
+    private void noteQuestionFinished() {
+        if (ctx != null && ctx.ollamaMonitor != null) {
+            ctx.ollamaMonitor.questionFinished();
+        }
     }
 
     private void runAgentLoop(String systemPrompt, String question) throws InterruptedException {
@@ -1403,6 +1494,7 @@ class AiPanel {
         long turnAiMs = 0;
         long turnToolMs = 0;
         int turnToolCalls = 0;
+        int turnRequests = 0;
         for (int i = 0; i < MAX_ITERATIONS; i++) {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
@@ -1419,8 +1511,9 @@ class AiPanel {
                 log(LogLevel.ERROR, "Error", err);
                 return;
             }
+            turnRequests++;
             totalUsage = totalUsage.add(response.usage());
-            recordUsage(response, callLatency);
+            recordUsage(response, callLatency, null);
 
             // check for error response (null text, no tool calls, error stop reason)
             if ("error".equals(response.stopReason())
@@ -1472,28 +1565,47 @@ class AiPanel {
                 }
                 messages.add(LlmClient.Message.toolResults(results));
             } else {
-                completeTurn(response.text(), false, totalUsage, turnAiMs, turnToolMs, turnToolCalls, messages);
+                completeTurn(response.text(), false, totalUsage, turnAiMs, turnToolMs, turnToolCalls, turnRequests,
+                        messages);
                 return;
             }
         }
 
-        // out of round trips: ask the model once more, without tools, so the user gets an answer rather than an error
+        // out of round trips: ask the model once more to answer with what it has. The tool definitions stay in the
+        // request so the prompt prefix is unchanged and a local server serves it from its cache; dropping them
+        // changed the prefix and cost a full re-prefill (13 s for 8k tokens measured). A tool call in the reply is
+        // ignored.
         messages.add(LlmClient.Message.user(
                 "You have used all " + MAX_ITERATIONS + " tool calls available for this question and cannot call any"
-                                            + " more. Answer now: summarize what you did, what you found, what"
-                                            + " failed, and what the user could try next."));
+                                            + " more; do not call a tool. Answer now: summarize what you did, what"
+                                            + " you found, what failed, and what the user could try next."));
         long wrapUpStart = System.currentTimeMillis();
         drainClientOutput();
-        LlmClient.ChatResponse wrapUp = client.chatWithTools(systemPrompt, messages, List.of());
+        LlmClient.ChatResponse wrapUp = client.chatWithTools(systemPrompt, messages, tools);
         long wrapUpLatency = System.currentTimeMillis() - wrapUpStart;
         turnAiMs += wrapUpLatency;
         if (wrapUp != null) {
+            turnRequests++;
             totalUsage = totalUsage.add(wrapUp.usage());
-            recordUsage(wrapUp, wrapUpLatency);
-            if (wrapUp.text() != null && !wrapUp.text().isBlank()) {
-                completeTurn(wrapUp.text(), true, totalUsage, turnAiMs, turnToolMs, turnToolCalls, messages);
-                return;
+            recordUsage(wrapUp, wrapUpLatency, "limit");
+        }
+        if (wrapUp == null || wrapUp.text() == null || wrapUp.text().isBlank()) {
+            // the model called a tool regardless: once more without any tool to call, at the price of the prefix
+            wrapUpStart = System.currentTimeMillis();
+            drainClientOutput();
+            wrapUp = client.chatWithTools(systemPrompt, messages, List.of());
+            wrapUpLatency = System.currentTimeMillis() - wrapUpStart;
+            turnAiMs += wrapUpLatency;
+            if (wrapUp != null) {
+                turnRequests++;
+                totalUsage = totalUsage.add(wrapUp.usage());
+                recordUsage(wrapUp, wrapUpLatency, "limit");
             }
+        }
+        if (wrapUp != null && wrapUp.text() != null && !wrapUp.text().isBlank()) {
+            completeTurn(wrapUp.text(), true, totalUsage, turnAiMs, turnToolMs, turnToolCalls, turnRequests,
+                    messages);
+            return;
         }
 
         StringBuilder sb = new StringBuilder();
@@ -1520,20 +1632,17 @@ class AiPanel {
      */
     private void completeTurn(
             String text, boolean wrapUp, LlmClient.TokenUsage totalUsage, long turnAiMs, long turnToolMs,
-            int turnToolCalls, List<LlmClient.Message> messages) {
+            int turnToolCalls, int turnRequests, List<LlmClient.Message> messages) {
         sessionTotalTokens += totalUsage.totalTokens();
         if (text != null && !text.isBlank()) {
             long elapsed = System.currentTimeMillis() - thinkingStartTime;
             ConversationEntry entry = new ConversationEntry(
                     AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
-                    totalUsage.totalTokens());
+                    totalUsage.totalTokens(), turnRequests, wrapUp, contextFillPercent());
             conversation.add(entry);
             turnTimings.add(new long[] { turnAiMs, turnToolMs, turnToolCalls });
-            String tokenInfo = totalUsage.totalTokens() > 0
-                    ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
-                    : "";
             String label = wrapUp ? "Response after reaching the tool call limit (" : "Response (";
-            log(LogLevel.RESPONSE, label + entry.timing() + tokenInfo + describeCacheSignal(totalUsage) + ")", text);
+            log(LogLevel.RESPONSE, label + entry.byline() + describeCacheSignal(totalUsage) + ")", text);
         } else {
             String err = "Empty response from LLM.";
             conversation.add(new ConversationEntry(AiRole.ERROR, err));
@@ -1545,19 +1654,123 @@ class AiPanel {
     }
 
     /**
-     * Compacts the history after a turn unless the endpoint is local and the history is still within
-     * {@link #LOCAL_HISTORY_BUDGET_TOKENS}; see there for why rewriting history is the slower choice locally.
-     * {@code /compact} bypasses this and always compacts.
+     * Compacts the history after a turn. Hosted endpoints compact a little every turn (tokens cost money, rewriting is
+     * free). A local endpoint waits until the measured prompt passes the budget, then compacts hard once and tells the
+     * user what it cost; see {@link #LOCAL_HISTORY_BUDGET_TOKENS} for why. {@code /compact} bypasses the wait.
      */
     private void compactHistoryAfterTurn() {
         boolean local = client != null && client.isLocalEndpoint();
-        if (shouldCompactAfterTurn(local, historyChars(messages))) {
-            compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS);
+        int budget = compactionBudgetTokens(local, knownContextWindow);
+        if (!shouldCompactAfterTurn(local, historyChars(messages), lastMeasuredPromptTokens, budget)) {
+            return;
         }
+        if (!local) {
+            compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS);
+            return;
+        }
+        String notice = compactLocalHistoryWithNotice(budget, true);
+        conversation.add(new ConversationEntry(AiRole.SYSTEM, notice));
+        log(LogLevel.RESPONSE, "History compacted", notice);
+    }
+
+    /** Compacts the local history hard and returns the notice describing what it cost; resets the measurement. */
+    private String compactLocalHistoryWithNotice(int budget, boolean automatic) {
+        int before = lastMeasuredPromptTokens > 0 ? lastMeasuredPromptTokens : promptTokensEstimate();
+        compactLocalHistory(messages, budget);
+        int after = promptTokensEstimate();
+        lastMeasuredPromptTokens = 0;
+        return describeCompaction(automatic, before, after, true, coldPrefillTokensPerSecond);
     }
 
     static boolean shouldCompactAfterTurn(boolean localEndpoint, long historyChars) {
-        return !localEndpoint || estimateTokens(historyChars) > LOCAL_HISTORY_BUDGET_TOKENS;
+        return shouldCompactAfterTurn(localEndpoint, historyChars, 0, LOCAL_HISTORY_BUDGET_TOKENS);
+    }
+
+    /**
+     * Hosted endpoints always compact. Local ones compact once the prompt Ollama measured for the last request passes
+     * the budget, or, when nothing was measured, once the character estimate of the history does.
+     */
+    static boolean shouldCompactAfterTurn(
+            boolean localEndpoint, long historyChars, int measuredPromptTokens, int budgetTokens) {
+        if (!localEndpoint) {
+            return true;
+        }
+        if (measuredPromptTokens > 0) {
+            return measuredPromptTokens > budgetTokens;
+        }
+        return estimateTokens(historyChars) > budgetTokens;
+    }
+
+    /** Half of the window the local server serves, capped at {@link #LOCAL_HISTORY_MAX_WINDOW_TOKENS}. */
+    static int compactionBudgetTokens(boolean localEndpoint, int windowTokens) {
+        if (!localEndpoint || windowTokens <= 0) {
+            return LOCAL_HISTORY_BUDGET_TOKENS;
+        }
+        return Math.min(windowTokens, LOCAL_HISTORY_MAX_WINDOW_TOKENS) / 2;
+    }
+
+    /**
+     * Compacts as {@code /compact} does (older tool results cut, the previous turn included) and then drops the oldest
+     * turns until the history is estimated at half the budget, so that with the static prefix the next prompt lands
+     * around a quarter to a third of the window. Every compaction costs a full re-prefill locally, so one compaction
+     * has to buy several quiet turns.
+     */
+    static void compactLocalHistory(List<LlmClient.Message> history, int budgetTokens) {
+        compactHistory(history, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS, false);
+        int target = Math.max(1, budgetTokens / 2);
+        while (countTurns(history) > 1 && estimateTokens(historyChars(history)) > target) {
+            dropOldestTurn(history);
+        }
+    }
+
+    /** Removes the first question with everything up to the next one. */
+    static void dropOldestTurn(List<LlmClient.Message> history) {
+        int firstUser = -1;
+        for (int i = 0; i < history.size(); i++) {
+            LlmClient.Message m = history.get(i);
+            boolean question = "user".equals(m.role()) && m.toolCalls() == null && m.toolResults() == null;
+            if (question) {
+                if (firstUser >= 0) {
+                    history.subList(0, i).clear();
+                    return;
+                }
+                firstUser = i;
+            }
+        }
+    }
+
+    /**
+     * The line shown when the history is compacted. Locally the next request prefills the whole prompt again, so the
+     * user is told how long that takes at the speed measured on a cold request (or an assumed speed until one was).
+     */
+    static String describeCompaction(
+            boolean automatic, int beforeTokens, int afterTokens, boolean localEndpoint,
+            double coldPrefillTokensPerSecond) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(automatic ? "History compacted automatically: ~" : "Compacting history: ~")
+                .append(LlmClient.formatTokens(beforeTokens)).append(" -> ~")
+                .append(LlmClient.formatTokens(afterTokens)).append(" tokens");
+        if (!localEndpoint) {
+            sb.append(", saving ~").append(LlmClient.formatTokens(Math.max(0, beforeTokens - afterTokens)))
+                    .append(" tokens per request.");
+            return sb.toString();
+        }
+        boolean assumed = coldPrefillTokensPerSecond <= 0;
+        double rate = assumed ? ASSUMED_COLD_PREFILL_TOKENS_PER_SECOND : coldPrefillTokensPerSecond;
+        double seconds = afterTokens / rate;
+        sb.append(". The next reply prefills the whole prompt again (about ")
+                .append(seconds < 10
+                        ? String.format(Locale.ROOT, "%.0f", Math.max(1, seconds))
+                        : String.format(Locale.ROOT, "%.0f", seconds))
+                .append("s at ").append(String.format(Locale.ROOT, "%.0f", rate)).append(" tok/s")
+                .append(assumed ? ", assumed" : ", measured").append(") because the local server's cache resets.");
+        return sb.toString();
+    }
+
+    /** Estimate of the next prompt: static prefix plus history, in tokens. */
+    private int promptTokensEstimate() {
+        return estimateTokens(buildSystemPrompt().length()) + estimateTokens(toolSchemaChars())
+               + estimateTokens(historyChars(messages));
     }
 
     /**
@@ -1984,7 +2197,8 @@ class AiPanel {
         return null;
     }
 
-    private void recordUsage(LlmClient.ChatResponse response, long latencyMs) {
+    /** {@code reasonOverride} replaces the provider's stop reason on the Ollama tab, e.g. "limit" for the wrap-up. */
+    private void recordUsage(LlmClient.ChatResponse response, long latencyMs, String reasonOverride) {
         if (client == null || response.usage().totalTokens() == 0) {
             return;
         }
@@ -1996,11 +2210,26 @@ class AiPanel {
                 response.usage().totalTokens(), latencyMs,
                 response.stopReason(), Instant.now(),
                 AiUsageSource.TUI, null, questionCounter));
+        noteMeasuredPrompt(response.usage());
         if (ctx != null && ctx.ollamaMonitor != null && client.apiType() == LlmClient.ApiType.ollama) {
             // the Ollama tab shows this request with the timings Ollama returned
             ctx.ollamaMonitor.adoptEndpoint(client.endpointUrl());
-            ctx.ollamaMonitor.recordRequest(model, response.usage(), latencyMs, response.stopReason(),
-                    questionCounter, currentQuestion);
+            ctx.ollamaMonitor.recordRequest(model, response.usage(), latencyMs,
+                    reasonOverride != null ? reasonOverride : response.stopReason(), questionCounter, currentQuestion);
+            ctx.ollamaMonitor.setPanelContext(knownContextWindow, compactionBudgetTokens(true, knownContextWindow));
+        }
+    }
+
+    /** Keeps what the provider measured: the prompt size, the cold prefill speed and, for Ollama, the window. */
+    private void noteMeasuredPrompt(LlmClient.TokenUsage usage) {
+        if (usage.inputTokens() > 0) {
+            lastMeasuredPromptTokens = usage.inputTokens();
+        }
+        if (usage.cachedTokens() == 0 && usage.inputTokens() >= 1000 && usage.prefillMillis() > 0) {
+            coldPrefillTokensPerSecond = usage.inputTokens() * 1000.0 / usage.prefillMillis();
+        }
+        if (client != null && client.apiType() == LlmClient.ApiType.ollama) {
+            knownContextWindow = client.ollamaContextWindow();
         }
     }
 
@@ -2016,7 +2245,8 @@ class AiPanel {
             String tokenSuffix = titleTokens > 0 ? ", " + LlmClient.formatTokens(titleTokens) + " tokens" : "";
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
-                    Span.styled("(" + formatSeconds(titleElapsed) + tokenSuffix + ") ", Style.EMPTY.dim()));
+                    Span.styled("(" + formatSeconds(titleElapsed) + tokenSuffix + describeContextFillSuffix() + ") ",
+                            Style.EMPTY.dim()));
         } else if (acpPreset != null) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
@@ -2024,7 +2254,9 @@ class AiPanel {
         } else if (sessionTotalTokens > 0) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
-                    Span.styled("(total: " + LlmClient.formatTokens(sessionTotalTokens) + " tokens) ", Style.EMPTY.dim()));
+                    Span.styled("(total: " + LlmClient.formatTokens(sessionTotalTokens) + " tokens"
+                                + describeContextFillSuffix() + ") ",
+                            Style.EMPTY.dim()));
         } else {
             titleLine = Line.from(Span.styled(" AI ", Style.EMPTY.bold()));
         }
@@ -2167,14 +2399,12 @@ class AiPanel {
 
         // Show elapsed time and token count as a dimmed line below the markdown when at the bottom
         long lastElapsed = -1;
-        String lastTiming = "";
-        int lastTokens = 0;
+        String lastByline = "";
         if (!thinking.get() && !conversation.isEmpty()) {
             ConversationEntry last = conversation.get(conversation.size() - 1);
             if (last.role() == AiRole.ASSISTANT && last.elapsedMs() >= 0) {
                 lastElapsed = last.elapsedMs();
-                lastTiming = last.timing();
-                lastTokens = last.totalTokens();
+                lastByline = last.byline();
             }
         }
 
@@ -2237,10 +2467,9 @@ class AiPanel {
         }
 
         if (elapsedArea != null && lastElapsed >= 0) {
-            String tokenSuffix = lastTokens > 0 ? ", " + LlmClient.formatTokens(lastTokens) + " tokens" : "";
             frame.renderWidget(
                     Paragraph.from(
-                            Line.from(Span.styled("(" + lastTiming + tokenSuffix + ")", Style.EMPTY.dim()))),
+                            Line.from(Span.styled("(" + lastByline + ")", Style.EMPTY.dim()))),
                     elapsedArea);
         }
         if (statusArea != null) {
@@ -2501,6 +2730,7 @@ class AiPanel {
         int totalOutput = 0;
         int totalTokens = 0;
         long totalLatency = 0;
+        long tuiLatency = 0;
         int tuiRequests = 0;
         int routeRequests = 0;
         for (AiUsageEntry e : entries) {
@@ -2512,9 +2742,11 @@ class AiPanel {
                 routeRequests++;
             } else {
                 tuiRequests++;
+                tuiLatency += e.latencyMs();
             }
         }
         int requestCount = entries.size();
+        int questionCount = countQuestions(entries);
 
         // Per-model aggregation
         Map<String, long[]> perModel = new LinkedHashMap<>();
@@ -2578,8 +2810,10 @@ class AiPanel {
                 Span.styled(LlmClient.formatTokens(totalOutput), Theme.label()),
                 Span.styled(")", dimStyle)));
         summaryLines.add(Line.from(
-                Span.styled("Avg latency: ", dimStyle),
-                Span.styled(formatSeconds(totalLatency / requestCount), cyanStyle),
+                Span.styled("Avg per question: ", dimStyle),
+                Span.styled(formatSeconds(questionCount > 0 ? tuiLatency / questionCount : totalLatency / requestCount),
+                        cyanStyle),
+                Span.styled(" (" + formatSeconds(totalLatency / requestCount) + " per request)", dimStyle),
                 Span.styled("   AI time: ", dimStyle),
                 Span.styled(formatSeconds(totalLatency), cyanStyle),
                 Span.styled("   Tool time: ", dimStyle),
@@ -2610,14 +2844,14 @@ class AiPanel {
                         Cell.from(Span.styled("INPUT", Style.EMPTY.bold())),
                         Cell.from(Span.styled("OUTPUT", Style.EMPTY.bold())),
                         Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("AVG", Style.EMPTY.bold()))))
+                        Cell.from(Span.styled("AVG/REQ", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.fill(),
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(8),
-                        Constraint.length(7))
+                        Constraint.length(8))
                 .build();
         frame.renderStatefulWidget(table, tableArea, statsTableState);
 
@@ -3165,7 +3399,34 @@ class AiPanel {
         sb.append("Next request: ~").append(LlmClient.formatTokens(promptTokens + toolTokens + historyTokens))
                 .append(" tokens before your question; session total so far ")
                 .append(LlmClient.formatTokens(sessionTotalTokens)).append(" tokens");
+        int window = knownContextWindow;
+        if (window > 0) {
+            int budget = compactionBudgetTokens(true, window);
+            sb.append("\nContext window: ").append(LlmClient.formatTokens(window))
+                    .append(" tokens (Ollama); the history is compacted once a prompt passes ~")
+                    .append(LlmClient.formatTokens(budget));
+            if (lastMeasuredPromptTokens > 0) {
+                sb.append("; last prompt ").append(LlmClient.formatTokens(lastMeasuredPromptTokens))
+                        .append(" tokens (").append(lastMeasuredPromptTokens * 100L / window).append("%)");
+            }
+        }
         return sb.toString();
+    }
+
+    /** {@code , ctx 34%}: the measured prompt against the window, for the title; empty until both are known. */
+    private String describeContextFillSuffix() {
+        int fill = contextFillPercent();
+        return fill > 0 ? ", ctx " + fill + "%" : "";
+    }
+
+    /** The measured prompt against the window in percent, 0 until both are known. */
+    private int contextFillPercent() {
+        int window = knownContextWindow;
+        int measured = lastMeasuredPromptTokens;
+        if (window <= 0 || measured <= 0) {
+            return 0;
+        }
+        return (int) (measured * 100L / window);
     }
 
     /** The title's context figure, empty until the agent reports one. */
@@ -3236,6 +3497,9 @@ class AiPanel {
         if (messages == null || messages.isEmpty()) {
             return "History is empty, nothing to compact";
         }
+        if (client != null && client.isLocalEndpoint()) {
+            return compactLocalHistoryWithNotice(compactionBudgetTokens(true, knownContextWindow), false);
+        }
         int before = estimateTokens(historyChars(messages));
         int messagesBefore = messages.size();
         compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS, false);
@@ -3290,6 +3554,7 @@ class AiPanel {
         int totalOutput = 0;
         int totalTokens = 0;
         long totalLatency = 0;
+        long tuiLatency = 0;
         int tuiRequests = 0;
         int routeRequests = 0;
         Map<String, long[]> perModel = new LinkedHashMap<>();
@@ -3302,6 +3567,7 @@ class AiPanel {
                 routeRequests++;
             } else {
                 tuiRequests++;
+                tuiLatency += e.latencyMs();
             }
             long[] stats = perModel.computeIfAbsent(modelTableKey(e), k -> new long[5]);
             stats[0]++;
@@ -3320,7 +3586,10 @@ class AiPanel {
         sb.append("- **Tokens:** ").append(LlmClient.formatTokens(totalTokens))
                 .append(" (in ").append(LlmClient.formatTokens(totalInput))
                 .append(", out ").append(LlmClient.formatTokens(totalOutput)).append(")\n");
-        sb.append("- **Avg latency:** ").append(formatSeconds(totalLatency / entries.size())).append("\n");
+        int questionCount = countQuestions(entries);
+        sb.append("- **Avg per question:** ")
+                .append(formatSeconds(questionCount > 0 ? tuiLatency / questionCount : totalLatency / entries.size()))
+                .append(" (").append(formatSeconds(totalLatency / entries.size())).append(" per request)\n");
         if (sessionToolCalls > 0) {
             sb.append("- **AI time:** ").append(formatSeconds(totalLatency))
                     .append(", **Tool time:** ").append(formatSeconds(sessionToolTimeMs))
@@ -3331,7 +3600,7 @@ class AiPanel {
             sb.append("- **Last request:** ").append(LlmClient.formatTokens(last.totalTokens()))
                     .append(" tokens in ").append(formatSeconds(last.latencyMs())).append("\n");
         }
-        sb.append("\n| Model | Reqs | In | Out | Total | Avg |\n|---|---|---|---|---|---|\n");
+        sb.append("\n| Model | Reqs | In | Out | Total | Avg/req |\n|---|---|---|---|---|---|\n");
         for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
             long[] stats = entry.getValue();
             sb.append("| ").append(entry.getKey())
@@ -3635,6 +3904,7 @@ class AiPanel {
                 return false;
             }
             client.withModel(model);
+            client.resolveOllamaContextWindowInBackground();
             persistModelSelection(model);
             return true;
         }

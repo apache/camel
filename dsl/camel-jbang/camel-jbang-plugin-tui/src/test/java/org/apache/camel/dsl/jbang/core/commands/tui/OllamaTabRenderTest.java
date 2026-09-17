@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.style.Style;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -94,8 +95,10 @@ class OllamaTabRenderTest {
         assertTrue(rendered.contains("qwen35moe"), rendered);
         assertTrue(rendered.contains("41 layers"), rendered);
         assertTrue(rendered.contains("256 experts (8 active)"), rendered);
+        assertTrue(rendered.contains("max ctx 256k"), rendered);
         assertTrue(rendered.contains("100% GPU"), rendered);
-        assertTrue(rendered.contains("ctx 262,144"), rendered);
+        assertTrue(rendered.contains("· ctx 256k ·"), rendered);
+        assertFalse(rendered.contains("of 256k"), rendered);
         // panels
         assertTrue(rendered.contains("Throughput"), rendered);
         assertTrue(rendered.contains("decode"), rendered);
@@ -191,6 +194,91 @@ class OllamaTabRenderTest {
     }
 
     @Test
+    void aQuestionThatCostManyRequestsOrRanLongIsColoured() {
+        // the request count: plain for a few, yellow from ten, red when the tool-call limit ended the question
+        assertEquals(Theme.info(), OllamaTab.requestCountStyle(3, "stop"));
+        assertEquals(Theme.warning(), OllamaTab.requestCountStyle(OllamaTab.MANY_REQUESTS, "stop"));
+        assertEquals(Theme.error().bold(), OllamaTab.requestCountStyle(26, "limit"));
+        assertEquals(Theme.error().bold(), OllamaTab.requestCountStyle(2, "limit"));
+
+        // the total: plain under half a minute, yellow from there, orange from a minute
+        assertEquals(Style.EMPTY, OllamaTab.totalTimeStyle(12_000));
+        assertEquals(Theme.warning(), OllamaTab.totalTimeStyle(OllamaTab.SLOW_QUESTION_MS));
+        assertEquals(Style.EMPTY.fg(Theme.accent()).bold(), OllamaTab.totalTimeStyle(75_000));
+
+        // and the row still reads the same
+        localServerWithModel();
+        String question = "what's the name of the source file that has the route";
+        for (int i = 0; i < 25; i++) {
+            monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                    9_000 + i * 200, 40, 9_040, 8_800, 300,
+                    1_500, 0, 2_000), 0, "tool_calls", 9, question);
+        }
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                14_000, 120, 14_120, 13_800, 300, 3_000, 0,
+                3_500), 0, "limit", 9, question);
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertTrue(rendered.contains("#9 ×26"), rendered);
+        assertTrue(rendered.contains("limit"), rendered);
+    }
+
+    @Test
+    void theQuestionBeingAnsweredShowsAsWorkingFromTheMomentItIsAsked() {
+        localServerWithModel();
+        String question = "what's the name of the source file that has the route";
+        monitor.questionStarted(9, question);
+
+        // before the first request returns: a row with the question, a running clock and no figures
+        OllamaTab tab = new OllamaTab(ctx, monitor);
+        String rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertTrue(rendered.contains("Requests (0 questions, 0 requests, 1 in progress)"), rendered);
+        assertTrue(rendered.contains("#9"), rendered);
+        assertTrue(rendered.contains(question), rendered);
+        assertTrue(rendered.contains("working"), rendered);
+        assertFalse(rendered.contains("No requests yet"), rendered);
+
+        // a tool call came back: the normal row, still working rather than tool_calls
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(9_000, 40, 9_040, 0, 5_000, 700, 0, 5_800),
+                0, "tool_calls", 9, question);
+        rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertTrue(rendered.contains("Requests (1 question, 1 request, 1 in progress)"), rendered);
+        assertTrue(rendered.contains("working"), rendered);
+        assertFalse(rendered.contains("tool_calls"), rendered);
+
+        // the answer landed
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                9_400, 120, 9_520, 9_000, 300, 2_000, 0,
+                2_400), 0, "stop", 9, question);
+        monitor.questionFinished();
+        rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertTrue(rendered.contains("Requests (1 question, 2 requests)"), rendered);
+        assertTrue(rendered.contains("#9 ×2"), rendered);
+        assertFalse(rendered.contains("working"), rendered);
+        assertTrue(rendered.contains("stop"), rendered);
+    }
+
+    @Test
+    void aFooterAveragesTheQuestionsOnceThereAreTwo() {
+        localServerWithModel();
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                5_000, 100, 5_100, 4_000, 500, 1_500, 0,
+                2_000), 0, "stop", 1, "how many routes");
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertFalse(rendered.contains("avg/question"), rendered);
+
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                5_200, 40, 5_240, 5_000, 500, 500, 0,
+                1_000), 0, "tool_calls", 2, "how much memory");
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                5_400, 300, 5_700, 5_200, 200, 4_800, 0,
+                5_000), 0, "limit", 2, "how much memory");
+        rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertTrue(rendered.contains("avg/question"), rendered);
+        assertTrue(rendered.contains("2 questions · 3 requests"), rendered);
+        assertTrue(rendered.contains("1 limit"), rendered);
+    }
+
+    @Test
     void routeRequestsShowTheirRouteId() {
         localServerWithModel();
         monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(16, 6, 22, 0, 188, 81, 12, 300), 0, "stop");
@@ -216,6 +304,21 @@ class OllamaTabRenderTest {
         JsonObject summary = (JsonObject) json.get("summary");
         assertEquals(true, summary.get("connected"));
         assertEquals(1, ((JsonArray) summary.get("loadedModels")).size());
+    }
+
+    @Test
+    void headerShowsWhatThePanelAsksForAndWhereItCompacts() {
+        localServerWithModel();
+        // the model in this fixture is loaded at 256k while the panel asked for 64k: both are named
+        monitor.setPanelContext(65_536, 32_768);
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertTrue(rendered.contains("AI panel asks 64k · AI panel compacts above 32k"), rendered);
+        // when the panel adopted the loaded window only the compaction point is worth a mention
+        monitor.setPanelContext(262_144, 32_768);
+        rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertFalse(rendered.contains("AI panel asks"), rendered);
+        assertTrue(rendered.contains("ctx 256k · unloads in"), rendered);
+        assertTrue(rendered.contains("AI panel compacts above 32k"), rendered);
     }
 
     @Test
@@ -253,7 +356,10 @@ class OllamaTabRenderTest {
         assertEquals("0", OllamaTab.formatRate(0));
         assertEquals("999", OllamaTab.formatTokens(999));
         assertEquals("1.2k", OllamaTab.formatTokens(1203));
-        assertEquals("262k", OllamaTab.formatTokens(262144));
+        assertEquals("256k", OllamaTab.formatTokens(262144));
+        assertEquals("64k", OllamaTab.formatTokens(65536));
+        assertEquals("32k", OllamaTab.formatTokens(32768));
+        assertEquals("250k", OllamaTab.formatTokens(250_000));
         assertEquals("1.5M", OllamaTab.formatTokens(1_500_000));
         assertEquals("0.14s", OllamaTab.formatSeconds(138));
         assertEquals("2.8s", OllamaTab.formatSeconds(2829));

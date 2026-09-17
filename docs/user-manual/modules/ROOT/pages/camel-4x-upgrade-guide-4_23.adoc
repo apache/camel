@@ -790,9 +790,13 @@ The F8 AI panel now sends only a core subset of its `tui_*` tools to local provi
 provider on `localhost`); the drawing, animation and automation tools are left out to keep the
 prompt small for local models. Hosted providers are unaffected. Use `/tools full` in the panel, or
 set `camel.tui.ai.tools=full`, to restore the previous behaviour. Requests to Ollama now also set
-`keep_alive` to 30 minutes and `num_ctx` to 32768 (or `OLLAMA_CONTEXT_LENGTH` when that is set in the
-environment), which can cause a one-time model reload if the model was loaded with a different
-context size.
+`keep_alive` to 30 minutes and a `num_ctx` chosen once per model: `OLLAMA_CONTEXT_LENGTH` when set in the
+environment, else the window of the model when Ollama already has it loaded (raised to 32768 when
+smaller), else 65536 when the model's weights plus the KV cache of that window fit the machine's memory
+and 32768 otherwise. The same rule applies to `camel ask` and the other CLI commands that use Ollama.
+Asking for a window Ollama does not have loaded causes a one-time model reload. The AI panel compacts
+its conversation history for a local provider once the prompt Ollama measured passes half that window
+(at most half of 65536) and prints a line saying so, instead of the earlier estimate-based threshold.
 
 `camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
 to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`

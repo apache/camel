@@ -178,6 +178,27 @@ On Apple Silicon, all RAM is unified — a 64 GB M-series Mac can run `llama3.3:
 Use the default (GGUF) tags rather than the `-mlx` tags: the Ollama MLX engine cannot yet reuse the
 cached prompt for Qwen 3.x models, so every question re-processes the whole prompt.
 
+==== Context window and keep-alive
+
+Every Ollama request from the CLI (`camel ask`, `camel explain`, `camel harden`) and from the TUI asks
+Ollama to keep the model loaded for 30 minutes, so a follow-up question reuses the cached prompt instead
+of reloading the model, and for a context window (`num_ctx`) chosen once per model:
+
+1. `OLLAMA_CONTEXT_LENGTH` in the environment wins when set.
+2. If Ollama already has the model loaded, its window is adopted (raised to 32k when smaller), so the CLI
+   never makes Ollama reload a model that another client is using. A request with a different `num_ctx`
+   makes Ollama reload the model, which costs a cold start of tens of seconds and throws away the prompt
+   cache of every client.
+3. Otherwise 64k when the model's weights plus the KV cache of a 64k window fit the machine's memory,
+   judged from what `ollama show` reports about the model, else 32k. A window that does not fit makes
+   Ollama move layers to the CPU, which slows generation far more than a smaller window costs.
+
+The tool-calling prompt alone is about 4.5k tokens, which is why 32k is the floor: Ollama's own default
+on machines with less than 24 GB is 4k and would truncate it. Keep all your Ollama clients on the same
+value; if you set `OLLAMA_CONTEXT_LENGTH` for the CLI, set it for `ollama serve` too. The TUI's Ollama
+tab shows the window in use, and xref:camel-jbang-tui.adoc#_working_with_a_local_ollama_model[Working
+with a local Ollama model] explains how the AI panel manages its history inside it.
+
 === Using an OpenAI-compatible local server
 
 Many local LLM servers expose an OpenAI-compatible API. Use `LLM_API_KEY` and `LLM_BASE_URL`

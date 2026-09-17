@@ -76,6 +76,9 @@ final class OllamaMonitor {
     private static final long TAGS_INTERVAL_MS = 15_000;
     private static final long RUNNER_SCAN_INTERVAL_MS = 5_000;
     private static final long HOST_INTERVAL_MS = 1_000;
+    /** The runner's slot is read twice a second while it generates, and every two seconds while it sits idle. */
+    private static final long SLOT_BUSY_INTERVAL_MS = 500;
+    private static final long SLOT_IDLE_INTERVAL_MS = 2_000;
     private static final long RATE_WINDOW_MS = 1_500;
     private static final int MAX_SEEN_SPANS = 4_000;
     private static final long SPAN_INTERVAL_MS = 5_000;
@@ -304,10 +307,13 @@ final class OllamaMonitor {
             return false;
         }
 
-        /** From the first request starting to the last one finishing. */
+        /**
+         * From the first request starting to the last one finishing. A request is stamped when its reply arrives, so
+         * its start is that stamp less its own total.
+         */
         long wallMs() {
-            long start = first().timestamp().toEpochMilli();
-            long end = last().timestamp().toEpochMilli() + last().totalMs();
+            long start = first().timestamp().toEpochMilli() - first().totalMs();
+            long end = last().timestamp().toEpochMilli();
             return Math.max(end - start, last().totalMs());
         }
 
@@ -364,11 +370,90 @@ final class OllamaMonitor {
         }
     }
 
+    /**
+     * The AI panel question being answered right now, so the tab can list it from the moment it was asked: before the
+     * first request returns there is no {@link RequestEntry} for it, and while tools run its last step says
+     * {@code tool_calls} like a finished question's would.
+     */
+    record ActiveQuestion(int question, String text, Instant startedAt) {
+
+        long elapsedMs() {
+            return Math.max(0, System.currentTimeMillis() - startedAt.toEpochMilli());
+        }
+
+        boolean matches(QuestionGroup g) {
+            return g.source() == RequestSource.TUI && g.question() == question;
+        }
+    }
+
+    /**
+     * The AI panel's questions of the session in one line, the footer of the requests table: averages per question
+     * where a question row shows a figure per question, pooled rates and cache hit, the peak context fill and how many
+     * questions ended at the tool-call limit. Route calls are not questions and are left out.
+     */
+    record QuestionSummary(int questions, int requests, long totalWallMs, long avgPromptTokens,
+            long avgOutputTokens, int cacheHitPercent, int peakContextPercent, double prefillTokensPerSecond,
+            double decodeTokensPerSecond, long avgTtftMs, long avgWallMs, int limitHits) {
+
+        static final QuestionSummary EMPTY = new QuestionSummary(0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
+
+        static QuestionSummary of(List<QuestionGroup> groups) {
+            int questions = 0;
+            int requests = 0;
+            long wall = 0;
+            long prompt = 0;
+            long output = 0;
+            long promptAll = 0;
+            long cachedAll = 0;
+            long evaluated = 0;
+            long prefillMs = 0;
+            long decodeMs = 0;
+            int peak = -1;
+            long ttft = 0;
+            int timed = 0;
+            int limits = 0;
+            for (QuestionGroup g : groups) {
+                if (g.source() != RequestSource.TUI) {
+                    continue;
+                }
+                questions++;
+                requests += g.steps().size();
+                wall += g.wallMs();
+                prompt += g.promptTokens();
+                output += g.outputTokens();
+                peak = Math.max(peak, g.contextPercent());
+                if (g.hasTimings()) {
+                    ttft += g.ttftMs();
+                    timed++;
+                }
+                if ("limit".equals(g.doneReason())) {
+                    limits++;
+                }
+                for (RequestEntry e : g.steps()) {
+                    promptAll += e.inputTokens();
+                    cachedAll += e.cachedTokens();
+                    evaluated += e.evaluatedTokens();
+                    prefillMs += e.prefillMs();
+                    decodeMs += e.decodeMs();
+                }
+            }
+            if (questions == 0) {
+                return EMPTY;
+            }
+            return new QuestionSummary(
+                    questions, requests, wall, prompt / questions, output / questions,
+                    promptAll > 0 ? (int) Math.min(100, cachedAll * 100 / promptAll) : 0, peak,
+                    prefillMs > 0 && evaluated > 0 ? evaluated * 1000.0 / prefillMs : 0,
+                    decodeMs > 0 && output > 0 ? output * 1000.0 / decodeMs : 0,
+                    timed > 0 ? ttft / timed : 0, wall / questions, limits);
+        }
+    }
+
     /** Immutable view for rendering and for the MCP tool. */
     record Snapshot(ServerInfo server, List<LoadedModel> models, List<String> installed, SlotState slot,
             RunnerInfo runner, HostStats host, List<RequestEntry> requests, double liveDecodeRate,
             double livePrefillRate, long[] decodeHistory, SessionTotals totals, String lastError, Instant lastPoll,
-            String probedUrl) {
+            String probedUrl, int panelWindow, int panelBudget, ActiveQuestion activeQuestion) {
 
         boolean connected() {
             return server != null;
@@ -403,11 +488,15 @@ final class OllamaMonitor {
     private final LinkedHashSet<String> seenSpanIds = new LinkedHashSet<>();
     private SessionTotals totals = SessionTotals.EMPTY;
     private long lastTuiPromptTokens;
+    private int lastTuiQuestion;
     private final TokenRateWindow decodeWindow = new TokenRateWindow(RATE_WINDOW_MS);
     private final TokenRateWindow prefillWindow = new TokenRateWindow(RATE_WINDOW_MS);
     private final long[] decodeHistory = new long[HISTORY_POINTS];
     private String lastError;
     private Instant lastPoll;
+    private int panelWindow;
+    private int panelBudget;
+    private ActiveQuestion activeQuestion;
 
     private long lastProbe;
     private long lastVersion;
@@ -415,6 +504,7 @@ final class OllamaMonitor {
     private long lastTags;
     private long lastRunnerScan;
     private long lastHost;
+    private long lastSlotPoll;
     private int psFailures;
     private long lastSpanIngest;
     private Boolean nvidiaSmiAvailable;
@@ -595,12 +685,35 @@ final class OllamaMonitor {
         return false;
     }
 
+    /** What the AI panel asks Ollama for and where it compacts, shown in the header next to what Ollama allocated. */
+    void setPanelContext(int window, int budget) {
+        synchronized (lock) {
+            panelWindow = window;
+            panelBudget = budget;
+        }
+    }
+
+    /** The AI panel started working on a question; it is listed as in progress until {@link #questionFinished()}. */
+    void questionStarted(int question, String text) {
+        synchronized (lock) {
+            activeQuestion = new ActiveQuestion(question, text, Instant.now());
+        }
+    }
+
+    /** The AI panel's turn ended: answered, failed or cancelled. */
+    void questionFinished() {
+        synchronized (lock) {
+            activeQuestion = null;
+        }
+    }
+
     /** Clears the request log, the session totals and the rate history. */
     void reset() {
         synchronized (lock) {
             requests.clear();
             totals = SessionTotals.EMPTY;
             lastTuiPromptTokens = 0;
+            lastTuiQuestion = 0;
             Arrays.fill(decodeHistory, 0);
             decodeWindow.clear();
             prefillWindow.clear();
@@ -616,13 +729,17 @@ final class OllamaMonitor {
     }
 
     private void addRequest(RequestEntry entry) {
-        // an AI panel prompt that shrinks by a fifth or more against the previous turn means the history was
-        // compacted (or a new conversation started); either way the context was freed
+        // the first prompt of a question that is a fifth or more smaller than the last prompt of the previous
+        // question means the history was compacted between the two (or a new conversation started); either way the
+        // context was freed. Within a question prompts only grow, so a smaller step (the wrap-up after the tool call
+        // limit) is not a compaction.
         boolean compaction = false;
         if (entry.source() == RequestSource.TUI) {
-            if (lastTuiPromptTokens > 0 && entry.promptTokens() < lastTuiPromptTokens * 0.8) {
+            boolean newQuestion = entry.question() == 0 || entry.question() != lastTuiQuestion;
+            if (newQuestion && lastTuiPromptTokens > 0 && entry.promptTokens() < lastTuiPromptTokens * 0.8) {
                 compaction = true;
             }
+            lastTuiQuestion = entry.question();
             lastTuiPromptTokens = entry.promptTokens();
         }
         requests.addFirst(entry);
@@ -699,7 +816,8 @@ final class OllamaMonitor {
             return new Snapshot(
                     server, models, installed, slot, runner, host, List.copyOf(requests),
                     decodeWindow.ratePerSecond(now), prefillWindow.ratePerSecond(now),
-                    decodeHistory.clone(), totals, lastError, lastPoll, baseUrl);
+                    decodeHistory.clone(), totals, lastError, lastPoll, baseUrl, panelWindow, panelBudget,
+                    activeQuestion);
         }
     }
 
@@ -816,12 +934,22 @@ final class OllamaMonitor {
             }
         }
         if (current != null) {
-            JsonArray slots = getJsonArray("http://127.0.0.1:" + current.port() + "/slots");
-            if (slots != null) {
-                updateSlot(OllamaParsers.parseSlots(slots, Instant.ofEpochMilli(now)));
-            } else {
-                updateRunner(null);
-                current = null;
+            // llama-server logs every request at the verbosity Ollama starts it with, so the slot is read only as
+            // often as the live view needs: fast while it generates, slowly while idle
+            boolean busy;
+            synchronized (lock) {
+                busy = slot != null && slot.processing();
+            }
+            long slotInterval = busy ? SLOT_BUSY_INTERVAL_MS : SLOT_IDLE_INTERVAL_MS;
+            if (now - lastSlotPoll >= slotInterval) {
+                lastSlotPoll = now;
+                JsonArray slots = getJsonArray("http://127.0.0.1:" + current.port() + "/slots");
+                if (slots != null) {
+                    updateSlot(OllamaParsers.parseSlots(slots, Instant.ofEpochMilli(now)));
+                } else {
+                    updateRunner(null);
+                    current = null;
+                }
             }
         }
         if (now - lastHost >= HOST_INTERVAL_MS) {
@@ -1164,6 +1292,12 @@ final class OllamaMonitor {
         session.put("peakContextPercent", s.totals().peakContextPercent());
         session.put("compactions", s.totals().compactions());
         root.put("session", session);
+        if (s.panelWindow() > 0) {
+            JsonObject panel = new JsonObject();
+            panel.put("contextWindow", s.panelWindow());
+            panel.put("compactsAbove", s.panelBudget());
+            root.put("aiPanel", panel);
+        }
 
         JsonArray reqs = new JsonArray();
         int n = 0;
@@ -1175,12 +1309,37 @@ final class OllamaMonitor {
         }
         root.put("requests", reqs);
         JsonArray questions = new JsonArray();
+        ActiveQuestion active = s.activeQuestion();
+        boolean activeListed = false;
         int q = 0;
-        for (QuestionGroup g : groupByQuestion(s.requests())) {
+        List<QuestionGroup> groups = groupByQuestion(s.requests());
+        QuestionSummary summary = QuestionSummary.of(groups);
+        if (summary.questions() > 0) {
+            JsonObject js = new JsonObject();
+            js.put("questions", summary.questions());
+            js.put("requests", summary.requests());
+            js.put("totalWallMs", summary.totalWallMs());
+            js.put("avgWallMs", summary.avgWallMs());
+            js.put("avgTtftMs", summary.avgTtftMs());
+            js.put("avgPromptTokens", summary.avgPromptTokens());
+            js.put("avgOutputTokens", summary.avgOutputTokens());
+            js.put("cacheHitPercent", summary.cacheHitPercent());
+            js.put("peakContextPercent", summary.peakContextPercent());
+            js.put("prefillTokensPerSecond", round1(summary.prefillTokensPerSecond()));
+            js.put("decodeTokensPerSecond", round1(summary.decodeTokensPerSecond()));
+            js.put("limitHits", summary.limitHits());
+            root.put("questionSummary", js);
+        }
+        for (QuestionGroup g : groups) {
             if (q++ >= requestLimit) {
                 break;
             }
             JsonObject jg = new JsonObject();
+            if (active != null && active.matches(g)) {
+                activeListed = true;
+                jg.put("inProgress", true);
+                jg.put("elapsedMs", active.elapsedMs());
+            }
             jg.put("time", g.first().timestamp().toString());
             jg.put("source", g.source().name().toLowerCase(Locale.ROOT));
             if (g.routeId() != null) {
@@ -1207,6 +1366,20 @@ final class OllamaMonitor {
                 jg.put("doneReason", g.doneReason());
             }
             questions.add(jg);
+        }
+        if (active != null && !activeListed) {
+            // asked, but no request has returned yet
+            JsonObject jq = new JsonObject();
+            jq.put("time", active.startedAt().toString());
+            jq.put("source", "tui");
+            jq.put("question", active.question());
+            if (active.text() != null) {
+                jq.put("questionText", active.text());
+            }
+            jq.put("steps", 0);
+            jq.put("inProgress", true);
+            jq.put("elapsedMs", active.elapsedMs());
+            questions.add(0, jq);
         }
         root.put("questions", questions);
         if (s.lastPoll() != null) {

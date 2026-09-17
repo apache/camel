@@ -48,6 +48,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AiPanelTest {
 
     @Test
+    void bylineSaysWhatTheQuestionCostInPlainWords() {
+        AiPanel.ConversationEntry plain = new AiPanel.ConversationEntry(
+                AiRole.ASSISTANT, "hi", 3_200, 3_200, 0, 0, 4_900, 1, false, 7);
+        assertEquals("3.2s · 4.9k tokens · ctx 7%", plain.byline());
+
+        AiPanel.ConversationEntry tools = new AiPanel.ConversationEntry(
+                AiRole.ASSISTANT, "hi", 11_700, 11_700, 40, 2, 14_200, 3, false, 7);
+        assertEquals("11.7s · 2 tool calls · 3 requests · 14.2k tokens · ctx 7%", tools.byline());
+
+        AiPanel.ConversationEntry limit = new AiPanel.ConversationEntry(
+                AiRole.ASSISTANT, "hi", 61_100, 61_100, 2_500, 25, 231_300, 26, true, 18);
+        assertEquals("61.1s · 25 tool calls, limit reached (2.5s in tools) · 26 requests · 231.3k tokens · ctx 18%",
+                limit.byline());
+
+        // hosted providers have no window: no fill; the old seven-argument form still works
+        AiPanel.ConversationEntry hosted = new AiPanel.ConversationEntry(
+                AiRole.ASSISTANT, "hi", 2_000, 2_000, 0, 1, 900);
+        assertEquals("2.0s · 1 tool call · 900 tokens", hosted.byline());
+    }
+
+    @Test
     void normalTextStillGoesToLlm() throws Exception {
         AiPanel panel = new AiPanel();
         RecordingLlmClient client = new RecordingLlmClient("ok");
@@ -982,8 +1003,34 @@ class AiPanelTest {
         assertEquals(AiPanel.MAX_ITERATIONS, last.toolCalls(), "every round trip before the wrap-up made a tool call");
         assertEquals(AiPanel.MAX_ITERATIONS, client.toolRoundTrips);
         assertTrue(client.sawWrapUpRequest, "the model must be told the tool budget is spent");
+        assertTrue(client.sawWrapUpWithTools, "the wrap-up keeps the tools in the request so the cached prefix holds");
         assertTrue(panel.conversationForTesting().stream().noneMatch(e -> e.role() == AiRole.ERROR),
                 "reaching the limit must not surface as an error when the model can still answer");
+        assertEquals(AiPanel.MAX_ITERATIONS + 1, last.requests(), "25 tool round trips plus the wrap-up");
+        assertTrue(last.limitReached());
+        assertTrue(last.byline().contains("25 tool calls, limit reached · 26 requests"), last.byline());
+    }
+
+    @Test
+    void aModelThatKeepsCallingToolsAtTheLimitIsAskedOnceMoreWithoutThem() throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        BusyLlmClient client = new BusyLlmClient();
+        client.answersWhileToolsArePresent = false;
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "send a few messages into the app");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ASSISTANT, last.role(), last.text());
+        assertEquals("I sent the messages; they all failed in the jq transform.", last.text());
+        // 25 tool round trips, the wrap-up with tools that the model answered with yet another tool call, then the
+        // wrap-up without tools
+        assertEquals(AiPanel.MAX_ITERATIONS + 1, client.toolRoundTrips);
+        assertEquals(AiPanel.MAX_ITERATIONS + 2, last.requests());
+        assertTrue(last.limitReached());
     }
 
     /**
@@ -994,6 +1041,7 @@ class AiPanelTest {
 
         volatile int toolRoundTrips;
         volatile boolean sawWrapUpRequest;
+        volatile boolean sawWrapUpWithTools;
 
         BusyLlmClient() {
             withModel("test-model");
@@ -1005,11 +1053,17 @@ class AiPanelTest {
             return true;
         }
 
+        volatile boolean answersWhileToolsArePresent = true;
+
         @Override
         public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
-            if (tools.isEmpty()) {
-                Message lastMessage = messages.get(messages.size() - 1);
-                if (lastMessage.content() != null && lastMessage.content().contains("cannot call any more")) {
+            Message lastMessage = messages.get(messages.size() - 1);
+            boolean wrapUp = lastMessage.content() != null && lastMessage.content().contains("cannot call any more");
+            if (wrapUp && !tools.isEmpty()) {
+                sawWrapUpWithTools = true;
+            }
+            if (tools.isEmpty() || (wrapUp && answersWhileToolsArePresent)) {
+                if (wrapUp) {
                     sawWrapUpRequest = true;
                 }
                 return new ChatResponse(
@@ -1104,6 +1158,34 @@ class AiPanelTest {
     }
 
     @Test
+    void usageAveragesPerQuestionAndPerRequestAreBothReported() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+        // question 1 took three round trips, question 2 one; a route call is not a question
+        Instant now = Instant.now();
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 4_000, 20, 4_020, 3_000, "tool_calls", now,
+                AiPanel.AiUsageSource.TUI, null, 1));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 4_100, 20, 4_120, 1_000, "tool_calls", now,
+                AiPanel.AiUsageSource.TUI, null, 1));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 4_300, 90, 4_390, 2_000, "stop", now,
+                AiPanel.AiUsageSource.TUI, null, 1));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 4_400, 30, 4_430, 2_000, "stop", now,
+                AiPanel.AiUsageSource.TUI, null, 2));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 400, 30, 430, 8_000, "stop", now,
+                AiPanel.AiUsageSource.ROUTE, "chat-route", 0));
+
+        assertEquals(2, AiPanel.countQuestions(panel.combinedUsageEntriesForTesting()));
+        String summary = panel.usageSummary();
+        // 8 s of panel time over 2 questions; 16 s over 5 requests
+        assertTrue(summary.contains("- **Avg per question:** 4.0s (3.2s per request)"), summary);
+    }
+
+    @Test
     void usageSummaryReportsTotalsPerModelAndLastRequest() {
         AiPanel panel = new AiPanel();
         panel.setClientForTesting(new RecordingLlmClient("ok"));
@@ -1118,7 +1200,8 @@ class AiPanelTest {
 
         assertTrue(summary.startsWith("**AI usage:** 2 request(s)"), summary);
         assertTrue(summary.contains("- **Tokens:** 6.5k (in 6.2k, out 300)"), summary);
-        assertTrue(summary.contains("- **Avg latency:** 3.5s"), summary);
+        // two requests without a question number are one question of 7.0s
+        assertTrue(summary.contains("- **Avg per question:** 7.0s (3.5s per request)"), summary);
         assertTrue(summary.contains("| [tui] qwen3.6:35b-a3b (ollama) | 2 | 6.2k | 300 | 6.5k | 3.5s |"), summary);
         assertTrue(summary.contains("- **Last request:** 3.4k tokens in 2.0s"), summary);
     }

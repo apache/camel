@@ -48,10 +48,16 @@ The loaded model and its shape:
 - Size in memory and the share held by the GPU (`100% GPU` means fully
   offloaded; a lower figure means part of the model runs on the CPU
   and decode will be slow)
-- `ctx 32,768 of 262,144` — the context window Ollama allocated for
-  this load, and the maximum the model supports. The AI panel asks for
-  `32768` unless `OLLAMA_CONTEXT_LENGTH` is set. A request with a
-  different size makes Ollama reload the model.
+- `max ctx 256k` on the model line — the largest context the model was
+  trained for. `ctx 64k` on the loaded line — the window Ollama
+  allocated for this load; it is fixed for the life of the runner, and a
+  request for a different size makes Ollama reload the model.
+- `AI panel compacts above 32k` — the prompt size above which the TUI's
+  AI panel compacts its history, shown once the panel has made a
+  request. The panel asks for `OLLAMA_CONTEXT_LENGTH` when set, else the
+  window already loaded, else 64k when the model's cache fits the
+  machine's memory, else 32k; `AI panel asks ...` appears only when that
+  differs from the loaded window.
 - When the model unloads (its keep-alive)
 
 With no model loaded the installed models are listed instead; a model
@@ -89,8 +95,10 @@ loads on the first request.
   filled (system prompt, tool definitions, history, question). The
   bars grow as a conversation continues and drop when the history is
   compacted; the line ends with the latest fill, the session peak and
-  the number of compactions seen. Yellow from 50%, red from 80%: that is
-  when `/compact` in the AI panel, or a smaller toolset, pays off.
+  the number of compactions seen. The colour follows the AI panel's
+  compaction point once known (yellow from three quarters of it, red at
+  it), else the window (yellow from 50%, red from 80%): that is when
+  `/compact` in the AI panel, or a smaller toolset, pays off.
 
 Without the local runner the panel falls back to the last request's
 tokens against the model's context length.
@@ -116,6 +124,12 @@ whole. Press **Enter** (or **→**) on a question with `×N` in the SOURCE
 column to unfold its steps, **←** to fold them again. A call made by a
 Camel route is one line of its own.
 
+The question the AI panel is working on is listed from the moment it is
+asked, with `working` and a spinner as its reason and TOTAL counting up;
+the figures fill in as its requests return, and the reason becomes
+`stop` or `limit` when the answer lands (or the row goes when you cancel
+with Esc).
+
 | Column | Question line | Step line |
 |--------|---------------|-----------|
 | TIME | When the first request started | When the request started |
@@ -129,10 +143,22 @@ Camel route is one line of its own.
 | DECODE | Generated tokens per second across the steps | Same for this request |
 | TTFT | Time to the first token of the first step (load plus prefill), yellow after a cold start | Time to first token of this request |
 | TOTAL | From the first request starting to the last finishing: what you waited | This request as Ollama measured it |
-| REASON | Why the last step stopped: `stop`, `length` (hit the token limit) | `tool_calls` for every step but the last |
+| REASON | Why the last step stopped: `stop`, `length` (hit the token limit), `limit` (the AI panel's tool-call limit ended the question; the answer summarises what was found) | `tool_calls` for every step but the last |
 
 Route requests show `-` for prefill, decode and TTFT because the GenAI
 span carries tokens and duration only.
+
+With two or more questions a footer row, `avg/question`, gives the
+session's average per question for IN, OUT, TTFT and TOTAL, the pooled
+cache hit and rates, the peak CTX, and how many questions ended at the
+tool-call limit. Its TOTAL is the average time you waited per question,
+the figure the AI panel's usage view (Ctrl+U) reports as well. Route calls
+are not questions and are left out.
+
+Two figures are coloured so a costly question stands out without reading
+the row: the `×N` request count is yellow from 10 requests and red when
+the question ended at the AI panel's tool-call limit (REASON `limit`);
+TOTAL is yellow from 30 seconds and orange from a minute.
 
 ## Remote and Containerised Ollama
 
@@ -140,6 +166,15 @@ The Ollama API and the per-request data work against any host. The
 live figures, the context panel's live state and the host panel need
 the runner on this machine; against a remote host or a container the
 tab says so and keeps the rest.
+
+## How often the tab reads
+
+While the tab is showing, the runner's slot state is read twice a
+second during generation and every two seconds when idle, the Ollama
+API once a second and the host probes once a second. With the tab
+closed only a version probe every ten seconds keeps the More menu
+entry current. Each read shows up in Ollama's own log at the verbosity
+it starts the runner with.
 
 ## Keyboard Shortcuts
 
