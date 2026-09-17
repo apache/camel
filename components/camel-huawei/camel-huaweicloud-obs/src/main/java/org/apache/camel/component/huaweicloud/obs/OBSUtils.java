@@ -54,9 +54,10 @@ public final class OBSUtils {
     public static void mapObsObject(Exchange exchange, ObsObject obsObject) {
         Message message = exchange.getIn();
 
-        // set exchange body to a byte array of object contents
-        try {
-            message.setBody(OBSUtils.toBytes(obsObject.getObjectContent()));
+        // set exchange body to a byte array of object contents. The SDK object-content stream holds a pooled
+        // HTTP connection, so it must be closed once read - otherwise every downloaded object leaks a connection.
+        try (InputStream content = obsObject.getObjectContent()) {
+            message.setBody(OBSUtils.toBytes(content));
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
