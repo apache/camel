@@ -19,6 +19,7 @@ package org.apache.camel.component.huaweicloud.obs;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,6 +128,11 @@ public class OBSProducer extends DefaultProducer {
         LOG.trace("Checking if bucket {} exists", clientConfigurations.getBucketName());
         if (!obsClient.headBucket(clientConfigurations.getBucketName())) {
             LOG.warn("No bucket found with name {}. Attempting to create", clientConfigurations.getBucketName());
+            // bucket location is optional to create a new bucket; default it, mirroring the createBucket operation
+            if (ObjectHelper.isEmpty(clientConfigurations.getBucketLocation())) {
+                LOG.warn("No bucket location given, defaulting to '{}'", OBSConstants.DEFAULT_LOCATION);
+                clientConfigurations.setBucketLocation(OBSConstants.DEFAULT_LOCATION);
+            }
             OBSRegion.checkValidRegion(clientConfigurations.getBucketLocation());
             CreateBucketRequest request = new CreateBucketRequest(
                     clientConfigurations.getBucketName(),
@@ -153,10 +159,10 @@ public class OBSProducer extends DefaultProducer {
         } else if (body instanceof String) {
             // the string content will be stored in the remote object
             LOG.trace("Writing text body into an object");
-            InputStream stream = new ByteArrayInputStream(((String) body).getBytes());
-            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName(), stream);
-            stream.close();
+            try (InputStream stream = new ByteArrayInputStream(((String) body).getBytes(StandardCharsets.UTF_8))) {
+                putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
+                        clientConfigurations.getObjectName(), stream);
+            }
 
         } else if (body instanceof InputStream) {
             // this covers miscellaneous file types
@@ -186,7 +192,7 @@ public class OBSProducer extends DefaultProducer {
         }
 
         LOG.debug("Downloading remote obs object {} from bucket {}", clientConfigurations.getObjectName(),
-                clientConfigurations.getBucketLocation());
+                clientConfigurations.getBucketName());
 
         ObsObject obsObject = obsClient
                 .getObject(clientConfigurations.getBucketName(), clientConfigurations.getObjectName());
