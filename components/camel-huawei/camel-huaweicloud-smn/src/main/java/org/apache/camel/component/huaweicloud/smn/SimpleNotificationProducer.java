@@ -124,8 +124,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
                         .withSubject(clientConfigurations.getSubject())
                         .withTimeToLive(String.valueOf(clientConfigurations.getMessageTtl()))
                         .withMessageTemplateName((String) exchange.getProperty(SmnProperties.TEMPLATE_NAME))
-                        .withTags((HashMap<String, String>) exchange.getProperty(SmnProperties.TEMPLATE_TAGS))
-                        .withTimeToLive(String.valueOf(clientConfigurations.getMessageTtl()));
+                        .withTags((HashMap<String, String>) exchange.getProperty(SmnProperties.TEMPLATE_TAGS));
 
                 response = smnClient.publishMessage(new PublishMessageRequest()
                         .withBody(apiBody)
@@ -307,17 +306,8 @@ public class SimpleNotificationProducer extends DefaultProducer {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Inspecting exchange body");
         }
-        // verifying if exchange has valid body content. this is mandatory for 'publish as text' operation
-        if (ObjectHelper.isEmpty(exchange.getMessage().getBody())) {
-            if (simpleNotificationEndpoint.getOperation().equals("publishAsTextMessage")) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Found null/empty body. Cannot perform publish as text operation");
-                }
-                throw new IllegalArgumentException("exchange body cannot be null / empty");
-            }
-        }
-
-        // checking for mandatory field 'operation name'
+        // resolve the operation first: the CamelHwCloudSmnOperation exchange property takes precedence over the
+        // endpoint parameter, so the body check below must test the operation that is actually dispatched
         if (LOG.isDebugEnabled()) {
             LOG.debug("Inspecting operation name");
         }
@@ -330,6 +320,15 @@ public class SimpleNotificationProducer extends DefaultProducer {
         } else {
             clientConfigurations.setOperation(exchange.getProperty(SmnProperties.SMN_OPERATION) != null
                     ? (String) exchange.getProperty(SmnProperties.SMN_OPERATION) : simpleNotificationEndpoint.getOperation());
+        }
+
+        // verifying if exchange has valid body content. this is mandatory for 'publish as text' operation
+        if (ObjectHelper.isEmpty(exchange.getMessage().getBody())
+                && SmnOperations.PUBLISH_AS_TEXT_MESSAGE.equals(clientConfigurations.getOperation())) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error("Found null/empty body. Cannot perform publish as text operation");
+            }
+            throw new IllegalArgumentException("exchange body cannot be null / empty");
         }
 
         // checking for mandatory field 'topic name'
