@@ -64,6 +64,77 @@ class AiPanelHistoryCompactionTest {
     }
 
     @Test
+    void measuredPromptDecidesForLocalEndpointsWhenAvailable() {
+        int budget = AiPanel.compactionBudgetTokens(true, 32_768);
+        assertEquals(16_384, budget);
+        // the estimate says the history is small, Ollama measured a prompt over the budget: compact
+        assertTrue(AiPanel.shouldCompactAfterTurn(true, 1_000, 24_800, budget));
+        // the estimate says big, the measurement says fine: the measurement wins
+        assertFalse(AiPanel.shouldCompactAfterTurn(true, 100_000, 12_000, budget));
+        // nothing measured yet: the estimate decides
+        assertTrue(AiPanel.shouldCompactAfterTurn(true, 100_000, 0, budget));
+        assertFalse(AiPanel.shouldCompactAfterTurn(true, 1_000, 0, budget));
+        // hosted endpoints compact regardless
+        assertTrue(AiPanel.shouldCompactAfterTurn(false, 0, 0, budget));
+    }
+
+    @Test
+    void budgetIsHalfTheWindowCappedAtTheMaximum() {
+        assertEquals(AiPanel.LOCAL_HISTORY_BUDGET_TOKENS, AiPanel.compactionBudgetTokens(true, 0));
+        assertEquals(AiPanel.LOCAL_HISTORY_BUDGET_TOKENS, AiPanel.compactionBudgetTokens(false, 262_144));
+        assertEquals(16_384, AiPanel.compactionBudgetTokens(true, 32_768));
+        assertEquals(32_768, AiPanel.compactionBudgetTokens(true, 65_536));
+        // a 256k window adopted from another client is used, but the panel still budgets as if it were 64k
+        assertEquals(32_768, AiPanel.compactionBudgetTokens(true, 262_144));
+    }
+
+    @Test
+    void localCompactionShrinksThePreviousTurnAndDropsOldTurnsUntilHalfTheBudget() {
+        List<LlmClient.Message> history = new ArrayList<>();
+        for (int i = 1; i <= 6; i++) {
+            history.addAll(turn("q" + i, BIG));
+        }
+        // six turns of ~5,000 chars of tool results each; budget 4,000 tokens -> target ~2,000 tokens (8,000 chars)
+        AiPanel.compactLocalHistory(history, 4_000);
+
+        // the previous turn's tool result was cut too, unlike the per-turn compaction of hosted endpoints
+        for (LlmClient.Message m : history) {
+            if (m.toolResults() != null) {
+                assertTrue(m.toolResults().get(0).content().length() < 500, "tool results are cut");
+            }
+        }
+        assertTrue(AiPanel.estimateTokens(AiPanel.historyChars(history)) <= 2_000);
+        // the newest turn is always kept
+        assertEquals("answer to q6", history.get(history.size() - 1).content());
+    }
+
+    @Test
+    void dropOldestTurnRemovesTheFirstQuestionWithItsAnswer() {
+        List<LlmClient.Message> history = new ArrayList<>();
+        history.addAll(turn("q1", "r1"));
+        history.addAll(turn("q2", "r2"));
+        AiPanel.dropOldestTurn(history);
+        assertEquals(4, history.size());
+        assertEquals("q2", history.get(0).content());
+        // a single turn is never dropped by the loop in compactLocalHistory; the helper alone leaves it too
+        AiPanel.dropOldestTurn(history);
+        assertEquals(4, history.size());
+    }
+
+    @Test
+    void compactionNoticeExplainsTheRePrefillCostLocally() {
+        String local = AiPanel.describeCompaction(true, 24_800, 8_100, true, 650);
+        assertTrue(local.startsWith("History compacted automatically: ~24.8k -> ~8.1k tokens."), local);
+        assertTrue(local.contains("about 12s at 650 tok/s, measured"), local);
+        String manual = AiPanel.describeCompaction(false, 24_800, 8_100, true, 0);
+        assertTrue(manual.startsWith("Compacting history:"), manual);
+        assertTrue(manual.contains("at 600 tok/s, assumed"), manual);
+        String hosted = AiPanel.describeCompaction(true, 24_800, 8_100, false, 0);
+        assertEquals("History compacted automatically: ~24.8k -> ~8.1k tokens, saving ~16.7k tokens per request.",
+                hosted);
+    }
+
+    @Test
     void truncatesOversizedToolResultsButKeepsShortOnes() {
         String small = "ok";
         assertSame(small, AiPanel.truncateToolResult(small));

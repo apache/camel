@@ -219,6 +219,14 @@ class OllamaTabRenderTest {
     }
 
     @Test
+    void headerShowsWhatThePanelAsksForAndWhereItCompacts() {
+        localServerWithModel();
+        monitor.setPanelContext(65_536, 32_768);
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertTrue(rendered.contains("AI panel asks 65k, compacts above 32k"), rendered);
+    }
+
+    @Test
     void contextTrendShowsTurnsPeakAndCompactions() {
         localServerWithModel(); // ctx 262,144
         // four turns: the prompt grows, then a compaction frees most of it

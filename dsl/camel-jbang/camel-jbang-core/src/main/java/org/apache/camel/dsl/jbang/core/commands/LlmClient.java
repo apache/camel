@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -27,12 +28,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.sun.management.OperatingSystemMXBean;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonArray;
@@ -60,11 +64,18 @@ public class LlmClient {
      */
     private static final String OLLAMA_KEEP_ALIVE = "30m";
     /**
-     * Context window requested from Ollama. The tool-calling system prompt alone is several thousand tokens, and older
-     * Ollama releases default to 4096 which silently truncates it; 32k leaves room for a long conversation with tool
-     * results while keeping the KV cache modest. {@code OLLAMA_CONTEXT_LENGTH} in the environment overrides it.
+     * Smallest context window requested from Ollama. The tool-calling system prompt and the tool schemas alone are
+     * several thousand tokens, and Ollama's memory-based default is 4k on machines with less than 24 GiB, which would
+     * silently truncate the prompt. See {@link #ollamaContextWindow()} for the whole policy;
+     * {@code OLLAMA_CONTEXT_LENGTH} in the environment overrides it.
      */
-    private static final int OLLAMA_NUM_CTX = 32768;
+    public static final int OLLAMA_MIN_CONTEXT = 32_768;
+    /**
+     * Largest context window requested on the client's own initiative. Every token of history is prefill time again
+     * after a cache loss (idle unload, another client with a different window, a restart), and 64k at a few hundred
+     * tokens per second is already well over a minute.
+     */
+    public static final int OLLAMA_MAX_CONTEXT = 65_536;
     private static final String DEFAULT_WATSONX_URL = "https://us-south.ml.cloud.ibm.com";
     private static final String DEFAULT_WATSONX_MODEL = "ibm/granite-4-1-8b-instruct";
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
@@ -999,11 +1010,64 @@ public class LlmClient {
     private JsonObject ollamaOptions() {
         JsonObject options = new JsonObject();
         options.put("temperature", temperature);
-        options.put("num_ctx", ollamaNumCtx());
+        options.put("num_ctx", ollamaContextWindow());
         return options;
     }
 
-    static int ollamaNumCtx() {
+    // ---- Ollama context window ----
+
+    private Integer resolvedOllamaContext;
+    private String resolvedOllamaContextModel;
+    private String resolvedOllamaContextUrl;
+
+    /**
+     * The context window ({@code num_ctx}) this client asks Ollama for with the current model, resolved once per model
+     * and endpoint:
+     * <ol>
+     * <li>{@code OLLAMA_CONTEXT_LENGTH} in the environment wins when set.</li>
+     * <li>If Ollama already has the model loaded, its window is adopted (raised to {@link #OLLAMA_MIN_CONTEXT} when
+     * smaller), because a request with a different {@code num_ctx} makes Ollama reload the model, which costs a cold
+     * start and throws away the prompt cache of every other client.</li>
+     * <li>Otherwise {@link #OLLAMA_MAX_CONTEXT} when the model's weights plus the KV cache of that window fit the
+     * machine's memory, else {@link #OLLAMA_MIN_CONTEXT}. Overshooting is worse than being conservative: Ollama then
+     * moves layers to the CPU and generation slows to a crawl.</li>
+     * </ol>
+     * Callers that manage a conversation should budget their history against {@code min(window, OLLAMA_MAX_CONTEXT)}
+     * even when a larger window was adopted, so a cache loss never means minutes of prefill.
+     */
+    public synchronized int ollamaContextWindow() {
+        if (resolvedOllamaContext != null && Objects.equals(resolvedOllamaContextModel, model)
+                && Objects.equals(resolvedOllamaContextUrl, url)) {
+            return resolvedOllamaContext;
+        }
+        int window = resolveOllamaContextWindow(totalPhysicalMemory());
+        resolvedOllamaContext = window;
+        resolvedOllamaContextModel = model;
+        resolvedOllamaContextUrl = url;
+        return window;
+    }
+
+    /** Forgets the resolved window, e.g. after the user switched model; the next request resolves it again. */
+    public synchronized void resetOllamaContextWindow() {
+        resolvedOllamaContext = null;
+    }
+
+    int resolveOllamaContextWindow(long totalMemoryBytes) {
+        Integer env = ollamaContextLengthFromEnv();
+        if (env != null) {
+            return env;
+        }
+        if (url == null || model == null) {
+            return OLLAMA_MIN_CONTEXT;
+        }
+        long loaded = loadedOllamaContext();
+        if (loaded > 0) {
+            return (int) Math.max(OLLAMA_MIN_CONTEXT, Math.min(loaded, Integer.MAX_VALUE));
+        }
+        return ollamaContextFits(OLLAMA_MAX_CONTEXT, totalMemoryBytes) ? OLLAMA_MAX_CONTEXT : OLLAMA_MIN_CONTEXT;
+    }
+
+    static Integer ollamaContextLengthFromEnv() {
         String env = System.getenv("OLLAMA_CONTEXT_LENGTH");
         if (env != null && !env.isBlank()) {
             try {
@@ -1012,10 +1076,155 @@ public class LlmClient {
                     return value;
                 }
             } catch (NumberFormatException e) {
-                // fall through to the default
+                // fall through to the policy
             }
         }
-        return OLLAMA_NUM_CTX;
+        return null;
+    }
+
+    /** Context length of the current model if Ollama already has it loaded ({@code /api/ps}), 0 otherwise. */
+    long loadedOllamaContext() {
+        JsonObject ps = sendGetRequest(url + "/api/ps", Map.of());
+        if (ps == null) {
+            return 0;
+        }
+        Collection<?> loaded = ps.getCollection("models");
+        if (loaded == null) {
+            return 0;
+        }
+        for (Object o : loaded) {
+            if (o instanceof JsonObject m && ollamaModelMatches(model, m.getString("name"))) {
+                return getLongValue(m, "context_length");
+            }
+        }
+        return 0;
+    }
+
+    /** {@code llama3.2} matches {@code llama3.2:latest}; a name with a tag must match exactly. */
+    static boolean ollamaModelMatches(String wanted, String candidate) {
+        if (wanted == null || candidate == null) {
+            return false;
+        }
+        if (wanted.equals(candidate)) {
+            return true;
+        }
+        return !wanted.contains(":") && candidate.startsWith(wanted + ":");
+    }
+
+    /**
+     * Whether the current model's weights plus the KV cache of a {@code contextTokens} window fit in
+     * {@code totalMemoryBytes}: weights from {@code /api/tags}, the KV cost per token from the architecture facts in
+     * {@code /api/show}. Unknown facts count as "does not fit".
+     */
+    boolean ollamaContextFits(int contextTokens, long totalMemoryBytes) {
+        if (totalMemoryBytes <= 0) {
+            return false;
+        }
+        long weights = ollamaWeightBytes();
+        if (weights <= 0) {
+            return false;
+        }
+        JsonObject body = new JsonObject();
+        body.put("model", model);
+        JsonObject show = postJsonQuietly(url + "/api/show", body);
+        long perToken = ollamaKvBytesPerToken(show);
+        if (perToken <= 0) {
+            return false;
+        }
+        return ollamaContextFits(weights, perToken, contextTokens, totalMemoryBytes);
+    }
+
+    /**
+     * Four fifths of the memory less a gibibyte for compute buffers: roughly what Apple silicon lets the GPU wire and a
+     * fair share of a machine that also runs the integration and the TUI. A heuristic, deliberately on the safe side.
+     */
+    static boolean ollamaContextFits(long weightBytes, long kvBytesPerToken, int contextTokens, long totalMemoryBytes) {
+        long budget = totalMemoryBytes / 5 * 4 - (1L << 30);
+        return weightBytes + kvBytesPerToken * contextTokens <= budget;
+    }
+
+    /**
+     * Bytes of KV cache per context token: 16-bit keys and values for each KV head of each layer that keeps a full
+     * attention cache. Hybrid models (Qwen 3.5/3.6 MoE) report {@code full_attention_interval}; only every n-th layer
+     * holds a cache, the others carry a fixed-size state. Head dimensions come from {@code attention.key_length} and
+     * {@code attention.value_length} when reported, else from the embedding size over the head count.
+     */
+    static long ollamaKvBytesPerToken(JsonObject show) {
+        if (show == null || !(show.get("model_info") instanceof JsonObject info)) {
+            return 0;
+        }
+        String arch = info.getString("general.architecture");
+        if (arch == null) {
+            return 0;
+        }
+        long layers = getLongValue(info, arch + ".block_count");
+        long heads = getLongValue(info, arch + ".attention.head_count");
+        long kvHeads = getLongValue(info, arch + ".attention.head_count_kv");
+        long embedding = getLongValue(info, arch + ".embedding_length");
+        long keyLength = getLongValue(info, arch + ".attention.key_length");
+        long valueLength = getLongValue(info, arch + ".attention.value_length");
+        long interval = getLongValue(info, arch + ".full_attention_interval");
+        if (kvHeads <= 0) {
+            kvHeads = heads;
+        }
+        if (keyLength <= 0) {
+            keyLength = heads > 0 ? embedding / heads : 0;
+        }
+        if (valueLength <= 0) {
+            valueLength = keyLength;
+        }
+        long cacheLayers = interval > 1 ? layers / interval : layers;
+        if (cacheLayers <= 0 || kvHeads <= 0 || keyLength <= 0) {
+            return 0;
+        }
+        return cacheLayers * kvHeads * (keyLength + valueLength) * 2L;
+    }
+
+    /** A short POST with the health-check timeout and no console output, for probes outside a chat request. */
+    private JsonObject postJsonQuietly(String requestUrl, JsonObject body) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(requestUrl))
+                    .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(body.toJson()))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return (JsonObject) Jsoner.deserialize(response.body());
+            }
+        } catch (Exception e) {
+            // the caller treats an unknown answer as "does not fit"
+        }
+        return null;
+    }
+
+    private long ollamaWeightBytes() {
+        JsonObject tags = sendGetRequest(url + "/api/tags", Map.of());
+        if (tags == null) {
+            return 0;
+        }
+        Collection<?> models = tags.getCollection("models");
+        if (models == null) {
+            return 0;
+        }
+        for (Object o : models) {
+            if (o instanceof JsonObject m && ollamaModelMatches(model, m.getString("name"))) {
+                return getLongValue(m, "size");
+            }
+        }
+        return 0;
+    }
+
+    static long totalPhysicalMemory() {
+        try {
+            if (ManagementFactory.getOperatingSystemMXBean() instanceof OperatingSystemMXBean os) {
+                return os.getTotalMemorySize();
+            }
+        } catch (Throwable e) {
+            // not available on this JVM
+        }
+        return 0;
     }
 
     // ---- Ollama native chat with tools ----

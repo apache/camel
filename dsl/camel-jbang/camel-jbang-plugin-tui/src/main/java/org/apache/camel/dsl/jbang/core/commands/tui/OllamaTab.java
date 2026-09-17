@@ -264,7 +264,12 @@ class OllamaTab extends AbstractTab {
                 LoadedModel m = s.models().get(i);
                 lines.add(Line.from(Span.styled("  " + m.name(), Style.EMPTY.fg(Theme.accent()).bold()),
                         Span.styled("   " + describeShape(m), Theme.muted())));
-                lines.add(Line.from(Span.styled("  " + describeResidency(m, Instant.now()), Theme.label())));
+                String residency = describeResidency(m, Instant.now());
+                if (i == 0 && s.panelWindow() > 0) {
+                    residency += " · AI panel asks " + formatTokens(s.panelWindow()) + ", compacts above "
+                                 + formatTokens(s.panelBudget());
+                }
+                lines.add(Line.from(Span.styled("  " + residency, Theme.label())));
             }
         }
         frame.renderWidget(Paragraph.builder()
@@ -455,7 +460,10 @@ class OllamaTab extends AbstractTab {
         for (int i = 0; i < n; i++) {
             data[n - 1 - i] = turns.get(i).contextPercent();
         }
-        Style level = last >= 80 ? Theme.error() : last >= 50 ? Theme.warning() : Theme.info();
+        // colour against the panel's compaction budget when known, else against the window
+        long lastPrompt = turns.get(0).promptTokens();
+        int pressure = s.panelBudget() > 0 ? (int) Math.min(100, lastPrompt * 100 / s.panelBudget()) : last;
+        Style level = pressure >= 100 ? Theme.error() : pressure >= 75 ? Theme.warning() : Theme.info();
         // bars start right after the label and grow to the right as turns are added
         return Line.from(
                 Span.styled(" turns ", Theme.muted()),

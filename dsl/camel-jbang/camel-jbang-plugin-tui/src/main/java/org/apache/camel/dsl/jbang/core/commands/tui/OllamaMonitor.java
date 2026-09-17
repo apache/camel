@@ -368,7 +368,7 @@ final class OllamaMonitor {
     record Snapshot(ServerInfo server, List<LoadedModel> models, List<String> installed, SlotState slot,
             RunnerInfo runner, HostStats host, List<RequestEntry> requests, double liveDecodeRate,
             double livePrefillRate, long[] decodeHistory, SessionTotals totals, String lastError, Instant lastPoll,
-            String probedUrl) {
+            String probedUrl, int panelWindow, int panelBudget) {
 
         boolean connected() {
             return server != null;
@@ -408,6 +408,8 @@ final class OllamaMonitor {
     private final long[] decodeHistory = new long[HISTORY_POINTS];
     private String lastError;
     private Instant lastPoll;
+    private int panelWindow;
+    private int panelBudget;
 
     private long lastProbe;
     private long lastVersion;
@@ -595,6 +597,14 @@ final class OllamaMonitor {
         return false;
     }
 
+    /** What the AI panel asks Ollama for and where it compacts, shown in the header next to what Ollama allocated. */
+    void setPanelContext(int window, int budget) {
+        synchronized (lock) {
+            panelWindow = window;
+            panelBudget = budget;
+        }
+    }
+
     /** Clears the request log, the session totals and the rate history. */
     void reset() {
         synchronized (lock) {
@@ -699,7 +709,7 @@ final class OllamaMonitor {
             return new Snapshot(
                     server, models, installed, slot, runner, host, List.copyOf(requests),
                     decodeWindow.ratePerSecond(now), prefillWindow.ratePerSecond(now),
-                    decodeHistory.clone(), totals, lastError, lastPoll, baseUrl);
+                    decodeHistory.clone(), totals, lastError, lastPoll, baseUrl, panelWindow, panelBudget);
         }
     }
 
@@ -1164,6 +1174,12 @@ final class OllamaMonitor {
         session.put("peakContextPercent", s.totals().peakContextPercent());
         session.put("compactions", s.totals().compactions());
         root.put("session", session);
+        if (s.panelWindow() > 0) {
+            JsonObject panel = new JsonObject();
+            panel.put("contextWindow", s.panelWindow());
+            panel.put("compactsAbove", s.panelBudget());
+            root.put("aiPanel", panel);
+        }
 
         JsonArray reqs = new JsonArray();
         int n = 0;

@@ -902,8 +902,9 @@ and to any provider on `localhost`, which roughly halves the prompt. Hosted prov
 tool, including the drawing, animation and automation tools. Use `/tools full` in the panel to send
 all tools to a local model too, `/tools core` to trim the set for a hosted one, pick *AI Tools* in
 *F2 -> Settings*, or set `camel.tui.ai.tools` in `.camel-cli.properties`. Ollama requests also ask the server to keep the
-model loaded for 30 minutes and use a 32k context window (`OLLAMA_CONTEXT_LENGTH` overrides it),
-so follow-up questions reuse the cached prompt instead of reloading the model.
+model loaded for 30 minutes and for a context window of 32k or 64k (see <<_working_with_a_local_ollama_model>>;
+`OLLAMA_CONTEXT_LENGTH` overrides it), so follow-up questions reuse the cached prompt instead of reloading
+the model.
 
 ==== Working with a local Ollama model
 
@@ -933,20 +934,27 @@ Ollama tab shows the request count per question as `×N` and the cache hit per q
 with a high count and a short answer is the model exploring, which a smaller, sharper tool set reduces
 (see <<_tool_set_for_local_models>>).
 
-*The context window.* The TUI asks Ollama for a 32k context window; `OLLAMA_CONTEXT_LENGTH` overrides
-it. The static prefix of system prompt and core tools is about 4.5k tokens, 14% of the window, and each
-question with tool calls adds another 2k to 4k of history. The panel compacts the history once it
-grows past roughly 16k tokens (see `/compact` under <<_ai_panel_slash_commands>>). Compacting rewrites
-the history, which invalidates Ollama's prompt cache, so the request after a compaction prefills the
-whole prompt again: about 40 seconds for a 21k-token prompt. That is why the panel compacts local
-history late and rarely rather than a little on every turn. Two practical rules follow:
+*The context window.* The TUI decides the window it asks Ollama for (`num_ctx`) once per model:
 
-* Keep every Ollama client on the same context size. A request with a different `num_ctx` makes
-  Ollama reload the model, which costs a cold start. The TUI's AI panel, `camel ask` and your own routes
-  should agree on the value.
-* A bigger window is cheap in memory for mixture-of-experts models with hybrid attention (this model
-  grows from 22.5 GB at 32k to 23.6 GB at 262k) but every token in it is prefill time after a
-  compaction or a reload, so raise it with a purpose.
+1. `OLLAMA_CONTEXT_LENGTH` in the environment wins when set.
+2. If the model is already loaded, its window is adopted (raised to 32k when smaller), so the TUI never
+   makes Ollama reload a model another client is using. A request with a different `num_ctx` costs a
+   cold start and throws away everyone's prompt cache.
+3. Otherwise 64k when the model's weights plus the KV cache of a 64k window fit the machine's memory,
+   computed from what `ollama show` reports (layers, KV heads, head size), else 32k. Overshooting is
+   worse than being conservative: Ollama then moves layers to the CPU and generation slows to a crawl.
+
+The static prefix of system prompt and core tools is about 4.5k tokens, and each question with tool
+calls adds another 2k to 4k of history. The panel compacts the history once the prompt Ollama measured
+for the last request passes half the window, capped at half of 64k even when a larger window was
+adopted: every token of history is prefill time again after a cache loss (an idle unload after 30
+minutes, another client, a restart), and 64k at a few hundred tokens per second is already well over a
+minute. Compacting rewrites the history, which invalidates Ollama's prompt cache, so the request after
+a compaction prefills the whole prompt again: about 40 seconds for a 21k-token prompt. The panel
+therefore compacts local history rarely and then thoroughly, down to about a quarter of the window,
+and prints one line saying what it did and how long the next reply will take to start. `/compact` does
+the same on demand with the same line; `/context` shows the window, the compaction point and the last
+measured prompt; the panel title shows the fill as `ctx 34%`.
 
 *Choosing the model.* With no `camel.tui.ai.model` set the panel takes `llama3.2` when it is installed,
 otherwise the first installed model; run `/model <name>` in the panel or set *AI Model* in
@@ -1074,10 +1082,10 @@ cycles backward.
 | Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
 
 | `/context` (`/ctx`)
-| Show what the next request costs: provider and model, tool set, static prefix size, history size and the session total. Useful with local models, where prompt size is time.
+| Show what the next request costs: provider and model, tool set, static prefix size, history size and the session total, and with Ollama the context window, the prompt size above which the history is compacted and the last measured prompt. Useful with local models, where prompt size is time.
 
 | `/compact`
-| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. With a hosted provider the panel does this automatically after each answer for all but the latest turn. With Ollama or another `localhost` provider it waits until the history grows past roughly 16k tokens, because a local server can reuse its cached prompt only while the conversation is appended to, and rewriting the history would make it process the whole prompt again.
+| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. With a hosted provider the panel does this automatically after each answer for all but the latest turn. With Ollama or another `localhost` provider it waits until the prompt Ollama measured passes half the context window (see <<_working_with_a_local_ollama_model>>), then compacts thoroughly, because a local server can reuse its cached prompt only while the conversation is appended to and rewriting the history makes it process the whole prompt again. Both the command and the automatic compaction print one line with the sizes before and after and, locally, how long the next reply will take to start.
 
 | `/retry`
 | Send the last question again, starting from a clean turn in the model history.

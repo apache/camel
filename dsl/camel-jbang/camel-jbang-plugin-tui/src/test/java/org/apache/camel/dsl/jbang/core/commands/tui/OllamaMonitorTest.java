@@ -268,6 +268,16 @@ class OllamaMonitorTest {
     }
 
     @Test
+    void panelContextAppearsInTheJsonOnceKnown() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        assertNull(monitor.toJson(1).get("aiPanel"));
+        monitor.setPanelContext(32_768, 16_384);
+        JsonObject panel = (JsonObject) monitor.toJson(1).get("aiPanel");
+        assertEquals(32_768, panel.get("contextWindow"));
+        assertEquals(16_384, panel.get("compactsAbove"));
+    }
+
+    @Test
     void availabilityFollowsTheServer() {
         OllamaMonitor monitor = new OllamaMonitor();
         assertFalse(monitor.isAvailable());

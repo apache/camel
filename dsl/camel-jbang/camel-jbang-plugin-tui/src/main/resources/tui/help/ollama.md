@@ -49,9 +49,13 @@ The loaded model and its shape:
   offloaded; a lower figure means part of the model runs on the CPU
   and decode will be slow)
 - `ctx 32,768 of 262,144` — the context window Ollama allocated for
-  this load, and the maximum the model supports. The AI panel asks for
-  `32768` unless `OLLAMA_CONTEXT_LENGTH` is set. A request with a
+  this load, and the maximum the model supports. A request with a
   different size makes Ollama reload the model.
+- `AI panel asks 64k, compacts above 32k` — what the TUI's AI panel
+  requests (`OLLAMA_CONTEXT_LENGTH`, else the window already loaded,
+  else 64k when the model's cache fits the machine's memory, else 32k)
+  and the prompt size above which it compacts its history. Shown once
+  the panel has made a request.
 - When the model unloads (its keep-alive)
 
 With no model loaded the installed models are listed instead; a model
@@ -89,8 +93,10 @@ loads on the first request.
   filled (system prompt, tool definitions, history, question). The
   bars grow as a conversation continues and drop when the history is
   compacted; the line ends with the latest fill, the session peak and
-  the number of compactions seen. Yellow from 50%, red from 80%: that is
-  when `/compact` in the AI panel, or a smaller toolset, pays off.
+  the number of compactions seen. The colour follows the AI panel's
+  compaction point once known (yellow from three quarters of it, red at
+  it), else the window (yellow from 50%, red from 80%): that is when
+  `/compact` in the AI panel, or a smaller toolset, pays off.
 
 Without the local runner the panel falls back to the last request's
 tokens against the model's context length.
