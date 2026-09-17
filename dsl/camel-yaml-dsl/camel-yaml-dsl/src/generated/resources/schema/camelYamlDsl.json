@@ -12363,7 +12363,7 @@
             "type" : "string",
             "title" : "Xml Cipher Algorithm",
             "description" : "The cipher algorithm to be used for encryption/decryption of the XML message content.",
-            "default" : "AES-256-GCM",
+            "default" : "AES_256_GCM",
             "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ]
           }
         }

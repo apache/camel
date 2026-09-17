@@ -2740,7 +2740,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "namespace", def.getNamespaceRef(), null);
-        doWriteAttribute(jo, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute(jo, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES_256_GCM");
         doWriteAttribute(jo, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(jo, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(jo, "secureTag", def.getSecureTag(), null);
