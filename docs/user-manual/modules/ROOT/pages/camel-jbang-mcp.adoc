@@ -269,7 +269,9 @@ project `directory` as an argument, the runtime tools take the integration `name
   Maven coordinates, and for a component the rules of its endpoint URI spelled out (which
   options are path parts, the YAML `uri` plus `parameters` form, placeholders, `RAW()`). For the `simple`
   language the syntax rules, functions and operators (their count and names by group, or with `optionsFilter`
-  the matching ones with parameters and examples), and `docPage` serves the functions, operators, OGNL and
+  the matching ones with parameters and examples: a group name such as `date` gives that group only, an
+  operator kind such as `logical` that kind only, a function or operator name comes first, and any other word
+  matches the names and descriptions), and `docPage` serves the functions, operators, OGNL and
   advanced pages. With `endpoint` it checks a URI against the catalog: unknown options with the closest real
   names, invalid values, missing path parts, consumer options on a producer endpoint. `includeHeaders=true`
   adds the message headers of a component (the `CamelXxx` names, their constants, types and consumer or

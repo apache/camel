@@ -1084,15 +1084,30 @@ public final class CatalogDocs {
         if (functions != null && !functions.isEmpty()) {
             result.put("functionCount", functions.size());
             if (filter != null) {
+                // a function name comes first, even when a group has the same name; a group name is then that group
+                // and nothing else (date is two functions, not every function whose description mentions a date);
+                // the rest is a word match
+                boolean group = functions.stream().anyMatch(fn -> filter.equalsIgnoreCase(fn.getGroup()));
+                JsonArray exact = new JsonArray();
                 JsonArray arr = new JsonArray();
                 for (LanguageModel.LanguageFunctionModel fn : functions) {
-                    if (matchesOptionFilter(fn, filter)
+                    if (isFunctionName(fn, filter)) {
+                        exact.add(functionToJson(fn));
+                    } else if (group) {
+                        if (filter.equalsIgnoreCase(fn.getGroup())) {
+                            arr.add(functionToJson(fn));
+                        }
+                    } else if (matchesOptionFilter(fn, filter)
                             || (fn.getDisplayName() != null && fn.getDisplayName().toLowerCase().contains(filter))) {
                         arr.add(functionToJson(fn));
                     }
                 }
-                result.put("functions", arr);
-                result.put("matchedFunctions", arr.size());
+                exact.addAll(arr);
+                result.put("functions", exact);
+                result.put("matchedFunctions", exact.size());
+                if (group) {
+                    result.put("functionGroup", filter);
+                }
             } else {
                 Map<String, JsonArray> groups = new TreeMap<>();
                 for (LanguageModel.LanguageFunctionModel fn : functions) {
@@ -1109,15 +1124,28 @@ public final class CatalogDocs {
         if (operators != null && !operators.isEmpty()) {
             result.put("operatorCount", operators.size());
             if (filter != null) {
+                // an operator kind (binary, logical, unary...) is that kind only; an operator itself comes first
+                boolean kind = operators.stream().anyMatch(op -> filter.equalsIgnoreCase(op.getOperatorKind()));
+                JsonArray exact = new JsonArray();
                 JsonArray arr = new JsonArray();
                 for (LanguageModel.LanguageOperatorModel op : operators) {
-                    if (matchesOptionFilter(op, filter)
+                    if (kind) {
+                        if (filter.equalsIgnoreCase(op.getOperatorKind())) {
+                            arr.add(operatorToJson(op));
+                        }
+                    } else if (filter.equalsIgnoreCase(op.getName())) {
+                        exact.add(operatorToJson(op));
+                    } else if (matchesOptionFilter(op, filter)
                             || (op.getOperatorKind() != null && op.getOperatorKind().toLowerCase().contains(filter))) {
                         arr.add(operatorToJson(op));
                     }
                 }
-                result.put("operators", arr);
-                result.put("matchedOperators", arr.size());
+                exact.addAll(arr);
+                result.put("operators", exact);
+                result.put("matchedOperators", exact.size());
+                if (kind) {
+                    result.put("operatorKind", filter);
+                }
             } else {
                 JsonArray syntaxes = new JsonArray();
                 for (LanguageModel.LanguageOperatorModel op : operators) {
@@ -1126,6 +1154,19 @@ public final class CatalogDocs {
                 result.put("operatorSyntax", syntaxes);
             }
         }
+    }
+
+    /**
+     * Whether the filter is the function's name: {@code random} or {@code random(min,max)} for {@code random(min,max)}.
+     */
+    private static boolean isFunctionName(LanguageModel.LanguageFunctionModel fn, String filter) {
+        String name = fn.getName();
+        if (name == null) {
+            return false;
+        }
+        int paren = name.indexOf('(');
+        String bare = paren > 0 ? name.substring(0, paren) : name;
+        return filter.equalsIgnoreCase(name) || filter.equalsIgnoreCase(bare);
     }
 
     private static JsonObject functionToJson(LanguageModel.LanguageFunctionModel fn) {

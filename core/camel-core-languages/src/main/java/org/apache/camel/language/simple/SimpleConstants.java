@@ -230,7 +230,7 @@ public final class SimpleConstants {
     public static final String BODY_AS = "bodyAs(type)";
 
     @Metadata(description = "Converts the body to a String and removes all line-breaks, so the string is in one line.",
-              javaType = "String", label = "function",
+              javaType = "String", label = "core",
               examples = { "${bodyOneLine} -> Hello World // when body is 'Hello\\nWorld'" })
     public static final String BODY_ONE_LINE = "bodyOneLine";
 
