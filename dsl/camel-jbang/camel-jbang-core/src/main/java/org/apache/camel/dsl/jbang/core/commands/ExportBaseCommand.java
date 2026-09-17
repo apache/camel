@@ -227,7 +227,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected boolean observe;
 
     @CommandLine.Option(names = { "--console" }, defaultValue = "false",
-                        description = "Developer console at /q/dev on local HTTP server (port 8080 by default). Camel Main runtime only.")
+                        description = "Developer console on the local HTTP server (port 8080 by default): /q/dev with Camel Main,"
+                                      + " /actuator/camel with Spring Boot, and /q/camel/dev-console with Quarkus")
     protected boolean console;
 
     @CommandLine.Option(names = {

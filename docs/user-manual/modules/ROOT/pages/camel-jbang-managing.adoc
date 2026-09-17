@@ -288,6 +288,13 @@ camel run hello.java --console
 The console is accessible at http://localhost:8080/q/dev and provides insights into routes,
 performance, and EIP-level metrics. The endpoints support both HTTP GET and POST.
 
+When running with xref:camel-jbang-running.adoc#_runtimes[another runtime], the console is served where
+that runtime puts it: `/q/dev` with Camel Main, `/actuator/camel` with Spring Boot (the `camel` actuator
+endpoint; with `--observe` it moves to the management port under `/observe/camel`), and
+`/q/camel/dev-console` with Quarkus. The exported Quarkus project exposes the console in prod mode
+(`quarkus.camel.console.exposure-mode=ALL`) as `camel run` without `--dev` runs via `quarkus:run`. The
+console has no authentication on any runtime, so it is meant for local development only.
+
 GET with query parameters:
 
 [source,bash]

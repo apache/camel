@@ -1590,6 +1590,8 @@ public class Run extends CamelCommand {
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
         eq.profile = this.profile;
+        eq.observe = this.serverOptions.observe;
+        eq.console = this.serverOptions.console;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Quarkus (preparing and downloading files)");
@@ -2319,6 +2321,8 @@ public class Run extends CamelCommand {
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
         eq.profile = this.profile;
+        eq.observe = this.serverOptions.observe;
+        eq.console = this.serverOptions.console;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Spring Boot (preparing and downloading files)");
@@ -3570,7 +3574,9 @@ public class Run extends CamelCommand {
         int managementPort = -1;
 
         @Option(names = { "--console" }, defaultValue = "false",
-                description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
+                description = "Developer console on the local HTTP server (port 8080 by default): /q/dev with the jbang"
+                              + " and Camel Main runtimes, /actuator/camel with Spring Boot, and /q/camel/dev-console"
+                              + " with Quarkus")
         boolean console;
 
         @Option(names = { "--mcp" }, defaultValue = "false",

@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -150,15 +151,22 @@ class ExportSpringBoot extends Export {
             }
             if (hawtio) {
                 // spring boot needs these options configured to support hawtio
-                String s = prop.getProperty("management.endpoints.web.exposure.include");
-                if (s == null) {
-                    s = "hawtio,jolokia";
-                } else {
-                    s = s + ",hawtio,jolokia";
-                }
-                prop.setProperty("management.endpoints.web.exposure.include", s);
+                exposeActuatorEndpoints(prop, "hawtio,jolokia");
                 prop.setProperty("spring.jmx.enabled", "true");
                 prop.setProperty("hawtio.authenticationEnabled", "false");
+            }
+            // developer console (--console) is the camel actuator endpoint (/actuator/camel)
+            if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
+                if (!prop.containsKey("camel.main.devConsoleEnabled")
+                        && !prop.containsKey("camel.main.dev-console-enabled")) {
+                    prop.put("camel.main.devConsoleEnabled", "true");
+                }
+                if (observe && !prop.containsKey("management.endpoints.web.exposure.include")) {
+                    // camel-observability-services-starter exposes health and prometheus as its default, which an
+                    // explicit exposure list would replace, so keep them (the console is then at /observe/camel)
+                    exposeActuatorEndpoints(prop, "health,prometheus");
+                }
+                exposeActuatorEndpoints(prop, "camel");
             }
             return prop;
         });
@@ -424,8 +432,27 @@ class ExportSpringBoot extends Export {
             String hawtioArtifact = springBootVersion.startsWith("4.") ? "hawtio-springboot4" : "hawtio-springboot";
             answer.add("mvn:io.hawt:" + hawtioArtifact + ":" + hawtioVersion);
         }
+        if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
+            // developer console (--console) as actuator endpoint (camel-console-starter)
+            answer.add("mvn:org.apache.camel:camel-console");
+            answer.add("mvn:org.apache.camel:camel-management");
+        }
 
         return answer;
+    }
+
+    /**
+     * Adds the given actuator endpoint ids to {@code management.endpoints.web.exposure.include}, keeping the ids that
+     * are already exposed.
+     */
+    private static void exposeActuatorEndpoints(Properties prop, String ids) {
+        String s = prop.getProperty("management.endpoints.web.exposure.include");
+        if (s == null || s.isBlank()) {
+            s = ids;
+        } else {
+            s = s + "," + ids;
+        }
+        prop.setProperty("management.endpoints.web.exposure.include", s);
     }
 
     private void createMainClassSource(Path srcJavaDir, String packageName, String mainClassname) throws Exception {

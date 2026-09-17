@@ -60,6 +60,7 @@ import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CLASSPATH_FILES;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CONSOLE;
 
 class ExportQuarkus extends Export {
 
@@ -151,6 +152,18 @@ class ExportQuarkus extends Export {
             }
             if (hawtio) {
                 prop.setProperty("quarkus.hawtio.authenticationEnabled", "false");
+            }
+            // developer console (--console) is the camel-quarkus-console extension (/q/camel/dev-console)
+            if (settingsFlag(settings, CONSOLE)) {
+                if (!prop.containsKey("camel.main.devConsoleEnabled")
+                        && !prop.containsKey("camel.main.dev-console-enabled")) {
+                    prop.put("camel.main.devConsoleEnabled", "true");
+                }
+                // the console is only exposed in dev and test mode by default, and camel run without --dev runs in
+                // prod mode (quarkus:run). The console has no authentication, so this is for local development only.
+                if (!prop.containsKey("quarkus.camel.console.exposure-mode")) {
+                    prop.put("quarkus.camel.console.exposure-mode", "ALL");
+                }
             }
             return prop;
         });
@@ -511,6 +524,11 @@ class ExportQuarkus extends Export {
         if (hawtio) {
             answer.add("mvn:org.apache.camel:camel-management");
             answer.add("mvn:io.hawt:hawtio-quarkus:" + hawtioVersion);
+        }
+        if (settingsFlag(settings, CONSOLE)) {
+            // developer console (--console) as the camel-quarkus-console extension
+            answer.add("mvn:org.apache.camel:camel-console");
+            answer.add("mvn:org.apache.camel:camel-management");
         }
 
         return answer;
