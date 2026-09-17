@@ -228,6 +228,54 @@ RouteBuilder.addRoutes(context, b -> {
 <2> transform data to proper Http CloudEvents format
 <3> push event to the broker that gets resolved via the `Knative Environment`
 
+The same route in the DSLs, with the component configured through `camel.component.knative.environmentPath`
+as shown above:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:tick")
+    .setBody().simple("Hello Knative!")
+    .transformDataType("http:application-cloudevents")
+    .to("knative:event/default?kind=Broker&name=default");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="timer:tick"/>
+    <setBody>
+        <simple>Hello Knative!</simple>
+    </setBody>
+    <transformDataType toType="http:application-cloudevents"/>
+    <to uri="knative:event/default?kind=Broker&amp;name=default"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:tick
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: Hello Knative!
+        - transformDataType:
+            toType: http:application-cloudevents
+        - to:
+            uri: knative:event/default?kind=Broker&name=default
+----
+====
+
 The Knative eventing broker uses CloudEvents data format by default.
 This is why we transform the data with the given data type before sending the request to the broker.
 The data type will set proper CloudEvent attributes like event type, id, source, subject and so on.
@@ -361,6 +409,42 @@ RouteBuilder.addRoutes(context, b -> {
 });
 ----
 
+The same route in the DSLs; the body is the data of the CloudEvent and its attributes are message headers such
+as `CamelCloudEventType` and `CamelCloudEventSource`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("knative:event/default?kind=Broker&name=default")
+    .log("Received event: ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="knative:event/default?kind=Broker&amp;name=default"/>
+    <log message="Received event: ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: knative:event/default?kind=Broker&name=default
+      steps:
+        - log:
+            message: "Received event: ${body}"
+----
+====
+
 The according `Knative Environment` configuration that specifies the Http service looks like this:
 
 .knative.json
@@ -384,3 +468,51 @@ The according `Knative Environment` configuration that specifies the Http servic
 
 This will create a proper Http service with the right resource path routing so that all incoming event requests will be consumed by the Camel route.
 Once again the Knative broker will use CloudEvent data format by default, so you can access the CloudEvent attributes such as event type, id, source, subject in the Camel route.
+
+=== Bridging channels
+
+The `channel` resource type works the same way with https://knative.dev/docs/eventing/channels/[Knative channels]:
+a route consumes the messages of one channel and produces to another, with both channels declared in the
+`Knative Environment` as `channel` resources, the consumed one with `"endpointKind": "source"` and the produced
+one with `"endpointKind": "sink"`:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("knative:channel/messages")
+    .transform().simple("transformed ${body}")
+    .to("knative:channel/words");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="knative:channel/messages"/>
+    <transform>
+        <simple>transformed ${body}</simple>
+    </transform>
+    <to uri="knative:channel/words"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: knative:channel/messages
+      steps:
+        - transform:
+            expression:
+              simple:
+                expression: transformed ${body}
+        - to:
+            uri: knative:channel/words
+----
+====
