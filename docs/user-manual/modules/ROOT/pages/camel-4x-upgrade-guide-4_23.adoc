@@ -478,6 +478,31 @@ The XML schemas (`camel-spring.xsd`, `camel-xml-io.xsd`) and the YAML schema no 
 ran. A bean that is neither scripted nor built still needs a `type`, and the error for a missing one
 is now an `IllegalArgumentException` naming the bean instead of a `NullPointerException`.
 
+=== camel-core - Splitter unwraps Exchange parts
+
+The Splitter EIP now unwraps parts of type `org.apache.camel.Exchange`, the same way it already unwrapped parts of
+type `org.apache.camel.Message`. When splitting a body of type `List<Exchange>`, as produced by the camel-kafka
+batching consumer (`batching=true`) and by the grouped exchange aggregation strategy, each child exchange now
+carries the body and the headers of the corresponding part. Previously the child body was the part `Exchange`
+itself, with no headers.
+
+Code that read the part from the child body must be updated, for example when performing a Kafka manual commit
+after a split:
+
+[source,java]
+----
+// before
+KafkaManualCommit manual = exchange.getMessage().getBody(Exchange.class)
+        .getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+
+// now
+KafkaManualCommit manual = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+----
+
+The message of the part is copied into the child exchange, so the exchanges in the original list are left
+untouched and remain usable after the split, for example by the batching consumer that owns them. Exchange
+properties of the part are not carried over to the child exchange, as is already the case for `Message` parts.
+
 === Component deprecation
 
 ==== camel-minio

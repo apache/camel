@@ -93,8 +93,8 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
                         .aggregationStrategy(AggregationStrategies.groupedExchange())
                         .split().body()
                         .process(e -> {
-                            KafkaManualCommit manual = e.getMessage().getBody(Exchange.class)
-                                    .getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                            KafkaManualCommit manual
+                                    = e.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
                             assertNotNull(manual);
 
                             try {
