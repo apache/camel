@@ -162,7 +162,9 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
     }
 
     private void setHeaderIfNotPresent(String headerName, Object value, Message message) {
-        message.setHeader(headerName, value);
+        if (message.getHeader(headerName) == null) {
+            message.setHeader(headerName, value);
+        }
     }
 
     private Map<String, AttributeValue> getAttributeValueMap(Map<String, Object> body) {
