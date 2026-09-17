@@ -43,7 +43,8 @@ enum ThemeMode {
     EVERFOREST("everforest", "Everforest", false),
     EVERFOREST_LIGHT("everforest-light", "Everforest Light", true),
     MONOCHROME("monochrome", "Monochrome", false),
-    CRT("crt", "CRT", false);
+    CRT("crt", "CRT", false),
+    TURBO_PASCAL("turbo-pascal", "Turbo Pascal", false);
 
     private final String id;
     private final String label;

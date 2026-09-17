@@ -1,8 +1,9 @@
 # Camel TUI Theme Reference
 
 This document describes the CSS token system used by the Camel TUI.
-Every `.tcss` theme file must define all 28 tokens listed below.
-Missing tokens cause a startup validation error.
+Every `.tcss` theme file must define all 28 required tokens listed below.
+Missing required tokens cause a startup validation error. The 7 syntax
+tokens are optional.
 
 ## File Format
 
@@ -74,6 +75,24 @@ $brand: #F69123;
 | `diagram-eip` | fg | Routing EIPs (`split`, `aggregate`, `multicast`, etc.) |
 | `diagram-default` | fg | Fallback for unspecified EIP types |
 
+### Syntax (7 tokens, optional)
+
+Code in the Source tab and in fenced code blocks of AI answers is highlighted
+with these tokens. They are optional: a theme that omits them gets the
+built-in Monokai palette (dark themes) or GitHub-inspired palette (light
+themes). Define them when the theme calls for its own editor look, as the
+Turbo Pascal theme does, but keep code readable.
+
+| Token | Type | Purpose |
+|-------|------|---------|
+| `syntax-comment` | fg | Comments |
+| `syntax-string` | fg | String literals, YAML and properties values, XML attribute values |
+| `syntax-keyword` | fg | Keywords and modifiers, YAML and properties keys, XML tags |
+| `syntax-function` | fg | Annotations, XML attribute names |
+| `syntax-type` | fg | Primitive and built-in types |
+| `syntax-constant` | fg | Numbers, booleans, null, XML entities |
+| `syntax-text` | fg | Plain code text such as `:` and `=` separators |
+
 ## Design Guidelines
 
 When creating a new theme:
@@ -90,6 +109,9 @@ When creating a new theme:
   each other. They appear as foreground text on `base-bg`.
 - **Zebra striping**: `row-alt` background should be subtle, just enough
   to distinguish alternating rows without clashing with `selection`.
+- **Syntax tokens**: only override them when the theme has a distinct
+  editor identity. Keywords, strings and comments must stay distinguishable
+  from each other and from `base-fg`.
 
 ## Built-in Themes
 
@@ -99,14 +121,20 @@ When creating a new theme:
 | `light` | `light.tcss` | GitHub-inspired light palette |
 | `dracula` | `dracula.tcss` | Dracula purple-and-pink-on-dark palette |
 | `nord` | `nord.tcss` | Nord arctic, bluish dark palette |
+| `nord-light` | `nord-light.tcss` | Nord arctic light palette |
 | `solarized-dark` | `solarized-dark.tcss` | Solarized dark palette |
 | `solarized-light` | `solarized-light.tcss` | Solarized light palette |
 | `gruvbox-dark` | `gruvbox-dark.tcss` | Gruvbox retro-groove dark palette |
+| `gruvbox-light` | `gruvbox-light.tcss` | Gruvbox retro-groove light palette |
 | `catppuccin-mocha` | `catppuccin-mocha.tcss` | Catppuccin Mocha pastel dark palette |
+| `catppuccin-frappe` | `catppuccin-frappe.tcss` | Catppuccin Frappé pastel dark palette |
 | `catppuccin-latte` | `catppuccin-latte.tcss` | Catppuccin Latte pastel light palette |
 | `tokyo-night` | `tokyo-night.tcss` | Tokyo Night neon-on-dark palette |
 | `rose-pine` | `rose-pine.tcss` | Rosé Pine muted dark palette |
+| `rose-pine-moon` | `rose-pine-moon.tcss` | Rosé Pine Moon softer dark palette |
 | `kanagawa` | `kanagawa.tcss` | Kanagawa Japanese-wave-inspired dark palette |
 | `everforest` | `everforest.tcss` | Everforest warm, green-forest dark palette |
+| `everforest-light` | `everforest-light.tcss` | Everforest warm, green-forest light palette |
 | `monochrome` | `monochrome.tcss` | Grayscale palette, no color, brightness only |
 | `crt` | `crt.tcss` | Retro green-phosphor terminal palette |
+| `turbo-pascal` | `turbo-pascal.tcss` | Borland Turbo Pascal IDE: yellow on blue, cyan frames, grey menu bar; overrides the syntax tokens |

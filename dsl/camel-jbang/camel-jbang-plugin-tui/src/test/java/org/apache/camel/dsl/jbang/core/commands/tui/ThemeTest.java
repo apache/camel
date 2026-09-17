@@ -261,6 +261,65 @@ class ThemeTest {
     }
 
     @Test
+    void syntaxColorsFallBackToMonokaiForDarkThemesWithoutSyntaxTokens() {
+        Theme.setMode("dark");
+        assertEquals(SyntaxHighlighter.MONOKAI_COMMENT, Theme.syntaxComment());
+        assertEquals(SyntaxHighlighter.MONOKAI_STRING, Theme.syntaxString());
+        assertEquals(SyntaxHighlighter.MONOKAI_KEYWORD, Theme.syntaxKeyword());
+        assertEquals(SyntaxHighlighter.MONOKAI_FUNCTION, Theme.syntaxFunction());
+        assertEquals(SyntaxHighlighter.MONOKAI_TYPE, Theme.syntaxType());
+        assertEquals(SyntaxHighlighter.MONOKAI_CONSTANT, Theme.syntaxConstant());
+        assertEquals(SyntaxHighlighter.MONOKAI_TEXT, Theme.syntaxText());
+    }
+
+    @Test
+    void syntaxColorsFallBackToLightPaletteForLightThemesWithoutSyntaxTokens() {
+        Theme.setMode("light");
+        assertEquals(SyntaxHighlighter.LIGHT_COMMENT, Theme.syntaxComment());
+        assertEquals(SyntaxHighlighter.LIGHT_STRING, Theme.syntaxString());
+        assertEquals(SyntaxHighlighter.LIGHT_KEYWORD, Theme.syntaxKeyword());
+        assertEquals(SyntaxHighlighter.LIGHT_TEXT, Theme.syntaxText());
+    }
+
+    @Test
+    void turboPascalOverridesSyntaxColorsFromStylesheet() {
+        Theme.setMode("turbo-pascal");
+        // Borland's editor: reserved words white, code yellow, comments grey, strings cyan.
+        assertEquals(Color.rgb(0xFF, 0xFF, 0xFF), Theme.syntaxKeyword());
+        assertEquals(Color.rgb(0xFF, 0xFF, 0x55), Theme.syntaxText());
+        assertEquals(Color.rgb(0xAA, 0xAA, 0xAA), Theme.syntaxComment());
+        assertEquals(Color.rgb(0x0B, 0xDF, 0xEA), Theme.syntaxString());
+        assertNotEquals(SyntaxHighlighter.MONOKAI_KEYWORD, Theme.syntaxKeyword());
+    }
+
+    @Test
+    void syntaxColorsFollowThemeSwitches() {
+        Theme.setMode("turbo-pascal");
+        assertEquals(Color.rgb(0xFF, 0xFF, 0xFF), Theme.syntaxKeyword());
+
+        Theme.setMode("dark");
+        assertEquals(SyntaxHighlighter.MONOKAI_KEYWORD, Theme.syntaxKeyword());
+
+        Theme.preview("turbo-pascal");
+        assertEquals(Color.rgb(0xFF, 0xFF, 0xFF), Theme.syntaxKeyword());
+        Theme.revertPreview();
+        assertEquals(SyntaxHighlighter.MONOKAI_KEYWORD, Theme.syntaxKeyword());
+    }
+
+    @Test
+    void turboPascalPaletteResolvesExpectedTokens() {
+        Theme.setMode("turbo-pascal");
+        assertEquals(Color.rgb(0x01, 0x03, 0x78), Theme.baseBg());
+        assertEquals(Color.rgb(0xFF, 0xFF, 0x55), Theme.baseFg());
+        assertEquals(Color.rgb(0x0B, 0xDF, 0xEA), Theme.accent());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x0B, 0xDF, 0xEA)), Theme.borderFocused());
+        assertEquals(Style.EMPTY.fg(Color.rgb(0xAA, 0xAA, 0xAA)), Theme.border());
+        // The selection bar: editor blue on the highlight yellow.
+        assertEquals(Style.EMPTY.fg(Color.rgb(0x01, 0x03, 0x78)).bg(Color.rgb(0xF7, 0xEE, 0x0B)).bold(),
+                Theme.selectionBg());
+    }
+
+    @Test
     void allThemesLoadSuccessfully() {
         for (ThemeMode m : ThemeMode.values()) {
             Theme.resetForTesting();
