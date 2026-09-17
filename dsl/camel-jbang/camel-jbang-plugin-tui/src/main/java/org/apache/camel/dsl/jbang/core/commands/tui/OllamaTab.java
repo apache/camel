@@ -608,7 +608,7 @@ class OllamaTab extends AbstractTab {
             sourceStyle = Theme.notice();
         } else {
             source = (g.question() > 0 ? "#" + g.question() : "tui") + (multi ? " ×" + g.steps().size() : "");
-            sourceStyle = Theme.info();
+            sourceStyle = requestCountStyle(g.steps().size(), g.doneReason());
         }
         String text = g.questionText() != null && !g.questionText().isBlank()
                 ? firstLine(g.questionText())
@@ -629,8 +629,35 @@ class OllamaTab extends AbstractTab {
                         Theme.success()),
                 rightCell(g.hasTimings() ? formatSeconds(g.ttftMs()) : "-", 7,
                         g.coldStart() ? Theme.warning() : Style.EMPTY),
-                rightCell(g.wallMs() > 0 ? formatSeconds(g.wallMs()) : "-", 7),
+                rightCell(g.wallMs() > 0 ? formatSeconds(g.wallMs()) : "-", 7, totalTimeStyle(g.wallMs())),
                 Cell.from(Span.styled(" " + (g.doneReason() != null ? g.doneReason() : ""), reasonStyle(g.doneReason()))));
+    }
+
+    /**
+     * A question's request count is the number of times the whole prompt was sent: yellow from {@value #MANY_REQUESTS}
+     * requests, red when it ended at the AI panel's tool-call limit.
+     */
+    static final int MANY_REQUESTS = 10;
+
+    /**
+     * A question that made you wait: yellow from {@value #SLOW_QUESTION_MS} ms, orange from
+     * {@value #VERY_SLOW_QUESTION_MS} ms.
+     */
+    static final long SLOW_QUESTION_MS = 30_000;
+    static final long VERY_SLOW_QUESTION_MS = 60_000;
+
+    static Style requestCountStyle(int requests, String doneReason) {
+        if ("limit".equals(doneReason)) {
+            return Theme.error().bold();
+        }
+        return requests >= MANY_REQUESTS ? Theme.warning() : Theme.info();
+    }
+
+    static Style totalTimeStyle(long wallMs) {
+        if (wallMs >= VERY_SLOW_QUESTION_MS) {
+            return Style.EMPTY.fg(Theme.accent()).bold();
+        }
+        return wallMs >= SLOW_QUESTION_MS ? Theme.warning() : Style.EMPTY;
     }
 
     /** One request of an unfolded question: step number, the model, and that request's own figures. */

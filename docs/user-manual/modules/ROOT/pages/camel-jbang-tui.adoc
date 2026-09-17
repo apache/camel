@@ -1126,8 +1126,10 @@ model called and the time spent in them, the number of requests, the tokens and,
 the context window got (for example `61.1s · 25 tool calls, limit reached (2.5s in tools) · 26 requests
 · 231.3k tokens · ctx 18%`). The panel allows 25 tool calls per question. When the model reaches that
 the byline says `limit reached`, the panel asks the model to answer from what it has found so far, and
-the <<_ollama>> tab shows `limit` as the reason for that question. A question that runs into the limit
-is usually a tool that makes the model guess, not a weak model: the AI log shows which one.
+the <<_ollama>> tab shows the question's request count in red with `limit` as its reason (the count is
+yellow from 10 requests, and the total time yellow from 30 seconds and orange from a minute). A question
+that runs into the limit is usually a tool that makes the model guess, not a weak model: the AI log
+shows which one.
 
 Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
 the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),

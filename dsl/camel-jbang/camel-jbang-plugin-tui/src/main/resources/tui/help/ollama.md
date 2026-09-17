@@ -142,6 +142,11 @@ Camel route is one line of its own.
 Route requests show `-` for prefill, decode and TTFT because the GenAI
 span carries tokens and duration only.
 
+Two figures are coloured so a costly question stands out without reading
+the row: the `×N` request count is yellow from 10 requests and red when
+the question ended at the AI panel's tool-call limit (REASON `limit`);
+TOTAL is yellow from 30 seconds and orange from a minute.
+
 ## Remote and Containerised Ollama
 
 The Ollama API and the per-request data work against any host. The

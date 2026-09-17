@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.style.Style;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -190,6 +191,35 @@ class OllamaTabRenderTest {
         tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
         rendered = TuiTestHelper.renderToString(tab, 200, 40);
         assertFalse(rendered.contains("step 1/3"), rendered);
+    }
+
+    @Test
+    void aQuestionThatCostManyRequestsOrRanLongIsColoured() {
+        // the request count: plain for a few, yellow from ten, red when the tool-call limit ended the question
+        assertEquals(Theme.info(), OllamaTab.requestCountStyle(3, "stop"));
+        assertEquals(Theme.warning(), OllamaTab.requestCountStyle(OllamaTab.MANY_REQUESTS, "stop"));
+        assertEquals(Theme.error().bold(), OllamaTab.requestCountStyle(26, "limit"));
+        assertEquals(Theme.error().bold(), OllamaTab.requestCountStyle(2, "limit"));
+
+        // the total: plain under half a minute, yellow from there, orange from a minute
+        assertEquals(Style.EMPTY, OllamaTab.totalTimeStyle(12_000));
+        assertEquals(Theme.warning(), OllamaTab.totalTimeStyle(OllamaTab.SLOW_QUESTION_MS));
+        assertEquals(Style.EMPTY.fg(Theme.accent()).bold(), OllamaTab.totalTimeStyle(75_000));
+
+        // and the row still reads the same
+        localServerWithModel();
+        String question = "what's the name of the source file that has the route";
+        for (int i = 0; i < 25; i++) {
+            monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                    9_000 + i * 200, 40, 9_040, 8_800, 300,
+                    1_500, 0, 2_000), 0, "tool_calls", 9, question);
+        }
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                14_000, 120, 14_120, 13_800, 300, 3_000, 0,
+                3_500), 0, "limit", 9, question);
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertTrue(rendered.contains("#9 ×26"), rendered);
+        assertTrue(rendered.contains("limit"), rendered);
     }
 
     @Test
