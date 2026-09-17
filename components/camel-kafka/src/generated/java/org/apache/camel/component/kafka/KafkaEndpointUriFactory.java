@@ -24,7 +24,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(121);
+        Set<String> props = new HashSet<>(122);
         props.add("additionalProperties");
         props.add("allowManualCommit");
         props.add("autoCommitEnable");
@@ -46,6 +46,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("consumersCount");
         props.add("deliveryTimeoutMs");
         props.add("enableIdempotence");
+        props.add("exactlyOnce");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("fetchMaxBytes");

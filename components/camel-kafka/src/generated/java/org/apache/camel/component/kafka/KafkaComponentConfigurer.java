@@ -77,6 +77,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "deliveryTimeoutMs": getOrCreateConfiguration(target).setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
         case "enableIdempotence": getOrCreateConfiguration(target).setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
+        case "exactlyonce":
+        case "exactlyOnce": getOrCreateConfiguration(target).setExactlyOnce(property(camelContext, boolean.class, value)); return true;
         case "fetchmaxbytes":
         case "fetchMaxBytes": getOrCreateConfiguration(target).setFetchMaxBytes(property(camelContext, java.lang.Integer.class, value)); return true;
         case "fetchminbytes":
@@ -339,6 +341,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
         case "enableIdempotence": return boolean.class;
+        case "exactlyonce":
+        case "exactlyOnce": return boolean.class;
         case "fetchmaxbytes":
         case "fetchMaxBytes": return java.lang.Integer.class;
         case "fetchminbytes":
@@ -597,6 +601,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "deliveryTimeoutMs": return getOrCreateConfiguration(target).getDeliveryTimeoutMs();
         case "enableidempotence":
         case "enableIdempotence": return getOrCreateConfiguration(target).isEnableIdempotence();
+        case "exactlyonce":
+        case "exactlyOnce": return getOrCreateConfiguration(target).isExactlyOnce();
         case "fetchmaxbytes":
         case "fetchMaxBytes": return getOrCreateConfiguration(target).getFetchMaxBytes();
         case "fetchminbytes":

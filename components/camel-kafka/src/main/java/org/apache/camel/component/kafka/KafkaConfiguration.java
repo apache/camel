@@ -410,6 +410,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "false")
     private boolean transacted;
 
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean exactlyOnce;
+
     public KafkaConfiguration() {
     }
 
@@ -2294,6 +2297,22 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setTransactionalId(String transactionalId) {
         this.transactionalId = transactionalId;
+    }
+
+    public boolean isExactlyOnce() {
+        return exactlyOnce;
+    }
+
+    /**
+     * Enables exactly-once (read-process-write) semantics on a Kafka-to-Kafka route. When enabled together with a
+     * transactional producer (transacted=true or transactionalId set), the source consumer's offsets are committed
+     * inside the producer transaction via sendOffsetsToTransaction, so a consumed message and the records it produces
+     * are committed atomically. This requires the source Kafka consumer to use allowManualCommit=true and
+     * autoCommitEnable=false (so it does not commit offsets on its own), the produce step to run on the consumer poll
+     * thread, and downstream consumers to use isolation.level=read_committed.
+     */
+    public void setExactlyOnce(boolean exactlyOnce) {
+        this.exactlyOnce = exactlyOnce;
     }
 
 }
