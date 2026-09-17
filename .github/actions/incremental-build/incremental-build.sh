@@ -427,6 +427,7 @@ checkManualItTests() {
 writeScalpelComparison() {
   local comment_file="$1"
   local current_reactor_ids="${2:-}"
+  local report="${3:-target/scalpel-report.json}"
 
   # If Scalpel failed, show why in the PR comment
   if [ -n "$scalpel_failure_reason" ]; then
@@ -502,7 +503,7 @@ writeScalpelComparison() {
   echo "<details><summary>:microscope: Scalpel shadow comparison — ${summary}</summary>" >> "$comment_file"
   echo "" >> "$comment_file"
 
-  echo "[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) detected **${scalpel_total}${nm_suffix} affected modules** (current approach: ${current_total})." >> "$comment_file"
+  echo "[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) detected **${scalpel_total} affected modules** (current approach: ${current_total})." >> "$comment_file"
   echo "" >> "$comment_file"
 
   # Show Scalpel-detected change details
@@ -552,7 +553,6 @@ writeScalpelComparison() {
     echo "" >> "$comment_file"
     echo "<details><summary>Modules Scalpel would test (${scalpel_tested_count})</summary>" >> "$comment_file"
     echo "" >> "$comment_file"
-    local report="target/scalpel-report.json"
     echo "$scalpel_would_test" | tr ',' '\n' | while read -r m; do
       if [ -n "$m" ]; then
         # Pull evidence[] for this module from the report (explain=true populates it)
@@ -995,7 +995,7 @@ main() {
       fi
     done)
   fi
-  writeScalpelComparison "$comment_file" "$tested_reactor_ids"
+  writeScalpelComparison "$comment_file" "$tested_reactor_ids" "target/scalpel-report.json"
 
   # Check for tests disabled in CI via @DisabledIfSystemProperty(named = "ci.env.name")
   local disabled_tests
