@@ -226,8 +226,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Enable observability services")
     protected boolean observe;
 
+    // set by camel run: the exported project is temporary and only used for that run, so the developer console is
+    // enabled in its application.properties regardless of the profile
+    boolean consoleForRun;
+
     @CommandLine.Option(names = { "--console" }, defaultValue = "false",
-                        description = "Developer console at /q/dev on local HTTP server (port 8080 by default). Camel Main runtime only.")
+                        description = "Developer console on the local HTTP server (port 8080 by default): /q/dev with Camel Main,"
+                                      + " /actuator/camel with Spring Boot, and /q/camel/dev-console with Quarkus."
+                                      + " The exported project only has the console with the dev profile.")
     protected boolean console;
 
     @CommandLine.Option(names = {
@@ -1353,6 +1359,73 @@ public abstract class ExportBaseCommand extends CamelCommand {
             // ignore
         }
         return false;
+    }
+
+    /**
+     * Whether the developer console ({@code --console}) settings go into the exported {@code application.properties}:
+     * for {@code camel run} (the project is temporary), and for {@code --profile=dev} (the dev profile is flattened
+     * into application.properties). Otherwise they go into {@code application-dev.properties}, so an exported project
+     * only has the console when running with the dev profile.
+     */
+    protected boolean isConsoleInApplicationProperties() {
+        return consoleForRun || "dev".equals(profile);
+    }
+
+    /**
+     * Adds the given developer console settings to the exported project: either to the given
+     * {@code application.properties} (see {@link #isConsoleInApplicationProperties()}), or else collected in
+     * {@code devProfile} to be written to {@code application-dev.properties} by
+     * {@link #writeDevProfileProperties(Path, Map)}. Settings that are already configured are kept.
+     */
+    protected void addConsoleProperties(Properties prop, Map<String, String> devProfile, Map<String, String> settings) {
+        for (Map.Entry<String, String> entry : settings.entrySet()) {
+            String key = entry.getKey();
+            if (prop.containsKey(key) || prop.containsKey(StringHelper.camelCaseToDash(key))) {
+                continue;
+            }
+            if (isConsoleInApplicationProperties()) {
+                prop.put(key, entry.getValue());
+            } else {
+                devProfile.put(key, entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * Appends the given properties to {@code application-dev.properties} in the exported project (which is created if
+     * it does not exist), skipping keys that the file already has.
+     */
+    protected void writeDevProfileProperties(Path srcResourcesDir, Map<String, String> devProfile) throws Exception {
+        if (devProfile.isEmpty()) {
+            return;
+        }
+        Path file = srcResourcesDir.resolve("application-dev.properties");
+        Properties existing = new Properties();
+        if (Files.exists(file)) {
+            try (InputStream is = Files.newInputStream(file)) {
+                existing.load(is);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : devProfile.entrySet()) {
+            String key = entry.getKey();
+            if (existing.containsKey(key) || existing.containsKey(StringHelper.camelCaseToDash(key))) {
+                continue;
+            }
+            String line = applicationPropertyLine(key, entry.getValue());
+            if (line != null && !line.isBlank()) {
+                sb.append(line).append("\n");
+            }
+        }
+        if (sb.isEmpty()) {
+            return;
+        }
+        String content = Files.exists(file) ? Files.readString(file) : "";
+        if (!content.isEmpty() && !content.endsWith("\n")) {
+            content += "\n";
+        }
+        content += "# developer console (--console), only for the dev profile\n" + sb;
+        Files.writeString(file, content);
     }
 
     protected static int httpManagementPort(Path settings) {
