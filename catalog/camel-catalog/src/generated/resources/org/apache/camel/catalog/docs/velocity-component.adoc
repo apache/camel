@@ -103,6 +103,86 @@ VelocityContext velocityContext = new VelocityContext(variableMap);
 exchange.getIn().setHeader("CamelVelocityContext", velocityContext);
 ----
 
+=== Using Velocity Tools such as EscapeTool
+
+Anything you store in an exchange variable is available to the template via `$variables`.
+This makes it easy to hand
+https://velocity.apache.org/tools/devel/apidocs/org/apache/velocity/tools/generic/EscapeTool.html[Velocity Tools]
+such as `EscapeTool` to the template, so special characters can be escaped for HTML, XML, JSON, SQL, or URLs
+directly in the template, instead of pre-processing the message before calling the template.
+
+First, add the Velocity Tools dependency to your project (Camel does not ship it):
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.velocity.tools</groupId>
+    <artifactId>velocity-tools-generic</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+Then register an `EscapeTool` as a bean, pass it to the template in an exchange variable, and call it from the template:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+    .setVariable("esc", constant(new EscapeTool()))
+    .to("velocity:com/acme/order.vm");
+----
+
+XML::
++
+[source,xml]
+----
+<bean id="esc" class="org.apache.velocity.tools.generic.EscapeTool"/>
+
+<route>
+  <from uri="direct:order"/>
+  <setVariable name="esc">
+    <simple>${ref:esc}</simple>
+  </setVariable>
+  <to uri="velocity:com/acme/order.vm"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: esc
+      type: org.apache.velocity.tools.generic.EscapeTool
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - setVariable:
+            name: esc
+            expression:
+              simple:
+                expression: ${ref:esc}
+        - to:
+            uri: velocity:com/acme/order.vm
+----
+====
+
+.order.vm
+[source,text]
+----
+Dear ${headers.name}. You ordered item $variables.esc.xml(${headers.item}) on $variables.esc.xml(${body}).
+----
+
+With a body of `Monday & Tuesday` the template renders `Monday &amp; Tuesday`.
+The same works with `$variables.esc.html(...)`, `$variables.esc.json(...)`, `$variables.esc.sql(...)`, and `$variables.esc.url(...)`.
+
+TIP: A message header works the same way (`setHeader("esc", constant(new EscapeTool()))` and `$headers.esc` in the template),
+but a variable keeps the tool out of the message, so it is not sent along to the next endpoint.
+
 === Hot reloading
 
 The Velocity template resource is, by default, hot reloadable for both
