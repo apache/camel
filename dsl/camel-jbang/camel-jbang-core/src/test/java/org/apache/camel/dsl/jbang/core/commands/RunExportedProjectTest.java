@@ -75,8 +75,13 @@ class RunExportedProjectTest extends CamelCommandBaseTestSupport {
 
         List<String> limits = run.buildDurationLimitArgs();
         assertThat(limits).containsExactly("-Dcamel.main.durationMaxSeconds=30");
-        assertThat(run.buildExistingProjectSystemProperties("server.port")).containsAll(limits);
+        // exported project (camel run foo.yaml --runtime=quarkus|spring-boot)
         assertThat(run.buildExportedRunJvmArgs()).isEqualTo(String.join(" ", limits));
+        // existing project (camel run pom.xml), per runtime
+        assertThat(run.buildExistingQuarkusJvmArgs("my-app")).containsAll(limits);
+        assertThat(run.buildExistingSpringBootJvmArgs()).containsAll(limits);
+        assertThat(run.buildExistingCamelMainSystemProperties("my-app", dir.resolve("log4j2.properties")))
+                .containsAll(limits);
     }
 
     @Test
