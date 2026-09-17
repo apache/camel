@@ -24,8 +24,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -153,13 +155,9 @@ class ExportSpringBoot extends Export {
             }
             if (hawtio) {
                 // spring boot needs these options configured to support hawtio
-                String s = prop.getProperty("management.endpoints.web.exposure.include");
-                if (s == null) {
-                    s = "hawtio,jolokia";
-                } else {
-                    s = s + ",hawtio,jolokia";
-                }
-                prop.setProperty("management.endpoints.web.exposure.include", s);
+                prop.setProperty("management.endpoints.web.exposure.include",
+                        exposeActuatorEndpoints(prop.getProperty("management.endpoints.web.exposure.include"),
+                                "hawtio", "jolokia"));
                 prop.setProperty("spring.jmx.enabled", "true");
                 prop.setProperty("hawtio.authenticationEnabled", "false");
             }
@@ -173,7 +171,7 @@ class ExportSpringBoot extends Export {
                 if (exposed == null && observe) {
                     exposed = "health,prometheus";
                 }
-                exposed = exposed == null ? "camel" : exposed + ",camel";
+                exposed = exposeActuatorEndpoints(exposed, "camel");
                 if (isConsoleInApplicationProperties()) {
                     prop.put("management.endpoints.web.exposure.include", exposed);
                 } else {
@@ -452,6 +450,27 @@ class ExportSpringBoot extends Export {
         }
 
         return answer;
+    }
+
+    /**
+     * The value of {@code management.endpoints.web.exposure.include} with the given actuator endpoint ids added to the
+     * ids that are already exposed (without duplicates).
+     */
+    static String exposeActuatorEndpoints(String exposed, String... ids) {
+        Set<String> answer = new LinkedHashSet<>();
+        if (exposed != null) {
+            if (exposed.contains("*")) {
+                // all endpoints are exposed already
+                return exposed;
+            }
+            for (String id : exposed.split(",")) {
+                if (!id.isBlank()) {
+                    answer.add(id.trim());
+                }
+            }
+        }
+        answer.addAll(Arrays.asList(ids));
+        return String.join(",", answer);
     }
 
     private void createMainClassSource(Path srcJavaDir, String packageName, String mainClassname) throws Exception {
