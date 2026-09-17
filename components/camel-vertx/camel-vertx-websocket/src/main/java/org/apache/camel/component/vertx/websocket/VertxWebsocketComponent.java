@@ -202,10 +202,16 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         VertxWebsocketEndpoint endpoint = consumer.getEndpoint();
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
         VertxWebsocketHostKey hostKey = createHostKey(configuration.getWebsocketURI());
-        VertxWebsocketHost vertxWebsocketHost = vertxHostRegistry.remove(hostKey);
+        VertxWebsocketHost vertxWebsocketHost = vertxHostRegistry.get(hostKey);
 
         if (vertxWebsocketHost != null) {
             vertxWebsocketHost.disconnect(configuration.getWebsocketURI().getPath());
+
+            // every consumer on this host and port shares the one host, which stops its server as its last
+            // consumer goes. Forgetting it any earlier would leave the consumers still on it unable to disconnect
+            if (!vertxWebsocketHost.isServingConsumers()) {
+                vertxHostRegistry.remove(hostKey, vertxWebsocketHost);
+            }
         }
     }
 

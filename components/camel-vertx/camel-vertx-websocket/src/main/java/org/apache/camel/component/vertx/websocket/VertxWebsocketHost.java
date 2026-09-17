@@ -17,10 +17,10 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
@@ -51,7 +51,8 @@ public class VertxWebsocketHost {
 
     private final VertxWebsocketHostConfiguration hostConfiguration;
     private final VertxWebsocketHostKey hostKey;
-    private final Map<String, Route> routeRegistry = new HashMap<>();
+    // routes are added and removed as consumers start and stop, which the route controller can do concurrently
+    private final Map<String, Route> routeRegistry = new ConcurrentHashMap<>();
     private final List<VertxWebsocketPeer> connectedPeers = new CopyOnWriteArrayList<>(); // thread-safe
     private final CamelContext camelContext;
     private HttpServer server;
@@ -162,7 +163,9 @@ public class VertxWebsocketHost {
     public void disconnect(String path) {
         LOG.info("Disconnected consumer for path {}", path);
         Route route = routeRegistry.remove(path);
-        route.remove();
+        if (route != null) {
+            route.remove();
+        }
         if (routeRegistry.isEmpty()) {
             try {
                 stop();
@@ -234,6 +237,14 @@ public class VertxWebsocketHost {
         connectedPeers.clear();
         routeRegistry.clear();
         port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
+    }
+
+    /**
+     * Whether this host still serves any consumer. Every consumer bound to the same host and port shares one instance,
+     * so the host outlives the first consumer that stops, and only once the last one goes is its server stopped.
+     */
+    public boolean isServingConsumers() {
+        return !routeRegistry.isEmpty();
     }
 
     /**
