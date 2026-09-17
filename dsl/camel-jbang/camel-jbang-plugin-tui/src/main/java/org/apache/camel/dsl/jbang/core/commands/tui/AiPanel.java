@@ -74,6 +74,7 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonObject;
@@ -334,14 +335,20 @@ class AiPanel {
      * {@code toolCalls} TUI tool calls the model made.
      */
     record ConversationEntry(AiRole role, String text, long elapsedMs, long aiMs, long toolMs, int toolCalls,
-            int totalTokens, int requests, boolean limitReached, int contextPercent) {
+            int totalTokens, int requests, boolean limitReached, int contextPercent, int corrections, String note) {
         ConversationEntry(AiRole role, String text) {
-            this(role, text, -1, 0, 0, 0, 0, 0, false, 0);
+            this(role, text, -1, 0, 0, 0, 0, 0, false, 0, 0, null);
         }
 
         ConversationEntry(AiRole role, String text, long elapsedMs, long aiMs, long toolMs, int toolCalls,
                           int totalTokens) {
-            this(role, text, elapsedMs, aiMs, toolMs, toolCalls, totalTokens, 0, false, 0);
+            this(role, text, elapsedMs, aiMs, toolMs, toolCalls, totalTokens, 0, false, 0, 0, null);
+        }
+
+        ConversationEntry(AiRole role, String text, long elapsedMs, long aiMs, long toolMs, int toolCalls,
+                          int totalTokens, int requests, boolean limitReached, int contextPercent) {
+            this(role, text, elapsedMs, aiMs, toolMs, toolCalls, totalTokens, requests, limitReached, contextPercent, 0,
+                 null);
         }
 
         /** "5.2s" or, when tools were called, "5.2s, ai 4.1s, tools 1.1s/3". */
@@ -373,6 +380,9 @@ class AiPanel {
             }
             if (requests > 1) {
                 sb.append(" · ").append(requests).append(" requests");
+            }
+            if (corrections > 0) {
+                sb.append(" · ").append(corrections).append(corrections == 1 ? " correction" : " corrections");
             }
             if (totalTokens > 0) {
                 sb.append(" · ").append(LlmClient.formatTokens(totalTokens)).append(" tokens");
@@ -1495,6 +1505,7 @@ class AiPanel {
         long turnToolMs = 0;
         int turnToolCalls = 0;
         int turnRequests = 0;
+        int turnCorrections = 0;
         for (int i = 0; i < MAX_ITERATIONS; i++) {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
@@ -1565,8 +1576,19 @@ class AiPanel {
                 }
                 messages.add(LlmClient.Message.toolResults(results));
             } else {
+                // what the model says is checked like what it writes: an invalid simple expression in the answer
+                // gets one correction turn, since the answer is what the user copies (CAMEL-24805)
+                List<AnswerChecks.Problem> problems = AnswerChecks.checkSimple(response.text());
+                if (!problems.isEmpty() && turnCorrections == 0 && i < MAX_ITERATIONS - 1) {
+                    turnCorrections++;
+                    String request = correctionRequest(problems);
+                    messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
+                    messages.add(LlmClient.Message.user(request));
+                    log(LogLevel.RESULT, "Answer check: invalid simple expression, asking for a fix", request);
+                    continue;
+                }
                 completeTurn(response.text(), false, totalUsage, turnAiMs, turnToolMs, turnToolCalls, turnRequests,
-                        messages);
+                        turnCorrections, problems, messages);
                 return;
             }
         }
@@ -1603,8 +1625,9 @@ class AiPanel {
             }
         }
         if (wrapUp != null && wrapUp.text() != null && !wrapUp.text().isBlank()) {
+            // no round trip left for a correction: the answer is shown with what the check found
             completeTurn(wrapUp.text(), true, totalUsage, turnAiMs, turnToolMs, turnToolCalls, turnRequests,
-                    messages);
+                    turnCorrections, AnswerChecks.checkSimple(wrapUp.text()), messages);
             return;
         }
 
@@ -1632,17 +1655,20 @@ class AiPanel {
      */
     private void completeTurn(
             String text, boolean wrapUp, LlmClient.TokenUsage totalUsage, long turnAiMs, long turnToolMs,
-            int turnToolCalls, int turnRequests, List<LlmClient.Message> messages) {
+            int turnToolCalls, int turnRequests, int corrections, List<AnswerChecks.Problem> problems,
+            List<LlmClient.Message> messages) {
         sessionTotalTokens += totalUsage.totalTokens();
         if (text != null && !text.isBlank()) {
             long elapsed = System.currentTimeMillis() - thinkingStartTime;
+            String note = problems.isEmpty() ? null : answerNote(problems);
             ConversationEntry entry = new ConversationEntry(
                     AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
-                    totalUsage.totalTokens(), turnRequests, wrapUp, contextFillPercent());
+                    totalUsage.totalTokens(), turnRequests, wrapUp, contextFillPercent(), corrections, note);
             conversation.add(entry);
             turnTimings.add(new long[] { turnAiMs, turnToolMs, turnToolCalls });
             String label = wrapUp ? "Response after reaching the tool call limit (" : "Response (";
-            log(LogLevel.RESPONSE, label + entry.byline() + describeCacheSignal(totalUsage) + ")", text);
+            log(LogLevel.RESPONSE, label + entry.byline() + describeCacheSignal(totalUsage) + ")",
+                    note == null ? text : text + "\n\n" + note);
         } else {
             String err = "Empty response from LLM.";
             conversation.add(new ConversationEntry(AiRole.ERROR, err));
@@ -1803,6 +1829,36 @@ class AiPanel {
      */
     private static String formatToolTime(long millis) {
         return millis < 1000 ? millis + "ms" : formatSeconds(millis);
+    }
+
+    /**
+     * The one correction turn a model gets when its answer has an invalid simple expression: what is wrong, the rule it
+     * broke, and to send the whole answer again. Worded so the fake clients of the tests and the log recognise it.
+     */
+    static String correctionRequest(List<AnswerChecks.Problem> problems) {
+        StringBuilder sb = new StringBuilder("Your answer contains ");
+        sb.append(problems.size() == 1 ? "an invalid simple expression" : "invalid simple expressions").append(":\n");
+        for (AnswerChecks.Problem p : problems) {
+            sb.append("- ").append(p.message()).append('\n');
+        }
+        sb.append("Rule: functions and values go inside ${...}, operators go between placeholders with spaces:")
+                .append(" ${header.user} ?: 'Guest', ${header.a} == 'b', ${body} != null.")
+                .append(" Send the whole answer again with the expressions fixed; do not call a tool.");
+        return sb.toString();
+    }
+
+    /** The line under an answer whose simple expressions the model did not fix, so the user is not misled. */
+    static String answerNote(List<AnswerChecks.Problem> problems) {
+        StringBuilder sb = new StringBuilder("**Simple check:** ");
+        if (problems.size() == 1) {
+            sb.append("`").append(problems.get(0).expression()).append("` is invalid: ").append(problems.get(0).error());
+        } else {
+            sb.append(problems.size()).append(" expressions are invalid:");
+            for (AnswerChecks.Problem p : problems) {
+                sb.append("\n- `").append(p.expression()).append("`: ").append(p.error());
+            }
+        }
+        return sb.toString();
     }
 
     private static String summarize(String text, int max) {
@@ -2391,7 +2447,12 @@ class AiPanel {
         for (ConversationEntry entry : conversation) {
             switch (entry.role()) {
                 case USER -> md.append("> ").append(entry.text().replace("\n", "\n> ")).append("\n\n");
-                case ASSISTANT -> md.append(toHardBreaks(entry.text())).append("\n\n");
+                case ASSISTANT -> {
+                    md.append(toHardBreaks(entry.text())).append("\n\n");
+                    if (entry.note() != null) {
+                        md.append(entry.note()).append("\n\n");
+                    }
+                }
                 case ERROR -> md.append("**Error:** ").append(entry.text()).append("\n\n");
                 case SYSTEM -> md.append(toHardBreaks(entry.text())).append("\n\n");
             }

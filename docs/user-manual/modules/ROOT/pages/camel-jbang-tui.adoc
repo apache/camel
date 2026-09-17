@@ -1133,6 +1133,17 @@ yellow from 10 requests, and the total time yellow from 30 seconds and orange fr
 that runs into the limit is usually a tool that makes the model guess, not a weak model: the AI log
 shows which one.
 
+What the model says is checked like what it writes. A file goes through the validator before
+`camel_write_file` writes it; the answer shown in the chat is what you copy, so its simple expressions
+are checked against the catalog too: the `${...}` placeholders in the text and in Java or XML code
+blocks, and the `simple:` values and log messages of YAML blocks. A small model tends to put the
+operator inside the placeholder (`${header.user ?: 'Guest'}` instead of `${header.user} ?: 'Guest'`).
+When the check finds such an expression the panel sends the answer back to the model once, with what is
+wrong and the rule, and shows the corrected answer with `1 correction` in the byline. When the model
+does not fix it the answer is shown as it is with a *Simple check* line under it naming the expression
+and the error, and the AI log has the exchange. Placeholders that are not simple (a Maven
+`${camel-version}`, a shell variable) are left alone.
+
 Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
 the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),
 the latter taken from OpenTelemetry GenAI spans when observability is enabled on the integration. The
