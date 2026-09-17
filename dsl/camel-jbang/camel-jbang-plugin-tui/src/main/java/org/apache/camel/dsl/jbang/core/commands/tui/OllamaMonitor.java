@@ -409,6 +409,7 @@ final class OllamaMonitor {
     private final LinkedHashSet<String> seenSpanIds = new LinkedHashSet<>();
     private SessionTotals totals = SessionTotals.EMPTY;
     private long lastTuiPromptTokens;
+    private int lastTuiQuestion;
     private final TokenRateWindow decodeWindow = new TokenRateWindow(RATE_WINDOW_MS);
     private final TokenRateWindow prefillWindow = new TokenRateWindow(RATE_WINDOW_MS);
     private final long[] decodeHistory = new long[HISTORY_POINTS];
@@ -618,6 +619,7 @@ final class OllamaMonitor {
             requests.clear();
             totals = SessionTotals.EMPTY;
             lastTuiPromptTokens = 0;
+            lastTuiQuestion = 0;
             Arrays.fill(decodeHistory, 0);
             decodeWindow.clear();
             prefillWindow.clear();
@@ -633,13 +635,17 @@ final class OllamaMonitor {
     }
 
     private void addRequest(RequestEntry entry) {
-        // an AI panel prompt that shrinks by a fifth or more against the previous turn means the history was
-        // compacted (or a new conversation started); either way the context was freed
+        // the first prompt of a question that is a fifth or more smaller than the last prompt of the previous
+        // question means the history was compacted between the two (or a new conversation started); either way the
+        // context was freed. Within a question prompts only grow, so a smaller step (the wrap-up after the tool call
+        // limit) is not a compaction.
         boolean compaction = false;
         if (entry.source() == RequestSource.TUI) {
-            if (lastTuiPromptTokens > 0 && entry.promptTokens() < lastTuiPromptTokens * 0.8) {
+            boolean newQuestion = entry.question() == 0 || entry.question() != lastTuiQuestion;
+            if (newQuestion && lastTuiPromptTokens > 0 && entry.promptTokens() < lastTuiPromptTokens * 0.8) {
                 compaction = true;
             }
+            lastTuiQuestion = entry.question();
             lastTuiPromptTokens = entry.promptTokens();
         }
         requests.addFirst(entry);

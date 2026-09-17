@@ -334,9 +334,14 @@ class AiPanel {
      * {@code toolCalls} TUI tool calls the model made.
      */
     record ConversationEntry(AiRole role, String text, long elapsedMs, long aiMs, long toolMs, int toolCalls,
-            int totalTokens) {
+            int totalTokens, int requests, boolean limitReached, int contextPercent) {
         ConversationEntry(AiRole role, String text) {
-            this(role, text, -1, 0, 0, 0, 0);
+            this(role, text, -1, 0, 0, 0, 0, 0, false, 0);
+        }
+
+        ConversationEntry(AiRole role, String text, long elapsedMs, long aiMs, long toolMs, int toolCalls,
+                          int totalTokens) {
+            this(role, text, elapsedMs, aiMs, toolMs, toolCalls, totalTokens, 0, false, 0);
         }
 
         /** "5.2s" or, when tools were called, "5.2s, ai 4.1s, tools 1.1s/3". */
@@ -346,6 +351,36 @@ class AiPanel {
                 t += ", ai " + formatSeconds(aiMs) + ", tools " + formatSeconds(toolMs) + "/" + toolCalls;
             }
             return t;
+        }
+
+        /**
+         * The line under an answer: what the question cost in plain words. "61.1s · 25 tool calls, limit reached · 26
+         * requests · 231.3k tokens · ctx 18%". The requests are the model round trips, which is what a local model pays
+         * for and what the Ollama tab counts per question; the tool time is named only when it mattered.
+         */
+        String byline() {
+            StringBuilder sb = new StringBuilder(formatSeconds(elapsedMs));
+            if (toolCalls > 0) {
+                sb.append(" · ").append(toolCalls).append(toolCalls == 1 ? " tool call" : " tool calls");
+                if (limitReached) {
+                    sb.append(", limit reached");
+                }
+                if (toolMs >= 1000) {
+                    sb.append(" (").append(formatSeconds(toolMs)).append(" in tools)");
+                }
+            } else if (limitReached) {
+                sb.append(" · limit reached");
+            }
+            if (requests > 1) {
+                sb.append(" · ").append(requests).append(" requests");
+            }
+            if (totalTokens > 0) {
+                sb.append(" · ").append(LlmClient.formatTokens(totalTokens)).append(" tokens");
+            }
+            if (contextPercent > 0) {
+                sb.append(" · ctx ").append(contextPercent).append('%');
+            }
+            return sb.toString();
         }
     }
 
@@ -1418,6 +1453,7 @@ class AiPanel {
         long turnAiMs = 0;
         long turnToolMs = 0;
         int turnToolCalls = 0;
+        int turnRequests = 0;
         for (int i = 0; i < MAX_ITERATIONS; i++) {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
@@ -1434,8 +1470,9 @@ class AiPanel {
                 log(LogLevel.ERROR, "Error", err);
                 return;
             }
+            turnRequests++;
             totalUsage = totalUsage.add(response.usage());
-            recordUsage(response, callLatency);
+            recordUsage(response, callLatency, null);
 
             // check for error response (null text, no tool calls, error stop reason)
             if ("error".equals(response.stopReason())
@@ -1487,28 +1524,47 @@ class AiPanel {
                 }
                 messages.add(LlmClient.Message.toolResults(results));
             } else {
-                completeTurn(response.text(), false, totalUsage, turnAiMs, turnToolMs, turnToolCalls, messages);
+                completeTurn(response.text(), false, totalUsage, turnAiMs, turnToolMs, turnToolCalls, turnRequests,
+                        messages);
                 return;
             }
         }
 
-        // out of round trips: ask the model once more, without tools, so the user gets an answer rather than an error
+        // out of round trips: ask the model once more to answer with what it has. The tool definitions stay in the
+        // request so the prompt prefix is unchanged and a local server serves it from its cache; dropping them
+        // changed the prefix and cost a full re-prefill (13 s for 8k tokens measured). A tool call in the reply is
+        // ignored.
         messages.add(LlmClient.Message.user(
                 "You have used all " + MAX_ITERATIONS + " tool calls available for this question and cannot call any"
-                                            + " more. Answer now: summarize what you did, what you found, what"
-                                            + " failed, and what the user could try next."));
+                                            + " more; do not call a tool. Answer now: summarize what you did, what"
+                                            + " you found, what failed, and what the user could try next."));
         long wrapUpStart = System.currentTimeMillis();
         drainClientOutput();
-        LlmClient.ChatResponse wrapUp = client.chatWithTools(systemPrompt, messages, List.of());
+        LlmClient.ChatResponse wrapUp = client.chatWithTools(systemPrompt, messages, tools);
         long wrapUpLatency = System.currentTimeMillis() - wrapUpStart;
         turnAiMs += wrapUpLatency;
         if (wrapUp != null) {
+            turnRequests++;
             totalUsage = totalUsage.add(wrapUp.usage());
-            recordUsage(wrapUp, wrapUpLatency);
-            if (wrapUp.text() != null && !wrapUp.text().isBlank()) {
-                completeTurn(wrapUp.text(), true, totalUsage, turnAiMs, turnToolMs, turnToolCalls, messages);
-                return;
+            recordUsage(wrapUp, wrapUpLatency, "limit");
+        }
+        if (wrapUp == null || wrapUp.text() == null || wrapUp.text().isBlank()) {
+            // the model called a tool regardless: once more without any tool to call, at the price of the prefix
+            wrapUpStart = System.currentTimeMillis();
+            drainClientOutput();
+            wrapUp = client.chatWithTools(systemPrompt, messages, List.of());
+            wrapUpLatency = System.currentTimeMillis() - wrapUpStart;
+            turnAiMs += wrapUpLatency;
+            if (wrapUp != null) {
+                turnRequests++;
+                totalUsage = totalUsage.add(wrapUp.usage());
+                recordUsage(wrapUp, wrapUpLatency, "limit");
             }
+        }
+        if (wrapUp != null && wrapUp.text() != null && !wrapUp.text().isBlank()) {
+            completeTurn(wrapUp.text(), true, totalUsage, turnAiMs, turnToolMs, turnToolCalls, turnRequests,
+                    messages);
+            return;
         }
 
         StringBuilder sb = new StringBuilder();
@@ -1535,20 +1591,17 @@ class AiPanel {
      */
     private void completeTurn(
             String text, boolean wrapUp, LlmClient.TokenUsage totalUsage, long turnAiMs, long turnToolMs,
-            int turnToolCalls, List<LlmClient.Message> messages) {
+            int turnToolCalls, int turnRequests, List<LlmClient.Message> messages) {
         sessionTotalTokens += totalUsage.totalTokens();
         if (text != null && !text.isBlank()) {
             long elapsed = System.currentTimeMillis() - thinkingStartTime;
             ConversationEntry entry = new ConversationEntry(
                     AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
-                    totalUsage.totalTokens());
+                    totalUsage.totalTokens(), turnRequests, wrapUp, contextFillPercent());
             conversation.add(entry);
             turnTimings.add(new long[] { turnAiMs, turnToolMs, turnToolCalls });
-            String tokenInfo = totalUsage.totalTokens() > 0
-                    ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
-                    : "";
             String label = wrapUp ? "Response after reaching the tool call limit (" : "Response (";
-            log(LogLevel.RESPONSE, label + entry.timing() + tokenInfo + describeCacheSignal(totalUsage) + ")", text);
+            log(LogLevel.RESPONSE, label + entry.byline() + describeCacheSignal(totalUsage) + ")", text);
         } else {
             String err = "Empty response from LLM.";
             conversation.add(new ConversationEntry(AiRole.ERROR, err));
@@ -2103,7 +2156,8 @@ class AiPanel {
         return null;
     }
 
-    private void recordUsage(LlmClient.ChatResponse response, long latencyMs) {
+    /** {@code reasonOverride} replaces the provider's stop reason on the Ollama tab, e.g. "limit" for the wrap-up. */
+    private void recordUsage(LlmClient.ChatResponse response, long latencyMs, String reasonOverride) {
         if (client == null || response.usage().totalTokens() == 0) {
             return;
         }
@@ -2119,8 +2173,8 @@ class AiPanel {
         if (ctx != null && ctx.ollamaMonitor != null && client.apiType() == LlmClient.ApiType.ollama) {
             // the Ollama tab shows this request with the timings Ollama returned
             ctx.ollamaMonitor.adoptEndpoint(client.endpointUrl());
-            ctx.ollamaMonitor.recordRequest(model, response.usage(), latencyMs, response.stopReason(),
-                    questionCounter, currentQuestion);
+            ctx.ollamaMonitor.recordRequest(model, response.usage(), latencyMs,
+                    reasonOverride != null ? reasonOverride : response.stopReason(), questionCounter, currentQuestion);
             ctx.ollamaMonitor.setPanelContext(knownContextWindow, compactionBudgetTokens(true, knownContextWindow));
         }
     }
@@ -2304,14 +2358,12 @@ class AiPanel {
 
         // Show elapsed time and token count as a dimmed line below the markdown when at the bottom
         long lastElapsed = -1;
-        String lastTiming = "";
-        int lastTokens = 0;
+        String lastByline = "";
         if (!thinking.get() && !conversation.isEmpty()) {
             ConversationEntry last = conversation.get(conversation.size() - 1);
             if (last.role() == AiRole.ASSISTANT && last.elapsedMs() >= 0) {
                 lastElapsed = last.elapsedMs();
-                lastTiming = last.timing();
-                lastTokens = last.totalTokens();
+                lastByline = last.byline();
             }
         }
 
@@ -2374,10 +2426,9 @@ class AiPanel {
         }
 
         if (elapsedArea != null && lastElapsed >= 0) {
-            String tokenSuffix = lastTokens > 0 ? ", " + LlmClient.formatTokens(lastTokens) + " tokens" : "";
             frame.renderWidget(
                     Paragraph.from(
-                            Line.from(Span.styled("(" + lastTiming + tokenSuffix + ")", Style.EMPTY.dim()))),
+                            Line.from(Span.styled("(" + lastByline + ")", Style.EMPTY.dim()))),
                     elapsedArea);
         }
         if (statusArea != null) {
@@ -3318,12 +3369,18 @@ class AiPanel {
 
     /** {@code , ctx 34%}: the measured prompt against the window, for the title; empty until both are known. */
     private String describeContextFillSuffix() {
+        int fill = contextFillPercent();
+        return fill > 0 ? ", ctx " + fill + "%" : "";
+    }
+
+    /** The measured prompt against the window in percent, 0 until both are known. */
+    private int contextFillPercent() {
         int window = knownContextWindow;
         int measured = lastMeasuredPromptTokens;
         if (window <= 0 || measured <= 0) {
-            return "";
+            return 0;
         }
-        return ", ctx " + (measured * 100L / window) + "%";
+        return (int) (measured * 100L / window);
     }
 
     /** The title's context figure, empty until the agent reports one. */

@@ -1121,6 +1121,14 @@ cycles backward.
 Submitted prompts (including slash commands) participate in AI prompt history when
 `camel.tui.ai.promptHistory` is not `0`. Use *↑*/*↓* on the prompt line to recall them.
 
+Every answer ends with a byline saying what the question cost: the time it took, how many tools the
+model called and the time spent in them, the number of requests, the tokens and, with Ollama, how full
+the context window got (for example `61.1s · 25 tool calls, limit reached (2.5s in tools) · 26 requests
+· 231.3k tokens · ctx 18%`). The panel allows 25 tool calls per question. When the model reaches that
+the byline says `limit reached`, the panel asks the model to answer from what it has found so far, and
+the <<_ollama>> tab shows `limit` as the reason for that question. A question that runs into the limit
+is usually a tool that makes the model guess, not a weak model: the AI log shows which one.
+
 Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
 the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),
 the latter taken from OpenTelemetry GenAI spans when observability is enabled on the integration. The

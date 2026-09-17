@@ -137,7 +137,7 @@ Camel route is one line of its own.
 | DECODE | Generated tokens per second across the steps | Same for this request |
 | TTFT | Time to the first token of the first step (load plus prefill), yellow after a cold start | Time to first token of this request |
 | TOTAL | From the first request starting to the last finishing: what you waited | This request as Ollama measured it |
-| REASON | Why the last step stopped: `stop`, `length` (hit the token limit) | `tool_calls` for every step but the last |
+| REASON | Why the last step stopped: `stop`, `length` (hit the token limit), `limit` (the AI panel's tool-call limit ended the question; the answer summarises what was found) | `tool_calls` for every step but the last |
 
 Route requests show `-` for prefill, decode and TTFT because the GenAI
 span carries tokens and duration only.

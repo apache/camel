@@ -630,7 +630,7 @@ class OllamaTab extends AbstractTab {
                 rightCell(g.hasTimings() ? formatSeconds(g.ttftMs()) : "-", 7,
                         g.coldStart() ? Theme.warning() : Style.EMPTY),
                 rightCell(g.wallMs() > 0 ? formatSeconds(g.wallMs()) : "-", 7),
-                Cell.from(Span.styled(" " + (g.doneReason() != null ? g.doneReason() : ""), Theme.muted())));
+                Cell.from(Span.styled(" " + (g.doneReason() != null ? g.doneReason() : ""), reasonStyle(g.doneReason()))));
     }
 
     /** One request of an unfolded question: step number, the model, and that request's own figures. */
@@ -649,7 +649,13 @@ class OllamaTab extends AbstractTab {
                 rightCell(e.hasTimings() ? formatSeconds(e.ttftMs()) : "-", 7,
                         e.coldStart() ? Theme.warning() : Theme.muted()),
                 rightCell(e.totalMs() > 0 ? formatSeconds(e.totalMs()) : "-", 7, Theme.muted()),
-                Cell.from(Span.styled(" " + (e.doneReason() != null ? e.doneReason() : ""), Theme.muted().dim())));
+                Cell.from(Span.styled(" " + (e.doneReason() != null ? e.doneReason() : ""),
+                        "limit".equals(e.doneReason()) ? Theme.warning() : Theme.muted().dim())));
+    }
+
+    /** "limit" (the AI panel's tool-call limit ended the question) and "length" (the token limit) stand out. */
+    private static Style reasonStyle(String reason) {
+        return "limit".equals(reason) || "length".equals(reason) ? Theme.warning() : Theme.muted();
     }
 
     static String firstLine(String text) {

@@ -280,6 +280,26 @@ class OllamaMonitorTest {
     }
 
     @Test
+    void aSmallerStepWithinAQuestionIsNotACompactionButASmallerNextQuestionIs() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.updateModels(List.of(new OllamaMonitor.LoadedModel(
+                "m", "f", "35.5B", "Q4_K_M", 1, 1, 32_768, null, null)));
+        // question 3 grows over its steps, then the wrap-up after the tool-call limit is smaller: no compaction
+        monitor.recordRequest("m", new LlmClient.TokenUsage(20_000, 40, 20_040, 19_000, 300, 700, 0, 1_000), 0,
+                "tool_calls", 3, "q3");
+        monitor.recordRequest("m", new LlmClient.TokenUsage(24_000, 40, 24_040, 23_000, 300, 700, 0, 1_000), 0,
+                "tool_calls", 3, "q3");
+        monitor.recordRequest("m", new LlmClient.TokenUsage(15_000, 200, 15_200, 0, 20_000, 3_000, 0, 23_000), 0,
+                "limit", 3, "q3");
+        assertEquals(0, monitor.snapshot().totals().compactions());
+        // the next question starts far below where the previous one ended: that is a compaction
+        monitor.recordRequest("m", new LlmClient.TokenUsage(9_000, 40, 9_040, 0, 900, 700, 0, 1_600), 0,
+                "stop", 4, "q4");
+        assertEquals(1, monitor.snapshot().totals().compactions());
+        assertEquals("limit", OllamaMonitor.groupByQuestion(monitor.snapshot().requests()).get(1).doneReason());
+    }
+
+    @Test
     void availabilityFollowsTheServer() {
         OllamaMonitor monitor = new OllamaMonitor();
         assertFalse(monitor.isAvailable());
