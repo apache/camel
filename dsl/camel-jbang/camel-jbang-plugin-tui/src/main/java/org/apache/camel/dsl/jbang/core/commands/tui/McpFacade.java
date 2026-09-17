@@ -1065,7 +1065,9 @@ class McpFacade {
             for (RouteInfo r : target.routes) {
                 if (r.source != null && !r.source.isBlank()) {
                     JsonObject j = new JsonObject();
-                    j.put("routeId", r.routeId);
+                    if (r.routeId != null) {
+                        j.put("routeId", r.routeId);
+                    }
                     j.put("source", r.source);
                     routes.add(j);
                 }
