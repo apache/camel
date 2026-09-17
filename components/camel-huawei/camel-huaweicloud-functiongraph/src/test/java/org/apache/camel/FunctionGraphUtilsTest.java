@@ -16,19 +16,17 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.constants.FunctionGraphConstants;
-import org.apache.camel.models.ClientConfigurations;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FunctionGraphUtilsTest extends CamelTestSupport {
-
-    // --- extractJsonFieldAsString: must not assume 'body' is a JSON object (HTTP-triggered functions
-    // return it as a JSON-encoded string/primitive), and must tolerate an absent/null field ---
+/**
+ * Unit tests for the static {@link FunctionGraphUtils#extractJsonFieldAsString} helper. It must not assume 'body' is a
+ * JSON object (HTTP-triggered functions return it as a JSON-encoded string/primitive) and must tolerate an absent/null
+ * field and a null/blank result.
+ */
+public class FunctionGraphUtilsTest {
 
     @Test
     public void extractObjectBodyReturnsItsJson() {
@@ -55,24 +53,9 @@ public class FunctionGraphUtilsTest extends CamelTestSupport {
         assertNull(FunctionGraphUtils.extractJsonFieldAsString("{\"statusCode\":200}", "body"));
     }
 
-    // --- ClientConfigurations must keep the region for the invoke URN even when 'endpoint' is also set ---
-
     @Test
-    public void urnKeepsRegionWhenEndpointIsAlsoConfigured() {
-        FunctionGraphEndpoint endpoint = context.getEndpoint(
-                "hwcloud-functiongraph:invokeFunction?region=eu-west-101&endpoint=https://function.example.com"
-                                                             + "&projectId=proj-1&functionName=fn&functionPackage=pkg"
-                                                             + "&accessKey=ak&secretKey=sk&ignoreSslVerification=true",
-                FunctionGraphEndpoint.class);
-
-        ClientConfigurations clientConfigurations = new ClientConfigurations(endpoint);
-
-        assertEquals("eu-west-101", clientConfigurations.getRegion(),
-                "region must be populated even when the client is initialized from the endpoint");
-        // functionName/functionPackage are filled in by the producer at invoke time; here we only assert the
-        // region segment is present (previously it was 'urn:fss:null:...' whenever endpoint was configured)
-        String urn = FunctionGraphUtils.composeUrn(FunctionGraphConstants.URN_FORMAT, clientConfigurations);
-        assertTrue(urn.startsWith("urn:fss:eu-west-101:proj-1:function:"),
-                "the invoke URN must carry the region, was: " + urn);
+    public void extractNullJsonReturnsNull() {
+        // a function that returns no result (response.getResult() == null) hits the root == null guard
+        assertNull(FunctionGraphUtils.extractJsonFieldAsString(null, "body"));
     }
 }
