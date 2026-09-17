@@ -422,6 +422,10 @@ public class Splitter extends MulticastProcessor {
                         }
                         if (part instanceof Message message) {
                             newExchange.setIn(message);
+                        } else if (part instanceof Exchange partExchange) {
+                            // copy (do not adopt) the message, so the exchange owning the part, such as the batch
+                            // exchange of a batching consumer, is left untouched when the child exchange completes
+                            newExchange.getIn().copyFrom(partExchange.getMessage());
                         } else {
                             Message in = newExchange.getIn();
                             in.setBody(part);
