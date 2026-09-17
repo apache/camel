@@ -40,15 +40,30 @@ class OllamaDoctorSupportTest {
         }
     }
 
+    /**
+     * {@code detect} is a discovery: an explicit URL that does not answer is not the end of it, the client goes on to
+     * the {@code camel infra run ollama} PID files and the default {@code localhost:11434}, which is what a doctor
+     * probe is for. So the outcome for an unreachable URL depends on the host: nothing found when the host has no
+     * Ollama, the host's own Ollama otherwise, and never the unreachable URL itself. Asserting only "not running"
+     * failed on every machine with Ollama running (CAMEL-24772).
+     */
     @Test
-    void detectReturnsNotRunningWhenEndpointUnreachable() {
-        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl("http://127.0.0.1:1");
+    void anUnreachableUrlFallsBackToDiscoveryOfTheHostsOwnOllama() {
+        LlmClient discovery = LlmClient.create().withApiType(LlmClient.ApiType.ollama);
+        boolean hostHasOllama = discovery.detectEndpoint();
 
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl("http://127.0.0.1:1");
         OllamaDoctorSupport.Status status = OllamaDoctorSupport.detect(client);
 
-        assertThat(status.running()).isFalse();
-        assertThat(status.baseUrl()).isNull();
-        assertThat(status.models()).isEmpty();
+        if (hostHasOllama) {
+            assertThat(status.running()).isTrue();
+            assertThat(status.baseUrl()).isEqualTo(discovery.endpointUrl()).isNotEqualTo("http://127.0.0.1:1");
+            assertThat(status.models()).isNotNull();
+        } else {
+            assertThat(status.running()).isFalse();
+            assertThat(status.baseUrl()).isNull();
+            assertThat(status.models()).isEmpty();
+        }
     }
 
     @Test
