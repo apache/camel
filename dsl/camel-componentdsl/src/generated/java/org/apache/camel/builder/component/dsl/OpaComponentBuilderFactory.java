@@ -309,6 +309,27 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * How long to wait for the connection to the OPA server to be
+         * established, in rest mode. The SDK's own transport applies no timeout
+         * at all, so a server that never answers would otherwise park the
+         * calling thread indefinitely rather than letting the component fail
+         * closed.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder connectionTimeout(long connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+    
         /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
@@ -343,6 +364,26 @@ public interface OpaComponentBuilderFactory {
          */
         default OpaComponentBuilder poolSize(int poolSize) {
             doSetProperty("poolSize", poolSize);
+            return this;
+        }
+    
+        
+        /**
+         * How long to wait for the decision once connected, in rest mode. A
+         * request that times out is an evaluation failure rather than a deny,
+         * so it fails closed - or proceeds when failOpen is set - like any
+         * other failure to reach a verdict.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
     
@@ -419,6 +460,43 @@ public interface OpaComponentBuilderFactory {
             doSetProperty("failOpen", failOpen);
             return this;
         }
+    
+        /**
+         * TLS configuration for the connection to the OPA server in rest mode.
+         * Needed to trust a server whose certificate comes from a private CA,
+         * and to present a client certificate to a server that requires mutual
+         * TLS - a SPIFFE X.509-SVID, for instance, so the workload
+         * authenticates to the policy decision point as itself.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+    
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
     }
 
     class OpaComponentBuilderImpl
@@ -452,12 +530,16 @@ public interface OpaComponentBuilderFactory {
             case "serverUrl": getOrCreateConfiguration((OpaComponent) component).setServerUrl((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "borrowTimeout": getOrCreateConfiguration((OpaComponent) component).setBorrowTimeout((long) value); return true;
+            case "connectionTimeout": getOrCreateConfiguration((OpaComponent) component).setConnectionTimeout((long) value); return true;
             case "opaClient": getOrCreateConfiguration((OpaComponent) component).setOpaClient((com.styra.opa.OPAClient) value); return true;
             case "poolSize": getOrCreateConfiguration((OpaComponent) component).setPoolSize((int) value); return true;
+            case "requestTimeout": getOrCreateConfiguration((OpaComponent) component).setRequestTimeout((long) value); return true;
             case "healthCheckConsumerEnabled": ((OpaComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((OpaComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "bearerToken": getOrCreateConfiguration((OpaComponent) component).setBearerToken((java.lang.String) value); return true;
             case "failOpen": getOrCreateConfiguration((OpaComponent) component).setFailOpen((boolean) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((OpaComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((OpaComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

@@ -21,6 +21,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 @UriParams
 public class OpaConfiguration implements Cloneable {
@@ -56,6 +57,14 @@ public class OpaConfiguration implements Cloneable {
     private int poolSize = 8;
     @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
     private long borrowTimeout = 30000;
+
+    @UriParam(label = "advanced", defaultValue = "10000", javaType = "java.time.Duration")
+    private long connectionTimeout = 10000;
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
+    private long requestTimeout = 30000;
+
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
 
     @UriParam(label = "security", security = "insecure:dev")
     private boolean failOpen;
@@ -216,6 +225,45 @@ public class OpaConfiguration implements Cloneable {
      */
     public void setBorrowTimeout(long borrowTimeout) {
         this.borrowTimeout = borrowTimeout;
+    }
+
+    public long getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    /**
+     * How long to wait for the connection to the OPA server to be established, in {@code rest} mode. The SDK's own
+     * transport applies no timeout at all, so a server that never answers would otherwise park the calling thread
+     * indefinitely rather than letting the component fail closed.
+     */
+    public void setConnectionTimeout(long connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    /**
+     * How long to wait for the decision once connected, in {@code rest} mode. A request that times out is an evaluation
+     * failure rather than a deny, so it fails closed - or proceeds when {@code failOpen} is set - like any other
+     * failure to reach a verdict.
+     */
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * TLS configuration for the connection to the OPA server in {@code rest} mode. Needed to trust a server whose
+     * certificate comes from a private CA, and to present a client certificate to a server that requires mutual TLS - a
+     * SPIFFE X.509-SVID, for instance, so the workload authenticates to the policy decision point as itself.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     /**

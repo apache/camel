@@ -16,14 +16,23 @@
  */
 package org.apache.camel.component.opa.security;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import javax.net.ssl.SSLContext;
+
 import com.styra.opa.OPAClient;
+import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.opa.OpaHttpClient;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
 import org.apache.camel.component.opa.OpaRestEvaluator;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AuthorizationPolicy;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -59,10 +68,14 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     private OPAClient opaClient;
 
     private boolean healthCheckEnabled = true;
+    private long connectionTimeout = 10000;
+    private long requestTimeout = 30000;
+    private SSLContextParameters sslContextParameters;
 
     private volatile OpaPolicyEvaluator evaluator;
     private volatile OpaSecurityPolicyHealthCheck healthCheck;
     private volatile boolean ownsClient;
+    private volatile SSLContext sslContext;
 
     public OpaSecurityPolicy() {
     }
@@ -76,13 +89,25 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     public void beforeWrap(Route route, NamedNode definition) {
         if (evaluator == null) {
             StringHelper.notEmpty(policyPath, "policyPath", this);
+            OpaHttpClient transport = null;
             if (opaClient == null) {
                 // createClient moved to OpaRestEvaluator when the evaluator became an abstract base
-                opaClient = OpaRestEvaluator.createClient(serverUrl, bearerToken);
+                sslContext = createSslContext(route.getCamelContext());
+                transport = OpaRestEvaluator.createTransport(
+                        bearerToken, connectionTimeout, requestTimeout, sslContext);
+                opaClient = OpaRestEvaluator.createClient(serverUrl, transport);
                 ownsClient = true;
             }
             evaluator = new OpaRestEvaluator(
-                    opaClient, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+                    opaClient, transport, policyPath, allowKey, includeHeaders, includeProperties, includeBody,
+                    failOpen);
+            // a Policy has no stop hook of its own, so the transport would outlive the routes it was built for.
+            // Registering the evaluator as a service hands its close() to the context's shutdown
+            try {
+                route.getCamelContext().addService(evaluator);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Could not register the evaluator for policy " + policyPath, e);
+            }
         }
         // after validation, so a policy that is missing its policyPath fails without leaving a ".../null" check
         // behind in the registry
@@ -105,7 +130,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         if (registry == null) {
             return;
         }
-        healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath);
+        healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath, sslContext);
         registry.register(healthCheck);
     }
 
@@ -209,6 +234,64 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      */
     public void setFailOpen(boolean failOpen) {
         this.failOpen = failOpen;
+    }
+
+    /**
+     * The policy is a bean rather than a {@code CamelContextAware} service, so the context comes from the route it is
+     * wrapping - which is the only place one is available.
+     */
+    private SSLContext createSslContext(CamelContext camelContext) {
+        if (sslContextParameters == null) {
+            return null;
+        }
+        try {
+            return sslContextParameters.createSSLContext(camelContext);
+        } catch (GeneralSecurityException | IOException e) {
+            // beforeWrap cannot throw checked exceptions, and a policy whose TLS configuration is broken must not
+            // start a route that would then talk to OPA over the JVM default trust material instead
+            throw new RuntimeCamelException("Could not build the SSLContext for policy " + policyPath, e);
+        }
+    }
+
+    public long getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    /**
+     * How long to wait for the connection to the OPA server to be established. The SDK's own transport applies no
+     * timeout, so a server that never answers would otherwise park the routing thread rather than letting the policy
+     * fail closed.
+     */
+    public void setConnectionTimeout(long connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    /**
+     * How long to wait for the decision once connected. A request that times out is an evaluation failure rather than a
+     * deny, so the policy denies the exchange unless {@code failOpen} is set.
+     */
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * TLS configuration for the connection to the OPA server. Needed to trust a server whose certificate comes from a
+     * private CA, and to present a client certificate to a server requiring mutual TLS.
+     * <p/>
+     * Note: {@code useGlobalSslContextParameters} on the {@link org.apache.camel.component.opa.OpaComponent} has no
+     * effect here. {@code OpaSecurityPolicy} is a standalone bean and is not bound to any component instance, so the
+     * global SSL context cannot be resolved automatically. Set this field explicitly when TLS is required.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public boolean isHealthCheckEnabled() {

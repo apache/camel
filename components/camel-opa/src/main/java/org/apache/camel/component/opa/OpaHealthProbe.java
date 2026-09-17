@@ -21,6 +21,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.util.FileUtil;
@@ -45,7 +49,25 @@ public final class OpaHealthProbe {
      */
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().connectTimeout(TIMEOUT).build();
 
+    /**
+     * One client per distinct TLS configuration, because an {@link SSLContext} can only be set when the client is
+     * built. A probe that ignored it would fail its handshake against the very server the decision call reaches happily
+     * - reporting DOWN, and with it an application that never becomes ready.
+     * <p/>
+     * Keyed on identity and never evicted, which is bounded in practice: the key is an {@code SSLContext} built from an
+     * endpoint's {@code sslContextParameters}, and a deployment has one or two of those, not one per exchange.
+     */
+    private static final Map<SSLContext, HttpClient> TLS_CLIENTS = new ConcurrentHashMap<>();
+
     private OpaHealthProbe() {
+    }
+
+    private static HttpClient clientFor(SSLContext sslContext) {
+        if (sslContext == null) {
+            return HTTP_CLIENT;
+        }
+        return TLS_CLIENTS.computeIfAbsent(sslContext,
+                ctx -> HttpClient.newBuilder().connectTimeout(TIMEOUT).sslContext(ctx).build());
     }
 
     /**
@@ -58,9 +80,11 @@ public final class OpaHealthProbe {
      * @param serverUrl   base URL of the OPA server, without the /v1/data suffix
      * @param bearerToken token for OPA API authentication, or null when OPA does not require one
      * @param policyPath  the policy this check is reporting for, recorded as a detail
+     * @param sslContext  the TLS configuration the decision call uses, or null for the JVM default
      */
     public static void probe(
-            HealthCheckResultBuilder builder, String serverUrl, String bearerToken, String policyPath) {
+            HealthCheckResultBuilder builder, String serverUrl, String bearerToken, String policyPath,
+            SSLContext sslContext) {
         builder.detail("opa.serverUrl", URISupport.sanitizeUri(serverUrl));
         builder.detail("opa.policyPath", policyPath);
 
@@ -75,7 +99,7 @@ public final class OpaHealthProbe {
         }
 
         try {
-            HttpResponse<Void> response = HTTP_CLIENT.send(request.build(), HttpResponse.BodyHandlers.discarding());
+            HttpResponse<Void> response = clientFor(sslContext).send(request.build(), HttpResponse.BodyHandlers.discarding());
             if (response.statusCode() == 200) {
                 builder.up();
             } else {

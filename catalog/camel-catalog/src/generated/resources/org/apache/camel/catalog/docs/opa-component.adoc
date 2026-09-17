@@ -278,6 +278,43 @@ exchanges evaluate at once, and `borrowTimeout` when a single evaluation is legi
 run long enough to matter is usually better served by `evaluationMode=rest`, where the decision point is a
 separate process that a timeout can abandon.
 
+== Connecting to the server
+
+In `rest` mode the component talks to OPA over HTTP, and both waits are bounded:
+
+* `connectionTimeout` (default 10s) — establishing the connection.
+* `requestTimeout` (default 30s) — waiting for the decision once connected.
+
+Neither is optional in practice. A refused connection fails immediately, but a server that *accepts* and then
+stops answering — wedged, mid-restart, or behind a load balancer holding the socket — would otherwise park the
+routing thread indefinitely. For a component that fails closed that is worse than a denial: it never reaches the
+point of deciding. A timeout is treated as a failure to reach a verdict, so it denies, or proceeds if `failOpen`
+is set, like any other such failure.
+
+TLS is configured with `sslContextParameters`, the usual xref:manual::camel-configuration-utilities.adoc[JSSE
+utility]:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .to("opa:authz/orders/allow?serverUrl=https://opa:8181&sslContextParameters=#opaTls")
+------------------------------------------------------------
+
+Set `useGlobalSslContextParameters=true` on the component to pick up the context-wide configuration instead.
+
+That is what lets a workload present a client certificate to an OPA server requiring mutual TLS — a SPIFFE
+X.509-SVID, for example, so the application authenticates to the policy decision point as itself rather than
+relying on network position:
+
+[source,java]
+------------------------------------------------------------
+SpiffeSSLContextParameters spiffe = new SpiffeSSLContextParameters();
+spiffe.setCamelContext(context);
+context.getRegistry().bind("opaTls", spiffe);
+------------------------------------------------------------
+
+None of this applies in `wasm` mode, where there is no server to reach.
+
 == Failure handling
 
 The component fails closed. If the policy cannot be evaluated at all — the OPA server is unreachable, times out,

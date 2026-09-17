@@ -29,6 +29,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "borrowtimeout":
         case "borrowTimeout": target.getConfiguration().setBorrowTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "entrypoint": target.getConfiguration().setEntrypoint(property(camelContext, java.lang.String.class, value)); return true;
         case "evaluationmode":
         case "evaluationMode": target.getConfiguration().setEvaluationMode(property(camelContext, java.lang.String.class, value)); return true;
@@ -48,8 +50,12 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "policyBundle": target.getConfiguration().setPolicyBundle(property(camelContext, java.lang.String.class, value)); return true;
         case "poolsize":
         case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "serverurl":
         case "serverUrl": target.getConfiguration().setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         default: return false;
         }
     }
@@ -68,6 +74,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bearerToken": return java.lang.String.class;
         case "borrowtimeout":
         case "borrowTimeout": return long.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return long.class;
         case "entrypoint": return java.lang.String.class;
         case "evaluationmode":
         case "evaluationMode": return java.lang.String.class;
@@ -87,8 +95,12 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "policyBundle": return java.lang.String.class;
         case "poolsize":
         case "poolSize": return int.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
         case "serverurl":
         case "serverUrl": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         default: return null;
         }
     }
@@ -103,6 +115,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bearerToken": return target.getConfiguration().getBearerToken();
         case "borrowtimeout":
         case "borrowTimeout": return target.getConfiguration().getBorrowTimeout();
+        case "connectiontimeout":
+        case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
         case "entrypoint": return target.getConfiguration().getEntrypoint();
         case "evaluationmode":
         case "evaluationMode": return target.getConfiguration().getEvaluationMode();
@@ -122,8 +136,12 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "policyBundle": return target.getConfiguration().getPolicyBundle();
         case "poolsize":
         case "poolSize": return target.getConfiguration().getPoolSize();
+        case "requesttimeout":
+        case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "serverurl":
         case "serverUrl": return target.getConfiguration().getServerUrl();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         default: return null;
         }
     }

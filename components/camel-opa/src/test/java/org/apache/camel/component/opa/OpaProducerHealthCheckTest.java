@@ -52,7 +52,7 @@ class OpaProducerHealthCheckTest {
     }
 
     private static HealthCheck.Result call(String serverUrl) {
-        OpaProducerHealthCheck check = new OpaProducerHealthCheck(serverUrl, null, "authz/allow", "authz/allow");
+        OpaProducerHealthCheck check = new OpaProducerHealthCheck(serverUrl, null, "authz/allow", "authz/allow", null);
         check.setEnabled(true);
         return check.call(Map.of());
     }
@@ -63,7 +63,7 @@ class OpaProducerHealthCheckTest {
         // health output, so the token must not survive into it
         OpaProducerHealthCheck check = new OpaProducerHealthCheck(
                 "http://localhost:8181", "s3cr3t-token", "authz/allow",
-                "opa://authz/allow?bearerToken=s3cr3t-token&serverUrl=http://localhost:8181");
+                "opa://authz/allow?bearerToken=s3cr3t-token&serverUrl=http://localhost:8181", null);
 
         assertThat(check.getId()).doesNotContain("s3cr3t-token");
         assertThat(check.getId()).contains("serverUrl=http://localhost:8181");
@@ -73,10 +73,10 @@ class OpaProducerHealthCheckTest {
     void givesEndpointsOnDifferentServersDistinctIds() {
         OpaProducerHealthCheck primary = new OpaProducerHealthCheck(
                 "http://opa-primary:8181", null, "authz/allow",
-                "opa://authz/allow?serverUrl=http://opa-primary:8181");
+                "opa://authz/allow?serverUrl=http://opa-primary:8181", null);
         OpaProducerHealthCheck secondary = new OpaProducerHealthCheck(
                 "http://opa-secondary:8181", null, "authz/allow",
-                "opa://authz/allow?serverUrl=http://opa-secondary:8181");
+                "opa://authz/allow?serverUrl=http://opa-secondary:8181", null);
 
         assertThat(primary.getId()).isNotEqualTo(secondary.getId());
         assertThat(primary).isNotEqualTo(secondary);

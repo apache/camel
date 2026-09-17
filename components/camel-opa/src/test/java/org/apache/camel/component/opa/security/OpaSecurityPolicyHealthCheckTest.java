@@ -112,7 +112,7 @@ public class OpaSecurityPolicyHealthCheckTest extends CamelTestSupport {
         // non-canonical path with a redirect, and the probe's client does not follow redirects, so a healthy
         // server was reported DOWN. Every other test here uses a slash-free URL, which is how it went unnoticed.
         OpaSecurityPolicyHealthCheck check
-                = new OpaSecurityPolicyHealthCheck(serverUrl + "/", null, "authz/allow");
+                = new OpaSecurityPolicyHealthCheck(serverUrl + "/", null, "authz/allow", null);
         check.setEnabled(true);
 
         HealthCheck.Result result = check.call(Map.of());
@@ -123,7 +123,7 @@ public class OpaSecurityPolicyHealthCheckTest extends CamelTestSupport {
     @Test
     void reportsDownWhenTheServerCannotBeReached() {
         OpaSecurityPolicyHealthCheck check
-                = new OpaSecurityPolicyHealthCheck("http://localhost:1", null, "authz/allow");
+                = new OpaSecurityPolicyHealthCheck("http://localhost:1", null, "authz/allow", null);
         check.setEnabled(true);
 
         HealthCheck.Result result = check.call(Map.of());

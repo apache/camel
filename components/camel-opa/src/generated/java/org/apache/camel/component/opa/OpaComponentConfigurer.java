@@ -39,6 +39,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "borrowtimeout":
         case "borrowTimeout": getOrCreateConfiguration(target).setBorrowTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.opa.OpaConfiguration.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": getOrCreateConfiguration(target).setConnectionTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "entrypoint": getOrCreateConfiguration(target).setEntrypoint(property(camelContext, java.lang.String.class, value)); return true;
         case "evaluationmode":
         case "evaluationMode": getOrCreateConfiguration(target).setEvaluationMode(property(camelContext, java.lang.String.class, value)); return true;
@@ -62,8 +64,14 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "policyBundle": getOrCreateConfiguration(target).setPolicyBundle(property(camelContext, java.lang.String.class, value)); return true;
         case "poolsize":
         case "poolSize": getOrCreateConfiguration(target).setPoolSize(property(camelContext, int.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "serverurl":
         case "serverUrl": getOrCreateConfiguration(target).setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -85,6 +93,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "borrowtimeout":
         case "borrowTimeout": return long.class;
         case "configuration": return org.apache.camel.component.opa.OpaConfiguration.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return long.class;
         case "entrypoint": return java.lang.String.class;
         case "evaluationmode":
         case "evaluationMode": return java.lang.String.class;
@@ -108,8 +118,14 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "policyBundle": return java.lang.String.class;
         case "poolsize":
         case "poolSize": return int.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
         case "serverurl":
         case "serverUrl": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
         }
     }
@@ -127,6 +143,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "borrowtimeout":
         case "borrowTimeout": return getOrCreateConfiguration(target).getBorrowTimeout();
         case "configuration": return target.getConfiguration();
+        case "connectiontimeout":
+        case "connectionTimeout": return getOrCreateConfiguration(target).getConnectionTimeout();
         case "entrypoint": return getOrCreateConfiguration(target).getEntrypoint();
         case "evaluationmode":
         case "evaluationMode": return getOrCreateConfiguration(target).getEvaluationMode();
@@ -150,8 +168,14 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "policyBundle": return getOrCreateConfiguration(target).getPolicyBundle();
         case "poolsize":
         case "poolSize": return getOrCreateConfiguration(target).getPoolSize();
+        case "requesttimeout":
+        case "requestTimeout": return getOrCreateConfiguration(target).getRequestTimeout();
         case "serverurl":
         case "serverUrl": return getOrCreateConfiguration(target).getServerUrl();
+        case "sslcontextparameters":
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
         }
     }

@@ -274,6 +274,44 @@ public interface OpaEndpointBuilderFactory {
             doSetProperty("failOpen", failOpen);
             return this;
         }
+        /**
+         * TLS configuration for the connection to the OPA server in rest mode.
+         * Needed to trust a server whose certificate comes from a private CA,
+         * and to present a client certificate to a server that requires mutual
+         * TLS - a SPIFFE X.509-SVID, for instance, so the workload
+         * authenticates to the policy decision point as itself.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * TLS configuration for the connection to the OPA server in rest mode.
+         * Needed to trust a server whose certificate comes from a private CA,
+         * and to present a client certificate to a server that requires mutual
+         * TLS - a SPIFFE X.509-SVID, for instance, so the workload
+         * authenticates to the policy decision point as itself.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
     }
 
     /**
@@ -373,6 +411,44 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long to wait for the connection to the OPA server to be
+         * established, in rest mode. The SDK's own transport applies no timeout
+         * at all, so a server that never answers would otherwise park the
+         * calling thread indefinitely rather than letting the component fail
+         * closed.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder connectionTimeout(long connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * How long to wait for the connection to the OPA server to be
+         * established, in rest mode. The SDK's own transport applies no timeout
+         * at all, so a server that never answers would otherwise park the
+         * calling thread indefinitely rather than letting the component fail
+         * closed.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder connectionTimeout(String connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
          * 
@@ -437,6 +513,42 @@ public interface OpaEndpointBuilderFactory {
          */
         default AdvancedOpaEndpointBuilder poolSize(String poolSize) {
             doSetProperty("poolSize", poolSize);
+            return this;
+        }
+        /**
+         * How long to wait for the decision once connected, in rest mode. A
+         * request that times out is an evaluation failure rather than a deny,
+         * so it fails closed - or proceeds when failOpen is set - like any
+         * other failure to reach a verdict.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * How long to wait for the decision once connected, in rest mode. A
+         * request that times out is an evaluation failure rather than a deny,
+         * so it fails closed - or proceeds when failOpen is set - like any
+         * other failure to reach a verdict.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
     }
