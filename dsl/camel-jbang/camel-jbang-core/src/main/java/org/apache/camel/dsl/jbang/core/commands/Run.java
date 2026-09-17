@@ -1592,6 +1592,7 @@ public class Run extends CamelCommand {
         eq.profile = this.profile;
         eq.observe = this.serverOptions.observe;
         eq.console = this.serverOptions.console;
+        eq.consoleForRun = true;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Quarkus (preparing and downloading files)");
@@ -1632,6 +1633,12 @@ public class Run extends CamelCommand {
         String quarkusRunJvmArgs = buildExportedRunJvmArgs();
         if (quarkusRunJvmArgs != null) {
             mvnCmd.add("-Djvm.args=" + quarkusRunJvmArgs);
+        }
+        if (serverOptions.console) {
+            // the console extension only exposes the console in dev and test mode, and camel run without --dev is
+            // quarkus:run (prod mode). This is build-time configuration, and is set on the build of this temporary
+            // project only, so an exported project does not have the console exposed in prod mode
+            mvnCmd.add("-Dquarkus.camel.console.exposure-mode=ALL");
         }
         mvnCmd.add("package");
         mvnCmd.add("quarkus:" + (dev ? "dev" : "run"));
@@ -1768,6 +1775,7 @@ public class Run extends CamelCommand {
         eq.profile = this.profile;
         eq.observe = this.serverOptions.observe;
         eq.console = this.serverOptions.console;
+        eq.consoleForRun = true;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Camel Main (preparing and downloading files)");
@@ -2323,6 +2331,7 @@ public class Run extends CamelCommand {
         eq.profile = this.profile;
         eq.observe = this.serverOptions.observe;
         eq.console = this.serverOptions.console;
+        eq.consoleForRun = true;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Spring Boot (preparing and downloading files)");

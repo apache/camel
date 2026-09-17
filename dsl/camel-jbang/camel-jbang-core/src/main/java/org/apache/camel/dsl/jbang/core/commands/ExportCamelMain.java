@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -39,7 +40,6 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
 
@@ -118,6 +118,7 @@ class ExportCamelMain extends Export {
                 srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
+        Map<String, String> devProfile = new LinkedHashMap<>();
         copySettingsAndProfile(settings, profile,
                 srcResourcesDir, prop -> {
                     if (groovyPrecompiled && !prop.containsKey("camel.main.groovyPreloadCompiled")) {
@@ -160,17 +161,17 @@ class ExportCamelMain extends Export {
                     // developer console (--console) is configured in-process by camel-jbang, so export the
                     // equivalent settings (same as KameletMain: console with health, info and jolokia)
                     if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
-                        prop.put("camel.management.enabled", "true");
-                        for (String key : List.of("camel.main.devConsoleEnabled", "camel.management.devConsoleEnabled",
-                                "camel.management.healthCheckEnabled", "camel.management.infoEnabled",
-                                "camel.management.jolokiaEnabled")) {
-                            if (!prop.containsKey(key) && !prop.containsKey(StringHelper.camelCaseToDash(key))) {
-                                prop.put(key, "true");
-                            }
+                        Map<String, String> console = new LinkedHashMap<>();
+                        for (String key : List.of("camel.management.enabled", "camel.main.devConsoleEnabled",
+                                "camel.management.devConsoleEnabled", "camel.management.healthCheckEnabled",
+                                "camel.management.infoEnabled", "camel.management.jolokiaEnabled")) {
+                            console.put(key, "true");
                         }
+                        addConsoleProperties(prop, devProfile, console);
                     }
                     return prop;
                 });
+        writeDevProfileProperties(srcResourcesDir, devProfile);
         // create main class
         createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
         // copy local lib JARs

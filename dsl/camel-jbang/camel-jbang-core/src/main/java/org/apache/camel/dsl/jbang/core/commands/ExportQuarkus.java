@@ -26,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -130,6 +131,7 @@ class ExportQuarkus extends Export {
                 srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
+        Map<String, String> devProfile = new LinkedHashMap<>();
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {
                 prop.remove("camel.main.modeline");
@@ -153,20 +155,15 @@ class ExportQuarkus extends Export {
             if (hawtio) {
                 prop.setProperty("quarkus.hawtio.authenticationEnabled", "false");
             }
-            // developer console (--console) is the camel-quarkus-console extension (/q/camel/dev-console)
+            // developer console (--console) is the camel-quarkus-console extension (/q/camel/dev-console), which
+            // only exposes the console in dev and test mode (quarkus.camel.console.exposure-mode) so an exported
+            // project has no console in prod mode (camel run sets the exposure mode for its temporary project)
             if (settingsFlag(settings, CONSOLE)) {
-                if (!prop.containsKey("camel.main.devConsoleEnabled")
-                        && !prop.containsKey("camel.main.dev-console-enabled")) {
-                    prop.put("camel.main.devConsoleEnabled", "true");
-                }
-                // the console is only exposed in dev and test mode by default, and camel run without --dev runs in
-                // prod mode (quarkus:run). The console has no authentication, so this is for local development only.
-                if (!prop.containsKey("quarkus.camel.console.exposure-mode")) {
-                    prop.put("quarkus.camel.console.exposure-mode", "ALL");
-                }
+                addConsoleProperties(prop, devProfile, Map.of("camel.main.devConsoleEnabled", "true"));
             }
             return prop;
         });
+        writeDevProfileProperties(srcResourcesDir, devProfile);
         // copy docker files
         if (docker) {
             copyDockerFiles(BUILD_DIR);

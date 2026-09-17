@@ -289,11 +289,21 @@ The console is accessible at http://localhost:8080/q/dev and provides insights i
 performance, and EIP-level metrics. The endpoints support both HTTP GET and POST.
 
 When running with xref:camel-jbang-running.adoc#_runtimes[another runtime], the console is served where
-that runtime puts it: `/q/dev` with Camel Main, `/actuator/camel` with Spring Boot (the `camel` actuator
-endpoint; with `--observe` it moves to the management port under `/observe/camel`), and
-`/q/camel/dev-console` with Quarkus. The exported Quarkus project exposes the console in prod mode
-(`quarkus.camel.console.exposure-mode=ALL`) as `camel run` without `--dev` runs via `quarkus:run`. The
-console has no authentication on any runtime, so it is meant for local development only.
+that runtime puts it:
+
+[width="100%",cols="2,4,4",options="header"]
+|===
+| Runtime | `--console` | `--console --observe`
+| jbang, Camel Main | `http://localhost:8080/q/dev` | `http://localhost:9876/q/dev` (on the management port)
+| Spring Boot | `http://localhost:8080/actuator/camel` (the `camel` actuator endpoint) | `http://localhost:9876/observe/camel`
+| Quarkus | `http://localhost:8080/q/camel/dev-console` | `http://localhost:8080/q/camel/dev-console`
+|===
+
+The console has no authentication, so it is meant for development only. `camel export --console` therefore
+includes the console dependency in the exported project, but only enables it in `application-dev.properties`,
+so the console is there when the project runs with the dev profile (`camel.main.profile=dev` with Camel Main,
+`spring.profiles.active=dev` with Spring Boot, and `quarkus:dev` with Quarkus) and not in a production build.
+With `camel export --profile=dev` the dev profile is flattened into `application.properties`, and so is the console.
 
 GET with query parameters:
 

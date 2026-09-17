@@ -863,8 +863,48 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
-    public void shouldExportConsole(RuntimeType rt) throws Exception {
-        LOG.info("shouldExportConsole {}", rt);
+    public void shouldExportConsoleForDevProfileOnly(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportConsoleForDevProfileOnly {}", rt);
+        int exit = exportWithConsole(rt);
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        assertConsoleDependencies(model, rt);
+
+        // an exported project only has the console with the dev profile
+        Properties props = loadExportedProperties("application.properties");
+        Assertions.assertNull(exportedProperty(props, "camel.main.devConsoleEnabled"));
+        Assertions.assertNull(props.getProperty("management.endpoints.web.exposure.include"));
+        Assertions.assertNull(props.getProperty("camel.jbang.console"));
+
+        Properties dev = loadExportedProperties("application-dev.properties");
+        Assertions.assertNull(dev.getProperty("quarkus.camel.console.exposure-mode"));
+        // what the application sees with the dev profile active
+        Properties effective = new Properties();
+        effective.putAll(props);
+        effective.putAll(dev);
+        assertConsoleProperties(effective, rt);
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportConsoleInDevProfileExport(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportConsoleInDevProfileExport {}", rt);
+        int exit = exportWithConsole(rt, "--profile=dev");
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        assertConsoleDependencies(model, rt);
+
+        // the dev profile is flattened into application.properties, and so is the console
+        Properties props = loadExportedProperties("application.properties");
+        assertConsoleProperties(props, rt);
+        Assertions.assertNull(props.getProperty("quarkus.camel.console.exposure-mode"));
+        Assertions.assertNull(props.getProperty("camel.jbang.console"));
+        Assertions.assertFalse(new File(workingDir, "src/main/resources/application-dev.properties").exists());
+    }
+
+    private int exportWithConsole(RuntimeType rt, String... extraArgs) throws Exception {
         Export command = new Export(new CamelJBangMain());
         List<String> cmdArgs = new ArrayList<>(
                 List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
@@ -872,27 +912,48 @@ class ExportTest {
         if (rt == RuntimeType.springBoot) {
             cmdArgs.add("--camel-version=" + RELEASED_CAMEL_VERSION);
         }
+        cmdArgs.addAll(List.of(extraArgs));
         cmdArgs.add("target/test-classes/route.yaml");
         CommandLine.populateCommand(command, cmdArgs.toArray(String[]::new));
-        int exit = command.doCall();
+        return command.doCall();
+    }
 
-        Assertions.assertEquals(0, exit);
-        Model model = readMavenModel();
+    private Properties loadExportedProperties(String name) throws Exception {
         Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/resources/application.properties"))) {
+        File f = new File(workingDir, "src/main/resources/" + name);
+        Assertions.assertTrue(f.isFile(), "Missing " + name);
+        try (FileInputStream fis = new FileInputStream(f)) {
             props.load(fis);
         }
-        // the developer console is enabled with the same camel-main option on all runtimes
-        Assertions.assertEquals("true", exportedProperty(props, "camel.main.devConsoleEnabled"));
-        // internal camel-jbang settings must not leak into the exported project
-        Assertions.assertNull(props.getProperty("camel.jbang.console"));
+        return props;
+    }
 
+    private void assertConsoleDependencies(Model model, RuntimeType rt) {
         if (rt == RuntimeType.main) {
             for (String artifact : List.of("camel-console", "camel-management", "camel-health",
                     "camel-platform-http-main", "camel-platform-http-jolokia")) {
                 Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", artifact, null),
                         "Missing dependency " + artifact);
             }
+        } else if (rt == RuntimeType.springBoot) {
+            for (String artifact : List.of("camel-console-starter", "camel-management-starter")) {
+                Assertions.assertTrue(
+                        containsDependency(model.getDependencies(), "org.apache.camel.springboot", artifact, null),
+                        "Missing dependency " + artifact);
+            }
+        } else if (rt == RuntimeType.quarkus) {
+            for (String artifact : List.of("camel-quarkus-console", "camel-quarkus-management")) {
+                Assertions.assertTrue(
+                        containsDependency(model.getDependencies(), "org.apache.camel.quarkus", artifact, null),
+                        "Missing dependency " + artifact);
+            }
+        }
+    }
+
+    private static void assertConsoleProperties(Properties props, RuntimeType rt) {
+        // the developer console is enabled with the same camel-main option on all runtimes
+        Assertions.assertEquals("true", exportedProperty(props, "camel.main.devConsoleEnabled"));
+        if (rt == RuntimeType.main) {
             for (String key : List.of("camel.management.enabled", "camel.management.devConsoleEnabled",
                     "camel.management.healthCheckEnabled", "camel.management.infoEnabled",
                     "camel.management.jolokiaEnabled")) {
@@ -900,62 +961,49 @@ class ExportTest {
             }
         } else if (rt == RuntimeType.springBoot) {
             // the console is the camel actuator endpoint, which must be exposed over the web
-            for (String artifact : List.of("camel-console-starter", "camel-management-starter")) {
-                Assertions.assertTrue(
-                        containsDependency(model.getDependencies(), "org.apache.camel.springboot", artifact, null),
-                        "Missing dependency " + artifact);
-            }
             Assertions.assertEquals("camel", props.getProperty("management.endpoints.web.exposure.include"));
-        } else if (rt == RuntimeType.quarkus) {
-            // the console extension only exposes the console in dev and test mode unless told otherwise
-            for (String artifact : List.of("camel-quarkus-console", "camel-quarkus-management")) {
-                Assertions.assertTrue(
-                        containsDependency(model.getDependencies(), "org.apache.camel.quarkus", artifact, null),
-                        "Missing dependency " + artifact);
-            }
-            Assertions.assertEquals("ALL", props.getProperty("quarkus.camel.console.exposure-mode"));
         }
     }
 
     @Test
     public void shouldExposeConsoleWithObserveOnSpringBoot() throws Exception {
-        Export command = new Export(new CamelJBangMain());
-        CommandLine.populateCommand(command,
-                "--gav=examples:route:1.0.0",
-                "--dir=" + workingDir,
-                "--quiet",
-                "--runtime=spring-boot", "--camel-version=" + RELEASED_CAMEL_VERSION,
-                "--console", "--observe",
-                "target/test-classes/route.yaml");
-        int exit = command.doCall();
+        int exit = exportWithConsole(RuntimeType.springBoot, "--observe");
 
         Assertions.assertEquals(0, exit);
-        Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/resources/application.properties"))) {
-            props.load(fis);
-        }
         // the observability defaults must survive the explicit exposure list
-        Assertions.assertEquals("health,prometheus,camel", props.getProperty("management.endpoints.web.exposure.include"));
+        Properties dev = loadExportedProperties("application-dev.properties");
+        Assertions.assertEquals("health,prometheus,camel", dev.getProperty("management.endpoints.web.exposure.include"));
     }
 
     @Test
     public void shouldExposeConsoleWithHawtioOnSpringBoot() throws Exception {
+        int exit = exportWithConsole(RuntimeType.springBoot, "--hawtio");
+
+        Assertions.assertEquals(0, exit);
+        // hawtio is exposed in application.properties, and the dev profile must keep it when adding the console
+        Properties props = loadExportedProperties("application.properties");
+        Assertions.assertEquals("hawtio,jolokia", props.getProperty("management.endpoints.web.exposure.include"));
+        Properties dev = loadExportedProperties("application-dev.properties");
+        Assertions.assertEquals("hawtio,jolokia,camel", dev.getProperty("management.endpoints.web.exposure.include"));
+    }
+
+    @Test
+    public void shouldAppendConsoleToExistingDevProfile() throws Exception {
         Export command = new Export(new CamelJBangMain());
         CommandLine.populateCommand(command,
                 "--gav=examples:route:1.0.0",
                 "--dir=" + workingDir,
                 "--quiet",
-                "--runtime=spring-boot", "--camel-version=" + RELEASED_CAMEL_VERSION,
-                "--console", "--hawtio",
-                "target/test-classes/route.yaml");
+                "--runtime=main",
+                "--console",
+                "src/test/resources/devprofile");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
-        Properties props = new Properties();
-        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/resources/application.properties"))) {
-            props.load(fis);
-        }
-        Assertions.assertEquals("hawtio,jolokia,camel", props.getProperty("management.endpoints.web.exposure.include"));
+        Properties dev = loadExportedProperties("application-dev.properties");
+        // the user's own dev profile settings are kept
+        Assertions.assertEquals("true", dev.getProperty("camel.main.tracing"));
+        Assertions.assertEquals("true", exportedProperty(dev, "camel.main.devConsoleEnabled"));
     }
 
     @Test
