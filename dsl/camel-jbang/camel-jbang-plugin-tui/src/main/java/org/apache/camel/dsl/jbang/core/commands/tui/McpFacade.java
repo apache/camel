@@ -290,6 +290,11 @@ class McpFacade {
         return ctx != null ? ctx.selectedPid : null;
     }
 
+    /** Whether a running integration goes by this name (a model often passes it where a directory is asked for). */
+    boolean hasIntegration(String name) {
+        return name != null && !name.isEmpty() && findIntegration(name) != null;
+    }
+
     String getSelectedIntegrationName() {
         if (ctx == null) {
             return null;

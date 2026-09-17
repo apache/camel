@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.util.json.JsonArray;
@@ -85,6 +86,17 @@ class McpFacadeGetFilesTest {
         JsonObject file = facade.getFiles("timer-log", "src/main/resources/camel/timer-log.camel.yaml");
         assertEquals(ROUTE, file.getString("content"));
         assertNull(file.get("routes"), "reading one file does not repeat the route list");
+    }
+
+    @Test
+    void theIntegrationNameIsAcceptedWhereTheToolAsksForADirectory(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+        TuiToolRegistry registry = new TuiToolRegistry(facade(dir, "file:" + dir.resolve("demo.camel.yaml") + ":1"));
+
+        // the model passed the integration's name as the directory: answered for that integration, not an error
+        String answer = registry.execute("camel_get_files", Map.of("directory", "timer-log"));
+        assertTrue(answer.contains("\"routeFiles\":[\"demo.camel.yaml\"]"), answer);
+        assertTrue(answer.contains("\"editing\""), "answered by the TUI, with its directory knowledge: " + answer);
     }
 
     @Test
