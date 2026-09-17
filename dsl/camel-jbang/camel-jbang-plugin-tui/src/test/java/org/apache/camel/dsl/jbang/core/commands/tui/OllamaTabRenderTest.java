@@ -223,6 +223,41 @@ class OllamaTabRenderTest {
     }
 
     @Test
+    void theQuestionBeingAnsweredShowsAsWorkingFromTheMomentItIsAsked() {
+        localServerWithModel();
+        String question = "what's the name of the source file that has the route";
+        monitor.questionStarted(9, question);
+
+        // before the first request returns: a row with the question, a running clock and no figures
+        OllamaTab tab = new OllamaTab(ctx, monitor);
+        String rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertTrue(rendered.contains("Requests (0 questions, 0 requests, 1 in progress)"), rendered);
+        assertTrue(rendered.contains("#9"), rendered);
+        assertTrue(rendered.contains(question), rendered);
+        assertTrue(rendered.contains("working"), rendered);
+        assertFalse(rendered.contains("No requests yet"), rendered);
+
+        // a tool call came back: the normal row, still working rather than tool_calls
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(9_000, 40, 9_040, 0, 5_000, 700, 0, 5_800),
+                0, "tool_calls", 9, question);
+        rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertTrue(rendered.contains("Requests (1 question, 1 request, 1 in progress)"), rendered);
+        assertTrue(rendered.contains("working"), rendered);
+        assertFalse(rendered.contains("tool_calls"), rendered);
+
+        // the answer landed
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                9_400, 120, 9_520, 9_000, 300, 2_000, 0,
+                2_400), 0, "stop", 9, question);
+        monitor.questionFinished();
+        rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertTrue(rendered.contains("Requests (1 question, 2 requests)"), rendered);
+        assertTrue(rendered.contains("#9 ×2"), rendered);
+        assertFalse(rendered.contains("working"), rendered);
+        assertTrue(rendered.contains("stop"), rendered);
+    }
+
+    @Test
     void routeRequestsShowTheirRouteId() {
         localServerWithModel();
         monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(16, 6, 22, 0, 188, 81, 12, 300), 0, "stop");

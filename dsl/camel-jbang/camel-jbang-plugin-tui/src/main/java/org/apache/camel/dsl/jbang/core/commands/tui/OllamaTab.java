@@ -46,6 +46,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ActiveQuestion;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.HostStats;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.LoadedModel;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ModelShape;
@@ -521,7 +522,8 @@ class OllamaTab extends AbstractTab {
 
     private void renderRequests(Frame frame, Rect area, Snapshot s) {
         List<RequestEntry> requests = s.requests();
-        if (requests.isEmpty()) {
+        ActiveQuestion active = s.activeQuestion();
+        if (requests.isEmpty() && active == null) {
             rowRefs = List.of();
             lastTableArea = area;
             frame.renderWidget(Paragraph.builder()
@@ -541,10 +543,16 @@ class OllamaTab extends AbstractTab {
         int questionWidth = Math.max(12, area.width() - FIXED_COLUMNS_WIDTH);
         List<Row> rows = new ArrayList<>();
         List<Object> refs = new ArrayList<>();
+        if (active != null && groups.stream().noneMatch(active::matches)) {
+            // asked, but the first request has not returned yet
+            rows.add(activeRow(active, questionWidth));
+            refs.add(active);
+        }
         for (QuestionGroup g : groups) {
             boolean multi = g.steps().size() > 1;
             boolean expanded = multi && expandedGroups.contains(g.key());
-            rows.add(questionRow(g, multi, expanded, questionWidth));
+            rows.add(questionRow(g, multi, expanded, questionWidth,
+                    active != null && active.matches(g) ? active : null));
             refs.add(g);
             if (expanded) {
                 int n = 1;
@@ -557,7 +565,8 @@ class OllamaTab extends AbstractTab {
         rowRefs = refs;
 
         String title = " Requests (" + groups.size() + (groups.size() == 1 ? " question, " : " questions, ")
-                       + requests.size() + (requests.size() == 1 ? " request)" : " requests)")
+                       + requests.size() + (requests.size() == 1 ? " request" : " requests")
+                       + (active != null ? ", 1 in progress" : "") + ")"
                        + "  tok/s for prefill and decode · CTX = prompt share of the context window ";
         Table table = Table.builder()
                 .rows(rows)
@@ -598,8 +607,38 @@ class OllamaTab extends AbstractTab {
 
     private static final int FIXED_COLUMNS_WIDTH = 10 + 18 + 6 + 6 + 6 + 5 + 8 + 8 + 7 + 7 + 12 + 6;
 
-    /** One question (or route call) on one line: the question text cut to fit, then the whole-question figures. */
-    private static Row questionRow(QuestionGroup g, boolean multi, boolean expanded, int questionWidth) {
+    private static final String[] SPINNER = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };
+
+    private static Span workingSpan() {
+        String frame = SPINNER[(int) ((System.currentTimeMillis() / 100) % SPINNER.length)];
+        return Span.styled(" " + frame + " working", Theme.info());
+    }
+
+    /** The question the AI panel is working on before its first request has returned: text and a clock, no figures. */
+    private static Row activeRow(ActiveQuestion a, int questionWidth) {
+        String text = a.text() != null ? firstLine(a.text()) : "";
+        return Row.from(
+                Cell.from(Span.styled(" " + TIME.format(a.startedAt()), Theme.muted())),
+                Cell.from(Span.styled("#" + a.question(), Theme.info())),
+                Cell.from(Span.styled(TuiHelper.truncate(text, questionWidth), Theme.label())),
+                rightCell("-", 6),
+                rightCell("-", 6),
+                rightCell("-", 6, Theme.muted()),
+                rightCell("-", 5),
+                rightCell("-", 8, Theme.info()),
+                rightCell("-", 8, Theme.success()),
+                rightCell("-", 7),
+                rightCell(formatSeconds(a.elapsedMs()), 7, Theme.info()),
+                Cell.from(workingSpan()));
+    }
+
+    /**
+     * One question (or route call) on one line: the question text cut to fit, then the whole-question figures.
+     * {@code active} is set while the AI panel is still working on it: the clock keeps running and the reason reads
+     * {@code working} instead of the last step's {@code tool_calls}.
+     */
+    private static Row questionRow(
+            QuestionGroup g, boolean multi, boolean expanded, int questionWidth, ActiveQuestion active) {
         String marker = multi ? (expanded ? TuiIcons.MORE_CHEVRON : TuiIcons.ARROW_RIGHT) : " ";
         String source;
         Style sourceStyle;
@@ -629,8 +668,13 @@ class OllamaTab extends AbstractTab {
                         Theme.success()),
                 rightCell(g.hasTimings() ? formatSeconds(g.ttftMs()) : "-", 7,
                         g.coldStart() ? Theme.warning() : Style.EMPTY),
-                rightCell(g.wallMs() > 0 ? formatSeconds(g.wallMs()) : "-", 7, totalTimeStyle(g.wallMs())),
-                Cell.from(Span.styled(" " + (g.doneReason() != null ? g.doneReason() : ""), reasonStyle(g.doneReason()))));
+                active != null
+                        ? rightCell(formatSeconds(Math.max(g.wallMs(), active.elapsedMs())), 7, Theme.info())
+                        : rightCell(g.wallMs() > 0 ? formatSeconds(g.wallMs()) : "-", 7, totalTimeStyle(g.wallMs())),
+                Cell.from(active != null
+                        ? workingSpan()
+                        : Span.styled(" " + (g.doneReason() != null ? g.doneReason() : ""),
+                                reasonStyle(g.doneReason()))));
     }
 
     /**

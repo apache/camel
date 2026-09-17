@@ -124,6 +124,12 @@ whole. Press **Enter** (or **→**) on a question with `×N` in the SOURCE
 column to unfold its steps, **←** to fold them again. A call made by a
 Camel route is one line of its own.
 
+The question the AI panel is working on is listed from the moment it is
+asked, with `working` and a spinner as its reason and TOTAL counting up;
+the figures fill in as its requests return, and the reason becomes
+`stop` or `limit` when the answer lands (or the row goes when you cancel
+with Esc).
+
 | Column | Question line | Step line |
 |--------|---------------|-----------|
 | TIME | When the first request started | When the request started |

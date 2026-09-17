@@ -371,10 +371,26 @@ final class OllamaMonitor {
     }
 
     /** Immutable view for rendering and for the MCP tool. */
+    /**
+     * The AI panel question being answered right now, so the tab can list it from the moment it was asked: before the
+     * first request returns there is no {@link RequestEntry} for it, and while tools run its last step says
+     * {@code tool_calls} like a finished question's would.
+     */
+    record ActiveQuestion(int question, String text, Instant startedAt) {
+
+        long elapsedMs() {
+            return Math.max(0, System.currentTimeMillis() - startedAt.toEpochMilli());
+        }
+
+        boolean matches(QuestionGroup g) {
+            return g.source() == RequestSource.TUI && g.question() == question;
+        }
+    }
+
     record Snapshot(ServerInfo server, List<LoadedModel> models, List<String> installed, SlotState slot,
             RunnerInfo runner, HostStats host, List<RequestEntry> requests, double liveDecodeRate,
             double livePrefillRate, long[] decodeHistory, SessionTotals totals, String lastError, Instant lastPoll,
-            String probedUrl, int panelWindow, int panelBudget) {
+            String probedUrl, int panelWindow, int panelBudget, ActiveQuestion activeQuestion) {
 
         boolean connected() {
             return server != null;
@@ -417,6 +433,7 @@ final class OllamaMonitor {
     private Instant lastPoll;
     private int panelWindow;
     private int panelBudget;
+    private ActiveQuestion activeQuestion;
 
     private long lastProbe;
     private long lastVersion;
@@ -613,6 +630,20 @@ final class OllamaMonitor {
         }
     }
 
+    /** The AI panel started working on a question; it is listed as in progress until {@link #questionFinished()}. */
+    void questionStarted(int question, String text) {
+        synchronized (lock) {
+            activeQuestion = new ActiveQuestion(question, text, Instant.now());
+        }
+    }
+
+    /** The AI panel's turn ended: answered, failed or cancelled. */
+    void questionFinished() {
+        synchronized (lock) {
+            activeQuestion = null;
+        }
+    }
+
     /** Clears the request log, the session totals and the rate history. */
     void reset() {
         synchronized (lock) {
@@ -722,7 +753,8 @@ final class OllamaMonitor {
             return new Snapshot(
                     server, models, installed, slot, runner, host, List.copyOf(requests),
                     decodeWindow.ratePerSecond(now), prefillWindow.ratePerSecond(now),
-                    decodeHistory.clone(), totals, lastError, lastPoll, baseUrl, panelWindow, panelBudget);
+                    decodeHistory.clone(), totals, lastError, lastPoll, baseUrl, panelWindow, panelBudget,
+                    activeQuestion);
         }
     }
 
@@ -1214,12 +1246,19 @@ final class OllamaMonitor {
         }
         root.put("requests", reqs);
         JsonArray questions = new JsonArray();
+        ActiveQuestion active = s.activeQuestion();
+        boolean activeListed = false;
         int q = 0;
         for (QuestionGroup g : groupByQuestion(s.requests())) {
             if (q++ >= requestLimit) {
                 break;
             }
             JsonObject jg = new JsonObject();
+            if (active != null && active.matches(g)) {
+                activeListed = true;
+                jg.put("inProgress", true);
+                jg.put("elapsedMs", active.elapsedMs());
+            }
             jg.put("time", g.first().timestamp().toString());
             jg.put("source", g.source().name().toLowerCase(Locale.ROOT));
             if (g.routeId() != null) {
@@ -1246,6 +1285,20 @@ final class OllamaMonitor {
                 jg.put("doneReason", g.doneReason());
             }
             questions.add(jg);
+        }
+        if (active != null && !activeListed) {
+            // asked, but no request has returned yet
+            JsonObject jq = new JsonObject();
+            jq.put("time", active.startedAt().toString());
+            jq.put("source", "tui");
+            jq.put("question", active.question());
+            if (active.text() != null) {
+                jq.put("questionText", active.text());
+            }
+            jq.put("steps", 0);
+            jq.put("inProgress", true);
+            jq.put("elapsedMs", active.elapsedMs());
+            questions.add(0, jq);
         }
         root.put("questions", questions);
         if (s.lastPoll() != null) {

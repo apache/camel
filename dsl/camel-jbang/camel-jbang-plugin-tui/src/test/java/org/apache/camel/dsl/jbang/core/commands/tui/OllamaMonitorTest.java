@@ -270,6 +270,40 @@ class OllamaMonitorTest {
     }
 
     @Test
+    void theQuestionBeingAnsweredIsListedUntilTheTurnEnds() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.questionStarted(9, "what's the name of the source file that has the route");
+
+        // asked, nothing back yet: a question with no steps
+        JsonArray questions = (JsonArray) monitor.toJson(10).get("questions");
+        assertEquals(1, questions.size());
+        JsonObject q = (JsonObject) questions.get(0);
+        assertEquals(9, q.get("question"));
+        assertEquals(0, q.get("steps"));
+        assertEquals(true, q.get("inProgress"));
+        assertNotNull(q.get("elapsedMs"));
+        assertNotNull(monitor.snapshot().activeQuestion());
+
+        // the first tool call returned: the same question, now with a step, still in progress
+        monitor.recordRequest("m", new LlmClient.TokenUsage(9_000, 40, 9_040, 0, 5_000, 700, 0, 5_800), 0,
+                "tool_calls", 9, "what's the name of the source file that has the route");
+        questions = (JsonArray) monitor.toJson(10).get("questions");
+        assertEquals(1, questions.size());
+        q = (JsonObject) questions.get(0);
+        assertEquals(1, q.get("steps"));
+        assertEquals(true, q.get("inProgress"));
+
+        // the answer landed
+        monitor.recordRequest("m", new LlmClient.TokenUsage(9_400, 120, 9_520, 9_000, 300, 2_000, 0, 2_400), 0,
+                "stop", 9, "what's the name of the source file that has the route");
+        monitor.questionFinished();
+        q = (JsonObject) ((JsonArray) monitor.toJson(10).get("questions")).get(0);
+        assertEquals(2, q.get("steps"));
+        assertNull(q.get("inProgress"));
+        assertNull(monitor.snapshot().activeQuestion());
+    }
+
+    @Test
     void panelContextAppearsInTheJsonOnceKnown() {
         OllamaMonitor monitor = new OllamaMonitor();
         assertNull(monitor.toJson(1).get("aiPanel"));

@@ -1223,6 +1223,7 @@ class AiPanel {
                 conversation.add(new ConversationEntry(AiRole.USER, input));
                 questionCounter++;
                 currentQuestion = input;
+                noteQuestionStarted(input);
                 log(LogLevel.QUESTION, "Question about the edit", input);
                 return;
             }
@@ -1408,6 +1409,7 @@ class AiPanel {
         conversation.add(new ConversationEntry(AiRole.USER, question));
         questionCounter++;
         currentQuestion = question;
+        noteQuestionStarted(question);
         log(LogLevel.QUESTION, "Question", question);
         thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
         thinkingStartTime = System.currentTimeMillis();
@@ -1432,11 +1434,29 @@ class AiPanel {
                 if (agentThread == Thread.currentThread()) {
                     thinking.set(false);
                     agentThread = null;
+                    noteQuestionFinished();
                 }
             }
         }, "tui-ai-agent");
         agentThread.setDaemon(true);
         agentThread.start();
+    }
+
+    /**
+     * Tells the Ollama tab which question the panel is working on, so it lists it as in progress from the moment it was
+     * asked until the turn ends: answered, failed or cancelled. Only for Ollama; the tab is about that server.
+     */
+    private void noteQuestionStarted(String question) {
+        if (ctx != null && ctx.ollamaMonitor != null && client != null
+                && client.apiType() == LlmClient.ApiType.ollama) {
+            ctx.ollamaMonitor.questionStarted(questionCounter, question);
+        }
+    }
+
+    private void noteQuestionFinished() {
+        if (ctx != null && ctx.ollamaMonitor != null) {
+            ctx.ollamaMonitor.questionFinished();
+        }
     }
 
     private void runAgentLoop(String systemPrompt, String question) throws InterruptedException {
