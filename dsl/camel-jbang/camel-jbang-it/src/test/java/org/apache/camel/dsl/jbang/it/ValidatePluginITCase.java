@@ -21,21 +21,22 @@ import java.io.IOException;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class ValidatePluginITCase extends JBangTestSupport {
+class ValidatePluginITCase extends JBangTestSupport {
 
     @Test
-    public void testValidateOK() throws IOException {
+    void testValidateOK() throws IOException {
         copyResourceInDataFolder(TestResources.ROUTE2);
         execute("plugin add validate");
         checkCommandOutputs(String.format("validate yaml %s/route2.yaml", mountPoint()), "Validation success (files:1)");
     }
 
     @Test
-    public void testValidateKO() throws IOException {
+    void testValidateKO() throws IOException {
         copyResourceInDataFolder(TestResources.ROUTE2);
         execute("plugin add validate");
         execInContainer(String.format("echo \"test\" >> %s/route2.yaml", mountPoint()));
         checkCommandFailsWithOutput(String.format("validate yaml %s/route2.yaml", mountPoint()),
-                "MarkedYAMLException: while scanning a simple key");
+                "Validation error detected",
+                "a route file holds only the YAML, put explanations in a # comment or leave them out (while scanning a simple key)");
     }
 }

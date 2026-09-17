@@ -236,6 +236,12 @@ public abstract class JBangTestSupport {
                 .contains(contains);
     }
 
+    protected void checkCommandFailsWithOutput(String command, String... contains) {
+        Assertions.assertThat(execute(command, false, true))
+                .as("command " + getMainCommand() + " " + command + " should fail with error " + String.join(", ", contains))
+                .contains(contains);
+    }
+
     protected void checkCommandOutputsPattern(String command, String contains) {
         Assertions.assertThat(execute(command))
                 .as("command  " + getMainCommand() + " " + command + " should output " + contains)
