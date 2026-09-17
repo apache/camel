@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Deliberately hostile fixture: surefire never emits a DOCTYPE. Kept tiny on
+     purpose so that a regression in the guard fails the test rather than hanging
+     the test run. -->
+<!DOCTYPE testsuite [
+  <!ENTITY a "aaaaaaaaaa">
+  <!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;">
+]>
+<testsuite name="org.apache.camel.probe.HostileTest" tests="1" failures="0" flakes="1">
+  <testcase name="expanded" classname="org.apache.camel.probe.HostileTest">
+    <flakyFailure message="&b;" type="java.lang.AssertionError"/>
+  </testcase>
+</testsuite>
