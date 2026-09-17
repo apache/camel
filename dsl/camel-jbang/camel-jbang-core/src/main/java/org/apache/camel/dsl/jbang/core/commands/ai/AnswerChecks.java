@@ -28,6 +28,8 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The checks of what an AI model says, as opposed to what it writes: a file goes through the validator before it is
@@ -51,8 +53,9 @@ public final class AnswerChecks {
         }
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(AnswerChecks.class);
+
     private static volatile CamelCatalog defaultCatalog;
-    private static volatile Set<String> roots;
 
     private AnswerChecks() {
     }
@@ -114,7 +117,8 @@ public final class AnswerChecks {
                     }
                 }
             } catch (Exception e) {
-                // best effort: what the catalog cannot judge is not reported
+                // best effort: what the catalog cannot judge is not reported, the cause is in the debug log
+                LOG.debug("Cannot validate the simple expression {} of the answer", placeholder, e);
             }
         }
         return new ArrayList<>(problems.values());
@@ -178,29 +182,27 @@ public final class AnswerChecks {
 
     /** The first word of every simple function name: header for header.name, date for date:command:pattern. */
     private static Set<String> roots(CamelCatalog catalog) {
-        Set<String> answer = roots;
-        if (answer == null) {
-            answer = new HashSet<>();
-            LanguageModel simple = catalog.languageModel("simple");
-            if (simple != null && simple.getFunctions() != null) {
-                for (LanguageModel.LanguageFunctionModel fn : simple.getFunctions()) {
-                    String name = fn.getName();
-                    if (name != null) {
-                        int end = 0;
-                        while (end < name.length()) {
-                            char ch = name.charAt(end);
-                            if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '_') {
-                                break;
-                            }
-                            end++;
+        // computed from the catalog given, so a catalog of another Camel version answers for its own functions; the
+        // language model behind it is cached by the catalog, so this is a walk over a list of names
+        Set<String> answer = new HashSet<>();
+        LanguageModel simple = catalog.languageModel("simple");
+        if (simple != null && simple.getFunctions() != null) {
+            for (LanguageModel.LanguageFunctionModel fn : simple.getFunctions()) {
+                String name = fn.getName();
+                if (name != null) {
+                    int end = 0;
+                    while (end < name.length()) {
+                        char ch = name.charAt(end);
+                        if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '_') {
+                            break;
                         }
-                        if (end > 0) {
-                            answer.add(name.substring(0, end));
-                        }
+                        end++;
+                    }
+                    if (end > 0) {
+                        answer.add(name.substring(0, end));
                     }
                 }
             }
-            roots = answer;
         }
         return answer;
     }
