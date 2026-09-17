@@ -76,6 +76,9 @@ final class OllamaMonitor {
     private static final long TAGS_INTERVAL_MS = 15_000;
     private static final long RUNNER_SCAN_INTERVAL_MS = 5_000;
     private static final long HOST_INTERVAL_MS = 1_000;
+    /** The runner's slot is read twice a second while it generates, and every two seconds while it sits idle. */
+    private static final long SLOT_BUSY_INTERVAL_MS = 500;
+    private static final long SLOT_IDLE_INTERVAL_MS = 2_000;
     private static final long RATE_WINDOW_MS = 1_500;
     private static final int MAX_SEEN_SPANS = 4_000;
     private static final long SPAN_INTERVAL_MS = 5_000;
@@ -420,6 +423,7 @@ final class OllamaMonitor {
     private long lastTags;
     private long lastRunnerScan;
     private long lastHost;
+    private long lastSlotPoll;
     private int psFailures;
     private long lastSpanIngest;
     private Boolean nvidiaSmiAvailable;
@@ -829,12 +833,22 @@ final class OllamaMonitor {
             }
         }
         if (current != null) {
-            JsonArray slots = getJsonArray("http://127.0.0.1:" + current.port() + "/slots");
-            if (slots != null) {
-                updateSlot(OllamaParsers.parseSlots(slots, Instant.ofEpochMilli(now)));
-            } else {
-                updateRunner(null);
-                current = null;
+            // llama-server logs every request at the verbosity Ollama starts it with, so the slot is read only as
+            // often as the live view needs: fast while it generates, slowly while idle
+            boolean busy;
+            synchronized (lock) {
+                busy = slot != null && slot.processing();
+            }
+            long slotInterval = busy ? SLOT_BUSY_INTERVAL_MS : SLOT_IDLE_INTERVAL_MS;
+            if (now - lastSlotPoll >= slotInterval) {
+                lastSlotPoll = now;
+                JsonArray slots = getJsonArray("http://127.0.0.1:" + current.port() + "/slots");
+                if (slots != null) {
+                    updateSlot(OllamaParsers.parseSlots(slots, Instant.ofEpochMilli(now)));
+                } else {
+                    updateRunner(null);
+                    current = null;
+                }
             }
         }
         if (now - lastHost >= HOST_INTERVAL_MS) {

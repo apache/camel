@@ -149,6 +149,15 @@ live figures, the context panel's live state and the host panel need
 the runner on this machine; against a remote host or a container the
 tab says so and keeps the rest.
 
+## How often the tab reads
+
+While the tab is showing, the runner's slot state is read twice a
+second during generation and every two seconds when idle, the Ollama
+API once a second and the host probes once a second. With the tab
+closed only a version probe every ten seconds keeps the More menu
+entry current. Each read shows up in Ollama's own log at the verbosity
+it starts the runner with.
+
 ## Keyboard Shortcuts
 
 | Key | Action |
