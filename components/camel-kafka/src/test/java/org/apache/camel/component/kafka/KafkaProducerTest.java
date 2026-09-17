@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -197,8 +196,11 @@ public class KafkaProducerTest {
         // CAMEL-24780: a failure to begin the transaction must set the exception and complete the async
         // callback rather than escaping process(), and it must not leave the unit of work flagged as
         // transacted without a synchronization to commit or roll it back.
-        setTransactionId(producer, "test-tx");
+        // Exercise the real init path: doStart() derives transactionId from transactionalId and calls
+        // initTransactions() on the mock (a no-op), so no reflection on the private field is needed.
+        endpoint.getConfiguration().setTransactionalId("test-tx");
         endpoint.getConfiguration().setTopic("sometopic");
+        producer.doStart();
 
         Producer kp = producer.getKafkaProducer();
         Mockito.doThrow(new ApiException("cannot begin")).when(kp).beginTransaction();
@@ -217,12 +219,6 @@ public class KafkaProducerTest {
         // begin failed, so the unit of work must be left untouched (no dangling transacted flag)
         Mockito.verify(uow, Mockito.never()).beginTransactedBy(any());
         Mockito.verify(uow, Mockito.never()).addSynchronization(any());
-    }
-
-    private static void setTransactionId(KafkaProducer kafkaProducer, String transactionId) throws Exception {
-        final Field field = KafkaProducer.class.getDeclaredField("transactionId");
-        field.setAccessible(true);
-        field.set(kafkaProducer, transactionId);
     }
 
     @Test
