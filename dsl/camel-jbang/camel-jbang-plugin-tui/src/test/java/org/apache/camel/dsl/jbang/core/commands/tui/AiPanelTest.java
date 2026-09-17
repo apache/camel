@@ -1158,6 +1158,34 @@ class AiPanelTest {
     }
 
     @Test
+    void usageAveragesPerQuestionAndPerRequestAreBothReported() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+        // question 1 took three round trips, question 2 one; a route call is not a question
+        Instant now = Instant.now();
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 4_000, 20, 4_020, 3_000, "tool_calls", now,
+                AiPanel.AiUsageSource.TUI, null, 1));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 4_100, 20, 4_120, 1_000, "tool_calls", now,
+                AiPanel.AiUsageSource.TUI, null, 1));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 4_300, 90, 4_390, 2_000, "stop", now,
+                AiPanel.AiUsageSource.TUI, null, 1));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 4_400, 30, 4_430, 2_000, "stop", now,
+                AiPanel.AiUsageSource.TUI, null, 2));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "m", "ollama", 400, 30, 430, 8_000, "stop", now,
+                AiPanel.AiUsageSource.ROUTE, "chat-route", 0));
+
+        assertEquals(2, AiPanel.countQuestions(panel.combinedUsageEntriesForTesting()));
+        String summary = panel.usageSummary();
+        // 8 s of panel time over 2 questions; 16 s over 5 requests
+        assertTrue(summary.contains("- **Avg per question:** 4.0s (3.2s per request)"), summary);
+    }
+
+    @Test
     void usageSummaryReportsTotalsPerModelAndLastRequest() {
         AiPanel panel = new AiPanel();
         panel.setClientForTesting(new RecordingLlmClient("ok"));
@@ -1172,7 +1200,8 @@ class AiPanelTest {
 
         assertTrue(summary.startsWith("**AI usage:** 2 request(s)"), summary);
         assertTrue(summary.contains("- **Tokens:** 6.5k (in 6.2k, out 300)"), summary);
-        assertTrue(summary.contains("- **Avg latency:** 3.5s"), summary);
+        // two requests without a question number are one question of 7.0s
+        assertTrue(summary.contains("- **Avg per question:** 7.0s (3.5s per request)"), summary);
         assertTrue(summary.contains("| [tui] qwen3.6:35b-a3b (ollama) | 2 | 6.2k | 300 | 6.5k | 3.5s |"), summary);
         assertTrue(summary.contains("- **Last request:** 3.4k tokens in 2.0s"), summary);
     }

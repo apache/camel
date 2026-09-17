@@ -389,6 +389,25 @@ class AiPanel {
      * question takes several round trips when the model calls tools), so usage can be grouped per question; it is 0 for
      * route requests, which belong to no question.
      */
+    /**
+     * How many questions the panel's own requests were made for: a question takes one request per model round trip, and
+     * consecutive requests with the same question number belong to one question. Route calls do not count.
+     */
+    static int countQuestions(List<AiUsageEntry> entries) {
+        int questions = 0;
+        int lastQuestion = -1;
+        for (AiUsageEntry e : entries) {
+            if (e.source() == AiUsageSource.ROUTE) {
+                continue;
+            }
+            if (questions == 0 || e.question() != lastQuestion) {
+                questions++;
+                lastQuestion = e.question();
+            }
+        }
+        return questions;
+    }
+
     record AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
             int totalTokens, long latencyMs, String stopReason, Instant timestamp,
             AiUsageSource source, String routeId, int question) {
@@ -2709,6 +2728,7 @@ class AiPanel {
         int totalOutput = 0;
         int totalTokens = 0;
         long totalLatency = 0;
+        long tuiLatency = 0;
         int tuiRequests = 0;
         int routeRequests = 0;
         for (AiUsageEntry e : entries) {
@@ -2720,9 +2740,11 @@ class AiPanel {
                 routeRequests++;
             } else {
                 tuiRequests++;
+                tuiLatency += e.latencyMs();
             }
         }
         int requestCount = entries.size();
+        int questionCount = countQuestions(entries);
 
         // Per-model aggregation
         Map<String, long[]> perModel = new LinkedHashMap<>();
@@ -2786,8 +2808,10 @@ class AiPanel {
                 Span.styled(LlmClient.formatTokens(totalOutput), Theme.label()),
                 Span.styled(")", dimStyle)));
         summaryLines.add(Line.from(
-                Span.styled("Avg latency: ", dimStyle),
-                Span.styled(formatSeconds(totalLatency / requestCount), cyanStyle),
+                Span.styled("Avg per question: ", dimStyle),
+                Span.styled(formatSeconds(questionCount > 0 ? tuiLatency / questionCount : totalLatency / requestCount),
+                        cyanStyle),
+                Span.styled(" (" + formatSeconds(totalLatency / requestCount) + " per request)", dimStyle),
                 Span.styled("   AI time: ", dimStyle),
                 Span.styled(formatSeconds(totalLatency), cyanStyle),
                 Span.styled("   Tool time: ", dimStyle),
@@ -2818,14 +2842,14 @@ class AiPanel {
                         Cell.from(Span.styled("INPUT", Style.EMPTY.bold())),
                         Cell.from(Span.styled("OUTPUT", Style.EMPTY.bold())),
                         Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("AVG", Style.EMPTY.bold()))))
+                        Cell.from(Span.styled("AVG/REQ", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.fill(),
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(8),
-                        Constraint.length(7))
+                        Constraint.length(8))
                 .build();
         frame.renderStatefulWidget(table, tableArea, statsTableState);
 
@@ -3528,6 +3552,7 @@ class AiPanel {
         int totalOutput = 0;
         int totalTokens = 0;
         long totalLatency = 0;
+        long tuiLatency = 0;
         int tuiRequests = 0;
         int routeRequests = 0;
         Map<String, long[]> perModel = new LinkedHashMap<>();
@@ -3540,6 +3565,7 @@ class AiPanel {
                 routeRequests++;
             } else {
                 tuiRequests++;
+                tuiLatency += e.latencyMs();
             }
             long[] stats = perModel.computeIfAbsent(modelTableKey(e), k -> new long[5]);
             stats[0]++;
@@ -3558,7 +3584,10 @@ class AiPanel {
         sb.append("- **Tokens:** ").append(LlmClient.formatTokens(totalTokens))
                 .append(" (in ").append(LlmClient.formatTokens(totalInput))
                 .append(", out ").append(LlmClient.formatTokens(totalOutput)).append(")\n");
-        sb.append("- **Avg latency:** ").append(formatSeconds(totalLatency / entries.size())).append("\n");
+        int questionCount = countQuestions(entries);
+        sb.append("- **Avg per question:** ")
+                .append(formatSeconds(questionCount > 0 ? tuiLatency / questionCount : totalLatency / entries.size()))
+                .append(" (").append(formatSeconds(totalLatency / entries.size())).append(" per request)\n");
         if (sessionToolCalls > 0) {
             sb.append("- **AI time:** ").append(formatSeconds(totalLatency))
                     .append(", **Tool time:** ").append(formatSeconds(sessionToolTimeMs))
@@ -3569,7 +3598,7 @@ class AiPanel {
             sb.append("- **Last request:** ").append(LlmClient.formatTokens(last.totalTokens()))
                     .append(" tokens in ").append(formatSeconds(last.latencyMs())).append("\n");
         }
-        sb.append("\n| Model | Reqs | In | Out | Total | Avg |\n|---|---|---|---|---|---|\n");
+        sb.append("\n| Model | Reqs | In | Out | Total | Avg/req |\n|---|---|---|---|---|---|\n");
         for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
             long[] stats = entry.getValue();
             sb.append("| ").append(entry.getKey())

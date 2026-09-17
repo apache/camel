@@ -1137,8 +1137,9 @@ the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored inte
 the latter taken from OpenTelemetry GenAI spans when observability is enabled on the integration. The
 *Tokens per question* chart has one bar per question you asked, so a question that needed several tool
 calls shows as a single bar. The summary line splits the session time into *AI time* (waiting for the
-model) and *Tool time* (running the TUI tools the model called, with the number of calls), the model
-table has an *AVG* latency column, and the *Time per question* chart next to the token chart shows the
+model) and *Tool time* (running the TUI tools the model called, with the number of calls), the summary line gives the
+average time per question (and per request in brackets), the model table has an *AVG/REQ* column with
+the average per request for that model, and the *Time per question* chart next to the token chart shows the
 two side by side for each question, so you can see whether a slow answer was the model or the tools.
 
 === AI log
