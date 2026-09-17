@@ -1020,9 +1020,11 @@ public class LlmClient {
 
     // ---- Ollama context window ----
 
-    private Integer resolvedOllamaContext;
-    private String resolvedOllamaContextModel;
-    private String resolvedOllamaContextUrl;
+    /** The window resolved for one model at one endpoint; replaced as a whole so readers need no lock. */
+    private record ResolvedOllamaContext(String model, String url, int window) {
+    }
+
+    private volatile ResolvedOllamaContext resolvedOllamaContext;
 
     /**
      * The context window ({@code num_ctx}) this client asks Ollama for with the current model, resolved once per model
@@ -1039,20 +1041,45 @@ public class LlmClient {
      * Callers that manage a conversation should budget their history against {@code min(window, OLLAMA_MAX_CONTEXT)}
      * even when a larger window was adopted, so a cache loss never means minutes of prefill.
      */
-    public synchronized int ollamaContextWindow() {
-        if (resolvedOllamaContext != null && Objects.equals(resolvedOllamaContextModel, model)
-                && Objects.equals(resolvedOllamaContextUrl, url)) {
-            return resolvedOllamaContext;
+    public int ollamaContextWindow() {
+        Integer cached = resolvedOllamaContextWindow();
+        if (cached != null) {
+            return cached;
         }
-        int window = resolveOllamaContextWindow(totalPhysicalMemory());
-        resolvedOllamaContext = window;
-        resolvedOllamaContextModel = model;
-        resolvedOllamaContextUrl = url;
-        return window;
+        synchronized (this) {
+            cached = resolvedOllamaContextWindow();
+            if (cached != null) {
+                return cached;
+            }
+            int window = resolveOllamaContextWindow(totalPhysicalMemory());
+            resolvedOllamaContext = new ResolvedOllamaContext(model, url, window);
+            return window;
+        }
+    }
+
+    /** The window already resolved for the current model and endpoint, or null when the next request resolves it. */
+    public Integer resolvedOllamaContextWindow() {
+        ResolvedOllamaContext r = resolvedOllamaContext;
+        return r != null && Objects.equals(r.model(), model) && Objects.equals(r.url(), url) ? r.window() : null;
+    }
+
+    /**
+     * Resolves the window on a daemon thread so it is known before the first request needs it. Resolution asks Ollama
+     * three questions ({@code /api/ps}, {@code /api/tags}, {@code /api/show}); against a local server that is
+     * milliseconds, but done lazily it would sit between the user's question and the first request. Call it when the
+     * client is connected and after a model switch; a request arriving earlier resolves synchronously as before.
+     */
+    public void resolveOllamaContextWindowInBackground() {
+        if (apiType != ApiType.ollama || resolvedOllamaContextWindow() != null) {
+            return;
+        }
+        Thread t = new Thread(this::ollamaContextWindow, "llm-ollama-context");
+        t.setDaemon(true);
+        t.start();
     }
 
     /** Forgets the resolved window, e.g. after the user switched model; the next request resolves it again. */
-    public synchronized void resetOllamaContextWindow() {
+    public void resetOllamaContextWindow() {
         resolvedOllamaContext = null;
     }
 

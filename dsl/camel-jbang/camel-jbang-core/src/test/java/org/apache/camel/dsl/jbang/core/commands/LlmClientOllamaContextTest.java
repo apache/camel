@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.util.json.JsonObject;
@@ -29,8 +30,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -117,6 +120,27 @@ class LlmClientOllamaContextTest {
         // still the cached value although the server is gone
         assertEquals(262144, client.ollamaContextWindow());
         client.resetOllamaContextWindow();
+        assertEquals(LlmClient.OLLAMA_MIN_CONTEXT, client.ollamaContextWindow());
+    }
+
+    @Test
+    void theWindowCanBeResolvedAheadOfTheFirstRequest() throws IOException {
+        LlmClient client = client("qwen3.6:35b-a3b", 65536, SHOW_MOE, MOE_WEIGHTS);
+        assertNull(client.resolvedOllamaContextWindow(), "nothing resolved until asked");
+
+        client.resolveOllamaContextWindowInBackground();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> client.resolvedOllamaContextWindow() != null);
+
+        // the server can go: the first request finds the window without asking
+        server.stop(0);
+        server = null;
+        assertEquals(65536, client.ollamaContextWindow());
+
+        // a model switch invalidates it, and a later warm-up resolves for the new model (no server: the minimum)
+        client.withModel("other:latest");
+        assertNull(client.resolvedOllamaContextWindow());
+        client.resolveOllamaContextWindowInBackground();
+        await().atMost(20, TimeUnit.SECONDS).until(() -> client.resolvedOllamaContextWindow() != null);
         assertEquals(LlmClient.OLLAMA_MIN_CONTEXT, client.ollamaContextWindow());
     }
 

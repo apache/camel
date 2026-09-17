@@ -597,6 +597,8 @@ class AiPanel {
                 return;
             }
             initError = null;
+            // know the Ollama window before the first question instead of resolving it in front of the first request
+            client.resolveOllamaContextWindowInBackground();
             messages = new ArrayList<>();
             tools = buildTuiToolDefinitions();
         } catch (Exception e) {
@@ -3902,6 +3904,7 @@ class AiPanel {
                 return false;
             }
             client.withModel(model);
+            client.resolveOllamaContextWindowInBackground();
             persistModelSelection(model);
             return true;
         }
