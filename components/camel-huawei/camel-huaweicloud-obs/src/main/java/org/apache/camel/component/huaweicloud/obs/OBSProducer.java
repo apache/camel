@@ -159,10 +159,10 @@ public class OBSProducer extends DefaultProducer {
         } else if (body instanceof String) {
             // the string content will be stored in the remote object
             LOG.trace("Writing text body into an object");
-            InputStream stream = new ByteArrayInputStream(((String) body).getBytes(StandardCharsets.UTF_8));
-            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName(), stream);
-            stream.close();
+            try (InputStream stream = new ByteArrayInputStream(((String) body).getBytes(StandardCharsets.UTF_8))) {
+                putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
+                        clientConfigurations.getObjectName(), stream);
+            }
 
         } else if (body instanceof InputStream) {
             // this covers miscellaneous file types
