@@ -225,7 +225,7 @@ Write methods like put(key, value) and remove(key) do not return the previous va
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT) // <1>
     .setHeader(InfinispanConstants.KEY).constant("123") // <2>
-    .to("infinispan:myCacheName&cacheContainer=#cacheContainer"); // <3>
+    .to("infinispan-embedded:myCacheName?cacheContainer=#cacheContainer"); // <3>
 ----
 <1> Set the operation to perform
 <2> Set the key used to identify the element in the cache
@@ -243,7 +243,7 @@ from("direct:start")
     .setHeader(InfinispanConstants.KEY).constant("123")
     .setHeader(InfinispanConstants.LIFESPAN_TIME).constant(100L) // <1>
     .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT).constant(TimeUnit.MILLISECONDS.toString()) // <2>
-    .to("infinispan:myCacheName");
+    .to("infinispan-embedded:myCacheName");
 ----
 <1> Set the lifespan of the entry
 <2> Set the time unit for the lifespan
@@ -262,7 +262,7 @@ from("direct:start")
             return qf.from(User.class).having("name").like("%abc%").build();
         }
     })
-    .to("infinispan:myCacheName?cacheContainer=#cacheManager") ;
+    .to("infinispan-embedded:myCacheName?cacheContainer=#cacheManager") ;
 ----
 +
 
@@ -274,7 +274,7 @@ Java::
 +
 [source,java]
 ----
-from("infinispan://?cacheContainer=#cacheManager&customListener=#myCustomListener")
+from("infinispan-embedded:myCacheName?cacheContainer=#cacheManager&customListener=#myCustomListener")
   .to("mock:result");
 ----
 
@@ -283,7 +283,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="infinispan://?cacheContainer=#cacheManager&amp;customListener=#myCustomListener"/>
+  <from uri="infinispan-embedded:myCacheName?cacheContainer=#cacheManager&amp;customListener=#myCustomListener"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -294,7 +294,7 @@ YAML::
 ----
 - route:
     from:
-      uri: "infinispan://"
+      uri: infinispan-embedded:myCacheName
       parameters:
         cacheContainer: "#cacheManager"
         customListener: "#myCustomListener"

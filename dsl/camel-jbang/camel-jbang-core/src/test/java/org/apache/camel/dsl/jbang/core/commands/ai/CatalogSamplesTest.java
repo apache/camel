@@ -270,7 +270,7 @@ public class CatalogSamplesTest {
     }
 
     @Test
-    void componentsSharingAPageAndPagesWithoutAnEndpointExample() {
+    void componentsSharingAPageAndPagesThatOnceLackedAnEndpointExample() {
         CamelCatalog catalog = new DefaultCamelCatalog();
         // smtp, imap and pop3 are documented on the mail page
         JsonObject smtp = CatalogSamples.sample(catalog, "smtp", 1);
@@ -281,14 +281,16 @@ public class CatalogSamplesTest {
         JsonObject mail = CatalogSamples.sample(catalog, "mail", 1);
         assertThat(mail.getString("name")).isEqualTo("mail");
         assertThat(mail.get("note")).isNull();
-        // mapstruct is used through convertBodyTo, no mapstruct: endpoint in its examples
+        // mapstruct used to be shown only through convertBodyTo; the page now has a mapstruct: endpoint example too
         JsonObject mapstruct = CatalogSamples.sample(catalog, "mapstruct", 1);
         assertThat((Integer) mapstruct.get("count")).isPositive();
-        assertThat(mapstruct.getString("note")).contains("none of the examples");
-        // knative shows Kubernetes manifests, no route example
+        assertThat(mapstruct.get("note")).isNull();
+        assertThat(yaml(mapstruct, 0)).contains("mapstruct:");
+        // knative used to show only Kubernetes manifests; the page now has route examples
         JsonObject knative = CatalogSamples.sample(catalog, "knative", 1);
-        assertThat((Integer) knative.get("count")).isZero();
-        assertThat(knative.getString("hint")).contains("no YAML route example");
+        assertThat((Integer) knative.get("count")).isPositive();
+        assertThat(knative.get("hint")).isNull();
+        assertThat(yaml(knative, 0)).contains("knative:");
     }
 
     @Test

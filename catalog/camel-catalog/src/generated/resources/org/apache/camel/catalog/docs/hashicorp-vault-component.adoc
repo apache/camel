@@ -55,6 +55,222 @@ When using a HashiCorp Vault Cloud instance, in addition to the standard paramet
 
 == Examples
 
+=== Using the producer operations
+
+The producer works on a secrets engine, given as the path of the endpoint (`secret` is the default key/value
+engine), and connects with the `host`, `port`, `scheme` and `token` endpoint options. The `operation` option
+selects what to do, and `secretPath` names the secret to work on; the `CamelHashicorpVaultProducerOperation`
+and `CamelHashicorpVaultSecretPath` headers override them per message.
+
+==== Creating a secret
+
+The message body is the map of key/value pairs to store as the secret:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:createSecret")
+    .to("hashicorp-vault:secret?operation=createSecret&secretPath=database&host=localhost&port=8200&scheme=http&token={{vault.token}}");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:createSecret"/>
+        <to uri="hashicorp-vault:secret?operation=createSecret&amp;secretPath=database&amp;host=localhost&amp;port=8200&amp;scheme=http&amp;token={{vault.token}}"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createSecret
+      steps:
+        - to:
+            uri: hashicorp-vault:secret?operation=createSecret&secretPath=database&host=localhost&port=8200&scheme=http&token={{vault.token}}
+----
+====
+
+==== Getting a secret
+
+The message body becomes the data of the secret; the `CamelHashicorpVaultSecretVersion` header reads a given
+version instead of the latest:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:getSecret")
+    .to("hashicorp-vault:secret?operation=getSecret&secretPath=database&host=localhost&port=8200&scheme=http&token={{vault.token}}")
+    .log("The database secret is ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:getSecret"/>
+        <to uri="hashicorp-vault:secret?operation=getSecret&amp;secretPath=database&amp;host=localhost&amp;port=8200&amp;scheme=http&amp;token={{vault.token}}"/>
+        <log message="The database secret is ${body}"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getSecret
+      steps:
+        - to:
+            uri: hashicorp-vault:secret?operation=getSecret&secretPath=database&host=localhost&port=8200&scheme=http&token={{vault.token}}
+        - log:
+            message: "The database secret is ${body}"
+----
+====
+
+The secret can also be chosen per message with the `CamelHashicorpVaultSecretPath` header:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:getSecret")
+    .setHeader(HashicorpVaultConstants.SECRET_PATH, constant("database"))
+    .to("hashicorp-vault:secret?operation=getSecret&host=localhost&port=8200&scheme=http&token={{vault.token}}");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:getSecret"/>
+        <setHeader name="CamelHashicorpVaultSecretPath">
+            <constant>database</constant>
+        </setHeader>
+        <to uri="hashicorp-vault:secret?operation=getSecret&amp;host=localhost&amp;port=8200&amp;scheme=http&amp;token={{vault.token}}"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:getSecret
+      steps:
+        - setHeader:
+            name: CamelHashicorpVaultSecretPath
+            expression:
+              constant:
+                expression: database
+        - to:
+            uri: hashicorp-vault:secret?operation=getSecret&host=localhost&port=8200&scheme=http&token={{vault.token}}
+----
+====
+
+==== Deleting a secret
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:deleteSecret")
+    .to("hashicorp-vault:secret?operation=deleteSecret&secretPath=database&host=localhost&port=8200&scheme=http&token={{vault.token}}");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:deleteSecret"/>
+        <to uri="hashicorp-vault:secret?operation=deleteSecret&amp;secretPath=database&amp;host=localhost&amp;port=8200&amp;scheme=http&amp;token={{vault.token}}"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deleteSecret
+      steps:
+        - to:
+            uri: hashicorp-vault:secret?operation=deleteSecret&secretPath=database&host=localhost&port=8200&scheme=http&token={{vault.token}}
+----
+====
+
+==== Listing the secrets
+
+The message body becomes the list of the names of the secrets in the engine:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:listSecrets")
+    .to("hashicorp-vault:secret?operation=listSecrets&host=localhost&port=8200&scheme=http&token={{vault.token}}")
+    .log("The secrets are ${body}");
+----
+
+XML::
++
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:listSecrets"/>
+        <to uri="hashicorp-vault:secret?operation=listSecrets&amp;host=localhost&amp;port=8200&amp;scheme=http&amp;token={{vault.token}}"/>
+        <log message="The secrets are ${body}"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:listSecrets
+      steps:
+        - to:
+            uri: hashicorp-vault:secret?operation=listSecrets&host=localhost&port=8200&scheme=http&token={{vault.token}}
+        - log:
+            message: "The secrets are ${body}"
+----
+====
+
 === Using HashiCorp Vault Property Function
 
 To use this function, you'll need to provide credentials for HashiCorp Vault as environment variables:
