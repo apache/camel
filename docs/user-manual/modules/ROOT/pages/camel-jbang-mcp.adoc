@@ -297,15 +297,20 @@ project `directory` as an argument, the runtime tools take the integration `name
   `AggregationStrategy` lists the built-in implementations.
 
 | `camel_catalog_sample`
-| Validated YAML DSL samples of an EIP or file entry (`onException`, `aggregate`, `split`, `rest`, `beans`) taken
-  from the documentation examples, with where it goes: a top-level entry next to the route, or a step inside
-  it. The name can be kebab-case, a part of another EIP (`doCatch`, `when`, `onFallback` show the whole
-  construct), an alias of the EIP (`fan-out`, `rate-limit`, from the catalog's EIP models) or what to do
-  (`read file`, `call service`, `retry`, `batch`). The EIP samples come from the
-  documentation of the catalog in use, so they follow its Camel version; the file entries come from the user
-  manual examples that the build validates (`generate-doc-samples` in
-  xref:camel-yaml-dsl-validator-maven-plugin.adoc[]). `limit` is 2 by default, at most 5.
-  Use it before writing an EIP the first time, or after a `not defined in the schema` validation error.
+| Validated YAML DSL samples of an EIP or file entry (`onException`, `aggregate`, `split`, `rest`, `beans`), a
+  component (`kafka`, `file`), a data format (`csv`) or a language (`jq`) taken from the documentation
+  examples, with where it goes: a top-level entry next to the route, a step inside it, an endpoint uri in
+  `from:` or `to:` (the component's consumer or producer side), a `marshal`/`unmarshal` step, or the
+  expression of a step. The name can be kebab-case, a part of another EIP (`doCatch`, `when`, `onFallback`
+  show the whole construct), an alias of the EIP (`fan-out`, `rate-limit`, from the catalog's EIP models) or
+  what to do (`read file`, `call service`, `retry`, `batch`); `kind` (`eip`, `component`, `dataformat`,
+  `language`) is only needed for a name that is in several kinds (`avro`, `file`), otherwise the answer names
+  the kinds to choose from. The samples come from the documentation of the catalog in use, so they follow its
+  Camel version: the EIP page, the component page and its sub-pages (the examples using the component's
+  endpoint first), the data format or language page. The file entries come from the user manual examples that
+  the build validates (`generate-doc-samples` in xref:camel-yaml-dsl-validator-maven-plugin.adoc[]).
+  `limit` is 2 by default, at most 5. Use it before writing one the first time, or after a
+  `not defined in the schema` validation error.
 
 | `camel_validate_source`
 | Validates Camel YAML DSL or `.properties` source without writing: the YAML DSL schema (a misspelled option
