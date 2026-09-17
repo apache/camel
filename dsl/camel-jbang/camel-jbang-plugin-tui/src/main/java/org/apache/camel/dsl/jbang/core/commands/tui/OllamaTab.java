@@ -345,7 +345,7 @@ class OllamaTab extends AbstractTab {
             RequestEntry last = s.lastRequest();
             long ctx = model != null ? model.contextLength() : 0;
             if (last != null && ctx > 0) {
-                long used = (long) last.inputTokens() + last.outputTokens() + last.cachedTokens();
+                long used = (long) last.inputTokens() + last.outputTokens();
                 int pct = (int) Math.min(100, used * 100 / ctx);
                 lines.add(Line.from(
                         Span.styled(" " + gaugeBar(pct, gaugeWidth) + " ", pct >= 90 ? Theme.error() : Theme.info()),

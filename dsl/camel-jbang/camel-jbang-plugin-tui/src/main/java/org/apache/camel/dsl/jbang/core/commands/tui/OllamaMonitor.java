@@ -148,9 +148,17 @@ final class OllamaMonitor {
             int outputTokens, int cachedTokens, long prefillMs, long decodeMs, long loadMs, long totalMs,
             String doneReason, long contextSize) {
 
-        /** Everything the model had in front of it: prompt tokens evaluated plus those served from cache. */
+        /**
+         * Everything the model had in front of it. Ollama's {@code prompt_eval_count} is the whole prompt; the cached
+         * count is the part of it served from the KV cache, not an addition.
+         */
         long promptTokens() {
-            return (long) inputTokens + cachedTokens;
+            return inputTokens;
+        }
+
+        /** Prompt tokens the runner actually had to evaluate this time. */
+        long evaluatedTokens() {
+            return Math.max(0, (long) inputTokens - cachedTokens);
         }
 
         /** Share of the context window the prompt filled, or -1 when the window is unknown. */
@@ -161,8 +169,9 @@ final class OllamaMonitor {
             return (int) Math.min(100, promptTokens() * 100 / contextSize);
         }
 
+        /** Prefill speed over the tokens that were not served from cache. */
         double prefillTokensPerSecond() {
-            return prefillMs > 0 ? inputTokens * 1000.0 / prefillMs : 0;
+            return prefillMs > 0 && evaluatedTokens() > 0 ? evaluatedTokens() * 1000.0 / prefillMs : 0;
         }
 
         double decodeTokensPerSecond() {
@@ -202,7 +211,8 @@ final class OllamaMonitor {
         }
 
         double avgPrefillTokensPerSecond() {
-            return prefillMs > 0 ? inputTokens * 1000.0 / prefillMs : 0;
+            long evaluated = Math.max(0, inputTokens - cachedTokens);
+            return prefillMs > 0 && evaluated > 0 ? evaluated * 1000.0 / prefillMs : 0;
         }
     }
 
@@ -986,6 +996,7 @@ final class OllamaMonitor {
         r.put("ttftMs", e.ttftMs());
         r.put("coldStart", e.coldStart());
         r.put("promptTokens", e.promptTokens());
+        r.put("evaluatedTokens", e.evaluatedTokens());
         r.put("contextSize", e.contextSize());
         r.put("contextPercent", e.contextPercent());
         if (e.doneReason() != null) {

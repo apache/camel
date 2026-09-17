@@ -22,9 +22,11 @@ one of them:
    size), Ollama starts a runner and loads the weights. Seconds to tens
    of seconds. A load of a second or more is shown as a **cold** start.
 2. **Prefill** — the prompt (system prompt, tool definitions, history,
-   your question) is processed in one batch. Reported as *prefill
-   tokens per second*. Prompt tokens already in Ollama's cache from the
-   previous turn are skipped; they show as **cached**.
+   your question) is processed in one batch. Prompt tokens already in
+   Ollama's cache from the previous turn or tool step are skipped; they
+   show as **cached**. *Prefill tokens per second* counts only the
+   tokens that had to be evaluated, so a long prompt with a high cache
+   hit still has a short prefill.
 3. **Decode** — the answer is generated one token at a time. Reported
    as *decode tokens per second*; this is the "typing speed" you see.
 
@@ -110,11 +112,11 @@ One line per request, newest first:
 | TIME | When the request started |
 | SOURCE | `tui` for the AI panel, `route:<id>` for a Camel route |
 | MODEL | The model that answered |
-| IN | Prompt tokens evaluated |
+| IN | Prompt tokens, the whole prompt the model saw (CACHED is the part of it served from cache) |
 | OUT | Tokens generated |
 | CACHED | Prompt tokens served from Ollama's cache (`-` when none) |
-| CTX | Share of the context window the prompt filled (IN plus CACHED against the window that served it) |
-| PREFILL | Prompt tokens per second |
+| CTX | Share of the context window the prompt filled (IN against the window that served it) |
+| PREFILL | Evaluated prompt tokens per second (IN minus CACHED over the prefill time) |
 | DECODE | Generated tokens per second |
 | TTFT | Time to first token (load plus prefill), shown in yellow after a cold start |
 | TOTAL | Whole request as Ollama measured it |

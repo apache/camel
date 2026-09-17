@@ -70,6 +70,19 @@ class OllamaMonitorTest {
     }
 
     @Test
+    void prefillRateCountsOnlyTokensNotServedFromCache() {
+        // a tool-loop step observed live: 12,774 prompt tokens of which 12,624 came from the cache, 532 ms prefill
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.recordRequest("m", new LlmClient.TokenUsage(12_774, 161, 12_935, 12_624, 532, 2_990, 0, 3_588), 0,
+                "stop");
+        RequestEntry e = monitor.snapshot().lastRequest();
+        assertEquals(150, e.evaluatedTokens());
+        assertEquals(150 * 1000.0 / 532, e.prefillTokensPerSecond(), 0.1);
+        assertEquals(12_774, e.promptTokens());
+        assertEquals(150 * 1000.0 / 532, monitor.snapshot().totals().avgPrefillTokensPerSecond(), 0.1);
+    }
+
+    @Test
     void coldStartIsDetectedFromLoadTime() {
         OllamaMonitor monitor = new OllamaMonitor();
         monitor.recordRequest("qwen3.6:35b-a3b", COLD, 11400, "stop");
@@ -150,15 +163,17 @@ class OllamaMonitorTest {
         monitor.recordRequest("m", new LlmClient.TokenUsage(4_000, 60, 4_060, 500, 900, 800, 0, 1800), 0, "stop");
         RequestEntry first = monitor.snapshot().lastRequest();
         assertEquals(32_768, first.contextSize());
-        assertEquals(4_500, first.promptTokens());
-        assertEquals(13, first.contextPercent());
+        // prompt_eval_count is the whole prompt; the cached 500 are part of it, not on top
+        assertEquals(4_000, first.promptTokens());
+        assertEquals(3_500, first.evaluatedTokens());
+        assertEquals(12, first.contextPercent());
 
         // the runner's slot wins over the model list when present
         monitor.updateSlot(slot(false, 0, System.currentTimeMillis()));
         monitor.recordRequest("m", new LlmClient.TokenUsage(20_000, 60, 20_060, 0, 900, 800, 0, 1800), 0, "stop");
         assertEquals(262144, monitor.snapshot().lastRequest().contextSize());
         assertEquals(7, monitor.snapshot().lastRequest().contextPercent());
-        assertEquals(13, monitor.snapshot().totals().peakContextPercent());
+        assertEquals(12, monitor.snapshot().totals().peakContextPercent());
         assertEquals(0, monitor.snapshot().totals().compactions());
 
         // a prompt a fifth smaller than the previous turn counts as a compaction
