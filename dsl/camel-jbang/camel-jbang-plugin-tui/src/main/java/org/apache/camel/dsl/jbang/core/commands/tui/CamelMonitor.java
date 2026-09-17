@@ -2941,6 +2941,10 @@ public class CamelMonitor extends CamelCommand {
             aiPanel.spanRefreshRequested = false;
             dataService.refreshSpanData();
         }
+        if (ollamaMonitor != null) {
+            // cheap and throttled: keeps the More menu's Ollama entry in step with whether a server answers
+            ollamaMonitor.probe();
+        }
         if (tabRegistry.selectedTabIndex() == TAB_MORE
                 && tabRegistry.getActiveMoreTab() == tabRegistry.ollamaTab() && ollamaMonitor != null) {
             ollamaMonitor.poll();

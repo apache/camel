@@ -204,6 +204,16 @@ class OllamaMonitorTest {
     }
 
     @Test
+    void availabilityFollowsTheServer() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        assertFalse(monitor.isAvailable());
+        monitor.updateServer(new ServerInfo("http://localhost:11434", "0.33.3", true));
+        assertTrue(monitor.isAvailable());
+        monitor.updateServer(null);
+        assertFalse(monitor.isAvailable());
+    }
+
+    @Test
     void resetClearsRequestsTotalsAndHistoryButKeepsServer() {
         OllamaMonitor monitor = new OllamaMonitor();
         monitor.updateServer(new ServerInfo("http://localhost:11434", "0.33.3", true));

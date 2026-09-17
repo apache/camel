@@ -261,7 +261,7 @@ final class OllamaMonitor {
     private String lastError;
     private Instant lastPoll;
 
-    private long lastDetect;
+    private long lastProbe;
     private long lastVersion;
     private long lastPs;
     private long lastTags;
@@ -273,6 +273,36 @@ final class OllamaMonitor {
     private final Map<Long, long[]> cpuSamples = new HashMap<>();
 
     // ---- input from the rest of the TUI ----
+
+    /** Whether an Ollama server currently answers; the More menu lists the tab only then. */
+    boolean isAvailable() {
+        synchronized (lock) {
+            return server != null;
+        }
+    }
+
+    /**
+     * Cheap background check while the tab is not showing, so the More menu can list it as soon as Ollama comes up and
+     * drop it when Ollama goes away: endpoint detection and one version request every ten seconds. Full polling happens
+     * in {@link #poll()} while the tab is active.
+     */
+    void probe() {
+        if (!polling.compareAndSet(false, true)) {
+            return;
+        }
+        try {
+            long now = System.currentTimeMillis();
+            if (now - lastProbe >= DETECT_INTERVAL_MS) {
+                lastProbe = now;
+                lastVersion = now;
+                checkServer();
+            }
+        } catch (Exception e) {
+            LOG.debug("Ollama probe failed", e);
+        } finally {
+            polling.set(false);
+        }
+    }
 
     /** Uses the Ollama endpoint another part of the TUI already resolved (the AI panel's client, an explicit URL). */
     void adoptEndpoint(String url) {
@@ -530,22 +560,6 @@ final class OllamaMonitor {
     }
 
     private void doPoll(long now) {
-        String base = baseUrl;
-        if (base == null) {
-            if (now - lastDetect >= DETECT_INTERVAL_MS) {
-                lastDetect = now;
-                base = detectEndpoint();
-                if (base != null) {
-                    adoptEndpoint(base);
-                    base = baseUrl;
-                }
-            }
-            if (base == null) {
-                tick(now);
-                return;
-            }
-        }
-
         boolean connected;
         synchronized (lock) {
             connected = server != null;
@@ -553,24 +567,14 @@ final class OllamaMonitor {
         long versionInterval = connected ? VERSION_INTERVAL_MS : RECONNECT_INTERVAL_MS;
         if (now - lastVersion >= versionInterval) {
             lastVersion = now;
-            JsonObject version = getJsonObject(base + "/api/version");
-            if (version == null) {
-                synchronized (lock) {
-                    server = null;
-                    models = List.of();
-                    slot = null;
-                    lastError = "Ollama not reachable at " + OllamaParsers.displayHost(base);
-                }
-                tick(now);
-                return;
-            }
-            updateServer(new ServerInfo(base, OllamaParsers.str(version, "version"), OllamaParsers.isLoopbackUrl(base)));
-            connected = true;
+            lastProbe = now;
+            connected = checkServer();
         }
         if (!connected) {
             tick(now);
             return;
         }
+        String base = baseUrl;
 
         if (now - lastPs >= PS_INTERVAL_MS) {
             lastPs = now;
@@ -669,6 +673,31 @@ final class OllamaMonitor {
             }
         }
         return shape;
+    }
+
+    /** Detects the endpoint when none is known yet and confirms the server answers; true when connected. */
+    private boolean checkServer() {
+        String base = baseUrl;
+        if (base == null) {
+            base = detectEndpoint();
+            if (base == null) {
+                return false;
+            }
+            adoptEndpoint(base);
+            base = baseUrl;
+        }
+        JsonObject version = getJsonObject(base + "/api/version");
+        if (version == null) {
+            synchronized (lock) {
+                server = null;
+                models = List.of();
+                slot = null;
+                lastError = "Ollama not reachable at " + OllamaParsers.displayHost(base);
+            }
+            return false;
+        }
+        updateServer(new ServerInfo(base, OllamaParsers.str(version, "version"), OllamaParsers.isLoopbackUrl(base)));
+        return true;
     }
 
     private String detectEndpoint() {

@@ -150,7 +150,7 @@ The *More* menu (key *0*) opens a popup with tabs organized into groups:
 
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
 * *Observability* -- Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
-* *AI* -- Ollama
+* *AI* -- Ollama (listed when an Ollama server is detected)
 * *Data* -- JDBC DataSource, Kafka, SQL Query, SQL Trace
 * *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads
 * *Project* -- Beans, Catalog, Configuration, CVE Audit, Maven Dependencies, Type Converters, Data Type Transformers
@@ -417,7 +417,8 @@ correlating Camel processing with external service calls (HTTP, database, messag
 The Ollama tab (under More, in the *AI* group) shows how the model served by a local
 https://ollama.com[Ollama] is performing, in the spirit of an LLM dashboard. It works with or without a
 running integration: it finds Ollama at `localhost:11434`, at the address of `camel infra run ollama`,
-or at the endpoint the AI panel (*F8*) is using.
+or at the endpoint the AI panel (*F8*) is using. The tab is listed only while an Ollama server answers;
+the TUI checks every ten seconds, so it appears shortly after `ollama serve` starts.
 
 * *Model* -- the loaded model with its family, parameters, quantization, layers, experts (and how many
   are active per token for a mixture-of-experts model), how much of it sits in GPU memory, the

@@ -3,7 +3,10 @@
 The Ollama tab shows how the model served by Ollama is performing, in
 the spirit of an LLM dashboard. It finds Ollama at `localhost:11434`,
 at the address of `camel infra run ollama`, or at the endpoint the AI
-panel (F8) uses, and works with or without a running integration.
+panel (F8) uses, and works with or without a running integration. The
+tab is listed in the More menu only while an Ollama server answers; the
+TUI checks every ten seconds, so it appears shortly after `ollama serve`
+starts and disappears when it stops.
 
 Two kinds of requests feed it. Questions asked in the AI panel with
 Ollama as the provider arrive with the timings Ollama reports for every

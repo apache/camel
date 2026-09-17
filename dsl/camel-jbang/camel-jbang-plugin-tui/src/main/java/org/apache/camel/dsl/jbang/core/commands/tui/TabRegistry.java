@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 import dev.tamboui.widgets.tabs.TabsState;
@@ -164,7 +165,8 @@ class TabRegistry {
         threadsTab = new ThreadsTab(ctx);
         spansTab = new SpansTab(ctx, dataService.otelSpans());
         processTab = new ProcessTab(ctx);
-        ollamaTab = new OllamaTab(ctx, ctx.ollamaMonitor);
+        OllamaMonitor ollamaMonitor = ctx.ollamaMonitor;
+        ollamaTab = new OllamaTab(ctx, ollamaMonitor);
         overviewTab = new OverviewTab(
                 ctx, dataService.metrics(), dataService.stoppingPids(),
                 resetIntegrationTabState);
@@ -218,7 +220,10 @@ class TabRegistry {
                         TuiIcons.TAB_JFR, "JFR", "J&FR", jfrTab, "Observability",
                         List.of("jfr")),
                 // Data
-                new MoreTab(TuiIcons.TAB_OLLAMA, "Ollama", "&Ollama", ollamaTab, "AI"),
+                new MoreTab(
+                        TuiIcons.TAB_OLLAMA, "Ollama", "&Ollama", ollamaTab, "AI", List.of(), null,
+                        // listed only while an Ollama server answers; the monitor probes in the background
+                        () -> ollamaMonitor != null && ollamaMonitor.isAvailable()),
                 new MoreTab(
                         TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab, "Data",
                         List.of(), info -> !info.dataSources.isEmpty()),
@@ -481,21 +486,28 @@ class TabRegistry {
      * @param requiredConsoles dev console IDs that must be present (any-of) for this tab to be active; empty = always
      *                         active
      * @param activeWhen       runtime predicate on IntegrationInfo; null = always active (after console check)
+     * @param availableWhen    runtime check independent of any integration (e.g. a local service answers); null =
+     *                         always available. Unlike {@code activeWhen} it also applies when nothing is selected.
      */
     record MoreTab(String icon, String name, String label, MonitorTab tab, String group,
-            List<String> requiredConsoles, Predicate<IntegrationInfo> activeWhen) {
+            List<String> requiredConsoles, Predicate<IntegrationInfo> activeWhen, BooleanSupplier availableWhen) {
+
+        MoreTab(String icon, String name, String label, MonitorTab tab, String group,
+                List<String> requiredConsoles, Predicate<IntegrationInfo> activeWhen) {
+            this(icon, name, label, tab, group, requiredConsoles, activeWhen, null);
+        }
 
         MoreTab(String icon, String name, String label, MonitorTab tab, String group,
                 List<String> requiredConsoles) {
-            this(icon, name, label, tab, group, requiredConsoles, null);
+            this(icon, name, label, tab, group, requiredConsoles, null, null);
         }
 
         MoreTab(String icon, String name, String label, MonitorTab tab, String group) {
-            this(icon, name, label, tab, group, List.of(), null);
+            this(icon, name, label, tab, group, List.of(), null, null);
         }
 
         MoreTab(String icon, String name, String label, MonitorTab tab) {
-            this(icon, name, label, tab, null, List.of(), null);
+            this(icon, name, label, tab, null, List.of(), null, null);
         }
 
         MoreTab {
@@ -524,6 +536,9 @@ class TabRegistry {
     }
 
     static boolean isMoreTabActive(MoreTab mt, IntegrationInfo info) {
+        if (mt.availableWhen() != null && !mt.availableWhen().getAsBoolean()) {
+            return false;
+        }
         if (mt.requiredConsoles().isEmpty() && mt.activeWhen() == null) {
             return true;
         }

@@ -81,6 +81,30 @@ class TabRegistryTest {
     }
 
     @Test
+    void availableWhenHidesATabEvenWithoutASelectedIntegration() {
+        MonitorTab tab = registry.moreTabs().get(0).tab();
+        TabRegistry.MoreTab hidden = new TabRegistry.MoreTab(
+                "🦙", "Probe", "&Probe", tab, "AI", List.of(), null, () -> false);
+        TabRegistry.MoreTab shown = new TabRegistry.MoreTab(
+                "🦙", "Probe", "&Probe", tab, "AI", List.of(), null, () -> true);
+        IntegrationInfo info = new IntegrationInfo();
+
+        assertFalse(TabRegistry.isMoreTabActive(hidden, null));
+        assertFalse(TabRegistry.isMoreTabActive(hidden, info));
+        assertTrue(TabRegistry.isMoreTabActive(shown, null));
+        assertTrue(TabRegistry.isMoreTabActive(shown, info));
+    }
+
+    @Test
+    void ollamaTabIsListedOnlyWhileTheMonitorSeesAServer() {
+        TabRegistry.MoreTab ollama = registry.moreTabs().stream()
+                .filter(mt -> "Ollama".equals(mt.name())).findFirst().orElseThrow();
+        // the registry in this test has no monitor at all: never listed
+        assertFalse(TabRegistry.isMoreTabActive(ollama, null));
+        assertEquals("AI", ollama.group());
+    }
+
+    @Test
     void everyMoreTabLabelHasMnemonicMarker() {
         for (TabRegistry.MoreTab mt : registry.moreTabs()) {
             assertTrue(mt.mnemonicIndex() >= 0,
@@ -118,7 +142,9 @@ class TabRegistryTest {
     @Test
     void allTabEntriesExposeDigitsIconsAndMoreShortcuts() {
         List<TabRegistry.TabEntry> entries = registry.allTabEntries();
-        assertEquals(9 + registry.moreTabs().size(), entries.size());
+        // the Ollama tab is listed only while a server answers, and this registry has no monitor
+        assertEquals(registry.moreTabs().size() - 1, registry.activeMoreTabs(null).size());
+        assertEquals(9 + registry.activeMoreTabs(null).size(), entries.size());
 
         // Primary tabs: digit shortcuts 1-9, moreIndex -1, icon indexed by tabIndex.
         for (int i = 0; i < 9; i++) {
@@ -128,12 +154,15 @@ class TabRegistryTest {
             assertEquals(TuiIcons.PRIMARY_TAB_ICONS.get(e.tabIndex()), e.icon());
         }
 
-        // More tabs: tabIndex TAB_MORE, ascending moreIndex, shortcut/name/icon carried from the owning MoreTab.
-        for (int i = 0; i < registry.moreTabs().size(); i++) {
-            TabRegistry.TabEntry e = entries.get(9 + i);
-            TabRegistry.MoreTab mt = registry.moreTabs().get(i);
+        // More tabs: tabIndex TAB_MORE, ascending moreIndex into the full list, shortcut/name/icon carried from
+        // the owning MoreTab; a tab that is not listed leaves a gap in the indexes.
+        int previousIndex = -1;
+        for (int i = 9; i < entries.size(); i++) {
+            TabRegistry.TabEntry e = entries.get(i);
+            TabRegistry.MoreTab mt = registry.moreTabs().get(e.moreIndex());
             assertEquals(TabRegistry.TAB_MORE, e.tabIndex());
-            assertEquals(i, e.moreIndex());
+            assertTrue(e.moreIndex() > previousIndex, "More indexes ascend");
+            previousIndex = e.moreIndex();
             assertEquals(String.valueOf(mt.shortcut()), e.shortcut());
             assertEquals(mt.name(), e.name());
             assertEquals(mt.icon(), e.icon());
