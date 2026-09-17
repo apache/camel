@@ -38,6 +38,8 @@ import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Validated Camel YAML DSL samples per EIP (and per top-level entry such as onException, rest or routeConfiguration),
@@ -53,6 +55,8 @@ import org.apache.camel.util.json.Jsoner;
  * come from the catalog in use only, which is the point of asking for a version.
  */
 public final class CatalogSamples {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CatalogSamples.class);
 
     private static final String RESOURCE = "org/apache/camel/dsl/jbang/core/commands/ai/eip-samples.json";
     public static final int DEFAULT_LIMIT = 2;
@@ -200,7 +204,9 @@ public final class CatalogSamples {
                 default -> eipSamples(catalog, key);
             };
         } catch (Exception e) {
-            // a page that cannot be read or validated: the shipped samples are the fallback
+            // a page that cannot be read or validated: the shipped samples are the fallback, and the answer says the
+            // page has no example; the cause is in the debug log
+            LOG.debug("Cannot read the {} samples of {} from the catalog documentation", kind, key, e);
             found = Found.NONE;
         }
         if (cacheable) {
