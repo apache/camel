@@ -788,6 +788,11 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
+        return doGetEndpoint(uri, null, parameters, normalized, prototype);
+    }
+
+    protected Endpoint doGetEndpoint(
+            String uri, String explicitRawUri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
         // ensure CamelContext are initialized before we can get an endpoint
         build();
 
@@ -802,7 +807,7 @@ public abstract class AbstractCamelContext extends BaseService
             uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
         }
 
-        final String rawUri = uri;
+        final String rawUri = explicitRawUri != null ? explicitRawUri : uri;
 
         // normalize uri so we can do endpoint hits with minor mistakes and
         // parameters is not in the same order

@@ -2178,3 +2178,17 @@ It was read by the Weaviate embeddings data-type transformer but its value was n
 vector is always sent as the object vector, so a "vector field name" had no effect (Weaviate has no named
 vector-field concept in this producer). Routes that set this header can simply drop it; behaviour is
 unchanged.
+
+=== toD now passes the raw URI to useRawUri() components
+
+Components that override `useRawUri()` to return `true` (such as `kamelet`, `master`, and `webhook`) now
+receive the original, un-encoded URI when the endpoint is resolved dynamically via `toD`, exactly as they
+already did via the static `to` DSL.
+
+Before this change, `toD` passed the URL-encoded (normalised) form to such components, causing parameter
+values containing special characters (`%`, `+`, `?`, `=`, `@`, `|`) to arrive double-encoded at the
+component.
+
+This is a bug fix (CAMEL-24747). Routes that relied on `toD` passing the encoded form to a `useRawUri()`
+component will now see the original raw value instead. For all other components (`useRawUri()` returns
+`false`), behaviour is unchanged.

@@ -28,8 +28,14 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
 
     // must extend ValueHolder to let this class be used as key for Camels endpoint registry
 
-    private NormalizedUri(String value) {
-        super(value);
+    // The raw (un-normalized) URI, preserved so that components with useRawUri()=true
+    // receive the original unencoded form even when the endpoint is resolved via a
+    // NormalizedEndpointUri (e.g. from SendDynamicProcessor / toD).
+    private final String rawUri;
+
+    private NormalizedUri(String normalizedValue, String rawUri) {
+        super(normalizedValue);
+        this.rawUri = rawUri;
     }
 
     /**
@@ -41,10 +47,25 @@ public final class NormalizedUri extends ValueHolder<String> implements Normaliz
      */
     public static NormalizedUri newNormalizedUri(String uri, boolean normalized) {
         if (normalized) {
-            return new NormalizedUri(uri);
+            return new NormalizedUri(uri, null);
         } else {
-            return new NormalizedUri(EndpointHelper.normalizeEndpointUri(uri));
+            return new NormalizedUri(EndpointHelper.normalizeEndpointUri(uri), uri);
         }
+    }
+
+    /**
+     * Returns the raw (un-normalized) URI that was used to create this instance. Components that declare
+     * {@code useRawUri()=true} should receive this value so that parameter values are not URL-decoded before they reach
+     * the component.
+     *
+     * <p>
+     * May be {@code null} when the raw form is not known (e.g. when the URI was already normalized at construction
+     * time). Callers should treat {@code null} as "fall back to the normalized URI".
+     *
+     * @since 4.23
+     */
+    public String getRawUri() {
+        return rawUri;
     }
 
     @Override
