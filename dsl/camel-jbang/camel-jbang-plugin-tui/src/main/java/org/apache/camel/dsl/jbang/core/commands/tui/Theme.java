@@ -301,7 +301,7 @@ public final class Theme {
      * {@code syntax-*} stylesheet tokens as {@link SyntaxHighlighter}, so the Source tab and markdown code blocks
      * agree.
      */
-    public static SyntaxTheme syntaxTheme() {
+    public static synchronized SyntaxTheme syntaxTheme() {
         return SyntaxTheme.builder()
                 .token(TokenType.COMMENT, Style.EMPTY.fg(syntaxComment()))
                 .token(TokenType.KEYWORD, Style.EMPTY.fg(syntaxKeyword()))

@@ -66,6 +66,9 @@ class SyntaxHighlighter {
     private static final Pattern XML_ATTR_NAME = Pattern.compile("\\s([\\w:.-]+)=");
     private static final Pattern XML_ENTITY = Pattern.compile("&[^;]+;");
 
+    // Fallback palettes used when a theme defines no syntax-* tokens (see Theme). Package-private so ThemeTest can
+    // assert the fallback colors; not a stable API for other callers.
+
     // Monokai color palette (dark themes)
     static final Color MONOKAI_COMMENT = Color.rgb(117, 113, 94);
     static final Color MONOKAI_STRING = Color.rgb(230, 219, 116);
