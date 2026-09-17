@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -109,10 +110,12 @@ class AnswerChecksTest {
         assertThat(AnswerChecks.placeholders("a ${body} b ${header.${header.key}} c ${x"))
                 .containsExactly("${body}", "${header.${header.key}}");
         assertThat(AnswerChecks.placeholders("${header.a\n}")).isEmpty();
-        assertThat(AnswerChecks.isSimple("${header.user}", CATALOG)).isTrue();
-        assertThat(AnswerChecks.isSimple("${date-with-timezone:now:UTC:yyyy}", CATALOG)).isTrue();
-        assertThat(AnswerChecks.isSimple("${camel-version}", CATALOG)).isFalse();
-        assertThat(AnswerChecks.isSimple("${}", CATALOG)).isFalse();
+        Set<String> roots = AnswerChecks.roots(CATALOG);
+        assertThat(roots).contains("body", "header", "date", "random");
+        assertThat(AnswerChecks.isSimple("${header.user}", roots)).isTrue();
+        assertThat(AnswerChecks.isSimple("${date-with-timezone:now:UTC:yyyy}", roots)).isTrue();
+        assertThat(AnswerChecks.isSimple("${camel-version}", roots)).isFalse();
+        assertThat(AnswerChecks.isSimple("${}", roots)).isFalse();
     }
 
     @Test

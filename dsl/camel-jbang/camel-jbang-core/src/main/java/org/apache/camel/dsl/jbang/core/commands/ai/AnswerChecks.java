@@ -103,8 +103,9 @@ public final class AnswerChecks {
             // an unterminated fence: the model ran out of tokens, judge what is there as text
             text.append(block);
         }
+        Set<String> roots = roots(catalog);
         for (String placeholder : placeholders(text.toString())) {
-            if (problems.containsKey(placeholder) || !isSimple(placeholder, catalog)
+            if (problems.containsKey(placeholder) || !isSimple(placeholder, roots)
                     || SimpleChecks.hasPlaceholderAsLogicalOperand(placeholder)) {
                 continue;
             }
@@ -163,8 +164,11 @@ public final class AnswerChecks {
         return answer;
     }
 
-    /** Whether the placeholder starts with a simple function or value, so the catalog is the judge of it. */
-    static boolean isSimple(String placeholder, CamelCatalog catalog) {
+    /**
+     * Whether the placeholder starts with a simple function or value, one of the {@link #roots(CamelCatalog) roots}, so
+     * the catalog is the judge of it.
+     */
+    static boolean isSimple(String placeholder, Set<String> roots) {
         String content = placeholder.substring(2, placeholder.length() - 1).strip();
         int end = 0;
         while (end < content.length()) {
@@ -177,13 +181,15 @@ public final class AnswerChecks {
         if (end == 0) {
             return false;
         }
-        return roots(catalog).contains(content.substring(0, end));
+        return roots.contains(content.substring(0, end));
     }
 
-    /** The first word of every simple function name: header for header.name, date for date:command:pattern. */
-    private static Set<String> roots(CamelCatalog catalog) {
-        // computed from the catalog given, so a catalog of another Camel version answers for its own functions; the
-        // language model behind it is cached by the catalog, so this is a walk over a list of names
+    /**
+     * The first word of every simple function name: header for header.name, date for date:command:pattern. Computed
+     * once per answer from the catalog given, so a catalog of another Camel version answers for its own functions.
+     */
+    static Set<String> roots(CamelCatalog catalog) {
+        // the language model behind it is cached by the catalog, so this is a walk over a list of names
         Set<String> answer = new HashSet<>();
         LanguageModel simple = catalog.languageModel("simple");
         if (simple != null && simple.getFunctions() != null) {
