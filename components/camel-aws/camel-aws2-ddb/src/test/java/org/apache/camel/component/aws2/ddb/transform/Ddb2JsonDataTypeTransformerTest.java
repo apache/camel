@@ -120,6 +120,47 @@ public class Ddb2JsonDataTypeTransformerTest {
     }
 
     @Test
+    void shouldKeepExplicitReturnValuesOnPutItem() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setBody(Json.mapper().readTree(itemJson));
+        exchange.getMessage().setHeader(Ddb2Constants.RETURN_VALUES, ReturnValue.NONE.toString());
+        exchange.setProperty("operation", Ddb2Operations.PutItem.name());
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+
+        Assertions.assertEquals(ReturnValue.NONE.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+    }
+
+    @Test
+    void shouldKeepExplicitReturnValuesOnUpdateItem() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage()
+                .setBody(Json.mapper().readTree("{\"operation\": \"" + Ddb2Operations.UpdateItem.name() + "\", \"key\": "
+                                                + keyJson + ", \"item\": " + itemJson + "}"));
+        exchange.getMessage().setHeader(Ddb2Constants.RETURN_VALUES, ReturnValue.UPDATED_OLD.toString());
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+
+        Assertions.assertEquals(ReturnValue.UPDATED_OLD.toString(),
+                exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+    }
+
+    @Test
+    void shouldKeepExplicitReturnValuesOnDeleteItem() throws Exception {
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.getMessage().setBody(Json.mapper().readTree("{\"key\": " + keyJson + "}"));
+        exchange.getMessage().setHeader(Ddb2Constants.RETURN_VALUES, ReturnValue.NONE.toString());
+        exchange.setProperty("operation", Ddb2Operations.DeleteItem.name());
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, new DataType(AWS_2_DDB_APPLICATION_JSON_TRANSFORMER));
+
+        Assertions.assertEquals(ReturnValue.NONE.toString(), exchange.getMessage().getHeader(Ddb2Constants.RETURN_VALUES));
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     void shouldMapNestedObjects() throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
