@@ -165,16 +165,20 @@ Scalpel is only invoked when a **subdirectory** `pom.xml` is changed (e.g. `pare
 
 - **Source-set-aware propagation**: Distinguishes test-jar dependencies from regular dependencies. A module that depends only on another module's test-jar (e.g., `camel-core`'s test-jar with test utilities) is propagated through the `TEST` source set, not the `MAIN` source set. This prevents a change to test utilities from triggering tests in all ~500 modules that depend on `camel-core`.
 - **`skipTestsForDownstreamModules`**: Allows specifying modules whose tests should be skipped when they appear as downstream dependents (mirrors the `EXCLUSION_LIST` in `incremental-build.sh`). This gives Scalpel an accurate picture of what skip-tests mode would actually test.
+- **Explain mode** (`-Dscalpel.explain=true`): Each affected module carries an `evidence[]` array naming the exact file, property, managed dependency, or graph edge that caused it to be included. The PR comment surfaces this evidence inline — e.g. `` `camel-kafka` ← properties/version.kafka `` — making it immediately clear why each module is in the build set.
+- **`reactorModuleCount`** (report field, 0.4.1+): Total reactor size emitted directly by Scalpel. Used for N-of-M framing in the PR comment (e.g. "47 of 1,847 tested") without extra shell arithmetic.
+- **`testedModulesCount`** (report field, 0.4.x): Modules whose tests will actually run, computed by Scalpel. Used directly instead of counting list elements in the script.
 
 #### Shadow comparison
 
 Scalpel runs in **shadow mode**: it observes what skip-tests mode *would* have done and reports it in a collapsible section of the PR comment, without affecting actual test execution. This allows the team to validate Scalpel's decisions across many PRs before switching to Scalpel-driven test execution.
 
 The shadow comparison section shows:
-- How many modules Scalpel would test (direct + downstream)
+- How many modules Scalpel would test out of the total reactor (N-of-M framing)
 - How many downstream modules would have tests skipped (generated code, meta-modules)
+- POM change details: changed properties, managed dependencies, managed plugins
 - Set differences: modules only Scalpel found vs modules only the current approach found
-- The full list of modules in each category
+- The full list of modules in each category, with per-module evidence (explain mode)
 
 The comparison is apples-to-apples: the current approach's reactor is filtered through the `EXCLUSION_LIST` before comparing, so both sides exclude the same meta/generated modules (catalog, jbang, docs, etc.).
 
