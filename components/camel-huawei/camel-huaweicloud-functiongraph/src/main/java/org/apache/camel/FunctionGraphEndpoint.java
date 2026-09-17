@@ -263,7 +263,7 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
         HttpConfig httpConfig = HttpConfig.getDefaultHttpConfig();
         httpConfig.withIgnoreSSLVerification(isIgnoreSslVerification());
         if (ObjectHelper.isNotEmpty(getProxyHost())
-                && ObjectHelper.isNotEmpty(getProxyPort())) {
+                && getProxyPort() > 0) {
             httpConfig.withProxyHost(getProxyHost())
                     .withProxyPort(getProxyPort());
 
