@@ -966,9 +966,9 @@ session totals per question.
 and the live runner state and host load on the Ollama tab need the server on the same machine.
 
 For the wider picture see the blog posts
-https://camel.apache.org/blog/2026/09/camel-local-model-benchmark/index.html[We had a frontier AI coach a small local model through Camel]
+link:/blog/2026/09/camel-local-model-benchmark/[We had a frontier AI coach a small local model through Camel]
 on what a local model can do with Camel and what was changed to help it, and
-https://camel.apache.org/blog/2026/09/camel-genai-observability-jbang/index.html[Observe Your Camel AI Routes with GenAI OpenTelemetry]
+link:/blog/2026/09/camel-genai-observability-jbang/[Observe Your Camel AI Routes with GenAI OpenTelemetry]
 on observing routes that call Ollama.
 
 ==== Using an OpenAI-compatible local server
