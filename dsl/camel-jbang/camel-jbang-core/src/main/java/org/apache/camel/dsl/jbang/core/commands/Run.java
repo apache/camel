@@ -1464,6 +1464,38 @@ public class Run extends CamelCommand {
         return existing.trim() + " " + extra;
     }
 
+    /**
+     * The execution limits ({@code --max-seconds}, {@code --max-messages} and {@code --max-idle-seconds}) as
+     * {@code camel.main.durationMax*} system properties, which all the runtimes honour.
+     */
+    List<String> buildDurationLimitArgs() {
+        List<String> args = new ArrayList<>();
+        if (executionLimitOptions.maxSeconds > 0) {
+            args.add("-Dcamel.main.durationMaxSeconds=" + executionLimitOptions.maxSeconds);
+        }
+        if (executionLimitOptions.maxMessages > 0) {
+            args.add("-Dcamel.main.durationMaxMessages=" + executionLimitOptions.maxMessages);
+        }
+        if (executionLimitOptions.maxIdleSeconds > 0) {
+            args.add("-Dcamel.main.durationMaxIdleSeconds=" + executionLimitOptions.maxIdleSeconds);
+        }
+        return args;
+    }
+
+    /**
+     * The JVM arguments the exported Quarkus or Spring Boot project is run with ({@code jvm.args} and
+     * {@code spring-boot.run.jvmArguments}): {@code --jvm-args}, the flight recording and the execution limits. Returns
+     * null when there are none.
+     */
+    String buildExportedRunJvmArgs() {
+        String args = mergeJvmArgs(jvmArgs, buildJfrJvmArgs());
+        List<String> limits = buildDurationLimitArgs();
+        if (!limits.isEmpty()) {
+            args = mergeJvmArgs(args, String.join(" ", limits));
+        }
+        return args != null && !args.isBlank() ? args.trim() : null;
+    }
+
     protected int runQuarkus() throws Exception {
         if (background) {
             printer().printErr("Run Camel Quarkus with --background is not supported");
@@ -1568,7 +1600,10 @@ public class Run extends CamelCommand {
             return exit;
         }
 
-        appNameRef.set(eq.name);
+        // the exported project may have derived the application name from the source files, and the log file
+        // must be named after the name the application reports (which is what camel log and the TUI look for)
+        String appName = resolveExportedAppName(runDirPath, eq.name);
+        appNameRef.set(appName);
 
         // prepare quarkus for logging to file
         Path appProps = Paths.get(eq.exportDir, "src/main/resources/application.properties");
@@ -1576,7 +1611,7 @@ public class Run extends CamelCommand {
             String content = Files.readString(appProps);
             content += "\n# logging to file\n"
                        + "quarkus.log.file.enabled=true\n"
-                       + "quarkus.log.file.path=${user.home}/.camel/" + eq.name + ".log\n"
+                       + "quarkus.log.file.path=${user.home}/.camel/" + appName + ".log\n"
                        + "quarkus.log.file.format=" + QUARKUS_LOG_FILE_FORMAT + "\n";
             Files.writeString(appProps, content);
         }
@@ -1592,9 +1627,9 @@ public class Run extends CamelCommand {
         mvnCmd.add("--quiet");
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
-        String quarkusRunJvmArgs = mergeJvmArgs(jvmArgs, buildJfrJvmArgs());
-        if (quarkusRunJvmArgs != null && !quarkusRunJvmArgs.isBlank()) {
-            mvnCmd.add("-Djvm.args=" + quarkusRunJvmArgs.trim());
+        String quarkusRunJvmArgs = buildExportedRunJvmArgs();
+        if (quarkusRunJvmArgs != null) {
+            mvnCmd.add("-Djvm.args=" + quarkusRunJvmArgs);
         }
         mvnCmd.add("package");
         mvnCmd.add("quarkus:" + (dev ? "dev" : "run"));
@@ -1793,15 +1828,7 @@ public class Run extends CamelCommand {
         if (dev) {
             javaCmd.addAll(buildCamelMainReloadArgs());
         }
-        if (executionLimitOptions.maxSeconds > 0) {
-            javaCmd.add("-Dcamel.main.durationMaxSeconds=" + executionLimitOptions.maxSeconds);
-        }
-        if (executionLimitOptions.maxMessages > 0) {
-            javaCmd.add("-Dcamel.main.durationMaxMessages=" + executionLimitOptions.maxMessages);
-        }
-        if (executionLimitOptions.maxIdleSeconds > 0) {
-            javaCmd.add("-Dcamel.main.durationMaxIdleSeconds=" + executionLimitOptions.maxIdleSeconds);
-        }
+        javaCmd.addAll(buildDurationLimitArgs());
         javaCmd.add("-jar");
         javaCmd.add(jar.toAbsolutePath().toString());
 
@@ -1820,7 +1847,7 @@ public class Run extends CamelCommand {
      * The application name as configured in the exported project ({@code camel.main.name}), which is what the running
      * application reports to the CLI and the TUI.
      */
-    private static String resolveExportedAppName(Path runDirPath, String fallback) {
+    static String resolveExportedAppName(Path runDirPath, String fallback) {
         Path props = runDirPath.resolve("src/main/resources/application.properties");
         if (Files.exists(props)) {
             try (InputStream is = Files.newInputStream(props)) {
@@ -1864,15 +1891,7 @@ public class Run extends CamelCommand {
         if (serverOptions.port != -1) {
             args.add("-D" + portKey + "=" + serverOptions.port);
         }
-        if (executionLimitOptions.maxSeconds > 0) {
-            args.add("-Dcamel.main.durationMaxSeconds=" + executionLimitOptions.maxSeconds);
-        }
-        if (executionLimitOptions.maxMessages > 0) {
-            args.add("-Dcamel.main.durationMaxMessages=" + executionLimitOptions.maxMessages);
-        }
-        if (executionLimitOptions.maxIdleSeconds > 0) {
-            args.add("-Dcamel.main.durationMaxIdleSeconds=" + executionLimitOptions.maxIdleSeconds);
-        }
+        args.addAll(buildDurationLimitArgs());
         if (property != null) {
             for (String p : property) {
                 String s = p.trim();
@@ -2328,9 +2347,9 @@ public class Run extends CamelCommand {
         mvnCmd.add("--quiet");
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
-        String springBootRunJvmArgs = mergeJvmArgs(jvmArgs, buildJfrJvmArgs());
-        if (springBootRunJvmArgs != null && !springBootRunJvmArgs.isBlank()) {
-            mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs.trim());
+        String springBootRunJvmArgs = buildExportedRunJvmArgs();
+        if (springBootRunJvmArgs != null) {
+            mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs);
         }
         mvnCmd.add("spring-boot:run");
         pb.command(mvnCmd);
