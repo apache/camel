@@ -68,6 +68,7 @@ public class EscapeHelperTest {
         assertEquals("a%26b%3Dc%2Fd%3Fe", EscapeHelper.url("a&b=c/d?e"));
         assertEquals("caf%C3%A9", EscapeHelper.url("caf\u00e9"));
         assertEquals("plain-text_1.2*", EscapeHelper.url("plain-text_1.2*"));
+        assertEquals("a%2Bb", EscapeHelper.url("a+b")); // + in input -> %2B, not %20
     }
 
     @Test

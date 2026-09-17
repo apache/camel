@@ -61,6 +61,9 @@ public final class EscapeHelper {
 
         /**
          * Escapes the value according to this kind.
+         *
+         * @param  value the value to escape
+         * @return       the escaped value, or <tt>null</tt> if the value is <tt>null</tt>
          */
         public String escape(String value) {
             return EscapeHelper.escape(this, value);
