@@ -70,6 +70,7 @@ final class TuiIcons {
     static final String KEYSTROKES = "🔤";
     static final String SLEEP = "💤";
     static final String STOP = "🛑";
+    static final String QUIT = "🚪";
     static final String RECORD = "🔴";
     static final String DOCTOR = "🩺";
     static final String RESET = "🔄";

@@ -40,6 +40,8 @@ class ActionsPopupTest {
         assertEquals(ActionsPopup.Action.RUN_INFRA, ActionsPopup.actionForLabel("Run Dev/Infra Service..."));
         assertEquals(ActionsPopup.Action.TAPE_RECORDING, ActionsPopup.actionForLabel("Stop Tape Recording"));
         assertEquals(ActionsPopup.Action.SHOW_KEYSTROKES, ActionsPopup.actionForLabel("Hide Keystrokes"));
+        assertEquals(ActionsPopup.Action.QUIT, ActionsPopup.actionForLabel("Quit"));
+        assertEquals(ActionsPopup.Action.QUIT, ActionsPopup.actionForLabel("exit"));
     }
 
     @Test
