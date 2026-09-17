@@ -53,16 +53,16 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
     private String endpoint;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true, security = "secret", label = "security")
+              security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)",
-              secret = true, security = "secret", label = "security")
+    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret",
+              label = "security")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)",
-              secret = true, security = "secret", label = "security")
+    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret",
+              label = "security")
     @Metadata(required = true)
     private String secretKey;
 

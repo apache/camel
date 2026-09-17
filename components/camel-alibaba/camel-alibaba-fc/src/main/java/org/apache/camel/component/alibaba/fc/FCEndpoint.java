@@ -50,16 +50,16 @@ public class FCEndpoint extends DefaultEndpoint {
               displayName = "Endpoint")
     private String endpoint;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "Access Key",
-              secret = true, security = "secret", label = "security")
+    @UriParam(description = "Access key for the cloud user", displayName = "Access Key", security = "secret",
+              label = "security")
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "Secret Key",
-              secret = true, security = "secret", label = "security")
+    @UriParam(description = "Secret key for the cloud user", displayName = "Secret Key", security = "secret",
+              label = "security")
     private String secretKey;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Keys",
-              secret = true, security = "secret", label = "security")
+              security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
     @UriParam(description = "FC service name", displayName = "Service Name")
