@@ -258,6 +258,27 @@ class OllamaTabRenderTest {
     }
 
     @Test
+    void aFooterAveragesTheQuestionsOnceThereAreTwo() {
+        localServerWithModel();
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                5_000, 100, 5_100, 4_000, 500, 1_500, 0,
+                2_000), 0, "stop", 1, "how many routes");
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertFalse(rendered.contains("avg/question"), rendered);
+
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                5_200, 40, 5_240, 5_000, 500, 500, 0,
+                1_000), 0, "tool_calls", 2, "how much memory");
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(
+                5_400, 300, 5_700, 5_200, 200, 4_800, 0,
+                5_000), 0, "limit", 2, "how much memory");
+        rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertTrue(rendered.contains("avg/question"), rendered);
+        assertTrue(rendered.contains("2 questions · 3 requests"), rendered);
+        assertTrue(rendered.contains("1 limit"), rendered);
+    }
+
+    @Test
     void routeRequestsShowTheirRouteId() {
         localServerWithModel();
         monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(16, 6, 22, 0, 188, 81, 12, 300), 0, "stop");

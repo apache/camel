@@ -967,7 +967,7 @@ whether Ollama was found, which models are installed and whether they are large 
 per request, time to first token with cold starts marked, cache hit, how full the context window is
 and how it grows per question, GPU and process load, and one line per question with the requests it
 took, the question being answered right now on top with `working` as its reason and its time counting
-up. In the AI panel, `/context` prints what the next request will cost, `/usage` and *Ctrl+U* the
+up, and a footer with the average per question. In the AI panel, `/context` prints what the next request will cost, `/usage` and *Ctrl+U* the
 session totals per question.
 
 *Remote and containerised Ollama.* Everything above applies to an Ollama on another host or inside

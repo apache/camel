@@ -51,6 +51,7 @@ import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.HostStats;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.LoadedModel;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ModelShape;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.QuestionGroup;
+import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.QuestionSummary;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestEntry;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestSource;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.SessionTotals;
@@ -568,8 +569,13 @@ class OllamaTab extends AbstractTab {
                        + requests.size() + (requests.size() == 1 ? " request" : " requests")
                        + (active != null ? ", 1 in progress" : "") + ")"
                        + "  tok/s for prefill and decode · CTX = prompt share of the context window ";
-        Table table = Table.builder()
-                .rows(rows)
+        QuestionSummary summary = QuestionSummary.of(groups);
+        Table.Builder builder = Table.builder()
+                .rows(rows);
+        if (summary.questions() >= 2) {
+            builder.footer(summaryRow(summary, questionWidth));
+        }
+        Table table = builder
                 .header(Row.from(
                         Cell.from(Span.styled(" TIME", Style.EMPTY.bold())),
                         Cell.from(Span.styled("SOURCE", Style.EMPTY.bold())),
@@ -606,6 +612,29 @@ class OllamaTab extends AbstractTab {
     }
 
     private static final int FIXED_COLUMNS_WIDTH = 10 + 18 + 6 + 6 + 6 + 5 + 8 + 8 + 7 + 7 + 12 + 6;
+
+    /**
+     * The footer under the questions, spreadsheet style: the session's average per question in every column that is per
+     * question above, pooled rates and cache hit, the peak context fill, and the tool-call limit count.
+     */
+    private static Row summaryRow(QuestionSummary s, int questionWidth) {
+        Style dim = Theme.muted();
+        String text = s.questions() + " questions · " + s.requests() + " requests · " + formatSeconds(s.totalWallMs());
+        return Row.from(
+                Cell.from(Span.styled("", dim)),
+                Cell.from(Span.styled("avg/question", dim)),
+                Cell.from(Span.styled(TuiHelper.truncate(text, questionWidth), dim)),
+                rightCell(formatTokens(s.avgPromptTokens()), 6, dim),
+                rightCell(formatTokens(s.avgOutputTokens()), 6, dim),
+                rightCell(s.cacheHitPercent() + "%", 6, dim),
+                rightCell(s.peakContextPercent() >= 0 ? s.peakContextPercent() + "%" : "-", 5, dim),
+                rightCell(s.prefillTokensPerSecond() > 0 ? formatRate(s.prefillTokensPerSecond()) : "-", 8, dim),
+                rightCell(s.decodeTokensPerSecond() > 0 ? formatRate(s.decodeTokensPerSecond()) : "-", 8, dim),
+                rightCell(s.avgTtftMs() > 0 ? formatSeconds(s.avgTtftMs()) : "-", 7, dim),
+                rightCell(formatSeconds(s.avgWallMs()), 7, Style.EMPTY.fg(Theme.accent()).bold()),
+                Cell.from(Span.styled(s.limitHits() > 0 ? " " + s.limitHits() + " limit" : "",
+                        s.limitHits() > 0 ? Theme.error() : dim)));
+    }
 
     private static final String[] SPINNER = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };
 

@@ -304,6 +304,46 @@ class OllamaMonitorTest {
     }
 
     @Test
+    void theQuestionSummaryAveragesPerQuestionAndLeavesRoutesOut() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.updateModels(List.of(new OllamaMonitor.LoadedModel(
+                "m", "f", "35.5B", "Q4_K_M", 1, 1, 65_536, null, null)));
+        // question 1: two steps, 4 s of wall time, ended at the tool-call limit
+        monitor.recordRequest("m", new LlmClient.TokenUsage(5_000, 40, 5_040, 4_000, 500, 1_000, 0, 1_500), 0,
+                "tool_calls", 1, "one");
+        monitor.recordRequest("m", new LlmClient.TokenUsage(5_200, 160, 5_360, 5_000, 200, 2_300, 0, 2_500), 0,
+                "limit", 1, "one");
+        // question 2: one step of 2 s
+        monitor.recordRequest("m", new LlmClient.TokenUsage(5_400, 100, 5_500, 5_200, 200, 1_800, 0, 2_000), 0,
+                "stop", 2, "two");
+        // a route call is not a question
+        monitor.ingestSpans(List.of(genAiSpan("s1", "ollama", "m", "chat-route", 412, 180, 9_000)));
+
+        OllamaMonitor.QuestionSummary s
+                = OllamaMonitor.QuestionSummary.of(OllamaMonitor.groupByQuestion(monitor.snapshot().requests()));
+        assertEquals(2, s.questions());
+        assertEquals(3, s.requests());
+        assertEquals(5_300, s.avgPromptTokens(), "average of each question's largest prompt");
+        assertEquals(150, s.avgOutputTokens());
+        assertEquals(91, s.cacheHitPercent(), "14.2k cached of 15.6k prompt tokens");
+        assertEquals(8, s.peakContextPercent());
+        assertEquals(1, s.limitHits());
+        // the fake requests land at once, so a question's wall time is its first step's total plus the rest:
+        // (1.5 s + 1 s) and 2 s, averaged
+        assertTrue(s.avgWallMs() >= 2_250 && s.avgWallMs() < 2_400, "was " + s.avgWallMs());
+        assertEquals(350, s.avgTtftMs());
+        assertEquals(59, Math.round(s.decodeTokensPerSecond()), "300 tokens over 5.1 s of decode");
+        assertEquals(1556, Math.round(s.prefillTokensPerSecond()), "1.4k evaluated tokens over 0.9 s");
+
+        JsonObject js = (JsonObject) monitor.toJson(10).get("questionSummary");
+        assertEquals(2, js.get("questions"));
+        assertEquals(1, js.get("limitHits"));
+        assertEquals(s.avgWallMs(), js.get("avgWallMs"));
+
+        assertEquals(OllamaMonitor.QuestionSummary.EMPTY, OllamaMonitor.QuestionSummary.of(List.of()));
+    }
+
+    @Test
     void panelContextAppearsInTheJsonOnceKnown() {
         OllamaMonitor monitor = new OllamaMonitor();
         assertNull(monitor.toJson(1).get("aiPanel"));

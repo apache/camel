@@ -370,7 +370,6 @@ final class OllamaMonitor {
         }
     }
 
-    /** Immutable view for rendering and for the MCP tool. */
     /**
      * The AI panel question being answered right now, so the tab can list it from the moment it was asked: before the
      * first request returns there is no {@link RequestEntry} for it, and while tools run its last step says
@@ -387,6 +386,70 @@ final class OllamaMonitor {
         }
     }
 
+    /**
+     * The AI panel's questions of the session in one line, the footer of the requests table: averages per question
+     * where a question row shows a figure per question, pooled rates and cache hit, the peak context fill and how many
+     * questions ended at the tool-call limit. Route calls are not questions and are left out.
+     */
+    record QuestionSummary(int questions, int requests, long totalWallMs, long avgPromptTokens,
+            long avgOutputTokens, int cacheHitPercent, int peakContextPercent, double prefillTokensPerSecond,
+            double decodeTokensPerSecond, long avgTtftMs, long avgWallMs, int limitHits) {
+
+        static final QuestionSummary EMPTY = new QuestionSummary(0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
+
+        static QuestionSummary of(List<QuestionGroup> groups) {
+            int questions = 0;
+            int requests = 0;
+            long wall = 0;
+            long prompt = 0;
+            long output = 0;
+            long promptAll = 0;
+            long cachedAll = 0;
+            long evaluated = 0;
+            long prefillMs = 0;
+            long decodeMs = 0;
+            int peak = -1;
+            long ttft = 0;
+            int timed = 0;
+            int limits = 0;
+            for (QuestionGroup g : groups) {
+                if (g.source() != RequestSource.TUI) {
+                    continue;
+                }
+                questions++;
+                requests += g.steps().size();
+                wall += g.wallMs();
+                prompt += g.promptTokens();
+                output += g.outputTokens();
+                peak = Math.max(peak, g.contextPercent());
+                if (g.hasTimings()) {
+                    ttft += g.ttftMs();
+                    timed++;
+                }
+                if ("limit".equals(g.doneReason())) {
+                    limits++;
+                }
+                for (RequestEntry e : g.steps()) {
+                    promptAll += e.inputTokens();
+                    cachedAll += e.cachedTokens();
+                    evaluated += e.evaluatedTokens();
+                    prefillMs += e.prefillMs();
+                    decodeMs += e.decodeMs();
+                }
+            }
+            if (questions == 0) {
+                return EMPTY;
+            }
+            return new QuestionSummary(
+                    questions, requests, wall, prompt / questions, output / questions,
+                    promptAll > 0 ? (int) Math.min(100, cachedAll * 100 / promptAll) : 0, peak,
+                    prefillMs > 0 && evaluated > 0 ? evaluated * 1000.0 / prefillMs : 0,
+                    decodeMs > 0 && output > 0 ? output * 1000.0 / decodeMs : 0,
+                    timed > 0 ? ttft / timed : 0, wall / questions, limits);
+        }
+    }
+
+    /** Immutable view for rendering and for the MCP tool. */
     record Snapshot(ServerInfo server, List<LoadedModel> models, List<String> installed, SlotState slot,
             RunnerInfo runner, HostStats host, List<RequestEntry> requests, double liveDecodeRate,
             double livePrefillRate, long[] decodeHistory, SessionTotals totals, String lastError, Instant lastPoll,
@@ -1249,7 +1312,25 @@ final class OllamaMonitor {
         ActiveQuestion active = s.activeQuestion();
         boolean activeListed = false;
         int q = 0;
-        for (QuestionGroup g : groupByQuestion(s.requests())) {
+        List<QuestionGroup> groups = groupByQuestion(s.requests());
+        QuestionSummary summary = QuestionSummary.of(groups);
+        if (summary.questions() > 0) {
+            JsonObject js = new JsonObject();
+            js.put("questions", summary.questions());
+            js.put("requests", summary.requests());
+            js.put("totalWallMs", summary.totalWallMs());
+            js.put("avgWallMs", summary.avgWallMs());
+            js.put("avgTtftMs", summary.avgTtftMs());
+            js.put("avgPromptTokens", summary.avgPromptTokens());
+            js.put("avgOutputTokens", summary.avgOutputTokens());
+            js.put("cacheHitPercent", summary.cacheHitPercent());
+            js.put("peakContextPercent", summary.peakContextPercent());
+            js.put("prefillTokensPerSecond", round1(summary.prefillTokensPerSecond()));
+            js.put("decodeTokensPerSecond", round1(summary.decodeTokensPerSecond()));
+            js.put("limitHits", summary.limitHits());
+            root.put("questionSummary", js);
+        }
+        for (QuestionGroup g : groups) {
             if (q++ >= requestLimit) {
                 break;
             }

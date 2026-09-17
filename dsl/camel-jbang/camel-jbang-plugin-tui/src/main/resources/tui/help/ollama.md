@@ -148,6 +148,13 @@ with Esc).
 Route requests show `-` for prefill, decode and TTFT because the GenAI
 span carries tokens and duration only.
 
+With two or more questions a footer row, `avg/question`, gives the
+session's average per question for IN, OUT, TTFT and TOTAL, the pooled
+cache hit and rates, the peak CTX, and how many questions ended at the
+tool-call limit. Its TOTAL is the average time you waited per question,
+the figure the AI panel's usage view (Ctrl+U) reports as well. Route calls
+are not questions and are left out.
+
 Two figures are coloured so a costly question stands out without reading
 the row: the `×N` request count is yellow from 10 requests and red when
 the question ended at the AI panel's tool-call limit (REASON `limit`);
