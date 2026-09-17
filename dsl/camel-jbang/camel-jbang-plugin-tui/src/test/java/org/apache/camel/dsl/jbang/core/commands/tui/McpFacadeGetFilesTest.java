@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,12 +45,16 @@ class McpFacadeGetFilesTest {
                                         + "      steps:\n        - log:\n            message: hi\n";
 
     private static McpFacade facade(Path projectDir, String routeSource) {
+        return facade(projectDir, "timer-log", routeSource);
+    }
+
+    private static McpFacade facade(Path projectDir, String routeId, String routeSource) {
         IntegrationInfo info = new IntegrationInfo();
         info.name = "timer-log";
         info.pid = "1";
         info.directory = projectDir.toString();
         RouteInfo route = new RouteInfo();
-        route.routeId = "timer-log";
+        route.routeId = routeId;
         route.source = routeSource;
         info.routes.add(route);
         return new McpFacade(
@@ -97,6 +102,20 @@ class McpFacadeGetFilesTest {
         String answer = registry.execute("camel_get_files", Map.of("directory", "timer-log"));
         assertTrue(answer.contains("\"routeFiles\":[\"demo.camel.yaml\"]"), answer);
         assertTrue(answer.contains("\"editing\""), "answered by the TUI, with its directory knowledge: " + answer);
+    }
+
+    @Test
+    void aRouteWithoutAnIdIsListedByItsFileAlone(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+        McpFacade facade = facade(dir, null, "file:" + dir.resolve("demo.camel.yaml") + ":1");
+
+        JsonObject list = facade.getFiles("timer-log", null);
+
+        JsonArray routes = (JsonArray) list.get("routes");
+        assertEquals(1, routes.size());
+        JsonObject route = (JsonObject) routes.get(0);
+        assertEquals("demo.camel.yaml", route.getString("file"));
+        assertFalse(route.containsKey("routeId"), "an anonymous route has no routeId key, not a \"null\" one: " + route);
     }
 
     @Test
