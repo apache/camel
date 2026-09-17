@@ -202,6 +202,11 @@ class CatalogDocsTest {
             assertEquals("random(min,max)", first.getString("name"), name);
         }
 
+        // a function name comes first even when a group has the same name
+        JsonObject function = catalogDoc(Map.of("name", "simple", "kind", "language", "optionsFilter", "function"));
+        assertEquals("function(name,exp)",
+                ((JsonObject) function.getCollection("functions").iterator().next()).getString("name"));
+
         // an operator kind is that kind only, and an operator itself comes first
         JsonObject logical = catalogDoc(Map.of("name", "simple", "kind", "language", "optionsFilter", "logical"));
         assertEquals("logical", logical.getString("operatorKind"));

@@ -1084,18 +1084,19 @@ public final class CatalogDocs {
         if (functions != null && !functions.isEmpty()) {
             result.put("functionCount", functions.size());
             if (filter != null) {
-                // a group name is that group and nothing else (date is two functions, not every function whose
-                // description mentions a date); a function name comes first; the rest is a word match
+                // a function name comes first, even when a group has the same name; a group name is then that group
+                // and nothing else (date is two functions, not every function whose description mentions a date);
+                // the rest is a word match
                 boolean group = functions.stream().anyMatch(fn -> filter.equalsIgnoreCase(fn.getGroup()));
                 JsonArray exact = new JsonArray();
                 JsonArray arr = new JsonArray();
                 for (LanguageModel.LanguageFunctionModel fn : functions) {
-                    if (group) {
+                    if (isFunctionName(fn, filter)) {
+                        exact.add(functionToJson(fn));
+                    } else if (group) {
                         if (filter.equalsIgnoreCase(fn.getGroup())) {
                             arr.add(functionToJson(fn));
                         }
-                    } else if (isFunctionName(fn, filter)) {
-                        exact.add(functionToJson(fn));
                     } else if (matchesOptionFilter(fn, filter)
                             || (fn.getDisplayName() != null && fn.getDisplayName().toLowerCase().contains(filter))) {
                         arr.add(functionToJson(fn));
