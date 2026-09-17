@@ -1,0 +1,70 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Camel TUI Turbo Pascal theme — Borland's IDE: the blue editor field, the grey menu bar, the cyan frame.
+ * Palette adapted from the Omarchy Turbo Pascal theme by Alexander Zeitler (MIT),
+ * https://github.com/AlexZeitler/omarchy-turbo-pascal-theme
+ */
+
+$brand: #0BDFEA;
+$dark-bg: #010378;
+$dark-fg: #FFFF55;
+$bright: #FFFFFF;
+$grey: #AAAAAA;
+$highlight: #F7EE0B;
+
+#accent         { color: $brand; }
+#accent-bg      { color: $dark-bg; background: $grey; text-style: bold; }
+#hint-key       { color: $dark-bg; background: $brand; text-style: bold; }
+#border         { color: $grey; }
+#border-focused { color: $brand; }
+#title          { color: $brand; text-style: bold; }
+#success        { color: #5BC98A; }
+#warning        { color: #FFA94D; }
+#error          { color: #FF7A66; }
+#muted          { color: $grey; }
+#selection      { color: $dark-bg; background: $highlight; text-style: bold; }
+#info           { color: #9FBEFF; }
+#notice         { color: #E07CE0; }
+#row-alt        { background: #010556; }
+#base-bg        { background: $dark-bg; }
+#base-fg        { color: $dark-fg; }
+
+/* Content tokens */
+#label          { color: $bright; }
+#change         { color: $highlight; }
+#search-match   { color: $dark-bg; background: #B0F5FB; }
+#mnemonic       { color: $bright; text-style: bold underline; }
+
+/* Diagram tokens */
+#diagram-border  { color: $grey; }
+#diagram-id      { color: $dark-fg; }
+#diagram-from    { color: #5BC98A; }
+#diagram-to      { color: $brand; }
+#diagram-choice  { color: $highlight; }
+#diagram-action  { color: #E07CE0; }
+#diagram-eip     { color: #9FBEFF; }
+#diagram-default { color: $grey; }
+
+/* Syntax tokens (optional) — the IDE's three-colour editor: reserved words white, code yellow, comments grey. */
+#syntax-comment  { color: $grey; }
+#syntax-string   { color: $brand; }
+#syntax-keyword  { color: $bright; }
+#syntax-function { color: $dark-fg; }
+#syntax-type     { color: $bright; }
+#syntax-constant { color: #B0F5FB; }
+#syntax-text     { color: $dark-fg; }

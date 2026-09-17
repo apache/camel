@@ -101,6 +101,7 @@ public final class Theme {
     };
 
     private static final Map<String, Style> CACHE = new HashMap<>();
+    private static final Map<String, Color> COLOR_CACHE = new HashMap<>();
 
     private static boolean initialized;
     private static boolean persistedModeLoaded;
@@ -296,36 +297,72 @@ public final class Theme {
     }
 
     /**
-     * Theme-aware syntax highlighting palette for fenced code blocks in MarkdownView. Reuses the Monokai (dark) and
-     * GitHub-inspired (light) palettes from {@link SyntaxHighlighter}.
+     * Theme-aware syntax highlighting palette for fenced code blocks in MarkdownView. Uses the same optional
+     * {@code syntax-*} stylesheet tokens as {@link SyntaxHighlighter}, so the Source tab and markdown code blocks
+     * agree.
      */
     public static SyntaxTheme syntaxTheme() {
-        if (isDark()) {
-            return SyntaxTheme.builder()
-                    .token(TokenType.COMMENT, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_COMMENT))
-                    .token(TokenType.KEYWORD, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_KEYWORD))
-                    .token(TokenType.TYPE, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_TYPE))
-                    .token(TokenType.STRING, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_STRING))
-                    .token(TokenType.NUMBER, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_CONSTANT))
-                    .token(TokenType.CONSTANT, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_CONSTANT))
-                    .token(TokenType.FUNCTION, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_FUNCTION))
-                    .token(TokenType.ANNOTATION, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_FUNCTION))
-                    .token(TokenType.TAG, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_KEYWORD))
-                    .token(TokenType.ATTRIBUTE, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_FUNCTION))
-                    .build();
-        }
         return SyntaxTheme.builder()
-                .token(TokenType.COMMENT, Style.EMPTY.fg(Color.rgb(106, 115, 125)))
-                .token(TokenType.KEYWORD, Style.EMPTY.fg(Color.rgb(215, 58, 73)))
-                .token(TokenType.TYPE, Style.EMPTY.fg(Color.rgb(0, 92, 197)))
-                .token(TokenType.STRING, Style.EMPTY.fg(Color.rgb(3, 47, 98)))
-                .token(TokenType.NUMBER, Style.EMPTY.fg(Color.rgb(111, 66, 193)))
-                .token(TokenType.CONSTANT, Style.EMPTY.fg(Color.rgb(111, 66, 193)))
-                .token(TokenType.FUNCTION, Style.EMPTY.fg(Color.rgb(0, 92, 197)))
-                .token(TokenType.ANNOTATION, Style.EMPTY.fg(Color.rgb(0, 92, 197)))
-                .token(TokenType.TAG, Style.EMPTY.fg(Color.rgb(215, 58, 73)))
-                .token(TokenType.ATTRIBUTE, Style.EMPTY.fg(Color.rgb(0, 92, 197)))
+                .token(TokenType.COMMENT, Style.EMPTY.fg(syntaxComment()))
+                .token(TokenType.KEYWORD, Style.EMPTY.fg(syntaxKeyword()))
+                .token(TokenType.TYPE, Style.EMPTY.fg(syntaxType()))
+                .token(TokenType.STRING, Style.EMPTY.fg(syntaxString()))
+                .token(TokenType.NUMBER, Style.EMPTY.fg(syntaxConstant()))
+                .token(TokenType.CONSTANT, Style.EMPTY.fg(syntaxConstant()))
+                .token(TokenType.FUNCTION, Style.EMPTY.fg(syntaxFunction()))
+                .token(TokenType.ANNOTATION, Style.EMPTY.fg(syntaxFunction()))
+                .token(TokenType.TAG, Style.EMPTY.fg(syntaxKeyword()))
+                .token(TokenType.ATTRIBUTE, Style.EMPTY.fg(syntaxFunction()))
                 .build();
+    }
+
+    // ---- Syntax highlighting colors ----
+    //
+    // Optional stylesheet tokens: a theme may define #syntax-comment, #syntax-string, #syntax-keyword,
+    // #syntax-function, #syntax-type, #syntax-constant and #syntax-text to give code its own look (e.g. the
+    // Turbo Pascal theme). Themes that omit them fall back to the Monokai (dark) or GitHub-inspired (light)
+    // palettes in SyntaxHighlighter.
+
+    /** Syntax color for comments. */
+    public static synchronized Color syntaxComment() {
+        return color("syntax-comment",
+                isDark() ? SyntaxHighlighter.MONOKAI_COMMENT : SyntaxHighlighter.LIGHT_COMMENT);
+    }
+
+    /** Syntax color for string literals and values. */
+    public static synchronized Color syntaxString() {
+        return color("syntax-string",
+                isDark() ? SyntaxHighlighter.MONOKAI_STRING : SyntaxHighlighter.LIGHT_STRING);
+    }
+
+    /** Syntax color for keywords, YAML/properties keys and XML tags. */
+    public static synchronized Color syntaxKeyword() {
+        return color("syntax-keyword",
+                isDark() ? SyntaxHighlighter.MONOKAI_KEYWORD : SyntaxHighlighter.LIGHT_KEYWORD);
+    }
+
+    /** Syntax color for functions, annotations and XML attribute names. */
+    public static synchronized Color syntaxFunction() {
+        return color("syntax-function",
+                isDark() ? SyntaxHighlighter.MONOKAI_FUNCTION : SyntaxHighlighter.LIGHT_FUNCTION);
+    }
+
+    /** Syntax color for types. */
+    public static synchronized Color syntaxType() {
+        return color("syntax-type",
+                isDark() ? SyntaxHighlighter.MONOKAI_TYPE : SyntaxHighlighter.LIGHT_TYPE);
+    }
+
+    /** Syntax color for numbers, booleans, null and entities. */
+    public static synchronized Color syntaxConstant() {
+        return color("syntax-constant",
+                isDark() ? SyntaxHighlighter.MONOKAI_CONSTANT : SyntaxHighlighter.LIGHT_CONSTANT);
+    }
+
+    /** Syntax color for plain code text such as separators. */
+    public static synchronized Color syntaxText() {
+        return color("syntax-text",
+                isDark() ? SyntaxHighlighter.MONOKAI_TEXT : SyntaxHighlighter.LIGHT_TEXT);
     }
 
     /** Diagram box-drawing border color. */
@@ -477,6 +514,7 @@ public final class Theme {
         persistedModeLoaded = false;
         previewOriginal = null;
         CACHE.clear();
+        COLOR_CACHE.clear();
         engine = null;
         initialized = false;
         mode = ThemeMode.DARK;
@@ -488,6 +526,7 @@ public final class Theme {
             persistedModeLoaded = true;
         }
         CACHE.clear();
+        COLOR_CACHE.clear();
         engine = null;
         initialized = false;
         engine();
@@ -498,9 +537,18 @@ public final class Theme {
         if (e == null) {
             return fallback;
         }
+        Color cached = COLOR_CACHE.get(id);
+        if (cached != null) {
+            return cached;
+        }
         try {
-            return e.resolve(new Token(id)).foreground().orElse(fallback);
+            // A token the stylesheet does not define resolves to the fallback; that is cached too because the
+            // stylesheet cannot change without activate() clearing the cache.
+            Color resolved = e.resolve(new Token(id)).foreground().orElse(fallback);
+            COLOR_CACHE.put(id, resolved);
+            return resolved;
         } catch (RuntimeException ex) {
+            // Not cached: a transient resolution failure must not permanently lock this token to the fallback.
             logTokenFallbackOnce(ex);
             return fallback;
         }

@@ -533,19 +533,26 @@ open at the bottom by default; see *Panel Position* in <<_settings>>.
 
 == Theme
 
-The TUI ships with 15 color themes defined as CSS stylesheets:
+The TUI ships with 21 color themes defined as CSS stylesheets:
 
 * *Dark themes* -- Dark (default), Dracula, Nord, Solarized Dark, Gruvbox Dark,
-  Catppuccin Mocha, Tokyo Night, Rosé Pine, Kanagawa, Everforest, Monochrome, CRT
-* *Light themes* -- Light, Solarized Light, Catppuccin Latte
+  Catppuccin Mocha, Catppuccin Frappé, Tokyo Night, Rosé Pine, Rosé Pine Moon, Kanagawa,
+  Everforest, Monochrome, CRT, Turbo Pascal
+* *Light themes* -- Light, Nord Light, Solarized Light, Gruvbox Light, Catppuccin Latte,
+  Everforest Light
 
 Open the *F2* actions menu and choose *Settings...* to switch themes, or pass
 `--theme=<name>` on the command line (e.g., `--theme=tokyo-night`). The CLI value
 overrides the persisted preference from `.camel-cli.properties`; runtime toggles and
 the config file still apply on later launches when `--theme` is omitted.
 
-The brand orange accent is consistent across all themes; status colors (success,
-warning, error) and borders adapt for readability on each palette.
+The brand orange accent is consistent across most themes; status colors (success,
+warning, error) and borders adapt for readability on each palette. A few themes trade
+the brand accent for their own identity: Monochrome, CRT and Turbo Pascal. The Turbo
+Pascal theme recreates Borland's IDE (yellow text on the blue editor field, cyan window
+frames, grey menu bar) and also restyles source code the way that editor did: reserved
+words in white, code in yellow, comments in grey. Other themes highlight code with a
+fixed Monokai (dark) or GitHub-inspired (light) palette.
 
 Your choice is remembered: it is saved as `camel.tui.theme` in `.camel-cli.properties`
 and restored the next time you open the TUI.
@@ -554,7 +561,7 @@ and restored the next time you open the TUI.
 
 Open the *F2* actions menu and choose *Settings...* to change TUI preferences in one place:
 
-* *Theme* -- cycle through 15 available themes (applied immediately on save).
+* *Theme* -- cycle through 21 available themes (applied immediately on save).
 * *Starting Tab* -- the tab shown when the TUI launches; any tab (primary or under *More*) can be
   chosen. Defaults to *Overview*.
 * *Select Tab* -- the tab to switch to when selecting an integration from the Overview tab.
@@ -1306,7 +1313,7 @@ vhs demo.tape               # .tape -> .gif
 | `100`
 
 | `--theme`
-| Color theme for this session (e.g., `dark`, `tokyo-night`, `dracula`). See <<Theme>> for the full list of 15 themes. Overrides the persisted `camel.tui.theme` preference when set.
+| Color theme for this session (e.g., `dark`, `tokyo-night`, `dracula`). See <<Theme>> for the full list of 21 themes. Overrides the persisted `camel.tui.theme` preference when set.
 |
 
 | `--record`

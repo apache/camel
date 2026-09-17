@@ -62,7 +62,8 @@ class ThemeModeTest {
     void nextCyclesToNextThemeInDeclarationOrder() {
         assertEquals(ThemeMode.LIGHT, ThemeMode.DARK.next());
         assertEquals(ThemeMode.DRACULA, ThemeMode.LIGHT.next());
-        assertEquals(ThemeMode.DARK, ThemeMode.CRT.next());
+        assertEquals(ThemeMode.TURBO_PASCAL, ThemeMode.CRT.next());
+        assertEquals(ThemeMode.DARK, ThemeMode.TURBO_PASCAL.next());
     }
 
     @Test
@@ -71,7 +72,7 @@ class ThemeModeTest {
                 "dark", "light", "dracula", "nord", "nord-light", "solarized-dark", "solarized-light",
                 "gruvbox-dark", "gruvbox-light", "catppuccin-mocha", "catppuccin-frappe", "catppuccin-latte",
                 "tokyo-night", "rose-pine", "rose-pine-moon", "kanagawa", "everforest", "everforest-light",
-                "monochrome", "crt"), ThemeMode.ids());
+                "monochrome", "crt", "turbo-pascal"), ThemeMode.ids());
     }
 
     @Test
