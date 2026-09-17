@@ -29,6 +29,12 @@
 # All sets of affected modules are merged and deduplicated before testing.
 
 set -euo pipefail
+# Ignore SIGPIPE to prevent spurious failures on long GitHub Actions jobs.
+# When the runner truncates stdout, commands like `sort` receive SIGPIPE and exit
+# with code 2.  Under `set -e` + `pipefail` this terminates the entire script even
+# though the Maven build already completed successfully.  Ignoring SIGPIPE avoids
+# the false-negative: the script exits with Maven's real return code instead.
+trap '' PIPE
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=reactor_timing.sh
