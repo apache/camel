@@ -300,12 +300,19 @@ class McpFacadeWriteFileTest {
         McpFacade facade = facade(dir, true, bridge);
 
         assertEquals("error", facade.writeFile("demo", "../escape.yaml", "x", true).getString("status"));
-        assertEquals("error", facade.writeFile("demo", "sub/dir.yaml", "x", true).getString("status"));
+        assertEquals("error", facade.writeFile("demo", "sub/../../dir.yaml", "x", true).getString("status"));
+        assertEquals("error", facade.writeFile("demo", dir.resolve("abs.yaml").toString(), "x", true).getString("status"));
         assertEquals("error", facade.writeFile("demo", "", "x", true).getString("status"));
         assertEquals("error", facade.writeFile("demo", "demo.camel.yaml", null, true).getString("status"));
         assertEquals("error", facade.writeFile("nope", "demo.camel.yaml", "x", true).getString("status"));
         assertEquals(0, bridge.asked);
         assertFalse(Files.exists(dir.getParent().resolve("escape.yaml")));
+
+        // a path into a subdirectory is fine (a Maven project keeps its routes under src/main/resources/camel)
+        JsonObject created = facade.writeFile("demo", "sub/dir.camel.yaml", "- route: {}", true);
+        assertEquals("created", created.getString("status"));
+        assertEquals("sub/dir.camel.yaml", bridge.request.file());
+        assertTrue(Files.isRegularFile(dir.resolve("sub/dir.camel.yaml")));
 
         // reading reports the same directory knowledge the agent needs before writing
         JsonObject files = facade.getFiles("demo", null);

@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
@@ -119,9 +121,13 @@ class AuthoringToolsTest {
         Files.createDirectory(dir.resolve("sub"));
         JsonObject list = call("camel_get_files", new ToolContext(), Map.of("directory", dir.toString()));
         assertEquals(2, list.getInteger("totalFiles"), "directories are not listed");
+        assertEquals("flat", list.getString("layout"));
+        assertEquals(List.of("demo.camel.yaml"), list.getCollection("routeFiles"));
+        assertEquals(List.of("application.properties"), list.getCollection("configFiles"));
         JsonObject first = (JsonObject) list.getCollection("files").iterator().next();
         assertEquals("application.properties", first.getString("name"));
         assertEquals("properties", first.getString("type"));
+        assertEquals("config", first.getString("kind"));
         JsonObject file = call("camel_get_files", new ToolContext(),
                 Map.of("directory", dir.toString(), "file", "demo.camel.yaml"));
         assertEquals(VALID_ROUTE, file.getString("content"));
@@ -165,13 +171,96 @@ class AuthoringToolsTest {
     }
 
     @Test
-    void fileNamesStayInsideTheDirectory(@TempDir Path dir) {
-        for (String bad : List.of("../etc/passwd", "sub/x.yaml", "/tmp/x.yaml")) {
+    void filePathsStayInsideTheDirectoryButMayNameASubdirectory(@TempDir Path dir) throws IOException {
+        for (String bad : List.of("../etc/passwd", "/tmp/x.yaml", "sub/../../x.yaml")) {
             ToolExecutionException e = assertThrows(ToolExecutionException.class,
                     () -> ToolRegistry.execute("camel_write_file", new ToolContext(),
                             Map.of("directory", dir.toString(), "file", bad, "content", "x")));
-            assertTrue(e.getMessage().contains("plain file name"), bad + ": " + e.getMessage());
+            assertTrue(e.getMessage().contains("inside the directory") || e.getMessage().contains("relative to"),
+                    bad + ": " + e.getMessage());
         }
+        // a relative path is fine, and its directories are created
+        JsonObject written = call("camel_write_file", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "src/main/resources/camel/x.camel.yaml", "content",
+                        VALID_ROUTE));
+        assertEquals("created", written.getString("status"));
+        assertEquals(VALID_ROUTE, Files.readString(dir.resolve("src/main/resources/camel/x.camel.yaml")));
+    }
+
+    @Test
+    void aMavenProjectListsItsRouteFilesFirstAndReadsByRelativePath(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("pom.xml"), "<project/>");
+        Files.createDirectories(dir.resolve("src/main/resources/camel"));
+        Files.createDirectories(dir.resolve("src/main/java/org/acme"));
+        Files.createDirectories(dir.resolve("target/classes/camel"));
+        Files.createDirectories(dir.resolve(".mvn"));
+        Files.writeString(dir.resolve("src/main/resources/camel/timer-log.camel.yaml"), VALID_ROUTE);
+        Files.writeString(dir.resolve("src/main/resources/application.properties"), "camel.main.name=timer-log\n");
+        Files.writeString(dir.resolve("src/main/resources/log4j2.properties"), "rootLogger.level=info\n");
+        Files.writeString(dir.resolve("src/main/java/org/acme/MyRoute.java"),
+                "package org.acme;\nimport org.apache.camel.builder.RouteBuilder;\n"
+                                                                              + "public class MyRoute extends RouteBuilder { public void configure() { } }\n");
+        Files.writeString(dir.resolve("src/main/java/org/acme/Helper.java"), "package org.acme;\nclass Helper { }\n");
+        Files.writeString(dir.resolve("target/classes/camel/timer-log.camel.yaml"), VALID_ROUTE);
+        Files.writeString(dir.resolve(".mvn/maven.config"), "-T1\n");
+        Files.writeString(dir.resolve("README.md"), "# demo\n");
+
+        JsonObject list = call("camel_get_files", new ToolContext(), Map.of("directory", dir.toString()));
+        assertEquals("maven", list.getString("layout"));
+        assertEquals(List.of("src/main/java/org/acme/MyRoute.java", "src/main/resources/camel/timer-log.camel.yaml"),
+                list.getCollection("routeFiles"));
+        assertEquals(List.of("src/main/resources/application.properties"), list.getCollection("configFiles"));
+        assertEquals(7, list.getInteger("totalFiles"), "target and .mvn are skipped");
+        assertTrue(list.getString("hint").contains("src/main/resources/camel"), list.getString("hint"));
+        List<String> names = new ArrayList<>();
+        for (Object o : list.getCollection("files")) {
+            names.add(((JsonObject) o).getString("name"));
+        }
+        assertTrue(names.contains("pom.xml") && names.contains("src/main/resources/log4j2.properties"), names.toString());
+        assertTrue(names.stream().noneMatch(n -> n.startsWith("target/") || n.startsWith(".mvn/")), names.toString());
+
+        JsonObject file = call("camel_get_files", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "src/main/resources/camel/timer-log.camel.yaml"));
+        assertEquals(VALID_ROUTE, file.getString("content"));
+        ToolExecutionException e = assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("camel_get_files", new ToolContext(),
+                        Map.of("directory", dir.toString(), "file", "camel/timer-log.camel.yaml")));
+        assertTrue(e.getMessage().contains("routeFiles"), "the error says how to find the file: " + e.getMessage());
+    }
+
+    @Test
+    void routeSourcesMapTheRuntimesLocationsOntoProjectFiles(@TempDir Path dir) throws IOException {
+        Files.createDirectories(dir.resolve("src/main/resources/camel"));
+        Files.createDirectories(dir.resolve("src/main/java/org/acme"));
+        Files.writeString(dir.resolve("src/main/resources/camel/timer-log.camel.yaml"), VALID_ROUTE);
+        Files.writeString(dir.resolve("src/main/java/org/acme/MyRoute.java"), "class MyRoute {}");
+        Files.writeString(dir.resolve("flat.camel.yaml"), VALID_ROUTE);
+
+        // Spring Boot fat jar, Quarkus / classpath, a plain file, a Java class, a moved file and an unknown one
+        List<Map<String, String>> routes = List.of(
+                Map.of("routeId", "boot", "source", "nested:" + dir + "/target/app-1.0.jar/!BOOT-INF/classes/!/camel/"
+                                                    + "timer-log.camel.yaml:4"),
+                Map.of("routeId", "cp", "source", "classpath:camel/timer-log.camel.yaml:7"),
+                Map.of("routeId", "abs", "source", "file:" + dir.resolve("flat.camel.yaml") + ":1"),
+                Map.of("routeId", "java", "source", "org.acme.MyRoute:12"),
+                Map.of("routeId", "moved", "source", "file:old/place/flat.camel.yaml"),
+                Map.of("routeId", "gone", "source", "classpath:camel/nowhere.yaml:3"));
+        JsonArray mapped = AuthoringTools.routeSources(routes, dir);
+
+        assertEquals(6, mapped.size());
+        JsonObject boot = (JsonObject) mapped.get(0);
+        assertEquals("src/main/resources/camel/timer-log.camel.yaml", boot.getString("file"));
+        assertEquals(4, boot.getInteger("line"));
+        assertEquals(null, boot.get("missing"));
+        assertEquals("src/main/resources/camel/timer-log.camel.yaml", ((JsonObject) mapped.get(1)).getString("file"));
+        assertEquals("flat.camel.yaml", ((JsonObject) mapped.get(2)).getString("file"));
+        assertEquals("src/main/java/org/acme/MyRoute.java", ((JsonObject) mapped.get(3)).getString("file"));
+        assertEquals(12, ((JsonObject) mapped.get(3)).getInteger("line"));
+        assertEquals("flat.camel.yaml", ((JsonObject) mapped.get(4)).getString("file"), "found by name");
+        JsonObject gone = (JsonObject) mapped.get(5);
+        assertEquals("camel/nowhere.yaml", gone.getString("file"));
+        assertEquals(Boolean.TRUE, gone.get("missing"));
+        assertTrue(AuthoringTools.routeSources(null, dir).isEmpty());
     }
 
     @Test

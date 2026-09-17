@@ -120,12 +120,15 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "The source files of a project directory: without file the list (name, size, type), with "
-                        + "file its content. Use before editing to see the routes, configuration and other files of "
-                        + "the integration.")
+          description = "The source files of a project directory, subdirectories included: without file the list, "
+                        + "with the route and configuration files named first (routeFiles, configFiles) and, for a "
+                        + "running integration, which file and line each route comes from; with file (a path "
+                        + "relative to the directory, as listed) its content.")
     public JsonObject camel_get_files(
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
-            @ToolArg(description = "File name to read; omitted lists the files", required = false) String file) {
+            @ToolArg(description = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml,"
+                                   + " to read; omitted lists the files",
+                     required = false) String file) {
         return call("camel_get_files", args("directory", directory, "file", file));
     }
 
@@ -136,7 +139,8 @@ public class AuthoringTools {
                         + "camel_control.")
     public JsonObject camel_write_file(
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
-            @ToolArg(description = "File name, no path", required = true) String file,
+            @ToolArg(description = "File path relative to the directory (subdirectories are created)",
+                     required = true) String file,
             @ToolArg(description = "The complete new content", required = true) String content,
             @ToolArg(description = "Validate before writing (default true)", required = false) Boolean validate,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {

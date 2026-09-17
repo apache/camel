@@ -37,7 +37,9 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.widgets.tabs.TabsState;
+import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -978,8 +980,9 @@ class McpFacade {
         }
         if (content == null) {
             JsonObject existing = getFiles(name, file);
-            if (existing == null) {
-                return writeError("No such file in the source directory: " + file);
+            if (existing == null || existing.getString("content") == null) {
+                String error = existing != null ? existing.getString("error") : null;
+                return writeError(error != null ? error : "No such file in the source directory: " + file);
             }
             content = existing.getString("content");
         }
@@ -1026,6 +1029,12 @@ class McpFacade {
         result.put("editing", editing);
     }
 
+    /**
+     * The shared {@code camel_get_files} on the integration's source directory, with what only the TUI knows: whether
+     * the directory is editable and, for the listing, which file and line each running route comes from. A missing file
+     * or a bad path comes back as {@code error} with the directory, so the model corrects the path instead of
+     * concluding the sources are gone; null only when there is no integration or no source directory.
+     */
     JsonObject getFiles(String name, String file) {
         IntegrationInfo target = findIntegration(name);
         if (target == null) {
@@ -1035,56 +1044,38 @@ class McpFacade {
         if (dir == null || !Files.isDirectory(dir)) {
             return null;
         }
-        if (file != null && !file.isEmpty()) {
-            Path filePath = dir.resolve(file).normalize();
-            if (!filePath.startsWith(dir) || !Files.isRegularFile(filePath)) {
-                return null;
-            }
-            try {
-                String content = Files.readString(filePath, StandardCharsets.UTF_8);
-                JsonObject result = new JsonObject();
-                result.put("file", file);
-                describeSourceDirectory(target, dir, result);
-                result.put("size", FilesBrowser.formatFileSize(Files.size(filePath)));
-                result.put("type", FilesBrowser.fileType(filePath));
-                result.put("content", content);
-                return result;
-            } catch (IOException e) {
-                return null;
-            }
+        JsonObject result;
+        try {
+            result = file != null && !file.isEmpty()
+                    ? AuthoringTools.readFile(dir, file) : AuthoringTools.listFiles(dir);
+        } catch (ToolExecutionException e) {
+            JsonObject error = new JsonObject();
+            error.put("error", e.getMessage());
+            describeSourceDirectory(target, dir, error);
+            return error;
         }
-        JsonArray files = new JsonArray();
-        try (var stream = Files.list(dir)) {
-            stream.filter(Files::isRegularFile)
-                    .sorted((a, b) -> a.getFileName().toString().compareToIgnoreCase(b.getFileName().toString()))
-                    .limit(99)
-                    .forEach(p -> {
-                        JsonObject entry = new JsonObject();
-                        entry.put("name", p.getFileName().toString());
-                        try {
-                            entry.put("size", FilesBrowser.formatFileSize(Files.size(p)));
-                        } catch (IOException e) {
-                            entry.put("size", "0 B");
-                        }
-                        entry.put("type", FilesBrowser.fileType(p));
-                        files.add(entry);
-                    });
-        } catch (IOException e) {
-            return null;
-        }
-        if (files.isEmpty()) {
-            return null;
-        }
-        JsonObject result = new JsonObject();
         describeSourceDirectory(target, dir, result);
-        result.put("files", files);
-        result.put("totalFiles", files.size());
+        if (file == null || file.isEmpty()) {
+            JsonArray routes = new JsonArray();
+            for (RouteInfo r : target.routes) {
+                if (r.source != null && !r.source.isBlank()) {
+                    JsonObject j = new JsonObject();
+                    j.put("routeId", r.routeId);
+                    j.put("source", r.source);
+                    routes.add(j);
+                }
+            }
+            JsonArray mapped = AuthoringTools.routeSources(routes, dir);
+            if (!mapped.isEmpty()) {
+                result.put("routes", mapped);
+            }
+        }
         return result;
     }
 
     /**
      * Writes (creates or replaces) a file in the integration's source directory, after the user confirmed it in the TUI
-     * unless {@code confirm} is false. The file must be a plain file name in that directory.
+     * unless {@code confirm} is false. The file is a path relative to that directory.
      */
     JsonObject writeFile(String name, String file, String content, boolean confirm) {
         return writeFile(name, file, content, confirm, true);
@@ -1111,9 +1102,11 @@ class McpFacade {
         if (content == null) {
             return writeError("content is required");
         }
-        Path filePath = dir.resolve(file).normalize();
-        if (!filePath.startsWith(dir) || !dir.equals(filePath.getParent())) {
-            return writeError("file must be a plain file name in the source directory " + dir);
+        Path filePath;
+        try {
+            filePath = AuthoringTools.resolveFile(dir, file);
+        } catch (ToolExecutionException e) {
+            return writeError(e.getMessage());
         }
         boolean exists = Files.exists(filePath);
         if (exists && !Files.isRegularFile(filePath)) {
@@ -1183,6 +1176,7 @@ class McpFacade {
             }
         }
         try {
+            Files.createDirectories(filePath.getParent());
             Files.writeString(filePath, content, StandardCharsets.UTF_8);
         } catch (IOException e) {
             return writeError("Failed to write " + filePath + ": " + e.getMessage());
