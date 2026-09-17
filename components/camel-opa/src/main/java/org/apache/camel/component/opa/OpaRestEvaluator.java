@@ -58,8 +58,8 @@ public class OpaRestEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
      * The SDK's own default transport builds a fresh {@code HttpClient} per request with no timeouts at all; see
      * {@link OpaHttpClient} for why neither is acceptable on the path that decides authorization.
      *
-     * @param serverUrl         base URL of the OPA server, without the /v1/data suffix
-     * @param transport         the HTTP transport to use for all requests
+     * @param serverUrl base URL of the OPA server, without the /v1/data suffix
+     * @param transport the HTTP transport to use for all requests
      */
     public static OPAClient createClient(String serverUrl, OpaHttpClient transport) {
         return new OPAClient(serverUrl, transport);

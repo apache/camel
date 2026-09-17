@@ -17,11 +17,26 @@
 package org.apache.camel.component.opa;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsServer;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +53,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * denying, it simply stopped.
  */
 public class OpaRestTransportTest extends CamelTestSupport {
+
+    private static final String KEYSTORE = "opa-server.p12";
+    private static final String PASSWORD = "changeit";
 
     private final List<Closeable> open = new ArrayList<>();
 
@@ -72,6 +90,122 @@ public class OpaRestTransportTest extends CamelTestSupport {
         accepter.setDaemon(true);
         accepter.start();
         return listener.getLocalPort();
+    }
+
+    /**
+     * An HTTPS listener presenting the throwaway self-signed certificate from {@code opa-server.p12}, answering the
+     * policy query the way a real OPA would.
+     */
+    private int tlsPort() throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        try (InputStream in = getClass().getResourceAsStream("/" + KEYSTORE)) {
+            keyStore.load(in, PASSWORD.toCharArray());
+        }
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        kmf.init(keyStore, PASSWORD.toCharArray());
+        SSLContext serverContext = SSLContext.getInstance("TLS");
+        serverContext.init(kmf.getKeyManagers(), null, null);
+
+        HttpsServer server = HttpsServer.create(new InetSocketAddress("localhost", 0), 0);
+        server.setHttpsConfigurator(new HttpsConfigurator(serverContext));
+        server.createContext("/v1/data/authz/allow", exchange -> {
+            byte[] body = "{\"result\":true}".getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, body.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(body);
+            }
+        });
+        server.start();
+        open.add(() -> server.stop(0));
+        return server.getAddress().getPort();
+    }
+
+    /** Trust material holding exactly the fixture certificate, and nothing else. */
+    private SSLContextParameters trustingTheFixture() {
+        KeyStoreParameters ks = new KeyStoreParameters();
+        ks.setCamelContext(context);
+        ks.setResource(KEYSTORE);
+        ks.setPassword(PASSWORD);
+        ks.setType("PKCS12");
+
+        TrustManagersParameters tm = new TrustManagersParameters();
+        tm.setCamelContext(context);
+        tm.setKeyStore(ks);
+
+        SSLContextParameters ssl = new SSLContextParameters();
+        ssl.setCamelContext(context);
+        ssl.setTrustManagers(tm);
+        return ssl;
+    }
+
+    @Test
+    @Timeout(60)
+    void reachesAnHttpsServerWhenSslContextParametersTrustIt() throws Exception {
+        context.getRegistry().bind("opaTls", trustingTheFixture());
+
+        Exchange out = template.request(
+                "opa:authz/allow?serverUrl=https://localhost:" + tlsPort() + "&sslContextParameters=#opaTls", e -> {
+                });
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+    }
+
+    @Test
+    @Timeout(60)
+    void failsClosedAgainstTheSameServerWithoutTheTrustMaterial() throws Exception {
+        // same listener, same policy, same request - only sslContextParameters is missing. If this passed, the
+        // option would not be doing anything and the test above would prove nothing
+        Exchange out = template.request(
+                "opa:authz/allow?serverUrl=https://localhost:" + tlsPort(), e -> {
+                });
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+    }
+
+    /** A plain listener that answers every policy query and records the Authorization it was sent. */
+    private int recordingPort(AtomicReference<String> seen) throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        server.createContext("/v1/data/authz/allow", exchange -> {
+            seen.set(exchange.getRequestHeaders().getFirst("Authorization"));
+            byte[] body = "{\"result\":true}".getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, body.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(body);
+            }
+        });
+        server.start();
+        open.add(() -> server.stop(0));
+        return server.getAddress().getPort();
+    }
+
+    @Test
+    @Timeout(60)
+    void sendsTheBearerTokenWhenOneIsConfigured() throws Exception {
+        AtomicReference<String> seen = new AtomicReference<>();
+
+        template.request("opa:authz/allow?serverUrl=http://localhost:" + recordingPort(seen) + "&bearerToken=s3cr3t",
+                e -> {
+                });
+
+        assertThat(seen.get()).isEqualTo("Bearer s3cr3t");
+    }
+
+    @Test
+    @Timeout(60)
+    void sendsNoAuthorizationAtAllWhenTheTokenIsEmpty() throws Exception {
+        // an unset placeholder resolves to "", and "Authorization: Bearer " is not an absent header - it is a
+        // malformed credential, which a server enforcing tokens answers with a 401 rather than ignoring
+        AtomicReference<String> seen = new AtomicReference<>("not called");
+
+        template.request("opa:authz/allow?serverUrl=http://localhost:" + recordingPort(seen) + "&bearerToken=",
+                e -> {
+                });
+
+        assertThat(seen.get()).isNull();
     }
 
     @Test

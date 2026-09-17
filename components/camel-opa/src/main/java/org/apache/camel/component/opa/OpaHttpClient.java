@@ -25,6 +25,9 @@ import java.time.Duration;
 
 import javax.net.ssl.SSLContext;
 
+import com.styra.opa.openapi.utils.HTTPClient;
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * The HTTP transport the OPA SDK uses to reach the server.
  * <p/>
@@ -41,7 +44,7 @@ import javax.net.ssl.SSLContext;
  * </ul>
  * One client is built here per evaluator and reused, and every request is re-issued carrying a timeout.
  */
-class OpaHttpClient implements com.styra.opa.openapi.utils.HTTPClient, AutoCloseable {
+public class OpaHttpClient implements HTTPClient, AutoCloseable {
 
     private static final String AUTHORIZATION = "Authorization";
 
@@ -59,7 +62,9 @@ class OpaHttpClient implements com.styra.opa.openapi.utils.HTTPClient, AutoClose
         this.requestTimeout = Duration.ofMillis(requestTimeout);
         // the SDK has no constructor taking a transport and headers together, so the token is applied here
         // instead of through OPAClient(String, Map) - the request that goes out is the same either way
-        this.bearerToken = bearerToken;
+        // isNotEmpty, not a null check: an unset placeholder resolves to "", and sending
+        // "Authorization: Bearer " is worse than sending nothing at all
+        this.bearerToken = ObjectHelper.isNotEmpty(bearerToken) ? bearerToken : null;
     }
 
     @Override

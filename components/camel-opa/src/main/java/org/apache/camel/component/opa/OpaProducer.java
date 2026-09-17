@@ -58,7 +58,7 @@ public class OpaProducer extends DefaultProducer {
                     configuration.getServerUrl(), configuration.getBearerToken(),
                     // the endpoint URI is unique within the context, so two endpoints sharing a policy path but
                     // pointing at different servers get distinct health-check ids instead of colliding
-                    getEndpoint().getPolicyPath(), getEndpoint().getEndpointUri());
+                    getEndpoint().getPolicyPath(), getEndpoint().getEndpointUri(), getEndpoint().getSslContext());
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
         }

@@ -27,6 +27,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.opa.OpaHttpClient;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
 import org.apache.camel.component.opa.OpaRestEvaluator;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -74,6 +75,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     private volatile OpaPolicyEvaluator evaluator;
     private volatile OpaSecurityPolicyHealthCheck healthCheck;
     private volatile boolean ownsClient;
+    private volatile SSLContext sslContext;
 
     public OpaSecurityPolicy() {
     }
@@ -87,15 +89,25 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     public void beforeWrap(Route route, NamedNode definition) {
         if (evaluator == null) {
             StringHelper.notEmpty(policyPath, "policyPath", this);
+            OpaHttpClient transport = null;
             if (opaClient == null) {
                 // createClient moved to OpaRestEvaluator when the evaluator became an abstract base
-                opaClient = OpaRestEvaluator.createClient(
-                        serverUrl, bearerToken, connectionTimeout, requestTimeout,
-                        createSslContext(route.getCamelContext()));
+                sslContext = createSslContext(route.getCamelContext());
+                transport = OpaRestEvaluator.createTransport(
+                        bearerToken, connectionTimeout, requestTimeout, sslContext);
+                opaClient = OpaRestEvaluator.createClient(serverUrl, transport);
                 ownsClient = true;
             }
             evaluator = new OpaRestEvaluator(
-                    opaClient, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+                    opaClient, transport, policyPath, allowKey, includeHeaders, includeProperties, includeBody,
+                    failOpen);
+            // a Policy has no stop hook of its own, so the transport would outlive the routes it was built for.
+            // Registering the evaluator as a service hands its close() to the context's shutdown
+            try {
+                route.getCamelContext().addService(evaluator);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Could not register the evaluator for policy " + policyPath, e);
+            }
         }
         // after validation, so a policy that is missing its policyPath fails without leaving a ".../null" check
         // behind in the registry
@@ -118,7 +130,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         if (registry == null) {
             return;
         }
-        healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath);
+        healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath, sslContext);
         registry.register(healthCheck);
     }
 

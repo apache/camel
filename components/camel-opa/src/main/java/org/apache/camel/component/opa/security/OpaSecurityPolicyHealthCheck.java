@@ -18,6 +18,8 @@ package org.apache.camel.component.opa.security;
 
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.component.opa.OpaHealthProbe;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
@@ -36,18 +38,21 @@ public class OpaSecurityPolicyHealthCheck extends AbstractHealthCheck {
     private final String serverUrl;
     private final String bearerToken;
     private final String policyPath;
+    private final SSLContext sslContext;
 
-    public OpaSecurityPolicyHealthCheck(String serverUrl, String bearerToken, String policyPath) {
+    public OpaSecurityPolicyHealthCheck(String serverUrl, String bearerToken, String policyPath,
+                                        SSLContext sslContext) {
         // serverUrl and policyPath together identify the decision this policy enforces, so two policies pointing at
         // different servers stay distinct; sanitized because the id is published in the health output
         super("camel", "security-policy:opa-" + URISupport.sanitizeUri(serverUrl + "/" + policyPath));
         this.serverUrl = serverUrl;
         this.bearerToken = bearerToken;
         this.policyPath = policyPath;
+        this.sslContext = sslContext;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        OpaHealthProbe.probe(builder, serverUrl, bearerToken, policyPath);
+        OpaHealthProbe.probe(builder, serverUrl, bearerToken, policyPath, sslContext);
     }
 }

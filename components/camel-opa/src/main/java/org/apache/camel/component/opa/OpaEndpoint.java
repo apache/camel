@@ -55,6 +55,7 @@ public class OpaEndpoint extends DefaultEndpoint {
 
     private OPAClient opaClient;
     private volatile OpaPolicyEvaluator evaluator;
+    private volatile SSLContext sslContext;
 
     public OpaEndpoint(final String uri, final Component component, final OpaConfiguration configuration) {
         super(uri, component);
@@ -80,10 +81,11 @@ public class OpaEndpoint extends DefaultEndpoint {
                         configuration.getIncludeProperties(), configuration.isIncludeBody(),
                         configuration.isFailOpen());
             } else {
+                sslContext = createSslContext();
                 OpaHttpClient transport = OpaRestEvaluator.createTransport(
                         configuration.getBearerToken(),
                         configuration.getConnectionTimeout(), configuration.getRequestTimeout(),
-                        createSslContext());
+                        sslContext);
                 opaClient = OpaRestEvaluator.createClient(configuration.getServerUrl(), transport);
                 evaluator = new OpaRestEvaluator(
                         opaClient, transport, policyPath, configuration.getAllowKey(),
@@ -103,6 +105,14 @@ public class OpaEndpoint extends DefaultEndpoint {
             ssl = getComponent().retrieveGlobalSslContextParameters();
         }
         return ssl != null ? ssl.createSSLContext(getCamelContext()) : null;
+    }
+
+    /**
+     * The TLS configuration the decision call resolved to, so the producer's readiness check probes the server the same
+     * way rather than failing a handshake the decision call passes.
+     */
+    SSLContext getSslContext() {
+        return sslContext;
     }
 
     private OpaPolicyEvaluator createWasmEvaluator() throws Exception {
