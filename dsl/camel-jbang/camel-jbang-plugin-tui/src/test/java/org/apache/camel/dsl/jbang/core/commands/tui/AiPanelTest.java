@@ -1080,6 +1080,107 @@ class AiPanelTest {
         }
     }
 
+    // ---- the simple expressions of an answer are checked (CAMEL-24805) ----
+
+    @Test
+    void anInvalidSimpleExpressionInTheAnswerGetsOneCorrectionTurn() throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        CorrectingLlmClient client = new CorrectingLlmClient();
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "how do I fall back to a guest name");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ASSISTANT, last.role(), last.text());
+        assertTrue(client.sawCorrectionRequest, "the model must be told what is invalid and asked to fix the answer");
+        assertEquals(2, client.answers, "the first answer and the corrected one");
+        assertTrue(last.text().contains("${header.user} ?: 'Guest'"), last.text());
+        assertFalse(last.text().contains("${header.user ?: 'Guest'}"), last.text());
+        assertNull(last.note(), "a corrected answer is shown as it is");
+        assertEquals(1, last.corrections());
+        assertEquals(2, last.requests());
+        assertTrue(last.byline().contains("2 requests · 1 correction"), last.byline());
+        assertTrue(panel.conversationForTesting().stream().noneMatch(e -> e.role() == AiRole.ERROR));
+    }
+
+    @Test
+    void anAnswerThatStaysWrongIsShownWithWhatTheCheckFound() throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        CorrectingLlmClient client = new CorrectingLlmClient();
+        client.fixes = false;
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "how do I fall back to a guest name");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ASSISTANT, last.role(), last.text());
+        assertEquals(2, client.answers, "one correction turn, never a second");
+        assertTrue(last.text().contains("${header.user ?: 'Guest'}"), last.text());
+        assertNotNull(last.note(), "the user must see that the expression is invalid");
+        assertTrue(last.note().startsWith("**Simple check:** `${header.user ?: 'Guest'}` is invalid: "), last.note());
+        assertEquals(1, last.corrections());
+    }
+
+    @Test
+    void aCorrectAnswerIsNotSentBack() throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        CorrectingLlmClient client = new CorrectingLlmClient();
+        client.firstAnswerIsCorrect = true;
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "how do I fall back to a guest name");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(1, client.answers);
+        assertFalse(client.sawCorrectionRequest);
+        assertEquals(0, last.corrections());
+        assertNull(last.note());
+        assertFalse(last.byline().contains("correction"), last.byline());
+    }
+
+    /** Answers with the operator inside the placeholder, and fixes it when asked, like a small local model. */
+    private static final class CorrectingLlmClient extends LlmClient {
+
+        volatile boolean sawCorrectionRequest;
+        volatile int answers;
+        volatile boolean fixes = true;
+        volatile boolean firstAnswerIsCorrect;
+
+        CorrectingLlmClient() {
+            withModel("test-model");
+            withApiType(ApiType.openai);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            answers++;
+            Message last = messages.get(messages.size() - 1);
+            boolean correction = last.content() != null && last.content().contains("invalid simple expression");
+            if (correction) {
+                sawCorrectionRequest = true;
+            }
+            boolean correct = firstAnswerIsCorrect || (correction && fixes);
+            String text = correct
+                    ? "Use `${header.user} ?: 'Guest'` as the expression: the elvis operator goes between placeholders."
+                    : "Use `${header.user ?: 'Guest'}` as the expression to fall back to Guest.";
+            return new ChatResponse(text, List.of(), "stop", false, TokenUsage.EMPTY);
+        }
+    }
+
     /** Always asks for the same tool call, like a model stuck on a failing send. */
     private static final class LoopingLlmClient extends LlmClient {
 
