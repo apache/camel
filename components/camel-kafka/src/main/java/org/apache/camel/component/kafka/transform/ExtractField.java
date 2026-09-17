@@ -27,6 +27,8 @@ import org.apache.camel.Processor;
 
 public class ExtractField implements Processor {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     String field;
     String headerOutputName;
     boolean headerOutput;
@@ -52,7 +54,6 @@ public class ExtractField implements Processor {
 
     @Override
     public void process(Exchange ex) throws InvalidPayloadException {
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNodeBody = ex.getMessage().getBody(JsonNode.class);
 
         if (jsonNodeBody == null) {
@@ -60,7 +61,7 @@ public class ExtractField implements Processor {
 
         }
 
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
+        Map<Object, Object> body = OBJECT_MAPPER.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
         });
         if (!headerOutput || (strictHeaderCheck && checkHeaderExistence(ex))) {
             ex.getMessage().setBody(body.get(field));
