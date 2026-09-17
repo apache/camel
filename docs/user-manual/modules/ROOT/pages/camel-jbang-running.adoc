@@ -280,7 +280,7 @@ camel run foo.camel.yaml --runtime=quarkus --quarkus-version=3.9.4
 ----
 
 When running an existing Maven project (`camel run pom.xml`) the runtime is detected from the
-`pom.xml`, as such a project cannot run in-process. The application logs to `~/.camel/<name>.log`
+`pom.xml`, as such a project cannot run in-process. The application logs to a file in `~/.camel`
 so `camel log` and the TUI can read the logs; see xref:camel-jbang-tips.adoc#_running_a_maven_based_project[Running a Maven based project].
 
 == Running local Kamelets
