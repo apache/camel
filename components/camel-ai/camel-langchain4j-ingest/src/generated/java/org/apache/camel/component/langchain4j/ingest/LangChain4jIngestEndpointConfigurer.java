@@ -23,6 +23,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jIngestEndpoint target = (LangChain4jIngestEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "documentfilter":
+        case "documentFilter": target.getConfiguration().setDocumentFilter(property(camelContext, org.apache.camel.Predicate.class, value)); return true;
         case "documentidheader":
         case "documentIdHeader": target.getConfiguration().setDocumentIdHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "documentsplitter":
@@ -33,8 +35,12 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "embeddingModel": target.getConfiguration().setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "embeddingstore":
         case "embeddingStore": target.getConfiguration().setEmbeddingStore(property(camelContext, dev.langchain4j.store.embedding.EmbeddingStore.class, value)); return true;
+        case "excludeid":
+        case "excludeId": target.getConfiguration().setExcludeId(property(camelContext, java.lang.String.class, value)); return true;
         case "idempotentrepository":
         case "idempotentRepository": target.getConfiguration().setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
+        case "includeid":
+        case "includeId": target.getConfiguration().setIncludeId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxdocumentsize":
@@ -43,6 +49,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "maxOverlapSize": target.getConfiguration().setMaxOverlapSize(property(camelContext, int.class, value)); return true;
         case "maxsegmentsize":
         case "maxSegmentSize": target.getConfiguration().setMaxSegmentSize(property(camelContext, int.class, value)); return true;
+        case "mindocumentsize":
+        case "minDocumentSize": target.getConfiguration().setMinDocumentSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -55,6 +63,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "documentfilter":
+        case "documentFilter": return org.apache.camel.Predicate.class;
         case "documentidheader":
         case "documentIdHeader": return java.lang.String.class;
         case "documentsplitter":
@@ -65,8 +75,12 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "embeddingstore":
         case "embeddingStore": return dev.langchain4j.store.embedding.EmbeddingStore.class;
+        case "excludeid":
+        case "excludeId": return java.lang.String.class;
         case "idempotentrepository":
         case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "includeid":
+        case "includeId": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxdocumentsize":
@@ -75,6 +89,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "maxOverlapSize": return int.class;
         case "maxsegmentsize":
         case "maxSegmentSize": return int.class;
+        case "mindocumentsize":
+        case "minDocumentSize": return int.class;
         default: return null;
         }
     }
@@ -83,6 +99,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jIngestEndpoint target = (LangChain4jIngestEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "documentfilter":
+        case "documentFilter": return target.getConfiguration().getDocumentFilter();
         case "documentidheader":
         case "documentIdHeader": return target.getConfiguration().getDocumentIdHeader();
         case "documentsplitter":
@@ -93,8 +111,12 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "embeddingModel": return target.getConfiguration().getEmbeddingModel();
         case "embeddingstore":
         case "embeddingStore": return target.getConfiguration().getEmbeddingStore();
+        case "excludeid":
+        case "excludeId": return target.getConfiguration().getExcludeId();
         case "idempotentrepository":
         case "idempotentRepository": return target.getConfiguration().getIdempotentRepository();
+        case "includeid":
+        case "includeId": return target.getConfiguration().getIncludeId();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxdocumentsize":
@@ -103,6 +125,8 @@ public class LangChain4jIngestEndpointConfigurer extends PropertyConfigurerSuppo
         case "maxOverlapSize": return target.getConfiguration().getMaxOverlapSize();
         case "maxsegmentsize":
         case "maxSegmentSize": return target.getConfiguration().getMaxSegmentSize();
+        case "mindocumentsize":
+        case "minDocumentSize": return target.getConfiguration().getMinDocumentSize();
         default: return null;
         }
     }

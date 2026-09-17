@@ -96,8 +96,30 @@ replacement.
 
 After ingestion the message body is replaced with the `IngestResult`, so a request-reply
 caller receives the outcome of its call: the pipeline, the document id, the number of segments
-written and the outcome — `ingested`, `empty` (blank document, nothing written) or `skipped`
-(duplicate id, see below).
+written and the outcome — `ingested`, `empty` (blank document, nothing written), `skipped`
+(duplicate id, see below) or `filtered` (rejected by a filter option, see below).
+
+=== Filtering deliveries
+
+Not everything a consumer delivers belongs in a knowledge base. `includeId` and `excludeId`
+take comma-separated Ant-style patterns matched against the document id — exclusion wins —
+and act before the body is read and before the dedup claim, so a rejected delivery costs
+nothing and never occupies its id. A pattern and an id must agree on a leading `/`:
+`docs/**` never matches `/docs/guide.md`, so ids derived from absolute paths need patterns
+starting with `/`. `minDocumentSize` filters documents too short to carry
+retrievable content, and `documentFilter` names a `Predicate` bean evaluated with the body
+available; both answer `filtered` and release the dedup claim like a blank document does, so
+a later, acceptable delivery under the same id still ingests. A duplicate id is answered
+`skipped` before the content filters run, and the predicate runs before the blank-document
+check — it must tolerate an absent body, and rejecting a blank delivery answers `filtered`
+rather than `empty`.
+
+[source,java]
+----
+from("file:knowledge-base?noop=true")
+    .to("langchain4j-ingest:docs?documentIdHeader=CamelFileName"
+        + "&includeId=**/*.md,**/*.txt&excludeId=**/draft-*&minDocumentSize=100");
+----
 
 === Deduplicating deliveries
 

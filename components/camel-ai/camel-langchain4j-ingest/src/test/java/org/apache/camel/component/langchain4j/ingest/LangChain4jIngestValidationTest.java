@@ -92,6 +92,36 @@ class LangChain4jIngestValidationTest {
     }
 
     @Test
+    void negativeMinDocumentSizeFailsTheStart() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:in").to("langchain4j-ingest:pipe?minDocumentSize=-1");
+                }
+            });
+
+            assertThatThrownBy(context::start)
+                    .hasStackTraceContaining("minDocumentSize must not be negative");
+        }
+    }
+
+    @Test
+    void minDocumentSizeAboveMaxFailsTheStart() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:in").to("langchain4j-ingest:pipe?minDocumentSize=200&maxDocumentSize=100");
+                }
+            });
+
+            assertThatThrownBy(context::start)
+                    .hasStackTraceContaining("minDocumentSize must not exceed maxDocumentSize");
+        }
+    }
+
+    @Test
     void overlapNotSmallerThanSegmentSizeFailsTheStart() throws Exception {
         assertBoundsRejected("langchain4j-ingest:pipe?maxSegmentSize=100&maxOverlapSize=100");
     }

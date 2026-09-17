@@ -23,6 +23,8 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration target = (org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "documentfilter":
+        case "documentFilter": target.setDocumentFilter(property(camelContext, org.apache.camel.Predicate.class, value)); return true;
         case "documentidheader":
         case "documentIdHeader": target.setDocumentIdHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "documentsplitter":
@@ -33,14 +35,20 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
         case "embeddingModel": target.setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "embeddingstore":
         case "embeddingStore": target.setEmbeddingStore(property(camelContext, dev.langchain4j.store.embedding.EmbeddingStore.class, value)); return true;
+        case "excludeid":
+        case "excludeId": target.setExcludeId(property(camelContext, java.lang.String.class, value)); return true;
         case "idempotentrepository":
         case "idempotentRepository": target.setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
+        case "includeid":
+        case "includeId": target.setIncludeId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxdocumentsize":
         case "maxDocumentSize": target.setMaxDocumentSize(property(camelContext, int.class, value)); return true;
         case "maxoverlapsize":
         case "maxOverlapSize": target.setMaxOverlapSize(property(camelContext, int.class, value)); return true;
         case "maxsegmentsize":
         case "maxSegmentSize": target.setMaxSegmentSize(property(camelContext, int.class, value)); return true;
+        case "mindocumentsize":
+        case "minDocumentSize": target.setMinDocumentSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -48,6 +56,8 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "documentfilter":
+        case "documentFilter": return org.apache.camel.Predicate.class;
         case "documentidheader":
         case "documentIdHeader": return java.lang.String.class;
         case "documentsplitter":
@@ -58,14 +68,20 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "embeddingstore":
         case "embeddingStore": return dev.langchain4j.store.embedding.EmbeddingStore.class;
+        case "excludeid":
+        case "excludeId": return java.lang.String.class;
         case "idempotentrepository":
         case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "includeid":
+        case "includeId": return java.lang.String.class;
         case "maxdocumentsize":
         case "maxDocumentSize": return int.class;
         case "maxoverlapsize":
         case "maxOverlapSize": return int.class;
         case "maxsegmentsize":
         case "maxSegmentSize": return int.class;
+        case "mindocumentsize":
+        case "minDocumentSize": return int.class;
         default: return null;
         }
     }
@@ -74,6 +90,8 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration target = (org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "documentfilter":
+        case "documentFilter": return target.getDocumentFilter();
         case "documentidheader":
         case "documentIdHeader": return target.getDocumentIdHeader();
         case "documentsplitter":
@@ -84,14 +102,20 @@ public class LangChain4jIngestConfigurationConfigurer extends org.apache.camel.s
         case "embeddingModel": return target.getEmbeddingModel();
         case "embeddingstore":
         case "embeddingStore": return target.getEmbeddingStore();
+        case "excludeid":
+        case "excludeId": return target.getExcludeId();
         case "idempotentrepository":
         case "idempotentRepository": return target.getIdempotentRepository();
+        case "includeid":
+        case "includeId": return target.getIncludeId();
         case "maxdocumentsize":
         case "maxDocumentSize": return target.getMaxDocumentSize();
         case "maxoverlapsize":
         case "maxOverlapSize": return target.getMaxOverlapSize();
         case "maxsegmentsize":
         case "maxSegmentSize": return target.getMaxSegmentSize();
+        case "mindocumentsize":
+        case "minDocumentSize": return target.getMinDocumentSize();
         default: return null;
         }
     }

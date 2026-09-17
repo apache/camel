@@ -20,6 +20,7 @@ import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
+import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
@@ -85,6 +86,39 @@ public class LangChain4jIngestConfiguration implements Cloneable {
                             + " identity. An exchange without an id fails.",
               defaultValue = LangChain4jIngestHeaders.DOCUMENT_ID)
     private String documentIdHeader = LangChain4jIngestHeaders.DOCUMENT_ID;
+
+    @UriParam(description = "Comma-separated list of Ant-style patterns the document id must match to be ingested."
+                            + " A non-matching delivery is answered with a filtered result, before the dedup claim"
+                            + " and without reading the body. When not set, every id is accepted. Matching is"
+                            + " case-sensitive, and a pattern only matches an id that agrees with it on a leading"
+                            + " path separator - an id derived from an absolute path needs a pattern starting with"
+                            + " one. See the component documentation for pattern examples.",
+              label = "filter")
+    private String includeId;
+
+    @UriParam(description = "Comma-separated list of Ant-style patterns for document ids to skip. Exclusion wins"
+                            + " over includeId. A matching delivery is answered with a filtered result, before the"
+                            + " dedup claim and without reading the body. Matching is case-sensitive, and a pattern"
+                            + " only matches an id that agrees with it on a leading path separator. See the"
+                            + " component documentation for pattern examples.",
+              label = "filter")
+    private String excludeId;
+
+    @UriParam(description = "Minimum size of one document in characters; 0, the default, means no minimum. A"
+                            + " shorter document - boilerplate too small to carry retrievable content - is answered"
+                            + " with a filtered result instead of being written, and releases its dedup claim like"
+                            + " a blank one.",
+              defaultValue = "0", label = "filter")
+    private int minDocumentSize;
+
+    @UriParam(description = "A Predicate deciding whether a delivery is ingested, referenced as #bean:name and"
+                            + " evaluated with the message body available. A rejected delivery is answered with a"
+                            + " filtered result and releases its dedup claim. Runs after the id patterns and after"
+                            + " the dedup claim, so a duplicate is answered skipped without the filter being"
+                            + " evaluated. Not looked up by type on purpose - an application may hold unrelated"
+                            + " predicates.",
+              label = "filter")
+    private Predicate documentFilter;
 
     @UriParam(description = "The IdempotentRepository remembering already ingested document ids, referenced as"
                             + " #bean:name. When set, a delivery whose id was already written is answered with a"
@@ -186,6 +220,50 @@ public class LangChain4jIngestConfiguration implements Cloneable {
      */
     public void setDocumentIdHeader(String documentIdHeader) {
         this.documentIdHeader = documentIdHeader;
+    }
+
+    public String getIncludeId() {
+        return includeId;
+    }
+
+    /**
+     * Sets the Ant-style patterns the document id must match to be ingested.
+     */
+    public void setIncludeId(String includeId) {
+        this.includeId = includeId;
+    }
+
+    public String getExcludeId() {
+        return excludeId;
+    }
+
+    /**
+     * Sets the Ant-style patterns for document ids to skip; exclusion wins over inclusion.
+     */
+    public void setExcludeId(String excludeId) {
+        this.excludeId = excludeId;
+    }
+
+    public int getMinDocumentSize() {
+        return minDocumentSize;
+    }
+
+    /**
+     * Sets the minimum size of one document in characters; 0 means no minimum.
+     */
+    public void setMinDocumentSize(int minDocumentSize) {
+        this.minDocumentSize = minDocumentSize;
+    }
+
+    public Predicate getDocumentFilter() {
+        return documentFilter;
+    }
+
+    /**
+     * Sets the predicate deciding whether a delivery is ingested.
+     */
+    public void setDocumentFilter(Predicate documentFilter) {
+        this.documentFilter = documentFilter;
     }
 
     public IdempotentRepository getIdempotentRepository() {

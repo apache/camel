@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.ingest;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import dev.langchain4j.data.segment.TextSegment;
@@ -23,9 +24,11 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.AntPathMatcher;
 
 /**
  * Splits the message body into segments, embeds them in batches and writes them to the embedding store; the message
@@ -45,6 +48,8 @@ public class LangChain4jIngestProducer extends DefaultProducer {
     private final LangChain4jIngestEndpoint endpoint;
     private final LangChain4jIngestConfiguration configuration;
     private IngestService service;
+    private String[] includeIds;
+    private String[] excludeIds;
 
     public LangChain4jIngestProducer(LangChain4jIngestEndpoint endpoint) {
         super(endpoint);
@@ -90,6 +95,28 @@ public class LangChain4jIngestProducer extends DefaultProducer {
                                                + configuration.getMaxDocumentSize() + ")");
         }
 
+        if (configuration.getMinDocumentSize() < 0) {
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + pipeline + "': minDocumentSize must not be negative (got "
+                                               + configuration.getMinDocumentSize() + ")");
+        }
+        if (configuration.getMaxDocumentSize() > 0
+                && configuration.getMinDocumentSize() > configuration.getMaxDocumentSize()) {
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + pipeline + "': minDocumentSize must not exceed maxDocumentSize (got "
+                                               + configuration.getMinDocumentSize() + " > "
+                                               + configuration.getMaxDocumentSize() + ")");
+        }
+
+        includeIds = parsePatterns(configuration.getIncludeId());
+        excludeIds = parsePatterns(configuration.getExcludeId());
+        if (configuration.getDocumentFilter() != null) {
+            // initialised and started, but - like the repository below - never stopped: the
+            // bean may be shared, and stopping it here would tear it down under other users
+            configuration.getDocumentFilter().initPredicate(getEndpoint().getCamelContext());
+            ServiceHelper.startService(configuration.getDocumentFilter());
+        }
+
         EmbeddingStore<TextSegment> store
                 = resolve(EmbeddingStore.class, configuration.getEmbeddingStore(), "embedding store", "embeddingStore");
         EmbeddingModel model
@@ -97,11 +124,12 @@ public class LangChain4jIngestProducer extends DefaultProducer {
         service = configuration.getDocumentSplitter() != null
                 ? new IngestService(
                         pipeline, store, model, configuration.getDocumentSplitter(),
-                        configuration.getEmbeddingBatchSize(), configuration.getMaxDocumentSize())
+                        configuration.getEmbeddingBatchSize(), configuration.getMaxDocumentSize(),
+                        configuration.getMinDocumentSize())
                 : new IngestService(
                         pipeline, store, model, configuration.getMaxSegmentSize(),
                         configuration.getMaxOverlapSize(), configuration.getEmbeddingBatchSize(),
-                        configuration.getMaxDocumentSize());
+                        configuration.getMaxDocumentSize(), configuration.getMinDocumentSize());
 
         IdempotentRepository repository = configuration.getIdempotentRepository();
         if (repository != null) {
@@ -118,9 +146,16 @@ public class LangChain4jIngestProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String documentId = resolveDocumentId(exchange);
 
+        // before the claim and the body read: a filtered document never occupies its id and
+        // never pays for materialising the payload
+        if (!idAccepted(documentId)) {
+            exchange.getMessage().setBody(filtered(documentId));
+            return;
+        }
+
         IdempotentRepository repository = configuration.getIdempotentRepository();
         if (repository == null) {
-            exchange.getMessage().setBody(service.ingest(documentId, exchange.getMessage().getBody(String.class)));
+            exchange.getMessage().setBody(ingestUnlessFiltered(exchange, documentId));
             return;
         }
 
@@ -136,7 +171,7 @@ public class LangChain4jIngestProducer extends DefaultProducer {
         }
         IngestResult result;
         try {
-            result = service.ingest(documentId, exchange.getMessage().getBody(String.class));
+            result = ingestUnlessFiltered(exchange, documentId);
         } catch (Exception e) {
             // a failed write must not keep the claim, or the delivery could never be retried.
             // An Error (an OutOfMemoryError, say) is deliberately not caught: under a VM-level
@@ -151,14 +186,53 @@ public class LangChain4jIngestProducer extends DefaultProducer {
             }
             throw e;
         }
-        if (result.outcome() == IngestResult.Outcome.EMPTY) {
-            // a blank document wrote nothing, so it must not keep the claim - a later, populated
-            // delivery under the same id would be answered SKIPPED
+        if (result.outcome() == IngestResult.Outcome.EMPTY || result.outcome() == IngestResult.Outcome.FILTERED) {
+            // a blank or filtered document wrote nothing, so it must not keep the claim - a
+            // later delivery under the same id would be answered SKIPPED
             repository.remove(exchange, documentId);
         } else {
             repository.confirm(exchange, documentId);
         }
         exchange.getMessage().setBody(result);
+    }
+
+    /**
+     * The content filters, in claim scope: the documentFilter predicate sees the body, and minDocumentSize (inside
+     * {@link IngestService}) needs the text - both run after the dedup claim, unlike the id patterns.
+     */
+    private IngestResult ingestUnlessFiltered(Exchange exchange, String documentId) {
+        Predicate filter = configuration.getDocumentFilter();
+        if (filter != null && !filter.matches(exchange)) {
+            return filtered(documentId);
+        }
+        return service.ingest(documentId, exchange.getMessage().getBody(String.class));
+    }
+
+    private IngestResult filtered(String documentId) {
+        // the endpoint's pipeline name, not service.pipeline(): same value, but valid even
+        // if a harness invokes the producer before doStart
+        return new IngestResult(endpoint.getPipelineName(), documentId, 0, IngestResult.Outcome.FILTERED);
+    }
+
+    /** Exclusion wins over inclusion; with includeId set, only matching ids pass. */
+    private boolean idAccepted(String documentId) {
+        if (AntPathMatcher.INSTANCE.anyMatch(excludeIds, documentId)) {
+            return false;
+        }
+        return includeIds == null || AntPathMatcher.INSTANCE.anyMatch(includeIds, documentId);
+    }
+
+    // normalised to null when no pattern remains: an all-blank includeId must accept
+    // everything, while an empty array handed to anyMatch would reject everything
+    private static String[] parsePatterns(String patterns) {
+        if (patterns == null || patterns.isBlank()) {
+            return null;
+        }
+        String[] parsed = Arrays.stream(patterns.split(","))
+                .map(String::trim)
+                .filter(pattern -> !pattern.isEmpty())
+                .toArray(String[]::new);
+        return parsed.length == 0 ? null : parsed;
     }
 
     /**

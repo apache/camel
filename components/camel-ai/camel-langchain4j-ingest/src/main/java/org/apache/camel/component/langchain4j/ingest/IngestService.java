@@ -60,21 +60,25 @@ class IngestService {
     private final DocumentSplitter splitter;
     private final int embeddingBatchSize;
     private final int maxDocumentSize;
+    private final int minDocumentSize;
 
     public IngestService(String pipeline, EmbeddingStore<TextSegment> store, EmbeddingModel model,
-                         int maxSegmentSize, int maxOverlapSize, int embeddingBatchSize, int maxDocumentSize) {
+                         int maxSegmentSize, int maxOverlapSize, int embeddingBatchSize, int maxDocumentSize,
+                         int minDocumentSize) {
         this(pipeline, store, model, DocumentSplitters.recursive(maxSegmentSize, maxOverlapSize), embeddingBatchSize,
-             maxDocumentSize);
+             maxDocumentSize, minDocumentSize);
     }
 
     public IngestService(String pipeline, EmbeddingStore<TextSegment> store, EmbeddingModel model,
-                         DocumentSplitter splitter, int embeddingBatchSize, int maxDocumentSize) {
+                         DocumentSplitter splitter, int embeddingBatchSize, int maxDocumentSize,
+                         int minDocumentSize) {
         this.pipeline = pipeline;
         this.store = store;
         this.model = model;
         this.splitter = splitter;
         this.embeddingBatchSize = embeddingBatchSize;
         this.maxDocumentSize = maxDocumentSize;
+        this.minDocumentSize = minDocumentSize;
     }
 
     public IngestResult ingest(String documentId, String text) {
@@ -83,6 +87,12 @@ class IngestService {
         }
         if (text == null || text.isBlank()) {
             return new IngestResult(pipeline, documentId, 0, IngestResult.Outcome.EMPTY);
+        }
+        // a benign filter, not a guard: a too-short document answers FILTERED, which releases
+        // a dedup claim like EMPTY does. Deliberately soft where the max check below throws -
+        // undersized is a data decision, oversized a resource risk - so do not align the two
+        if (minDocumentSize > 0 && text.length() < minDocumentSize) {
+            return new IngestResult(pipeline, documentId, 0, IngestResult.Outcome.FILTERED);
         }
         // the pipeline is whole-document-in-memory by design, so the cap is the protection
         // against oversized - and, on a consumer-fed pipeline, attacker-sized - payloads. The
