@@ -136,6 +136,13 @@ class ParserTest extends CamelTestSupport {
     }
 
     @Test
+    public void multiArgFunctionShouldFail() {
+        // the comma separates the procedure parameters, so functions with several arguments are not supported
+        assertThrows(ParseRuntimeException.class,
+                () -> parser.parseTemplate("ADDNUMBERS2(VARCHAR ${replace(a,b)})"));
+    }
+
+    @Test
     public void vendorSpecificPositiveSqlType() {
         Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${header.foo})");
         assertEquals(1342, ((InParameter) template.getParameterList().get(0)).getSqlType());
