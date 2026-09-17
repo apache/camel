@@ -93,15 +93,20 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans) "
-                        + "from the docs, with where it goes (a top-level entry or a step). Use before writing an EIP the "
-                        + "first time or after a 'not defined in the schema' error.")
+          description = "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans), "
+                        + "a component (kafka, file), a data format (csv) or a language (jq) from the docs, with where "
+                        + "it goes (a top-level entry, a step, an endpoint uri, a marshal step, an expression). Use "
+                        + "before writing one the first time or after a 'not defined in the schema' error.")
     public JsonObject camel_catalog_sample(
-            @ToolArg(description = "EIP or entry name, or what to do (read file, call service, retry, batch)",
+            @ToolArg(description = "EIP, component, data format or language name, or what to do (read file, call "
+                                   + "service, retry, batch)",
                      required = true) String name,
+            @ToolArg(description = "eip, component, dataformat or language; needed only when a name is in several "
+                                   + "(avro, file)",
+                     required = false) String kind,
             @ToolArg(description = "Maximum samples to return (default 2, max 5)", required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
-        return call("camel_catalog_sample", args("name", name, "limit", limit, "camelVersion", camelVersion));
+        return call("camel_catalog_sample", args("name", name, "kind", kind, "limit", limit, "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),

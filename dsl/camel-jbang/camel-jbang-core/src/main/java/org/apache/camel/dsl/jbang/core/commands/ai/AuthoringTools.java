@@ -123,16 +123,23 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_catalog_sample",
-                "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans) from "
-                                                     + "the docs, with where it goes (a top-level entry or a step). Use before "
-                                                     + "writing an EIP the first time or after a 'not defined in the schema' error.")
-                .param("name", "string", "EIP or entry name, or what to do (read file, call service, retry, batch)", true)
+                "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans), a "
+                                                     + "component (kafka, file), a data format (csv) or a language (jq) from the "
+                                                     + "docs, with where it goes (a top-level entry, a step, an endpoint uri, a "
+                                                     + "marshal step, an expression). Use before writing one the first time or "
+                                                     + "after a 'not defined in the schema' error.")
+                .param("name", "string",
+                        "EIP, component, data format or language name, or what to do (read file, call service, retry, batch)",
+                        true)
+                .param("kind", "string", "eip, component, dataformat or language; needed only when a name is in several "
+                                         + "(avro, file)",
+                        false)
                 .param("limit", "integer", "Maximum samples to return (default 2, max 5)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
-                    return CatalogSamples.sample(ctx.catalog(), args.get("name"),
+                    return CatalogSamples.sample(ctx.catalog(), args.get("kind"), args.get("name"),
                             integer(args, "limit", CatalogSamples.DEFAULT_LIMIT));
                 }));
 

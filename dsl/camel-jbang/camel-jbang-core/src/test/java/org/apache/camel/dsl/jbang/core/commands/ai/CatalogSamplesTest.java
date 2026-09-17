@@ -17,7 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -61,12 +65,14 @@ public class CatalogSamplesTest {
     @Test
     void eipAliasesResolveThroughTheCatalog() {
         // the aliases of the EIP models, so the intent map need not repeat them
-        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         JsonObject o = CatalogSamples.sample(catalog, "fan-out", 1);
         assertThat(o.getString("name")).isEqualTo("multicast");
         assertThat(o.getString("note")).contains("multicast EIP");
         assertThat(CatalogSamples.sample(catalog, "broadcast", 1).getString("name")).isEqualTo("multicast");
-        assertThat(CatalogSamples.sample(catalog, "chunk", 1).getString("name")).isEqualTo("split");
+        // an exact component name (chunk is the Chunk templating component) beats an alias of an EIP, unless asked
+        assertThat(CatalogSamples.sample(catalog, "chunk", 1).getString("kind")).isEqualTo("component");
+        assertThat(CatalogSamples.sample(catalog, "eip", "chunk", 1).getString("name")).isEqualTo("split");
         // an alias of an EIP whose page has no YAML example still names the EIP
         JsonObject dedup = CatalogSamples.sample(catalog, "dedup", 1);
         assertThat(dedup.getString("error")).contains("dedup");
@@ -105,7 +111,7 @@ public class CatalogSamplesTest {
 
     @Test
     void eipSamplesComeFromTheCatalogDocsAndTheRestFromTheShippedSet() {
-        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         JsonObject o = CatalogSamples.sample(catalog, "poll", 2);
         JsonArray samples = (JsonArray) o.get("samples");
         assertThat(samples).isNotEmpty();
@@ -158,10 +164,161 @@ public class CatalogSamplesTest {
 
     @Test
     void patternPagesWithoutTheEipSuffixAreReadFromTheCatalog() {
-        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, "deadLetterChannel", 1).get("samples");
         assertThat(((JsonObject) samples.get(0)).getString("source")).startsWith("dead-letter-channel.adoc (Camel ");
         samples = (JsonArray) CatalogSamples.sample(catalog, "keyValueRepository", 1).get("samples");
         assertThat(((JsonObject) samples.get(0)).getString("source")).startsWith("keyValueRepository.adoc (Camel ");
+    }
+
+    // CAMEL-24720: components, data formats and languages from their documentation
+
+    private static String yaml(JsonObject answer, int i) {
+        return ((JsonObject) ((JsonArray) answer.get("samples")).get(i)).getString("yaml");
+    }
+
+    private static String source(JsonObject answer, int i) {
+        return ((JsonObject) ((JsonArray) answer.get("samples")).get(i)).getString("source");
+    }
+
+    @Test
+    void componentSamplesComeFromTheComponentPageWithItsEndpointFirst() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        JsonObject o = CatalogSamples.sample(catalog, "kafka", 2);
+        assertThat(o.getString("name")).isEqualTo("kafka");
+        assertThat(o.getString("kind")).isEqualTo("component");
+        assertThat(o.getString("placement")).contains("from:").contains("to:");
+        assertThat((JsonArray) o.get("samples")).hasSize(2);
+        // the first example of the kafka page is an idempotent consumer with a SQL repository: a kafka endpoint first
+        assertThat(yaml(o, 0)).contains("kafka:");
+        assertThat(source(o, 0)).startsWith("kafka-component.adoc (Camel ");
+        assertThat(o.get("note")).isNull();
+        assertThat((Integer) o.get("count")).isGreaterThan(5);
+        // any case, and the kind when given
+        assertThat(CatalogSamples.sample(catalog, "component", "Kafka", 1).getString("name")).isEqualTo("kafka");
+        // without a catalog there is no component page to read
+        assertThat(CatalogSamples.sample("kafka", 1).getString("error")).contains("kafka");
+    }
+
+    @Test
+    void theSubPagesOfAComponentBelongToIt() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        assertThat(CatalogSamples.subPages(catalog, "aws2-s3"))
+                .contains("aws2-s3-consumer-examples", "aws2-s3-producer-operations", "aws2-s3-streaming");
+        // mina-sftp is a component of its own: its pages are not mina's
+        assertThat(CatalogSamples.subPages(catalog, "mina")).isEmpty();
+        assertThat(CatalogSamples.subPages(catalog, "mina-sftp")).contains("mina-sftp-authentication");
+        // the examples of the sub-pages count, after the ones of the main page
+        Matcher m = Pattern.compile("\\[source,yaml\\]").matcher(catalog.asciiDoc("aws2-s3-component"));
+        int onMainPage = 0;
+        while (m.find()) {
+            onMainPage++;
+        }
+        JsonObject o = CatalogSamples.sample(catalog, "aws2-s3", 5);
+        assertThat((Integer) o.get("count")).isGreaterThan(onMainPage);
+        assertThat(source(o, 0)).startsWith("aws2-s3-component.adoc");
+    }
+
+    @Test
+    void aConsumerOrProducerOnlyComponentSaysItsSide() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        JsonObject timer = CatalogSamples.sample(catalog, "timer", 1);
+        assertThat(timer.getString("placement")).contains("from: only");
+        assertThat(yaml(timer, 0)).contains("timer:");
+        JsonObject log = CatalogSamples.sample(catalog, "component", "log", 1);
+        assertThat(log.getString("kind")).isEqualTo("component");
+        assertThat(log.getString("placement")).contains("to: only");
+        // without a kind the log EIP answers first, and says the component is there too
+        JsonObject eip = CatalogSamples.sample(catalog, "log", 1);
+        assertThat(eip.getString("kind")).isEqualTo("eip");
+        assertThat((JsonArray) eip.get("also")).containsExactly("component");
+        assertThat(eip.getString("hint")).contains("kind");
+        // an EIP that is no component says nothing
+        assertThat(CatalogSamples.sample(catalog, "split", 1).get("also")).isNull();
+    }
+
+    @Test
+    void dataFormatAndLanguageSamplesShowTheStepAndTheExpression() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        JsonObject csv = CatalogSamples.sample(catalog, "csv", 1);
+        assertThat(csv.getString("kind")).isEqualTo("dataformat");
+        assertThat(csv.getString("placement")).contains("marshal");
+        assertThat(yaml(csv, 0)).contains("csv:").containsAnyOf("marshal:", "unmarshal:");
+        assertThat(source(csv, 0)).startsWith("csv-dataformat.adoc (Camel ");
+        JsonObject jq = CatalogSamples.sample(catalog, "jq", 1);
+        assertThat(jq.getString("kind")).isEqualTo("language");
+        assertThat(jq.getString("placement")).contains("expression");
+        assertThat(yaml(jq, 0)).contains("jq:");
+        assertThat(source(jq, 0)).startsWith("jq-language.adoc (Camel ");
+    }
+
+    @Test
+    void aNameInSeveralKindsReturnsTheChoiceUnlessOnlyOneHasSamples() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        JsonObject avro = CatalogSamples.sample(catalog, "avro", 1);
+        assertThat(avro.get("samples")).isNull();
+        assertThat((JsonArray) avro.get("kinds")).containsExactly("component", "dataformat");
+        assertThat(avro.getString("hint")).contains("kind");
+        assertThat(CatalogSamples.sample(catalog, "dataformat", "avro", 1).getString("kind")).isEqualTo("dataformat");
+        assertThat(CatalogSamples.sample(catalog, "Data-Formats", "avro", 1).getString("kind")).isEqualTo("dataformat");
+        assertThat(yaml(CatalogSamples.sample(catalog, "component", "avro", 1), 0)).contains("avro:");
+        // file is a component and a language, and only the component page has examples
+        JsonObject file = CatalogSamples.sample(catalog, "file", 1);
+        assertThat(file.getString("kind")).isEqualTo("component");
+        assertThat(yaml(file, 0)).contains("file:");
+        assertThat(CatalogSamples.sample(catalog, "steps", "file", 1).getString("error")).contains("kind must be one of");
+    }
+
+    @Test
+    void componentsSharingAPageAndPagesWithoutAnEndpointExample() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        // smtp, imap and pop3 are documented on the mail page
+        JsonObject smtp = CatalogSamples.sample(catalog, "smtp", 1);
+        assertThat(smtp.getString("kind")).isEqualTo("component");
+        assertThat(source(smtp, 0)).startsWith("mail-component.adoc (Camel ");
+        assertThat(yaml(smtp, 0)).containsAnyOf("smtp:", "imap:", "pop3:");
+        assertThat(smtp.get("note")).isNull();
+        JsonObject mail = CatalogSamples.sample(catalog, "mail", 1);
+        assertThat(mail.getString("name")).isEqualTo("mail");
+        assertThat(mail.get("note")).isNull();
+        // mapstruct is used through convertBodyTo, no mapstruct: endpoint in its examples
+        JsonObject mapstruct = CatalogSamples.sample(catalog, "mapstruct", 1);
+        assertThat((Integer) mapstruct.get("count")).isPositive();
+        assertThat(mapstruct.getString("note")).contains("none of the examples");
+        // knative shows Kubernetes manifests, no route example
+        JsonObject knative = CatalogSamples.sample(catalog, "knative", 1);
+        assertThat((Integer) knative.get("count")).isZero();
+        assertThat(knative.getString("hint")).contains("no YAML route example");
+    }
+
+    @Test
+    void anUnknownNameGetsTheCatalogSuggestionsToo() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        JsonObject o = CatalogSamples.sample(catalog, "mqtt", 1);
+        assertThat(o.getString("error")).contains("mqtt");
+        assertThat(String.valueOf(o.get("suggestions"))).contains("(component)");
+        // a suggestion is a name with a page to come back for, and no EIP is guessed for another kind
+        JsonObject typo = CatalogSamples.sample(catalog, "dataformat", "univocity", 1);
+        assertThat(typo.getString("error")).contains("as a dataformat");
+        assertThat(String.valueOf(typo.get("suggestions"))).contains("univocityCsv (dataformat)");
+        assertThat(typo.get("eip")).isNull();
+    }
+
+    @Test
+    void aDataFormatDocumentedUnderAnotherPageNameStillAnswers() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        // jackson is on the jackson2 and jackson3 pages, one example each
+        assertThat(CatalogSamples.dataFormatPages(catalog, "jackson"))
+                .containsExactly("jackson2-dataformat", "jackson3-dataformat");
+        JsonObject jackson = CatalogSamples.sample(catalog, "jackson", 5);
+        assertThat(jackson.getString("kind")).isEqualTo("dataformat");
+        assertThat(source(jackson, 0)).startsWith("jackson2-dataformat.adoc");
+        assertThat((Integer) jackson.get("count")).isEqualTo(2);
+        // bindyCsv is on the bindy page, which has no YAML example
+        assertThat(CatalogSamples.dataFormatPages(catalog, "bindyCsv")).containsExactly("bindy-dataformat");
+        JsonObject bindy = CatalogSamples.sample(catalog, "bindyCsv", 1);
+        assertThat(bindy.getString("kind")).isEqualTo("dataformat");
+        assertThat((Integer) bindy.get("count")).isZero();
+        assertThat(bindy.getString("hint")).contains("no YAML route example");
     }
 }
