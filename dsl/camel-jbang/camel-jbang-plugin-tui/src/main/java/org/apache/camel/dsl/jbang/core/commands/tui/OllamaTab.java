@@ -266,8 +266,11 @@ class OllamaTab extends AbstractTab {
                         Span.styled("   " + describeShape(m), Theme.muted())));
                 String residency = describeResidency(m, Instant.now());
                 if (i == 0 && s.panelWindow() > 0) {
-                    residency += " · AI panel asks " + formatTokens(s.panelWindow()) + ", compacts above "
-                                 + formatTokens(s.panelBudget());
+                    // the panel adopts the loaded window, so it only needs naming when the two differ
+                    if (s.panelWindow() != m.contextLength()) {
+                        residency += " · AI panel asks " + formatTokens(s.panelWindow());
+                    }
+                    residency += " · AI panel compacts above " + formatTokens(s.panelBudget());
                 }
                 lines.add(Line.from(Span.styled("  " + residency, Theme.label())));
             }
@@ -712,6 +715,9 @@ class OllamaTab extends AbstractTab {
                 parts.add(shape.experts() + " experts"
                           + (shape.expertsUsed() > 0 ? " (" + shape.expertsUsed() + " active)" : ""));
             }
+            if (shape.maxContext() > 0) {
+                parts.add("max ctx " + formatTokens(shape.maxContext()));
+            }
             if (shape.capabilities() != null && !shape.capabilities().isEmpty()) {
                 List<String> caps = new ArrayList<>();
                 for (String c : shape.capabilities()) {
@@ -736,9 +742,6 @@ class OllamaTab extends AbstractTab {
         }
         if (m.contextLength() > 0) {
             sb.append(" · ctx ").append(formatTokens(m.contextLength()));
-            if (m.shape() != null && m.shape().maxContext() > m.contextLength()) {
-                sb.append(" of ").append(formatTokens(m.shape().maxContext()));
-            }
         }
         if (m.expiresAt() != null) {
             sb.append(" · ").append(formatCountdown(m.expiresAt(), now));

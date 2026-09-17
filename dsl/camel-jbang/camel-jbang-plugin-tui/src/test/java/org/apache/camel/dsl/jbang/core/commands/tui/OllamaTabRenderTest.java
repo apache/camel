@@ -94,8 +94,10 @@ class OllamaTabRenderTest {
         assertTrue(rendered.contains("qwen35moe"), rendered);
         assertTrue(rendered.contains("41 layers"), rendered);
         assertTrue(rendered.contains("256 experts (8 active)"), rendered);
+        assertTrue(rendered.contains("max ctx 256k"), rendered);
         assertTrue(rendered.contains("100% GPU"), rendered);
-        assertTrue(rendered.contains("ctx 256k"), rendered);
+        assertTrue(rendered.contains("· ctx 256k ·"), rendered);
+        assertFalse(rendered.contains("of 256k"), rendered);
         // panels
         assertTrue(rendered.contains("Throughput"), rendered);
         assertTrue(rendered.contains("decode"), rendered);
@@ -221,9 +223,16 @@ class OllamaTabRenderTest {
     @Test
     void headerShowsWhatThePanelAsksForAndWhereItCompacts() {
         localServerWithModel();
+        // the model in this fixture is loaded at 256k while the panel asked for 64k: both are named
         monitor.setPanelContext(65_536, 32_768);
         String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
-        assertTrue(rendered.contains("AI panel asks 64k, compacts above 32k"), rendered);
+        assertTrue(rendered.contains("AI panel asks 64k · AI panel compacts above 32k"), rendered);
+        // when the panel adopted the loaded window only the compaction point is worth a mention
+        monitor.setPanelContext(262_144, 32_768);
+        rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertFalse(rendered.contains("AI panel asks"), rendered);
+        assertTrue(rendered.contains("ctx 256k · unloads in"), rendered);
+        assertTrue(rendered.contains("AI panel compacts above 32k"), rendered);
     }
 
     @Test

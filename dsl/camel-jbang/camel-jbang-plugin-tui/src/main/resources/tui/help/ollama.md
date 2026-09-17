@@ -48,14 +48,16 @@ The loaded model and its shape:
 - Size in memory and the share held by the GPU (`100% GPU` means fully
   offloaded; a lower figure means part of the model runs on the CPU
   and decode will be slow)
-- `ctx 32,768 of 262,144` — the context window Ollama allocated for
-  this load, and the maximum the model supports. A request with a
-  different size makes Ollama reload the model.
-- `AI panel asks 64k, compacts above 32k` — what the TUI's AI panel
-  requests (`OLLAMA_CONTEXT_LENGTH`, else the window already loaded,
-  else 64k when the model's cache fits the machine's memory, else 32k)
-  and the prompt size above which it compacts its history. Shown once
-  the panel has made a request.
+- `max ctx 256k` on the model line — the largest context the model was
+  trained for. `ctx 64k` on the loaded line — the window Ollama
+  allocated for this load; it is fixed for the life of the runner, and a
+  request for a different size makes Ollama reload the model.
+- `AI panel compacts above 32k` — the prompt size above which the TUI's
+  AI panel compacts its history, shown once the panel has made a
+  request. The panel asks for `OLLAMA_CONTEXT_LENGTH` when set, else the
+  window already loaded, else 64k when the model's cache fits the
+  machine's memory, else 32k; `AI panel asks ...` appears only when that
+  differs from the loaded window.
 - When the model unloads (its keep-alive)
 
 With no model loaded the installed models are listed instead; a model
