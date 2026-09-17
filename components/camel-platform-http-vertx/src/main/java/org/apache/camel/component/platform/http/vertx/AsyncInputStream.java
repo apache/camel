@@ -55,6 +55,7 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     private Handler<Buffer> dataHandler;
     private Handler<Void> endHandler;
     private Handler<Throwable> exceptionHandler;
+    private Throwable readFailure;
 
     public AsyncInputStream(Vertx vertx, Context context, InputStream inputStream) {
         this(vertx, context, inputStream, false);
@@ -80,7 +81,9 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     public AsyncInputStream endHandler(Handler<Void> endHandler) {
         lock.lock();
         try {
-            checkStreamClosed();
+            if (closed) {
+                return this;
+            }
             this.endHandler = endHandler;
             return this;
         } finally {
@@ -92,7 +95,9 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     public AsyncInputStream exceptionHandler(Handler<Throwable> exceptionHandler) {
         lock.lock();
         try {
-            checkStreamClosed();
+            if (closed) {
+                return this;
+            }
             this.exceptionHandler = exceptionHandler;
             return this;
         } finally {
@@ -104,9 +109,11 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     public AsyncInputStream handler(Handler<Buffer> handler) {
         lock.lock();
         try {
-            checkStreamClosed();
+            if (closed) {
+                return this;
+            }
             this.dataHandler = handler;
-            if (this.dataHandler != null && !this.closed) {
+            if (this.dataHandler != null) {
                 this.doRead();
             } else {
                 queue.clear();
@@ -121,7 +128,9 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     public AsyncInputStream pause() {
         lock.lock();
         try {
-            checkStreamClosed();
+            if (closed) {
+                return this;
+            }
             queue.pause();
             return this;
         } finally {
@@ -133,7 +142,9 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     public AsyncInputStream resume() {
         lock.lock();
         try {
-            checkStreamClosed();
+            if (closed) {
+                return this;
+            }
             queue.resume();
             return this;
         } finally {
@@ -143,18 +154,31 @@ public class AsyncInputStream implements ReadStream<Buffer> {
 
     @Override
     public ReadStream<Buffer> fetch(long amount) {
-        checkStreamClosed();
-        queue.fetch(amount);
-        return this;
+        lock.lock();
+        try {
+            if (closed) {
+                return this;
+            }
+            queue.fetch(amount);
+            return this;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void close(Handler<AsyncResult<Void>> handler) {
         closeInternal(handler);
     }
 
-    private void checkStreamClosed() {
-        if (this.closed) {
-            throw new IllegalStateException("Stream closed");
+    /**
+     * The failure raised while reading the underlying {@link InputStream}, or {@code null} if reading has not failed.
+     */
+    Throwable getReadFailure() {
+        lock.lock();
+        try {
+            return readFailure;
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -191,13 +215,18 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     }
 
     private void doRead() {
-        checkStreamClosed();
         doRead(ByteBuffer.allocate(IOHelper.DEFAULT_BUFFER_SIZE));
     }
 
     private void doRead(ByteBuffer buffer) {
         lock.lock();
         try {
+            if (closed) {
+                // Reads can still be scheduled once the stream is closed, either by a queue drain that was already
+                // pending or by the next iteration of a read chain that is still in flight. The channel is gone, so
+                // there is nothing left to read.
+                return;
+            }
             if (!readInProgress) {
                 readInProgress = true;
                 Buffer buff = Buffer.buffer(IOHelper.DEFAULT_BUFFER_SIZE);
@@ -284,12 +313,27 @@ public class AsyncInputStream implements ReadStream<Buffer> {
     }
 
     private void handleException(Throwable t) {
-        if (exceptionHandler != null && t instanceof Exception) {
-            exceptionHandler.handle(t);
-        } else {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Unhandled error while processing stream", t);
+        Handler<Throwable> handler;
+        boolean streamClosed;
+        lock.lock();
+        try {
+            handler = this.exceptionHandler;
+            streamClosed = this.closed;
+            if (!streamClosed) {
+                readFailure = t;
             }
+        } finally {
+            lock.unlock();
+        }
+
+        if (streamClosed) {
+            // A read that was in flight when the stream was closed fails because the channel is gone. That is
+            // expected, for instance when the client disconnects part way through the response.
+            LOG.debug("Stream closed while a read was in progress", t);
+        } else if (handler != null && t instanceof Exception) {
+            handler.handle(t);
+        } else if (LOG.isErrorEnabled()) {
+            LOG.error("Unhandled error while processing stream", t);
         }
     }
 }

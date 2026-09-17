@@ -1493,6 +1493,25 @@ cannot serve one origin's response to another.
 Deployments that relied on credentialed cross-origin requests must list the permitted origins in
 `camel.server.cors.origins`.
 
+=== camel-platform-http-vertx - response write failures are no longer silent
+
+A streaming response body (any `InputStream` payload) was written to the client with the deprecated
+Vert.x `Pump`, which discards the result of every `write()`. Failures were therefore invisible: the
+response write was always reported as successful, even when nothing reached the client. Writing now
+uses `pipe()`, which propagates those failures.
+
+This is a bug fix (CAMEL-24864). A client that disconnects part way through a streaming response is
+now noticed, so the body stream is closed and the exchange completes. Previously neither happened,
+which leaked an exchange per aborted response — and, for a stream that only ends on an explicit
+marker, such as the Server-Sent Events stream produced by `camel-a2a`, also leaked the subscriber
+that the stream's `close()` was responsible for removing.
+
+A lost client connection is logged at DEBUG and is not reported through the consumer's
+`ExceptionHandler`, since a client going away is not a route failure. A failure raised while
+*producing* the body is still reported as before. Routes using `handleWriteResponseError=true` now
+see an exception on the exchange when a response write fails, including when the cause is the client
+disconnecting; routes that need to distinguish the two can inspect the exception cause.
+
 === camel-tika
 
 The `tika:parse` producer copies the metadata of the parsed document onto the Camel message. Those

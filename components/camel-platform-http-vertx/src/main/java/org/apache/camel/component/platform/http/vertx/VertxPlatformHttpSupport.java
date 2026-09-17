@@ -247,7 +247,14 @@ public final class VertxPlatformHttpSupport {
                 .to(response)
                 .onComplete(result -> asyncInputStream.close(closeResult -> {
                     if (result.failed()) {
-                        promise.fail(result.cause());
+                        Throwable cause = result.cause();
+                        if (cause == asyncInputStream.getReadFailure()) {
+                            promise.fail(cause);
+                        } else {
+                            // The InputStream did not fail, so writing to the response did. That happens when the
+                            // client has gone away, possibly before the response has been flagged as closed.
+                            promise.fail(new ResponseWriteException(cause));
+                        }
                     } else {
                         promise.complete();
                     }
