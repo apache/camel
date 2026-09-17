@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.GpuStats;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.HostStats;
@@ -110,7 +113,7 @@ class OllamaTabRenderTest {
         assertTrue(rendered.contains("llama-server"), rendered);
         assertTrue(rendered.contains("ollama serve"), rendered);
         // request log
-        assertTrue(rendered.contains("Requests (1)"), rendered);
+        assertTrue(rendered.contains("Requests (1 question, 1 request)"), rendered);
         assertTrue(rendered.contains("CTX"), rendered);
         assertTrue(rendered.contains("PREFILL"), rendered);
         assertTrue(rendered.contains("DECODE"), rendered);
@@ -156,6 +159,38 @@ class OllamaTabRenderTest {
     }
 
     @Test
+    void requestsAreGroupedPerQuestionAndUnfoldOnEnter() {
+        localServerWithModel();
+        String question = "how many messages have camel done\nand are any failing?";
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(4_500, 33, 4_533, 0, 620, 700, 0, 1_320), 0,
+                "tool_calls", 7, question);
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(4_700, 78, 4_778, 4_500, 50, 1_600, 0, 1_700), 0,
+                "tool_calls", 7, question);
+        monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(7_000, 106, 7_106, 4_700, 360, 1_900, 0, 2_300), 0,
+                "stop", 7, question);
+
+        OllamaTab tab = new OllamaTab(ctx, monitor);
+        String rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertTrue(rendered.contains("Requests (1 question, 3 requests)"), rendered);
+        assertTrue(rendered.contains("#7 ×3"), rendered);
+        assertTrue(rendered.contains("how many messages have camel done …"), rendered);
+        assertTrue(rendered.contains("QUESTION"), rendered);
+        assertFalse(rendered.contains("step 1/3"), rendered);
+
+        // Enter on the question unfolds its steps
+        tab.navigateDown();
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertTrue(rendered.contains("step 1/3"), rendered);
+        assertTrue(rendered.contains("step 3/3"), rendered);
+
+        // and folds them again
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        rendered = TuiTestHelper.renderToString(tab, 200, 40);
+        assertFalse(rendered.contains("step 1/3"), rendered);
+    }
+
+    @Test
     void routeRequestsShowTheirRouteId() {
         localServerWithModel();
         monitor.recordRequest("qwen3.6:35b-a3b", new LlmClient.TokenUsage(16, 6, 22, 0, 188, 81, 12, 300), 0, "stop");
@@ -164,7 +199,7 @@ class OllamaTabRenderTest {
 
         String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 180, 40);
         assertTrue(rendered.contains("route:chat-route"), rendered);
-        assertTrue(rendered.contains("Requests (2)"), rendered);
+        assertTrue(rendered.contains("Requests (2 questions, 2 requests)"), rendered);
     }
 
     @Test
@@ -205,7 +240,8 @@ class OllamaTabRenderTest {
     void helpTextExplainsThePhasesAndColumns() {
         String help = new OllamaTab(ctx, monitor).getHelpText();
         assertTrue(help != null && help.contains("TTFT"), help);
-        for (String term : List.of("Prefill", "Decode", "cold", "cache hit", "speculative", "CACHED", "REASON")) {
+        for (String term : List.of("Prefill", "Decode", "cold", "cache hit", "speculative", "CACHE", "QUESTION",
+                "REASON")) {
             assertTrue(help.contains(term), "help should explain " + term);
         }
     }

@@ -21,8 +21,10 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -47,6 +49,7 @@ import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.HostStats;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.LoadedModel;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ModelShape;
+import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.QuestionGroup;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestEntry;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestSource;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.SessionTotals;
@@ -76,6 +79,10 @@ class OllamaTab extends AbstractTab {
     private final TableState tableState = new TableState();
     private final ScrollbarState scrollState = new ScrollbarState();
     private Rect lastTableArea;
+    /** Questions whose steps are unfolded in the request log. */
+    private final Set<String> expandedGroups = new HashSet<>();
+    /** What each table row is: a {@link QuestionGroup} header or a {@link RequestEntry} step, as last rendered. */
+    private List<Object> rowRefs = List.of();
 
     OllamaTab(MonitorContext ctx, OllamaMonitor monitor) {
         super(ctx);
@@ -107,8 +114,25 @@ class OllamaTab extends AbstractTab {
             navigateDown();
             return true;
         }
+        if (ke.isConfirm() || ke.isRight() || ke.isLeft()) {
+            QuestionGroup group = selectedGroup();
+            if (group != null && group.steps().size() > 1) {
+                if (ke.isLeft()) {
+                    expandedGroups.remove(group.key());
+                    selectGroupHeader(group);
+                } else if (ke.isRight()) {
+                    expandedGroups.add(group.key());
+                } else if (!expandedGroups.remove(group.key())) {
+                    expandedGroups.add(group.key());
+                } else {
+                    selectGroupHeader(group);
+                }
+            }
+            return true;
+        }
         if (ke.isChar('r') && monitor != null) {
             monitor.reset();
+            expandedGroups.clear();
             tableState.select(0);
             return true;
         }
@@ -119,6 +143,35 @@ class OllamaTab extends AbstractTab {
         return false;
     }
 
+    /** The question the selected row belongs to (a header row or one of its steps). */
+    private QuestionGroup selectedGroup() {
+        Integer sel = tableState.selected();
+        if (sel == null || sel < 0 || sel >= rowRefs.size()) {
+            return null;
+        }
+        Object ref = rowRefs.get(sel);
+        if (ref instanceof QuestionGroup g) {
+            return g;
+        }
+        if (ref instanceof RequestEntry e) {
+            for (int i = sel; i >= 0; i--) {
+                if (rowRefs.get(i) instanceof QuestionGroup g && g.steps().contains(e)) {
+                    return g;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void selectGroupHeader(QuestionGroup group) {
+        for (int i = 0; i < rowRefs.size(); i++) {
+            if (rowRefs.get(i) == group) {
+                tableState.select(i);
+                return;
+            }
+        }
+    }
+
     @Override
     public void navigateUp() {
         tableState.selectPrevious();
@@ -126,7 +179,7 @@ class OllamaTab extends AbstractTab {
 
     @Override
     public void navigateDown() {
-        int rows = monitor != null ? monitor.snapshot().requests().size() : 0;
+        int rows = rowRefs.size();
         if (rows > 0) {
             tableState.selectNext(rows);
         }
@@ -134,13 +187,13 @@ class OllamaTab extends AbstractTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        int rows = monitor != null ? monitor.snapshot().requests().size() : 0;
-        return handleTableClick(me, lastTableArea, tableState, rows);
+        return handleTableClick(me, lastTableArea, tableState, rowRefs.size());
     }
 
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.ARROW_UP + TuiIcons.ARROW_DOWN, "select");
+        hint(spans, "Enter", "steps");
         hint(spans, "r", "reset");
         hintLast(spans, "F5", "refresh");
     }
@@ -457,28 +510,8 @@ class OllamaTab extends AbstractTab {
 
     private void renderRequests(Frame frame, Rect area, Snapshot s) {
         List<RequestEntry> requests = s.requests();
-        List<Row> rows = new ArrayList<>();
-        for (RequestEntry e : requests) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled(" " + TIME.format(e.timestamp()), Theme.muted())),
-                    Cell.from(Span.styled(sourceLabel(e), e.source() == RequestSource.ROUTE
-                            ? Theme.notice()
-                            : Theme.info())),
-                    Cell.from(Span.raw(e.model())),
-                    rightCell(formatTokens(e.inputTokens()), 6),
-                    rightCell(formatTokens(e.outputTokens()), 6),
-                    rightCell(e.cachedTokens() > 0 ? formatTokens(e.cachedTokens()) : "-", 6, Theme.muted()),
-                    rightCell(e.contextPercent() >= 0 ? e.contextPercent() + "%" : "-", 5,
-                            e.contextPercent() >= 80 ? Theme.error() : e.contextPercent() >= 50 ? Theme.warning()
-                                    : Style.EMPTY),
-                    rightCell(e.prefillMs() > 0 ? formatRate(e.prefillTokensPerSecond()) : "-", 8, Theme.info()),
-                    rightCell(e.decodeMs() > 0 ? formatRate(e.decodeTokensPerSecond()) : "-", 8, Theme.success()),
-                    rightCell(e.hasTimings() ? formatSeconds(e.ttftMs()) : "-", 7,
-                            e.coldStart() ? Theme.warning() : Style.EMPTY),
-                    rightCell(e.totalMs() > 0 ? formatSeconds(e.totalMs()) : "-", 7),
-                    Cell.from(Span.styled(" " + (e.doneReason() != null ? e.doneReason() : ""), Theme.muted()))));
-        }
-        if (rows.isEmpty()) {
+        if (requests.isEmpty()) {
+            rowRefs = List.of();
             lastTableArea = area;
             frame.renderWidget(Paragraph.builder()
                     .text(Text.from(List.of(
@@ -491,15 +524,39 @@ class OllamaTab extends AbstractTab {
                     .build(), area);
             return;
         }
+
+        List<QuestionGroup> groups = OllamaMonitor.groupByQuestion(requests);
+        // fixed columns plus borders and the highlight gutter; the rest is the question column
+        int questionWidth = Math.max(12, area.width() - FIXED_COLUMNS_WIDTH);
+        List<Row> rows = new ArrayList<>();
+        List<Object> refs = new ArrayList<>();
+        for (QuestionGroup g : groups) {
+            boolean multi = g.steps().size() > 1;
+            boolean expanded = multi && expandedGroups.contains(g.key());
+            rows.add(questionRow(g, multi, expanded, questionWidth));
+            refs.add(g);
+            if (expanded) {
+                int n = 1;
+                for (RequestEntry e : g.steps()) {
+                    rows.add(stepRow(e, n++, g.steps().size()));
+                    refs.add(e);
+                }
+            }
+        }
+        rowRefs = refs;
+
+        String title = " Requests (" + groups.size() + (groups.size() == 1 ? " question, " : " questions, ")
+                       + requests.size() + (requests.size() == 1 ? " request)" : " requests)")
+                       + "  tok/s for prefill and decode · CTX = prompt share of the context window ";
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
                         Cell.from(Span.styled(" TIME", Style.EMPTY.bold())),
                         Cell.from(Span.styled("SOURCE", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("MODEL", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("QUESTION", Style.EMPTY.bold())),
                         rightCell("IN", 6, Style.EMPTY.bold()),
                         rightCell("OUT", 6, Style.EMPTY.bold()),
-                        rightCell("CACHED", 6, Style.EMPTY.bold()),
+                        rightCell("CACHE", 6, Style.EMPTY.bold()),
                         rightCell("CTX", 5, Style.EMPTY.bold()),
                         rightCell("PREFILL", 8, Style.EMPTY.bold()),
                         rightCell("DECODE", 8, Style.EMPTY.bold()),
@@ -507,7 +564,7 @@ class OllamaTab extends AbstractTab {
                         rightCell("TOTAL", 7, Style.EMPTY.bold()),
                         Cell.from(Span.styled(" REASON", Style.EMPTY.bold()))))
                 .widths(
-                        Constraint.length(9),
+                        Constraint.length(10),
                         Constraint.length(18),
                         Constraint.fill(),
                         Constraint.length(6),
@@ -521,14 +578,76 @@ class OllamaTab extends AbstractTab {
                         Constraint.length(12))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Requests (" + requests.size()
-                               + ")  tok/s for prefill and decode · CTX = prompt share of the context window ")
-                        .build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
         renderTableScrollbar(frame, area, tableState, scrollState, rows.size());
+    }
+
+    private static final int FIXED_COLUMNS_WIDTH = 10 + 18 + 6 + 6 + 6 + 5 + 8 + 8 + 7 + 7 + 12 + 6;
+
+    /** One question (or route call) on one line: the question text cut to fit, then the whole-question figures. */
+    private static Row questionRow(QuestionGroup g, boolean multi, boolean expanded, int questionWidth) {
+        String marker = multi ? (expanded ? TuiIcons.MORE_CHEVRON : TuiIcons.ARROW_RIGHT) : " ";
+        String source;
+        Style sourceStyle;
+        if (g.source() == RequestSource.ROUTE) {
+            source = g.routeId() != null ? "route:" + g.routeId() : "route";
+            sourceStyle = Theme.notice();
+        } else {
+            source = (g.question() > 0 ? "#" + g.question() : "tui") + (multi ? " ×" + g.steps().size() : "");
+            sourceStyle = Theme.info();
+        }
+        String text = g.questionText() != null && !g.questionText().isBlank()
+                ? firstLine(g.questionText())
+                : g.last().model();
+        int ctx = g.contextPercent();
+        return Row.from(
+                Cell.from(Span.styled(marker + TIME.format(g.first().timestamp()), Theme.muted())),
+                Cell.from(Span.styled(source, sourceStyle)),
+                Cell.from(Span.styled(TuiHelper.truncate(text, questionWidth), Theme.label())),
+                rightCell(formatTokens(g.promptTokens()), 6),
+                rightCell(formatTokens(g.outputTokens()), 6),
+                rightCell(g.cacheHitPercent() + "%", 6, Theme.muted()),
+                rightCell(ctx >= 0 ? ctx + "%" : "-", 5,
+                        ctx >= 80 ? Theme.error() : ctx >= 50 ? Theme.warning() : Style.EMPTY),
+                rightCell(g.prefillTokensPerSecond() > 0 ? formatRate(g.prefillTokensPerSecond()) : "-", 8,
+                        Theme.info()),
+                rightCell(g.decodeTokensPerSecond() > 0 ? formatRate(g.decodeTokensPerSecond()) : "-", 8,
+                        Theme.success()),
+                rightCell(g.hasTimings() ? formatSeconds(g.ttftMs()) : "-", 7,
+                        g.coldStart() ? Theme.warning() : Style.EMPTY),
+                rightCell(g.wallMs() > 0 ? formatSeconds(g.wallMs()) : "-", 7),
+                Cell.from(Span.styled(" " + (g.doneReason() != null ? g.doneReason() : ""), Theme.muted())));
+    }
+
+    /** One request of an unfolded question: step number, the model, and that request's own figures. */
+    private static Row stepRow(RequestEntry e, int step, int of) {
+        int ctx = e.contextPercent();
+        return Row.from(
+                Cell.from(Span.styled("  " + TIME.format(e.timestamp()), Theme.muted().dim())),
+                Cell.from(Span.styled("  step " + step + "/" + of, Theme.muted())),
+                Cell.from(Span.styled(e.model(), Theme.muted().dim())),
+                rightCell(formatTokens(e.inputTokens()), 6, Theme.muted()),
+                rightCell(formatTokens(e.outputTokens()), 6, Theme.muted()),
+                rightCell(e.cachedTokens() > 0 ? e.cacheHitPercent() + "%" : "-", 6, Theme.muted()),
+                rightCell(ctx >= 0 ? ctx + "%" : "-", 5, Theme.muted()),
+                rightCell(e.prefillMs() > 0 ? formatRate(e.prefillTokensPerSecond()) : "-", 8, Theme.muted()),
+                rightCell(e.decodeMs() > 0 ? formatRate(e.decodeTokensPerSecond()) : "-", 8, Theme.muted()),
+                rightCell(e.hasTimings() ? formatSeconds(e.ttftMs()) : "-", 7,
+                        e.coldStart() ? Theme.warning() : Theme.muted()),
+                rightCell(e.totalMs() > 0 ? formatSeconds(e.totalMs()) : "-", 7, Theme.muted()),
+                Cell.from(Span.styled(" " + (e.doneReason() != null ? e.doneReason() : ""), Theme.muted().dim())));
+    }
+
+    static String firstLine(String text) {
+        String t = text.strip();
+        int nl = t.indexOf('\n');
+        if (nl >= 0) {
+            t = t.substring(0, nl).strip() + " …";
+        }
+        return t.replace('\t', ' ');
     }
 
     // ---- MCP / table data ----

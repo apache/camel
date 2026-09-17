@@ -432,9 +432,11 @@ the TUI checks every ten seconds, so it appears shortly after `ollama serve` sta
   of how much of the window each AI panel prompt filled, with the session peak and the compactions seen.
 * *Host* -- GPU utilization and memory (Apple silicon through `ioreg`, NVIDIA through `nvidia-smi`),
   and CPU and memory of the Ollama server and its model runner.
-* *Requests* -- one line per request with input, output and cached tokens, the share of the context
-  window the prompt filled, prefill and decode tokens per second, time to first token, total time and
-  the stop reason.
+* *Requests* -- one line per question asked in the AI panel (a question with tool calls costs one
+  request per step; *Enter* unfolds the steps) with the question text, prompt and generated tokens,
+  cache hit, the share of the context window reached, prefill and decode tokens per second, time to
+  first token, the time you waited and the stop reason. Calls made by Camel routes are listed as
+  their own lines.
 
 Two kinds of requests appear in the log. Questions asked in the AI panel with Ollama as the provider
 come with the timings Ollama reports for each request (prompt evaluation, generation, model load,

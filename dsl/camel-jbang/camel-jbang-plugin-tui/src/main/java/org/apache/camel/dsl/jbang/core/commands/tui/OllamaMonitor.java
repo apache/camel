@@ -146,7 +146,22 @@ final class OllamaMonitor {
      */
     record RequestEntry(Instant timestamp, RequestSource source, String routeId, String model, int inputTokens,
             int outputTokens, int cachedTokens, long prefillMs, long decodeMs, long loadMs, long totalMs,
-            String doneReason, long contextSize) {
+            String doneReason, long contextSize, int question, String questionText) {
+
+        RequestEntry(Instant timestamp, RequestSource source, String routeId, String model, int inputTokens,
+                     int outputTokens, int cachedTokens, long prefillMs, long decodeMs, long loadMs, long totalMs,
+                     String doneReason, long contextSize) {
+            this(timestamp, source, routeId, model, inputTokens, outputTokens, cachedTokens, prefillMs, decodeMs,
+                 loadMs, totalMs, doneReason, contextSize, 0, null);
+        }
+
+        /** Requests of the same AI panel question (its tool-call steps) share this key; a route call stands alone. */
+        String groupKey() {
+            if (source == RequestSource.ROUTE) {
+                return "route:" + timestamp.toEpochMilli() + ":" + routeId;
+            }
+            return "q" + question + ":" + (questionText != null ? questionText : "");
+        }
 
         /**
          * Everything the model had in front of it. Ollama's {@code prompt_eval_count} is the whole prompt; the cached
@@ -199,6 +214,131 @@ final class OllamaMonitor {
         boolean coldStart() {
             return loadMs >= 1000;
         }
+    }
+
+    /**
+     * One AI panel question with all the requests it took (the model's tool calls each cost a request), oldest step
+     * first, or a single route call. Aggregates are what the user experienced for the whole question.
+     */
+    record QuestionGroup(String key, RequestSource source, int question, String questionText, String routeId,
+            List<RequestEntry> steps) {
+
+        RequestEntry first() {
+            return steps.get(0);
+        }
+
+        RequestEntry last() {
+            return steps.get(steps.size() - 1);
+        }
+
+        /** The largest prompt of the question: how far the context was pushed. */
+        long promptTokens() {
+            long max = 0;
+            for (RequestEntry e : steps) {
+                max = Math.max(max, e.promptTokens());
+            }
+            return max;
+        }
+
+        long outputTokens() {
+            long sum = 0;
+            for (RequestEntry e : steps) {
+                sum += e.outputTokens();
+            }
+            return sum;
+        }
+
+        int cacheHitPercent() {
+            long prompt = 0;
+            long cached = 0;
+            for (RequestEntry e : steps) {
+                prompt += e.inputTokens();
+                cached += e.cachedTokens();
+            }
+            return prompt > 0 ? (int) Math.min(100, cached * 100 / prompt) : 0;
+        }
+
+        int contextPercent() {
+            int max = -1;
+            for (RequestEntry e : steps) {
+                max = Math.max(max, e.contextPercent());
+            }
+            return max;
+        }
+
+        double prefillTokensPerSecond() {
+            long evaluated = 0;
+            long ms = 0;
+            for (RequestEntry e : steps) {
+                evaluated += e.evaluatedTokens();
+                ms += e.prefillMs();
+            }
+            return ms > 0 && evaluated > 0 ? evaluated * 1000.0 / ms : 0;
+        }
+
+        double decodeTokensPerSecond() {
+            long out = 0;
+            long ms = 0;
+            for (RequestEntry e : steps) {
+                out += e.outputTokens();
+                ms += e.decodeMs();
+            }
+            return ms > 0 && out > 0 ? out * 1000.0 / ms : 0;
+        }
+
+        /** Time to the first token of the first step: the wait before anything happened. */
+        long ttftMs() {
+            return first().ttftMs();
+        }
+
+        boolean hasTimings() {
+            return first().hasTimings();
+        }
+
+        boolean coldStart() {
+            for (RequestEntry e : steps) {
+                if (e.coldStart()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /** From the first request starting to the last one finishing. */
+        long wallMs() {
+            long start = first().timestamp().toEpochMilli();
+            long end = last().timestamp().toEpochMilli() + last().totalMs();
+            return Math.max(end - start, last().totalMs());
+        }
+
+        String doneReason() {
+            return last().doneReason();
+        }
+    }
+
+    /**
+     * Groups requests (newest first) into questions: consecutive AI panel requests with the same question form one
+     * group with their steps oldest first; every route call is its own group. Groups come back newest first.
+     */
+    static List<QuestionGroup> groupByQuestion(List<RequestEntry> newestFirst) {
+        List<QuestionGroup> groups = new ArrayList<>();
+        int i = 0;
+        while (i < newestFirst.size()) {
+            RequestEntry head = newestFirst.get(i);
+            String key = head.groupKey();
+            List<RequestEntry> steps = new ArrayList<>();
+            int j = i;
+            while (j < newestFirst.size() && newestFirst.get(j).groupKey().equals(key)
+                    && (head.source() == RequestSource.TUI || j == i)) {
+                steps.add(0, newestFirst.get(j));
+                j++;
+            }
+            groups.add(new QuestionGroup(
+                    key, head.source(), head.question(), head.questionText(), head.routeId(),
+                    List.copyOf(steps)));
+            i = j;
+        }
+        return groups;
     }
 
     record SessionTotals(int requests, long inputTokens, long outputTokens, long cachedTokens, long prefillMs,
@@ -329,8 +469,18 @@ final class OllamaMonitor {
         }
     }
 
-    /** Records a request the TUI itself made to Ollama, with the usage and timings Ollama returned. */
+    /** As {@link #recordRequest(String, LlmClient.TokenUsage, long, String, int, String)} without a question. */
     void recordRequest(String model, LlmClient.TokenUsage usage, long latencyMs, String doneReason) {
+        recordRequest(model, usage, latencyMs, doneReason, 0, null);
+    }
+
+    /**
+     * Records a request the TUI itself made to Ollama, with the usage and timings Ollama returned. {@code question} and
+     * {@code questionText} identify the AI panel turn so the tool-call steps of one question group together.
+     */
+    void recordRequest(
+            String model, LlmClient.TokenUsage usage, long latencyMs, String doneReason, int question,
+            String questionText) {
         if (usage == null) {
             return;
         }
@@ -339,7 +489,7 @@ final class OllamaMonitor {
                 Instant.now(), RequestSource.TUI, null, model != null ? model : "unknown",
                 usage.inputTokens(), usage.outputTokens(), usage.cachedTokens(),
                 usage.prefillMillis(), usage.generationMillis(), usage.loadMillis(), total, doneReason,
-                contextSizeForNewRequest());
+                contextSizeForNewRequest(), question, questionText != null ? questionText.strip() : null);
         synchronized (lock) {
             addRequest(entry);
         }
@@ -1007,6 +1157,41 @@ final class OllamaMonitor {
             reqs.add(requestJson(e));
         }
         root.put("requests", reqs);
+        JsonArray questions = new JsonArray();
+        int q = 0;
+        for (QuestionGroup g : groupByQuestion(s.requests())) {
+            if (q++ >= requestLimit) {
+                break;
+            }
+            JsonObject jg = new JsonObject();
+            jg.put("time", g.first().timestamp().toString());
+            jg.put("source", g.source().name().toLowerCase(Locale.ROOT));
+            if (g.routeId() != null) {
+                jg.put("routeId", g.routeId());
+            }
+            if (g.question() > 0) {
+                jg.put("question", g.question());
+            }
+            if (g.questionText() != null) {
+                jg.put("questionText", g.questionText());
+            }
+            jg.put("model", g.last().model());
+            jg.put("steps", g.steps().size());
+            jg.put("promptTokens", g.promptTokens());
+            jg.put("outputTokens", g.outputTokens());
+            jg.put("cacheHitPercent", g.cacheHitPercent());
+            jg.put("contextPercent", g.contextPercent());
+            jg.put("prefillTokensPerSecond", round1(g.prefillTokensPerSecond()));
+            jg.put("decodeTokensPerSecond", round1(g.decodeTokensPerSecond()));
+            jg.put("ttftMs", g.ttftMs());
+            jg.put("wallMs", g.wallMs());
+            jg.put("coldStart", g.coldStart());
+            if (g.doneReason() != null) {
+                jg.put("doneReason", g.doneReason());
+            }
+            questions.add(jg);
+        }
+        root.put("questions", questions);
         if (s.lastPoll() != null) {
             root.put("lastPoll", s.lastPoll().toString());
         }
@@ -1034,6 +1219,12 @@ final class OllamaMonitor {
         r.put("coldStart", e.coldStart());
         r.put("promptTokens", e.promptTokens());
         r.put("evaluatedTokens", e.evaluatedTokens());
+        if (e.question() > 0) {
+            r.put("question", e.question());
+        }
+        if (e.questionText() != null) {
+            r.put("questionText", e.questionText());
+        }
         r.put("contextSize", e.contextSize());
         r.put("contextPercent", e.contextPercent());
         if (e.doneReason() != null) {

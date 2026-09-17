@@ -205,6 +205,60 @@ class OllamaMonitorTest {
     }
 
     @Test
+    void requestsGroupIntoQuestionsWithStepsOldestFirst() {
+        OllamaMonitor monitor = new OllamaMonitor();
+        monitor.updateModels(List.of(new OllamaMonitor.LoadedModel(
+                "m", "f", "35.5B", "Q4_K_M", 1, 1, 32_768, null, null)));
+        // question 7: three steps (two tool calls, then the answer); the prompt grows and the cache warms
+        // the first step loaded the model: 1.1 s load plus 5.1 s prefill
+        monitor.recordRequest("m", new LlmClient.TokenUsage(4_500, 33, 4_533, 0, 5_100, 700, 1_100, 6_900), 0,
+                "tool_calls", 7, "how many messages have camel done");
+        monitor.recordRequest("m", new LlmClient.TokenUsage(4_700, 78, 4_778, 4_500, 500, 1_600, 0, 1_900), 0,
+                "tool_calls", 7, "how many messages have camel done");
+        monitor.recordRequest("m", new LlmClient.TokenUsage(7_000, 106, 7_106, 4_700, 3_600, 1_900, 0, 5_500), 0,
+                "stop", 7, "how many messages have camel done");
+        // question 8: a single request
+        monitor.recordRequest("m", new LlmClient.TokenUsage(7_200, 40, 7_240, 7_000, 300, 700, 0, 1_000), 0,
+                "stop", 8, "thanks");
+        // and a route call
+        monitor.ingestSpans(List.of(genAiSpan("s9", "ollama", "m", "chat-route", 412, 180, 4100)));
+
+        List<OllamaMonitor.QuestionGroup> groups = OllamaMonitor.groupByQuestion(monitor.snapshot().requests());
+        assertEquals(3, groups.size());
+        OllamaMonitor.QuestionGroup route = groups.get(0);
+        assertEquals(RequestSource.ROUTE, route.source());
+        assertEquals(1, route.steps().size());
+        assertEquals("chat-route", route.routeId());
+
+        OllamaMonitor.QuestionGroup q8 = groups.get(1);
+        assertEquals(8, q8.question());
+        assertEquals("thanks", q8.questionText());
+        assertEquals(1, q8.steps().size());
+
+        OllamaMonitor.QuestionGroup q7 = groups.get(2);
+        assertEquals(7, q7.question());
+        assertEquals(3, q7.steps().size());
+        assertEquals(33, q7.steps().get(0).outputTokens(), "steps are oldest first");
+        assertEquals(7_000, q7.promptTokens());
+        assertEquals(33 + 78 + 106, q7.outputTokens());
+        // 9,200 of 16,200 prompt tokens came from the cache
+        assertEquals(56, q7.cacheHitPercent());
+        assertEquals(21, q7.contextPercent());
+        assertEquals(6_200, q7.ttftMs());
+        assertTrue(q7.coldStart());
+        assertEquals("stop", q7.doneReason());
+        // evaluated 4,500 + 200 + 2,300 tokens over 9.2 s of prefill
+        assertEquals(7_000 * 1000.0 / 9_200, q7.prefillTokensPerSecond(), 0.5);
+        assertTrue(q7.wallMs() >= 5_500);
+
+        JsonArray questions = (JsonArray) monitor.toJson(10).get("questions");
+        assertEquals(3, questions.size());
+        JsonObject jq7 = (JsonObject) questions.get(2);
+        assertEquals(3, jq7.get("steps"));
+        assertEquals("how many messages have camel done", jq7.get("questionText"));
+    }
+
+    @Test
     void availabilityFollowsTheServer() {
         OllamaMonitor monitor = new OllamaMonitor();
         assertFalse(monitor.isAvailable());

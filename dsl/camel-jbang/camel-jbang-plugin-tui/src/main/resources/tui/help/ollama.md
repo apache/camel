@@ -108,22 +108,28 @@ Shown when Ollama runs on this machine:
 
 ## Requests
 
-One line per request, newest first:
+One line per question, newest first. A question asked in the AI panel
+usually costs several requests, because every tool call the model makes
+is answered in a new request with the whole prompt again; the line shows
+the question text (cut to fit) and the figures for the question as a
+whole. Press **Enter** (or **→**) on a question with `×N` in the SOURCE
+column to unfold its steps, **←** to fold them again. A call made by a
+Camel route is one line of its own.
 
-| Column | Meaning |
-|--------|---------|
-| TIME | When the request started |
-| SOURCE | `tui` for the AI panel, `route:<id>` for a Camel route |
-| MODEL | The model that answered |
-| IN | Prompt tokens, the whole prompt the model saw (CACHED is the part of it served from cache) |
-| OUT | Tokens generated |
-| CACHED | Prompt tokens served from Ollama's cache (`-` when none) |
-| CTX | Share of the context window the prompt filled (IN against the window that served it) |
-| PREFILL | Evaluated prompt tokens per second (IN minus CACHED over the prefill time) |
-| DECODE | Generated tokens per second |
-| TTFT | Time to first token (load plus prefill), shown in yellow after a cold start |
-| TOTAL | Whole request as Ollama measured it |
-| REASON | Why generation stopped: `stop`, `length` (hit the token limit), `tool_calls` |
+| Column | Question line | Step line |
+|--------|---------------|-----------|
+| TIME | When the first request started | When the request started |
+| SOURCE | `#7 ×10`: question number and request count, or `route:<id>` | `step 3/10` |
+| QUESTION | The question, first line cut to fit (the model for a route) | The model that answered |
+| IN | The largest prompt of the question: how far the context was pushed | Prompt tokens, the whole prompt the model saw |
+| OUT | Tokens generated across all steps | Tokens generated |
+| CACHE | Share of all prompt tokens served from Ollama's cache | Share of this prompt served from cache (`-` when none) |
+| CTX | Highest share of the context window reached | Share of the context window this prompt filled |
+| PREFILL | Evaluated prompt tokens per second across the steps (prompt minus cached over the prefill time) | Same for this request |
+| DECODE | Generated tokens per second across the steps | Same for this request |
+| TTFT | Time to the first token of the first step (load plus prefill), yellow after a cold start | Time to first token of this request |
+| TOTAL | From the first request starting to the last finishing: what you waited | This request as Ollama measured it |
+| REASON | Why the last step stopped: `stop`, `length` (hit the token limit) | `tool_calls` for every step but the last |
 
 Route requests show `-` for prefill, decode and TTFT because the GenAI
 span carries tokens and duration only.
@@ -139,7 +145,9 @@ tab says so and keeps the rest.
 
 | Key | Action |
 |-----|--------|
-| ↑ / ↓ | Select a request |
+| ↑ / ↓ | Select a question or step |
+| Enter / → | Unfold the steps of a question |
+| ← | Fold them again |
 | r | Reset the request log and session totals |
 | F5 | Refresh now |
 
