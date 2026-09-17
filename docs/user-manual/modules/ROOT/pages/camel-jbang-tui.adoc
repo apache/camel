@@ -534,6 +534,7 @@ Press *F2* to open the actions menu with quick access to common operations:
 | Settings... | Change the theme, the starting tab, and the default run-from-folder.
 | Take Screenshot | Export the current screen as SVG, text, or ANSI art.
 | Start/Stop Tape Recording | Record your session as a `.tape` file for demos.
+| Quit | Quit the TUI, with the same confirmation as pressing *q*. The last entry of the menu, so quitting is one menu away on tabs and in input fields where *q* is taken by something else.
 |===
 
 === Sending Test Messages
@@ -667,7 +668,7 @@ line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a
 | *F8* / *Shift+F8* | Toggle the AI prompt panel / cycle its height
 | *F10* | Run menu (run, stop, restart, kill)
 | *Shift+F5* | Take screenshot
-| *Ctrl+C* / *Q* | Quit
+| *Ctrl+C* / *Q* / *F2* → Quit | Quit
 | *Esc* | Close popup / go back / return to Overview
 |===
 

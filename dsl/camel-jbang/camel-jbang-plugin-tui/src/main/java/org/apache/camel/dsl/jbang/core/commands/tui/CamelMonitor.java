@@ -505,6 +505,20 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
         actionsPopup.setSwitchIntegrationAction(
                 () -> popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations()));
+        actionsPopup.setQuitAction(() -> quitTui(true));
+    }
+
+    /**
+     * Quits this session the way {@code q} does. With confirmations on (the default) a dialog asks first; Ctrl+C and a
+     * session with confirmations off quit at once. The F2 menu's Quit entry and the {@code tui_action} MCP tool go
+     * through here too, so quitting behaves the same however it is asked for.
+     */
+    void quitTui(boolean confirm) {
+        if (confirm && ctx.confirmActions) {
+            popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
+        } else {
+            runner.quit();
+        }
     }
 
     /**
@@ -1311,11 +1325,7 @@ public class CamelMonitor extends CamelCommand {
         // Each session (the local terminal, or a browser tab connected via --web) owns an
         // independent CamelMonitor/TuiRunner, so quitting here only ends this session.
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
-            if (!ke.isCtrlC() && ctx.confirmActions) {
-                popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
-            } else {
-                runner.quit();
-            }
+            quitTui(!ke.isCtrlC());
             return true;
         }
         if (ke.isCtrlC()) {

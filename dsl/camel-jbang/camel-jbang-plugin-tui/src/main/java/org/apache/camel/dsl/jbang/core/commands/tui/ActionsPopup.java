@@ -60,6 +60,7 @@ class ActionsPopup {
         DOCTOR,
         RESET_STATS,
         SHELL,
+        QUIT,
         SCREEN_SUBMENU,
         SETTINGS,
         MCP_SUBMENU,
@@ -96,6 +97,7 @@ class ActionsPopup {
     private Runnable browseFilesAction;
     private Runnable camelAnimationAction;
     private Runnable switchIntegrationAction;
+    private Runnable quitAction;
     private final Supplier<Boolean> tapeRecordingActive;
     private MonitorContext ctx;
     private boolean mcpEnabled;
@@ -212,6 +214,14 @@ class ActionsPopup {
         this.switchIntegrationAction = switchIntegrationAction;
     }
 
+    /**
+     * What the Quit entry does: the monitor's own quit path, confirmation included, so quitting is one menu away on
+     * every tab and in every input field where {@code q} is taken.
+     */
+    void setQuitAction(Runnable quitAction) {
+        this.quitAction = quitAction;
+    }
+
     void setGotoTabSupport(List<TabRegistry.TabEntry> entries, Runnable callback) {
         gotoTabPopup.setTabEntries(entries, callback);
         settingsPopup.setTabEntries(entries);
@@ -288,6 +298,7 @@ class ActionsPopup {
         flat.add(Action.MCP_SUBMENU);
         flat.add(null);
         flat.add(Action.SHELL);
+        flat.add(Action.QUIT);
         return flat;
     }
 
@@ -437,6 +448,7 @@ class ActionsPopup {
         labels.add(mcpEnabled ? "AI & MCP..." : "AI...");
         labels.add("───");
         labels.add("Shell");
+        labels.add("Quit");
         return labels;
     }
 
@@ -700,6 +712,11 @@ class ActionsPopup {
                         if (browseFilesAction != null) {
                             browseFilesAction.run();
                         }
+                    }
+                } else if (action == Action.QUIT) {
+                    showActionsMenu = false;
+                    if (quitAction != null) {
+                        quitAction.run();
                     }
                 } else if (action == Action.DOCTOR) {
                     showActionsMenu = false;
@@ -1016,6 +1033,7 @@ class ActionsPopup {
         // Group 4: Shell
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         items.add(ListItem.from("  >_ Shell (F6)"));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.QUIT, "Quit")));
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
@@ -1400,6 +1418,7 @@ class ActionsPopup {
             case "reset stats" -> Action.RESET_STATS;
             case "settings" -> Action.SETTINGS;
             case "shell" -> Action.SHELL;
+            case "quit", "exit" -> Action.QUIT;
             case "take screenshot" -> Action.SCREENSHOT;
             case "reset screen" -> Action.RESET_SCREEN;
             case "start tape recording", "stop tape recording" -> Action.TAPE_RECORDING;
@@ -1497,6 +1516,12 @@ class ActionsPopup {
                     return false;
                 }
                 openShellAction.run();
+            }
+            case QUIT -> {
+                if (quitAction == null) {
+                    return false;
+                }
+                quitAction.run();
             }
             default -> {
                 return false;

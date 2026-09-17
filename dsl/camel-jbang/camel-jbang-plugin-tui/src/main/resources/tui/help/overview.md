@@ -152,7 +152,7 @@ are recorded in `F2` → `AI & MCP` → `AI Log`.
 ## Run
 
 - `F10` — open run popup (run, stop routes, start routes, restart, stop, kill)
-- `q` — quit the TUI
+- `q` — quit the TUI; `F2` → `Quit` does the same from any tab, popup or input field where `q` is taken
 
 By default, stop/restart actions show a confirmation dialog before executing.
 You can turn this off in Settings (`F2` → `Settings...` → `Confirm`).
