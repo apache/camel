@@ -150,6 +150,7 @@ The *More* menu (key *0*) opens a popup with tabs organized into groups:
 
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
 * *Observability* -- Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
+* *AI* -- Ollama
 * *Data* -- JDBC DataSource, Kafka, SQL Query, SQL Trace
 * *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads
 * *Project* -- Beans, Catalog, Configuration, CVE Audit, Maven Dependencies, Type Converters, Data Type Transformers
@@ -410,6 +411,42 @@ Features:
 
 This is especially useful for understanding latency in multi-route integrations and for
 correlating Camel processing with external service calls (HTTP, database, messaging).
+
+== Ollama
+
+The Ollama tab (under More, in the *AI* group) shows how the model served by a local
+https://ollama.com[Ollama] is performing, in the spirit of an LLM dashboard. It works with or without a
+running integration: it finds Ollama at `localhost:11434`, at the address of `camel infra run ollama`,
+or at the endpoint the AI panel (*F8*) is using.
+
+* *Model* -- the loaded model with its family, parameters, quantization, layers, experts (and how many
+  are active per token for a mixture-of-experts model), how much of it sits in GPU memory, the
+  allocated context length and when Ollama will unload it. With no model loaded, the installed models
+  are listed instead.
+* *Throughput* -- decode and prefill tokens per second, *live* while the model is generating and
+  otherwise from the last request; time to first token and load time (a load of a second or more
+  is a cold start); session averages and a sparkline of the decode rate.
+* *Context* -- how full the context window is, the share of the prompt served from Ollama's cache,
+  whether the model is working or idle, and the speculative decoding method in use.
+* *Host* -- GPU utilization and memory (Apple silicon through `ioreg`, NVIDIA through `nvidia-smi`),
+  and CPU and memory of the Ollama server and its model runner.
+* *Requests* -- one line per request with input, output and cached tokens, prefill and decode
+  tokens per second, time to first token, total time and the stop reason.
+
+Two kinds of requests appear in the log. Questions asked in the AI panel with Ollama as the provider
+come with the timings Ollama reports for each request (prompt evaluation, generation, model load,
+total). Calls made by Camel routes through `camel-langchain4j-chat`, `camel-openai` or
+`camel-spring-ai-chat` appear when the integration runs with GenAI observability (`--observe`, or
+`--dep=camel:ai-observability`), tagged with the route id; Camel records tokens and duration for those,
+not the phase split.
+
+The live figures, the context panel and the host panel need the model runner on the same machine:
+Ollama starts a `llama-server` process per loaded model and the tab reads its slot state a few times a
+second. Against a remote or containerised Ollama the tab keeps the model, per-request and session data
+and says which panels are unavailable.
+
+Press *r* to reset the request log and the session totals, *F5* to refresh immediately. The same data
+is available to AI agents through the `tui_get_ollama` MCP tool.
 
 == Process Information
 
@@ -1123,7 +1160,8 @@ through the TUI's confirm dialog or live replay. The `tui_` tools are the ones o
 by purpose:
 
 * *Observe* -- read the screen, get structured state, query tables/logs/errors/traces/topology/diagram/files,
-  list the running infra services (brokers, databases) and read their logs
+  list the running infra services (brokers, databases) and read their logs, read the performance of the
+  local Ollama server (`tui_get_ollama`: loaded model, tokens per second, context fill, host load, request log)
 * *Navigate* -- switch tabs, select integrations, select routes, send keystrokes, apply filters
 * *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels,
   list and launch the bundled examples, start/stop/restart infra services, run any entry of

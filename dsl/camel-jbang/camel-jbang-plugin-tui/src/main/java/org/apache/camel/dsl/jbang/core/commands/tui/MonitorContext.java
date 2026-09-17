@@ -64,6 +64,8 @@ class MonitorContext {
     boolean panelTop;
     /** Shell/AI panel is drawn over the tab instead of taking space away from it. */
     boolean panelOverlay;
+    /** Collector behind the Ollama tab and the tui_get_ollama tool; set by CamelMonitor at startup. */
+    OllamaMonitor ollamaMonitor;
     BiConsumer<String, Boolean> notificationCallback;
     BiConsumer<String, String> openMarkdownCallback;
     OpenOptionsCallback openOptionsCallback;

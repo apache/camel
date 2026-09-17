@@ -156,6 +156,7 @@ final class TuiIcons {
     static final String TAB_MEMORY = MEMORY;
     static final String TAB_MEMORY_LEAK = "💧";
     static final String TAB_NETWORK = "🌐";
+    static final String TAB_OLLAMA = "🦙";
     static final String TAB_METRICS = "📈";
     static final String TAB_SQL_QUERY = KEY;
     static final String TAB_SQL_TRACE = "🔎";

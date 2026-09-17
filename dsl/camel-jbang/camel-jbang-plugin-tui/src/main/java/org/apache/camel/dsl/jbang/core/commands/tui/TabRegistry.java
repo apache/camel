@@ -109,6 +109,7 @@ class TabRegistry {
     private TypeConvertersTab typeConvertersTab;
     private TransformersTab transformersTab;
     private SecretsTab secretsTab;
+    private OllamaTab ollamaTab;
 
     private MonitorTab activeMoreTab;
     private List<MoreTab> moreTabs;
@@ -163,6 +164,7 @@ class TabRegistry {
         threadsTab = new ThreadsTab(ctx);
         spansTab = new SpansTab(ctx, dataService.otelSpans());
         processTab = new ProcessTab(ctx);
+        ollamaTab = new OllamaTab(ctx, ctx.ollamaMonitor);
         overviewTab = new OverviewTab(
                 ctx, dataService.metrics(), dataService.stoppingPids(),
                 resetIntegrationTabState);
@@ -173,7 +175,7 @@ class TabRegistry {
         });
 
         // Single source of truth for the More submenu: icon, programmatic name, mnemonic label, tab instance, and group.
-        // Tabs are ordered by group (Routing, Observability, Data, JVM, Project), alphabetically within each group.
+        // Tabs are ordered by group (Routing, Observability, AI, Data, JVM, Project), alphabetically within each group.
         // The group field drives divider rendering in the More popup.
         moreTabs = List.of(
                 // Routing
@@ -216,6 +218,7 @@ class TabRegistry {
                         TuiIcons.TAB_JFR, "JFR", "J&FR", jfrTab, "Observability",
                         List.of("jfr")),
                 // Data
+                new MoreTab(TuiIcons.TAB_OLLAMA, "Ollama", "&Ollama", ollamaTab, "AI"),
                 new MoreTab(
                         TuiIcons.TAB_DATASOURCE, "JDBC DataSource", "&JDBC DataSource", dataSourceTab, "Data",
                         List.of(), info -> !info.dataSources.isEmpty()),
@@ -428,6 +431,10 @@ class TabRegistry {
 
     SpansTab spansTab() {
         return spansTab;
+    }
+
+    OllamaTab ollamaTab() {
+        return ollamaTab;
     }
 
     OverviewTab overviewTab() {

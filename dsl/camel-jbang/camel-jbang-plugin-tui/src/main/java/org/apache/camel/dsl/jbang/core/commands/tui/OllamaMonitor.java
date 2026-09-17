@@ -1,0 +1,927 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.camel.component.ai.observability.GenAiAttributes;
+import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Collects what the Ollama tab shows: the Ollama server and its loaded models over the REST API, the live state of the
+ * llama-server runner Ollama spawns on this machine, the load on the host, and a log of requests with the timings
+ * Ollama reports per request.
+ * <p/>
+ * {@link #poll()} is called from the TUI's background refresh while the tab is showing and throttles each source on its
+ * own interval. Requests arrive from two sides: the TUI's own AI panel calls {@link #recordRequest} with the usage of
+ * each Ollama reply, and calls made by Camel routes come in through {@link #ingestSpans} from the GenAI observability
+ * spans of the selected integration. The runner and host probes only run when the Ollama host is this machine; a remote
+ * or containerised Ollama still gets the API and per-request data.
+ * <p/>
+ * All I/O happens outside the lock; the {@code update*} methods apply results under it and are also what the tests
+ * feed.
+ */
+final class OllamaMonitor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OllamaMonitor.class);
+
+    static final int MAX_REQUESTS = 200;
+    static final int HISTORY_POINTS = 120;
+
+    private static final long DETECT_INTERVAL_MS = 10_000;
+    private static final long VERSION_INTERVAL_MS = 30_000;
+    private static final long RECONNECT_INTERVAL_MS = 5_000;
+    private static final long PS_INTERVAL_MS = 1_000;
+    private static final long TAGS_INTERVAL_MS = 15_000;
+    private static final long RUNNER_SCAN_INTERVAL_MS = 5_000;
+    private static final long HOST_INTERVAL_MS = 1_000;
+    private static final long RATE_WINDOW_MS = 1_500;
+    private static final int MAX_SEEN_SPANS = 4_000;
+    private static final long SPAN_INTERVAL_MS = 5_000;
+
+    // ---- data ----
+
+    record ServerInfo(String baseUrl, String version, boolean local) {
+    }
+
+    record ModelShape(String architecture, int layers, int experts, int expertsUsed, long maxContext,
+            int embeddingLength, long parameters, List<String> capabilities) {
+    }
+
+    record LoadedModel(String name, String family, String parameterSize, String quantization, long sizeBytes,
+            long sizeVram, long contextLength, Instant expiresAt, ModelShape shape) {
+
+        LoadedModel withShape(ModelShape newShape) {
+            return new LoadedModel(
+                    name, family, parameterSize, quantization, sizeBytes, sizeVram, contextLength,
+                    expiresAt, newShape);
+        }
+
+        /** Share of the model held in GPU memory; 100 means fully offloaded. */
+        int gpuPercent() {
+            if (sizeBytes <= 0) {
+                return 0;
+            }
+            return (int) Math.min(100, sizeVram * 100 / sizeBytes);
+        }
+    }
+
+    /** Folded state of the runner's slots; {@code decoded} counts tokens of the current or last request. */
+    record SlotState(boolean processing, long promptTokens, long promptProcessed, long cacheTokens, long decoded,
+            long contextSize, String speculative, int slots, Instant sampledAt) {
+
+        long contextUsed() {
+            return Math.max(promptTokens, cacheTokens) + decoded;
+        }
+
+        int cacheHitPercent() {
+            if (promptTokens <= 0) {
+                return 0;
+            }
+            return (int) Math.min(100, cacheTokens * 100 / promptTokens);
+        }
+    }
+
+    record RunnerInfo(long pid, int port, long contextSize, int parallel, String modelPath, String executable) {
+    }
+
+    record GpuStats(String name, int utilizationPercent, long memoryUsedBytes, long memoryTotalBytes, int count) {
+    }
+
+    record ProcessStats(long pid, String label, double cpuPercent, long rssBytes) {
+    }
+
+    record HostStats(GpuStats gpu, ProcessStats server, ProcessStats runner, Instant sampledAt) {
+    }
+
+    enum RequestSource {
+        TUI,
+        ROUTE
+    }
+
+    /** One request as Ollama reported it (TUI) or as the GenAI span of a route recorded it (no phase timings). */
+    record RequestEntry(Instant timestamp, RequestSource source, String routeId, String model, int inputTokens,
+            int outputTokens, int cachedTokens, long prefillMs, long decodeMs, long loadMs, long totalMs,
+            String doneReason) {
+
+        double prefillTokensPerSecond() {
+            return prefillMs > 0 ? inputTokens * 1000.0 / prefillMs : 0;
+        }
+
+        double decodeTokensPerSecond() {
+            return decodeMs > 0 ? outputTokens * 1000.0 / decodeMs : 0;
+        }
+
+        /** Time to first token: loading the model plus processing the prompt. Zero when timings are unknown. */
+        long ttftMs() {
+            return hasTimings() ? loadMs + prefillMs : 0;
+        }
+
+        boolean hasTimings() {
+            return prefillMs > 0 || decodeMs > 0;
+        }
+
+        /** A load of a second or more means the model was not in memory when the request arrived. */
+        boolean coldStart() {
+            return loadMs >= 1000;
+        }
+    }
+
+    record SessionTotals(int requests, long inputTokens, long outputTokens, long cachedTokens, long prefillMs,
+            long decodeMs, long loadMs, int coldStarts) {
+
+        static final SessionTotals EMPTY = new SessionTotals(0, 0, 0, 0, 0, 0, 0, 0);
+
+        SessionTotals plus(RequestEntry e) {
+            return new SessionTotals(
+                    requests + 1, inputTokens + e.inputTokens(), outputTokens + e.outputTokens(),
+                    cachedTokens + e.cachedTokens(), prefillMs + e.prefillMs(), decodeMs + e.decodeMs(),
+                    loadMs + e.loadMs(), coldStarts + (e.coldStart() ? 1 : 0));
+        }
+
+        double avgDecodeTokensPerSecond() {
+            return decodeMs > 0 ? outputTokens * 1000.0 / decodeMs : 0;
+        }
+
+        double avgPrefillTokensPerSecond() {
+            return prefillMs > 0 ? inputTokens * 1000.0 / prefillMs : 0;
+        }
+    }
+
+    /** Immutable view for rendering and for the MCP tool. */
+    record Snapshot(ServerInfo server, List<LoadedModel> models, List<String> installed, SlotState slot,
+            RunnerInfo runner, HostStats host, List<RequestEntry> requests, double liveDecodeRate,
+            double livePrefillRate, long[] decodeHistory, SessionTotals totals, String lastError, Instant lastPoll,
+            String probedUrl) {
+
+        boolean connected() {
+            return server != null;
+        }
+
+        boolean local() {
+            return server != null && server.local();
+        }
+
+        RequestEntry lastRequest() {
+            return requests.isEmpty() ? null : requests.get(0);
+        }
+    }
+
+    // ---- state ----
+
+    private final Object lock = new Object();
+    private final AtomicBoolean polling = new AtomicBoolean();
+    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofMillis(1500)).build();
+
+    private volatile String baseUrl;
+    private ServerInfo server;
+    private List<LoadedModel> models = List.of();
+    private List<String> installed = List.of();
+    private final Map<String, ModelShape> shapes = new HashMap<>();
+    private final Set<String> shapeAttempted = new HashSet<>();
+    private SlotState slot;
+    private RunnerInfo runner;
+    private long serverPid;
+    private HostStats host;
+    private final Deque<RequestEntry> requests = new ArrayDeque<>();
+    private final LinkedHashSet<String> seenSpanIds = new LinkedHashSet<>();
+    private SessionTotals totals = SessionTotals.EMPTY;
+    private final TokenRateWindow decodeWindow = new TokenRateWindow(RATE_WINDOW_MS);
+    private final TokenRateWindow prefillWindow = new TokenRateWindow(RATE_WINDOW_MS);
+    private final long[] decodeHistory = new long[HISTORY_POINTS];
+    private String lastError;
+    private Instant lastPoll;
+
+    private long lastDetect;
+    private long lastVersion;
+    private long lastPs;
+    private long lastTags;
+    private long lastRunnerScan;
+    private long lastHost;
+    private int psFailures;
+    private long lastSpanIngest;
+    private Boolean nvidiaSmiAvailable;
+    private final Map<Long, long[]> cpuSamples = new HashMap<>();
+
+    // ---- input from the rest of the TUI ----
+
+    /** Uses the Ollama endpoint another part of the TUI already resolved (the AI panel's client, an explicit URL). */
+    void adoptEndpoint(String url) {
+        if (url == null || url.isBlank()) {
+            return;
+        }
+        String normalized = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        if (!normalized.equals(baseUrl)) {
+            baseUrl = normalized;
+            synchronized (lock) {
+                server = null;
+                lastVersion = 0;
+                runner = null;
+                slot = null;
+            }
+        }
+    }
+
+    /** Records a request the TUI itself made to Ollama, with the usage and timings Ollama returned. */
+    void recordRequest(String model, LlmClient.TokenUsage usage, long latencyMs, String doneReason) {
+        if (usage == null) {
+            return;
+        }
+        long total = usage.totalMillis() > 0 ? usage.totalMillis() : Math.max(0, latencyMs);
+        RequestEntry entry = new RequestEntry(
+                Instant.now(), RequestSource.TUI, null, model != null ? model : "unknown",
+                usage.inputTokens(), usage.outputTokens(), usage.cachedTokens(),
+                usage.prefillMillis(), usage.generationMillis(), usage.loadMillis(), total, doneReason);
+        synchronized (lock) {
+            addRequest(entry);
+        }
+    }
+
+    /**
+     * Adds the Ollama calls Camel routes made, from the GenAI observability spans of the selected integration. Spans
+     * are deduplicated by id, so the same list can be handed over on every refresh.
+     */
+    void ingestSpans(List<SpanEntry> spans) {
+        if (spans == null || spans.isEmpty()) {
+            return;
+        }
+        List<RequestEntry> fresh = new ArrayList<>();
+        synchronized (lock) {
+            for (SpanEntry span : spans) {
+                if (!GenAiSpanUsageExtractor.isGenAiSpan(span) || span.spanId() == null) {
+                    continue;
+                }
+                Object system = span.attributes().get(GenAiAttributes.SYSTEM);
+                if (system == null || !system.toString().toLowerCase(Locale.ROOT).contains("ollama")) {
+                    continue;
+                }
+                if (!seenSpanIds.add(span.spanId())) {
+                    continue;
+                }
+                Map<String, Object> attrs = span.attributes();
+                String model = OllamaParsers.str(attrs, GenAiAttributes.RESPONSE_MODEL);
+                if (model == null) {
+                    model = OllamaParsers.str(attrs, GenAiAttributes.REQUEST_MODEL);
+                }
+                if (model == null) {
+                    model = span.name() != null ? span.name() : "unknown";
+                }
+                Instant ts = span.startEpochNanos() > 0 ? Instant.ofEpochSecond(0, span.startEpochNanos()) : Instant.now();
+                fresh.add(new RequestEntry(
+                        ts, RequestSource.ROUTE, span.routeId(), model,
+                        (int) OllamaParsers.num(attrs, GenAiAttributes.INPUT_TOKENS),
+                        (int) OllamaParsers.num(attrs, GenAiAttributes.OUTPUT_TOKENS),
+                        0, 0, 0, 0, Math.max(0, span.durationMs()),
+                        OllamaParsers.str(attrs, GenAiAttributes.FINISH_REASONS)));
+            }
+            // spans arrive oldest first; keep the log newest first
+            fresh.sort((a, b) -> a.timestamp().compareTo(b.timestamp()));
+            for (RequestEntry e : fresh) {
+                addRequest(e);
+            }
+            while (seenSpanIds.size() > MAX_SEEN_SPANS) {
+                seenSpanIds.remove(seenSpanIds.iterator().next());
+            }
+        }
+    }
+
+    /** True once every few seconds: the GenAI spans of a route are worth re-reading. */
+    boolean wantsSpans() {
+        long now = System.currentTimeMillis();
+        if (now - lastSpanIngest >= SPAN_INTERVAL_MS) {
+            lastSpanIngest = now;
+            return true;
+        }
+        return false;
+    }
+
+    /** Clears the request log, the session totals and the rate history. */
+    void reset() {
+        synchronized (lock) {
+            requests.clear();
+            totals = SessionTotals.EMPTY;
+            Arrays.fill(decodeHistory, 0);
+            decodeWindow.clear();
+            prefillWindow.clear();
+        }
+    }
+
+    private void addRequest(RequestEntry entry) {
+        requests.addFirst(entry);
+        while (requests.size() > MAX_REQUESTS) {
+            requests.removeLast();
+        }
+        totals = totals.plus(entry);
+    }
+
+    // ---- state updates (also the test seam) ----
+
+    void updateServer(ServerInfo info) {
+        synchronized (lock) {
+            server = info;
+            if (info != null) {
+                baseUrl = info.baseUrl();
+                lastError = null;
+            }
+        }
+    }
+
+    void updateModels(List<LoadedModel> loaded) {
+        synchronized (lock) {
+            models = loaded != null ? List.copyOf(loaded) : List.of();
+        }
+    }
+
+    void updateInstalled(List<String> names) {
+        synchronized (lock) {
+            installed = names != null ? List.copyOf(names) : List.of();
+        }
+    }
+
+    void updateRunner(RunnerInfo info) {
+        synchronized (lock) {
+            runner = info;
+            if (info == null) {
+                slot = null;
+            }
+        }
+    }
+
+    /** Applies a runner slot sample; the decode and prefill rate windows advance from its counters. */
+    void updateSlot(SlotState state) {
+        synchronized (lock) {
+            slot = state;
+            if (state != null) {
+                long now = state.sampledAt() != null ? state.sampledAt().toEpochMilli() : System.currentTimeMillis();
+                decodeWindow.sample(now, state.decoded());
+                prefillWindow.sample(now, state.promptProcessed());
+            }
+        }
+    }
+
+    void updateHost(HostStats stats) {
+        synchronized (lock) {
+            host = stats;
+        }
+    }
+
+    /** Ends one poll: appends the current live decode rate to the history and stamps the poll time. */
+    void tick(long nowMillis) {
+        synchronized (lock) {
+            long rate = Math.round(decodeWindow.ratePerSecond(nowMillis));
+            System.arraycopy(decodeHistory, 1, decodeHistory, 0, decodeHistory.length - 1);
+            decodeHistory[decodeHistory.length - 1] = rate;
+            lastPoll = Instant.ofEpochMilli(nowMillis);
+        }
+    }
+
+    Snapshot snapshot() {
+        synchronized (lock) {
+            long now = System.currentTimeMillis();
+            return new Snapshot(
+                    server, models, installed, slot, runner, host, List.copyOf(requests),
+                    decodeWindow.ratePerSecond(now), prefillWindow.ratePerSecond(now),
+                    decodeHistory.clone(), totals, lastError, lastPoll, baseUrl);
+        }
+    }
+
+    // ---- polling ----
+
+    /** One refresh cycle; safe to call every few hundred milliseconds, each source keeps its own interval. */
+    void poll() {
+        if (!polling.compareAndSet(false, true)) {
+            return;
+        }
+        try {
+            doPoll(System.currentTimeMillis());
+        } catch (Exception e) {
+            LOG.debug("Ollama poll failed", e);
+        } finally {
+            polling.set(false);
+        }
+    }
+
+    private void doPoll(long now) {
+        String base = baseUrl;
+        if (base == null) {
+            if (now - lastDetect >= DETECT_INTERVAL_MS) {
+                lastDetect = now;
+                base = detectEndpoint();
+                if (base != null) {
+                    adoptEndpoint(base);
+                    base = baseUrl;
+                }
+            }
+            if (base == null) {
+                tick(now);
+                return;
+            }
+        }
+
+        boolean connected;
+        synchronized (lock) {
+            connected = server != null;
+        }
+        long versionInterval = connected ? VERSION_INTERVAL_MS : RECONNECT_INTERVAL_MS;
+        if (now - lastVersion >= versionInterval) {
+            lastVersion = now;
+            JsonObject version = getJsonObject(base + "/api/version");
+            if (version == null) {
+                synchronized (lock) {
+                    server = null;
+                    models = List.of();
+                    slot = null;
+                    lastError = "Ollama not reachable at " + OllamaParsers.displayHost(base);
+                }
+                tick(now);
+                return;
+            }
+            updateServer(new ServerInfo(base, OllamaParsers.str(version, "version"), OllamaParsers.isLoopbackUrl(base)));
+            connected = true;
+        }
+        if (!connected) {
+            tick(now);
+            return;
+        }
+
+        if (now - lastPs >= PS_INTERVAL_MS) {
+            lastPs = now;
+            JsonObject ps = getJsonObject(base + "/api/ps");
+            if (ps != null) {
+                psFailures = 0;
+                List<LoadedModel> loaded = new ArrayList<>();
+                for (LoadedModel m : OllamaParsers.parsePs(ps)) {
+                    loaded.add(m.withShape(shapeFor(base, m.name())));
+                }
+                updateModels(loaded);
+            } else if (++psFailures >= 3) {
+                synchronized (lock) {
+                    server = null;
+                    lastError = "Ollama stopped answering at " + OllamaParsers.displayHost(base);
+                }
+                lastVersion = 0;
+                tick(now);
+                return;
+            }
+        }
+
+        if (now - lastTags >= TAGS_INTERVAL_MS) {
+            lastTags = now;
+            JsonObject tags = getJsonObject(base + "/api/tags");
+            if (tags != null) {
+                List<String> names = new ArrayList<>();
+                Collection<?> list = tags.getCollection("models");
+                if (list != null) {
+                    for (Object o : list) {
+                        if (o instanceof Map<?, ?> m) {
+                            String n = OllamaParsers.str(m, "name");
+                            if (n != null) {
+                                names.add(n);
+                            }
+                        }
+                    }
+                }
+                updateInstalled(names);
+            }
+        }
+
+        if (OllamaParsers.isLoopbackUrl(base)) {
+            pollLocal(now);
+        }
+        tick(now);
+    }
+
+    private void pollLocal(long now) {
+        RunnerInfo current;
+        boolean haveModels;
+        synchronized (lock) {
+            current = runner;
+            haveModels = !models.isEmpty();
+        }
+        // scan often while a model is loaded but no runner is known yet, rarely otherwise
+        long scanInterval = current == null && haveModels ? PS_INTERVAL_MS : RUNNER_SCAN_INTERVAL_MS;
+        if (now - lastRunnerScan >= scanInterval) {
+            lastRunnerScan = now;
+            RunnerInfo found = findRunner();
+            if (found == null || current == null || found.pid() != current.pid() || found.port() != current.port()) {
+                updateRunner(found);
+                current = found;
+            }
+        }
+        if (current != null) {
+            JsonArray slots = getJsonArray("http://127.0.0.1:" + current.port() + "/slots");
+            if (slots != null) {
+                updateSlot(OllamaParsers.parseSlots(slots, Instant.ofEpochMilli(now)));
+            } else {
+                updateRunner(null);
+                current = null;
+            }
+        }
+        if (now - lastHost >= HOST_INTERVAL_MS) {
+            lastHost = now;
+            updateHost(probeHost(now, current));
+        }
+    }
+
+    private ModelShape shapeFor(String base, String name) {
+        synchronized (lock) {
+            ModelShape cached = shapes.get(name);
+            if (cached != null || shapeAttempted.contains(name)) {
+                return cached;
+            }
+            shapeAttempted.add(name);
+        }
+        JsonObject body = new JsonObject();
+        body.put("model", name);
+        JsonObject show = postJsonObject(base + "/api/show", body.toJson());
+        ModelShape shape = OllamaParsers.parseShow(show);
+        if (shape != null) {
+            synchronized (lock) {
+                shapes.put(name, shape);
+            }
+        }
+        return shape;
+    }
+
+    private String detectEndpoint() {
+        try {
+            LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama);
+            if (client.detectEndpoint()) {
+                return client.endpointUrl();
+            }
+        } catch (Exception e) {
+            LOG.debug("Ollama endpoint detection failed", e);
+        }
+        return null;
+    }
+
+    // ---- runner and host probes ----
+
+    private RunnerInfo findRunner() {
+        try {
+            RunnerInfo[] found = new RunnerInfo[1];
+            long[] parent = new long[1];
+            ProcessHandle.allProcesses().forEach(ph -> {
+                if (found[0] != null) {
+                    return;
+                }
+                Optional<String> cmd = ph.info().commandLine();
+                if (cmd.isPresent() && OllamaParsers.isRunnerCommandLine(cmd.get())) {
+                    RunnerInfo ri = OllamaParsers.parseRunnerCommandLine(ph.pid(), cmd.get());
+                    if (ri != null) {
+                        found[0] = ri;
+                        parent[0] = ph.parent().map(ProcessHandle::pid).orElse(0L);
+                    }
+                }
+            });
+            if (found[0] != null) {
+                serverPid = parent[0];
+            } else {
+                serverPid = findServerPid();
+            }
+            return found[0];
+        } catch (Exception e) {
+            LOG.debug("Ollama runner scan failed", e);
+            return null;
+        }
+    }
+
+    private long findServerPid() {
+        try {
+            return ProcessHandle.allProcesses()
+                    .filter(ph -> ph.info().commandLine().map(c -> c.trim().endsWith("ollama serve")).orElse(false))
+                    .mapToLong(ProcessHandle::pid)
+                    .findFirst().orElse(0L);
+        } catch (Exception e) {
+            return 0L;
+        }
+    }
+
+    private HostStats probeHost(long now, RunnerInfo current) {
+        GpuStats gpu = probeGpu();
+        ProcessStats serverStats = serverPid > 0 ? processStats(serverPid, "ollama serve", now) : null;
+        ProcessStats runnerStats = current != null ? processStats(current.pid(), current.executable(), now) : null;
+        if (gpu == null && serverStats == null && runnerStats == null) {
+            return null;
+        }
+        return new HostStats(gpu, serverStats, runnerStats, Instant.ofEpochMilli(now));
+    }
+
+    private GpuStats probeGpu() {
+        String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        if (os.contains("mac")) {
+            return OllamaParsers.parseIoreg(runCommand(List.of("ioreg", "-r", "-d", "1", "-c", "IOAccelerator")));
+        }
+        if (Boolean.FALSE.equals(nvidiaSmiAvailable)) {
+            return null;
+        }
+        String out = runCommand(List.of("nvidia-smi", "--query-gpu=name,utilization.gpu,memory.used,memory.total",
+                "--format=csv,noheader,nounits"));
+        if (out == null) {
+            nvidiaSmiAvailable = Boolean.FALSE;
+            return null;
+        }
+        nvidiaSmiAvailable = Boolean.TRUE;
+        return OllamaParsers.parseNvidiaSmi(out);
+    }
+
+    /**
+     * CPU percent from the growth of the process's CPU time between two polls, plus resident memory. Read through
+     * {@code ps} on macOS and Linux (the JDK exposes no CPU time for other processes on macOS), from
+     * {@link ProcessHandle} elsewhere.
+     */
+    private ProcessStats processStats(long pid, String label, long now) {
+        Optional<ProcessHandle> handle = ProcessHandle.of(pid);
+        if (handle.isEmpty() || !handle.get().isAlive()) {
+            cpuSamples.remove(pid);
+            return null;
+        }
+        long cpuMs = -1;
+        long rss = 0;
+        String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        if (!os.contains("win")) {
+            long[] ps = OllamaParsers.parsePsCpuAndRss(
+                    runCommand(List.of("ps", "-o", "cputime=,rss=", "-p", Long.toString(pid))));
+            if (ps != null) {
+                cpuMs = ps[0];
+                rss = ps[1];
+            }
+        }
+        if (cpuMs < 0) {
+            cpuMs = handle.get().info().totalCpuDuration().map(Duration::toMillis).orElse(-1L);
+        }
+        double cpu = 0;
+        if (cpuMs >= 0) {
+            long[] prev = cpuSamples.put(pid, new long[] { now, cpuMs });
+            if (prev != null && now > prev[0]) {
+                cpu = (cpuMs - prev[1]) * 100.0 / (now - prev[0]);
+            }
+        }
+        return new ProcessStats(pid, label, Math.max(0, cpu), rss);
+    }
+
+    // ---- I/O helpers ----
+
+    private JsonObject getJsonObject(String url) {
+        Object parsed = getJson(url, null);
+        return parsed instanceof JsonObject jo ? jo : null;
+    }
+
+    private JsonArray getJsonArray(String url) {
+        Object parsed = getJson(url, null);
+        return parsed instanceof JsonArray ja ? ja : null;
+    }
+
+    private JsonObject postJsonObject(String url, String body) {
+        Object parsed = getJson(url, body);
+        return parsed instanceof JsonObject jo ? jo : null;
+    }
+
+    private Object getJson(String url, String postBody) {
+        try {
+            HttpRequest.Builder b = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofMillis(2500));
+            if (postBody != null) {
+                b.header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(postBody));
+            } else {
+                b.GET();
+            }
+            HttpResponse<String> response = http.send(b.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() / 100 != 2 || response.body() == null || response.body().isBlank()) {
+                return null;
+            }
+            return Jsoner.deserialize(response.body());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static String runCommand(List<String> command) {
+        Process process = null;
+        try {
+            process = new ProcessBuilder(command).redirectErrorStream(true).start();
+            byte[] out;
+            try (InputStream in = process.getInputStream()) {
+                out = in.readAllBytes();
+            }
+            if (!process.waitFor(2, TimeUnit.SECONDS)) {
+                process.destroyForcibly();
+                return null;
+            }
+            if (process.exitValue() != 0) {
+                return null;
+            }
+            return new String(out, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            if (process != null) {
+                process.destroyForcibly();
+            }
+            return null;
+        }
+    }
+
+    // ---- JSON for the MCP tool ----
+
+    JsonObject toJson(int requestLimit) {
+        Snapshot s = snapshot();
+        JsonObject root = new JsonObject();
+        root.put("connected", s.connected());
+        if (s.server() != null) {
+            JsonObject server = new JsonObject();
+            server.put("url", s.server().baseUrl());
+            server.put("host", OllamaParsers.displayHost(s.server().baseUrl()));
+            server.put("version", s.server().version());
+            server.put("local", s.server().local());
+            root.put("server", server);
+        } else if (s.probedUrl() != null) {
+            root.put("url", s.probedUrl());
+        }
+        if (s.lastError() != null) {
+            root.put("error", s.lastError());
+        }
+        JsonArray models = new JsonArray();
+        for (LoadedModel m : s.models()) {
+            JsonObject jm = new JsonObject();
+            jm.put("name", m.name());
+            jm.put("family", m.family());
+            jm.put("parameterSize", m.parameterSize());
+            jm.put("quantization", m.quantization());
+            jm.put("sizeBytes", m.sizeBytes());
+            jm.put("sizeVramBytes", m.sizeVram());
+            jm.put("gpuPercent", m.gpuPercent());
+            jm.put("contextLength", m.contextLength());
+            if (m.expiresAt() != null) {
+                jm.put("expiresAt", m.expiresAt().toString());
+            }
+            if (m.shape() != null) {
+                JsonObject shape = new JsonObject();
+                shape.put("architecture", m.shape().architecture());
+                shape.put("layers", m.shape().layers());
+                shape.put("experts", m.shape().experts());
+                shape.put("expertsUsed", m.shape().expertsUsed());
+                shape.put("maxContext", m.shape().maxContext());
+                shape.put("parameters", m.shape().parameters());
+                shape.put("capabilities", new JsonArray(m.shape().capabilities()));
+                jm.put("shape", shape);
+            }
+            models.add(jm);
+        }
+        root.put("loadedModels", models);
+        root.put("installedModels", new JsonArray(s.installed()));
+
+        JsonObject live = new JsonObject();
+        live.put("decodeTokensPerSecond", round1(s.liveDecodeRate()));
+        live.put("prefillTokensPerSecond", round1(s.livePrefillRate()));
+        JsonArray hist = new JsonArray();
+        for (long v : s.decodeHistory()) {
+            hist.add(v);
+        }
+        live.put("decodeHistory", hist);
+        if (s.slot() != null) {
+            JsonObject slot = new JsonObject();
+            slot.put("processing", s.slot().processing());
+            slot.put("promptTokens", s.slot().promptTokens());
+            slot.put("promptTokensProcessed", s.slot().promptProcessed());
+            slot.put("cacheTokens", s.slot().cacheTokens());
+            slot.put("decodedTokens", s.slot().decoded());
+            slot.put("contextUsed", s.slot().contextUsed());
+            slot.put("contextSize", s.slot().contextSize());
+            slot.put("cacheHitPercent", s.slot().cacheHitPercent());
+            slot.put("speculative", s.slot().speculative());
+            slot.put("slots", s.slot().slots());
+            live.put("slot", slot);
+        }
+        root.put("live", live);
+
+        if (s.runner() != null) {
+            JsonObject runner = new JsonObject();
+            runner.put("pid", s.runner().pid());
+            runner.put("port", s.runner().port());
+            runner.put("executable", s.runner().executable());
+            runner.put("contextSize", s.runner().contextSize());
+            runner.put("parallel", s.runner().parallel());
+            root.put("runner", runner);
+        }
+        if (s.host() != null) {
+            JsonObject hostJson = new JsonObject();
+            if (s.host().gpu() != null) {
+                JsonObject gpu = new JsonObject();
+                gpu.put("name", s.host().gpu().name());
+                gpu.put("utilizationPercent", s.host().gpu().utilizationPercent());
+                gpu.put("memoryUsedBytes", s.host().gpu().memoryUsedBytes());
+                gpu.put("memoryTotalBytes", s.host().gpu().memoryTotalBytes());
+                gpu.put("count", s.host().gpu().count());
+                hostJson.put("gpu", gpu);
+            }
+            if (s.host().server() != null) {
+                hostJson.put("server", processJson(s.host().server()));
+            }
+            if (s.host().runner() != null) {
+                hostJson.put("runner", processJson(s.host().runner()));
+            }
+            root.put("host", hostJson);
+        }
+
+        JsonObject session = new JsonObject();
+        session.put("requests", s.totals().requests());
+        session.put("inputTokens", s.totals().inputTokens());
+        session.put("outputTokens", s.totals().outputTokens());
+        session.put("cachedTokens", s.totals().cachedTokens());
+        session.put("avgDecodeTokensPerSecond", round1(s.totals().avgDecodeTokensPerSecond()));
+        session.put("avgPrefillTokensPerSecond", round1(s.totals().avgPrefillTokensPerSecond()));
+        session.put("coldStarts", s.totals().coldStarts());
+        root.put("session", session);
+
+        JsonArray reqs = new JsonArray();
+        int n = 0;
+        for (RequestEntry e : s.requests()) {
+            if (n++ >= requestLimit) {
+                break;
+            }
+            reqs.add(requestJson(e));
+        }
+        root.put("requests", reqs);
+        if (s.lastPoll() != null) {
+            root.put("lastPoll", s.lastPoll().toString());
+        }
+        return root;
+    }
+
+    static JsonObject requestJson(RequestEntry e) {
+        JsonObject r = new JsonObject();
+        r.put("time", e.timestamp().toString());
+        r.put("source", e.source().name().toLowerCase(Locale.ROOT));
+        if (e.routeId() != null) {
+            r.put("routeId", e.routeId());
+        }
+        r.put("model", e.model());
+        r.put("inputTokens", e.inputTokens());
+        r.put("outputTokens", e.outputTokens());
+        r.put("cachedTokens", e.cachedTokens());
+        r.put("prefillMs", e.prefillMs());
+        r.put("decodeMs", e.decodeMs());
+        r.put("loadMs", e.loadMs());
+        r.put("totalMs", e.totalMs());
+        r.put("prefillTokensPerSecond", round1(e.prefillTokensPerSecond()));
+        r.put("decodeTokensPerSecond", round1(e.decodeTokensPerSecond()));
+        r.put("ttftMs", e.ttftMs());
+        r.put("coldStart", e.coldStart());
+        if (e.doneReason() != null) {
+            r.put("doneReason", e.doneReason());
+        }
+        return r;
+    }
+
+    private static JsonObject processJson(ProcessStats p) {
+        JsonObject j = new JsonObject();
+        j.put("pid", p.pid());
+        j.put("label", p.label());
+        j.put("cpuPercent", round1(p.cpuPercent()));
+        j.put("rssBytes", p.rssBytes());
+        return j;
+    }
+
+    private static double round1(double v) {
+        return Math.round(v * 10.0) / 10.0;
+    }
+}

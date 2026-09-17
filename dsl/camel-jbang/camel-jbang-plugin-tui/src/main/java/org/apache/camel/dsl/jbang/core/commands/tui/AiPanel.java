@@ -1992,6 +1992,11 @@ class AiPanel {
                 response.usage().totalTokens(), latencyMs,
                 response.stopReason(), Instant.now(),
                 AiUsageSource.TUI, null, questionCounter));
+        if (ctx != null && ctx.ollamaMonitor != null && client.apiType() == LlmClient.ApiType.ollama) {
+            // the Ollama tab shows this request with the timings Ollama returned
+            ctx.ollamaMonitor.adoptEndpoint(client.endpointUrl());
+            ctx.ollamaMonitor.recordRequest(model, response.usage(), latencyMs, response.stopReason());
+        }
     }
 
     void render(Frame frame, Rect area) {
