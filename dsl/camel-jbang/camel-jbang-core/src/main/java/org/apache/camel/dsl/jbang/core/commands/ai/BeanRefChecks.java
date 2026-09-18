@@ -342,10 +342,6 @@ final class BeanRefChecks {
     }
 
     /**
-     * A class named with its package that is neither next to the route nor on the CLI classpath: the wrong package
-     * (org.apache.camel.support.StringAggregationStrategy) or a missing dependency. Null when the class is fine.
-     */
-    /**
      * The classes camel run resolves to a Maven dependency and downloads on demand (camel-kamelet-main's
      * camel-main-known-dependencies.properties, camel-component-known-dependencies.properties and the generated
      * camel-thirdparty-known-dependencies.properties of CAMEL-24809), so a #class:org.postgresql.ds.PGSimpleDataSource
@@ -387,6 +383,11 @@ final class BeanRefChecks {
         return gav;
     }
 
+    /**
+     * A class named with its package that is neither next to the route, nor on the CLI classpath, nor one camel run
+     * downloads: the wrong package (org.apache.camel.support.StringAggregationStrategy) or a missing dependency. Null
+     * when the class is fine.
+     */
     static String classNotFound(String fqcn, BeanDeclarations external) {
         if (external == null || external == BeanDeclarations.NONE
                 || fqcn == null || fqcn.contains("{{") || fqcn.contains("${")) {

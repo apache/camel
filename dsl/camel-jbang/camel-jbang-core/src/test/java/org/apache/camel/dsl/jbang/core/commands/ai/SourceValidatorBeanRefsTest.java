@@ -378,10 +378,11 @@ public class SourceValidatorBeanRefsTest {
 
     @Test
     void aClassFromAnUnknownLibrarySaysHowToDeclareTheDependency(@TempDir Path dir) throws IOException {
+        // a package no mapping will ever name: com.zaxxer.hikari is mapped as a package by CAMEL-24809
         List<String> msgs = SourceValidator.validate("r.camel.yaml", """
                 - beans:
                     - name: pool
-                      type: "#class:com.zaxxer.hikari.HikariDataSourceX"
+                      type: "#class:com.example.pool.HikariDataSourceX"
                 """, CATALOG, null, dir);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("was not found").contains("camel.jbang.dependencies=<groupId>:<artifactId>:<version>");
