@@ -244,7 +244,7 @@ public class BatchRequestHandler {
         List<String> outputLines = new ArrayList<>();
         List<String> errorLines = new ArrayList<>();
         int line = 0;
-        for (String requestLine : new String(input.content(), StandardCharsets.UTF_8).split("\n")) {
+        for (String requestLine : new String(input.content(), StandardCharsets.UTF_8).split("\r?\n")) {
             if (requestLine.isBlank()) {
                 continue;
             }

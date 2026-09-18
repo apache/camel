@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.openai.core.http.HttpResponse;
@@ -81,10 +83,14 @@ public class OpenAIBatchResultsProducer extends DefaultProducer {
         Optional<String> fileId = ERROR_FILE.equals(resultsFile) ? batch.errorFileId() : batch.outputFileId();
         if (fileId.isEmpty()) {
             switch (batch.status().value()) {
-                case FAILED ->
+                case FAILED -> {
                     // the input was rejected, so no result file exists: the reason is in the errors of the batch
+                    List<Map<String, Object>> errors = OpenAIBatchSupport.errors(batch);
                     throw new CamelExchangeException(
-                            "Batch " + batchId + " failed: " + OpenAIBatchSupport.errors(batch), exchange);
+                            "Batch " + batchId + " failed: "
+                                                     + (errors.isEmpty() ? "the API reported no validation errors" : errors),
+                            exchange);
+                }
                 case COMPLETED, EXPIRED, CANCELLED ->
                     // a batch without failures has no error file, and one without successes no output file
                     exchange.getMessage().setBody(null);
