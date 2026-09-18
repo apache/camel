@@ -272,7 +272,9 @@ mapped library is not the one you want, for example the ActiveMQ 5 client where 
 picks the ActiveMQ 6 client.
 
 `camel validate` and the write tools of the Camel MCP server consult the same three files, so a
-bean whose class Camel CLI would download is not reported as missing.
+bean whose class Camel CLI would download is not reported as missing, and the MCP tool
+`camel_dependency_for_class` answers the coordinates and the declaration for a class from the same
+mapping, with an optional Maven Central search for the rest.
 
 To add a library to the mapping, add one line to `known-third-party-libraries.properties`
 in `camel-kamelet-main`: the library's own package, its `groupId:artifactId`, and a version

@@ -213,6 +213,8 @@ The assistant uses `camel_error_diagnose` to identify the exception chain, extra
 
 * _"Check my pom.xml for missing or outdated dependencies"_ — uses `camel_dependency_check`
 * _"What are the latest LTS versions for Spring Boot?"_ — uses `camel_version_list`
+* _"Which dependency do I need for org.postgresql.ds.PGSimpleDataSource, and how do I add it on Quarkus?"_ —
+  uses `camel_dependency_for_class`
 
 === Migration
 
@@ -356,6 +358,13 @@ project `directory` as an argument, the runtime tools take the integration `name
   and returns the value (true/false for a predicate) or the syntax error, so an agent can check a simple
   expression before writing it into a route.
 
+| `camel_dependency_for_class`
+| Which Maven dependency provides a class, and how to declare it. Local first: the known dependencies
+  `camel run` downloads by itself (nothing to declare there), then a Camel component's artifact for each
+  runtime. Only with `mavenCentral=true` it searches Maven Central by class name, groups the hits by artifact,
+  takes the newest version, and marks the answer as a guess. Returns `camel.jbang.dependencies`, `--dep`, and
+  the `pom.xml` dependency for Camel Main, Spring Boot and Quarkus, or one runtime with `runtime`. Uses the
+  JVM proxy settings for the search.
 | `camel_error_diagnose`
 | See <<_error_diagnosis,Error Diagnosis>>; the same shared tool.
 |===

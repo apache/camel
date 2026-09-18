@@ -304,6 +304,24 @@ public final class AuthoringTools {
                             args.get("body")).toJson();
                 }));
 
+        registry.accept(tool("camel_dependency_for_class",
+                "Which Maven dependency provides a class, and how to declare it: the known dependencies camel run "
+                                                           + "downloads by itself (nothing to declare there), a Camel component's "
+                                                           + "artifact per runtime, or with mavenCentral=true a Maven Central search "
+                                                           + "by class name (a guess, marked as such). Answers camel.jbang.dependencies, "
+                                                           + "--dep, and the pom.xml dependency for Camel Main, Spring Boot and Quarkus.")
+                .param("className", "string", "Fully qualified class name, e.g. org.postgresql.ds.PGSimpleDataSource",
+                        true)
+                .param("runtime", "string", "main, spring-boot or quarkus (default: all three pom forms)", false)
+                .param("mavenCentral", "boolean",
+                        "Search Maven Central when the class is not in the known dependencies (default false; needs network, can take up to 40 s)",
+                        false)
+                .param("camelVersion", "string", VERSION_DESC, false)
+                .executor((ctx, args) -> {
+                    applyVersion(ctx, args);
+                    return DependencyLookup.lookup(ctx, required(args, "className"), args.get("runtime"),
+                            bool(args, "mavenCentral", false));
+                }));
         registry.accept(tool("camel_error_diagnose",
                 "Diagnoses a Camel error from a stack trace or error message: the known exceptions in it with common "
                                                      + "causes and suggested fixes, the components and EIPs it mentions with "

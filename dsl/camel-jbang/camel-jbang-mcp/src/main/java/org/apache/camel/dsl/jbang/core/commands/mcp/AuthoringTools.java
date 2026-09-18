@@ -208,6 +208,25 @@ public class AuthoringTools {
                 "name", name));
     }
 
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = true),
+          description = "Which Maven dependency provides a class, and how to declare it: the known dependencies "
+                        + "camel run downloads by itself (nothing to declare there), a Camel component's artifact per "
+                        + "runtime, or with mavenCentral=true a Maven Central search by class name (a guess, marked as "
+                        + "such). Answers camel.jbang.dependencies, --dep, and the pom.xml dependency for Camel Main, "
+                        + "Spring Boot and Quarkus.")
+    public JsonObject camel_dependency_for_class(
+            @ToolArg(description = "Fully qualified class name, e.g. org.postgresql.ds.PGSimpleDataSource",
+                     required = true) String className,
+            @ToolArg(description = "main, spring-boot or quarkus (default: all three pom forms)",
+                     required = false) String runtime,
+            @ToolArg(description = "Search Maven Central when the class is not in the known dependencies (default "
+                                   + "false; needs network, can take up to 40 s)",
+                     required = false) Boolean mavenCentral,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return call("camel_dependency_for_class", args("className", className, "runtime", runtime, "mavenCentral",
+                mavenCentral, "camelVersion", camelVersion));
+    }
+
     /** Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. */
     static JsonObject call(String tool, Map<String, String> args) {
         try {
