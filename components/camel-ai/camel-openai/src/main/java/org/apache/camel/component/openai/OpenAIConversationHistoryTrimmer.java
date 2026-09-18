@@ -229,6 +229,12 @@ final class OpenAIConversationHistoryTrimmer {
         if (part.imageUrl().isPresent()) {
             chars += part.asImageUrl().imageUrl().url().length();
         }
+        if (part.file().isPresent()) {
+            chars += part.asFile().file().fileData().orElse("").length();
+        }
+        if (part.inputAudio().isPresent()) {
+            chars += part.asInputAudio().inputAudio().data().length();
+        }
         return chars;
     }
 

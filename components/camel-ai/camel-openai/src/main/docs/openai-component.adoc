@@ -466,6 +466,32 @@ YAML::
 When using image input, the userMessage is required. Supported image formats are detected by MIME type (e.g., `image/png`, `image/jpeg`, `image/gif`, `image/webp`).
 ====
 
+=== PDF and Audio File Input with Chat Completion
+
+The `chat-completion` operation also accepts PDF documents and short audio clips (WAV or MP3) as the message body. Set `userMessage` to the prompt that accompanies the file, and provide a MIME type through `CamelOpenAIMediaType`, `Content-Type`, or a file name extension when needed:
+
+[source,java]
+----
+from("direct:pdf-summary")
+    .setHeader("CamelOpenAIMediaType", constant("application/pdf"))
+    .setHeader("CamelOpenAIUserMessage", constant("Summarize this document"))
+    .to("openai:chat-completion?model=gpt-4o")
+    .log("Response: ${body}");
+----
+
+For audio input, supported MIME types include `audio/wav`, `audio/mpeg` and `audio/mp4`.
+
+=== Diarized Audio Transcription
+
+Speaker-labelled transcription is available through the `audio-transcription` operation with `audioResponseFormat=diarized_json` and diarization models such as `gpt-4o-transcribe-diarize`. Optional tuning parameters include `audioChunkingStrategy`, `audioKnownSpeakerNames`, `audioKnownSpeakerReferences`, `audioKeywords`, `audioLanguages` and `audioInclude`.
+
+[source,java]
+----
+from("file:recordings?noop=true")
+    .to("openai:audio-transcription?audioModel=gpt-4o-transcribe-diarize&audioResponseFormat=diarized_json")
+    .log("Transcript: ${body}");
+----
+
 === Streaming Response
 
 When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` in the message body. You can consume this iterator using Camel's streaming EIPs or process it directly.

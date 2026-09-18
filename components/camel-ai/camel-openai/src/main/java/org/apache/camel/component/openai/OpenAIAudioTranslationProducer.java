@@ -21,6 +21,9 @@ import com.openai.models.audio.translations.TranslationCreateResponse;
 import com.openai.models.audio.translations.TranslationVerbose;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -73,8 +76,17 @@ public class OpenAIAudioTranslationProducer extends DefaultProducer {
         }
 
         TranslationCreateParams params = paramsBuilder.build();
-        TranslationCreateResponse response = getEndpoint().getClient()
-                .audio().translations().create(params);
+        GenAiObservation observation = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.TRANSCRIPTION, model);
+        TranslationCreateResponse response;
+        try {
+            response = getEndpoint().getClient().audio().translations().create(params);
+            OpenAIGenAiProducerSupport.recordSuccess(observation, GenAiUsage.of((Long) null, null, null, model));
+        } catch (Exception e) {
+            OpenAIGenAiProducerSupport.recordFailure(exchange, observation, e);
+            throw e;
+        } finally {
+            observation.close();
+        }
 
         Message out = exchange.getMessage();
 

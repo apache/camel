@@ -198,7 +198,7 @@ public final class OpenAIConstants {
     public static final String AUDIO_MODEL = "CamelOpenAIAudioModel";
     @Metadata(description = "The language of the input audio (ISO-639-1)", javaType = "String")
     public static final String AUDIO_LANGUAGE = "CamelOpenAIAudioLanguage";
-    @Metadata(description = "The response format for audio transcription (json, text, srt, verbose_json, vtt)",
+    @Metadata(description = "The response format for audio transcription (json, text, srt, verbose_json, vtt, diarized_json)",
               javaType = "String")
     public static final String AUDIO_RESPONSE_FORMAT = "CamelOpenAIAudioResponseFormat";
     @Metadata(description = "Sampling temperature for audio transcription (0.0 to 1.0)", javaType = "Double")
@@ -209,6 +209,19 @@ public final class OpenAIConstants {
     @Metadata(description = "Comma-separated timestamp granularities: word, segment, or word,segment (verbose_json only)",
               javaType = "String")
     public static final String AUDIO_TIMESTAMP_GRANULARITIES = "CamelOpenAIAudioTimestampGranularities";
+    @Metadata(description = "Chunking strategy for diarized transcription models: auto or vad", javaType = "String")
+    public static final String AUDIO_CHUNKING_STRATEGY = "CamelOpenAIAudioChunkingStrategy";
+    @Metadata(description = "Comma-separated known speaker names for diarized transcription", javaType = "String")
+    public static final String AUDIO_KNOWN_SPEAKER_NAMES = "CamelOpenAIAudioKnownSpeakerNames";
+    @Metadata(description = "Comma-separated known speaker reference audio file ids for diarized transcription",
+              javaType = "String")
+    public static final String AUDIO_KNOWN_SPEAKER_REFERENCES = "CamelOpenAIAudioKnownSpeakerReferences";
+    @Metadata(description = "Comma-separated keywords to improve transcription accuracy", javaType = "String")
+    public static final String AUDIO_KEYWORDS = "CamelOpenAIAudioKeywords";
+    @Metadata(description = "Comma-separated input audio languages (ISO-639-1 or ISO-639-3)", javaType = "String")
+    public static final String AUDIO_LANGUAGES = "CamelOpenAIAudioLanguages";
+    @Metadata(description = "Comma-separated extra response fields to include (e.g. logprobs)", javaType = "String")
+    public static final String AUDIO_INCLUDE = "CamelOpenAIAudioInclude";
 
     // Audio Transcription/Translation Output Headers
     @Metadata(description = "Duration of the audio in seconds (verbose_json only)", javaType = "Double")
