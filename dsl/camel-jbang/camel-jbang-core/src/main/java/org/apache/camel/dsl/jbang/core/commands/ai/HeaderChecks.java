@@ -45,16 +45,38 @@ final class HeaderChecks {
     static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile("uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*):");
 
     /**
-     * A Camel* header that no component used in the file defines (CamelTimerIndex; the timer sets CamelTimerCounter):
-     * the value is null at runtime. Checked against the header metadata of every component the file names, with the
-     * closest real name.
-     */
-    /**
      * Names a component sets as exchange properties, not headers; the catalog has no metadata for those, so the ones a
      * beginner reaches for are listed here (TimerConsumer sets them with setProperty).
      */
     static final Map<String, List<String>> EXCHANGE_PROPERTIES = Map.of(
             "timer", List.of("CamelTimerCounter", "CamelTimerName", "CamelTimerPeriod", "CamelTimerTime"));
+
+    /**
+     * What an invented Camel* header is usually reaching for, keyed on a fragment of its name, and the expression that
+     * answers it. Tried when no real header is close: in a timer-triggered route there is no message source to name, so
+     * a beginner or a model writes CamelFromEndpoint or CamelEndpointUri for "which endpoint did this come from" and
+     * was told only that the value would be null.
+     */
+    static final List<Map.Entry<Pattern, String>> INTENT_HINTS = List.of(
+            Map.entry(Pattern.compile("Endpoint|Uri|Source|From|Route|Origin"),
+                    "For the endpoint or route a message came from use ${exchange.fromEndpoint} or ${routeId}; for the"
+                                                                                + " endpoint it was last sent to, ${header.CamelToEndpoint}."),
+            Map.entry(Pattern.compile("Size|Length|Count"),
+                    "The body size is ${body.length()} for a String body or ${bodyAs(byte[]).length}; the number of"
+                                                            + " headers is ${headers.size()}."),
+            Map.entry(Pattern.compile("Timestamp|Time|Date"),
+                    "The current time is ${date:now:yyyy-MM-dd HH:mm:ss} and the time the message was created is"
+                                                              + " ${date:exchangeCreated:yyyy-MM-dd HH:mm:ss}; ${messageTimestamp} is set only by"
+                                                              + " components that stamp their messages."));
+
+    static String intentHint(String name) {
+        for (var e : INTENT_HINTS) {
+            if (e.getKey().matcher(name).find()) {
+                return e.getValue();
+            }
+        }
+        return null;
+    }
 
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
@@ -130,15 +152,39 @@ final class HeaderChecks {
                         .append(" is not set by ").append(String.join(", ", schemes)).append(" (the value would be null)");
                 if (best != null) {
                     sb.append(": did you mean ").append(best).append("?");
+                } else {
+                    String hint = intentHint(name);
+                    if (hint != null) {
+                        sb.append(" ").append(hint);
+                    }
                 }
+                // what the file's components do set: the owner of the closest name, and the first component in the
+                // file (normally the trigger), so a name with nothing close still learns the real ones
+                Set<String> listed = new LinkedHashSet<>();
                 if (scheme != null) {
+                    listed.add(scheme);
+                }
+                listed.add(schemes.iterator().next());
+                for (String sc : listed) {
                     List<String> names = new ArrayList<>();
                     for (var e : owner.entrySet()) {
-                        if (e.getValue().equals(scheme)) {
+                        if (e.getValue().equals(sc)) {
                             names.add(e.getKey());
                         }
                     }
-                    sb.append(" The ").append(scheme).append(" headers are ").append(String.join(", ", names)).append(".");
+                    if (!names.isEmpty()) {
+                        sb.append(" The ").append(sc).append(" headers are ").append(String.join(", ", names)).append(".");
+                    }
+                }
+                for (String sc : schemes) {
+                    List<String> props = EXCHANGE_PROPERTIES.getOrDefault(sc, List.of());
+                    if (!props.isEmpty()) {
+                        sb.append(" ").append(sc).append(" sets the exchange properties ").append(String.join(", ", props))
+                                .append(" (${exchangeProperty.").append(props.get(0)).append("}).");
+                    }
+                }
+                if (m.group(1) == null) {
+                    sb.append(" A header no component sets stays null unless a setHeader step sets it earlier in the route.");
                 }
                 msgs.add(sb.toString());
             }
