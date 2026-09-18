@@ -348,17 +348,37 @@ final class BeanRefChecks {
      * bean is fine without a dependency declared even though the class is not on the CLI classpath. Matched the way the
      * runtime matches: the class name, then each enclosing package.
      */
+    /**
+     * Lazily loaded without a lock, on purpose: two threads that both find it null both build the same immutable-in-use
+     * map from the same resources and both publish it through the volatile write; the last one wins and every caller
+     * sees a complete map. A benign race, cheaper than synchronising every lookup.
+     */
     private static volatile Map<String, String> knownDependencies;
 
     static String knownDependency(String fqcn) {
         Map<String, String> known = knownDependencies;
         if (known == null) {
-            known = new HashMap<>();
+            known = loadKnownDependencies(BeanRefChecks.class.getClassLoader());
+            knownDependencies = known;
+        }
+        return findKnown(known, fqcn);
+    }
+
+    /**
+     * The lookup against the mapping files of one class loader, uncached; a loader without the files answers nothing.
+     */
+    static String knownDependency(String fqcn, ClassLoader loader) {
+        return findKnown(loadKnownDependencies(loader), fqcn);
+    }
+
+    private static Map<String, String> loadKnownDependencies(ClassLoader loader) {
+        Map<String, String> known = new HashMap<>();
+        {
             for (String name : new String[] {
                     "camel-main-known-dependencies.properties", "camel-component-known-dependencies.properties",
                     "camel-thirdparty-known-dependencies.properties" }) {
                 try {
-                    Enumeration<URL> resources = BeanRefChecks.class.getClassLoader().getResources(name);
+                    Enumeration<URL> resources = loader.getResources(name);
                     while (resources.hasMoreElements()) {
                         try (InputStream is = resources.nextElement().openStream()) {
                             Properties prop = new Properties();
@@ -372,8 +392,11 @@ final class BeanRefChecks {
                     // the mapping is an optimisation of the message, not a requirement
                 }
             }
-            knownDependencies = known;
         }
+        return known;
+    }
+
+    private static String findKnown(Map<String, String> known, String fqcn) {
         String prefix = fqcn;
         String gav = known.get(prefix);
         while (gav == null && prefix.lastIndexOf('.') != -1) {
