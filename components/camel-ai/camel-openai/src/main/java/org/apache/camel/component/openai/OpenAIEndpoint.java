@@ -154,6 +154,10 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (operation == OpenAIOperations.batch) {
+            // fail at startup, before any client or MCP session exists, for the options a batch cannot honour
+            OpenAIBatchSupport.validateConfiguration(configuration);
+        }
         mcpStopped = false;
         client = createClient();
         registerRouteToolRegistryListener();

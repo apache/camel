@@ -44,6 +44,7 @@ public class BatchStore {
         final String metadata;
         int statusIndex;
         boolean cancelling;
+        boolean cancelled;
         boolean resultsBuilt;
         String outputFileId;
         String errorFileId;
@@ -101,11 +102,22 @@ public class BatchStore {
      * one was uploaded, so a test asserting on "the" input file cannot pass by accident.
      */
     public String getUploadedFile() {
+        return new String(uploadedFile().content(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * The name the route uploaded the batch input file under.
+     */
+    public String getUploadedFileName() {
+        return uploadedFile().filename();
+    }
+
+    private StoredFile uploadedFile() {
         var uploaded = files.values().stream().filter(file -> "batch".equals(file.purpose())).toList();
         if (uploaded.size() != 1) {
             throw new IllegalStateException("Expected exactly one uploaded batch input file, found " + uploaded.size());
         }
-        return new String(uploaded.get(0).content(), StandardCharsets.UTF_8);
+        return uploaded.get(0);
     }
 
     void clear() {

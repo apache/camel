@@ -49,6 +49,28 @@ public final class OpenAIBatchSupport {
     }
 
     /**
+     * Validates the options of the batch operation when the endpoint starts, before a client or an MCP session is
+     * created. A batch request runs once and returns a file, so options needing several round-trips cannot be honoured
+     * and are refused rather than silently dropped.
+     */
+    public static void validateConfiguration(OpenAIConfiguration config) {
+        if (config.isStreaming()) {
+            throw new IllegalArgumentException("The batch operation cannot stream responses; set streaming=false");
+        }
+        if (config.isConversationMemory()) {
+            throw new IllegalArgumentException(
+                    "The batch operation runs each request once, so conversationMemory is not supported");
+        }
+        if (ObjectHelper.isNotEmpty(config.getMcpServer()) || ObjectHelper.isNotEmpty(config.getTags())) {
+            throw new IllegalArgumentException(
+                    "The batch operation cannot run a tool loop, so mcpServer and tags are not supported");
+        }
+        if (ObjectHelper.isNotEmpty(config.getBatchEndpoint())) {
+            validateEndpoint(config.getBatchEndpoint());
+        }
+    }
+
+    /**
      * Resolves the endpoint of a batch from the header or the endpoint option, and validates it before anything is
      * uploaded, so an unsupported value does not leave an orphan input file behind.
      */
@@ -60,11 +82,15 @@ public final class OpenAIBatchSupport {
                                                + OpenAIConstants.BATCH_ENDPOINT + " header. Supported: "
                                                + sortedEndpoints());
         }
+        validateEndpoint(endpoint);
+        return endpoint;
+    }
+
+    private static void validateEndpoint(String endpoint) {
         if (!SUPPORTED_ENDPOINTS.contains(endpoint)) {
             throw new IllegalArgumentException(
                     "Unsupported batch endpoint: " + endpoint + ". Supported: " + sortedEndpoints());
         }
-        return endpoint;
     }
 
     public static boolean isFinal(Batch batch) {
@@ -73,12 +99,13 @@ public final class OpenAIBatchSupport {
 
     /**
      * Reports the batch on the message headers, so a route can poll it and route on its status without reading the SDK
-     * object.
+     * object. The endpoint of the batch is deliberately not reported: its header is the per-message override of the
+     * batchEndpoint option, and echoing it would make a batch created earlier in the route dictate the endpoint of the
+     * next one.
      */
     public static void setBatchHeaders(Message message, Batch batch) {
         message.setHeader(OpenAIConstants.BATCH_ID, batch.id());
         message.setHeader(OpenAIConstants.BATCH_STATUS, batch.status().asString());
-        message.setHeader(OpenAIConstants.BATCH_ENDPOINT, batch.endpoint());
         message.setHeader(OpenAIConstants.BATCH_INPUT_FILE_ID, batch.inputFileId());
         batch.outputFileId().ifPresent(id -> message.setHeader(OpenAIConstants.BATCH_OUTPUT_FILE_ID, id));
         batch.errorFileId().ifPresent(id -> message.setHeader(OpenAIConstants.BATCH_ERROR_FILE_ID, id));

@@ -128,12 +128,13 @@ static OpenAIMock openAIMock = new OpenAIMock().builder()
 
 A batch walks through `validating`, `in_progress`, `finalizing` and `completed`, one step per retrieve, so a
 polling route sees the same sequence as against the real API. Use `withBatchStatuses` for a different progression,
-such as ending in `expired` or `cancelled`. Once a final status is reached, lines with a reply are written to the
-output file of the batch and lines with an error to its error file, and a line whose `custom_id` has no
-expectation fails as well.
+such as ending in `expired`. Cancelling a running batch reports it as `cancelling`, and the next retrieve as
+`cancelled`, which is final; cancelling a final batch fails with a 400 as it does against the API. Once a final
+status is reached, lines with a reply are written to the output file of the batch and lines with an error to its
+error file, and a line whose `custom_id` has no expectation fails as well.
 
 `replyWithBatchResponse` sets the raw response body of a line, for endpoints other than chat completions, while
 `replyWithBatchContent` wraps the text in a chat completion.
 
-`getBatchStore().getUploadedFile()` returns the JSONL the route uploaded, so a test can assert on the requests it
-built.
+`getBatchStore().getUploadedFile()` returns the JSONL the route uploaded, and `getUploadedFileName()` the name it
+was uploaded under, so a test can assert on the requests it built.

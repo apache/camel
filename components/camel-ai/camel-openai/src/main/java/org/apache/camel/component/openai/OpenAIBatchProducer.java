@@ -18,10 +18,12 @@ package org.apache.camel.component.openai;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,14 +32,22 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonValue;
+import com.openai.core.MultipartField;
+import com.openai.core.ObjectMappers;
+import com.openai.models.ResponseFormatJsonSchema;
 import com.openai.models.batches.Batch;
 import com.openai.models.batches.BatchCreateParams;
+import com.openai.models.chat.completions.ChatCompletionCreateParams;
+import com.openai.models.embeddings.EmbeddingCreateParams;
 import com.openai.models.files.FileCreateParams;
 import com.openai.models.files.FilePurpose;
+import com.openai.models.moderations.ModerationCreateParams;
+import com.openai.models.responses.ResponseCreateParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ai.observability.GenAiErrorSupport;
+import org.apache.camel.component.openai.OpenAIResponsesInputBuilder.InputSpec;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -50,12 +60,16 @@ import org.slf4j.LoggerFactory;
  * The body is either the JSONL itself, as a {@link File}, {@link Path}, {@link WrappedFile}, {@link InputStream},
  * {@code byte[]} or String, or a {@link Map} keyed by {@code custom_id}. A map value that is itself a map is used as
  * the request body as it is, while a String value is turned into a request built from the endpoint options, so a route
- * that only has prompts does not have to assemble the API payload itself.
+ * that only has prompts does not have to assemble the API payload itself. Such a request is built with the same SDK
+ * parameters as the synchronous operation of the endpoint, so the options and headers of that operation apply.
  */
 public class OpenAIBatchProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIBatchProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String INPUT_FILE_SUFFIX = ".jsonl";
+
+    private Class<?> outputClassResolved;
 
     public OpenAIBatchProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -67,12 +81,23 @@ public class OpenAIBatchProducer extends DefaultProducer {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        String outputClass = getEndpoint().getConfiguration().getOutputClass();
+        if (ObjectHelper.isNotEmpty(outputClass)) {
+            outputClassResolved = getEndpoint().getCamelContext().getClassResolver().resolveMandatoryClass(outputClass);
+        }
+    }
+
+    @Override
     public void process(Exchange exchange) throws Exception {
         OpenAIConfiguration config = getEndpoint().getConfiguration();
         Message in = exchange.getIn();
-        // a batch request runs once and returns a file, so options needing several round-trips cannot be honoured
-        // and are refused rather than silently dropped
-        rejectUnsupportedOptions(config);
+        // the options a batch cannot honour are refused when the endpoint starts; the header can still ask for them
+        if (Boolean.TRUE.equals(in.getHeader(OpenAIConstants.STREAMING, Boolean.class))) {
+            throw new IllegalArgumentException(
+                    "The batch operation cannot stream responses; remove the " + OpenAIConstants.STREAMING + " header");
+        }
 
         String endpoint = OpenAIBatchSupport.resolveEndpoint(in, config);
 
@@ -88,7 +113,7 @@ public class OpenAIBatchProducer extends DefaultProducer {
             } else if (body instanceof Path path) {
                 input = path;
             } else {
-                input = writeTemporaryInput(exchange, body, endpoint, in, config);
+                input = writeTemporaryInput(body, endpoint, in, config);
                 temporary = true;
             }
 
@@ -107,10 +132,18 @@ public class OpenAIBatchProducer extends DefaultProducer {
         }
     }
 
-    private String upload(Exchange exchange, Path input) {
-        try {
+    /**
+     * Uploads the input file under a {@code .jsonl} name, the only extension the Files API accepts for a batch input,
+     * whatever the file is called on disk.
+     */
+    private String upload(Exchange exchange, Path input) throws IOException {
+        String filename = input.getFileName().toString();
+        if (!filename.endsWith(INPUT_FILE_SUFFIX)) {
+            filename = filename + INPUT_FILE_SUFFIX;
+        }
+        try (InputStream stream = Files.newInputStream(input)) {
             return getEndpoint().getClient().files().create(FileCreateParams.builder()
-                    .file(input)
+                    .file(MultipartField.<InputStream> builder().value(stream).filename(filename).build())
                     .purpose(FilePurpose.BATCH)
                     .build()).id();
         } catch (RuntimeException e) {
@@ -155,34 +188,45 @@ public class OpenAIBatchProducer extends DefaultProducer {
     }
 
     /**
-     * Writes the request lines to a temporary file, so the upload can be retried by the SDK, which a one-shot stream
-     * would not allow.
+     * Writes the body to a temporary file, so every body type is uploaded the same way. The body is validated and the
+     * request lines are built before the file is created, and the file is removed if writing it fails, so a rejected
+     * exchange leaves nothing behind.
      */
-    private Path writeTemporaryInput(
-            Exchange exchange, Object body, String endpoint, Message in, OpenAIConfiguration config)
+    private Path writeTemporaryInput(Object body, String endpoint, Message in, OpenAIConfiguration config)
             throws Exception {
-        Path file = Files.createTempFile("camel-openai-batch-", ".jsonl");
+        List<String> lines = null;
+        InputStream stream = null;
         if (body instanceof Map) {
-            try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-                for (String line : requestLines((Map<?, ?>) body, endpoint, in, config)) {
-                    writer.write(line);
-                    writer.newLine();
-                }
+            lines = requestLines((Map<?, ?>) body, endpoint, in, config);
+        } else {
+            stream = body instanceof InputStream is ? is : in.getBody(InputStream.class);
+            if (stream == null) {
+                throw new IllegalArgumentException(
+                        "Unsupported body type for the batch operation: "
+                                                   + (body != null ? body.getClass().getName() : "null")
+                                                   + ". Supported: File, Path, InputStream, byte[], String, or a Map "
+                                                   + "keyed by custom_id");
             }
-            LOG.debug("Wrote batch input file {} from a map body", file);
-            return file;
         }
 
-        InputStream stream = body instanceof InputStream is ? is : in.getBody(InputStream.class);
-        if (stream == null) {
-            throw new IllegalArgumentException(
-                    "Unsupported body type for the batch operation: "
-                                               + (body != null ? body.getClass().getName() : "null")
-                                               + ". Supported: File, Path, InputStream, byte[], String, or a Map "
-                                               + "keyed by custom_id");
-        }
-        try (InputStream source = stream) {
-            Files.copy(source, file, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        Path file = Files.createTempFile("camel-openai-batch-", INPUT_FILE_SUFFIX);
+        try {
+            if (lines != null) {
+                try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
+                    for (String line : lines) {
+                        writer.write(line);
+                        writer.newLine();
+                    }
+                }
+                LOG.debug("Wrote batch input file {} from a map body", file);
+            } else {
+                try (InputStream source = stream) {
+                    Files.copy(source, file, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        } catch (Exception e) {
+            Files.deleteIfExists(file);
+            throw e;
         }
         return file;
     }
@@ -225,76 +269,139 @@ public class OpenAIBatchProducer extends DefaultProducer {
 
     /**
      * Builds the request body of one line from the endpoint options, for the endpoints whose request is a single prompt
-     * or input text.
+     * or input text. The body is built with the SDK parameters of the synchronous operation and serialized with the SDK
+     * mapper, so a line carries exactly what that operation would send.
      */
-    private Map<String, Object> requestBody(String endpoint, String text, Message in, OpenAIConfiguration config)
+    private JsonNode requestBody(String endpoint, String text, Message in, OpenAIConfiguration config)
             throws Exception {
-        Map<String, Object> request = new LinkedHashMap<>();
-        switch (endpoint) {
-            case "/v1/chat/completions" -> {
-                request.put("model", requiredModel(in, config));
-                List<Map<String, Object>> messages = new ArrayList<>();
-                addMessage(messages, "system", in.getHeader(OpenAIConstants.SYSTEM_MESSAGE,
-                        config.getSystemMessage(), String.class));
-                addMessage(messages, "developer", config.getDeveloperMessage());
-                addMessage(messages, "user", text);
-                request.put("messages", messages);
-                addChatParameters(request, in, config);
-            }
-            case "/v1/responses" -> {
-                request.put("model", requiredModel(in, config));
-                String instructions = in.getHeader(OpenAIConstants.SYSTEM_MESSAGE,
-                        config.getSystemMessage(), String.class);
-                if (ObjectHelper.isNotEmpty(instructions)) {
-                    request.put("instructions", instructions);
-                }
-                request.put("input", text);
-            }
-            case "/v1/embeddings" -> {
-                if (ObjectHelper.isEmpty(config.getEmbeddingModel())) {
-                    throw new IllegalArgumentException(
-                            "The embeddingModel option must be set to build the requests of an embeddings batch");
-                }
-                request.put("model", config.getEmbeddingModel());
-                request.put("input", text);
-                if (config.getDimensions() != null) {
-                    request.put("dimensions", config.getDimensions());
-                }
-            }
-            case "/v1/moderations" -> {
-                request.put("model", config.getModerationModel());
-                request.put("input", text);
-            }
+        Object body = switch (endpoint) {
+            case "/v1/chat/completions" -> chatCompletion(text, in, config);
+            case "/v1/responses" -> responses(text, in, config);
+            case "/v1/embeddings" -> embeddings(text, in, config);
+            case "/v1/moderations" -> moderation(text, in, config);
             default -> throw new IllegalArgumentException(
                     "A String value builds the request of a /v1/chat/completions, /v1/responses, /v1/embeddings or "
                                                           + "/v1/moderations batch. For " + endpoint
                                                           + " pass the request body as a Map instead");
-        }
-        return request;
+        };
+        return ObjectMappers.jsonMapper().valueToTree(body);
     }
 
-    private void addChatParameters(Map<String, Object> request, Message in, OpenAIConfiguration config)
+    private ChatCompletionCreateParams.Body chatCompletion(String text, Message in, OpenAIConfiguration config)
             throws Exception {
+        ChatCompletionCreateParams.Builder builder = ChatCompletionCreateParams.builder()
+                .model(requiredModel(in, config));
+
+        String systemMessage = in.getHeader(OpenAIConstants.SYSTEM_MESSAGE, config.getSystemMessage(), String.class);
+        if (ObjectHelper.isNotEmpty(systemMessage)) {
+            builder.addSystemMessage(systemMessage);
+        }
+        String developerMessage
+                = in.getHeader(OpenAIConstants.DEVELOPER_MESSAGE, config.getDeveloperMessage(), String.class);
+        if (ObjectHelper.isNotEmpty(developerMessage)) {
+            builder.addDeveloperMessage(developerMessage);
+        }
+        builder.addUserMessage(text);
+
         Double temperature = in.getHeader(OpenAIConstants.TEMPERATURE, config.getTemperature(), Double.class);
         if (temperature != null) {
-            request.put("temperature", temperature);
+            builder.temperature(temperature);
         }
         Double topP = in.getHeader(OpenAIConstants.TOP_P, config.getTopP(), Double.class);
         if (topP != null) {
-            request.put("top_p", topP);
+            builder.topP(topP);
         }
         Integer maxTokens = in.getHeader(OpenAIConstants.MAX_TOKENS, config.getMaxTokens(), Integer.class);
         if (maxTokens != null) {
-            request.put("max_tokens", maxTokens);
+            builder.maxCompletionTokens(maxTokens.longValue());
+        }
+        additionalBodyProperties(config).forEach(builder::putAdditionalBodyProperty);
+
+        Class<?> outputClass = resolveOutputClass(in);
+        if (outputClass != null) {
+            return builder.responseFormat(outputClass).build().rawParams()._body();
         }
         String jsonSchema = in.getHeader(OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
         if (ObjectHelper.isNotEmpty(jsonSchema)) {
-            Map<String, Object> schema = new LinkedHashMap<>();
-            schema.put("name", "response");
-            schema.put("strict", true);
-            schema.put("schema", OBJECT_MAPPER.readValue(jsonSchema, Map.class));
-            request.put("response_format", Map.of("type", "json_schema", "json_schema", schema));
+            builder.responseFormat(ResponseFormatJsonSchema.builder()
+                    .jsonSchema(ResponseFormatJsonSchema.JsonSchema.builder()
+                            .name("camel_schema")
+                            .schema(schema(jsonSchema))
+                            .build())
+                    .build());
         }
+        return builder.build()._body();
+    }
+
+    private ResponseCreateParams.Body responses(String text, Message in, OpenAIConfiguration config)
+            throws Exception {
+        ResponseCreateParams.Builder builder = ResponseCreateParams.builder()
+                .model(requiredModel(in, config));
+
+        String instructions = in.getHeader(OpenAIConstants.SYSTEM_MESSAGE, config.getSystemMessage(), String.class);
+        if (ObjectHelper.isNotEmpty(instructions)) {
+            builder.instructions(instructions);
+        }
+        InputSpec input = InputSpec.plainText(text);
+        String developerMessage
+                = in.getHeader(OpenAIConstants.DEVELOPER_MESSAGE, config.getDeveloperMessage(), String.class);
+        if (ObjectHelper.isNotEmpty(developerMessage)) {
+            input = input.withDeveloperMessage(developerMessage);
+        }
+        if (input.isPlainText()) {
+            builder.input(text);
+        } else {
+            builder.inputOfResponse(input.items());
+        }
+
+        Double temperature = in.getHeader(OpenAIConstants.TEMPERATURE, config.getTemperature(), Double.class);
+        if (temperature != null) {
+            builder.temperature(temperature);
+        }
+        Double topP = in.getHeader(OpenAIConstants.TOP_P, config.getTopP(), Double.class);
+        if (topP != null) {
+            builder.topP(topP);
+        }
+        Integer maxTokens = in.getHeader(OpenAIConstants.MAX_TOKENS, config.getMaxTokens(), Integer.class);
+        if (maxTokens != null) {
+            builder.maxOutputTokens(maxTokens.longValue());
+        }
+        OpenAIResponsesSupport.applyAdditionalBodyProperties(builder, config.getAdditionalBodyProperty());
+
+        Class<?> outputClass = resolveOutputClass(in);
+        if (outputClass != null) {
+            return builder.text(outputClass).build().rawParams()._body();
+        }
+        String jsonSchema = in.getHeader(OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
+        if (ObjectHelper.isNotEmpty(jsonSchema)) {
+            OpenAIResponsesSupport.applyJsonSchemaTextFormat(builder, jsonSchema);
+        }
+        return builder.build()._body();
+    }
+
+    private EmbeddingCreateParams.Body embeddings(String text, Message in, OpenAIConfiguration config) {
+        String model = in.getHeader(OpenAIConstants.EMBEDDING_MODEL, config.getEmbeddingModel(), String.class);
+        if (ObjectHelper.isEmpty(model)) {
+            throw new IllegalArgumentException(
+                    "The embeddingModel option must be set to build the requests of an embeddings batch");
+        }
+        EmbeddingCreateParams.Builder builder = EmbeddingCreateParams.builder()
+                .model(model)
+                .input(text);
+        Integer dimensions = in.getHeader(OpenAIConstants.EMBEDDING_DIMENSIONS, config.getDimensions(), Integer.class);
+        if (dimensions != null) {
+            builder.dimensions(dimensions.longValue());
+        }
+        return builder.build()._body();
+    }
+
+    private ModerationCreateParams.Body moderation(String text, Message in, OpenAIConfiguration config) {
+        ModerationCreateParams.Builder builder = ModerationCreateParams.builder().input(text);
+        String model = in.getHeader(OpenAIConstants.MODERATION_MODEL, config.getModerationModel(), String.class);
+        if (ObjectHelper.isNotEmpty(model)) {
+            builder.model(model);
+        }
+        return builder.build()._body();
     }
 
     private String requiredModel(Message in, OpenAIConfiguration config) {
@@ -305,23 +412,50 @@ public class OpenAIBatchProducer extends DefaultProducer {
         return model;
     }
 
-    private void addMessage(List<Map<String, Object>> messages, String role, String content) {
-        if (ObjectHelper.isNotEmpty(content)) {
-            messages.add(Map.of("role", role, "content", content));
+    private Class<?> resolveOutputClass(Message in) throws ClassNotFoundException {
+        String header = in.getHeader(OpenAIConstants.OUTPUT_CLASS, String.class);
+        if (ObjectHelper.isNotEmpty(header)) {
+            return getEndpoint().getCamelContext().getClassResolver().resolveMandatoryClass(header);
         }
+        return outputClassResolved;
     }
 
-    private void rejectUnsupportedOptions(OpenAIConfiguration config) {
-        if (config.isStreaming()) {
-            throw new IllegalArgumentException("The batch operation cannot stream responses; set streaming=false");
+    /**
+     * The additional body properties as the chat completion operation sends them: a String value holding JSON is sent
+     * as that JSON, any other String as a literal.
+     */
+    private static Map<String, JsonValue> additionalBodyProperties(OpenAIConfiguration config) {
+        Map<String, JsonValue> properties = new LinkedHashMap<>();
+        Map<String, Object> additional = config.getAdditionalBodyProperty();
+        if (additional == null) {
+            return properties;
         }
-        if (config.isConversationMemory()) {
-            throw new IllegalArgumentException(
-                    "The batch operation runs each request once, so conversationMemory is not supported");
+        for (Map.Entry<String, Object> entry : additional.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof String s) {
+                try {
+                    value = OBJECT_MAPPER.readValue(s, Object.class);
+                } catch (Exception e) {
+                    value = s;
+                }
+            }
+            properties.put(entry.getKey(), JsonValue.from(value));
         }
-        if (ObjectHelper.isNotEmpty(config.getMcpServer()) || ObjectHelper.isNotEmpty(config.getTags())) {
-            throw new IllegalArgumentException(
-                    "The batch operation cannot run a tool loop, so mcpServer and tags are not supported");
+        return properties;
+    }
+
+    private static ResponseFormatJsonSchema.JsonSchema.Schema schema(String jsonSchema) {
+        Map<String, Object> root;
+        try {
+            root = OBJECT_MAPPER.readValue(jsonSchema, Map.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON schema content provided in header/option", e);
         }
+        if (root == null) {
+            throw new IllegalArgumentException("JSON schema string parsed to null");
+        }
+        ResponseFormatJsonSchema.JsonSchema.Schema.Builder builder = ResponseFormatJsonSchema.JsonSchema.Schema.builder();
+        root.forEach((key, value) -> builder.putAdditionalProperty(key, JsonValue.from(value)));
+        return builder.build();
     }
 }

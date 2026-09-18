@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,8 +36,9 @@ import org.slf4j.LoggerFactory;
  * the result files.
  * <p>
  * A batch walks the configured status progression, one step per retrieve, so a route that polls sees the same sequence
- * of states as it would against the real API. Once a final status is reached the output and error files are built from
- * the input file, matching each request line to a {@link BatchExpectation} by its {@code custom_id}.
+ * of states as it would against the real API. A cancel moves a running batch to {@code cancelling}, and the next
+ * retrieve to {@code cancelled}. Once a final status is reached the output and error files are built from the input
+ * file, matching each request line to a {@link BatchExpectation} by its {@code custom_id}.
  */
 public class BatchRequestHandler {
     private static final Logger LOG = LoggerFactory.getLogger(BatchRequestHandler.class);
@@ -115,7 +117,8 @@ public class BatchRequestHandler {
         String filename = "unknown";
         String purpose = "unknown";
         byte[] content = new byte[0];
-        for (String part : raw.split("--" + boundary)) {
+        // the boundary may hold regex metacharacters, so it is quoted rather than spliced into the pattern
+        for (String part : raw.split(Pattern.quote("--" + boundary))) {
             int headerEnd = part.indexOf("\r\n\r\n");
             if (headerEnd < 0) {
                 continue;
@@ -198,8 +201,10 @@ public class BatchRequestHandler {
             return;
         }
         if (batch.cancelling) {
+            // a cancelled batch is final, so the retrieve after the cancel reports it as such, as the API does
             batch.cancelling = false;
-        } else if (batch.statusIndex < statusList().size() - 1) {
+            batch.cancelled = true;
+        } else if (!batch.cancelled && batch.statusIndex < statusList().size() - 1) {
             batch.statusIndex++;
         }
         maybeBuildResults(batch);
@@ -212,6 +217,11 @@ public class BatchRequestHandler {
             sendError(exchange, 404, "invalid_request_error", "No such batch: " + batchId);
             return;
         }
+        if (isFinal(status(batch))) {
+            sendError(exchange, 400, "invalid_request_error",
+                    "Cannot cancel a batch with status '" + status(batch) + "'.");
+            return;
+        }
         batch.cancelling = true;
         sendJson(exchange, 200, batchNode(batch).toString());
     }
@@ -221,6 +231,9 @@ public class BatchRequestHandler {
     }
 
     private String status(BatchStore.StoredBatch batch) {
+        if (batch.cancelled) {
+            return "cancelled";
+        }
         if (batch.cancelling) {
             return "cancelling";
         }

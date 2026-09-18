@@ -23,9 +23,15 @@ For a map, the component writes the envelope of every line (`method` and the `ur
 value holds decides the request body:
 
 * a String is turned into a request built from the endpoint options, for `/v1/chat/completions`, `/v1/responses`,
-  `/v1/embeddings` and `/v1/moderations`
+  `/v1/embeddings` and `/v1/moderations`. The request is the one the synchronous operation of that endpoint would
+  send, so the same options and headers apply: `model`, `systemMessage`, `developerMessage`, `temperature`, `topP`,
+  `maxTokens`, `outputClass`, `jsonSchema` and `additionalBodyProperty` for chat completions and responses,
+  `embeddingModel` and `dimensions` for embeddings, and `moderationModel` for moderations
 * a `Map` or `JsonNode` is used as the request body as it is, which is what the other endpoints need, and what
   lets each line use different parameters
+
+The `CamelOpenAIBatchEndpoint` header overrides `batchEndpoint` for one message. A file body is uploaded under its
+own name with `.jsonl` appended when it has another extension, the only one the Files API accepts for a batch input.
 
 [tabs]
 ====
@@ -139,6 +145,9 @@ from("direct:store")
 * A batch without failures has no error file, and the body is then `null`, which splits into nothing.
 * The API accepts up to 50,000 requests or 200 MB per batch, and only a 24 hour completion window. Input files are
   kept for 30 days by default.
-* Because a batch request runs once, `streaming`, `conversationMemory`, `mcpServer` and `tags` are rejected rather
-  than silently ignored.
+* Because a batch request runs once, `streaming`, `conversationMemory`, `mcpServer` and `tags` are rejected when the
+  endpoint starts rather than silently ignored.
+* `batch-cancel` reports the batch as `cancelling`; the API moves it to `cancelled` once the requests in flight have
+  stopped, which a later `batch-retrieve` sees. The results of the requests completed before the cancel are in the
+  output file.
 * Result lines are model output: unmarshal them to a `Map`, never to a type the content chooses.
