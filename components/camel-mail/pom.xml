@@ -114,7 +114,6 @@
                                     <groupId>org.eclipse.angus</groupId>
                                     <artifactId>angus-mail</artifactId>
                                     <version>${angus-mail-version}</version>
-                                    <type>jar</type>
                                     <outputDirectory>${project.basedir}/src/generated/resources</outputDirectory>
                                     <includes>
                                         META-INF/javamail.default.address.map,

@@ -43,7 +43,6 @@
             <groupId>com.sonofab1rd</groupId>
             <artifactId>univocity-parsers</artifactId>
             <version>${univocity-parsers-version}</version>
-            <type>jar</type>
         </dependency>
 
         <!-- testing -->
