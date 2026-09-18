@@ -45,11 +45,6 @@ final class HeaderChecks {
     static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile("uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*):");
 
     /**
-     * A Camel* header that no component used in the file defines (CamelTimerIndex; the timer sets CamelTimerCounter):
-     * the value is null at runtime. Checked against the header metadata of every component the file names, with the
-     * closest real name.
-     */
-    /**
      * Names a component sets as exchange properties, not headers; the catalog has no metadata for those, so the ones a
      * beginner reaches for are listed here (TimerConsumer sets them with setProperty).
      */
