@@ -105,10 +105,14 @@ from("scheduler:batches?delay=600000")
 split line by line. Set `batchResultsFile=error` for the failed requests instead. Each line carries the `custom_id`
 of its request.
 
+The polling routes above hand a finished batch to `direct:collect`, which reads the file. Stream caching is on by
+default and would read the whole file into memory before the splitter sees it, so the route turns it off and lets
+the splitter stream the lines instead:
+
 [source,java]
 ----
 from("direct:collect")
-    .noStreamCaching()                       // otherwise the whole file is read into memory
+    .noStreamCaching()                       // otherwise stream caching reads the whole file into memory
     .to("openai:batch-results")
     .split(body().tokenize("\n")).streaming()
         .setHeader("ticketId", jsonpath("$.custom_id"))
@@ -117,7 +121,8 @@ from("direct:collect")
     .end();
 ----
 
-An embedding backfill works the same way, straight into a vector store:
+An embedding backfill works the same way, straight into a vector store. The batch is created by the first route,
+and a polling route like the ones above hands it to `direct:store` once it is finished:
 
 [source,java]
 ----
@@ -139,9 +144,9 @@ from("direct:store")
 == Notes
 
 * The results stream is closed when the exchange completes, so it must be consumed inside the route.
-* `batch-results` works once the batch is `completed`, `expired` or `cancelled`. It fails while the batch is still
-  running, and for a `failed` batch it reports the validation errors, which are also in the
-  `CamelOpenAIBatchErrors` header.
+* `batch-results` downloads a file as soon as the API has created it, which happens when the batch stops
+  processing (`completed`, `expired` or `cancelled`). It fails while the batch is still running, and for a `failed`
+  batch it reports the validation errors, which are also in the `CamelOpenAIBatchErrors` header.
 * A batch without failures has no error file, and the body is then `null`, which splits into nothing.
 * The API accepts up to 50,000 requests or 200 MB per batch, and only a 24 hour completion window. Input files are
   kept for 30 days by default.

@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.openai.models.batches.Batch;
+import com.openai.models.batches.BatchCreateParams.Endpoint;
 import com.openai.models.batches.BatchError;
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
@@ -34,16 +34,12 @@ import org.apache.camel.util.ObjectHelper;
 public final class OpenAIBatchSupport {
 
     /**
-     * The endpoints the Batch API accepts, as listed by the OpenAI API specification.
+     * The endpoints the SDK knows the Batch API accepts, for the error message of a rejected value. The check itself
+     * asks the SDK, so an endpoint added by a newer SDK is accepted even before it is listed here.
      */
-    public static final Set<String> SUPPORTED_ENDPOINTS = Set.of(
-            "/v1/responses", "/v1/chat/completions", "/v1/embeddings", "/v1/completions",
-            "/v1/moderations", "/v1/images/generations", "/v1/images/edits", "/v1/videos");
-
-    /**
-     * Statuses in which a batch has stopped processing, so its result files are final.
-     */
-    private static final Set<String> FINAL_STATUSES = Set.of("completed", "expired", "cancelled");
+    private static final List<Endpoint> KNOWN_ENDPOINTS = List.of(
+            Endpoint.V1_RESPONSES, Endpoint.V1_CHAT_COMPLETIONS, Endpoint.V1_EMBEDDINGS, Endpoint.V1_COMPLETIONS,
+            Endpoint.V1_MODERATIONS, Endpoint.V1_IMAGES_GENERATIONS, Endpoint.V1_IMAGES_EDITS, Endpoint.V1_VIDEOS);
 
     private OpenAIBatchSupport() {
     }
@@ -87,14 +83,10 @@ public final class OpenAIBatchSupport {
     }
 
     private static void validateEndpoint(String endpoint) {
-        if (!SUPPORTED_ENDPOINTS.contains(endpoint)) {
+        if (!Endpoint.of(endpoint).isValid()) {
             throw new IllegalArgumentException(
                     "Unsupported batch endpoint: " + endpoint + ". Supported: " + sortedEndpoints());
         }
-    }
-
-    public static boolean isFinal(Batch batch) {
-        return FINAL_STATUSES.contains(batch.status().asString());
     }
 
     /**
@@ -144,6 +136,6 @@ public final class OpenAIBatchSupport {
     }
 
     private static String sortedEndpoints() {
-        return String.join(", ", SUPPORTED_ENDPOINTS.stream().sorted().toList());
+        return String.join(", ", KNOWN_ENDPOINTS.stream().map(Endpoint::asString).sorted().toList());
     }
 }

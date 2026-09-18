@@ -76,23 +76,23 @@ public class OpenAIBatchResultsProducer extends DefaultProducer {
         }
         OpenAIBatchSupport.setBatchHeaders(exchange.getMessage(), batch);
 
-        String status = batch.status().asString();
-        if ("failed".equals(status)) {
-            // the input was rejected, so no result file exists: the reason is in the errors of the batch
-            throw new CamelExchangeException(
-                    "Batch " + batchId + " failed: " + OpenAIBatchSupport.errors(batch), exchange);
-        }
-        if (!OpenAIBatchSupport.isFinal(batch)) {
-            throw new CamelExchangeException(
-                    "Batch " + batchId + " is " + status + "; its results are available once it is completed, "
-                                             + "expired or cancelled",
-                    exchange);
-        }
-
+        // the API sets the file ids once it has stopped processing, so their presence, not the status, says whether
+        // the results can be read; the status only explains why a file is missing
         Optional<String> fileId = ERROR_FILE.equals(resultsFile) ? batch.errorFileId() : batch.outputFileId();
         if (fileId.isEmpty()) {
-            // a batch without failures has no error file, and one without successes no output file
-            exchange.getMessage().setBody(null);
+            switch (batch.status().value()) {
+                case FAILED ->
+                    // the input was rejected, so no result file exists: the reason is in the errors of the batch
+                    throw new CamelExchangeException(
+                            "Batch " + batchId + " failed: " + OpenAIBatchSupport.errors(batch), exchange);
+                case COMPLETED, EXPIRED, CANCELLED ->
+                    // a batch without failures has no error file, and one without successes no output file
+                    exchange.getMessage().setBody(null);
+                default -> throw new CamelExchangeException(
+                        "Batch " + batchId + " is " + batch.status().asString() + " and has no " + resultsFile
+                                                            + " file yet",
+                        exchange);
+            }
             return;
         }
 

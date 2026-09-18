@@ -336,7 +336,7 @@ public class OpenAIBatchMockTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:results",
                 e -> e.getIn().setHeader(OpenAIConstants.BATCH_ID, batchId));
 
-        assertThat(exchange.getException()).hasMessageContaining("its results are available once it is completed");
+        assertThat(exchange.getException()).hasMessageContaining("has no output file yet");
     }
 
     @Test
