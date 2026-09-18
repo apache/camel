@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -217,19 +218,29 @@ public final class ObjectHelper {
     }
 
     private static boolean typeCoerceIntLong(Object leftValue, String rightValue) {
+        Long rightNum = toLong(rightValue);
+        if (rightNum == null) {
+            // too big for a long so it cannot be equal to an int or long
+            return false;
+        }
         if (leftValue instanceof Integer intValue) {
-            return integerPairComparison(intValue, Integer.valueOf(rightValue));
+            return longPairComparison(intValue.longValue(), rightNum);
         } else if (leftValue instanceof Long longValue) {
-            return longPairComparison(longValue, Long.valueOf(rightValue));
+            return longPairComparison(longValue, rightNum);
         }
         return false;
     }
 
     private static boolean typeCoerceILString(String leftValue, Object rightValue) {
+        Long leftNum = toLong(leftValue);
+        if (leftNum == null) {
+            // too big for a long so it cannot be equal to an int or long
+            return false;
+        }
         if (rightValue instanceof Integer intValue) {
-            return integerPairComparison(Integer.valueOf(leftValue), intValue);
+            return longPairComparison(leftNum, intValue.longValue());
         } else if (rightValue instanceof Long longValue) {
-            return longPairComparison(Long.valueOf(leftValue), longValue);
+            return longPairComparison(leftNum, longValue);
         }
         return false;
     }
@@ -237,7 +248,13 @@ public final class ObjectHelper {
     private static boolean typeCoerceStringPair(String leftNum, String rightNum, boolean ignoreCase) {
         if (isNumber(leftNum) && isNumber(rightNum)) {
             // favour to use numeric comparison
-            return longPairComparison(Long.parseLong(leftNum), Long.parseLong(rightNum));
+            Long left = toLong(leftNum);
+            Long right = toLong(rightNum);
+            if (left != null && right != null) {
+                return longPairComparison(left, right);
+            }
+            // too big for a long so compare as big integers
+            return new BigInteger(leftNum).equals(new BigInteger(rightNum));
         }
         if (ignoreCase) {
             return leftNum.compareToIgnoreCase(rightNum) == 0;
@@ -276,23 +293,22 @@ public final class ObjectHelper {
             return leftNum.compareTo(rightNum);
         } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
                 leftValue instanceof String leftStr && isNumber(leftStr)) {
-            if (rightValue instanceof Integer rightNum) {
-                Integer leftNum = Integer.valueOf(leftStr);
-                return leftNum.compareTo(rightNum);
-            } else {
-                Long leftNum = Long.valueOf(leftStr);
-                Long rightNum = (Long) rightValue;
-                return leftNum.compareTo(rightNum);
+            long rightNum = ((Number) rightValue).longValue();
+            Long leftNum = toLong(leftStr);
+            if (leftNum == null) {
+                // too big for a long so compare as big integers
+                return new BigInteger(leftStr).compareTo(BigInteger.valueOf(rightNum));
             }
+            return Long.compare(leftNum, rightNum);
         } else if (rightValue instanceof String rightStr &&
                 (leftValue instanceof Integer || leftValue instanceof Long) && isNumber(rightStr)) {
-            if (leftValue instanceof Integer leftNum) {
-                Integer rightNum = Integer.valueOf(rightStr);
-                return leftNum.compareTo(rightNum);
-            } else if (leftValue instanceof Long leftNum) {
-                Long rightNum = Long.valueOf(rightStr);
-                return leftNum.compareTo(rightNum);
+            long leftNum = ((Number) leftValue).longValue();
+            Long rightNum = toLong(rightStr);
+            if (rightNum == null) {
+                // too big for a long so compare as big integers
+                return BigInteger.valueOf(leftNum).compareTo(new BigInteger(rightStr));
             }
+            return Long.compare(leftNum, rightNum);
         } else if (rightValue instanceof Double rightNum && leftValue instanceof String leftStr
                 && isFloatingNumber(leftStr)) {
             Double leftNum = Double.valueOf(leftStr);
@@ -355,25 +371,43 @@ public final class ObjectHelper {
 
     private static int typeCoerceCompareStringString(String leftNum, String rightNum) {
         // prioritize non-floating numbers first
-        Long num1 = isNumber(leftNum) ? Long.parseLong(leftNum) : null;
-        Long num2 = isNumber(rightNum) ? Long.parseLong(rightNum) : null;
-        Double dec1 = num1 == null && isFloatingNumber(leftNum) ? Double.parseDouble(leftNum) : null;
-        Double dec2 = num2 == null && isFloatingNumber(rightNum) ? Double.parseDouble(rightNum) : null;
-        if (num1 != null && num2 != null) {
-            return num1.compareTo(num2);
-        } else if (dec1 != null && dec2 != null) {
-            return dec1.compareTo(dec2);
+        if (isNumber(leftNum) && isNumber(rightNum)) {
+            Long num1 = toLong(leftNum);
+            Long num2 = toLong(rightNum);
+            if (num1 != null && num2 != null) {
+                return num1.compareTo(num2);
+            }
+            // too big for a long so compare as big integers
+            return new BigInteger(leftNum).compareTo(new BigInteger(rightNum));
         }
-        // okay mixed but we need to convert to floating
-        if (num1 != null && dec2 != null) {
-            dec1 = Double.parseDouble(leftNum);
-            return dec1.compareTo(dec2);
-        } else if (num2 != null && dec1 != null) {
-            dec2 = Double.parseDouble(rightNum);
+        // mixed or floating numbers are compared as floating
+        Double dec1 = isFloatingNumber(leftNum) ? Double.parseDouble(leftNum) : null;
+        Double dec2 = isFloatingNumber(rightNum) ? Double.parseDouble(rightNum) : null;
+        if (dec1 != null && dec2 != null) {
             return dec1.compareTo(dec2);
         }
         // fallback to string comparison
         return leftNum.compareTo(rightNum);
+    }
+
+    /**
+     * Checks whether the text is an integer number that fits in a {@link Long}. Numbers such as bank account numbers
+     * can have more digits than a long can hold, and must be compared as {@link BigInteger} instead.
+     */
+    public static boolean isLongNumber(String text) {
+        return isNumber(text) && toLong(text) != null;
+    }
+
+    /**
+     * Parses the text as a long, or <tt>null</tt> if the number has too many digits to fit in a {@link Long}. The text
+     * is expected to be checked with {@link #isNumber(String)} first, so overflow is the only way this fails.
+     */
+    private static Long toLong(String text) {
+        try {
+            return Long.parseLong(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**

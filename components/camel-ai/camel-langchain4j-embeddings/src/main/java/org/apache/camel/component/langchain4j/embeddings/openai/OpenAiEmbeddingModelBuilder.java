@@ -73,7 +73,7 @@ public final class OpenAiEmbeddingModelBuilder {
                 .maxRetries(maxRetries)
                 .dimensions(dimensions)
                 .logRequests(logRequests)
-                .logRequests(logResponses)
+                .logResponses(logResponses)
                 .build();
     }
 }

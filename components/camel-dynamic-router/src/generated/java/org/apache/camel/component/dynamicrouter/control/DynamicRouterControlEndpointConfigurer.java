@@ -23,6 +23,8 @@ public class DynamicRouterControlEndpointConfigurer extends PropertyConfigurerSu
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DynamicRouterControlEndpoint target = (DynamicRouterControlEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowpredicatefrommessage":
+        case "allowPredicateFromMessage": target.getConfiguration().setAllowPredicateFromMessage(property(camelContext, boolean.class, value)); return true;
         case "destinationuri":
         case "destinationUri": target.getConfiguration().setDestinationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "expressionlanguage":
@@ -44,6 +46,8 @@ public class DynamicRouterControlEndpointConfigurer extends PropertyConfigurerSu
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowpredicatefrommessage":
+        case "allowPredicateFromMessage": return boolean.class;
         case "destinationuri":
         case "destinationUri": return java.lang.String.class;
         case "expressionlanguage":
@@ -66,6 +70,8 @@ public class DynamicRouterControlEndpointConfigurer extends PropertyConfigurerSu
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DynamicRouterControlEndpoint target = (DynamicRouterControlEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowpredicatefrommessage":
+        case "allowPredicateFromMessage": return target.getConfiguration().isAllowPredicateFromMessage();
         case "destinationuri":
         case "destinationUri": return target.getConfiguration().getDestinationUri();
         case "expressionlanguage":

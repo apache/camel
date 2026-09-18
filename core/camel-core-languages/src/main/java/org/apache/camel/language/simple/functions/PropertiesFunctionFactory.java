@@ -56,26 +56,4 @@ public final class PropertiesFunctionFactory implements SimpleLanguageFunctionFa
 
         return null;
     }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public String createCode(CamelContext camelContext, String function, int index) {
-        String remainder = ifStartsWithReturnRemainder("properties:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 2);
-            String key = parts[0].trim();
-            if (parts.length >= 2) {
-                return "properties(exchange, \"" + key + "\", \"" + parts[1].trim() + "\")";
-            } else {
-                return "properties(exchange, \"" + key + "\")";
-            }
-        }
-
-        remainder = ifStartsWithReturnRemainder("ref:", function);
-        if (remainder != null) {
-            return "ref(exchange, \"" + remainder + "\")";
-        }
-
-        return null;
-    }
 }

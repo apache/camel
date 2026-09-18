@@ -16,20 +16,26 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "system-properties", description = "Displays Java System Properties")
 @Configurer(extended = true)
 public class SystemPropertiesDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "The system properties, one single-entry map per property") List<Map<String, String>> systemProperties) {
+    }
 
     public SystemPropertiesDevConsole() {
         super("jvm", "system-properties", "Java System Properties", "Displays Java System Properties");
@@ -53,21 +59,17 @@ public class SystemPropertiesDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
-        JsonArray arr = new JsonArray();
-        root.put("systemProperties", arr);
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<Map<String, String>> entries = new ArrayList<>();
 
         Properties p = System.getProperties();
         Set<String> keys = new TreeSet<>(p.stringPropertyNames());
         for (String k : keys) {
-            JsonObject jo = new JsonObject();
-            jo.put(k, System.getProperty(k));
-            arr.add(jo);
+            entries.add(Map.of(k, System.getProperty(k)));
         }
 
-        return root;
+        Response response = new Response(entries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }

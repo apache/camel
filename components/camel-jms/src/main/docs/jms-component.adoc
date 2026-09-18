@@ -777,7 +777,7 @@ XML::
 <route>
   <from uri="activemq:queue:in"/>
   <to uri="bean:validateOrder"/>
-  <inOnly uri="activemq:topic:order"/>
+  <to uri="activemq:topic:order" pattern="InOnly"/>
   <to uri="bean:handleOrder"/>
 </route>
 ----
@@ -792,8 +792,9 @@ YAML::
       steps:
         - to:
             uri: bean:validateOrder
-        - inOnly:
+        - to:
             uri: activemq:topic:order
+            pattern: InOnly
         - to:
             uri: bean:handleOrder
 ----
@@ -1099,11 +1100,11 @@ concurrent threads using the `concurrentConsumers` and
 `maxConcurrentConsumers` options. This allows you to easier configure
 this in Camel as shown below:
 
-._Java-only: uses `inOut()` Java DSL method for request-reply pattern_
+._Java-only: uses `to(ExchangePattern.InOut, ...)` for the request-reply pattern_
 [source,java]
 ----
 from(xxx)
-.inOut().to("activemq:queue:foo?concurrentConsumers=5")
+.to(ExchangePattern.InOut, "activemq:queue:foo?concurrentConsumers=5")
 .to(yyy)
 .to(zzz);
 ----
@@ -1117,11 +1118,11 @@ If you use a fixed reply queue when doing
 Request Reply over JMS as shown in the example
 below, then pay attention.
 
-._Java-only: uses `inOut()` Java DSL method for request-reply pattern_
+._Java-only: uses `to(ExchangePattern.InOut, ...)` for the request-reply pattern_
 [source,java]
 ----
 from(xxx)
-.inOut().to("activemq:queue:foo?replyTo=bar")
+.to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=bar")
 .to(yyy)
 ----
 
@@ -1135,11 +1136,11 @@ using the `receiveTimeout` option. By default, its 1000 milliseconds. So to
 make it faster, you can set it to 250 millis to pull 4 times per second
 as shown:
 
-._Java-only: uses `inOut()` Java DSL method for request-reply pattern_
+._Java-only: uses `to(ExchangePattern.InOut, ...)` for the request-reply pattern_
 [source,java]
 ----
 from(xxx)
-.inOut().to("activemq:queue:foo?replyTo=bar&receiveTimeout=250")
+.to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=bar&receiveTimeout=250")
 .to(yyy)
 ----
 
@@ -1163,11 +1164,11 @@ the `ReplyToType` option which you can configure to `Exclusive` +
  to tell Camel that the reply queue is exclusive as shown in the example
 below:
 
-._Java-only: uses `inOut()` Java DSL method for request-reply pattern_
+._Java-only: uses `to(ExchangePattern.InOut, ...)` for the request-reply pattern_
 [source,java]
 ----
 from(xxx)
-.inOut().to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
+.to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
 .to(yyy)
 ----
 
@@ -1175,15 +1176,15 @@ Mind that the queue must be exclusive to each and every endpoint. So if
 you have two routes, then they each need a unique reply queue as shown
 in the next example:
 
-._Java-only: uses `inOut()` Java DSL method for request-reply pattern_
+._Java-only: uses `to(ExchangePattern.InOut, ...)` for the request-reply pattern_
 [source,java]
 ----
 from(xxx)
-.inOut().to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
+.to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
 .to(yyy)
 
 from(aaa)
-.inOut().to("activemq:queue:order?replyTo=order.reply&replyToType=Exclusive")
+.to(ExchangePattern.InOut, "activemq:queue:order?replyTo=order.reply&replyToType=Exclusive")
 .to(bbb)
 ----
 

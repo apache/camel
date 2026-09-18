@@ -109,7 +109,7 @@ Java::
 [source,java]
 ----
 from("direct:createStateMachine")
-    .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createMachine");
+    .to("aws2-step-functions://test?awsSfnClient=#awsSfnClient&operation=createStateMachine");
 ----
 
 XML::
@@ -118,7 +118,7 @@ XML::
 ----
 <route>
   <from uri="direct:createStateMachine"/>
-  <to uri="aws2-step-functions://test?awsSfnClient=#awsSfnClient&amp;operation=createMachine"/>
+  <to uri="aws2-step-functions://test?awsSfnClient=#awsSfnClient&amp;operation=createStateMachine"/>
 </route>
 ----
 
@@ -134,7 +134,7 @@ YAML::
             uri: aws2-step-functions://test
             parameters:
               awsSfnClient: "#awsSfnClient"
-              operation: createMachine
+              operation: createStateMachine
 ----
 ====
 

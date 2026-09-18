@@ -31,6 +31,7 @@ public class SmooksDataFormatReifier extends DataFormatReifier<SmooksDataFormat>
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("smooksConfig", definition.getSmooksConfig());
+        properties.put("allowExternalEntities", definition.getAllowExternalEntities());
     }
 
 }

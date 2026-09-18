@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public abstract class TahuDefaultComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    protected static final ConcurrentMap<String, TahuDefaultEndpoint> endpoints = new ConcurrentHashMap<>();
+    protected final ConcurrentMap<String, TahuDefaultEndpoint> endpoints = new ConcurrentHashMap<>();
 
     @Metadata(label = "advanced")
     TahuConfiguration configuration;
@@ -112,6 +112,12 @@ public abstract class TahuDefaultComponent extends DefaultComponent implements S
      */
     TahuConfiguration createConfiguration() {
         return new TahuConfiguration();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        endpoints.clear();
+        super.doStop();
     }
 
     @Override

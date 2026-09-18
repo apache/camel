@@ -6,6 +6,7 @@
     "title": "Evaluate Language",
     "description": "Evaluate Language and display result",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.EvalLanguageDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -97,6 +98,24 @@
       "autowired": false,
       "secret": false,
       "description": "Optional exchange variables"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "description": "The evaluation status, success or failed (only present when a template was given)"
+      },
+      "result": {
+        "type": "string",
+        "description": "The evaluation result (only present on success)"
+      },
+      "exception": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "The exception, as an opaque JSON object (only present on failure)"
+      }
     }
   }
 }

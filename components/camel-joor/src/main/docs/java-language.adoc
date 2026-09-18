@@ -32,7 +32,7 @@ The Java language allows the following variables to be used in the script:
 | `exchange` | Exchange | The Camel Exchange
 | `message` | Message | The Camel message
 | `body` | Object | The message body
-| `optionalBody` | The body wrapped in `java.util.Optional`.
+| `optionalBody` | Optional | The body wrapped in `java.util.Optional`.
 |===
 
 === Functions
@@ -304,7 +304,8 @@ from("seda:orders")
 
 === Hot re-load
 
-You can turn off pre-compilation for the Java language and then Camel will recompile the script for each message.
+You can turn off pre-compilation for the Java language and then Camel will recompile an external script resource for each message
+(an inline script is still only compiled once, on first use, as its text cannot change).
 You can externalize the code into a resource file, which will be reloaded on each message as shown:
 
 ._Java-only: programmatic hot-reload configuration with Java DSL_

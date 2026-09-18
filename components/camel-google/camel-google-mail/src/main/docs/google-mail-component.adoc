@@ -118,17 +118,17 @@ YAML::
 - route:
     from:
       uri: "google-mail-stream:0"
-    steps:
-      - setVariable:
-          name: addLabels
-          constant: "Work"
-      - setVariable:
-          name: removeLabels
-          constant: "INBOX,UNREAD"
-      - transformDataType:
-          toType: "google-mail:update-message-labels"
-      - to:
-          uri: "google-mail:messages/modify"
+      steps:
+        - setVariable:
+            name: addLabels
+            constant: "Work"
+        - setVariable:
+            name: removeLabels
+            constant: "INBOX,UNREAD"
+        - transformDataType:
+            toType: "google-mail:update-message-labels"
+        - to:
+            uri: "google-mail:messages/modify"
 ----
 
 XML::
@@ -238,38 +238,38 @@ YAML::
 - route:
     from:
       uri: "google-mail-stream:0"
-    steps:
-      - setBody:
-          constant: "Thank you for your message. I will respond soon."
-      - transformDataType:
-          toType: "google-mail:draft"
-      - to:
-          uri: "google-mail:drafts/create"
-          parameters:
-            inBody: content
+      steps:
+        - setBody:
+            constant: "Thank you for your message. I will respond soon."
+        - transformDataType:
+            toType: "google-mail:draft"
+        - to:
+            uri: "google-mail:drafts/create"
+            parameters:
+              inBody: content
 
 # Create a new draft (no threading)
 - route:
     from:
       uri: "direct:newDraft"
-    steps:
-      - setBody:
-          constant: "This is a new draft message"
-      - setHeader:
-          name: CamelGoogleMailStreamFrom
-          constant: "sender@example.com"
-      - setHeader:
-          name: CamelGoogleMailStreamTo
-          constant: "recipient@example.com"
-      - setHeader:
-          name: CamelGoogleMailStreamSubject
-          constant: "New Draft"
-      - transformDataType:
-          toType: "google-mail:draft"
-      - to:
-          uri: "google-mail:drafts/create"
-          parameters:
-            inBody: content
+      steps:
+        - setBody:
+            constant: "This is a new draft message"
+        - setHeader:
+            name: CamelGoogleMailStreamFrom
+            constant: "sender@example.com"
+        - setHeader:
+            name: CamelGoogleMailStreamTo
+            constant: "recipient@example.com"
+        - setHeader:
+            name: CamelGoogleMailStreamSubject
+            constant: "New Draft"
+        - transformDataType:
+            toType: "google-mail:draft"
+        - to:
+            uri: "google-mail:drafts/create"
+            parameters:
+              inBody: content
 ----
 
 XML::

@@ -170,6 +170,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": target.getConfiguration().setLogMiningFlushTableName(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": target.getConfiguration().setLogMiningIncludeRedoSql(property(camelContext, boolean.class, value)); return true;
+        case "logmininglogcountgrowthmax":
+        case "logMiningLogCountGrowthMax": target.getConfiguration().setLogMiningLogCountGrowthMax(property(camelContext, int.class, value)); return true;
         case "logmininglogcountmin":
         case "logMiningLogCountMin": target.getConfiguration().setLogMiningLogCountMin(property(camelContext, int.class, value)); return true;
         case "logminingpathdictionary":
@@ -498,6 +500,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": return java.lang.String.class;
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": return boolean.class;
+        case "logmininglogcountgrowthmax":
+        case "logMiningLogCountGrowthMax": return int.class;
         case "logmininglogcountmin":
         case "logMiningLogCountMin": return int.class;
         case "logminingpathdictionary":
@@ -827,6 +831,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningFlushTableName": return target.getConfiguration().getLogMiningFlushTableName();
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": return target.getConfiguration().isLogMiningIncludeRedoSql();
+        case "logmininglogcountgrowthmax":
+        case "logMiningLogCountGrowthMax": return target.getConfiguration().getLogMiningLogCountGrowthMax();
         case "logmininglogcountmin":
         case "logMiningLogCountMin": return target.getConfiguration().getLogMiningLogCountMin();
         case "logminingpathdictionary":

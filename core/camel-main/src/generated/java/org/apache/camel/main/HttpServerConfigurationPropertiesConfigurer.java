@@ -38,12 +38,19 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("JwtKeystoreType", java.lang.String.class);
         map.put("MaxBodySize", java.lang.Long.class);
         map.put("McpEnabled", boolean.class);
+        map.put("McpInstructions", java.lang.String.class);
         map.put("McpPath", java.lang.String.class);
+        map.put("McpResourceTimeout", long.class);
+        map.put("McpServerDescription", java.lang.String.class);
+        map.put("McpServerIcons", java.lang.String.class);
         map.put("McpServerName", java.lang.String.class);
+        map.put("McpServerTitle", java.lang.String.class);
+        map.put("McpServerWebsiteUrl", java.lang.String.class);
         map.put("McpSessionIdleTtl", long.class);
         map.put("McpSessionKeepAliveInterval", long.class);
         map.put("McpTags", java.lang.String.class);
         map.put("McpToolTimeout", long.class);
+        map.put("McpTransport", java.lang.String.class);
         map.put("Path", java.lang.String.class);
         map.put("Port", int.class);
         map.put("StaticContextPath", java.lang.String.class);
@@ -87,10 +94,22 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "maxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
         case "mcpenabled":
         case "mcpEnabled": target.setMcpEnabled(property(camelContext, boolean.class, value)); return true;
+        case "mcpinstructions":
+        case "mcpInstructions": target.setMcpInstructions(property(camelContext, java.lang.String.class, value)); return true;
         case "mcppath":
         case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpresourcetimeout":
+        case "mcpResourceTimeout": target.setMcpResourceTimeout(property(camelContext, long.class, value)); return true;
+        case "mcpserverdescription":
+        case "mcpServerDescription": target.setMcpServerDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpservericons":
+        case "mcpServerIcons": target.setMcpServerIcons(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpservername":
         case "mcpServerName": target.setMcpServerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpservertitle":
+        case "mcpServerTitle": target.setMcpServerTitle(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpserverwebsiteurl":
+        case "mcpServerWebsiteUrl": target.setMcpServerWebsiteUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpsessionidlettl":
         case "mcpSessionIdleTtl": target.setMcpSessionIdleTtl(property(camelContext, long.class, value)); return true;
         case "mcpsessionkeepaliveinterval":
@@ -99,6 +118,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpTags": target.setMcpTags(property(camelContext, java.lang.String.class, value)); return true;
         case "mcptooltimeout":
         case "mcpToolTimeout": target.setMcpToolTimeout(property(camelContext, long.class, value)); return true;
+        case "mcptransport":
+        case "mcpTransport": target.setMcpTransport(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
         case "staticcontextpath":
@@ -151,10 +172,22 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "maxBodySize": return java.lang.Long.class;
         case "mcpenabled":
         case "mcpEnabled": return boolean.class;
+        case "mcpinstructions":
+        case "mcpInstructions": return java.lang.String.class;
         case "mcppath":
         case "mcpPath": return java.lang.String.class;
+        case "mcpresourcetimeout":
+        case "mcpResourceTimeout": return long.class;
+        case "mcpserverdescription":
+        case "mcpServerDescription": return java.lang.String.class;
+        case "mcpservericons":
+        case "mcpServerIcons": return java.lang.String.class;
         case "mcpservername":
         case "mcpServerName": return java.lang.String.class;
+        case "mcpservertitle":
+        case "mcpServerTitle": return java.lang.String.class;
+        case "mcpserverwebsiteurl":
+        case "mcpServerWebsiteUrl": return java.lang.String.class;
         case "mcpsessionidlettl":
         case "mcpSessionIdleTtl": return long.class;
         case "mcpsessionkeepaliveinterval":
@@ -163,6 +196,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpTags": return java.lang.String.class;
         case "mcptooltimeout":
         case "mcpToolTimeout": return long.class;
+        case "mcptransport":
+        case "mcpTransport": return java.lang.String.class;
         case "path": return java.lang.String.class;
         case "port": return int.class;
         case "staticcontextpath":
@@ -211,10 +246,22 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "maxBodySize": return target.getMaxBodySize();
         case "mcpenabled":
         case "mcpEnabled": return target.isMcpEnabled();
+        case "mcpinstructions":
+        case "mcpInstructions": return target.getMcpInstructions();
         case "mcppath":
         case "mcpPath": return target.getMcpPath();
+        case "mcpresourcetimeout":
+        case "mcpResourceTimeout": return target.getMcpResourceTimeout();
+        case "mcpserverdescription":
+        case "mcpServerDescription": return target.getMcpServerDescription();
+        case "mcpservericons":
+        case "mcpServerIcons": return target.getMcpServerIcons();
         case "mcpservername":
         case "mcpServerName": return target.getMcpServerName();
+        case "mcpservertitle":
+        case "mcpServerTitle": return target.getMcpServerTitle();
+        case "mcpserverwebsiteurl":
+        case "mcpServerWebsiteUrl": return target.getMcpServerWebsiteUrl();
         case "mcpsessionidlettl":
         case "mcpSessionIdleTtl": return target.getMcpSessionIdleTtl();
         case "mcpsessionkeepaliveinterval":
@@ -223,6 +270,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpTags": return target.getMcpTags();
         case "mcptooltimeout":
         case "mcpToolTimeout": return target.getMcpToolTimeout();
+        case "mcptransport":
+        case "mcpTransport": return target.getMcpTransport();
         case "path": return target.getPath();
         case "port": return target.getPort();
         case "staticcontextpath":

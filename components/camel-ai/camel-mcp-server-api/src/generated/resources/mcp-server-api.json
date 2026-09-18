@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "mcp-server-api",
     "title": "Mcp Server Api",
-    "description": "Runtime-agnostic bridge and engine SPI to expose ai-tool routes as MCP tools",
+    "description": "Runtime-agnostic bridge and engine SPI to expose ai-tool and ai-resource routes over MCP",
     "deprecated": false,
     "firstVersion": "4.22.0",
     "supportLevel": "Preview",

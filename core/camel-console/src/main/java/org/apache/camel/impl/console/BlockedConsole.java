@@ -16,18 +16,32 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "blocked", displayName = "Blocked Exchanges", description = "Display blocked exchanges")
 public class BlockedConsole extends AbstractDevConsole {
+
+    public record Entry(
+            @Metadata(description = "The exchange ID") String exchangeId,
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The node ID") String nodeId,
+            @Metadata(description = "The wait duration in milliseconds") long duration) {
+    }
+
+    public record Response(
+            @Metadata(description = "Number of blocked exchanges") int blocked,
+            @Metadata(description = "The blocked exchanges (only present when there are any)") List<Entry> exchanges) {
+    }
 
     public BlockedConsole() {
         super("camel", "blocked", "Blocked Exchanges", "Display blocked exchanges");
@@ -49,25 +63,17 @@ public class BlockedConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         AsyncProcessorAwaitManager am = PluginHelper.getAsyncProcessorAwaitManager(getCamelContext());
-        root.put("blocked", am.size());
 
-        final JsonArray list = new JsonArray();
+        List<Entry> entries = new ArrayList<>();
         for (AsyncProcessorAwaitManager.AwaitThread at : am.browse()) {
-            JsonObject props = new JsonObject();
-            props.put("exchangeId", at.getExchange().getExchangeId());
-            props.put("routeId", at.getRouteId());
-            props.put("nodeId", at.getNodeId());
-            props.put("duration", at.getWaitDuration());
-            list.add(props);
+            entries.add(new Entry(
+                    at.getExchange().getExchangeId(), at.getRouteId(), at.getNodeId(), at.getWaitDuration()));
         }
-        if (!list.isEmpty()) {
-            root.put("exchanges", list);
-        }
-        return root;
+
+        Response response = new Response(am.size(), entries.isEmpty() ? null : entries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }

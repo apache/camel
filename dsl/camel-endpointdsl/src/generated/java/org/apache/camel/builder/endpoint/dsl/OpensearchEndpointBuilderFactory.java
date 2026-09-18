@@ -163,7 +163,8 @@ public interface OpensearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The time in ms before retry.
+         * Deprecated: this option has no effect. It was used by the old
+         * low-level REST client and is ignored by the current client.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -173,12 +174,14 @@ public interface OpensearchEndpointBuilderFactory {
          * @param maxRetryTimeout the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default OpensearchEndpointBuilder maxRetryTimeout(int maxRetryTimeout) {
             doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
         }
         /**
-         * The time in ms before retry.
+         * Deprecated: this option has no effect. It was used by the old
+         * low-level REST client and is ignored by the current client.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -188,6 +191,7 @@ public interface OpensearchEndpointBuilderFactory {
          * @param maxRetryTimeout the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default OpensearchEndpointBuilder maxRetryTimeout(String maxRetryTimeout) {
             doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
@@ -813,7 +817,8 @@ public interface OpensearchEndpointBuilderFactory {
             return "CamelOpensearchWaitForActiveShards";
         }
         /**
-         * The starting index of the response.
+         * Time in ms during which OpenSearch will keep the search context
+         * alive.
          * 
          * The option is a: {@code Integer} type.
          * 

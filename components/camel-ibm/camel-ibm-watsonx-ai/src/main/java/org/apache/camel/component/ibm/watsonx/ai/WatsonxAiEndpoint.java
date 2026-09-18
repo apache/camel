@@ -139,7 +139,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the TextGenerationService instance.
      */
-    public TextGenerationService getTextGenerationService() {
+    public synchronized TextGenerationService getTextGenerationService() {
         if (textGenerationService == null) {
             textGenerationService = WatsonxAiServiceFactory.createTextGenerationService(configuration);
         }
@@ -149,7 +149,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the ChatService instance.
      */
-    public ChatService getChatService() {
+    public synchronized ChatService getChatService() {
         if (chatService == null) {
             chatService = WatsonxAiServiceFactory.createChatService(configuration);
         }
@@ -159,7 +159,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the EmbeddingService instance.
      */
-    public EmbeddingService getEmbeddingService() {
+    public synchronized EmbeddingService getEmbeddingService() {
         if (embeddingService == null) {
             embeddingService = WatsonxAiServiceFactory.createEmbeddingService(configuration);
         }
@@ -169,7 +169,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the RerankService instance.
      */
-    public RerankService getRerankService() {
+    public synchronized RerankService getRerankService() {
         if (rerankService == null) {
             rerankService = WatsonxAiServiceFactory.createRerankService(configuration);
         }
@@ -179,7 +179,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the TokenizationService instance.
      */
-    public TokenizationService getTokenizationService() {
+    public synchronized TokenizationService getTokenizationService() {
         if (tokenizationService == null) {
             tokenizationService = WatsonxAiServiceFactory.createTokenizationService(configuration);
         }
@@ -189,7 +189,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the DetectionService instance.
      */
-    public DetectionService getDetectionService() {
+    public synchronized DetectionService getDetectionService() {
         if (detectionService == null) {
             detectionService = WatsonxAiServiceFactory.createDetectionService(configuration);
         }
@@ -199,7 +199,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the TextExtractionService instance.
      */
-    public TextExtractionService getTextExtractionService() {
+    public synchronized TextExtractionService getTextExtractionService() {
         if (textExtractionService == null) {
             textExtractionService = WatsonxAiServiceFactory.createTextExtractionService(configuration);
         }
@@ -209,7 +209,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the TextClassificationService instance.
      */
-    public TextClassificationService getTextClassificationService() {
+    public synchronized TextClassificationService getTextClassificationService() {
         if (textClassificationService == null) {
             textClassificationService = WatsonxAiServiceFactory.createTextClassificationService(configuration);
         }
@@ -219,7 +219,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the TimeSeriesService instance.
      */
-    public TimeSeriesService getTimeSeriesService() {
+    public synchronized TimeSeriesService getTimeSeriesService() {
         if (timeSeriesService == null) {
             timeSeriesService = WatsonxAiServiceFactory.createTimeSeriesService(configuration);
         }
@@ -229,7 +229,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the FoundationModelService instance.
      */
-    public FoundationModelService getFoundationModelService() {
+    public synchronized FoundationModelService getFoundationModelService() {
         if (foundationModelService == null) {
             foundationModelService = WatsonxAiServiceFactory.createFoundationModelService(configuration);
         }
@@ -239,7 +239,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the DeploymentService instance.
      */
-    public DeploymentService getDeploymentService() {
+    public synchronized DeploymentService getDeploymentService() {
         if (deploymentService == null) {
             deploymentService = WatsonxAiServiceFactory.createDeploymentService(configuration);
         }
@@ -249,7 +249,7 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     /**
      * Gets or creates the ToolService instance.
      */
-    public ToolService getToolService() {
+    public synchronized ToolService getToolService() {
         if (toolService == null) {
             toolService = WatsonxAiServiceFactory.createToolService(configuration);
         }

@@ -31,9 +31,6 @@
     <name>Camel :: Avro</name>
     <description>Camel Avro data format</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -69,7 +69,16 @@ public class CamelJGroupsReceiver implements Receiver {
 
     @Override
     public void receive(Message message) {
-        Exchange exchange = endpoint.createExchange(message);
+        Exchange exchange;
+        try {
+            exchange = endpoint.createExchange(message);
+        } catch (Exception e) {
+            // the message could not be turned into an exchange, for example because its body type was
+            // refused by the configured deserializationFilter, so let the consumer deal with the failure
+            consumer.getExceptionHandler().handleException(
+                    "Error creating exchange for message " + message + ". This message is dropped.", e);
+            return;
+        }
         try {
             LOG.debug("Processing message: {}", message);
             processor.process(exchange, doneSync -> {

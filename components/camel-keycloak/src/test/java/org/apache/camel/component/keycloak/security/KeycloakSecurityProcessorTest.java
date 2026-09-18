@@ -121,6 +121,73 @@ class KeycloakSecurityProcessorTest {
         assertFalse(routeReached.get(), "Route body must not be reached for an inactive token");
     }
 
+    /**
+     * Issuer validation is opt-in, so an operator who enabled it is asking for tokens from other issuers to be refused.
+     * RFC 7662 makes "iss" optional in an introspection response, so an introspection endpoint that is a broker, a
+     * gateway, or a minimal implementation can return an active token with no issuer - which is not evidence that the
+     * token came from the expected one.
+     */
+    @Test
+    void testActiveIntrospectionWithoutIssuerClaimRejected() throws Exception {
+        KeycloakTokenIntrospector introspector = introspectorReturning(Map.of("active", true));
+
+        KeycloakSecurityPolicy policy = introspectionPolicy(introspector);
+        policy.setValidateIssuer(true);
+
+        AtomicBoolean routeReached = new AtomicBoolean(false);
+        KeycloakSecurityProcessor processor = new KeycloakSecurityProcessor(e -> routeReached.set(true), policy);
+
+        CamelAuthorizationException e
+                = assertThrows(CamelAuthorizationException.class, () -> processor.process(bearer("x")));
+        assertTrue(e.getMessage().contains("Token issuer missing"), "unexpected message: " + e.getMessage());
+        assertFalse(routeReached.get(), "Route body must not be reached for a token with no issuer");
+    }
+
+    @Test
+    void testActiveIntrospectionWithTheExpectedIssuerAccepted() throws Exception {
+        // getExpectedIssuer() is derived as serverUrl + "/realms/" + realm
+        String issuer = "http://localhost:8080/realms/test-realm";
+        KeycloakTokenIntrospector introspector = introspectorReturning(Map.of("active", true, "iss", issuer));
+
+        KeycloakSecurityPolicy policy = introspectionPolicy(introspector);
+        policy.setValidateIssuer(true);
+
+        AtomicBoolean routeReached = new AtomicBoolean(false);
+        KeycloakSecurityProcessor processor = new KeycloakSecurityProcessor(e -> routeReached.set(true), policy);
+
+        processor.process(bearer("x"));
+        assertTrue(routeReached.get(), "Route body must be reached for a token from the expected issuer");
+    }
+
+    private static KeycloakTokenIntrospector introspectorReturning(Map<String, Object> claims) {
+        return new KeycloakTokenIntrospector(
+                "http://localhost:8080", "test-realm", "test-client", "test-secret", (TokenCache) null) {
+            @Override
+            public IntrospectionResult introspect(String token) {
+                return new IntrospectionResult(claims);
+            }
+        };
+    }
+
+    private static KeycloakSecurityPolicy introspectionPolicy(KeycloakTokenIntrospector introspector) {
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy() {
+            @Override
+            public boolean isUseTokenIntrospection() {
+                return true;
+            }
+
+            @Override
+            public KeycloakTokenIntrospector getTokenIntrospector() {
+                return introspector;
+            }
+        };
+        policy.setServerUrl("http://localhost:8080");
+        policy.setRealm("test-realm");
+        policy.setClientId("test-client");
+        policy.setClientSecret("test-secret");
+        return policy;
+    }
+
     @Test
     void testTokenMissingExpectedAudienceRejectedLocalJwt() throws Exception {
         String issuer = "http://localhost:8080/realms/test-realm";

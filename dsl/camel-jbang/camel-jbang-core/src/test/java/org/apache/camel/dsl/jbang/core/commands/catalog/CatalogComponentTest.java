@@ -71,6 +71,17 @@ class CatalogComponentTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void shouldSuggestComponentByProtocolOrProductName() throws Exception {
+        CatalogComponent command = createCommand();
+        command.filterName = "servicebus";
+        int exit = command.doCall();
+        assertEquals(0, exit);
+        String out = printer.getOutput();
+        assertTrue(out.contains("Did you mean? azure-servicebus"),
+                "a product name should suggest the component using it, was: " + out);
+    }
+
+    @Test
     void shouldSuggestSimilarWhenFilterHasNoMatch() throws Exception {
         CatalogComponent command = createCommand();
         command.filterName = "kafkaa";

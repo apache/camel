@@ -51,29 +51,4 @@ public class VariableFunctionFactoryTest extends AbstractSimpleFunctionFactoryTe
         assertNotNull(vars);
         assertEquals("bar", vars.get("foo"));
     }
-
-    @Test
-    public void testCreateCodeVariable() {
-        assertEquals("variable(exchange, \"myVar\")", createCode("variable.myVar"));
-    }
-
-    @Test
-    public void testCreateCodeVariables() {
-        assertEquals("variables(exchange)", createCode("variables"));
-    }
-
-    @Test
-    public void testCreateCodeVariablesSize() {
-        assertEquals("variablesSize(exchange)", createCode("variables.size"));
-        assertEquals("variablesSize(exchange)", createCode("variables.size()"));
-        assertEquals("variablesSize(exchange)", createCode("variables.length"));
-        assertEquals("variablesSize(exchange)", createCode("variables.length()"));
-    }
-
-    @Test
-    public void testCreateCodeVariableAs() {
-        assertEquals("variableAs(exchange, \"num\", Integer.class)", createCode("variableAs(num, Integer)"));
-        assertEquals("variableAs(exchange, \"num\", java.lang.Integer.class)",
-                createCode("variableAs(num, java.lang.Integer)"));
-    }
 }

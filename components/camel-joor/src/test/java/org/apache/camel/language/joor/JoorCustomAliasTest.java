@@ -32,7 +32,7 @@ public class JoorCustomAliasTest extends CamelTestSupport {
                                                + "user=org.apache.camel.language.joor.MyUser\n"
                                                + "import static org.apache.camel.language.joor.JoorCustomImportsTest.echo;");
 
-        JoorLanguage joor = (JoorLanguage) context.resolveLanguage("joor");
+        JavaLanguage joor = (JavaLanguage) context.resolveLanguage("java");
         joor.setConfigResource("ref:MyConfig");
         return context;
     }
@@ -44,9 +44,9 @@ public class JoorCustomAliasTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         // must return null from script as its a void operator, but the joor language expects a returned value
-                        .script(joor(
+                        .script(java(
                                 "var u = new user(); u.setName('Tony'); u.setAge(22); exchange.getMessage().setBody(u); return null;"))
-                        .transform().joor("var u = bodyAs(user); return echo(u.getName());")
+                        .transform().java("var u = bodyAs(user); return echo(u.getName());")
                         .to("mock:result");
             }
         };

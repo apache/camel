@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "RedisKeyValueRepository",
+    "javaType": "org.apache.camel.component.redis.RedisKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Redis Key Value Repository",
+    "description": "A KeyValueRepository backed by Redis (Redisson client).",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-redis",
+    "version": "4.23.0-SNAPSHOT",
+    "properties": { "redisson": { "index": 0, "kind": "property", "displayName": "Redisson", "label": "advanced", "required": false, "type": "object", "javaType": "org.redisson.api.RedissonClient", "deprecated": false, "autowired": false, "secret": false, "description": "To use an existing Redisson client to connect to Redis server" }, "endpoint": { "index": 1, "kind": "property", "displayName": "Endpoint", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "URL to remote Redis server (host:port)" }, "keyPrefix": { "index": 2, "kind": "property", "displayName": "Key Prefix", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "camel-kvr:", "description": "Key prefix used to namespace entries in Redis" }, "deserializationFilter": { "index": 3, "kind": "property", "displayName": "Deserialization Filter", "label": "advanced,security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing values read back from the repository. When not set, the JVM-wide jdk.serialFilter is used if present; otherwise a conservative default filter denying java.net.* and otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen this pattern when storing instances of your own classes in the repository." } }
+  }
+}
+

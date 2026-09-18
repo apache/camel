@@ -6,6 +6,7 @@
     "title": "Camel Tracing",
     "description": "Trace routed messages",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.TraceDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -47,6 +48,83 @@
       "autowired": false,
       "secret": false,
       "description": "Whether to enable or disable tracing"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "description": "Whether tracing is enabled (only present when a backlog tracer is available)"
+      },
+      "traces": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "description": "The traced messages, as opaque JSON objects (only present when dumping)"
+      },
+      "standby": {
+        "type": "boolean",
+        "description": "Whether the tracer is in standby mode (only present when not dumping)"
+      },
+      "counter": {
+        "type": "integer",
+        "description": "Total number of traced messages (only present when not dumping)"
+      },
+      "backlogSize": {
+        "type": "integer",
+        "description": "The current backlog size (only present when not dumping)"
+      },
+      "queueSize": {
+        "type": "integer",
+        "description": "The current queue size (only present when not dumping)"
+      },
+      "removeOnDump": {
+        "type": "boolean",
+        "description": "Whether messages are removed from the backlog when dumped (only present when not dumping)"
+      },
+      "traceFilter": {
+        "type": "string",
+        "description": "The trace filter (only present when configured)"
+      },
+      "tracePattern": {
+        "type": "string",
+        "description": "The trace pattern (only present when configured)"
+      },
+      "traceRests": {
+        "type": "boolean",
+        "description": "Whether rests are traced (only present when not dumping)"
+      },
+      "traceTemplates": {
+        "type": "boolean",
+        "description": "Whether route templates\/Kamelets are traced (only present when not dumping)"
+      },
+      "bodyMaxChars": {
+        "type": "integer",
+        "description": "Maximum size of the message body to include (only present when not dumping)"
+      },
+      "bodyIncludeFiles": {
+        "type": "boolean",
+        "description": "Whether file-based message bodies are included (only present when not dumping)"
+      },
+      "bodyIncludeStreams": {
+        "type": "boolean",
+        "description": "Whether streaming message bodies are included (only present when not dumping)"
+      },
+      "includeExchangeProperties": {
+        "type": "boolean",
+        "description": "Whether exchange properties are included (only present when not dumping)"
+      },
+      "includeExchangeVariables": {
+        "type": "boolean",
+        "description": "Whether exchange variables are included (only present when not dumping)"
+      },
+      "includeException": {
+        "type": "boolean",
+        "description": "Whether exceptions are included (only present when not dumping)"
+      }
     }
   }
 }

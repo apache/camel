@@ -47,7 +47,10 @@ public interface InfinispanConstants {
     @Metadata(label = "producer", description = "The operation to perform.",
               javaType = "org.apache.camel.component.infinispan.InfinispanOperation")
     String OPERATION = "CamelInfinispanOperation";
-    @Metadata(label = "producer", description = "The name of the header whose value is the result", javaType = "String")
+    @Metadata(label = "producer", description = "The name of the header whose value is the result", javaType = "String",
+              deprecationNote = "Never set nor read by the component. Use CamelInfinispanOperationResultHeader to choose"
+                                + " the header that carries the result of an operation.")
+    @Deprecated
     String RESULT = "CamelInfinispanOperationResult";
     @Metadata(label = "producer", description = "Store the operation result in a header instead of the message body",
               javaType = "String")
@@ -66,14 +69,14 @@ public interface InfinispanConstants {
     @Metadata(label = "producer", description = "The Time Unit of an entry Max Idle Time.",
               javaType = "java.util.concurrent.TimeUnit")
     String MAX_IDLE_TIME_UNIT = "CamelInfinispanMaxIdleTimeUnit";
-    @Metadata(label = "consumer",
+    @Metadata(label = "producer",
               description = "Signals that a write operation's return value will be ignored, so reading the existing value from a store or from a remote node is not necessary.",
               javaType = "boolean", defaultValue = "false", applicableFor = SCHEME_EMBEDDED)
     String IGNORE_RETURN_VALUES = "CamelInfinispanIgnoreReturnValues";
     @Metadata(label = "consumer", description = "The event data.", javaType = "Object")
     String EVENT_DATA = "CamelInfinispanEventData";
     @Metadata(label = "producer",
-              description = "The QueryBuilder to use for QUERY command, if not present the command defaults to InifinispanConfiguration's one",
+              description = "The QueryBuilder to use for QUERY command, if not present the command defaults to the InfinispanConfiguration one",
               javaType = "org.apache.camel.component.infinispan.InfinispanQueryBuilder")
     String QUERY_BUILDER = "CamelInfinispanQueryBuilder";
     @Metadata(label = "consumer", description = "Provides access to the version of the created cache entry.", javaType = "long",

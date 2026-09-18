@@ -47,6 +47,21 @@ public final class ZooKeeperServiceFactory {
                 .addRemoteMapping(ZooKeeperRemoteService::new)
                 .build();
     }
+
+    public static ZooKeeperService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final ZooKeeperService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ZooKeeperService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonZooKeeperService(new ZooKeeperLocalContainerService(), "zookeeper"))
+                    .addRemoteMapping(ZooKeeperRemoteService::new);
+            INSTANCE = instance.build();
+        }
+    }
 }
 
 class ZooKeeperLocalContainerService extends ZooKeeperLocalContainerInfraService

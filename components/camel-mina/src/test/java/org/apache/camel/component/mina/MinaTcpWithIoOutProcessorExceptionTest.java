@@ -45,7 +45,7 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends BaseMinaTest {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true", getPort()).process(e -> {
+                fromF("mina:tcp://localhost:%1$s?textline=true&sync=true&muteException=false", getPort()).process(e -> {
                     assertEquals("Hello World", e.getIn().getBody(String.class));
                     // simulate a problem processing the input to see if we can handle it properly
                     throw new IllegalArgumentException("Forced exception");

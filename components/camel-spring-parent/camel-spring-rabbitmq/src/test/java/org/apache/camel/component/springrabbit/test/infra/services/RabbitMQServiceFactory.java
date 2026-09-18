@@ -26,4 +26,8 @@ public final class RabbitMQServiceFactory {
     public static RabbitMQService createService() {
         return org.apache.camel.test.infra.rabbitmq.services.RabbitMQServiceFactory.createService();
     }
+
+    public static RabbitMQService createSingletonService() {
+        return org.apache.camel.test.infra.rabbitmq.services.RabbitMQServiceFactory.createSingletonService();
+    }
 }

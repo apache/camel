@@ -43,7 +43,7 @@ import static org.awaitility.Awaitility.await;
 
 public class MasterEndpointFailoverIT {
     @RegisterExtension
-    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
+    static ZooKeeperService service = ZooKeeperServiceFactory.createSingletonService();
 
     private static final transient Logger LOG = LoggerFactory.getLogger(MasterEndpointFailoverIT.class);
 

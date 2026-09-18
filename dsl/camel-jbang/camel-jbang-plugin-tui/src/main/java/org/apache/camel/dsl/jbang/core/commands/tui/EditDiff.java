@@ -90,7 +90,210 @@ final class EditDiff {
     record DiffEntry(char type, String text, int lineNum) {
     }
 
+    /** Added and removed line counts of a diff, as "+3 -1". */
+    static String summary(List<DiffEntry> entries) {
+        long added = entries.stream().filter(e -> e.type() == '+').count();
+        long removed = entries.stream().filter(e -> e.type() == '-').count();
+        return "+" + added + " -" + removed;
+    }
+
+    /**
+     * Renders unified diff entries the way the source editor's F7 overlay does (removed lines on red, added lines on
+     * green, a line number gutter), starting at {@code scrollY}. Returns the scroll offset actually used, clamped so
+     * the last entry stays visible.
+     */
+    static int render(
+            dev.tamboui.terminal.Frame frame, dev.tamboui.layout.Rect inner, List<DiffEntry> entries,
+            int scrollY) {
+        if (entries.isEmpty()) {
+            entries = List.of(new DiffEntry(' ', "(no changes)", 0));
+        }
+        int maxLineNum = entries.stream().mapToInt(DiffEntry::lineNum).max().orElse(1);
+        int lineDigits = Math.max(2, String.valueOf(maxLineNum).length());
+        int gutterWidth = lineDigits + 2;
+
+        scrollY = Math.max(0, Math.min(scrollY, Math.max(0, entries.size() - inner.height())));
+        for (int r = 0; r < inner.height(); r++) {
+            int idx = scrollY + r;
+            if (idx >= entries.size()) {
+                break;
+            }
+            int screenY = inner.top() + r;
+            DiffEntry entry = entries.get(idx);
+            dev.tamboui.style.Style lineStyle;
+            dev.tamboui.style.Style gutterStyle;
+            if (entry.type() == '-') {
+                lineStyle = dev.tamboui.style.Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
+                        .bg(dev.tamboui.style.Color.rgb(0x6E, 0x1B, 0x1B));
+                gutterStyle = lineStyle;
+            } else if (entry.type() == '+') {
+                lineStyle = dev.tamboui.style.Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
+                        .bg(dev.tamboui.style.Color.rgb(0x1B, 0x4D, 0x1B));
+                gutterStyle = lineStyle;
+            } else if (entry.type() == '~') {
+                lineStyle = dev.tamboui.style.Style.EMPTY.dim();
+                gutterStyle = dev.tamboui.style.Style.EMPTY.dim();
+            } else {
+                lineStyle = dev.tamboui.style.Style.EMPTY;
+                gutterStyle = dev.tamboui.style.Style.EMPTY.dim();
+            }
+
+            // fill entire row with background for changed lines
+            if (entry.type() == '-' || entry.type() == '+') {
+                dev.tamboui.layout.Rect rowRect = new dev.tamboui.layout.Rect(inner.left(), screenY, inner.width(), 1);
+                frame.buffer().setStyle(rowRect, lineStyle);
+            }
+
+            // line number from original file (for -) or current file (for + and context)
+            String lineNum = entry.lineNum() > 0
+                    ? String.format("%" + lineDigits + "d ", entry.lineNum())
+                    : " ".repeat(lineDigits + 1);
+            frame.buffer().setString(inner.left(), screenY, lineNum, gutterStyle);
+            frame.buffer().set(inner.left() + gutterWidth - 1, screenY,
+                    new dev.tamboui.buffer.Cell("│", gutterStyle));
+
+            int textX = inner.left() + gutterWidth;
+            int maxWidth = Math.max(0, inner.width() - gutterWidth);
+            String prefix = entry.type() == ' ' ? "  " : entry.type() + " ";
+            String text = prefix + entry.text();
+            if (text.length() > maxWidth) {
+                text = text.substring(0, maxWidth);
+            }
+            frame.buffer().setString(textX, screenY, text, lineStyle);
+        }
+        return scrollY;
+    }
+
     static final DiffEntry SEPARATOR = new DiffEntry('~', "───", -1);
+
+    /**
+     * One change of a diff, anchored by context lines the way a unified diff hunk is, so it can be applied to a buffer
+     * whose line numbers have shifted (the context is searched, not assumed). {@code body} holds the lines of the hunk
+     * in order: context (' '), removed ('-') and added ('+').
+     */
+    record Hunk(List<String> before, List<DiffEntry> body, List<String> after) {
+
+        /** The lines of the original text this hunk expects: context before, body context and removed lines, after. */
+        List<String> originalLines() {
+            List<String> lines = new ArrayList<>(before);
+            for (DiffEntry e : body) {
+                if (e.type() != '+') {
+                    lines.add(e.text());
+                }
+            }
+            lines.addAll(after);
+            return lines;
+        }
+
+        int added() {
+            return (int) body.stream().filter(e -> e.type() == '+').count();
+        }
+
+        int removed() {
+            return (int) body.stream().filter(e -> e.type() == '-').count();
+        }
+
+        /**
+         * Where the given lines contain this hunk's original lines, starting the search at {@code fromRow}; -1 if not.
+         */
+        int locate(List<String> lines, int fromRow) {
+            List<String> pattern = originalLines();
+            if (pattern.isEmpty()) {
+                return Math.min(Math.max(0, fromRow), lines.size());
+            }
+            for (int start = Math.max(0, fromRow); start + pattern.size() <= lines.size(); start++) {
+                boolean match = true;
+                for (int i = 0; i < pattern.size(); i++) {
+                    if (!lines.get(start + i).equals(pattern.get(i))) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    return start;
+                }
+            }
+            return -1;
+        }
+    }
+
+    /**
+     * Splits the changes between {@code original} and {@code current} into hunks, one per run of changed lines, with up
+     * to {@code contextLines} unchanged lines of context on each side. Unlike a unified diff, changes close to each
+     * other are not merged: every change is its own step, so a replay can pause after each one. The context never
+     * reaches past the unchanged gap between two changes, so a hunk stays locatable whether or not the previous one was
+     * applied.
+     */
+    static List<Hunk> hunks(List<String> original, List<String> current, int contextLines) {
+        List<DiffEntry> raw = rawDiff(original, current);
+        List<Hunk> hunks = new ArrayList<>();
+        int k = 0;
+        while (k < raw.size()) {
+            if (raw.get(k).type() == ' ') {
+                k++;
+                continue;
+            }
+            int bodyStart = k;
+            int bodyEnd = k;
+            while (bodyEnd < raw.size() && raw.get(bodyEnd).type() != ' ') {
+                bodyEnd++;
+            }
+            List<String> before = new ArrayList<>();
+            for (int c = bodyStart - 1; c >= 0 && before.size() < contextLines && raw.get(c).type() == ' '; c--) {
+                before.add(0, raw.get(c).text());
+            }
+            List<String> after = new ArrayList<>();
+            for (int c = bodyEnd; c < raw.size() && after.size() < contextLines && raw.get(c).type() == ' '; c++) {
+                after.add(raw.get(c).text());
+            }
+            hunks.add(new Hunk(before, new ArrayList<>(raw.subList(bodyStart, bodyEnd)), after));
+            k = bodyEnd;
+        }
+        return hunks;
+    }
+
+    private static List<DiffEntry> rawDiff(List<String> original, List<String> current) {
+        int m = original.size();
+        int n = current.size();
+        List<DiffEntry> rawDiff = new ArrayList<>();
+        if (m == 0 && n == 0) {
+            return rawDiff;
+        }
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                if (original.get(i).equals(current.get(j))) {
+                    dp[i][j] = dp[i + 1][j + 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+                }
+            }
+        }
+        int i = 0;
+        int j = 0;
+        while (i < m && j < n) {
+            if (original.get(i).equals(current.get(j))) {
+                rawDiff.add(new DiffEntry(' ', original.get(i), j + 1));
+                i++;
+                j++;
+            } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+                rawDiff.add(new DiffEntry('-', original.get(i), i + 1));
+                i++;
+            } else {
+                rawDiff.add(new DiffEntry('+', current.get(j), j + 1));
+                j++;
+            }
+        }
+        while (i < m) {
+            rawDiff.add(new DiffEntry('-', original.get(i), i + 1));
+            i++;
+        }
+        while (j < n) {
+            rawDiff.add(new DiffEntry('+', current.get(j), j + 1));
+            j++;
+        }
+        return rawDiff;
+    }
 
     static List<DiffEntry> unifiedDiff(List<String> original, List<String> current, int contextLines) {
         int m = original.size();

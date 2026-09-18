@@ -228,7 +228,7 @@ in arrays or lists.
 |`collate(size)` | `Iterator<List>` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
 |`distinct(val1,val2,...)` | `Set` | Returns a set of all the values with duplicates removed
 |`empty(kind)` | `<T>` | *Deprecated* Use `createEmpty` instead.
-|`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression. This function is not supported when using csimple.
+|`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression.
 |`list(val1,val2,...)` | `List` | The list function creates an `java.util.ArrayList` with the given set of values.
 |`listAdd(fun)` | `List` | Adds the result of the function to the message body as a list object.
 |`listAdd(source,fun)` | `List` | Adds the result of the function to the source expression as a list object.
@@ -240,7 +240,7 @@ in arrays or lists.
 |`mapRemove(key)` | `List` | Removes the key from the message body as a map object.
 |`mapRemove(source,key)` | `List` | Removes the key from the source expression as a map object.
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
-|`filter(exp,fun)` | `List` | Returns a List containing only the values from the input expression for which the function evaluates to true. This function is not supported when using csimple.
+|`filter(exp,fun)` | `List` | Returns a List containing only the values from the input expression for which the function evaluates to true.
 |`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
 |`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
 |`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
@@ -325,7 +325,7 @@ The condition functions is small functions that mostly evaluates to a `boolean` 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
-|`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false. This function is not supported when using csimple.
+|`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false.
 |`contains(text)` | `boolean` | Returns true if the message body contains part of the text (ignore case)
 |`contains(exp,text)` | `boolean` | Returns true if the expression contains part of the text (ignore case)
 |`iif(predicate,trueExp,falseExp)` | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
@@ -513,6 +513,8 @@ The string functions is various functions to work with values that are String an
 |`capitalize()` | `String` | Capitalizes the message body as a String value (upper case every words)
 |`capitalize(exp)` | `String` | Capitalizes the expression as a String value (upper case every words)
 |`concat(exp,exp,separator)` | `String` | Performs a string concat using two expressions (message body as default) with optional separator.
+|`escape(kind)` | `String` | Escapes special characters in the message body so it can be safely embedded in HTML, XML, JSON, JavaScript, SQL, or a URL. The kind is one of `html`, `xml`, `json`, `js`, `sql`, or `url`.
+|`escape(kind,exp)` | `String` | Escapes special characters in the expression so it can be safely embedded in HTML, XML, JSON, JavaScript, SQL, or a URL. The kind is one of `html`, `xml`, `json`, `js`, `sql`, or `url`.
 |`join(separator,prefix,exp)` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
 |`lowercase()` | `String` | Lowercases the message body
 |`lowercase(exp)` | `String` | Lowercases the expression
@@ -556,6 +558,26 @@ For example if the message body contains a list of [A, B, C] then `${join()}` wo
 To use semicolon as separator you would use `${join(;)}`. The `prefix` argument can be used to prefix each value, so for example
 `${join(&,id=)}` would return `id=A&id=B&id=C`.
 
+The `escape` function escapes special characters so a value can be safely embedded in another format,
+instead of chaining multiple `replace` calls or using a custom bean. The first argument is the kind of escaping:
+
+[width="100%",cols="10%,45%,45%",options="header",]
+|====
+|Kind |Escaping |Example
+|`html` | `&` `<` `>` `"` `'` are replaced with HTML entities | `${escape(html, 'Tom & Jerry')}` returns `Tom &amp; Jerry`
+|`xml` | `&` `<` `>` `"` `'` are replaced with the five predefined XML entities | `${escape(xml, $\{header.title})}`
+|`json` | quotes, backslashes and control characters are backslash-escaped for use inside a JSON string (surrounding quotes are not added) | `${escape(json, $\{body})}`
+|`js` | as `json`, and also single quotes and `</` so the value can be used inside a JavaScript string literal | `${escape(js, $\{header.msg})}`
+|`sql` | single quotes are doubled for use inside an SQL string literal | `${escape(sql, $\{header.name})}`
+|`url` | percent-encoding (RFC 3986) for use as a URL query parameter or path segment; a space becomes `%20` | `${escape(url, 'Camel in Action')}` returns `Camel%20in%20Action`
+|====
+
+Without a second argument the function operates on the message body, so if the body is `Monday & Tuesday`
+then `${escape(html)}` returns `Monday &amp; Tuesday`. The kind is case-insensitive, and `javascript` can be used instead of `js`.
+
+TIP: Prefer parameterized queries over `escape(sql)`; the SQL kind is meant as a last resort for
+components where parameters cannot be used.
+
 The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
 So `${lowercase('Hello World')}` returns `hello world` and `${uppercase('Hello World')}` returns `HELLO WORLD`.
 Without arguments, they operate on the message body: if the body is `HELLO` then `${lowercase()}` returns `hello`.
@@ -577,6 +599,15 @@ The `substring`, `substringBefore`, and `substringAfter` functions are all simil
 
 Suppose the message body contains `ABCDEFGHIJK` then `${substring(3)}` returns `DEFGHIJK`, and `${substring(-3)}` returns `ABCDEFGH`.
 If you want to clip the first and last character you can use `${substring(1,-1)}` returning `BCDEFGHIJ`.
+
+[NOTE]
+====
+These `substring` functions are Camel functions with their own semantics (such as negative numbers clipping
+from the end). They are *not* the same as calling Java's `java.lang.String.substring` via
+xref:simple-ognl.adoc[OGNL]. For example `${substring(-3)}` (function) clips the last three characters,
+whereas `${body.substring(-3)}` (OGNL) invokes `String.substring(-3)` directly and throws
+`StringIndexOutOfBoundsException`.
+====
 
 Now suppose the message body contains `Hello great big World how are you`.
 

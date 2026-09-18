@@ -323,16 +323,21 @@ public class SedaComponent extends DefaultComponent {
      * @param endpoint the endpoint
      */
     void onShutdownEndpoint(SedaEndpoint endpoint) {
-        // we need to remove the endpoint from the reference counter
-        String key = getQueueKey(endpoint.getEndpointUri());
-        QueueReference ref = getQueues().get(key);
-        if (ref != null && endpoint.getConsumers().isEmpty()) {
-            // only remove the endpoint when the consumers are removed
-            ref.removeReference(endpoint);
-            if (ref.getCount() <= 0) {
-                // reference no longer needed so remove from queues
-                getQueues().remove(key);
+        lock.lock();
+        try {
+            // we need to remove the endpoint from the reference counter
+            String key = getQueueKey(endpoint.getEndpointUri());
+            QueueReference ref = getQueues().get(key);
+            if (ref != null && endpoint.getConsumers().isEmpty() && endpoint.getProducers().isEmpty()) {
+                // only remove the endpoint when both consumers and producers are removed
+                ref.removeReference(endpoint);
+                if (ref.getCount() <= 0 && !ref.hasConsumers() && !ref.hasProducers()) {
+                    // reference no longer needed so remove from queues
+                    getQueues().remove(key);
+                }
             }
+        } finally {
+            lock.unlock();
         }
     }
 

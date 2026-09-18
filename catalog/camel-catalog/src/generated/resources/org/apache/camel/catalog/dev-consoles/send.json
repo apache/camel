@@ -6,6 +6,7 @@
     "title": "Camel Send",
     "description": "Send messages to endpoints",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.SendDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -102,6 +103,45 @@
       "defaultValue": 20000,
       "description": "Timeout when using poll mode"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "timestamp": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds when the send was performed"
+      },
+      "status": {
+        "type": "string",
+        "description": "The send status, success\/error\/timeout"
+      },
+      "elapsed": {
+        "type": "integer",
+        "description": "Elapsed time in milliseconds"
+      },
+      "endpoint": {
+        "type": "string",
+        "description": "The endpoint URI (only present when known)"
+      },
+      "exception": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "The exception, as an opaque JSON object (only present on error)"
+      },
+      "exchangeId": {
+        "type": "string",
+        "description": "The exchange ID (only present when a response message is available)"
+      },
+      "message": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "The response message, as an opaque JSON object (only present when a response message is available)"
+      }
+    },
+    "required": [
+      "timestamp",
+      "elapsed"
+    ]
   }
 }
 

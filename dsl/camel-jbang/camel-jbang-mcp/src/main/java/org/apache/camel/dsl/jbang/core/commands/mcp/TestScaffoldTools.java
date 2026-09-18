@@ -83,8 +83,8 @@ public class TestScaffoldTools {
             @ToolArg(description = "The Camel route definition (YAML or XML)") String route,
             @ToolArg(description = "Route format: yaml or xml (default: yaml)") String format,
             @ToolArg(description = "Target runtime: main or spring-boot (default: main)") String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);

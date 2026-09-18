@@ -117,7 +117,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer", defaultValue = "45000")
     private Integer sessionTimeoutMs = 45000;
     @UriParam(label = "consumer", defaultValue = "500")
-    private Integer maxPollRecords;
+    private Integer maxPollRecords = 500;
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long pollTimeoutMs = 5000L;
     @UriParam(label = "consumer", javaType = "java.time.Duration")

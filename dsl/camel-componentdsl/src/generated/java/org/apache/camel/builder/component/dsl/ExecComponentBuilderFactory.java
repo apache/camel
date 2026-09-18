@@ -110,11 +110,13 @@ public interface ExecComponentBuilderFactory {
     
         
         /**
-         * Whether to allow to use Camel headers or not (default false).
-         * Enabling this allows to specify dynamic command line arguments via
-         * message header. However this can be seen as a potential security
-         * vulnerability if the header is coming from a malicious user, so use
-         * this with care.
+         * Whether {code CamelExec} in-headers may override URI options (default
+         * false since Camel 4.20). When false, CamelExecCommandExecutable,
+         * CamelExecCommandArgs, CamelExecCommandOutFile,
+         * CamelExecCommandWorkingDir, CamelExecCommandTimeout,
+         * CamelExecExitValues, CamelExecUseStderrOnEmptyStdout, and
+         * CamelExecCommandLogLevel are ignored. Enable only when those headers
+         * come from a trusted route, not from an untrusted consumer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

@@ -130,8 +130,10 @@ It does not support `camel-servlet` or `camel-jetty`.
 
 == Adding custom JARs
 
-Camel CLI automatically detects and downloads dependencies for Camel components.
-For 3rd-party JARs, use `--dep` with Maven GAV syntax:
+Camel CLI automatically detects and downloads dependencies for Camel components, and for the
+well-known third-party libraries a route may name in a bean, such as a JDBC datasource or a JMS
+connection factory (see <<advanced-class-to-dependency,how a class becomes a dependency>>).
+For other 3rd-party JARs, use `--dep` with Maven GAV syntax:
 
 [source,bash]
 ----
@@ -201,12 +203,22 @@ You can also configure repositories in `application.properties`:
 camel.jbang.repos=https://packages.atlassian.com/maven-external
 ----
 
-Or set a global default via environment variable:
+Or set a global default with the `camel.extra.repos` JVM system property, which applies to every
+Camel CLI command without having to repeat `--repos`:
 
 [source,bash]
 ----
 export JAVA_TOOL_OPTIONS="-Dcamel.extra.repos=repo1=https://repo1.example.com/maven2,repo2=https://repo2.example.com/releases"
 ----
+
+The value is a comma-separated list of repositories, where each entry is either a plain URL or an
+`id=url` pair. Prefer the `id=url` form when the repository requires authentication, as the id is
+what Camel matches against the `<server>` entries in `~/.m2/settings.xml`.
+
+NOTE: A custom Camel distribution can provide a baseline for this via the
+`camel.default.extra.repos.default.value` system property. It is only consulted when
+`camel.extra.repos` is not set, so setting `camel.extra.repos` replaces that baseline rather than
+adding to it. Apache Camel itself sets neither property.
 
 == Downloading JARs over the internet
 
@@ -224,22 +236,94 @@ To disable automatic downloading:
 camel run foo.java --download=false
 ----
 
-== Running with Spring Boot or Quarkus
+[[advanced-class-to-dependency]]
+=== Advanced: how a class becomes a dependency
 
-Camel CLI can run integrations using Spring Boot or Quarkus runtimes:
+When a route, a bean declaration, a `#class:` value in `application.properties`, or an `import`
+in a Java file next to the route names a class that is not on the classpath, Camel CLI looks the
+class up in three mapping files shipped in `camel-kamelet-main` and downloads the dependency it
+maps to. The files are read into one table, in this order (a later file wins for an identical key):
+
+1. `camel-main-known-dependencies.properties`, hand-written: Spring and Quarkus annotations,
+   `camel.*` switches, the LangChain4j model providers.
+2. `camel-component-known-dependencies.properties`, generated from the catalog: every Camel
+   component class maps to its `camel-` artifact.
+3. `camel-thirdparty-known-dependencies.properties`, generated at build time from the curated
+   list `known-third-party-libraries.properties` in `camel-kamelet-main`: JDBC drivers and
+   connection pools, messaging clients, cloud SDKs, JSON, XML and CSV libraries, and other
+   libraries a route commonly names, each mapped by package.
+
+The lookup walks up from the class name:
+
+1. The exact class, for example `org.postgresql.ds.PGSimpleDataSource`.
+2. Each enclosing package in turn, `org.postgresql.ds`, then `org.postgresql`, until a key
+   matches or no package is left. The deepest key wins, so `org.apache.activemq.artemis` is found
+   before `org.apache.activemq`.
+3. The value is a Maven coordinate. A `camel:xxx` short form becomes `org.apache.camel:camel-xxx`
+   at the running Camel version; a `${...}` placeholder in the hand-written file is resolved
+   from the `camel-dependencies` POM of that version; the generated third-party file carries the
+   versions already resolved.
+4. The dependency and its transitive dependencies are downloaded and added to the classpath,
+   and the class is loaded again.
+
+A dependency you declare yourself, with `--dep`, `camel.jbang.dependencies`, or in the project's
+POM, is on the classpath before any lookup, so it always takes precedence. Use that when a
+mapped library is not the one you want, for example the ActiveMQ 5 client where the mapping
+picks the ActiveMQ 6 client.
+
+`camel validate` and the write tools of the Camel MCP server consult the same three files, so a
+bean whose class Camel CLI would download is not reported as missing, and the MCP tool
+`camel_dependency_for_class` answers the coordinates and the declaration for a class from the same
+mapping, with an optional Maven Central search for the rest.
+
+To add a library to the mapping, add one line to `known-third-party-libraries.properties`
+in `camel-kamelet-main`: the library's own package, its `groupId:artifactId`, and a version
+property of `camel-parent`. The build resolves the version and fails on a property that does
+not exist; with `-Dcamel.known-dependencies.verify=true` it also resolves every JAR and checks
+that the package is in it.
+
+== Runtimes
+
+By default `camel run` runs the integration in-process, inside the JVM of the Camel CLI itself.
+This is the `jbang` runtime: it starts in well under a second and downloads any missing
+dependencies on the fly, which makes it ideal for prototyping. The trade-off is that the JVM
+classpath also contains the Camel CLI and its own dependencies, so it does not look exactly like
+a production deployment.
+
+To run in a separate JVM that only contains the dependencies of your integration, choose one of
+the other runtimes:
 
 [source,bash]
 ----
+camel run foo.camel.yaml --runtime=main
 camel run foo.camel.yaml --runtime=spring-boot
 camel run foo.camel.yaml --runtime=quarkus
 ----
 
-This does an export to a temporary folder and runs using Maven.
-Source changes are reloaded via Spring Boot dev-tools or Quarkus dev mode.
+This does an export to a temporary folder (the same as `camel export`), builds the project with
+Maven, and runs it in a new JVM. Camel Main runs the packaged runner JAR with plain `java`,
+Spring Boot runs via `spring-boot:run`, and Quarkus via `quarkus:dev` (or `quarkus:run`).
+This is the same JVM you would get from `camel export`, and is what the Camel TUI uses when
+launching examples and folders.
 
-Limitations:
+The options `--profile`, `--port`, `--prop`, `--max-seconds`, `--max-messages`, `--max-idle-seconds`,
+`--jvm-args`, `--jfr`, `--observe` and `--console` are passed to the application on all three runtimes
+(each runtime serves the developer console on its own path, see
+xref:camel-jbang-managing.adoc#_developer_console[Developer Console]). The application logs to a
+file in `~/.camel` so `camel log` and the TUI can read the logs: `<pid>.log` for Spring Boot, and
+`<name>.log` for Quarkus and Camel Main (`<name>` is the name the application reports, from `--name` or
+else the first route file).
 
-- Spring Boot and Quarkus cannot auto-detect new components (stop and run again to update dependencies)
+Limitations compared to the `jbang` runtime:
+
+- Startup is slower, as the project must be built with Maven first (the first run also downloads
+  the Maven wrapper and plugins).
+- New components cannot be auto-detected while running (stop and run again to update dependencies).
+- The deprecated `--health` and `--metrics` options are not supported in a separate JVM; use `--observe` instead.
+- Options that only work in-process are not supported: `--background`, `--code`, `--open-api`,
+  `--empty` and `--mcp-stdio`.
+- Dev mode reloads YAML and XML route files from the original source directory; Java sources cannot
+  be live-reloaded (Spring Boot uses dev-tools and Quarkus its dev mode instead).
 - Quarkus versions are locked to a specific Camel version (`camel version list --runtime=quarkus`)
 - Spring Boot is more flexible — you can choose different versions:
 
@@ -248,6 +332,10 @@ Limitations:
 camel run foo.camel.yaml --runtime=spring-boot --spring-boot-version=3.2.3 --camel-version=4.4.1
 camel run foo.camel.yaml --runtime=quarkus --quarkus-version=3.9.4
 ----
+
+When running an existing Maven project (`camel run pom.xml`) the runtime is detected from the
+`pom.xml`, as such a project cannot run in-process. The application logs to a file in `~/.camel`
+so `camel log` and the TUI can read the logs; see xref:camel-jbang-tips.adoc#_running_a_maven_based_project[Running a Maven based project].
 
 == Running local Kamelets
 

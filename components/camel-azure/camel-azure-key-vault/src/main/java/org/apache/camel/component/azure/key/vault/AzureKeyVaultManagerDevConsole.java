@@ -22,14 +22,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.vault.AzureVaultConfiguration;
 
 @DevConsole(name = "azure-secrets", displayName = "Azure Key Vault Secrets", description = "Azure Key Vault Secret Manager")
@@ -37,6 +37,23 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
 
     private KeyVaultPropertiesFunction propertiesFunction;
     private EventhubsReloadTriggerTask secretsRefreshTask;
+
+    public record SecretEntry(
+            @Metadata(description = "The secret name") String name,
+            @Metadata(description = "Epoch time in milliseconds of the last update (only present when known)") Long timestamp,
+            @Metadata(description = "Relative age of the last update (only present when known)") String age) {
+    }
+
+    public record Response(
+            @Metadata(description = "The login method (only present when the Azure Key Vault properties function is active)") String login,
+            @Metadata(description = "Whether secret refresh is enabled (only present when configured)") Boolean refreshEnabled,
+            @Metadata(description = "The refresh period in milliseconds (only present when configured)") Long refreshPeriod,
+            @Metadata(description = "Epoch time in milliseconds of the last check (only present when known)") Long lastCheckTimestamp,
+            @Metadata(description = "Relative age of the last check (only present when known)") String lastCheckAge,
+            @Metadata(description = "Epoch time in milliseconds of the last reload (only present when known)") Long lastReloadTimestamp,
+            @Metadata(description = "Relative age of the last reload (only present when known)") String lastReloadAge,
+            @Metadata(description = "The secrets in use (only present when the Azure Key Vault properties function is active)") List<SecretEntry> secrets) {
+    }
 
     public AzureKeyVaultManagerDevConsole() {
         super("camel", "azure-secrets", "Azure Key Vault Secrets", "Azure Key Vault Secret Manager");
@@ -99,47 +116,56 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String login = null;
+        Boolean refreshEnabled = null;
+        Long refreshPeriod = null;
+        Long lastCheckTimestamp = null;
+        String lastCheckAge = null;
+        Long lastReloadTimestamp = null;
+        String lastReloadAge = null;
+        List<SecretEntry> secrets = null;
+
         if (propertiesFunction != null) {
-            root.put("login", "Client Id/Client Secret");
+            login = "Client Id/Client Secret";
             AzureVaultConfiguration azure = getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
             if (azure != null) {
-                root.put("refreshEnabled", azure.isRefreshEnabled());
-                root.put("refreshPeriod", azure.getRefreshPeriod());
+                refreshEnabled = azure.isRefreshEnabled();
+                refreshPeriod = azure.getRefreshPeriod();
             }
             if (secretsRefreshTask != null) {
                 Instant last = secretsRefreshTask.getLastCheckTime();
                 if (last != null) {
-                    long timestamp = last.toEpochMilli();
-                    root.put("lastCheckTimestamp", timestamp);
-                    root.put("lastCheckAge", TimeUtils.printSince(timestamp));
+                    lastCheckTimestamp = last.toEpochMilli();
+                    lastCheckAge = TimeUtils.printSince(lastCheckTimestamp);
                 }
                 last = secretsRefreshTask.getLastReloadTime();
                 if (last != null) {
-                    long timestamp = last.toEpochMilli();
-                    root.put("lastReloadTimestamp", timestamp);
-                    root.put("lastReloadAge", TimeUtils.printSince(timestamp));
+                    lastReloadTimestamp = last.toEpochMilli();
+                    lastReloadAge = TimeUtils.printSince(lastReloadTimestamp);
                 }
             }
-            JsonArray arr = new JsonArray();
-            root.put("secrets", arr);
 
             List<String> sorted = new ArrayList<>(propertiesFunction.getSecrets());
             Collections.sort(sorted);
 
+            List<SecretEntry> arr = new ArrayList<>();
             for (String sec : sorted) {
-                JsonObject jo = new JsonObject();
-                jo.put("name", sec);
+                Long timestamp = null;
+                String age = null;
                 Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
                 if (last != null) {
-                    long timestamp = last.toEpochMilli();
-                    jo.put("timestamp", timestamp);
-                    jo.put("age", TimeUtils.printSince(timestamp));
+                    timestamp = last.toEpochMilli();
+                    age = TimeUtils.printSince(timestamp);
                 }
-                arr.add(jo);
+                arr.add(new SecretEntry(sec, timestamp, age));
             }
+            secrets = arr;
         }
-        return root;
+
+        Response response = new Response(
+                login, refreshEnabled, refreshPeriod, lastCheckTimestamp, lastCheckAge, lastReloadTimestamp,
+                lastReloadAge, secrets);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

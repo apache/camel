@@ -46,6 +46,12 @@ public class SmooksEndpoint extends DefaultEndpoint {
               label = "advanced",
               defaultValue = "false")
     private Boolean allowExecutionContextFromHeader = false;
+    @UriParam(description = "Whether to allow the XML reader used by Smooks to resolve external XML entities (external"
+                            + " general and parameter entities) when parsing XML input. This is disabled by default so"
+                            + " that external entities in the message body are not resolved; enable it only for trusted"
+                            + " legacy configurations that rely on external entity resolution.",
+              label = "security", defaultValue = "false", security = "insecure:dev", insecureValue = "true")
+    private boolean allowExternalEntities;
 
     private final SmooksProcessor smooksProcessor;
 
@@ -98,5 +104,13 @@ public class SmooksEndpoint extends DefaultEndpoint {
 
     public void setAllowExecutionContextFromHeader(Boolean allowExecutionContextFromHeader) {
         this.allowExecutionContextFromHeader = allowExecutionContextFromHeader;
+    }
+
+    public boolean isAllowExternalEntities() {
+        return allowExternalEntities;
+    }
+
+    public void setAllowExternalEntities(boolean allowExternalEntities) {
+        this.allowExternalEntities = allowExternalEntities;
     }
 }

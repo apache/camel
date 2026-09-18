@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SpringAiChatMcpSseIT extends OllamaTestSupport {
 
     @RegisterExtension
-    static McpEverythingSseService MCP_EVERYTHING = McpEverythingSseServiceFactory.createService();
+    static McpEverythingSseService MCP_EVERYTHING = McpEverythingSseServiceFactory.createSingletonService();
 
     @Test
     public void testMcpEchoTool() {

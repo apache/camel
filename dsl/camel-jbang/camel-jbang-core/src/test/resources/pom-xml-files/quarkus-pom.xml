@@ -37,7 +37,7 @@
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.23.0</quarkus.platform.version>
         <skipITs>true</skipITs>
-        <surefire-plugin.version>3.5.2</surefire-plugin.version>
+        <surefire-plugin.version>3.5.6</surefire-plugin.version>
         <quarkus.package.jar.enabled>true</quarkus.package.jar.enabled>
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
     </properties>

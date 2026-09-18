@@ -24,6 +24,7 @@ import java.util.function.BiPredicate;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.mcp.client.McpClient;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
@@ -66,11 +67,21 @@ public abstract class AbstractAgent<S> implements Agent {
     }
 
     /**
+     * Returns the LangChain4j chat model configured for this agent.
+     *
+     * @return the chat model from agent configuration
+     * @since  4.23
+     */
+    public ChatModel getChatModel() {
+        return configuration.getChatModel();
+    }
+
+    /**
      * Returns the MCP tool provider filter from the given agent's configuration.
      *
      * @param  agent the abstract agent, may be {@code null}
      * @return       the filter predicate, or {@code null} when the agent is {@code null} or no filter is configured
-     * @since        4.22
+     * @since        4.23
      */
     public static BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter(AbstractAgent<?> agent) {
         if (agent == null) {
@@ -114,7 +125,6 @@ public abstract class AbstractAgent<S> implements Agent {
      * @param builder      the AI services builder to configure
      * @param toolProvider the Apache Camel tool provider (may be null)
      */
-    @SuppressWarnings("unchecked")
     protected void configureBuilder(AiServices<S> builder, ToolProvider toolProvider) {
         // Collect all tool providers to compose them into a single provider
         List<ToolProvider> toolProviders = new ArrayList<>();

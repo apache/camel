@@ -226,7 +226,11 @@ public class CodeInjectionGuardrail implements InputGuardrail {
             }
 
             if (pattern.getPattern().matcher(text).find()) {
-                detected.add(pattern.getType());
+                // Only record distinct types: the non-strict check below blocks on "multiple different types",
+                // and several patterns share a type, so counting duplicates would false-positive on a single type.
+                if (!detected.contains(pattern.getType())) {
+                    detected.add(pattern.getType());
+                }
 
                 if (strict) {
                     return failure(String.format(

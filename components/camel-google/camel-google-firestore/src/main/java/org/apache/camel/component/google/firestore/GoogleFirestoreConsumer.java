@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.google.firestore;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentChange;
@@ -46,14 +50,19 @@ import org.slf4j.LoggerFactory;
 public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleFirestoreConsumer.class);
+    private static final long DISCARD_LOG_INTERVAL = 100;
 
     private final GoogleFirestoreEndpoint endpoint;
     private ListenerRegistration listenerRegistration;
-    private final Queue<Exchange> pendingExchanges = new ConcurrentLinkedQueue<>();
+    private final BlockingQueue<Exchange> pendingExchanges;
+    private final AtomicLong discardedChanges = new AtomicLong();
 
     public GoogleFirestoreConsumer(GoogleFirestoreEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
+
+        int max = endpoint.getConfiguration().getMaxPendingChanges();
+        this.pendingExchanges = max > 0 ? new LinkedBlockingQueue<>(max) : new LinkedBlockingQueue<>();
     }
 
     @Override
@@ -72,6 +81,14 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
             listenerRegistration = null;
             LOG.debug("Realtime listener removed");
         }
+
+        List<Exchange> remaining = new ArrayList<>();
+        pendingExchanges.drainTo(remaining);
+        if (!remaining.isEmpty()) {
+            LOG.debug("Releasing {} buffered document changes that were not polled", remaining.size());
+            remaining.forEach(exchange -> releaseExchange(exchange, false));
+        }
+
         super.doStop();
     }
 
@@ -93,7 +110,7 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         try {
                             Exchange exchange = createExchangeFromDocument(dc.getDocument(), dc.getType());
-                            pendingExchanges.add(exchange);
+                            bufferChange(exchange);
                         } catch (Exception ex) {
                             LOG.error("Error creating exchange from document change", ex);
                         }
@@ -112,17 +129,46 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
+    /**
+     * The document changes buffered by the realtime listener and not yet picked up by a poll.
+     */
+    BlockingQueue<Exchange> pendingChanges() {
+        return pendingExchanges;
+    }
+
+    /**
+     * Buffers a document change until the next poll picks it up. The listener callback runs on a Firestore client
+     * thread, so it must never block waiting for the route to catch up: when the buffer is bounded and full, the oldest
+     * buffered change is discarded instead, leaving the route with the most recent state of the collection.
+     */
+    void bufferChange(Exchange exchange) {
+        while (!pendingExchanges.offer(exchange)) {
+            Exchange discarded = pendingExchanges.poll();
+            if (discarded == null) {
+                // the poll drained the buffer in the meantime, so there is room again
+                continue;
+            }
+
+            releaseExchange(discarded, false);
+            long total = discardedChanges.incrementAndGet();
+            if (total == 1 || total % DISCARD_LOG_INTERVAL == 0) {
+                LOG.warn("The realtime buffer of collection {} is full (maxPendingChanges={}), discarding the oldest"
+                         + " buffered change. {} changes discarded so far. Raise maxPendingChanges, or make the route"
+                         + " consume faster.",
+                        endpoint.getConfiguration().getCollectionName(),
+                        endpoint.getConfiguration().getMaxPendingChanges(), total);
+            }
+        }
+    }
+
     @Override
     protected int poll() throws Exception {
         Queue<Exchange> exchanges;
 
         if (endpoint.getConfiguration().isRealtimeUpdates()) {
-            // Drain pending exchanges from realtime listener (lock-free)
+            // Drain pending exchanges from realtime listener
             exchanges = new LinkedList<>();
-            Exchange e;
-            while ((e = pendingExchanges.poll()) != null) {
-                exchanges.add(e);
-            }
+            pendingExchanges.drainTo(exchanges);
         } else {
             // Poll the collection
             exchanges = pollCollection();
@@ -166,7 +212,7 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
         message.setHeader(GoogleFirestoreConstants.RESPONSE_READ_TIME, document.getReadTime());
 
         if (changeType != null) {
-            message.setHeader("CamelGoogleFirestoreChangeType", changeType.name());
+            message.setHeader(GoogleFirestoreConstants.CHANGE_TYPE, changeType.name());
         }
 
         return exchange;
@@ -187,6 +233,12 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
             exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
+        }
+
+        // the batch is interrupted when the consumer is stopping, so release what is left over
+        Exchange remaining;
+        while ((remaining = (Exchange) exchanges.poll()) != null) {
+            releaseExchange(remaining, false);
         }
 
         return total;

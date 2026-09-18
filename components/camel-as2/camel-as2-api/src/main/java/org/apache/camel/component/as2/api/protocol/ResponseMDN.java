@@ -92,12 +92,15 @@ public class ResponseMDN implements HttpResponseInterceptor {
     private final String serverFQDN;
     private final String mdnMessageTemplate;
 
-    private AS2SignatureAlgorithm signingAlgorithm;
-    private Certificate[] signingCertificateChain;
-    private PrivateKey signingPrivateKey;
-    private PrivateKey decryptingPrivateKey;
-    private Certificate[] validateSigningCertificateChain;
-    private boolean keysAreDynamic = false; // Flag indicating if security keys/certs must be dynamically fetched from the HttpContext
+    // Configured security material. These are the statically configured values only: when the keys are
+    // dynamic they are resolved per request into locals in process(), never stored back here, because a
+    // single ResponseMDN instance serves every request on the shared HttpProcessor.
+    private final AS2SignatureAlgorithm signingAlgorithm;
+    private final Certificate[] signingCertificateChain;
+    private final PrivateKey signingPrivateKey;
+    private final PrivateKey decryptingPrivateKey;
+    private final Certificate[] validateSigningCertificateChain;
+    private final boolean keysAreDynamic; // whether security keys/certs must be fetched per request from the HttpContext
 
     private final Lock lock = new ReentrantLock();
     private VelocityEngine velocityEngine;
@@ -111,6 +114,11 @@ public class ResponseMDN implements HttpResponseInterceptor {
             this.mdnMessageTemplate = DEFAULT_MDN_MESSAGE_TEMPLATE;
         }
         this.keysAreDynamic = true;
+        this.signingAlgorithm = null;
+        this.signingCertificateChain = null;
+        this.signingPrivateKey = null;
+        this.decryptingPrivateKey = null;
+        this.validateSigningCertificateChain = null;
     }
 
     public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm,
@@ -130,6 +138,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             this.mdnMessageTemplate = DEFAULT_MDN_MESSAGE_TEMPLATE;
         }
         this.validateSigningCertificateChain = validateSigningCertificateChain;
+        this.keysAreDynamic = false;
     }
 
     @Override
@@ -144,15 +153,25 @@ public class ResponseMDN implements HttpResponseInterceptor {
             return;
         }
 
+        // Resolve the security material for THIS request into locals. A single ResponseMDN instance is
+        // registered on the shared HttpProcessor and serves every request, so per-request keys must not
+        // be written back to instance fields: a deployment hosting several partners on different paths
+        // would otherwise be able to sign one partner's MDN with another partner's key.
+        AS2SignatureAlgorithm signingAlgorithm = this.signingAlgorithm;
+        Certificate[] signingCertificateChain = this.signingCertificateChain;
+        PrivateKey signingPrivateKey = this.signingPrivateKey;
+        PrivateKey decryptingPrivateKey = this.decryptingPrivateKey;
+        Certificate[] validateSigningCertificateChain = this.validateSigningCertificateChain;
+
         if (this.keysAreDynamic) {
             // Dynamically load path-specific security material from the HttpContext,
             // which was populated by AS2ConsumerConfigInterceptor.
-            this.signingAlgorithm = (AS2SignatureAlgorithm) context.getAttribute(AS2ServerConnection.AS2_SIGNING_ALGORITHM);
-            this.signingCertificateChain
+            signingAlgorithm = (AS2SignatureAlgorithm) context.getAttribute(AS2ServerConnection.AS2_SIGNING_ALGORITHM);
+            signingCertificateChain
                     = (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_SIGNING_CERTIFICATE_CHAIN);
-            this.signingPrivateKey = (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_SIGNING_PRIVATE_KEY);
-            this.decryptingPrivateKey = (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_DECRYPTING_PRIVATE_KEY);
-            this.validateSigningCertificateChain
+            signingPrivateKey = (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_SIGNING_PRIVATE_KEY);
+            decryptingPrivateKey = (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_DECRYPTING_PRIVATE_KEY);
+            validateSigningCertificateChain
                     = (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_VALIDATE_SIGNING_CERTIFICATE_CHAIN);
         }
 

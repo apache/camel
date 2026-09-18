@@ -16,18 +16,44 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.TypeConvertible;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "type-converters", description = "Camel Type Converter information")
 public class TypeConverterConsole extends AbstractDevConsole {
+
+    public record Statistics(
+            @Metadata(description = "Number of attempted conversions") long attemptCounter,
+            @Metadata(description = "Number of successful conversions (cache hit)") long hitCounter,
+            @Metadata(description = "Number of cache misses") long missCounter,
+            @Metadata(description = "Number of failed conversions") long failedCounter,
+            @Metadata(description = "Number of noop conversions") long noopCounter) {
+    }
+
+    public record Converter(
+            @Metadata(description = "The source type") String from,
+            @Metadata(description = "The target type") String to,
+            @Metadata(description = "The type converter implementation class") String converterClass) {
+    }
+
+    public record Response(
+            @Metadata(description = "Number of registered type converters") int size,
+            @Metadata(description = "Whether a type converter must exist or not") String exists,
+            @Metadata(description = "Logging level used when a type converter does not exist") String existsLoggingLevel,
+            @Metadata(description = "Type converter usage statistics (only present when statistics are enabled)") Statistics statistics,
+            @Metadata(description = "The registered type converters") List<Converter> converters) {
+    }
 
     public TypeConverterConsole() {
         super("camel", "type-converters", "Type Converters", "Camel Type Converter information");
@@ -53,38 +79,53 @@ public class TypeConverterConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         TypeConverterRegistry reg = getCamelContext().getTypeConverterRegistry();
-        root.put("size", reg.size());
-        root.put("exists", reg.getTypeConverterExists().name());
-        root.put("existsLoggingLevel", reg.getTypeConverterExistsLoggingLevel().name());
 
         final TypeConverterRegistry.Statistics statistics = reg.getStatistics();
-        JsonObject props = new JsonObject();
+        AtomicLong attemptCounter = new AtomicLong();
+        AtomicLong hitCounter = new AtomicLong();
+        AtomicLong missCounter = new AtomicLong();
+        AtomicLong failedCounter = new AtomicLong();
+        AtomicLong noopCounter = new AtomicLong();
+        AtomicBoolean statisticsEnabled = new AtomicBoolean();
 
-        statistics.computeIfEnabled(statistics::getAttemptCounter, v -> props.put("attemptCounter", v));
-        statistics.computeIfEnabled(statistics::getHitCounter, v -> props.put("hitCounter", v));
-        statistics.computeIfEnabled(statistics::getMissCounter, v -> props.put("missCounter", v));
-        statistics.computeIfEnabled(statistics::getFailedCounter, v -> props.put("failedCounter", v));
-        statistics.computeIfEnabled(statistics::getNoopCounter, v -> props.put("noopCounter", v));
+        statistics.computeIfEnabled(statistics::getAttemptCounter, v -> {
+            attemptCounter.set(v);
+            statisticsEnabled.set(true);
+        });
+        statistics.computeIfEnabled(statistics::getHitCounter, v -> {
+            hitCounter.set(v);
+            statisticsEnabled.set(true);
+        });
+        statistics.computeIfEnabled(statistics::getMissCounter, v -> {
+            missCounter.set(v);
+            statisticsEnabled.set(true);
+        });
+        statistics.computeIfEnabled(statistics::getFailedCounter, v -> {
+            failedCounter.set(v);
+            statisticsEnabled.set(true);
+        });
+        statistics.computeIfEnabled(statistics::getNoopCounter, v -> {
+            noopCounter.set(v);
+            statisticsEnabled.set(true);
+        });
 
-        if (!props.isEmpty()) {
-            root.put("statistics", props);
-        }
+        Statistics stats = statisticsEnabled.get()
+                ? new Statistics(
+                        attemptCounter.get(), hitCounter.get(), missCounter.get(), failedCounter.get(), noopCounter.get())
+                : null;
 
-        JsonArray arr = new JsonArray();
+        List<Converter> converters = new ArrayList<>();
         for (Map.Entry<TypeConvertible<?, ?>, TypeConverter> e : reg.listTypeConverters().entrySet()) {
             TypeConvertible<?, ?> tc = e.getKey();
-            JsonObject jo = new JsonObject();
-            jo.put("from", tc.getFrom().getCanonicalName());
-            jo.put("to", tc.getTo().getCanonicalName());
-            jo.put("converterClass", e.getValue().getClass().getName());
-            arr.add(jo);
+            converters.add(new Converter(
+                    tc.getFrom().getCanonicalName(), tc.getTo().getCanonicalName(), e.getValue().getClass().getName()));
         }
-        root.put("converters", arr);
 
-        return root;
+        Response response = new Response(
+                reg.size(), reg.getTypeConverterExists().name(), reg.getTypeConverterExistsLoggingLevel().name(), stats,
+                converters);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

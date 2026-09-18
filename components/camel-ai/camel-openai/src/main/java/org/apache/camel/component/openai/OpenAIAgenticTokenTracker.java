@@ -27,6 +27,21 @@ final class OpenAIAgenticTokenTracker {
     private long promptTokens;
     private long completionTokens;
 
+    record Snapshot(long promptTokens, long completionTokens) {
+    }
+
+    Snapshot snapshot() {
+        return new Snapshot(promptTokens, completionTokens);
+    }
+
+    long promptTokensSince(Snapshot before) {
+        return promptTokens - before.promptTokens();
+    }
+
+    long completionTokensSince(Snapshot before) {
+        return completionTokens - before.completionTokens();
+    }
+
     void addUsage(ChatCompletion response) {
         if (response == null) {
             return;

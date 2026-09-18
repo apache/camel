@@ -122,18 +122,18 @@ YAML::
 - route:
     from:
       uri: direct:assumeRole
-    steps:
-      - setHeader:
-          name: CamelAwsStsRoleArn
-          constant: "arn:123"
-      - setHeader:
-          name: CamelAwsStsRoleSessionName
-          constant: groot
-      - to:
-          uri: aws2-sts://test
-          parameters:
-            stsClient: "#amazonSTSClient"
-            operation: assumeRole
+      steps:
+        - setHeader:
+            name: CamelAwsStsRoleArn
+            constant: "arn:123"
+        - setHeader:
+            name: CamelAwsStsRoleSessionName
+            constant: groot
+        - to:
+            uri: aws2-sts://test
+            parameters:
+              stsClient: "#amazonSTSClient"
+              operation: assumeRole
 ----
 ====
 
@@ -208,15 +208,15 @@ YAML::
 - route:
     from:
       uri: direct:getFederationToken
-    steps:
-      - setHeader:
-          name: CamelAwsStsFederatedName
-          constant: federation-account
-      - to:
-          uri: aws2-sts://test
-          parameters:
-            stsClient: "#amazonSTSClient"
-            operation: getFederationToken
+      steps:
+        - setHeader:
+            name: CamelAwsStsFederatedName
+            constant: federation-account
+        - to:
+            uri: aws2-sts://test
+            parameters:
+              stsClient: "#amazonSTSClient"
+              operation: getFederationToken
 ----
 ====
 

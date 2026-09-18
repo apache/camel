@@ -164,7 +164,7 @@ XML::
 </rest>
 <route>
   <from uri="direct:getUserByName"/>
-  // do something here
+  <!-- do something here -->
 </route>
 ----
 YAML::
@@ -447,7 +447,7 @@ XML::
 +
 [source,xml]
 ----
-<restConfiguration bindingMode="true" bindingPackageScan="sample.petstore.model"/>
+<restConfiguration bindingMode="json" bindingPackageScan="sample.petstore.model"/>
 ----
 
 YAML::
@@ -455,7 +455,7 @@ YAML::
 [source,yaml]
 ----
 - restConfiguration:
-    bindingMode: true
+    bindingMode: json
     bindingPackageScan: sample.petstore.model
 ----
 

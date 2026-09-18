@@ -17,6 +17,8 @@
 package org.apache.camel.component.azure.common;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -71,5 +73,29 @@ class AzureFileNameHelperTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> AzureFileNameHelper.resolveWithinDirectory(fileDir, "../workspace/secret"));
+    }
+
+    @Test
+    void shouldRejectSymbolicLinkResolvingOutsideDirectory(@TempDir Path parent) throws IOException {
+        Path downloadDir = Files.createDirectory(parent.resolve("downloads"));
+        Path outsideDir = Files.createDirectory(parent.resolve("outside"));
+        Files.createSymbolicLink(downloadDir.resolve("linked"), outsideDir);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> AzureFileNameHelper.resolveWithinDirectory(downloadDir.toString(), "linked/file.txt"));
+        assertTrue(exception.getMessage().contains("linked/file.txt"));
+        assertTrue(exception.getMessage().contains(downloadDir.toString()));
+    }
+
+    @Test
+    void shouldResolveParentSegmentAfterSymbolicLink(@TempDir Path parent) throws IOException {
+        Path downloadDir = Files.createDirectory(parent.resolve("downloads"));
+        Path outsideDir = Files.createDirectories(parent.resolve("outside/child"));
+        Files.createSymbolicLink(downloadDir.resolve("linked"), outsideDir);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> AzureFileNameHelper.resolveWithinDirectory(downloadDir.toString(), "linked/../file.txt"));
+        assertTrue(exception.getMessage().contains("linked/../file.txt"));
+        assertTrue(exception.getMessage().contains(downloadDir.toString()));
     }
 }

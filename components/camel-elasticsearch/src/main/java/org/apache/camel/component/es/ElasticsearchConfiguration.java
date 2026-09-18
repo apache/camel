@@ -50,7 +50,10 @@ public class ElasticsearchConfiguration {
     private String hostAddresses;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT;
-    @UriParam(defaultValue = "" + ElasticsearchConstants.MAX_RETRY_TIMEOUT)
+    @Deprecated
+    @UriParam(defaultValue = "" + ElasticsearchConstants.MAX_RETRY_TIMEOUT,
+              description = "Deprecated: this option has no effect. It was used by the old low-level REST client and is"
+                            + " ignored by the current client.")
     private int maxRetryTimeout = ElasticsearchConstants.MAX_RETRY_TIMEOUT;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
@@ -245,11 +248,15 @@ public class ElasticsearchConfiguration {
 
     /**
      * The time in ms before retry
+     *
+     * @deprecated this option has no effect and is ignored by the current client
      */
+    @Deprecated
     public int getMaxRetryTimeout() {
         return maxRetryTimeout;
     }
 
+    @Deprecated
     public void setMaxRetryTimeout(int maxRetryTimeout) {
         this.maxRetryTimeout = maxRetryTimeout;
     }

@@ -53,7 +53,7 @@ public class AiTraceTools {
             "aws-bedrock", "aws-bedrock-agent", "aws-bedrock-agent-runtime",
             "aws2-textract", "docling",
             "langchain4j-chat", "langchain4j-embeddings", "langchain4j-embeddingstore",
-            "langchain4j-tools", "langchain4j-agent", "langchain4j-web-search",
+            "langchain4j-agent", "langchain4j-web-search",
             "openai", "kserve", "tensorflow-serving", "djl",
             "huggingface", "ai-tool");
 

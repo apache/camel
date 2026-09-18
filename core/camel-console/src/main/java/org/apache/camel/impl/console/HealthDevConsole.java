@@ -16,8 +16,11 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -27,8 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "health", displayName = "Health Check", description = "Health Check Status")
 public class HealthDevConsole extends AbstractDevConsole {
@@ -36,6 +38,26 @@ public class HealthDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Exposure level for health check details",
               defaultValue = "default", javaType = "java.lang.String", enums = "default,oneline,full")
     public static final String EXPOSURE_LEVEL = "exposureLevel";
+
+    public record CheckEntry(
+            @Metadata(description = "The health check ID") String id,
+            @Metadata(description = "The health check group") String group,
+            @Metadata(description = "Whether the health check is up") boolean up,
+            @Metadata(description = "The health check state") String state,
+            @Metadata(description = "Whether the health check is enabled") boolean enabled,
+            @Metadata(description = "Whether the health check is a readiness check") boolean readiness,
+            @Metadata(description = "Whether the health check is a liveness check") boolean liveness,
+            @Metadata(description = "The failure message (only present when not up)") String message,
+            @Metadata(description = "The failure stack trace, one entry per line (only present when not up and an error is available)") List<String> stackTrace,
+            @Metadata(description = "Additional health check specific details (only present when available)") Map<String, String> details) {
+    }
+
+    public record Response(
+            @Metadata(description = "Whether the overall health status is up") boolean up,
+            @Metadata(description = "Whether the readiness checks are up") boolean ready,
+            @Metadata(description = "Whether the liveness checks are up") boolean live,
+            @Metadata(description = "The individual health checks") List<CheckEntry> checks) {
+    }
 
     public HealthDevConsole() {
         super("camel", "health", "Health Check", "Health Check Status");
@@ -79,61 +101,44 @@ public class HealthDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String exposureLevel = optionString(options, EXPOSURE_LEVEL);
         Collection<HealthCheck.Result> readies = HealthCheckHelper.invokeReadiness(getCamelContext(), exposureLevel);
         Collection<HealthCheck.Result> lives = HealthCheckHelper.invokeLiveness(getCamelContext(), exposureLevel);
         boolean ready = HealthCheckHelper.isResultsUp(readies, true);
         boolean live = HealthCheckHelper.isResultsUp(lives, false);
-        root.put("up", ready && live);
-        root.put("ready", ready);
-        root.put("live", live);
 
-        JsonArray arr = new JsonArray();
-        root.put("checks", arr);
-
-        Stream<HealthCheck.Result> checks = Stream.concat(readies.stream(), lives.stream());
-        checks.forEach(res -> {
-            JsonObject jo = new JsonObject();
-            arr.add(jo);
-
+        List<CheckEntry> checks = new ArrayList<>();
+        Stream.concat(readies.stream(), lives.stream()).forEach(res -> {
             boolean ok = res.getState().equals(HealthCheck.State.UP);
-            jo.put("id", res.getCheck().getId());
-            jo.put("group", res.getCheck().getGroup());
-            if (ok) {
-                jo.put("up", true);
-            } else {
-                jo.put("up", false);
-            }
-            jo.put("state", res.getState().toString());
-            jo.put("enabled", res.getCheck().isEnabled());
-            jo.put("readiness", res.getCheck().isReadiness());
-            jo.put("liveness", res.getCheck().isLiveness());
 
+            String message = null;
+            List<String> stackTrace = null;
             if (!ok) {
-                String msg = res.getMessage().orElse("");
-                jo.put("message", msg);
+                message = res.getMessage().orElse("");
 
                 Throwable cause = res.getError().orElse(null);
                 if (cause != null) {
-                    JsonArray arr2 = new JsonArray();
                     final String trace = ExceptionHelper.stackTraceToString(cause);
-                    jo.put("stackTrace", arr2);
-                    Collections.addAll(arr2, trace.split("\n"));
+                    stackTrace = Arrays.asList(trace.split("\n"));
                 }
             }
 
+            Map<String, String> details = null;
             if (!res.getDetails().isEmpty()) {
-                JsonObject details = new JsonObject();
-                res.getDetails().forEach((k, v) -> {
-                    details.put(k, v.toString());
-                });
-                jo.put("details", details);
+                details = new LinkedHashMap<>();
+                for (Map.Entry<String, Object> entry : res.getDetails().entrySet()) {
+                    details.put(entry.getKey(), entry.getValue().toString());
+                }
             }
+
+            checks.add(new CheckEntry(
+                    res.getCheck().getId(), res.getCheck().getGroup(), ok, res.getState().toString(),
+                    res.getCheck().isEnabled(), res.getCheck().isReadiness(), res.getCheck().isLiveness(), message,
+                    stackTrace, details));
         });
 
-        return root;
+        Response response = new Response(ready && live, ready, live, checks);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

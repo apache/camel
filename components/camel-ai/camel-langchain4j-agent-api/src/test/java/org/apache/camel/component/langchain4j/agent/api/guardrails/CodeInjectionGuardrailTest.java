@@ -123,6 +123,15 @@ class CodeInjectionGuardrailTest {
     }
 
     @Test
+    void testNonStrictModeDoesNotBlockMultipleMatchesOfTheSameType() {
+        CodeInjectionGuardrail guardrail = new CodeInjectionGuardrail();
+
+        // Both {{...}} and ${...} are TEMPLATE_INJECTION patterns, i.e. a single type - a legitimate
+        // templating question must not be blocked just because two same-type patterns matched.
+        assertTrue(guardrail.validate(UserMessage.from("render {{name}} and ${value}")).isSuccess());
+    }
+
+    @Test
     void testForSpecificTypes() {
         // Use builder with strict mode to fail on single match
         CodeInjectionGuardrail guardrail = CodeInjectionGuardrail.builder()

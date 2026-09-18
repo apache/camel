@@ -125,7 +125,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                fromF("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true",
+                fromF("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true&muteException=false",
                         getPort())
                         .process(e -> {
                             String in = e.getIn().getBody(String.class);

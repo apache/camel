@@ -139,6 +139,16 @@ messages)
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="cache" type="tns:cacheDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache
+miss, executes the block and caches the result body.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="camel" type="tns:applicationDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -238,15 +248,6 @@ Converts a variable value to a specified Java type using Camel's built-in type c
       <xs:documentation xml:lang="en">
 <![CDATA[
 Encrypt and decrypt messages using Java Cryptography Extension (JCE)
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="csimple" type="tns:cSimpleExpression">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: Evaluate a compiled simple expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -741,15 +742,6 @@ Evaluates a Java (Java compiled once at runtime) expression
       <xs:documentation xml:lang="en">
 <![CDATA[
 Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="joor" type="tns:joorExpression">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: Evaluates a jOOR (Java compiled once at runtime) expression
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1265,6 +1257,24 @@ Defines an HTTP PUT operation in the REST DSL
       <xs:documentation xml:lang="en">
 <![CDATA[
 Evaluates a Python expression
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="python3" type="tns:python3Expression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Evaluates a Python 3 expression
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="quickjs" type="tns:quickjsExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Evaluates a JavaScript expression using QuickJS4J
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1961,6 +1971,15 @@ Tokenizes the message body for AI processing, splitting text into chunks suitabl
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="toon" type="tns:toonDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="topicLoadBalancer" type="tns:topicLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -2004,6 +2023,15 @@ transformers
       <xs:documentation xml:lang="en">
 <![CDATA[
 Container for defining data type transformer definitions
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="ubl" type="tns:ublDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2197,6 +2225,7 @@ Compression and decompress streams using java.util.zip.Zip*Stream
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -2410,6 +2439,7 @@ values.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -2711,7 +2741,6 @@ ensuring the aggregation repository is empty before shutdown. Default value: fal
   <xs:complexType name="expressionSubElementDefinition">
     <xs:choice>
       <xs:element ref="tns:expressionDefinition"/>
-      <xs:element ref="tns:csimple"/>
       <xs:element ref="tns:constant"/>
       <xs:element ref="tns:datasonnet"/>
       <xs:element ref="tns:exchangeProperty"/>
@@ -2721,14 +2750,15 @@ ensuring the aggregation repository is empty before shutdown. Default value: fal
       <xs:element ref="tns:jactl"/>
       <xs:element ref="tns:java"/>
       <xs:element ref="tns:js"/>
-      <xs:element ref="tns:joor"/>
       <xs:element ref="tns:jq"/>
       <xs:element ref="tns:jsonpath"/>
       <xs:element ref="tns:language"/>
       <xs:element ref="tns:method"/>
       <xs:element ref="tns:mvel"/>
       <xs:element ref="tns:ognl"/>
+      <xs:element ref="tns:python3"/>
       <xs:element ref="tns:python"/>
+      <xs:element ref="tns:quickjs"/>
       <xs:element ref="tns:ref"/>
       <xs:element ref="tns:simple"/>
       <xs:element ref="tns:spel"/>
@@ -2906,11 +2936,12 @@ The name of the bean (bean id).
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="type" type="xs:string" use="required">
+    <xs:attribute name="type" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-The class name (fully qualified) of the bean.
+The class name (fully qualified) of the bean. Required unless the bean is created by a script (scriptLanguage) or a
+builder (builderClass), where the type is optional and is then the type the bean is registered as.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -3014,6 +3045,147 @@ Whether the script should support using Camel property placeholder syntax {{ }}.
     <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
   </xs:complexType>
+  <xs:complexType name="cacheDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:processorDefinition">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
+            <xs:element ref="tns:exchangeProperty"/>
+            <xs:element ref="tns:groovy"/>
+            <xs:element ref="tns:header"/>
+            <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
+            <xs:element ref="tns:java"/>
+            <xs:element ref="tns:js"/>
+            <xs:element ref="tns:jq"/>
+            <xs:element ref="tns:jsonpath"/>
+            <xs:element ref="tns:language"/>
+            <xs:element ref="tns:method"/>
+            <xs:element ref="tns:mvel"/>
+            <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
+            <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
+            <xs:element ref="tns:ref"/>
+            <xs:element ref="tns:simple"/>
+            <xs:element ref="tns:spel"/>
+            <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
+            <xs:element ref="tns:wasm"/>
+            <xs:element ref="tns:xtokenize"/>
+            <xs:element ref="tns:xpath"/>
+            <xs:element ref="tns:xquery"/>
+          </xs:choice>
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element ref="tns:a2aSubTask"/>
+            <xs:element ref="tns:aggregate"/>
+            <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
+            <xs:element ref="tns:doCatch"/>
+            <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:circuitBreaker"/>
+            <xs:element ref="tns:claimCheck"/>
+            <xs:element ref="tns:convertBodyTo"/>
+            <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
+            <xs:element ref="tns:delay"/>
+            <xs:element ref="tns:dynamicRouter"/>
+            <xs:element ref="tns:enrich"/>
+            <xs:element ref="tns:filter"/>
+            <xs:element ref="tns:doFinally"/>
+            <xs:element ref="tns:idempotentConsumer"/>
+            <xs:element ref="tns:intercept"/>
+            <xs:element ref="tns:interceptFrom"/>
+            <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
+            <xs:element ref="tns:loadBalance"/>
+            <xs:element ref="tns:log"/>
+            <xs:element ref="tns:loop"/>
+            <xs:element ref="tns:marshal"/>
+            <xs:element ref="tns:multicast"/>
+            <xs:element ref="tns:onCompletion"/>
+            <xs:element ref="tns:onException"/>
+            <xs:element ref="tns:pausable"/>
+            <xs:element ref="tns:pipeline"/>
+            <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
+            <xs:element ref="tns:pollEnrich"/>
+            <xs:element ref="tns:process"/>
+            <xs:element ref="tns:recipientList"/>
+            <xs:element ref="tns:removeHeader"/>
+            <xs:element ref="tns:removeHeaders"/>
+            <xs:element ref="tns:removeProperties"/>
+            <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
+            <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
+            <xs:element ref="tns:rollback"/>
+            <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routingSlip"/>
+            <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sample"/>
+            <xs:element ref="tns:script"/>
+            <xs:element ref="tns:setBody"/>
+            <xs:element ref="tns:setExchangePattern"/>
+            <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
+            <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
+            <xs:element ref="tns:setVariables"/>
+            <xs:element ref="tns:sort"/>
+            <xs:element ref="tns:split"/>
+            <xs:element ref="tns:step"/>
+            <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
+            <xs:element ref="tns:throwException"/>
+            <xs:element ref="tns:to"/>
+            <xs:element ref="tns:toD"/>
+            <xs:element ref="tns:tokenizer"/>
+            <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
+            <xs:element ref="tns:transform"/>
+            <xs:element ref="tns:doTry"/>
+            <xs:element ref="tns:unmarshal"/>
+            <xs:element ref="tns:validate"/>
+            <xs:element ref="tns:wireTap"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="keyValueRepository" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the reference name of the KeyValueRepository to use as the cache backing store. If not set, a
+MemoryKeyValueRepository is auto-created.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ttl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the time-to-live for cached entries. Supports duration syntax (e.g. 10m, 1h) or milliseconds. Default: -1 (no
+expiration). Default value: -1
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="cacheNull" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to cache null results. By default, null message bodies are not cached. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="catchDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -3032,6 +3204,7 @@ The exception class names (fully qualified) to catch.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -3110,7 +3283,6 @@ The exception class names (fully qualified) to catch.
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -3120,14 +3292,15 @@ The exception class names (fully qualified) to catch.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -3167,7 +3340,6 @@ placeholders or simple expressions using only property placeholders are supporte
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
@@ -3177,14 +3349,15 @@ placeholders or simple expressions using only property placeholders are supporte
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
             <xs:element ref="tns:method"/>
             <xs:element ref="tns:mvel"/>
             <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -3199,6 +3372,7 @@ placeholders or simple expressions using only property placeholders are supporte
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -3289,6 +3463,7 @@ Disables this EIP from the route. Default value: false
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -3381,6 +3556,7 @@ Disables this EIP from the route. Default value: false
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -3461,7 +3637,7 @@ Refers to a circuit breaker configuration to use for configuring the circuit bre
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="inheritErrorHandler" type="xs:boolean">
+        <xs:attribute name="inheritErrorHandler" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -3895,6 +4071,7 @@ References a custom thread pool to use when offloading a guarded action to anoth
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -4220,7 +4397,6 @@ To use a specific charset when converting.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -4230,14 +4406,15 @@ To use a specific charset when converting.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -4283,7 +4460,6 @@ To use a custom thread pool if asyncDelay has been enabled.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -4293,14 +4469,15 @@ To use a custom thread pool if asyncDelay has been enabled.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -4359,7 +4536,6 @@ restriction, useful for low-code / Kamelet deployments; by default (unset) any s
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -4369,14 +4545,15 @@ restriction, useful for low-code / Kamelet deployments; by default (unset) any s
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -4981,7 +5158,6 @@ The logging level to use for logging transactional rollback. Default is WARN. De
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
@@ -4991,14 +5167,15 @@ The logging level to use for logging transactional rollback. Default is WARN. De
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
             <xs:element ref="tns:method"/>
             <xs:element ref="tns:mvel"/>
             <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -5013,6 +5190,7 @@ The logging level to use for logging transactional rollback. Default is WARN. De
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -5103,6 +5281,7 @@ Name of an exchange property to store whether the filter predicate matched or no
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -5234,7 +5413,6 @@ Global option value.
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
@@ -5244,14 +5422,15 @@ Global option value.
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
             <xs:element ref="tns:method"/>
             <xs:element ref="tns:mvel"/>
             <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -5266,6 +5445,7 @@ Global option value.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -5421,6 +5601,7 @@ Whether validation is required for this input type. Default value: false
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -5519,6 +5700,7 @@ Intercept incoming messages from the uri or uri pattern. If not configured, then
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -5628,6 +5810,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -5728,6 +5911,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -5870,7 +6054,7 @@ value: -1
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="inheritErrorHandler" type="xs:boolean">
+        <xs:attribute name="inheritErrorHandler" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -6024,7 +6208,6 @@ The language to use for evaluating the log message, such as simple, groovy, or o
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
@@ -6034,14 +6217,15 @@ The language to use for evaluating the log message, such as simple, groovy, or o
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
             <xs:element ref="tns:method"/>
             <xs:element ref="tns:mvel"/>
             <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -6056,6 +6240,7 @@ The language to use for evaluating the log message, such as simple, groovy, or o
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -6212,6 +6397,8 @@ custom logic needed before the looping executes.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:toon"/>
+            <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
@@ -6460,6 +6647,16 @@ Optional schema resolver used to lookup schemas for the data in transit.
             <xs:documentation xml:lang="en">
 <![CDATA[
 When not disabled, the SchemaResolver will be looked up into the registry. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="serializablePackages" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes
+resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8632,6 +8829,18 @@ no_signature_allowed.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="requireIntegrityProtection" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet
+carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it
+lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still
+emits the legacy packet. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -8925,6 +9134,17 @@ Path to the Smooks configuration file.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="allowExternalEntities" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and parameter
+entities) when parsing XML input. This is disabled by default so that external entities in the message body are not
+resolved; enable it only for trusted legacy configurations that rely on external entity resolution. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -9106,6 +9326,76 @@ Whether to preserve path elements when the file name contains path elements in t
 <![CDATA[
 The maximum decompressed size of a tar file (in bytes). An IOException is thrown if the decompressed size exceeds this
 amount. Set to -1 to disable. Default value: 1073741824
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="toonDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="indent" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Number of spaces per indentation level. Default value: 2
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="delimiter" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Delimiter used for tabular array rows and inline primitive arrays. Default value: COMMA
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="lengthMarker" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.
+Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="strict" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing. Default value:
+true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether the data format should set the Content-Type header to text/toon when marshalling. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ublDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="prettyPrint" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable pretty printing (formatted) output of the XML. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9395,7 +9685,7 @@ The escape character. Default value: \
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The cipher algorithm to be used for encryption/decryption of the XML message content. Default value: AES-256-GCM
+The cipher algorithm to be used for encryption/decryption of the XML message content. Default value: AES_256_GCM
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9706,6 +9996,7 @@ gigabyte. Set to -1 to disable setting a maximum decompressed size. Default valu
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -9908,6 +10199,7 @@ own individual unit of work. Default value: false
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -10093,6 +10385,7 @@ onException steps complete. The exception is considered handled as well.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -10305,6 +10598,7 @@ Predicate to evaluate whether the processing can resume. Returns true if consump
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -10386,6 +10680,7 @@ Predicate to evaluate whether the processing can resume. Returns true if consump
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -10509,7 +10804,6 @@ Timeout in millis when polling from the external service. The default value is 2
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -10519,14 +10813,15 @@ Timeout in millis when polling from the external service. The default value is 2
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -10695,7 +10990,6 @@ The property value.
   <xs:complexType name="propertyExpressionDefinition">
     <xs:choice>
       <xs:element ref="tns:expressionDefinition"/>
-      <xs:element ref="tns:csimple"/>
       <xs:element ref="tns:constant"/>
       <xs:element ref="tns:datasonnet"/>
       <xs:element ref="tns:exchangeProperty"/>
@@ -10705,14 +10999,15 @@ The property value.
       <xs:element ref="tns:jactl"/>
       <xs:element ref="tns:java"/>
       <xs:element ref="tns:js"/>
-      <xs:element ref="tns:joor"/>
       <xs:element ref="tns:jq"/>
       <xs:element ref="tns:jsonpath"/>
       <xs:element ref="tns:language"/>
       <xs:element ref="tns:method"/>
       <xs:element ref="tns:mvel"/>
       <xs:element ref="tns:ognl"/>
+      <xs:element ref="tns:python3"/>
       <xs:element ref="tns:python"/>
+      <xs:element ref="tns:quickjs"/>
       <xs:element ref="tns:ref"/>
       <xs:element ref="tns:simple"/>
       <xs:element ref="tns:spel"/>
@@ -10738,7 +11033,6 @@ The property key.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -10748,14 +11042,15 @@ The property key.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -11041,7 +11336,6 @@ Name of the variable to remove.
           </xs:choice>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
@@ -11051,14 +11345,15 @@ Name of the variable to remove.
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
             <xs:element ref="tns:method"/>
             <xs:element ref="tns:mvel"/>
             <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -11073,6 +11368,7 @@ Name of the variable to remove.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -11431,6 +11727,7 @@ Reference to the routes in the xml-dsl.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -11514,7 +11811,7 @@ Whether to auto start this route. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to slow down processing messages by a given delay in msec. Default value: advanced
+Whether to slow down processing messages by a given delay in msec.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11687,7 +11984,7 @@ The name of the template parameter.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="required" type="xs:boolean">
+    <xs:attribute name="required" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
@@ -11740,7 +12037,6 @@ Description of the template parameter for documentation purposes.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -11750,14 +12046,15 @@ Description of the template parameter for documentation purposes.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -11828,6 +12125,7 @@ Option values will be transformed into input headers of the compensation/complet
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -11994,7 +12292,6 @@ The frequency of samples as a message count, using a message-frequency approach.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -12004,14 +12301,15 @@ The frequency of samples as a message count, using a message-frequency approach.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12046,7 +12344,6 @@ The uri of the endpoint to send to.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -12056,14 +12353,15 @@ The uri of the endpoint to send to.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12098,7 +12396,6 @@ The new exchange pattern to use from this point forward.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -12108,14 +12405,15 @@ The new exchange pattern to use from this point forward.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12153,7 +12451,6 @@ Otherwise a constant name will be used.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -12163,14 +12460,15 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12199,7 +12497,6 @@ name. Otherwise a constant name will be used.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -12209,14 +12506,15 @@ name. Otherwise a constant name will be used.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12254,7 +12552,6 @@ Otherwise a constant name will be used.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -12264,14 +12561,15 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12300,7 +12598,6 @@ Sets a reference to lookup for the comparator to use for sorting.
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
@@ -12310,14 +12607,15 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
             <xs:element ref="tns:method"/>
             <xs:element ref="tns:mvel"/>
             <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -12332,6 +12630,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -12607,6 +12906,7 @@ enables value-based watermarking instead of index-based. The expression is evalu
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -12961,7 +13261,6 @@ handler. Default value: true
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
@@ -12971,14 +13270,15 @@ handler. Default value: true
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
             <xs:element ref="tns:method"/>
             <xs:element ref="tns:mvel"/>
             <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -13330,6 +13630,7 @@ The underlying model name used by the tokenizer. Providing this switches to comp
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -13444,7 +13745,6 @@ into.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -13454,14 +13754,15 @@ into.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -13483,6 +13784,7 @@ into.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -13601,6 +13903,8 @@ into.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:toon"/>
+            <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
@@ -13648,7 +13952,6 @@ Indicates whether null is allowed as value of a body to unmarshall. Default valu
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -13658,14 +13961,15 @@ Indicates whether null is allowed as value of a body to unmarshall. Default valu
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -13907,7 +14211,8 @@ Allows to configure custom validation levels when using camel-openapi-validator 
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow.
+The Camel Rest component to use for the REST transport (consumer), such as platform-http, netty-http, jetty, servlet,
+undertow.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -14799,7 +15104,7 @@ The default value of the parameter.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="required" type="xs:boolean">
+    <xs:attribute name="required" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
@@ -15029,6 +15334,8 @@ An example value of this response header.
         <xs:element ref="tns:swiftMx"/>
         <xs:element ref="tns:syslog"/>
         <xs:element ref="tns:tarFile"/>
+        <xs:element ref="tns:toon"/>
+        <xs:element ref="tns:ubl"/>
         <xs:element ref="tns:thrift"/>
         <xs:element ref="tns:univocityCsv"/>
         <xs:element ref="tns:univocityFixed"/>
@@ -15040,28 +15347,9 @@ An example value of this response header.
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="cSimpleExpression">
+  <xs:complexType name="constantExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition">
-        <xs:attribute name="trimResult" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to trim the returned values when this language is in use. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="pretty" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To pretty format the output (only JSon or XML supported). Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
+      <xs:extension base="tns:typedExpressionDefinition"/>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType abstract="true" name="typedExpressionDefinition">
@@ -15077,11 +15365,6 @@ The class of the result type (type from output).
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-  <xs:complexType name="constantExpression">
-    <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition"/>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="datasonnetExpression">
@@ -15178,32 +15461,6 @@ strings inside strings. Default value: true
   <xs:complexType name="javaScriptExpression">
     <xs:simpleContent>
       <xs:extension base="tns:typedExpressionDefinition"/>
-    </xs:simpleContent>
-  </xs:complexType>
-  <xs:complexType name="joorExpression">
-    <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition">
-        <xs:attribute name="preCompile" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the
-expression is reloaded and compiled on each evaluation. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="singleQuotes" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with
-strings inside strings. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="jqExpression">
@@ -15346,7 +15603,18 @@ Whether to validate the bean has the configured method. Default value: true
   </xs:complexType>
   <xs:complexType abstract="true" name="namespaceAwareExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:singleInputTypedExpressionDefinition"/>
+      <xs:extension base="tns:singleInputTypedExpressionDefinition">
+        <xs:attribute name="namespacesRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix
+to uri mappings.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="ognlExpression">
@@ -15354,7 +15622,17 @@ Whether to validate the bean has the configured method. Default value: true
       <xs:extension base="tns:typedExpressionDefinition"/>
     </xs:simpleContent>
   </xs:complexType>
+  <xs:complexType name="python3Expression">
+    <xs:simpleContent>
+      <xs:extension base="tns:typedExpressionDefinition"/>
+    </xs:simpleContent>
+  </xs:complexType>
   <xs:complexType name="pythonExpression">
+    <xs:simpleContent>
+      <xs:extension base="tns:typedExpressionDefinition"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="quickjsExpression">
     <xs:simpleContent>
       <xs:extension base="tns:typedExpressionDefinition"/>
     </xs:simpleContent>
@@ -15912,6 +16190,8 @@ matches. If you specify just 'json', it matches all json destination types.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:toon"/>
+            <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
@@ -16053,7 +16333,6 @@ URI of the Endpoint used for validation.
       <xs:extension base="tns:validator">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
-          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
@@ -16063,14 +16342,15 @@ URI of the Endpoint used for validation.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:joor"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
           <xs:element ref="tns:method"/>
           <xs:element ref="tns:mvel"/>
           <xs:element ref="tns:ognl"/>
+          <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>

@@ -57,8 +57,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         // --- 1. AMQP Setup ---
         // Ensures the RabbitMQ queue, exchange, and binding exist before the test.
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
-        Queue q = new Queue("myqueue");
-        TopicExchange t = new TopicExchange("foo");
+        Queue q = new Queue(uniqueName("myqueue"));
+        TopicExchange t = new TopicExchange(uniqueName("foo"));
         AmqpAdmin admin = new RabbitAdmin(cf);
         admin.declareQueue(q);
         admin.declareExchange(t);
@@ -115,7 +115,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         StopWatch lastMessageStopWatch = new StopWatch();
         final long idleTimeoutMillis = 2000; // 2 seconds
         while (true) {
-            Object receivedMessage = rabbitConsumerTemplate.receiveAndConvert("myqueue");
+            Object receivedMessage = rabbitConsumerTemplate.receiveAndConvert(uniqueName("myqueue"));
 
             if (receivedMessage != null) {
                 // If we got a message, increment count and reset the idle timer.
@@ -140,8 +140,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
     public void testProducer() throws Exception {
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
-        Queue q = new Queue("myqueue");
-        TopicExchange t = new TopicExchange("foo");
+        Queue q = new Queue(uniqueName("myqueue"));
+        TopicExchange t = new TopicExchange(uniqueName("foo"));
 
         AmqpAdmin admin = new RabbitAdmin(cf);
         admin.declareQueue(q);
@@ -151,7 +151,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         template.sendBody("direct:start", "Hello World");
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        String out = (String) template.receiveAndConvert("myqueue");
+        String out = (String) template.receiveAndConvert(uniqueName("myqueue"));
         Assertions.assertEquals("Hello World", out);
     }
 
@@ -159,8 +159,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
     public void testProducerWithHeader() throws Exception {
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
-        Queue q = new Queue("myqueue");
-        TopicExchange t = new TopicExchange("foo");
+        Queue q = new Queue(uniqueName("myqueue"));
+        TopicExchange t = new TopicExchange(uniqueName("foo"));
 
         AmqpAdmin admin = new RabbitAdmin(cf);
         admin.declareQueue(q);
@@ -170,7 +170,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         template.sendBodyAndHeader("direct:start", "Hello World", "cheese", "gouda");
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        Message out = template.receive("myqueue");
+        Message out = template.receive(uniqueName("myqueue"));
 
         byte[] body = out.getBody();
         Assertions.assertNotNull(body, "The body should not be null");
@@ -182,8 +182,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
     public void testProducerWithMessage() throws Exception {
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
-        Queue q = new Queue("myqueue");
-        TopicExchange t = new TopicExchange("foo");
+        Queue q = new Queue(uniqueName("myqueue"));
+        TopicExchange t = new TopicExchange(uniqueName("foo"));
 
         AmqpAdmin admin = new RabbitAdmin(cf);
         admin.declareQueue(q);
@@ -202,7 +202,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         template.sendBody("direct:start", body);
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        Message out = template.receive("myqueue");
+        Message out = template.receive(uniqueName("myqueue"));
         Assertions.assertEquals("foo", new String(out.getBody()));
         Assertions.assertEquals("baz", out.getMessageProperties().getHeader("bar"));
     }
@@ -211,8 +211,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
     public void testProducerWithMessageProperties() throws Exception {
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
-        Queue q = new Queue("myqueue");
-        TopicExchange t = new TopicExchange("foo");
+        Queue q = new Queue(uniqueName("myqueue"));
+        TopicExchange t = new TopicExchange(uniqueName("foo"));
 
         AmqpAdmin admin = new RabbitAdmin(cf);
         admin.declareQueue(q);
@@ -227,7 +227,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
                         SpringRabbitMQConstants.PRIORITY, 1));
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        Message out = template.receive("myqueue");
+        Message out = template.receive(uniqueName("myqueue"));
 
         final MessageProperties messageProperties = out.getMessageProperties();
         Assertions.assertNotNull(messageProperties, "The message properties should not be null");
@@ -246,8 +246,8 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
     public void testProducerWithBreadcrumb() throws Exception {
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
-        Queue q = new Queue("myqueue");
-        TopicExchange t = new TopicExchange("foo");
+        Queue q = new Queue(uniqueName("myqueue"));
+        TopicExchange t = new TopicExchange(uniqueName("foo"));
 
         AmqpAdmin admin = new RabbitAdmin(cf);
         admin.declareQueue(q);
@@ -259,7 +259,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
                         SpringRabbitMQConstants.TYPE, "price", Exchange.BREADCRUMB_ID, "mycrumb123"));
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        Message out = template.receive("myqueue");
+        Message out = template.receive(uniqueName("myqueue"));
 
         final MessageProperties messageProperties = out.getMessageProperties();
         Assertions.assertNotNull(messageProperties, "The message properties should not be null");
@@ -277,7 +277,7 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo?routingKey=foo.bar");
+                        .to("spring-rabbitmq:" + uniqueName("foo") + "?routingKey=foo.bar");
             }
         };
     }

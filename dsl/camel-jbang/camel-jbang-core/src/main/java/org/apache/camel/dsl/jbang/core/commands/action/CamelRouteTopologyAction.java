@@ -101,6 +101,10 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                         description = "Include external systems (consumers at top, producers at bottom)")
     boolean external;
 
+    @CommandLine.Option(names = { "--kamelets" },
+                        description = "Include routes created by Kamelets (hidden by default, only for a running Camel application)")
+    boolean kamelets;
+
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
@@ -135,6 +139,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         Path outputFile = prepareAction(Long.toString(pid), "route-topology", root -> {
             root.put("metric", String.valueOf(metric));
             root.put("external", String.valueOf(external));
+            root.put("kamelets", String.valueOf(kamelets));
         });
 
         JsonObject jo = getJsonObject(outputFile);

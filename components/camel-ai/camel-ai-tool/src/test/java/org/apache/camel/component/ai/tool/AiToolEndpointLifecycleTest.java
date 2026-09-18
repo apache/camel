@@ -18,6 +18,7 @@ package org.apache.camel.component.ai.tool;
 
 import java.util.Set;
 
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -352,7 +353,8 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
                      + "&argSchema={\"type\":\"object\"}")
                         .setBody(constant("invalid"));
             }
-        })).isInstanceOf(IllegalArgumentException.class)
+        })).isInstanceOf(FailedToStartRouteException.class)
+                .cause().isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("mutually exclusive");
     }
 
@@ -381,6 +383,60 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
         assertThat(annotations.destructiveHint()).isTrue();
         assertThat(annotations.idempotentHint()).isFalse();
         assertThat(annotations.openWorldHint()).isTrue();
+    }
+
+    @Test
+    void testOutputSchemaToolRegisteredOnStart() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:getWeatherStructured"
+                     + "?tags=weather-structured"
+                     + "&description=Get weather"
+                     + "&outputSchema=classpath:output-schemas/weather-result.json")
+                        .setBody(constant("{\"temperature\":21.5,\"unit\":\"celsius\"}"));
+            }
+        });
+
+        AiToolSpec spec = AiToolRegistry.getOrCreate(context).getToolsByTag("weather-structured").iterator().next();
+
+        assertThat(spec.getName()).isEqualTo("getWeatherStructured");
+
+        assertThat(spec.getOutputParameterDefs()).isEmpty();
+        assertThat(spec.getOutputJsonSchema()).isNotNull().contains("\"temperature\"");
+    }
+
+    @Test
+    void testOutputParameterToolRegisteredOnStart() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:getTemperature"
+                     + "?tags=weather-output"
+                     + "&description=Get temperature"
+                     + "&outputParameter.temperature=number"
+                     + "&outputParameter.unit=string")
+                        .setBody(constant("{\"temperature\":18,\"unit\":\"celsius\"}"));
+            }
+        });
+
+        AiToolSpec spec = AiToolRegistry.getOrCreate(context).getToolsByTag("weather-output").iterator().next();
+
+        assertThat(spec.getOutputParameterDefs()).containsKeys("temperature", "unit");
+        assertThat(spec.getOutputJsonSchema()).contains("\"temperature\"").contains("\"unit\"");
+    }
+
+    @Test
+    void testOutputSchemaAndOutputParametersAreMutuallyExclusive() {
+        assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:invalidOutput"
+                     + "?tags=test"
+                     + "&outputParameter.temperature=number"
+                     + "&outputSchema={\"type\":\"object\"}")
+                        .setBody(constant("invalid"));
+            }
+        })).isInstanceOf(FailedToStartRouteException.class)
+                .cause().isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("mutually exclusive");
     }
 
     @Test

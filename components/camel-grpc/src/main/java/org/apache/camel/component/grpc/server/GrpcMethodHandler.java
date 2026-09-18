@@ -33,6 +33,8 @@ import org.apache.camel.component.grpc.GrpcEndpoint;
  */
 public class GrpcMethodHandler {
 
+    private static final String MUTED_DESCRIPTION = "Exchange processing failed";
+
     protected final GrpcConsumer consumer;
 
     public GrpcMethodHandler(GrpcConsumer consumer) {
@@ -64,8 +66,12 @@ public class GrpcMethodHandler {
         invokeRoute(endpoint, exchange);
 
         if (exchange.isFailed()) {
+            // the description IS transmitted to the client, so it carries the route's exception message only when
+            // the endpoint opted out of muting; the cause below stays local either way
+            String description = endpoint.getConfiguration().isMuteException()
+                    ? MUTED_DESCRIPTION : exchange.getException().getMessage();
             responseObserver.onError(Status.INTERNAL
-                    .withDescription(exchange.getException().getMessage())
+                    .withDescription(description)
                     // This can be attached to the Status locally, but NOT transmitted to the client!
                     .withCause(exchange.getException())
                     .asRuntimeException());

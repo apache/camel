@@ -55,4 +55,11 @@ public abstract class AbstractCvZooPredictor<T> extends AbstractPredictor {
             throw new RuntimeCamelException("Could not process input or output", e);
         }
     }
+
+    @Override
+    public void close() {
+        if (model != null) {
+            model.close();
+        }
+    }
 }

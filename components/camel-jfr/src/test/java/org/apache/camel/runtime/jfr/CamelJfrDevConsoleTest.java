@@ -63,6 +63,12 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
     }
 
     @Test
+    void isNotReadOnly() {
+        // the console can enable/disable JFR events and trigger snapshots, so it must not be advertised as safe
+        assertThat(resolveConsole(context).isReadOnly()).isFalse();
+    }
+
+    @Test
     void statusReportsNotRegisteredByDefault() {
         // camel-jfr is on the classpath, but its runtime instrumentation is opt-in, so merely having the
         // recorder available must not install the hooks

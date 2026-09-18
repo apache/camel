@@ -174,7 +174,7 @@ Spring DSL based configuration of endpoint
   </camel:trustManagers>
 </camel:sslContextParameters>...
 ...
-<to uri="smtps://smtp.google.com?username=user@gmail.com&password=password&sslContextParameters=#sslContextParameters"/>...
+<to uri="smtps://smtp.google.com?username=user@gmail.com&amp;password=password&amp;sslContextParameters=#sslContextParameters"/>...
 ----
 
 ==== Configuring JavaMail Directly
@@ -328,14 +328,18 @@ YAML::
 +
 [source,yaml]
 ----
-- to:
-    uri: smtp://relay@mailhost
-    parameters:
-      to: "safe@mycompany.com"
-      from: "noreply@mycompany.com"
-      useHeaderRecipients: false
-      useHeaderFrom: false
-      useHeaderReplyTo: false
+- route:
+    from:
+      uri: direct:send
+      steps:
+        - to:
+            uri: smtp://relay@mailhost
+            parameters:
+              to: "safe@mycompany.com"
+              from: "noreply@mycompany.com"
+              useHeaderRecipients: false
+              useHeaderFrom: false
+              useHeaderReplyTo: false
 ----
 ====
 
@@ -697,7 +701,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.subjectOrBody=Camel"/>
+  <from uri="imaps://mymailseerver?username=foo&amp;password=secret&amp;searchTerm.subjectOrBody=Camel"/>
   <to uri="bean:myBean"/>
 </route>
 ----
@@ -743,7 +747,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.fromSentDate=now-24h"/>
+  <from uri="imaps://mymailseerver?username=foo&amp;password=secret&amp;searchTerm.fromSentDate=now-24h"/>
   <to uri="bean:myBean"/>
 </route>
 ----
@@ -785,7 +789,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm.subject=Camel&searchTerm.fromSentDate=now-24h"/>
+  <from uri="imaps://mymailseerver?username=foo&amp;password=secret&amp;searchTerm.subject=Camel&amp;searchTerm.fromSentDate=now-24h"/>
   <to uri="bean:myBean"/>
 </route>
 ----
@@ -839,7 +843,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="imaps://mymailseerver?username=foo&password=secret&searchTerm=#mySearchTerm"/>
+  <from uri="imaps://mymailseerver?username=foo&amp;password=secret&amp;searchTerm=#mySearchTerm"/>
   <to uri="bean:myBean"/>
 </route>
 ----
@@ -899,11 +903,11 @@ For example, to provide a dynamic uuid in `mail.smtp.from` (SMTP MAIL command):
 NOTE: This is only supported when *not* using a custom `JavaMailSender`.
 
 WARNING: This feature is *disabled by default* and must be explicitly enabled with
-`useJavaMailSessionPropertiesFromHeaders=true`. The `mail.smtp.*` / `mail.smtps.*` keys are a
+`useJavaMailSessionPropertiesFromHeaders=true`. The `+mail.smtp.*+` / `+mail.smtps.*+` keys are a
 Camel-internal namespace that is not filtered by any `HeaderFilterStrategy`, so if these headers can
 originate from data crossing a trust boundary (for example HTTP query parameters, or JMS/Kafka
 messages from untrusted producers) an attacker could weaken transport security (such as
 `mail.smtp.ssl.trust` or `mail.smtp.starttls.enable`) or redirect the SMTP connection. Only enable
 the option when these headers are set exclusively by trusted route logic, and strip the namespace
-with `removeHeaders("mail.smtp.*", "mail.smtps.*")` before the producer when bridging an untrusted
+with `+removeHeaders("mail.smtp.*", "mail.smtps.*")+` before the producer when bridging an untrusted
 source. See the xref:manual::security-model.adoc[Camel Security Model] for the general pattern.

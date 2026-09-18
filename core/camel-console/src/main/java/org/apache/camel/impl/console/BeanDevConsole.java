@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -26,12 +29,26 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "bean", description = "Displays Java beans from the registry")
 public class BeanDevConsole extends AbstractDevConsole {
+
+    public record PropertyEntry(
+            @Metadata(description = "The property name") String name,
+            @Metadata(description = "The property type (only present when the value is not null)") String type,
+            @Metadata(description = "The property value") Object value) {
+    }
+
+    public record BeanEntry(
+            @Metadata(description = "The bean name") String name,
+            @Metadata(description = "The bean class type") String type,
+            @Metadata(description = "The bean properties (only present when properties were requested and the bean has some)") List<PropertyEntry> properties) {
+    }
+
+    public record Response(@Metadata(description = "The beans, keyed by bean name") Map<String, BeanEntry> beans) {
+    }
 
     public BeanDevConsole() {
         super("camel", "bean", "Bean", "Displays Java beans from the registry");
@@ -102,22 +119,21 @@ public class BeanDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String filter = optionString(options, FILTER);
         boolean properties = optionBoolean(options, PROPERTIES, true);
         boolean nulls = optionBoolean(options, NULLS, true);
         boolean internal = optionBoolean(options, INTERNAL, true);
 
-        JsonObject root = new JsonObject();
-        JsonObject jo = new JsonObject();
-        root.put("beans", jo);
+        Map<String, BeanEntry> beans = new LinkedHashMap<>();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
         try {
-            Map<String, Object> beans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
-            Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
+            Map<String, Object> registryBeans = getCamelContext().getRegistry().findByTypeWithName(Object.class);
+            Stream<String> keys
+                    = registryBeans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
             keys.forEach(k -> {
-                Object bean = beans.get(k);
+                Object bean = registryBeans.get(k);
                 if (bean != null) {
                     boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
                     if (include) {
@@ -129,14 +145,13 @@ public class BeanDevConsole extends AbstractDevConsole {
                                 // ignore
                             }
                         }
-                        JsonObject jb = new JsonObject();
-                        jb.put("name", k);
-                        jb.put("type", bean.getClass().getName());
-                        jo.put(k, jb);
 
+                        List<PropertyEntry> props = null;
                         if (!values.isEmpty()) {
-                            JsonArray arr = new JsonArray();
-                            values.forEach((pk, pv) -> {
+                            props = new ArrayList<>();
+                            for (Map.Entry<String, Object> entry : values.entrySet()) {
+                                String pk = entry.getKey();
+                                Object pv = entry.getValue();
                                 Object value = pv;
                                 String type = pv != null ? pv.getClass().getName() : null;
                                 if (type != null) {
@@ -149,19 +164,14 @@ public class BeanDevConsole extends AbstractDevConsole {
                                         value = pv;
                                     }
                                 }
-                                JsonObject jp = new JsonObject();
-                                jp.put("name", pk);
-                                if (type != null) {
-                                    jp.put("type", type);
-                                }
-                                jp.put("value", value);
                                 boolean accept = value != null || nulls;
                                 if (accept) {
-                                    arr.add(jp);
+                                    props.add(new PropertyEntry(pk, type, value));
                                 }
-                            });
-                            jb.put("properties", arr);
+                            }
                         }
+
+                        beans.put(k, new BeanEntry(k, bean.getClass().getName(), props));
                     }
                 }
             });
@@ -169,7 +179,7 @@ public class BeanDevConsole extends AbstractDevConsole {
             // ignore
         }
 
-        return root;
+        return JsonRecordSupport.toJsonObject(new Response(beans));
     }
 
     private static boolean accept(String name, String filter) {

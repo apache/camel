@@ -24,7 +24,7 @@ public class CxfEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(38);
+        Set<String> props = new HashSet<>(39);
         props.add("address");
         props.add("allowStreaming");
         props.add("beanId");
@@ -48,6 +48,7 @@ public class CxfEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("loggingSizeLimit");
         props.add("mergeProtocolHeaders");
         props.add("mtomEnabled");
+        props.add("muteException");
         props.add("password");
         props.add("portName");
         props.add("properties");

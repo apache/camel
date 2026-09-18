@@ -114,13 +114,20 @@ public final class VertxPlatformHttpServerSupport {
                             corsConfig.getHeaders());
                 }
 
-                final boolean allowsOrigin
-                        = ObjectHelper.isEmpty(corsConfig.getOrigins()) || corsConfig.getOrigins().contains(origin);
+                // With no origin list configured the request origin is simply reflected back. That is the
+                // standard way around the fetch spec's rule that "*" and credentials are mutually exclusive,
+                // so credentials are only allowed when the operator actually named the origins.
+                final boolean explicitOrigins = ObjectHelper.isNotEmpty(corsConfig.getOrigins());
+                final boolean allowsOrigin = !explicitOrigins || corsConfig.getOrigins().contains(origin);
                 if (allowsOrigin) {
                     response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+                    // The response body varies with the request origin, so it must not be cached against
+                    // one origin and served to another.
+                    response.headers().add(HttpHeaders.VARY, HttpHeaders.ORIGIN);
+                    if (explicitOrigins) {
+                        response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+                    }
                 }
-
-                response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
 
                 if (ObjectHelper.isNotEmpty(corsConfig.getExposedHeaders())) {
                     response.headers().set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,

@@ -108,17 +108,21 @@ class MarshalTest extends YamlTestSupport {
         }
     }
 
-    def "no dataformat"() {
+    def "Error: no dataformat"() {
         when:
         var route = '''
                     - from:
                         uri: "direct:start"
-                        steps:    
+                        steps:
                           - marshal: {}
                           - to: "mock:result"
             '''
-        loadRoutes(route)
         then:
-        context.routeDefinitions.size() == 1
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (IllegalArgumentException e) {
+            Assertions.assertTrue(e.getMessage().contains("0 are valid"), e.getMessage())
+        }
     }
 }

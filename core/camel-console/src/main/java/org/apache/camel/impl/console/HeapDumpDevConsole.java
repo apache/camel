@@ -30,12 +30,18 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "heap-dump", displayName = "Heap Dump",
-            description = "Write a heap dump (.hprof) file for deep memory analysis")
+            description = "Write a heap dump (.hprof) file for deep memory analysis", readOnly = false)
 @Configurer(extended = true)
 public class HeapDumpDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "The absolute path of the written heap dump file (only present on success)") String file,
+            @Metadata(description = "The size in bytes of the written heap dump file (only present on success)") Long size,
+            @Metadata(description = "The error message (only present on failure)") String error) {
+    }
 
     private static final DateTimeFormatter TIMESTAMP = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
 
@@ -53,18 +59,19 @@ public class HeapDumpDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        JsonObject json = doCallJson(options);
-        String error = json.getString("error");
-        if (error != null) {
-            return "Heap dump failed: " + error;
+        Response response = buildResponse(options);
+        if (response.error() != null) {
+            return "Heap dump failed: " + response.error();
         }
-        return "Heap dump written to: " + json.getString("file") + " (" + json.getLong("size") + " bytes)";
+        return "Heap dump written to: " + response.file() + " (" + response.size() + " bytes)";
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        return JsonRecordSupport.toJsonObject(buildResponse(options));
+    }
 
+    private Response buildResponse(Map<String, Object> options) {
         String name = optionString(options, NAME);
         if (name == null || name.isBlank()) {
             name = "heap-dump-" + TIMESTAMP.format(LocalDateTime.now());
@@ -85,12 +92,9 @@ public class HeapDumpDevConsole extends AbstractDevConsole {
                     new String[] { String.class.getName(), boolean.class.getName() });
 
             File file = new File(name);
-            root.put("file", file.getAbsolutePath());
-            root.put("size", file.length());
+            return new Response(file.getAbsolutePath(), file.length(), null);
         } catch (Exception e) {
-            root.put("error", e.getMessage());
+            return new Response(null, null, e.getMessage());
         }
-
-        return root;
     }
 }

@@ -153,6 +153,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
     private class CxfConsumerInvoker implements Invoker {
 
         private static final String COMPLETED = "org.apache.camel.component.cxf.jaxws.completed";
+        private static final String MUTED_FAULT_MESSAGE = "Exchange processing failed";
 
         private final CxfEndpoint endpoint;
 
@@ -359,18 +360,43 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         }
 
         private void checkFailure(org.apache.camel.Exchange camelExchange, Exchange cxfExchange) throws Fault {
-            final Throwable t = extractThrowable(camelExchange);
+            // an exception set on the exchange is a route failure; one carried in the body is a fault the route
+            // chose to return, and stays part of the contract either way
+            final Throwable routeFailure = camelExchange.getException();
+            final Throwable t = routeFailure != null ? routeFailure : extractFromBody(camelExchange, null);
 
             if (t != null) {
                 cxfExchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
                 if (t instanceof Fault fault) {
                     handleFault(cxfExchange, fault);
+                } else if (routeFailure != null && isMuted(t)) {
+                    buildFaultFromThrowable(mutedThrowable());
                 } else {
                     // This is not a CXF Fault. Build the CXF Fault manually.
                     buildFaultFromThrowable(t);
                 }
 
             }
+        }
+
+        /**
+         * Only an <em>undeclared</em> route failure is muted. An exception the service contract declares - annotated
+         * {@code @WebFault} - is what a SOAP client is written against, so suppressing it would break the contract
+         * rather than protect anything.
+         */
+        private boolean isMuted(Throwable t) {
+            return ((CxfEndpoint) getEndpoint()).isMuteException()
+                    && t.getClass().getAnnotation(WebFault.class) == null;
+        }
+
+        /**
+         * Carries no class name, no message and no stack trace of the route's exception: CXF copies the message into
+         * the SOAP faultstring, and can be configured to put the stack trace in the fault detail.
+         */
+        private static Throwable mutedThrowable() {
+            Exception muted = new Exception(MUTED_FAULT_MESSAGE);
+            muted.setStackTrace(new StackTraceElement[0]);
+            return muted;
         }
 
         private static void buildFaultFromThrowable(Throwable t) {
@@ -410,15 +436,9 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             throw t;
         }
 
-        private static Throwable extractThrowable(org.apache.camel.Exchange camelExchange) {
-            Throwable t = camelExchange.getException();
-            if (t == null) {
-                // SOAP faults can be stored as exceptions as message body (to be backwards compatible)
-                t = extractFromBody(camelExchange, t);
-            }
-            return t;
-        }
-
+        /**
+         * SOAP faults can be stored as exceptions as message body (to be backwards compatible).
+         */
         private static Throwable extractFromBody(org.apache.camel.Exchange camelExchange, Throwable t) {
             Object body = camelExchange.getMessage().getBody();
             if (body instanceof Throwable throwable) {

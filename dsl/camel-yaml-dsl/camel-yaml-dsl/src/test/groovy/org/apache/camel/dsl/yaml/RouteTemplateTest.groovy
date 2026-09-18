@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.dsl.yaml.support.model.MyBeanBuilder
 import org.apache.camel.dsl.yaml.support.model.MySetBody
 import org.apache.camel.dsl.yaml.support.model.MyUppercaseProcessor
 import org.apache.camel.impl.engine.DefaultRoute
@@ -133,6 +134,24 @@ class RouteTemplateTest extends YamlTestSupport {
                             steps:
                               - to: "direct:myId"
                               - to: "mock:result"
+                    """),
+                asResource('script-without-type', """
+                        - routeTemplate:
+                            id: "myTemplate"
+                            beans:
+                              - name: "myProcessor"
+                                scriptLanguage: "groovy"
+                                script: "new ${MyUppercaseProcessor.class.name}()"
+                            from:
+                              uri: "direct:{{directName}}"
+                              steps:
+                                - process:
+                                    ref: "{{myProcessor}}"
+                        - from:
+                            uri: "direct:start"
+                            steps:
+                              - to: "direct:myId"
+                              - to: "mock:result"
                     """)
         ]
     }
@@ -176,6 +195,49 @@ class RouteTemplateTest extends YamlTestSupport {
         with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
             id == 'myTemplate'
             templateBeans.size() == 1
+        }
+
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "create template with builder bean without type"() {
+        setup:
+        loadRoutes """
+                - routeTemplate:
+                    id: "myTemplate"
+                    beans:
+                      - name: "myBean"
+                        builderClass: "${MyBeanBuilder.class.name}"
+                        builderMethod: "createTheBean"
+                        properties:
+                          field1: "builder-hello"
+                    from:
+                      uri: "direct:{{directName}}"
+                      steps:
+                        - to: "bean:{{myBean}}?method=getField1"
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "direct:myId"
+                      - to: "mock:result"
+            """
+
+        withMock('mock:result') {
+            expectedMessageCount 1
+            expectedBodiesReceived 'builder-hello'
+        }
+        when:
+        context.addRouteFromTemplate('myId', 'myTemplate', ['directName': 'myId'])
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
+        then:
+        with(context.routeTemplateDefinitions[0], RouteTemplateDefinition) {
+            id == 'myTemplate'
+            templateBeans.size() == 1
+            templateBeans[0].type == null
         }
 
         MockEndpoint.assertIsSatisfied(context)
@@ -270,7 +332,7 @@ class RouteTemplateTest extends YamlTestSupport {
         mock2.assertIsSatisfied()
     }
 
-    def "create template with joor"() {
+    def "create template with java"() {
         setup:
             loadRoutes """                
                     - routeTemplate:
@@ -278,7 +340,7 @@ class RouteTemplateTest extends YamlTestSupport {
                         beans:
                           - name: "myAgg"
                             type: "org.apache.camel.AggregationStrategy"
-                            scriptLanguage: "joor"
+                            scriptLanguage: "java"
                             script: "(e1, e2) -> { return e2.getMessage().getBody(); }"
                         from:
                           uri: "direct:route"

@@ -22,6 +22,9 @@ import java.util.List;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.tui.event.KeyCode;
+import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +32,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -67,7 +72,7 @@ class SettingsPopupRenderTest {
                 new TabRegistry.TabEntry("🩺", "Health", "health", "7", 6, -1)));
         popup.open();
 
-        Rect area = new Rect(0, 0, 80, 25);
+        Rect area = new Rect(0, 0, 80, 28);
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
         popup.render(frame, area);
@@ -84,5 +89,37 @@ class SettingsPopupRenderTest {
         assertTrue(rendered.contains("AI Base URL"), "the AI Base URL row should be shown");
         assertTrue(rendered.contains("Shell History"), "the Shell History row should be shown");
         assertTrue(rendered.contains("AI History"), "the AI History row should be shown");
+        assertTrue(rendered.contains("ACP Command"), "the ACP Command row should be shown");
+    }
+
+    @Test
+    void lineOfAccountsForEveryRowAndDivider() {
+        assertEquals(SettingsPopup.ROW_COUNT + SettingsPopup.DIVIDERS,
+                SettingsPopup.lineOf(SettingsPopup.ROW_COUNT - 1) + 1);
+    }
+
+    @Test
+    void scrollsTheSelectedRowIntoViewOnAShortTerminal(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(List.of(
+                new TabRegistry.TabEntry("🐪", "Overview", "overview", "1", 0, -1),
+                new TabRegistry.TabEntry("🩺", "Health", "health", "7", 6, -1)));
+        popup.open();
+        Rect area = new Rect(0, 0, 80, 25);
+        Buffer buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+        String rendered = TuiTestHelper.bufferToString(buffer);
+        assertTrue(rendered.contains("Theme:"), rendered);
+        assertFalse(rendered.contains("ACP Command"), "the last rows do not fit in 25 lines");
+        for (int i = 0; i < 18; i++) {
+            popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        }
+        buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+        rendered = TuiTestHelper.bufferToString(buffer);
+        assertTrue(rendered.contains("ACP Command"), rendered);
+        assertTrue(rendered.contains("AI History"), rendered);
+        assertFalse(rendered.contains("Theme:"), "the first rows scrolled out");
     }
 }

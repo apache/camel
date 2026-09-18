@@ -17,8 +17,31 @@
 package org.apache.camel.test.infra.triton.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class TritonServiceFactory {
+
+    private static class SingletonTritonService extends SingletonService<TritonService> implements TritonService {
+        public SingletonTritonService(TritonService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public int httpPort() {
+            return getService().httpPort();
+        }
+
+        @Override
+        public int grpcPort() {
+            return getService().grpcPort();
+        }
+
+        @Override
+        public int metricsPort() {
+            return getService().metricsPort();
+        }
+    }
+
     private TritonServiceFactory() {
     }
 
@@ -31,6 +54,21 @@ public final class TritonServiceFactory {
                 .addLocalMapping(TritonLocalContainerService::new)
                 .addRemoteMapping(TritonRemoteService::new)
                 .build();
+    }
+
+    public static TritonService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final TritonService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<TritonService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonTritonService(new TritonLocalContainerService(), "triton"))
+                    .addRemoteMapping(TritonRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class TritonLocalContainerService extends TritonLocalContainerInfraService

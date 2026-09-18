@@ -68,8 +68,10 @@ public class InfinispanRemoteConsumer
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        // the listener has to go before the consumer is stopped, or an event arriving in between is
+        // processed against a consumer that is already down
         ServiceHelper.stopService(handler);
+        super.doStop();
     }
 
     // *********************************
@@ -150,7 +152,7 @@ public class InfinispanRemoteConsumer
                 try {
                     cache.removeClientListener(listener);
                 } catch (RemoteCacheManagerNotStartedException e) {
-                    LOG.debug("Cannot remote the listener because the cache manager is not started: {}", e.getMessage(), e);
+                    LOG.debug("Cannot remove the listener because the cache manager is not started: {}", e.getMessage(), e);
                 }
             }
 

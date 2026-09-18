@@ -50,6 +50,8 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
     private boolean skipCamelInfo = false;
     @Metadata(defaultValue = "false")
     private boolean logMetricsOnShutdown = false;
+    @Metadata(defaultValue = "json", enums = "json,prometheus")
+    private String logMetricsOnShutdownFormat = "json";
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
     @Metadata
@@ -212,6 +214,17 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
         this.logMetricsOnShutdown = logMetricsOnShutdown;
     }
 
+    public String getLogMetricsOnShutdownFormat() {
+        return logMetricsOnShutdownFormat;
+    }
+
+    /**
+     * Format used to log metrics when application is shutting down. Either `json` (default) or `prometheus` format.
+     */
+    public void setLogMetricsOnShutdownFormat(String logMetricsOnShutdownFormat) {
+        this.logMetricsOnShutdownFormat = logMetricsOnShutdownFormat;
+    }
+
     public String getTextFormatVersion() {
         return textFormatVersion;
     }
@@ -363,6 +376,14 @@ public class MetricsConfigurationProperties implements BootstrapCloseable {
      */
     public MetricsConfigurationProperties withLogMetricsOnShutdown(boolean logMetricsOnShutdown) {
         this.logMetricsOnShutdown = logMetricsOnShutdown;
+        return this;
+    }
+
+    /**
+     * Format used to log metrics when application is shutting down. Either `json` (default) or `prometheus` format.
+     */
+    public MetricsConfigurationProperties withLogMetricsOnShutdownFormat(String logMetricsOnShutdownFormat) {
+        this.logMetricsOnShutdownFormat = logMetricsOnShutdownFormat;
         return this;
     }
 

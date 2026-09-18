@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "JCacheKeyValueRepository",
+    "javaType": "org.apache.camel.component.jcache.processor.JCacheKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "JCache Key Value Repository",
+    "description": "A JCache-based KeyValueRepository with per-entry TTL support.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jcache",
+    "version": "4.23.0-SNAPSHOT",
+    "properties": { "configuration": { "index": 0, "kind": "property", "displayName": "Configuration", "required": false, "type": "object", "javaType": "org.apache.camel.component.jcache.JCacheConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "Configuration for JCache" } }
+  }
+}
+

@@ -31,7 +31,6 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 
@@ -42,6 +41,8 @@ class RunOptionsForm {
 
     private static final int PAGE_OPTIONS = 0;
     private static final int PAGE_PROPERTIES = 1;
+    /** Fixed height of the options page; the properties page is aligned to it. */
+    private static final int PAGE1_HEIGHT = 18;
 
     // Row indices for page 0
     private static final int ROW_NAME = 0;
@@ -67,12 +68,15 @@ class RunOptionsForm {
 
     private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
+    // the runtime is always passed explicitly: the Camel CLI defaults to the in-process jbang runtime, but the TUI
+    // prefers running in a separate JVM (Camel Main, Spring Boot or Quarkus) which resembles a production deployment
     private static final String[] RUNTIME_LABELS = {
             TuiIcons.labeled(TuiIcons.CAMEL, "Camel Main"),
             TuiIcons.labeled(TuiIcons.SPRING_BOOT, "Spring Boot"),
-            TuiIcons.labeled(TuiIcons.QUARKUS, "Quarkus")
+            TuiIcons.labeled(TuiIcons.QUARKUS, "Quarkus"),
+            TuiIcons.labeled(TuiIcons.JBANG, "JBang")
     };
-    private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus" };
+    private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus", "jbang" };
     private static final String[] PROFILE_LABELS = {
             TuiIcons.labeled(TuiIcons.DEV_PROFILE, "dev"),
             TuiIcons.labeled(TuiIcons.PROD_PROFILE, "prod")
@@ -216,7 +220,6 @@ class RunOptionsForm {
             hintLast(spans, "Esc", "back");
         } else {
             hint(spans, TuiIcons.KEY_LEFT, "options");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "+", "add");
             hint(spans, "Enter", "launch");
             hintLast(spans, "Esc", "back");
@@ -229,9 +232,7 @@ class RunOptionsForm {
         if (!name.isEmpty()) {
             args.add("--name=" + name);
         }
-        if (runtimeMode > 0) {
-            args.add("--runtime=" + RUNTIME_VALUES[runtimeMode]);
-        }
+        args.add("--runtime=" + RUNTIME_VALUES[runtimeMode]);
         args.add("--profile=" + PROFILE_VALUES[profileMode]);
         String port = portInput.text().trim();
         if (!port.isEmpty()) {
@@ -503,11 +504,10 @@ class RunOptionsForm {
     // ---- Rendering ----
 
     private void renderOptionsPage(Frame frame, Rect area) {
-        int popupW = Math.min(68, area.width() - 4);
-        int popupH = errorMessage != null ? 19 : 18;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        // wide enough for the runtime cycler to show all runtimes (Camel Main, Spring Boot, Quarkus, JBang)
+        int popupW = Math.min(80, area.width() - 4);
+        int popupH = errorMessage != null ? PAGE1_HEIGHT + 1 : PAGE1_HEIGHT;
+        Rect popup = DialogHelper.centered(area, popupW, popupH);
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -610,7 +610,7 @@ class RunOptionsForm {
             rowY++;
             Rect errorArea = new Rect(innerX, rowY, innerW, 1);
             frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(TuiIcons.HEALTH_WARN + " " + errorMessage, Style.EMPTY.bold()))), errorArea);
+                    Span.styled(TuiIcons.HEALTH_WARN + " " + errorMessage, Theme.error().bold()))), errorArea);
         }
     }
 
@@ -618,11 +618,9 @@ class RunOptionsForm {
         int popupW = Math.min(100, area.width() - 4);
         int propCount = properties != null ? properties.size() : 0;
         int popupH = Math.min(propCount + 2, Math.min(20, area.height() - 4));
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        // use same y-offset as page 1 (based on page 1's fixed height) so both pages align
-        int page1H = 18;
-        int y = area.top() + Math.max(0, (area.height() - page1H) / 4);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        // use the same y-offset as page 1 (based on page 1's fixed height) so both pages align
+        Rect page1 = DialogHelper.centered(area, popupW, PAGE1_HEIGHT);
+        Rect popup = new Rect(page1.x(), page1.y(), page1.width(), Math.min(popupH, area.height()));
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -841,9 +839,7 @@ class RunOptionsForm {
     }
 
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {
-        Style style = selected ? Style.EMPTY.bold() : Style.EMPTY.dim();
-        Rect labelArea = new Rect(x, y, w, 1);
-        frame.renderWidget(Paragraph.from(Line.from(Span.styled(label, style))), labelArea);
+        FormHelper.renderLabel(frame, x, y, w, label, selected);
     }
 
     private void renderTextInput(Frame frame, int x, int y, int w, TextInputState state, boolean active) {
@@ -852,23 +848,9 @@ class RunOptionsForm {
 
     private void renderTextInputWithHint(
             Frame frame, int x, int y, int w, TextInputState state, boolean active, String hint) {
-        Rect inputArea = new Rect(x, y, w, 1);
-        if (active) {
-            TextInput textInput = TextInput.builder()
-                    .cursorStyle(Style.EMPTY.reversed())
-                    .build();
-            frame.renderStatefulWidget(textInput, inputArea, state);
-        } else {
-            String text = state.text();
-            if (text.isEmpty() && hint != null) {
-                frame.renderWidget(Paragraph.from(Line.from(
-                        Span.styled(hint, Style.EMPTY.dim()))), inputArea);
-            } else {
-                Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
-                frame.renderWidget(Paragraph.from(Line.from(
-                        Span.styled(text.isEmpty() ? "—" : text, style))), inputArea);
-            }
-        }
+        // an inactive empty field without a hint shows a dash so the row does not look blank
+        String placeholder = hint != null ? hint : (active ? null : "—");
+        FormHelper.renderTextField(frame, new Rect(x, y, w, 1), state, active, placeholder);
     }
 
     private void renderCycler(Frame frame, int x, int y, int w, String[] labels, int active, boolean selected) {

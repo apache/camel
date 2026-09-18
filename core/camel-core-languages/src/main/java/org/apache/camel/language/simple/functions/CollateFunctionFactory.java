@@ -43,17 +43,4 @@ public final class CollateFunctionFactory implements SimpleLanguageFunctionFacto
         }
         return MiscExpressionBuilder.collateExpression("${body}", values.trim());
     }
-
-    @Override
-    public String createCode(CamelContext camelContext, String function, int index) {
-        String remainder = ifStartsWithReturnRemainder("collate(", function);
-        if (remainder == null) {
-            return null;
-        }
-        String values = StringHelper.beforeLast(remainder, ")");
-        if (values == null || ObjectHelper.isEmpty(values)) {
-            throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, index);
-        }
-        return "collate(exchange, " + values.trim() + ")";
-    }
 }

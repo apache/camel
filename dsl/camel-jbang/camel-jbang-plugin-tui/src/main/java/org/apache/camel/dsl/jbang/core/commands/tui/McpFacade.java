@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import dev.tamboui.buffer.Buffer;
@@ -35,11 +37,16 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.widgets.tabs.TabsState;
+import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
+import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 /**
  * Facade that exposes monitor state and actions to the MCP server.
@@ -83,6 +90,64 @@ class McpFacade {
         void stopAll();
 
         void resetIntegrationTabState();
+
+        /**
+         * Asks the user to confirm a file write requested by an AI tool, blocking the calling (tool) thread until the
+         * user answers. Returns false when the user declines, or when no one answers.
+         */
+        default boolean confirmFileWrite(FileWrite request) {
+            return false;
+        }
+
+        /**
+         * Replays a file write in the source editor so the user watches the edit happen and then saves or discards it
+         * (write mode {@code live}), blocking the calling (tool) thread until then. Returns null when the replay could
+         * not start, in which case the caller falls back to the confirm dialog.
+         */
+        default ReplayOutcome replayFileWrite(FileWrite request) {
+            return null;
+        }
+
+        /**
+         * The file of a live edit parked in the editor (the user asked about it and has not continued, saved or
+         * discarded it yet), or null. Another file cannot be replayed until then.
+         */
+        default String parkedReplayFile() {
+            return null;
+        }
+    }
+
+    /** How file writes requested by tools are handled; set by the user with /write in the AI panel. */
+    enum WriteMode {
+        CONFIRM,
+        AUTO,
+        LIVE
+    }
+
+    /**
+     * What happened to a file write replayed in the editor: whether the user saved it, how many hunks were applied,
+     * which were skipped (their context was changed by the user), and the content of the file afterwards. A
+     * {@link #paused()} outcome means the user paused the replay to ask {@code question} about the edit: the editor
+     * still holds the applied hunks ({@code content} is the buffer, not the file), {@code remaining} hunks wait.
+     */
+    record ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
+            int remaining) {
+
+        ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content) {
+            this(saved, applied, skipped, content, null, 0);
+        }
+
+        boolean paused() {
+            return question != null;
+        }
+    }
+
+    /**
+     * A file write requested by an AI tool, waiting for the user's confirmation. {@code oldContent} is null when the
+     * file does not exist yet.
+     */
+    record FileWrite(String file, Path directory, String oldContent, String newContent, boolean temporary,
+            boolean devMode) {
     }
 
     // Tab name constants
@@ -106,8 +171,12 @@ class McpFacade {
     private final MonitorBridge bridge;
 
     private volatile Supplier<List<AiPanel.LogEntry>> aiActivityLog;
+    private volatile StatusFileReader statusFiles = StatusFileReader.defaultReader();
     private volatile Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog;
     private volatile Supplier<Integer> mcpToolCallCount;
+    // the F2 menu's launcher: starts examples (tui_run_example) and infra services (tui_infra start). It is held
+    // here, not in the tool registry, so the AI panel's registry and the MCP server's registry both see it.
+    private volatile LaunchManager launchManager;
 
     McpFacade(
               MonitorContext ctx,
@@ -145,6 +214,14 @@ class McpFacade {
     void setMcpActivityLog(Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog, Supplier<Integer> mcpToolCallCount) {
         this.mcpActivityLog = mcpActivityLog;
         this.mcpToolCallCount = mcpToolCallCount;
+    }
+
+    void setLaunchManager(LaunchManager launchManager) {
+        this.launchManager = launchManager;
+    }
+
+    LaunchManager getLaunchManager() {
+        return launchManager;
     }
 
     List<AiPanel.LogEntry> getAiActivityLog() {
@@ -213,6 +290,11 @@ class McpFacade {
         return ctx != null ? ctx.selectedPid : null;
     }
 
+    /** Whether a running integration goes by this name (a model often passes it where a directory is asked for). */
+    boolean hasIntegration(String name) {
+        return name != null && !name.isEmpty() && findIntegration(name) != null;
+    }
+
     String getSelectedIntegrationName() {
         if (ctx == null) {
             return null;
@@ -227,6 +309,16 @@ class McpFacade {
         }
         IntegrationInfo info = ctx.findSelectedIntegration();
         return info != null ? info.camelVersion : null;
+    }
+
+    /** The source directory of the selected integration, the default directory of the shared file tools. */
+    Path getSelectedSourceDirectory() {
+        IntegrationInfo info = findIntegration(null);
+        if (info == null) {
+            return null;
+        }
+        Path dir = FilesBrowser.resolveSourceDirectory(info);
+        return dir != null && Files.isDirectory(dir) ? dir : null;
     }
 
     int getIntegrationCount() {
@@ -339,11 +431,67 @@ class McpFacade {
         return tab != null ? tab.isDetailFocused() : null;
     }
 
+    /**
+     * Reader for the per-process status documents; replaceable so tests can point it at a temporary directory.
+     */
+    StatusFileReader statusFiles() {
+        return statusFiles;
+    }
+
+    void setStatusFiles(StatusFileReader statusFiles) {
+        this.statusFiles = statusFiles;
+    }
+
+    /**
+     * Integrations currently monitored (vanished processes excluded), for callers that need pid and name.
+     */
+    List<IntegrationInfo> liveIntegrations() {
+        List<IntegrationInfo> all = data.get();
+        return all == null ? List.of() : all.stream().filter(i -> !i.vanishing).toList();
+    }
+
     List<String> getIntegrationNames() {
         return data.get().stream()
                 .filter(i -> !i.vanishing)
                 .map(i -> i.name != null ? i.name : i.pid)
                 .toList();
+    }
+
+    /**
+     * Infra services (brokers, databases, ...) started with {@code camel infra run} that are still alive.
+     */
+    List<InfraInfo> liveInfraServices() {
+        if (ctx == null || ctx.infraData == null) {
+            return List.of();
+        }
+        List<InfraInfo> all = ctx.infraData.get();
+        return all == null ? List.of() : all.stream().filter(i -> !i.vanishing).toList();
+    }
+
+    InfraInfo findInfra(String aliasOrPid) {
+        return InfraSupport.find(liveInfraServices(), aliasOrPid);
+    }
+
+    /** Alias of the infra service selected in Overview, or null when an integration (or nothing) is selected. */
+    String getSelectedInfraAlias() {
+        InfraInfo infra = ctx != null ? ctx.findSelectedInfra() : null;
+        return infra != null ? infra.alias : null;
+    }
+
+    JsonObject getInfraLogData(InfraInfo info, int limit, String filter) throws IOException {
+        List<String> lines = InfraSupport.readLogTail(CommandLineHelper.getCamelDir(), info, limit, filter);
+        JsonObject result = new JsonObject();
+        result.put("infra", info.alias);
+        result.put("pid", info.pid);
+        JsonArray arr = new JsonArray();
+        arr.addAll(lines);
+        result.put("lines", arr);
+        result.put("returnedLines", lines.size());
+        return result;
+    }
+
+    boolean stopInfra(InfraInfo info) {
+        return InfraSupport.stop(CommandLineHelper.getCamelDir(), info);
     }
 
     // ---- Key injection ----
@@ -427,17 +575,54 @@ class McpFacade {
 
     // ---- Data access ----
 
+    /** How long a table read waits for a tab that loads its data on demand. The connector action timeout is 5s. */
+    static final long ON_DEMAND_LOAD_TIMEOUT_MS = 8_000;
+
     JsonObject getTableData(String tabName) {
-        MonitorTab tab;
-        if (tabName != null && !tabName.isBlank()) {
-            tab = tabRegistry.findTabByName(tabName);
-            if (tab == null) {
-                return null;
-            }
-        } else {
-            tab = bridge.activeTab();
+        MonitorTab tab = resolveTab(tabName);
+        return tab != null ? awaitTableData(tab, ON_DEMAND_LOAD_TIMEOUT_MS) : null;
+    }
+
+    /**
+     * Why {@link #getTableData(String)} returned nothing for the tab: unknown tab, a load error, or an empty tab.
+     */
+    String tableDataError(String tabName) {
+        MonitorTab tab = resolveTab(tabName);
+        if (tab == null) {
+            return tabName != null && !tabName.isBlank() ? "Unknown tab: " + tabName : "No active tab";
         }
-        return tab != null ? tab.getTableDataAsJson() : null;
+        String error = tab.dataLoadError();
+        return error != null ? error : "No table data available for tab: " + tabName;
+    }
+
+    private MonitorTab resolveTab(String tabName) {
+        if (tabName != null && !tabName.isBlank()) {
+            return tabRegistry.findTabByName(tabName);
+        }
+        return bridge.activeTab();
+    }
+
+    /**
+     * Reads the tab's table, and when the tab loads its data on demand and has none yet, starts the load and waits
+     * (polling) until data arrives, the load reports an error or an empty result, or the timeout passes. Must not be
+     * called on the render thread, since the loads complete there.
+     */
+    static JsonObject awaitTableData(MonitorTab tab, long timeoutMs) {
+        JsonObject data = tab.getTableDataAsJson();
+        if (data != null || !tab.ensureDataLoaded()) {
+            return data;
+        }
+        long deadline = System.currentTimeMillis() + timeoutMs;
+        while (data == null && System.currentTimeMillis() < deadline && tab.dataLoadError() == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            data = tab.getTableDataAsJson();
+        }
+        return data;
     }
 
     boolean executeAction(String actionName) {
@@ -462,6 +647,18 @@ class McpFacade {
 
     JsonObject getTopologyData() {
         return tabRegistry.diagramTab().getTopologyDataAsJson();
+    }
+
+    /** Snapshot of the Ollama monitor for the tui_get_ollama tool; polls first so the caller sees current data. */
+    JsonObject getOllamaData(int limit) {
+        OllamaMonitor monitor = ctx.ollamaMonitor;
+        if (monitor == null) {
+            JsonObject none = new JsonObject();
+            none.put("connected", false);
+            return none;
+        }
+        monitor.poll();
+        return monitor.toJson(limit);
     }
 
     JsonObject getSpanData(String traceId, int limit) {
@@ -612,13 +809,11 @@ class McpFacade {
             filesBrowser.renderFooter(spans);
         } else if (bridge.isSwitchPopupVisible() || bridge.isMorePopupVisible()) {
             if (bridge.isSwitchPopupVisible()) {
-                hint(spans, "Up/Down", "select");
                 hint(spans, "Enter", "switch");
-                hint(spans, "Esc", "close");
+                hintLast(spans, "Esc", "close");
             } else {
-                hint(spans, "Up/Down", "select");
                 hint(spans, "Enter", "open");
-                hint(spans, "Esc", "close");
+                hintLast(spans, "Esc", "close");
             }
         } else {
             MonitorTab tab = bridge.activeTab();
@@ -725,19 +920,128 @@ class McpFacade {
         }
     }
 
-    JsonObject getFiles(String name, String file) {
-        List<IntegrationInfo> integrations = data.get();
-        IntegrationInfo target = null;
+    private IntegrationInfo findIntegration(String name) {
         if (name != null && !name.isEmpty()) {
-            for (IntegrationInfo info : integrations) {
+            for (IntegrationInfo info : data.get()) {
                 if (!info.vanishing && name.equals(info.name)) {
-                    target = info;
-                    break;
+                    return info;
                 }
             }
-        } else {
-            target = ctx != null ? ctx.findSelectedIntegration() : null;
+            return null;
         }
+        return ctx != null ? ctx.findSelectedIntegration() : null;
+    }
+
+    /**
+     * Tells an agent where the sources are and whether editing them makes sense: the directory differs with how the
+     * integration was started (plain files, --source-dir, an example extracted to a temporary folder, an exported
+     * project), and edits only take effect on reload (dev mode) or restart.
+     */
+    // time the last camel_write_file spent waiting for the user's confirmation; the AI panel subtracts it from the
+    // tool time of the call so the usage statistics show what the tool did, not how long the user thought about it
+    private volatile long lastConfirmWaitMs;
+
+    // only the user chooses how writes are handled (/write in the AI panel): a model asked to respect a rejection
+    // may simply retry with confirm=false, so that argument is honoured in AUTO mode only
+    private volatile WriteMode writeMode = WriteMode.CONFIRM;
+
+    void setWriteMode(WriteMode writeMode) {
+        this.writeMode = writeMode;
+    }
+
+    WriteMode getWriteMode() {
+        return writeMode;
+    }
+
+    // validates source by file type (Camel YAML DSL, application.properties) with the editor's own checks,
+    // see SourceEditAssist#validateSource
+    private BiFunction<String, String, List<String>> sourceValidator;
+    // the editor's check of a properties line the catalog does not know (Spring Boot), for the shared tools
+    private Function<String, String> propertyLineValidator;
+
+    void setSourceValidator(BiFunction<String, String, List<String>> sourceValidator) {
+        this.sourceValidator = sourceValidator;
+    }
+
+    void setPropertyLineValidator(Function<String, String> propertyLineValidator) {
+        this.propertyLineValidator = propertyLineValidator;
+    }
+
+    Function<String, String> getPropertyLineValidator() {
+        return propertyLineValidator;
+    }
+
+    /**
+     * Validates source before it is written: {@code content} when given (the file name decides the checks), otherwise
+     * the file from the integration's source directory. A YAML file is validated as Camel YAML DSL and a .properties
+     * file as Camel and Spring Boot options.
+     */
+    JsonObject validateSource(String name, String file, String content) {
+        if (file == null || file.isBlank()) {
+            if (content == null) {
+                return writeError("file is required (and content, unless the file exists in the source directory)");
+            }
+            file = "source.camel.yaml";
+        }
+        if (content == null) {
+            JsonObject existing = getFiles(name, file);
+            if (existing == null || existing.getString("content") == null) {
+                String error = existing != null ? existing.getString("error") : null;
+                return writeError(error != null ? error : "No such file in the source directory: " + file);
+            }
+            content = existing.getString("content");
+        }
+        if (sourceValidator == null) {
+            return writeError("Validation is not available");
+        }
+        if (!SourceValidator.isValidatableFile(file)) {
+            return writeError("No validation for " + file + ": only YAML routes and .properties files are validated");
+        }
+        List<String> errors = sourceValidator.apply(file, content);
+        JsonObject result = new JsonObject();
+        result.put("valid", errors.isEmpty());
+        result.put("file", file);
+        JsonArray arr = new JsonArray();
+        arr.addAll(errors);
+        result.put("errors", arr);
+        result.put("message", errors.isEmpty()
+                ? "The source is valid"
+                : errors.size() + " problem(s) found; fix them before writing the file");
+        return result;
+    }
+
+    long consumeConfirmWaitMs() {
+        long wait = lastConfirmWaitMs;
+        lastConfirmWaitMs = 0;
+        return wait;
+    }
+
+    private static void describeSourceDirectory(IntegrationInfo info, Path dir, JsonObject result) {
+        boolean temporary = FilesBrowser.isTemporaryDirectory(dir);
+        result.put("directory", dir.toString());
+        result.put("devMode", info.devMode);
+        result.put("temporary", temporary);
+        String editing;
+        if (temporary) {
+            editing = "The directory is a temporary copy of the sources; edits made with camel_write_file are lost when"
+                      + " the integration stops"
+                      + (info.devMode ? ", but are reloaded while it runs (dev mode)." : ".");
+        } else if (info.devMode) {
+            editing = "Files can be edited with camel_write_file; changes are reloaded automatically (dev mode).";
+        } else {
+            editing = "Files can be edited with camel_write_file; restart the integration for changes to take effect.";
+        }
+        result.put("editing", editing);
+    }
+
+    /**
+     * The shared {@code camel_get_files} on the integration's source directory, with what only the TUI knows: whether
+     * the directory is editable and, for the listing, which file and line each running route comes from. A missing file
+     * or a bad path comes back as {@code error} with the directory, so the model corrects the path instead of
+     * concluding the sources are gone; null only when there is no integration or no source directory.
+     */
+    JsonObject getFiles(String name, String file) {
+        IntegrationInfo target = findIntegration(name);
         if (target == null) {
             return null;
         }
@@ -745,50 +1049,211 @@ class McpFacade {
         if (dir == null || !Files.isDirectory(dir)) {
             return null;
         }
-        if (file != null && !file.isEmpty()) {
-            Path filePath = dir.resolve(file).normalize();
-            if (!filePath.startsWith(dir) || !Files.isRegularFile(filePath)) {
-                return null;
+        JsonObject result;
+        try {
+            result = file != null && !file.isEmpty()
+                    ? AuthoringTools.readFile(dir, file) : AuthoringTools.listFiles(dir);
+        } catch (ToolExecutionException e) {
+            JsonObject error = new JsonObject();
+            error.put("error", e.getMessage());
+            describeSourceDirectory(target, dir, error);
+            return error;
+        }
+        describeSourceDirectory(target, dir, result);
+        if (file == null || file.isEmpty()) {
+            JsonArray routes = new JsonArray();
+            for (RouteInfo r : target.routes) {
+                if (r.source != null && !r.source.isBlank()) {
+                    JsonObject j = new JsonObject();
+                    if (r.routeId != null) {
+                        j.put("routeId", r.routeId);
+                    }
+                    j.put("source", r.source);
+                    routes.add(j);
+                }
             }
-            try {
-                String content = Files.readString(filePath, StandardCharsets.UTF_8);
+            JsonArray mapped = AuthoringTools.routeSources(routes, dir);
+            if (!mapped.isEmpty()) {
+                result.put("routes", mapped);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Writes (creates or replaces) a file in the integration's source directory, after the user confirmed it in the TUI
+     * unless {@code confirm} is false. The file is a path relative to that directory.
+     */
+    JsonObject writeFile(String name, String file, String content, boolean confirm) {
+        return writeFile(name, file, content, confirm, true);
+    }
+
+    /**
+     * As {@link #writeFile(String, String, String, boolean)}; with {@code validate} a YAML route or .properties file is
+     * validated first (the editor's checks) and not written when it has errors, so a model fixes them instead of the
+     * user finding them in the log after the reload.
+     */
+    JsonObject writeFile(String name, String file, String content, boolean confirm, boolean validate) {
+        IntegrationInfo target = findIntegration(name);
+        if (target == null) {
+            return writeError(name != null && !name.isEmpty()
+                    ? "No integration named '" + name + "'" : "No integration selected");
+        }
+        Path dir = FilesBrowser.resolveSourceDirectory(target);
+        if (dir == null || !Files.isDirectory(dir)) {
+            return writeError("No source directory found for the integration");
+        }
+        if (file == null || file.isBlank()) {
+            return writeError("file is required");
+        }
+        if (content == null) {
+            return writeError("content is required");
+        }
+        Path filePath;
+        try {
+            filePath = AuthoringTools.resolveFile(dir, file);
+        } catch (ToolExecutionException e) {
+            return writeError(e.getMessage());
+        }
+        boolean exists = Files.exists(filePath);
+        if (exists && !Files.isRegularFile(filePath)) {
+            return writeError(file + " is not a regular file");
+        }
+        if (validate && sourceValidator != null && SourceValidator.isValidatableFile(file)) {
+            List<String> errors = sourceValidator.apply(file, content);
+            if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
+                result.put("status", "invalid");
                 result.put("file", file);
-                result.put("directory", dir.toString());
-                result.put("size", FilesBrowser.formatFileSize(Files.size(filePath)));
-                result.put("type", FilesBrowser.fileType(filePath));
-                result.put("content", content);
+                JsonArray arr = new JsonArray();
+                arr.addAll(errors);
+                result.put("errors", arr);
+                result.put("message", "The file was not written: the content has validation errors. Fix them and"
+                                      + " call camel_write_file again (validate=false writes it anyway).");
                 return result;
-            } catch (IOException e) {
-                return null;
             }
         }
-        JsonArray files = new JsonArray();
-        try (var stream = Files.list(dir)) {
-            stream.filter(Files::isRegularFile)
-                    .sorted((a, b) -> a.getFileName().toString().compareToIgnoreCase(b.getFileName().toString()))
-                    .limit(99)
-                    .forEach(p -> {
-                        JsonObject entry = new JsonObject();
-                        entry.put("name", p.getFileName().toString());
-                        try {
-                            entry.put("size", FilesBrowser.formatFileSize(Files.size(p)));
-                        } catch (IOException e) {
-                            entry.put("size", "0 B");
-                        }
-                        entry.put("type", FilesBrowser.fileType(p));
-                        files.add(entry);
-                    });
-        } catch (IOException e) {
-            return null;
+        int lines = content.isEmpty() ? 0 : (int) content.lines().count();
+        String oldContent = null;
+        if (exists) {
+            try {
+                oldContent = Files.readString(filePath, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                oldContent = "";
+            }
         }
-        if (files.isEmpty()) {
-            return null;
+        FileWrite request = new FileWrite(
+                file, dir, oldContent, content, FilesBrowser.isTemporaryDirectory(dir), target.devMode);
+        if (writeMode == WriteMode.LIVE && bridge != null) {
+            String parked = bridge.parkedReplayFile();
+            if (parked != null && !parked.equals(file)) {
+                JsonObject result = new JsonObject();
+                result.put("status", "deferred");
+                result.put("file", file);
+                result.put("message", "Not written: the editor still holds the paused live edit of " + parked
+                                      + " (the user asked about it and has not continued, saved or discarded it"
+                                      + " yet). Answer the user's question now and end your turn without writing"
+                                      + " more files. The user finishes that edit first; your next message tells"
+                                      + " you what became of it, then write " + file + ".");
+                return result;
+            }
+        }
+        if (writeMode == WriteMode.LIVE && exists && bridge != null) {
+            long waitStart = System.currentTimeMillis();
+            ReplayOutcome outcome = bridge.replayFileWrite(request);
+            lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
+            if (outcome != null) {
+                return replayResult(target, dir, file, content, outcome);
+            }
+            // could not replay (for example unsaved edits in the editor): fall back to the dialog
+        }
+        if (confirm || writeMode != WriteMode.AUTO) {
+            long waitStart = System.currentTimeMillis();
+            boolean confirmed = bridge != null && bridge.confirmFileWrite(request);
+            lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
+            if (!confirmed) {
+                JsonObject result = new JsonObject();
+                result.put("status", "rejected");
+                result.put("file", file);
+                result.put("message", "The user rejected the change to " + file + " in the TUI; the file is"
+                                      + " unchanged and nothing is pending. Do not say you are waiting for a"
+                                      + " confirmation, and do not retry unless the user asks for it. Passing"
+                                      + " confirm=false does not skip the dialog; only the user can turn it off.");
+                return result;
+            }
+        }
+        try {
+            Files.createDirectories(filePath.getParent());
+            Files.writeString(filePath, content, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return writeError("Failed to write " + filePath + ": " + e.getMessage());
         }
         JsonObject result = new JsonObject();
-        result.put("directory", dir.toString());
-        result.put("files", files);
-        result.put("totalFiles", files.size());
+        result.put("status", exists ? "overwritten" : "created");
+        result.put("file", file);
+        describeSourceDirectory(target, dir, result);
+        result.put("lines", lines);
+        result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
+        return result;
+    }
+
+    private JsonObject replayResult(
+            IntegrationInfo target, Path dir, String file, String requested, ReplayOutcome outcome) {
+        JsonObject result = new JsonObject();
+        result.put("file", file);
+        JsonArray skipped = new JsonArray();
+        skipped.addAll(outcome.skipped());
+        if (outcome.paused()) {
+            result.put("status", "paused");
+            result.put("appliedHunks", outcome.applied());
+            result.put("pendingHunks", outcome.remaining());
+            result.put("skippedHunks", skipped);
+            result.put("question", outcome.question());
+            result.put("content", outcome.content() != null ? outcome.content() : "");
+            result.put("message", "The user paused the replay in the editor after " + outcome.applied()
+                                  + " of " + (outcome.applied() + outcome.remaining())
+                                  + " edit(s) and asks: " + outcome.question()
+                                  + "\nAnswer the question briefly (what the edit does and why); look options up with"
+                                  + " camel_catalog_doc rather than listing them from memory. Nothing is written"
+                                  + " yet: 'content' is the editor buffer with the applied edits, the file on disk"
+                                  + " is unchanged. If the user wants the change done differently, call"
+                                  + " camel_write_file again with the complete new content: it continues in the"
+                                  + " editor from 'content'. Otherwise only answer and end your turn: do not write"
+                                  + " other files until the user has finished this edit (Enter continues the"
+                                  + " pending edit(s), then the user saves or discards).");
+            return result;
+        }
+        if (!outcome.saved()) {
+            result.put("status", "rejected");
+            result.put("message", "The change was replayed in the editor and the user discarded it; the file is"
+                                  + " unchanged and nothing is pending. Do not retry unless the user asks for it.");
+            return result;
+        }
+        result.put("status", "written");
+        describeSourceDirectory(target, dir, result);
+        result.put("appliedHunks", outcome.applied());
+        result.put("skippedHunks", skipped);
+        String content = outcome.content() != null ? outcome.content() : "";
+        result.put("lines", content.isEmpty() ? 0 : (int) content.lines().count());
+        StringBuilder message = new StringBuilder();
+        message.append("The change was replayed in the editor and the user saved the file");
+        if (!outcome.skipped().isEmpty()) {
+            message.append("; edit(s) ").append(outcome.skipped())
+                    .append(" were skipped because the user changed that part of the file in the meantime");
+        }
+        if (!content.equals(requested)) {
+            message.append(". The saved file differs from what you sent (the user edited it); its content is in"
+                           + " 'content', use that as the current state");
+            result.put("content", content);
+        }
+        result.put("message", message.toString());
+        return result;
+    }
+
+    private static JsonObject writeError(String message) {
+        JsonObject result = new JsonObject();
+        result.put("status", "error");
+        result.put("error", message);
         return result;
     }
 
@@ -858,6 +1323,13 @@ class McpFacade {
         }
         String name = ctx.selectedName();
         return switch (action) {
+            case "reset-stats", "clear-stats" -> {
+                if (ctx.isInfraSelected()) {
+                    yield "Error: cannot reset statistics on infra service";
+                }
+                actionsPopup.executeActionByName("reset-stats");
+                yield "Statistics reset for " + name;
+            }
             case "stop-routes", "pause" -> {
                 if (ctx.isInfraSelected()) {
                     yield "Error: cannot stop routes on infra service";
@@ -921,6 +1393,9 @@ class McpFacade {
             phantom.platform = "Quarkus";
         } else {
             phantom.platform = "Camel";
+        }
+        if (runtime != null) {
+            phantom.camelVersion = DependencyLoader.detectCamelVersion(pomFile);
         }
         ctx.addPhantom(phantom);
         ctx.selectedPid = phantom.pid;

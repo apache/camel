@@ -107,7 +107,7 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     protected void doStart() throws Exception {
         super.doStart();
         ServiceHelper.startService(platformHttpConsumer);
-        if (register) {
+        if (register && platformHttpConsumer != null) {
             getComponent().addHttpEndpoint(getEndpoint().getPath(), getEndpoint().getHttpMethodRestrict(),
                     getEndpoint().getConsumes(), getEndpoint().getProduces(), platformHttpConsumer);
         }
@@ -116,8 +116,8 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (register) {
-            getComponent().removeHttpEndpoint(getEndpoint().getPath());
+        if (register && platformHttpConsumer != null) {
+            getComponent().removeHttpEndpoint(platformHttpConsumer);
         }
         ServiceHelper.stopAndShutdownServices(platformHttpConsumer);
     }

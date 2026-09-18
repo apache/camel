@@ -128,18 +128,23 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         }
         String endpointUri = exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT, String.class);
 
-        // capture node id and location from the last message history entry
-        // (the historyNodeId on the exchange extension is cleared after the node finishes processing,
-        // so by the time the error event fires it is always null)
-        String toNode = null;
-        String location = null;
-        List<MessageHistory> history
-                = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
-        if (history != null && !history.isEmpty()) {
-            MessageHistory last = history.get(history.size() - 1);
-            if (last.getNode() != null) {
-                toNode = last.getNode().getId();
-                location = LoggerHelper.getLineNumberLoggerName(last.getNode());
+        // capture node id and location where the exchange actually failed
+        // (captured up-front by the error handler / doCatch, before any failure processor such as
+        // onException or a dead letter channel ran its own processing steps - otherwise those steps
+        // would also be recorded in the message history, and the last entry would no longer point to
+        // the node that actually failed)
+        String toNode = exchange.getProperty(ExchangePropertyKey.FAILURE_NODE_ID, String.class);
+        String location = exchange.getProperty(ExchangePropertyKey.FAILURE_LOCATION, String.class);
+        if (toNode == null) {
+            // fallback for error handlers that do not capture the failure origin up-front (such as
+            // noErrorHandler): derive it from the last message history entry instead
+            List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+            if (history != null && !history.isEmpty()) {
+                MessageHistory last = history.get(history.size() - 1);
+                if (last.getNode() != null) {
+                    toNode = last.getNode().getId();
+                    location = LoggerHelper.getLineNumberLoggerName(last.getNode());
+                }
             }
         }
 

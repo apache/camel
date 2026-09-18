@@ -230,7 +230,7 @@ public final class SimpleConstants {
     public static final String BODY_AS = "bodyAs(type)";
 
     @Metadata(description = "Converts the body to a String and removes all line-breaks, so the string is in one line.",
-              javaType = "String", label = "function",
+              javaType = "String", label = "core",
               examples = { "${bodyOneLine} -> Hello World // when body is 'Hello\\nWorld'" })
     public static final String BODY_ONE_LINE = "bodyOneLine";
 
@@ -338,6 +338,19 @@ public final class SimpleConstants {
               examples = { "${env.HOME} -> /home/user", "${env.JAVA_HOME} -> /usr/lib/jvm/java-17" },
               annotations = { "param=name:String:required::The environment variable name" })
     public static final String ENV = "env.name";
+
+    @Metadata(description = "Escapes special characters in the message body (or expression) so the value can be safely embedded"
+                            + " in HTML, XML, JSON, JavaScript, SQL, or a URL. The kind is one of: html, xml, json, js, sql, url.",
+              label = "string", javaType = "String", displayName = "Escape Special Characters",
+              examples = {
+                      "${escape(html)} -> the message body with & < > \" ' escaped as HTML entities",
+                      "${escape(xml, ${header.title})} -> the header value with & < > \" ' escaped as XML entities",
+                      "${escape(json, ${body})} -> the body with quotes, backslashes and control characters backslash-escaped",
+                      "${escape(url, 'Camel in Action')} -> Camel%20in%20Action" },
+              annotations = {
+                      "param=kind:String:required::The kind of escaping: html, xml, json, js, sql, or url",
+                      "param=exp:Object:optional:body:The expression to escape. When omitted uses the message body" })
+    public static final String ESCAPE = "escape(kind,exp)";
 
     @Metadata(description = "The current exchange", javaType = "org.apache.camel.Exchange", label = "core,ognl")
     public static final String EXCHANGE = "exchange";

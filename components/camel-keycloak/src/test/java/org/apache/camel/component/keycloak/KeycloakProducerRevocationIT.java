@@ -60,7 +60,7 @@ public class KeycloakProducerRevocationIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakProducerRevocationIT.class);
 
     @RegisterExtension
-    static KeycloakService keycloakService = KeycloakServiceFactory.createService();
+    static KeycloakService keycloakService = KeycloakServiceFactory.createSingletonService();
 
     private static final String TEST_REALM_NAME = "revocation-realm-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String TEST_CLIENT_ID = "revocation-client-" + UUID.randomUUID().toString().substring(0, 8);

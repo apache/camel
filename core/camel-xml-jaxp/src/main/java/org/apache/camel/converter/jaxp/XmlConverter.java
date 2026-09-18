@@ -691,20 +691,27 @@ public class XmlConverter {
      *
      * @param  data     is the data to be parsed
      * @param  exchange is the exchange to be used when calling the converter
-     * @return          the parsed document
+     * @return          the parsed document, or {@code null} if the byte content does not look like XML
      */
-    @Converter(order = 54)
+    @Converter(order = 54, allowNull = true)
     public Document toDOMDocument(byte[] data, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
+        if (!looksLikeXml(data)) {
+            return null;
+        }
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(new ByteArrayInputStream(data));
     }
 
-    @Converter(order = 55)
+    @Converter(order = 55, allowNull = true)
     public Document toDOMDocument(StreamCache cache, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
-        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, cache);
-        return toDOMDocument(is, exchange);
+        byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, cache);
+        if (!looksLikeXml(data)) {
+            return null;
+        }
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
+        return documentBuilder.parse(new ByteArrayInputStream(data));
     }
 
     /**
@@ -1205,6 +1212,18 @@ public class XmlConverter {
             LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
                     "http://xml.org/sax/features/external-general-entities", false, e.getMessage());
         }
+        try {
+            sfactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
+                    "http://xml.org/sax/features/external-parameter-entities", false, e.getMessage());
+        }
+        try {
+            sfactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
+                    "http://apache.org/xml/features/nonvalidating/load-external-dtd", false, e.getMessage());
+        }
         sfactory.setNamespaceAware(true);
         return sfactory;
     }
@@ -1226,4 +1245,48 @@ public class XmlConverter {
             LOG.error(exception.getMessage(), exception);
         }
     }
+
+    /**
+     * Returns {@code true} if the given byte array looks like it could be well-formed XML, by inspecting only the first
+     * few bytes.
+     * <p>
+     * Handles UTF-8 BOM, UTF-16 BE/LE BOMs, and leading ASCII whitespace. Returns {@code true} for anything whose first
+     * non-BOM, non-whitespace byte is {@code <}, which means it will not reject valid XML. Its only purpose is to
+     * short-circuit the expensive {@code DocumentBuilder.parse()} call for obviously non-XML content (empty body,
+     * JSON/HTML error pages, plain text) before any DOM allocation occurs.
+     *
+     * @param  data the bytes to inspect (may be null or empty)
+     * @return      {@code true} if the content may be XML; {@code false} if it is definitely not XML
+     */
+    static boolean looksLikeXml(byte[] data) {
+        if (data == null || data.length == 0) {
+            return false;
+        }
+        int offset = 0;
+        // skip UTF-8 BOM (EF BB BF)
+        if (data.length >= 3
+                && (data[0] & 0xFF) == 0xEF
+                && (data[1] & 0xFF) == 0xBB
+                && (data[2] & 0xFF) == 0xBF) {
+            offset = 3;
+        } else if (data.length >= 2) {
+            // UTF-16 BE (FE FF) or LE (FF FE) BOM — XML parsers handle these natively
+            int b0 = data[0] & 0xFF;
+            int b1 = data[1] & 0xFF;
+            if ((b0 == 0xFE && b1 == 0xFF) || (b0 == 0xFF && b1 == 0xFE)) {
+                return true;
+            }
+        }
+        // skip leading ASCII whitespace
+        while (offset < data.length) {
+            byte b = data[offset];
+            if (b == ' ' || b == '\t' || b == '\r' || b == '\n') {
+                offset++;
+            } else {
+                break;
+            }
+        }
+        return offset < data.length && data[offset] == '<';
+    }
+
 }

@@ -633,6 +633,26 @@ The `Exchange.FAILURE_ROUTE_ID` have the constant value `CamelFailureRouteId`.
 This allows, for example, you to fetch this information in your dead letter queue and use that for error reporting.
 
 
+=== Which node failed?
+
+Camel also stores the id of the node (EIP processor) where the message failed, along with its source
+code location (requires source location to be enabled). This information can be obtained in Java via:
+
+._Java-only: accessing the failure node id and location from the Exchange_
+[source,java]
+----
+String failedNodeId = exchange.getProperty(Exchange.FAILURE_NODE_ID, String.class);
+String failedLocation = exchange.getProperty(Exchange.FAILURE_LOCATION, String.class);
+----
+
+The `Exchange.FAILURE_NODE_ID` have the constant value `CamelFailureNodeId`, and `Exchange.FAILURE_LOCATION`
+have the constant value `CamelFailureLocation`.
+
+This information is captured up-front, as soon as the exception is caught, so it always points to the node
+that actually failed - even when the error handler (`onException`, `doCatch`, or the dead letter channel
+itself) performs further processing of its own before the exchange is moved to the dead letter queue.
+
+
 === Control if redelivery is allowed during stopping/shutdown
 
 The option `allowRedeliveryWhileStopping` (default is `true`) controls whether redelivery is allowed or not,

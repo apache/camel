@@ -16,10 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import dev.tamboui.layout.Rect;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for {@link ActionsPopup#listItemAt}, which maps a click to an entry in a single-line, bordered list popup. The
@@ -28,6 +36,52 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * entry, so on-screen row r maps to entry {@code offset + (r - firstRow)}.
  */
 class ActionsPopupTest {
+
+    @Test
+    void menuLabelsResolveToActionsIgnoringCaseEllipsisAndShortcutHints() {
+        assertEquals(ActionsPopup.Action.DOCTOR, ActionsPopup.actionForLabel("Run Doctor"));
+        assertEquals(ActionsPopup.Action.DOCTOR, ActionsPopup.actionForLabel("run doctor"));
+        assertEquals(ActionsPopup.Action.RUN_EXAMPLE, ActionsPopup.actionForLabel("Run an Example..."));
+        assertEquals(ActionsPopup.Action.GOTO_TAB, ActionsPopup.actionForLabel("Go to... (Shift+F2)"));
+        assertEquals(ActionsPopup.Action.SWITCH_INTEGRATION, ActionsPopup.actionForLabel("Switch Integration (F3)"));
+        assertEquals(ActionsPopup.Action.RUN_INFRA, ActionsPopup.actionForLabel("Run Dev/Infra Service..."));
+        assertEquals(ActionsPopup.Action.TAPE_RECORDING, ActionsPopup.actionForLabel("Stop Tape Recording"));
+        assertEquals(ActionsPopup.Action.SHOW_KEYSTROKES, ActionsPopup.actionForLabel("Hide Keystrokes"));
+        assertEquals(ActionsPopup.Action.QUIT, ActionsPopup.actionForLabel("Quit"));
+        assertEquals(ActionsPopup.Action.QUIT, ActionsPopup.actionForLabel("exit"));
+    }
+
+    @Test
+    void quitIsTheLastMenuEntryAndRunsTheWiredAction() {
+        ActionsPopup popup = new ActionsPopup(
+                Set::of, List::of, List::of, null, () -> {
+                }, () -> {
+                }, () -> false, () -> {
+                }, () -> false, () -> {
+                }, new HashSet<>());
+        List<String> labels = popup.getActionLabels();
+        assertEquals("Quit", labels.get(labels.size() - 1), "the last entry of the main menu");
+
+        // nothing wired (a test harness, or before the monitor is up): the action reports it did nothing
+        assertFalse(popup.executeActionByName("quit"));
+
+        AtomicBoolean quit = new AtomicBoolean();
+        popup.setQuitAction(() -> quit.set(true));
+        assertTrue(popup.executeActionByName("quit"), "tui_action Quit runs the monitor's quit path");
+        assertTrue(quit.get());
+        quit.set(false);
+        assertTrue(popup.executeActionByName("Quit"), "the menu label works as well as the kebab name");
+        assertTrue(quit.get());
+    }
+
+    @Test
+    void submenuAndDividerLabelsHaveNoAction() {
+        assertNull(ActionsPopup.actionForLabel("Screen..."));
+        assertNull(ActionsPopup.actionForLabel("AI & MCP..."));
+        assertNull(ActionsPopup.actionForLabel(".."));
+        assertNull(ActionsPopup.actionForLabel("───"));
+        assertNull(ActionsPopup.actionForLabel(null));
+    }
 
     @Test
     void resolvesClicksToEntriesWhenNotScrolled() {

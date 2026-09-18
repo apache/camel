@@ -327,17 +327,15 @@ configure _tags_ as a Map:
 [source,yaml]
 ----
 - from:
-    uri: "timer:tick"
+    uri: "plc4x"
     parameters:
-      period: "1000"
+      driver: "some driver url here"
+      tags:
+        "tags_2": "XXX"
+        "tags_6": "YYY"
     steps:
       - to:
-          uri: "plc4x"
-          parameters:
-            driver: "some driver url here"
-            tags:
-              "tags_2": "XXX"
-              "tags_6": "YYY"
+          uri: "log:plc"
 ----
 
 In this example the _tags_ options is of Map type and can be configured using YAML map syntax.
@@ -361,6 +359,24 @@ In addition to the general support for creating beans provided by xref:others:ma
 <1> the name of the bean which will be used to bound the instance to the Camel Registry
 <2> the full qualified class name of the bean
 <3> the properties of the bean to be set
+
+A bean declared this way is bound to the Camel registry, so a route in the same file can refer to it by name, such as
+calling it with the xref:eips:bean-eip.adoc[Bean] EIP:
+
+[source,yaml]
+----
+- beans:
+    - name: myBean
+      type: "#class:com.acme.MyBean"
+- route:
+    from:
+      uri: timer:tick?period=5000
+      steps:
+        - bean:
+            ref: myBean
+            method: hello
+        - log: "${body}"
+----
 
 The properties of the bean can be defined using either a map or properties style, as shown in the example below:
 
@@ -513,8 +529,8 @@ This gives flexibility to use a bit of programming to create and configure the b
     scriptLanguage: groovy
     script: >
       // some groovy script here to create the bean
-      bean = ...
-      ...
+      def bean = new com.acme.MyBean()
+      bean.name = 'Camel'
       return bean
 ----
 
@@ -530,10 +546,9 @@ You can refer to property placeholder values using `{{ }}` syntax inside the scr
     scriptLanguage: groovy
     script: >
       // some groovy script here to create the bean
-      bean = ...
-      bean.street = '{{addressLine1}}`
-      bean.street2 = '{{addressLine2}}`
-      ...
+      def bean = new com.acme.MyBean()
+      bean.street = '{{addressLine1}}'
+      bean.street2 = '{{addressLine2}}'
       return bean
 ----
 
@@ -549,10 +564,9 @@ Instead, you can invoke the APIs on `CamelContext` such as:
     scriptPropertyPlaceholders: false
     script: >
       // some groovy script here to create the bean
-      bean = ...
+      def bean = new com.acme.MyBean()
       bean.street = context.resolvePropertyPlaceholders('addressLine1')
       bean.street2 = context.resolvePropertyPlaceholders('addressLine2')
-      ...
       return bean
 ----
 
@@ -685,15 +699,15 @@ Classic::
 +
 [source,yaml]
 ----
-- log: "${body}"
+log: "${body}"
 ----
 
 Canonical::
 +
 [source,yaml]
 ----
-- log:
-    message: "${body}"
+log:
+  message: "${body}"
 ----
 ====
 
@@ -705,18 +719,18 @@ Classic::
 +
 [source,yaml]
 ----
-- setBody:
-    simple: "Hello Camel from ${routeId}"
+setBody:
+  simple: "Hello Camel from ${routeId}"
 ----
 
 Canonical::
 +
 [source,yaml]
 ----
-- setBody:
-    expression:
-      simple:
-        expression: "Hello Camel from ${routeId}"
+setBody:
+  expression:
+    simple:
+      expression: "Hello Camel from ${routeId}"
 ----
 ====
 
@@ -728,20 +742,20 @@ Classic::
 +
 [source,yaml]
 ----
-- setHeader:
-    name: Content-Type
-    constant: "application/json"
+setHeader:
+  name: Content-Type
+  constant: "application/json"
 ----
 
 Canonical::
 +
 [source,yaml]
 ----
-- setHeader:
-    name: Content-Type
-    expression:
-      constant:
-        expression: "application/json"
+setHeader:
+  name: Content-Type
+  expression:
+    constant:
+      expression: "application/json"
 ----
 ====
 
@@ -753,42 +767,42 @@ Classic::
 +
 [source,yaml]
 ----
-- choice:
-    when:
-      - simple: "${body} == 'Hello'"
-        steps:
-          - setProperty:
-              name: myProp
-              simple: "${body}"
-    otherwise:
+choice:
+  when:
+    - simple: "${body} == 'Hello'"
       steps:
         - setProperty:
             name: myProp
-            constant: "default"
+            simple: "${body}"
+  otherwise:
+    steps:
+      - setProperty:
+          name: myProp
+          constant: "default"
 ----
 
 Canonical::
 +
 [source,yaml]
 ----
-- choice:
-    when:
-      - expression:
-          simple:
-            expression: "${body} == 'Hello'"
-        steps:
-          - setProperty:
-              name: myProp
-              expression:
-                simple:
-                  expression: "${body}"
-    otherwise:
+choice:
+  when:
+    - expression:
+        simple:
+          expression: "${body} == 'Hello'"
       steps:
         - setProperty:
             name: myProp
             expression:
-              constant:
-                expression: "default"
+              simple:
+                expression: "${body}"
+  otherwise:
+    steps:
+      - setProperty:
+          name: myProp
+          expression:
+            constant:
+              expression: "default"
 ----
 ====
 
@@ -837,7 +851,7 @@ a simpler, more predictable schema structure. The classic schema remains the def
 === Using the schemas with IDEs
 
 The classic schema is registered in the https://www.schemastore.org/[JSON Schema Store] and is automatically
-used by IDEs like VS Code and IntelliJ for files matching `*.camel.yaml` and `*.camelk.yaml`.
+used by IDEs like VS Code and IntelliJ for files matching `+*.camel.yaml+` and `+*.camelk.yaml+`.
 
 To use the canonical schema instead, configure your IDE to point to the canonical schema URL:
 
@@ -869,7 +883,9 @@ camel validate normalize --output normalized/ myroute.yaml
 === Compact notation warning
 
 Camel logs a WARN message when YAML routes use compact (shorthand) notation instead of
-the canonical (explicit) form. This is to encourage adopting the canonical style which is
+the canonical (explicit) form: a step written as a string (`log: "..."`), a language written as a
+string (`simple: "..."`), or a language key directly on the EIP (`setBody: {simple: ...}`) instead of
+under `expression:`. This is to encourage adopting the canonical style which is
 more friendly for tooling and AI assistants.
 
 The warning is logged once per resource file and looks like:
@@ -896,7 +912,12 @@ To validate YAML routes against the canonical schema:
 camel validate yaml --canonical myroute.yaml
 ----
 
-This reports any shorthands or implicit forms that are not valid in the canonical schema.
+This reports each use of the compact notation with the canonical form to write, for example:
+
+----
+/0/route/from/steps/0/setBody: setBody: {simple: ...} is the deprecated compact notation: an expression is written under expression: (setBody: {expression: {simple: {expression: "..."}}}); camel validate normalize rewrites a file in the canonical format
+/0/route/from/steps/1/log: log: "..." is the deprecated compact notation: write log: {message: "..."}; camel validate normalize rewrites a file in the canonical format
+----
 
 The `YamlValidator` class supports both schemas programmatically:
 

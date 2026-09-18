@@ -6,10 +6,159 @@
     "title": "Quartz",
     "description": "Quartz Scheduler",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.quartz.QuartzConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-quartz",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "schedulerName": {
+        "type": "string",
+        "description": "The scheduler name"
+      },
+      "schedulerInstanceId": {
+        "type": "string",
+        "description": "The scheduler instance id"
+      },
+      "quartzVersion": {
+        "type": "string",
+        "description": "The Quartz version (only present when known)"
+      },
+      "runningSince": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds the scheduler started running (only present when known)"
+      },
+      "totalCounter": {
+        "type": "integer",
+        "description": "The total number of jobs executed (only present when known)"
+      },
+      "started": {
+        "type": "boolean",
+        "description": "Whether the scheduler is started (only present when known)"
+      },
+      "shutdown": {
+        "type": "boolean",
+        "description": "Whether the scheduler is shutdown (only present when known)"
+      },
+      "inStandbyMode": {
+        "type": "boolean",
+        "description": "Whether the scheduler is in standby mode (only present when known)"
+      },
+      "threadPoolClass": {
+        "type": "string",
+        "description": "The thread pool class name (only present when known)"
+      },
+      "threadPoolSize": {
+        "type": "integer",
+        "description": "The thread pool size (only present when known)"
+      },
+      "jpbStoreClass": {
+        "type": "string",
+        "description": "The job store class name (field kept as jpbStoreClass for backwards compatibility, only present when known)"
+      },
+      "jpbStoreClustered": {
+        "type": "boolean",
+        "description": "Whether the job store is clustered (field kept as jpbStoreClustered for backwards compatibility, only present when known)"
+      },
+      "jpbStoreSupportsPersistence": {
+        "type": "boolean",
+        "description": "Whether the job store supports persistence (field kept as jpbStoreSupportsPersistence for backwards compatibility, only present when known)"
+      },
+      "currentExecutingJobs": {
+        "type": "integer",
+        "description": "The number of currently executing jobs"
+      },
+      "jobs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "jobId": {
+              "type": "string",
+              "description": "The job fire instance id"
+            },
+            "triggerType": {
+              "type": "string",
+              "description": "The trigger type: cron or simple"
+            },
+            "cron": {
+              "type": "string",
+              "description": "The cron expression (only present for a cron trigger)"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route id (only present when known)"
+            },
+            "uri": {
+              "type": "string",
+              "description": "The endpoint URI (only present when a cron expression is set)"
+            },
+            "prevFireTime": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the previous fire time (only present when known)"
+            },
+            "fireTime": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the fire time (only present when known)"
+            },
+            "nextFireTime": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the next fire time (only present when known)"
+            },
+            "finalFireTime": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the final fire time (only present when known)"
+            },
+            "recovering": {
+              "type": "boolean",
+              "description": "Whether the job is recovering"
+            },
+            "refireCount": {
+              "type": "integer",
+              "description": "The number of times the job has been refired"
+            },
+            "misfireInstruction": {
+              "type": "integer",
+              "description": "The trigger's misfire instruction"
+            }
+          },
+          "required": [
+            "recovering",
+            "refireCount",
+            "misfireInstruction"
+          ]
+        },
+        "description": "Only present when there are any currently executing jobs"
+      },
+      "triggers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route id (only present when known)"
+            },
+            "triggerType": {
+              "type": "string",
+              "description": "The trigger type: cron or simple (only present when known)"
+            },
+            "cron": {
+              "type": "string",
+              "description": "The cron expression (only present when known)"
+            },
+            "repeatInterval": {
+              "type": "string",
+              "description": "The simple trigger repeat interval (only present when known)"
+            }
+          }
+        },
+        "description": "Only present when there are any scheduled triggers"
+      }
+    }
   }
 }
 

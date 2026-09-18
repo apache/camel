@@ -16,17 +16,33 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "transformers", displayName = "Data Type Transformers", description = "Data-type transformer information")
 public class TransformerConsole extends AbstractDevConsole {
+
+    public record TransformerEntry(
+            @Metadata(description = "The transformer name") String name,
+            @Metadata(description = "The from data type (only present when not any-type)") String from,
+            @Metadata(description = "The to data type (only present when not any-type)") String to) {
+    }
+
+    public record Response(
+            @Metadata(description = "Total number of transformers") int size,
+            @Metadata(description = "Number of transformers in the dynamic registry") int dynamicSize,
+            @Metadata(description = "Number of transformers in the static registry") int staticSize,
+            @Metadata(description = "Maximum number of entries to store in the dynamic registry") int maximumCacheSize,
+            @Metadata(description = "The transformers (only present when there are any)") List<TransformerEntry> transformers) {
+    }
 
     public TransformerConsole() {
         super("camel", "transformers", "Data Type Transformers", "Data-type transformer information");
@@ -56,37 +72,24 @@ public class TransformerConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         TransformerRegistry reg = getCamelContext().getTransformerRegistry();
-        root.put("size", reg.size());
-        root.put("dynamicSize", reg.dynamicSize());
-        root.put("staticSize", reg.staticSize());
-        root.put("maximumCacheSize", reg.getMaximumCacheSize());
-        final JsonArray arr = toJsonArray(reg);
-        if (!arr.isEmpty()) {
-            root.put("transformers", arr);
-        }
-        return root;
+        List<TransformerEntry> entries = toEntries(reg);
+
+        Response response = new Response(
+                reg.size(), reg.dynamicSize(), reg.staticSize(), reg.getMaximumCacheSize(),
+                entries.isEmpty() ? null : entries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private static JsonArray toJsonArray(TransformerRegistry reg) {
-        JsonArray arr = new JsonArray();
+    private static List<TransformerEntry> toEntries(TransformerRegistry reg) {
+        List<TransformerEntry> entries = new ArrayList<>();
         for (Map.Entry<?, Transformer> entry : reg.entrySet()) {
             Transformer t = entry.getValue();
             String from = t.getFrom() != null ? t.getFrom().getFullName() : null;
             String to = t.getTo() != null ? t.getTo().getFullName() : null;
-            JsonObject jo = new JsonObject();
-            jo.put("name", t.getName());
-            if (from != null) {
-                jo.put("from", from);
-            }
-            if (to != null) {
-                jo.put("to", to);
-            }
-            arr.add(jo);
+            entries.add(new TransformerEntry(t.getName(), from, to));
         }
-        return arr;
+        return entries;
     }
 }

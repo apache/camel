@@ -42,18 +42,14 @@ public class BlobConfiguration implements Cloneable {
     @UriParam
     @Metadata(autowired = true)
     private StorageSharedKeyCredential credentials;
-    @UriParam
+    @UriParam(label = "security", security = "secret")
     private String sasToken;
     @UriParam
     @Metadata(autowired = true)
     private BlobServiceClient serviceClient;
     @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "producer",
-              enums = "listBlobContainers,findBlobsByTags,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
-                      + "uploadBlockBlob,uploadBlockBlobChunked,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
-                      + "clearPageBlob,getPageBlobRanges,getChangeFeed,copyBlob,createBlobSnapshot,setBlobTags,getBlobTags,undeleteBlob,setBlobTier",
-              defaultValue = "listBlobContainers")
+    @UriParam(label = "producer", defaultValue = "listBlobContainers")
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
     @UriParam(label = "common")
     private String blobName;

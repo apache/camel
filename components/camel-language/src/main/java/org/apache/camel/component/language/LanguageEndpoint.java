@@ -55,8 +55,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private Expression expression;
     private boolean contentResolvedFromResource;
 
-    @UriPath(enums = "bean,constant,csimple,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,js,jsonpath"
-                     + ",mvel,ognl,python,ref,simple,spel,tokenize,variable,wasm,xpath,xquery,xtokenize")
+    @UriPath(enums = "bean,constant,datasonnet,exchangeProperty,file,groovy,header,hl7terser,java,joor,jq,js,jsonpath"
+                     + ",mvel,ognl,python,python3,quickjs,ref,simple,spel,tokenize,variable,wasm,xpath,xquery,xtokenize")
     @Metadata(required = true)
     private String languageName;
     // resourceUri is optional in the language endpoint

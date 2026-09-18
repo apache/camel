@@ -610,11 +610,43 @@ public class AgentConfig {
 }
 ----
 
+=== Content Moderation
+
+Configure a LangChain4j `ModerationModel` on `AgentConfiguration.withModerationModel(...)`. Camel pre-moderates the user message before the chat model is invoked, so flagged input raises `ModerationException` before tools run or conversation memory is updated. The producer sets the `CamelLangChain4jAgentModerationFlagged` header to `true` when moderation flags the input so routes can return a controlled refusal. Provider infrastructure failures are rethrown without setting the flagged header.
+
+Moderation runs before LangChain4j input guardrails, which execute inside the AiServices call. Moderation complements guardrails: guardrails are deterministic Java rules you implement; moderation delegates policy checks to a provider API (OpenAI Moderation, Mistral moderation, etc.). Only the user message text is moderated; system prompts configured by the route author are not sent to the moderation model.
+
+Custom `Agent` implementations should call `ModerationSupport.moderateUserMessage(...)` when they bypass `AgentWithMemory` / `AgentWithoutMemory`. Moderation failures are policy rejections (`GenAiErrorCategory.VALIDATION`), not malformed requests to retry blindly.
+
+._Java-only: public support chatbot with moderation and controlled refusal_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withModerationModel(openAiModerationModel);
+
+context.getRegistry().bind("supportAgentConfig", configuration);
+
+onException(ModerationException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(422))
+    .setBody(constant("Sorry, your message violates our usage policy."));
+
+from("platform-http:/support/chat")
+    .to("langchain4j-agent:support?agentConfiguration=#supportAgentConfig&tags=orders,billing");
+----
+
+In Spring Boot, inject an auto-configured `ModerationModel` bean from the LangChain4j starter alongside `ChatModel`.
+
 === Guardrail Behavior Summary
 
 [cols="1,1,2"]
 |===
 |Guardrail |When Triggered |Result
+
+|`Content moderation`
+|User message flagged by moderation model
+|Blocks the request before input guardrails and chat model
 
 |`InputLengthGuardrail`
 |Input too short/long

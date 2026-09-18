@@ -163,6 +163,7 @@ public final class ServiceBusClientFactory {
                 .prefetchCount(configuration.getPrefetchCount())
                 .subQueue(configuration.getSubQueue())
                 .maxConcurrentCalls(configuration.getMaxConcurrentCalls())
+                .maxConcurrentSessions(configuration.getMaxConcurrentSessions())
                 .processMessage(processMessage)
                 .processError(processError);
 

@@ -101,6 +101,26 @@ public interface Langchain4jAgentComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether LangChain4j should compensate when a tool execution fails.
+         * Only supported in inline agent creation mode (agentConfiguration
+         * without agent or agentFactory). URI value overrides the same option
+         * on the agentConfiguration bean.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param compensateOnToolErrors the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder compensateOnToolErrors(java.lang.Boolean compensateOnToolErrors) {
+            doSetProperty("compensateOnToolErrors", compensateOnToolErrors);
+            return this;
+        }
+    
         /**
          * The configuration.
          * 
@@ -114,6 +134,27 @@ public interface Langchain4jAgentComponentBuilderFactory {
          */
         default Langchain4jAgentComponentBuilder configuration(org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        
+        /**
+         * Whether multiple tools requested in a single LLM turn are executed
+         * concurrently. Camel route tools run on isolated exchange copies. Only
+         * supported in inline agent creation mode (agentConfiguration without
+         * agent or agentFactory). URI value overrides the same option on the
+         * agentConfiguration bean.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param executeToolsConcurrently the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder executeToolsConcurrently(java.lang.Boolean executeToolsConcurrently) {
+            doSetProperty("executeToolsConcurrently", executeToolsConcurrently);
             return this;
         }
     
@@ -160,6 +201,26 @@ public interface Langchain4jAgentComponentBuilderFactory {
          */
         default Langchain4jAgentComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        /**
+         * Maximum number of tool-calling round trips allowed per request. Each
+         * round trip is one LLM call plus execution of the tools requested in
+         * that call. Set to 0 to leave unset and use the LangChain4j default.
+         * Only supported in inline agent creation mode (agentConfiguration
+         * without agent or agentFactory). URI value overrides the same option
+         * on the agentConfiguration bean.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param maxToolCallingRoundTrips the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jAgentComponentBuilder maxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+            doSetProperty("maxToolCallingRoundTrips", maxToolCallingRoundTrips);
             return this;
         }
     
@@ -242,12 +303,12 @@ public interface Langchain4jAgentComponentBuilderFactory {
     
         /**
          * MCP server definitions in the form of mcpServer..=. Supported
-         * properties: transportType (stdio, http, streamableHttp, or sse,
-         * default: stdio), command (comma-separated, for stdio), url (for
-         * http/sse), environment.= (for stdio), timeout (in seconds, default:
-         * 60), logRequests, logResponses, oauthProfile (OAuth profile for HTTP
-         * auth, requires camel-oauth). This is a multi-value option with
-         * prefix: mcpServer.
+         * properties: transportType (stdio, http or streamableHttp, default:
+         * stdio), command (comma-separated, for stdio), url (for
+         * http/streamableHttp), environment.= (for stdio), timeout (in seconds,
+         * default: 60), logRequests, logResponses, oauthProfile (OAuth profile
+         * for HTTP auth, requires camel-oauth). This is a multi-value option
+         * with prefix: mcpServer.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.Object&amp;gt;&lt;/code&gt; type.
@@ -285,9 +346,12 @@ public interface Langchain4jAgentComponentBuilderFactory {
             case "agent": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgent((org.apache.camel.component.langchain4j.agent.api.Agent) value); return true;
             case "agentConfiguration": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentConfiguration((org.apache.camel.component.langchain4j.agent.api.AgentConfiguration) value); return true;
             case "agentFactory": getOrCreateConfiguration((LangChain4jAgentComponent) component).setAgentFactory((org.apache.camel.component.langchain4j.agent.api.AgentFactory) value); return true;
+            case "compensateOnToolErrors": getOrCreateConfiguration((LangChain4jAgentComponent) component).setCompensateOnToolErrors((java.lang.Boolean) value); return true;
             case "configuration": ((LangChain4jAgentComponent) component).setConfiguration((org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration) value); return true;
+            case "executeToolsConcurrently": getOrCreateConfiguration((LangChain4jAgentComponent) component).setExecuteToolsConcurrently((java.lang.Boolean) value); return true;
             case "jsonSchema": getOrCreateConfiguration((LangChain4jAgentComponent) component).setJsonSchema((java.lang.String) value); return true;
             case "lazyStartProducer": ((LangChain4jAgentComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxToolCallingRoundTrips": getOrCreateConfiguration((LangChain4jAgentComponent) component).setMaxToolCallingRoundTrips((int) value); return true;
             case "outputClass": getOrCreateConfiguration((LangChain4jAgentComponent) component).setOutputClass((java.lang.Class) value); return true;
             case "tags": getOrCreateConfiguration((LangChain4jAgentComponent) component).setTags((java.lang.String) value); return true;
             case "autowiredEnabled": ((LangChain4jAgentComponent) component).setAutowiredEnabled((boolean) value); return true;

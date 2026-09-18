@@ -29,11 +29,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.ExpressionSubElementDefinition;
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JavaExpression;
-import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -80,6 +78,12 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
     public static ExpressionReifier<? extends ExpressionDefinition> reifier(
             CamelContext camelContext, ExpressionDefinition definition) {
 
+        if (definition == null) {
+            // a split, filter, setBody... written without its expression (in YAML: only options such as delimiter)
+            throw new IllegalArgumentException(
+                    "No expression: the EIP needs an expression (a language and its text), for example simple: \"${body}\","
+                                               + " constant: \"...\" or tokenize: \",\"");
+        }
         ExpressionReifier<? extends ExpressionDefinition> answer = null;
         if (!EXPRESSIONS.isEmpty()) {
             // custom take precedence
@@ -100,14 +104,10 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     private static ExpressionReifier<? extends ExpressionDefinition> coreReifier(
             CamelContext camelContext, ExpressionDefinition definition) {
-        if (definition instanceof CSimpleExpression) {
-            return new CSimpleExpressionReifier(camelContext, definition);
-        } else if (definition instanceof DatasonnetExpression) {
+        if (definition instanceof DatasonnetExpression) {
             return new DatasonnetExpressionReifier(camelContext, definition);
         } else if (definition instanceof JavaExpression) {
             return new JavaExpressionReifier(camelContext, definition);
-        } else if (definition instanceof JoorExpression) {
-            return new JoorExpressionReifier(camelContext, definition);
         } else if (definition instanceof JsonPathExpression) {
             return new JsonPathExpressionReifier(camelContext, definition);
         } else if (definition instanceof MethodCallExpression) {

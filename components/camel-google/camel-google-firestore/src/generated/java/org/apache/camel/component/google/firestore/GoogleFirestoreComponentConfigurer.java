@@ -47,6 +47,8 @@ public class GoogleFirestoreComponentConfigurer extends PropertyConfigurerSuppor
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxpendingchanges":
+        case "maxPendingChanges": getOrCreateConfiguration(target).setMaxPendingChanges(property(camelContext, int.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.google.firestore.GoogleFirestoreOperations.class, value)); return true;
         case "projectid":
         case "projectId": getOrCreateConfiguration(target).setProjectId(property(camelContext, java.lang.String.class, value)); return true;
@@ -83,6 +85,8 @@ public class GoogleFirestoreComponentConfigurer extends PropertyConfigurerSuppor
         case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxpendingchanges":
+        case "maxPendingChanges": return int.class;
         case "operation": return org.apache.camel.component.google.firestore.GoogleFirestoreOperations.class;
         case "projectid":
         case "projectId": return java.lang.String.class;
@@ -115,6 +119,8 @@ public class GoogleFirestoreComponentConfigurer extends PropertyConfigurerSuppor
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxpendingchanges":
+        case "maxPendingChanges": return getOrCreateConfiguration(target).getMaxPendingChanges();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "projectid":
         case "projectId": return getOrCreateConfiguration(target).getProjectId();

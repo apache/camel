@@ -29,7 +29,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public class KeyVaultProducer extends DefaultProducer {
 
-    public static final String MISSING_SECRET_NAME = "Secret Name must be specified for createSecret Operation";
+    public static final String MISSING_SECRET_NAME = "Secret Name must be specified";
+    public static final String MISSING_SECRET_PROPERTIES = "Secret Properties must be specified";
 
     public KeyVaultProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -85,7 +86,7 @@ public class KeyVaultProducer extends DefaultProducer {
         final SecretProperties secretProperties
                 = exchange.getMessage().getHeader(KeyVaultConstants.SECRET_PROPERTIES, SecretProperties.class);
         if (ObjectHelper.isEmpty(secretProperties)) {
-            throw new IllegalArgumentException(MISSING_SECRET_NAME);
+            throw new IllegalArgumentException(MISSING_SECRET_PROPERTIES);
         }
         SecretProperties p = getEndpoint().getSecretClient()
                 .updateSecretProperties(secretProperties);

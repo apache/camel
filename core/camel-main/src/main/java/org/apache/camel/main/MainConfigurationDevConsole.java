@@ -16,20 +16,38 @@
  */
 package org.apache.camel.main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesResolvedValue;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.OrderedLocationProperties;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 import static org.apache.camel.util.LocationHelper.locationSummary;
 
 @DevConsole(name = "main-configuration", displayName = "Main Configuration",
             description = "Display Camel startup configuration")
 public class MainConfigurationDevConsole extends AbstractDevConsole {
+
+    public record ConfigurationEntry(
+            @Metadata(description = "The configuration key") String key,
+            @Metadata(description = "The configuration value (masked as xxxxxx when sensitive)") Object value,
+            @Metadata(description = "The default value (only present when known)") Object defaultValue,
+            @Metadata(description = "The original, unresolved value (only present when known and not sensitive)") Object originalValue,
+            @Metadata(description = "The source that provided the value (only present when known)") String source,
+            @Metadata(description = "The location the value came from (only present when known)") String location,
+            @Metadata(description = "Whether the location is internal (only present when the location is known)") Boolean internal) {
+    }
+
+    public record Response(
+            @Metadata(description = "The startup configurations (only present when there are any)") List<ConfigurationEntry> configurations) {
+    }
 
     private final OrderedLocationProperties startupConfiguration = new OrderedLocationProperties();
 
@@ -70,9 +88,9 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
 
-        JsonObject root = new JsonObject();
+        List<ConfigurationEntry> configurations = null;
         if (!startupConfiguration.isEmpty()) {
-            JsonArray arr = new JsonArray();
+            configurations = new ArrayList<>();
             for (var entry : startupConfiguration.entrySet()) {
                 String k = entry.getKey().toString();
                 Object v = entry.getValue();
@@ -80,33 +98,28 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
                 Object defaultValue = startupConfiguration.getDefaultValue(k);
 
                 boolean sensitive = MainHelper.containsSensitive(getCamelContext(), k, v);
-                JsonObject jo = new JsonObject();
-                jo.put("key", k);
-                jo.put("value", sensitive ? "xxxxxx" : v);
-                if (defaultValue != null) {
-                    jo.put("defaultValue", defaultValue);
-                }
-                // enrich if present
-                pc.getResolvedValue(k).ifPresent(r -> {
+                Object value = sensitive ? "xxxxxx" : v;
+
+                Object originalValue = null;
+                String source = null;
+                Optional<PropertiesResolvedValue> resolved = pc.getResolvedValue(k);
+                if (resolved.isPresent()) {
+                    PropertiesResolvedValue r = resolved.get();
                     String ov = r.originalValue();
                     if (ov != null) {
-                        jo.put("originalValue", sensitive ? "xxxxxx" : ov);
+                        originalValue = sensitive ? "xxxxxx" : ov;
                     }
-                    String src = r.source();
-                    if (src != null) {
-                        jo.put("source", src);
-                    }
-                });
-                if (loc != null) {
-                    jo.put("location", loc);
-                    jo.put("internal", isInternal(loc));
+                    source = r.source();
                 }
-                arr.add(jo);
+
+                Boolean internal = loc != null ? isInternal(loc) : null;
+
+                configurations.add(new ConfigurationEntry(k, value, defaultValue, originalValue, source, loc, internal));
             }
-            root.put("configurations", arr);
         }
 
-        return root;
+        Response response = new Response(configurations);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private static boolean isInternal(String loc) {

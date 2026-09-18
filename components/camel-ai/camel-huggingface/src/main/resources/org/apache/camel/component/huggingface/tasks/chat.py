@@ -28,7 +28,7 @@ def handle(inputs: Input):
     try:
         if not pipe:
             logging.debug("Initializing pipeline")
-            pipe = pipeline(task='text-generation', model='%s', revision='%s', device_map='%s'%s)
+            pipe = pipeline(task='text-generation', model='%s', revision='%s', device_map='%s')
             logging.debug("Pipeline initialized")
 
         if inputs.content.size() == 0:

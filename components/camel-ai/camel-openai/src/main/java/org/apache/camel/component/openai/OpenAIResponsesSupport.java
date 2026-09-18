@@ -16,24 +16,39 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.openai.core.JsonValue;
+import com.openai.core.ObjectMappers;
+import com.openai.models.ChatModel;
+import com.openai.models.FunctionDefinition;
+import com.openai.models.ResponsesModel;
+import com.openai.models.chat.completions.ChatCompletionFunctionTool;
+import com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall;
+import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import com.openai.models.responses.FileSearchTool;
+import com.openai.models.responses.FunctionTool;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseFormatTextConfig;
 import com.openai.models.responses.ResponseFormatTextJsonSchemaConfig;
+import com.openai.models.responses.ResponseFunctionToolCall;
+import com.openai.models.responses.ResponseInputItem;
 import com.openai.models.responses.ResponseOutputItem;
 import com.openai.models.responses.ResponseOutputMessage;
 import com.openai.models.responses.ResponseOutputText;
 import com.openai.models.responses.ResponseTextConfig;
 import com.openai.models.responses.Tool;
 import com.openai.models.responses.WebSearchTool;
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -100,27 +115,42 @@ final class OpenAIResponsesSupport {
         }
         JsonNode root = OBJECT_MAPPER.readTree(hostedMcpToolsJson);
         if (!root.isArray()) {
-            throw new IllegalArgumentException("hostedMcpTools must be a JSON array of Tool.Mcp objects");
+            throw new IllegalArgumentException("hostedMcpTools must be a JSON array of MCP tool objects");
         }
         for (JsonNode node : root) {
-            Tool.Mcp.Builder builder = Tool.Mcp.builder();
-            if (node.hasNonNull("server_label")) {
-                builder.serverLabel(node.get("server_label").asText());
-            } else if (node.hasNonNull("serverLabel")) {
-                builder.serverLabel(node.get("serverLabel").asText());
+            if (!(node instanceof ObjectNode tool)) {
+                throw new IllegalArgumentException("hostedMcpTools must be a JSON array of MCP tool objects");
             }
-            if (node.hasNonNull("server_url")) {
-                builder.serverUrl(node.get("server_url").asText());
-            } else if (node.hasNonNull("serverUrl")) {
-                builder.serverUrl(node.get("serverUrl").asText());
-            }
-            if (node.hasNonNull("server_description")) {
-                builder.serverDescription(node.get("server_description").asText());
-            } else if (node.hasNonNull("serverDescription")) {
-                builder.serverDescription(node.get("serverDescription").asText());
-            }
-            paramsBuilder.addTool(builder.build());
+            ObjectNode mcpTool = tool.deepCopy();
+            mcpTool.put("type", "mcp");
+            // camelCase names were accepted for these fields before every API field was passed through
+            renameField(mcpTool, "serverLabel", "server_label");
+            renameField(mcpTool, "serverUrl", "server_url");
+            renameField(mcpTool, "serverDescription", "server_description");
+            paramsBuilder.addTool(ObjectMappers.jsonMapper().treeToValue(mcpTool, Tool.Mcp.class));
         }
+    }
+
+    private static void renameField(ObjectNode node, String from, String to) {
+        if (node.has(from) && !node.has(to)) {
+            node.set(to, node.remove(from));
+        }
+    }
+
+    /**
+     * Converts a tool of the endpoint tool state, which holds the MCP and route tools as chat completion tools, into a
+     * Responses API function tool.
+     */
+    static FunctionTool toFunctionTool(ChatCompletionFunctionTool tool) {
+        FunctionDefinition function = tool.function();
+        FunctionTool.Parameters.Builder parameters = FunctionTool.Parameters.builder();
+        function.parameters().ifPresent(schema -> parameters.putAllAdditionalProperties(schema._additionalProperties()));
+        FunctionTool.Builder builder = FunctionTool.builder()
+                .name(function.name())
+                .parameters(parameters.build())
+                .strict(false);
+        function.description().ifPresent(builder::description);
+        return builder.build();
     }
 
     static void applyJsonSchemaTextFormat(ResponseCreateParams.Builder paramsBuilder, String jsonSchema)
@@ -183,6 +213,92 @@ final class OpenAIResponsesSupport {
             }
         }
         return text.toString();
+    }
+
+    static List<ResponseFunctionToolCall> extractFunctionCalls(Response response) {
+        return response.output().stream()
+                .filter(ResponseOutputItem::isFunctionCall)
+                .map(ResponseOutputItem::asFunctionCall)
+                .toList();
+    }
+
+    /**
+     * Returns the output items to send back as input before the function call results: the function calls themselves,
+     * and the reasoning and messages that came with them.
+     */
+    static List<ResponseInputItem> toInputItems(Response response) {
+        List<ResponseInputItem> items = new ArrayList<>();
+        for (ResponseOutputItem item : response.output()) {
+            if (item.isFunctionCall()) {
+                items.add(ResponseInputItem.ofFunctionCall(item.asFunctionCall()));
+            } else if (item.isReasoning()) {
+                items.add(ResponseInputItem.ofReasoning(item.asReasoning()));
+            } else if (item.isMessage()) {
+                items.add(ResponseInputItem.ofResponseOutputMessage(item.asMessage()));
+            }
+        }
+        return items;
+    }
+
+    /**
+     * Converts function calls into the chat completion tool calls executed by {@link McpToolCallExecutor}. The call id
+     * becomes the tool call id, so that each result pairs back with its call.
+     */
+    static List<ChatCompletionMessageToolCall> toChatToolCalls(List<ResponseFunctionToolCall> functionCalls) {
+        return functionCalls.stream()
+                .map(call -> ChatCompletionMessageToolCall.ofFunction(ChatCompletionMessageFunctionToolCall.builder()
+                        .id(call.callId())
+                        .function(ChatCompletionMessageFunctionToolCall.Function.builder()
+                                .name(call.name())
+                                .arguments(call.arguments())
+                                .build())
+                        .build()))
+                .toList();
+    }
+
+    /**
+     * Fails when the model waits for the approval of hosted MCP tool calls. The operation cannot grant approvals, so
+     * the exchange would otherwise complete with an empty body.
+     */
+    static void requireNoPendingMcpApprovals(Exchange exchange, Response response) throws CamelExchangeException {
+        List<String> pending = response.output().stream()
+                .filter(ResponseOutputItem::isMcpApprovalRequest)
+                .map(ResponseOutputItem::asMcpApprovalRequest)
+                .map(request -> request.serverLabel() + "/" + request.name())
+                .toList();
+        if (!pending.isEmpty()) {
+            throw new CamelExchangeException(
+                    "The model requested approval for the hosted MCP tool calls " + pending
+                                             + ", which the responses operation cannot grant. Set require_approval "
+                                             + "to never in hostedMcpTools",
+                    exchange);
+        }
+    }
+
+    /**
+     * Returns the model id. {@code ResponsesModel} is a union type whose {@code toString()} includes the variant name.
+     */
+    static String modelName(ResponsesModel model) {
+        return model.string()
+                .or(() -> model.chat().map(ChatModel::asString))
+                .or(() -> model.only().map(ResponsesModel.ResponsesOnlyModel::asString))
+                .orElseGet(model::toString);
+    }
+
+    /**
+     * Returns the annotations attached to the output text of the answer, such as citations, each converted to a map of
+     * the API fields.
+     */
+    @SuppressWarnings("unchecked")
+    static List<Map<String, Object>> extractAnnotations(Response response) {
+        return response.output().stream()
+                .filter(ResponseOutputItem::isMessage)
+                .flatMap(item -> item.asMessage().content().stream())
+                .filter(ResponseOutputMessage.Content::isOutputText)
+                // OpenAI-compatible servers may omit the field, which the annotations() accessor rejects
+                .flatMap(content -> content.asOutputText()._annotations().asKnown().orElse(List.of()).stream())
+                .map(annotation -> (Map<String, Object>) ObjectMappers.jsonMapper().convertValue(annotation, Map.class))
+                .toList();
     }
 
     static Optional<String> extractFinishStatus(Response response) {

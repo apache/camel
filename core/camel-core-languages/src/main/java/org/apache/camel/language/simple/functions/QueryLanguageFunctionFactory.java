@@ -33,7 +33,6 @@ import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWith
  * All four functions support an optional input-source qualifier so the language operates on a header, exchange
  * property, or variable rather than the body: e.g. {@code ${jq(header:myHeader,.name)}}.
  * <p>
- * CSimple code generation is not supported for these functions (returns {@code null}).
  */
 public final class QueryLanguageFunctionFactory implements SimpleLanguageFunctionFactory {
 

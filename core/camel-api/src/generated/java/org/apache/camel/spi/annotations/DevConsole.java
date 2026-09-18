@@ -51,4 +51,12 @@ public @interface DevConsole {
      */
     String description();
 
+    /**
+     * Whether this console is read-only (safe, and does not change any runtime state).
+     * <p/>
+     * Consoles that mutate state (such as starting/stopping a route, sending a message, or triggering a heap dump) must
+     * set this to {@code false}.
+     */
+    boolean readOnly() default true;
+
 }

@@ -21,6 +21,17 @@ import java.util.List;
 
 public class PojoBeanModel extends ArtifactModel<PojoBeanModel.PojoBeanOptionModel> {
 
+    private String interfaceType;
+
+    /** The interface the bean implements (org.apache.camel.AggregationStrategy), when it is a known Camel interface. */
+    public String getInterfaceType() {
+        return interfaceType;
+    }
+
+    public void setInterfaceType(String interfaceType) {
+        this.interfaceType = interfaceType;
+    }
+
     protected final List<PojoBeanModel.PojoBeanOptionModel> options = new ArrayList<>();
 
     public PojoBeanModel() {

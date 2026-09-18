@@ -32,7 +32,7 @@ public interface IBMCOSConstants {
     String BUCKET_DESTINATION_NAME = "CamelIBMCOSBucketDestinationName";
     @Metadata(description = "The *optional* Cache-Control HTTP header which allows the user to specify caching behavior",
               javaType = "String")
-    String CACHE_CONTROL = "CamelIBMCOSContentControl";
+    String CACHE_CONTROL = "CamelIBMCOSCacheControl";
     @Metadata(description = "The *optional* Content-Disposition HTTP header, which specifies presentational information such as the recommended filename",
               javaType = "String")
     String CONTENT_DISPOSITION = "CamelIBMCOSContentDisposition";

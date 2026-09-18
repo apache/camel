@@ -19,7 +19,7 @@ package org.apache.camel.main.util;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.catalog.suggest.CatalogSuggestionStrategy;
+import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
 
 public final class SuggestSimilarHelper {
 
@@ -29,7 +29,7 @@ public final class SuggestSimilarHelper {
     }
 
     public static List<String> didYouMean(List<String> names, String unknown) {
-        String[] suggestions = CatalogSuggestionStrategy.suggestEndpointOptions(names, unknown, MAX_SUGGESTIONS);
+        String[] suggestions = EditDistanceSuggestionStrategy.suggest(names, unknown, MAX_SUGGESTIONS);
         if (suggestions != null) {
             return Arrays.asList(suggestions);
         }

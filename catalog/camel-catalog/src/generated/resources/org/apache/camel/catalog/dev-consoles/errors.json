@@ -6,6 +6,7 @@
     "title": "Error Registry",
     "description": "Display captured routing errors",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ErrorRegistryConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -97,6 +98,40 @@
       "defaultValue": false,
       "description": "Whether to include stack traces"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "description": "Whether the error registry is enabled"
+      },
+      "size": {
+        "type": "integer",
+        "description": "Number of captured errors"
+      },
+      "maximumEntries": {
+        "type": "integer",
+        "description": "The maximum number of entries retained"
+      },
+      "timeToLive": {
+        "type": "string",
+        "description": "The time to live for entries"
+      },
+      "errors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "description": "The captured errors; shape depends on the underlying message implementation"
+      }
+    },
+    "required": [
+      "enabled",
+      "size",
+      "maximumEntries"
+    ]
   }
 }
 

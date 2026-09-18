@@ -18,7 +18,6 @@ package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 
 /**
@@ -32,11 +31,6 @@ public class DoubleQuoteEnd extends BaseSimpleNode implements BlockEnd {
 
     @Override
     public Expression createExpression(CamelContext camelContext, String expression) {
-        return null;
-    }
-
-    @Override
-    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
         return null;
     }
 }

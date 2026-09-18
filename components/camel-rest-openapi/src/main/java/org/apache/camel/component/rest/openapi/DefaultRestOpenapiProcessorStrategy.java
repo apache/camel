@@ -34,6 +34,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
@@ -74,7 +75,7 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
     private String component = "direct";
     private String missingOperation;
     private String mockIncludePattern;
-    private final List<String> uris = new ArrayList<>();
+    private Consumer registeredPlatformHttpConsumer;
 
     @Override
     public void validateOpenApi(OpenAPI openAPI, String basePath, PlatformHttpConsumerAware platformHttpConsumer)
@@ -150,8 +151,9 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                         }
                     }
                 }
-                phc.addHttpEndpoint(uri, verbs, consumes, produces, platformHttpConsumer.getPlatformHttpConsumer());
-                uris.add(uri);
+                Consumer consumer = platformHttpConsumer.getPlatformHttpConsumer();
+                phc.addHttpEndpoint(uri, verbs, consumes, produces, consumer);
+                registeredPlatformHttpConsumer = consumer;
             }
         }
     }
@@ -452,9 +454,9 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
 
         if (camelContext != null) {
             PlatformHttpComponent phc = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
-            if (phc != null) {
-                uris.forEach(phc::removeHttpEndpoint);
-                uris.clear();
+            if (phc != null && registeredPlatformHttpConsumer != null) {
+                phc.removeHttpEndpoint(registeredPlatformHttpConsumer);
+                registeredPlatformHttpConsumer = null;
             }
         }
     }

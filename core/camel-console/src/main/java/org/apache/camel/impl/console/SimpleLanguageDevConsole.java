@@ -16,17 +16,26 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "simple-language", displayName = "Simple Language", description = "Display simple language details")
 public class SimpleLanguageDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "Number of core simple functions") int coreSize,
+            @Metadata(description = "Number of custom simple functions") int customSize,
+            @Metadata(description = "The core function names (only present when there are any)") List<String> coreFunctions,
+            @Metadata(description = "The custom function names (only present when there are any)") List<String> customFunctions) {
+    }
 
     public SimpleLanguageDevConsole() {
         super("camel", "simple-language", "Simple Language", "Display simple language details");
@@ -52,23 +61,14 @@ public class SimpleLanguageDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
-        root.put("coreSize", reg.coreSize());
-        root.put("customSize", reg.customSize());
-        JsonArray arr = new JsonArray();
-        arr.addAll(reg.getCoreFunctionNames());
-        if (!arr.isEmpty()) {
-            root.put("coreFunctions", arr);
-        }
-        arr = new JsonArray();
-        arr.addAll(reg.getCustomFunctionNames());
-        if (!arr.isEmpty()) {
-            root.put("customFunctions", arr);
-        }
 
-        return root;
+        List<String> core = new ArrayList<>(reg.getCoreFunctionNames());
+        List<String> custom = new ArrayList<>(reg.getCustomFunctionNames());
+
+        Response response = new Response(
+                reg.coreSize(), reg.customSize(), core.isEmpty() ? null : core, custom.isEmpty() ? null : custom);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

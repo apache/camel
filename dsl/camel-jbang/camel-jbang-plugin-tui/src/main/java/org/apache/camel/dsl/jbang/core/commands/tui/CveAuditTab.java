@@ -70,10 +70,10 @@ class CveAuditTab extends AbstractTableTab {
     private int detailScroll;
 
     private List<DependencyLoader.DepEntry> depEntries = Collections.emptyList();
-    private List<VulnGroup> allGroups = Collections.emptyList();
+    private volatile List<VulnGroup> allGroups = Collections.emptyList();
     private String lastPid;
-    private String errorMessage;
-    private boolean dataLoaded;
+    private volatile String errorMessage;
+    private volatile boolean dataLoaded;
     private int scannedCount;
 
     CveAuditTab(MonitorContext ctx) {
@@ -96,6 +96,23 @@ class CveAuditTab extends AbstractTableTab {
         if (!dataLoaded) {
             loadAndScan();
         }
+    }
+
+    @Override
+    public boolean ensureDataLoaded() {
+        onTabSelected();
+        return true;
+    }
+
+    @Override
+    public String dataLoadError() {
+        if (!dataLoaded) {
+            return null;
+        }
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+        return allGroups.isEmpty() ? "No known vulnerabilities found for the selected integration" : null;
     }
 
     @Override
@@ -320,6 +337,7 @@ class CveAuditTab extends AbstractTableTab {
                         .scroll(detailScroll)
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
                         .styles(Theme.markdownStyles())
+                        .syntaxTheme(Theme.syntaxTheme())
                         .build(),
                 area);
     }
@@ -373,7 +391,6 @@ class CveAuditTab extends AbstractTableTab {
         hint(spans, "Esc", "back");
         hint(spans, "r", "rescan");
         super.renderFooter(spans);
-        hintLast(spans, "↑↓", "navigate");
     }
 
     private void rescan() {
@@ -716,47 +733,7 @@ class CveAuditTab extends AbstractTableTab {
 
     @Override
     public String getHelpText() {
-        return """
-                # CVE Audit
-
-                The CVE Audit tab scans the integration's classpath dependencies
-                against the **OSV.dev** vulnerability database (https://osv.dev).
-                OSV.dev aggregates vulnerabilities from multiple sources including
-                the GitHub Advisory Database (GHSA), the National Vulnerability
-                Database (NVD/CVE), and other ecosystem-specific databases.
-
-                It queries all Maven JARs using the OSV batch API and displays
-                known CVEs grouped by severity.
-
-                ## Table Columns
-
-                - **SEVERITY** — CRITICAL (red), HIGH (red), MEDIUM (yellow), LOW (dim)
-                - **CVE ID** — the canonical vulnerability identifier (prefers CVE- over GHSA-)
-                - **ARTIFACT** — the affected Maven artifact (groupId:artifactId:version)
-                - **VIA** — the direct dependency that pulls in the affected artifact (transitive dependency chain)
-                - **SUMMARY** — brief description of the vulnerability
-
-                ## Detail View
-
-                The detail panel at the bottom shows the full summary, affected
-                artifacts, aliases (e.g., both CVE and GHSA IDs for the same issue),
-                published date, and a link to the OSV.dev page.
-
-                ## Caching
-
-                Results are cached globally so re-visiting the tab is instant.
-                Switching to another integration that shares the same JARs will
-                also benefit from the cache. Press `r` to force a rescan.
-
-                ## Keys
-
-                - `Up/Down` — navigate vulnerabilities
-                - `PgUp/PgDn` — scroll detail panel
-                - `s` — cycle sort column
-                - `S` — reverse sort order
-                - `r` — rescan (clear cache and re-query)
-                - `Esc` — back
-                """;
+        return DocHelper.loadHelpText("cve-audit");
     }
 
     @Override

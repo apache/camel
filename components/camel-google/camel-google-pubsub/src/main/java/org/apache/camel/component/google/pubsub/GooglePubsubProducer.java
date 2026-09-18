@@ -70,15 +70,21 @@ public class GooglePubsubProducer extends DefaultProducer {
         }
 
         if (exchange.getIn().getBody() instanceof List) {
-            boolean groupedExchanges = false;
-            for (Object body : exchange.getIn().getBody(List.class)) {
-                if (body instanceof Exchange) {
-                    send((Exchange) body);
-                    groupedExchanges = true;
-                }
-            }
-            if (!groupedExchanges) {
+            List<?> bodies = exchange.getIn().getBody(List.class);
+            long exchanges = bodies.stream().filter(Exchange.class::isInstance).count();
+            if (exchanges == 0) {
+                // not an aggregated list: the list itself is the payload of a single message
                 send(exchange);
+            } else if (exchanges == bodies.size()) {
+                for (Object body : bodies) {
+                    send((Exchange) body);
+                }
+            } else {
+                // a list holding both exchanges and plain payloads used to publish only the exchanges and
+                // drop the rest without a word
+                throw new IllegalArgumentException(
+                        "The body is a list mixing " + exchanges + " exchange(s) with " + (bodies.size() - exchanges)
+                                                   + " other element(s). Send either an aggregated list of exchanges or a single payload.");
             }
         } else {
             send(exchange);
@@ -127,6 +133,13 @@ public class GooglePubsubProducer extends DefaultProducer {
             String value = exchange.getIn().getHeader(camelHeader, String.class);
             if (headerFilterStrategy != null
                     && headerFilterStrategy.applyFilterToCamelHeaders(camelHeader, value, exchange)) {
+                continue;
+            }
+            if (value == null) {
+                // a pubsub attribute cannot be null, and a header that does not convert to a string is not
+                // one the message can carry
+                logger.debug("Skipping header {} as it has no string value to send as a message attribute",
+                        camelHeader);
                 continue;
             }
             messageBuilder.putAttributes(camelHeader, value);

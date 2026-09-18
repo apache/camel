@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.ClassFilter;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JavaSerializationFilterConfig;
 import com.hazelcast.config.SerializationConfig;
 
 /**
- * Applies a default {@link JavaSerializationFilterConfig} to Hazelcast {@link Config} instances built by Camel when the
- * user has not configured one. The default whitelists {@code java.}, {@code javax.} and {@code org.apache.camel.} class
- * name prefixes and blacklists {@code java.net.}.
+ * Applies a default {@link JavaSerializationFilterConfig} to Hazelcast {@link Config} and {@link ClientConfig}
+ * instances built by Camel when the user has not configured one. The default whitelists {@code java.}, {@code javax.}
+ * and {@code org.apache.camel.} class name prefixes and blacklists {@code java.net.}.
  * <p>
- * If the supplied {@link Config} already declares a {@link JavaSerializationFilterConfig} (e.g. provided by the user
- * via a reference or XML/YAML configuration), it is left untouched.
+ * If the supplied configuration already declares a {@link JavaSerializationFilterConfig} (e.g. provided by the user via
+ * a reference or XML/YAML configuration), it is left untouched.
  */
 public final class HazelcastSerializationFilterHelper {
 
@@ -46,7 +47,22 @@ public final class HazelcastSerializationFilterHelper {
         if (config == null) {
             return;
         }
-        SerializationConfig serializationConfig = config.getSerializationConfig();
+        applyDefaultFilter(config.getSerializationConfig());
+    }
+
+    /**
+     * Applies the default {@link JavaSerializationFilterConfig} on the {@link SerializationConfig} of the given
+     * {@link ClientConfig} when one is not already set. Has no effect when {@code config} is {@code null} or the user
+     * has already configured a {@link JavaSerializationFilterConfig}.
+     */
+    public static void applyDefault(ClientConfig config) {
+        if (config == null) {
+            return;
+        }
+        applyDefaultFilter(config.getSerializationConfig());
+    }
+
+    private static void applyDefaultFilter(SerializationConfig serializationConfig) {
         if (serializationConfig == null) {
             return;
         }

@@ -3,6 +3,7 @@ A2ASubTaskDefinition
 AggregateDefinition
 BeanDefinition
 BeanFactoryDefinition
+CacheDefinition
 CatchDefinition
 ChoiceDefinition
 CircuitBreakerDefinition

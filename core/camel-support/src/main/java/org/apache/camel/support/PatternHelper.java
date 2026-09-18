@@ -93,6 +93,54 @@ public final class PatternHelper {
     }
 
     /**
+     * Matches the name with the given pattern (case insensitive) using simple matching only (no regular expressions).
+     * <p/>
+     * The match rules are applied in this order:
+     * <ul>
+     * <li>exact match (case insensitive), returns true</li>
+     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     * <li>otherwise returns false</li>
+     * </ul>
+     *
+     * @param  name    the name
+     * @param  pattern a pattern to match
+     * @return         <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @see            #matchSimplePatterns(String, String[])
+     */
+    public static boolean matchSimplePattern(String name, String pattern) {
+        if (name == null || pattern == null) {
+            return false;
+        }
+
+        if (name.equalsIgnoreCase(pattern)) {
+            return true;
+        }
+
+        if ("*".equals(pattern)) {
+            return true;
+        }
+
+        return matchWildcard(name, pattern);
+    }
+
+    /**
+     * Matches the name with the given patterns (case insensitive) using simple matching only (no regular expressions).
+     *
+     * @param  name     the name
+     * @param  patterns pattern(s) to match
+     * @return          <tt>true</tt> if match, <tt>false</tt> otherwise.
+     * @see             #matchSimplePattern(String, String)
+     */
+    public static boolean matchSimplePatterns(String name, String[] patterns) {
+        for (String pattern : patterns) {
+            if (PatternHelper.matchSimplePattern(name, pattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Matches the name with the given pattern (case insensitive).
      * <p/>
      * The match rules are applied in this order:

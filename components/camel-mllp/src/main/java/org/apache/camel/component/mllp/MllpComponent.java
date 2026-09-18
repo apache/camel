@@ -29,8 +29,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("mllp")
 public class MllpComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    @Metadata(label = "advanced", defaultValue = "true")
-    private boolean logPhi = true;
+    @Metadata(label = "advanced", defaultValue = "false")
+    private boolean logPhi;
     @Metadata(label = "advanced", defaultValue = "5120")
     private int logPhiMaxBytes = 5120;
     @Metadata(label = "advanced", defaultValue = "ISO-8859-1")

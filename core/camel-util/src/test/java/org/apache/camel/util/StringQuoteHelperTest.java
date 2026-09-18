@@ -22,6 +22,13 @@ import org.junit.jupiter.api.Test;
 public class StringQuoteHelperTest {
 
     @Test
+    public void testJsonQuoteEscapesSpecialCharacters() {
+        Assertions.assertEquals("\"He said \\\"hi\\\"\"", StringQuoteHelper.jsonQuote("He said \"hi\""));
+        Assertions.assertEquals("\"line1\\nline2\"", StringQuoteHelper.jsonQuote("line1\nline2"));
+        Assertions.assertEquals("\"a\\\\b\"", StringQuoteHelper.jsonQuote("a\\b"));
+    }
+
+    @Test
     public void testSplitBeanParametersTrim() throws Exception {
         String[] arr = StringQuoteHelper.splitSafeQuote("String.class ${body}, String.class Mars", ',', true, true);
         Assertions.assertEquals(2, arr.length);

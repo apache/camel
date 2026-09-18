@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "EhcacheKeyValueRepository",
+    "javaType": "org.apache.camel.component.ehcache.processor.EhcacheKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Ehcache Key Value Repository",
+    "description": "An Ehcache-based KeyValueRepository with per-entry TTL support.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-ehcache",
+    "version": "4.23.0-SNAPSHOT",
+    "properties": { "cacheName": { "index": 0, "kind": "property", "displayName": "Cache Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "EhcacheKeyValueRepository", "description": "Name of cache" }, "cacheManager": { "index": 1, "kind": "property", "displayName": "Cache Manager", "required": false, "type": "object", "javaType": "org.ehcache.CacheManager", "deprecated": false, "autowired": false, "secret": false, "description": "The Ehcache CacheManager to use" } }
+  }
+}
+

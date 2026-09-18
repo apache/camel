@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ClickHouseProducerIT extends CamelTestSupport {
 
     @RegisterExtension
-    static ClickHouseService service = ClickHouseServiceFactory.createService();
+    static ClickHouseService service = ClickHouseServiceFactory.createSingletonService();
 
     private static Client client;
 

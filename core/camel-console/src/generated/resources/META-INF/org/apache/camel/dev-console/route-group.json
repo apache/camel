@@ -6,6 +6,7 @@
     "title": "Route Group",
     "description": "Route Group information",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.RouteGroupDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -57,6 +58,145 @@
       "autowired": false,
       "secret": false,
       "description": "Limits the number of entries displayed"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "routeGroups": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "group": {
+              "type": "string",
+              "description": "The route group ID"
+            },
+            "size": {
+              "type": "integer",
+              "description": "Number of routes in this group"
+            },
+            "state": {
+              "type": "string",
+              "description": "The route group state"
+            },
+            "uptime": {
+              "type": "string",
+              "description": "Route uptime, human readable text"
+            },
+            "routeIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The route IDs within this group"
+            },
+            "statistics": {
+              "type": "object",
+              "properties": {
+                "coverage": {
+                  "type": "string",
+                  "description": "Route coverage (only present when computable)"
+                },
+                "load01": {
+                  "type": "string",
+                  "description": "1 minute load average (only present when available)"
+                },
+                "load05": {
+                  "type": "string",
+                  "description": "5 minute load average (only present when available)"
+                },
+                "load15": {
+                  "type": "string",
+                  "description": "15 minute load average (only present when available)"
+                },
+                "exchangesThroughput": {
+                  "type": "string",
+                  "description": "Messages per second throughput (only present when available)"
+                },
+                "idleSince": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds since the route group has been idle"
+                },
+                "exchangesTotal": {
+                  "type": "integer",
+                  "description": "Total number of exchanges"
+                },
+                "exchangesFailed": {
+                  "type": "integer",
+                  "description": "Number of failed exchanges"
+                },
+                "exchangesInflight": {
+                  "type": "integer",
+                  "description": "Number of inflight exchanges"
+                },
+                "meanProcessingTime": {
+                  "type": "integer",
+                  "description": "Mean processing time in milliseconds"
+                },
+                "maxProcessingTime": {
+                  "type": "integer",
+                  "description": "Max processing time in milliseconds"
+                },
+                "minProcessingTime": {
+                  "type": "integer",
+                  "description": "Min processing time in milliseconds"
+                },
+                "p50ProcessingTime": {
+                  "type": "integer",
+                  "description": "50th percentile processing time in milliseconds (only present when available)"
+                },
+                "p95ProcessingTime": {
+                  "type": "integer",
+                  "description": "95th percentile processing time in milliseconds (only present when available)"
+                },
+                "p99ProcessingTime": {
+                  "type": "integer",
+                  "description": "99th percentile processing time in milliseconds (only present when available)"
+                },
+                "lastProcessingTime": {
+                  "type": "integer",
+                  "description": "Processing time in milliseconds of the last exchange (only present once an exchange has completed)"
+                },
+                "deltaProcessingTime": {
+                  "type": "integer",
+                  "description": "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)"
+                },
+                "lastCreatedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)"
+                },
+                "lastCompletedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)"
+                },
+                "lastFailureHandledExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)"
+                },
+                "lastFailedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange failed (only present once one has occurred)"
+                }
+              },
+              "required": [
+                "idleSince",
+                "exchangesTotal",
+                "exchangesFailed",
+                "exchangesInflight",
+                "meanProcessingTime",
+                "maxProcessingTime",
+                "minProcessingTime"
+              ],
+              "description": "Runtime statistics"
+            }
+          },
+          "required": [
+            "size"
+          ]
+        },
+        "description": "The route groups (only present when no action was requested)"
+      }
     }
   }
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan.embedded;
 
 import org.apache.camel.Message;
 import org.apache.camel.component.infinispan.InfinispanProducer;
+import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.query.Query;
@@ -47,11 +48,16 @@ public class InfinispanEmbeddedProducer extends InfinispanProducer<InfinispanEmb
     @SuppressWarnings("unchecked")
     @InvokeOnHeader("QUERY")
     public void onQuery(Message message) {
-        final Cache<Object, Object> cache = getManager().getCache(message, getCacheName(), Cache.class);
-        final Query<?> query = InfinispanEmbeddedUtil.buildQuery(getConfiguration(), cache, message);
-
-        if (query != null) {
-            setResult(message, query.execute().list());
+        // resolved before the cache is looked up, so a misconfigured route is reported the same way everywhere
+        final InfinispanQueryBuilder builder = InfinispanEmbeddedUtil.resolveQueryBuilder(getConfiguration(), message);
+        if (builder == null) {
+            warnNoQueryBuilder();
+            return;
         }
+
+        final Cache<Object, Object> cache = getManager().getCache(message, getCacheName(), Cache.class);
+        final Query<?> query = InfinispanEmbeddedUtil.buildQuery(builder, cache);
+
+        setResult(message, query.execute().list());
     }
 }

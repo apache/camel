@@ -33,6 +33,7 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,9 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
         try {
             Collection<Part> parts = request.getParts();
             for (Part part : parts) {
-                String fileName = part.getName();
+                // the whitelist accepts file name extensions, so it must be checked against the submitted file
+                // name and not against Part.getName(), which is the multipart field name
+                String fileName = part.getSubmittedFileName();
                 // is the file name accepted
                 boolean accepted = true;
                 if (getFileNameExtWhitelist() != null) {
@@ -62,9 +65,7 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
                     if (ext != null) {
                         ext = ext.toLowerCase(Locale.US);
                         String whiteList = getFileNameExtWhitelist().toLowerCase(Locale.US);
-                        if (!whiteList.equals("*") && !whiteList.contains(ext)) {
-                            accepted = false;
-                        }
+                        accepted = whiteList.equals("*") || isExtWhitelisted(whiteList, ext);
                     }
                 }
 
@@ -81,12 +82,23 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
                 } else {
                     LOG.debug(
                             "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                            fileName, getFileNameExtWhitelist());
+                            HttpHelper.sanitizeLog(fileName), getFileNameExtWhitelist());
                 }
             }
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot populate attachments", e);
         }
+    }
+
+    // compare against each comma-separated extension exactly, not as a substring: a whitelist of "txt"
+    // must not accept an upload named "evil.x" just because "txt".contains("x")
+    private static boolean isExtWhitelisted(String whitelist, String ext) {
+        for (String allowed : whitelist.split(",")) {
+            if (allowed.trim().equals(ext)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public final class PartDataSource implements DataSource {

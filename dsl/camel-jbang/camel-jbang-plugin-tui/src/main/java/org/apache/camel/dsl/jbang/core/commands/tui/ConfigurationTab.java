@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,9 +65,10 @@ class ConfigurationTab extends AbstractTableTab {
     private Map<String, BaseOptionModel> mainOptionsMap;
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
 
-    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC)
+    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC or from local JARs)
     private Map<String, JsonObject> springBootMetadataCache;
     private boolean springBootMetadataLoaded;
+    private java.util.concurrent.CompletableFuture<SpringBootMetadataResolver.MetadataResult> springBootMetadataFuture;
 
     ConfigurationTab(MonitorContext ctx) {
         super(ctx, "key", "value", "source");
@@ -187,7 +190,7 @@ class ConfigurationTab extends AbstractTableTab {
 
         String title = String.format(" Configuration [%d] ", props.size());
 
-        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableBorderStyle = ctx.paneBorder(!detailFocused);
         Style tableTitleStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
 
         Table table = Table.builder()
@@ -213,7 +216,7 @@ class ConfigurationTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<ConfigProperty> props) {
-        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 
         Integer sel = tableState.selected();
@@ -368,6 +371,13 @@ class ConfigurationTab extends AbstractTableTab {
 
     private void ensureSpringBootMetadataCache() {
         if (springBootMetadataLoaded) {
+            if (springBootMetadataFuture != null && springBootMetadataFuture.isDone()) {
+                SpringBootMetadataResolver.MetadataResult result = springBootMetadataFuture.join();
+                if (result != null) {
+                    springBootMetadataCache = result.properties();
+                }
+                springBootMetadataFuture = null;
+            }
             return;
         }
         springBootMetadataLoaded = true;
@@ -375,7 +385,21 @@ class ConfigurationTab extends AbstractTableTab {
         if (info == null || !"Spring Boot".equals(info.platform)) {
             return;
         }
-        springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
+
+        if (!info.phantom && info.pid != null && !info.pid.isEmpty()) {
+            springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
+        }
+
+        if ((springBootMetadataCache == null || springBootMetadataCache.isEmpty())
+                && info.directory != null) {
+            Path pomFile = Path.of(info.directory, "pom.xml");
+            if (Files.isRegularFile(pomFile)) {
+                String camelVer = info.camelVersion;
+                springBootMetadataFuture = java.util.concurrent.CompletableFuture.supplyAsync(
+                        () -> SpringBootMetadataResolver.loadFromPom(pomFile, camelVer),
+                        ctx.backgroundExecutor);
+            }
+        }
     }
 
     private void initCatalog() {
@@ -397,6 +421,7 @@ class ConfigurationTab extends AbstractTableTab {
         componentOptionsCache.clear();
         springBootMetadataCache = null;
         springBootMetadataLoaded = false;
+        springBootMetadataFuture = null;
         MainModel mainModel = catalog.mainModel();
         if (mainModel != null) {
             for (MainModel.MainOptionModel opt : mainModel.getOptions()) {
@@ -428,7 +453,6 @@ class ConfigurationTab extends AbstractTableTab {
     public void renderFooter(List<Span> spans) {
         super.renderFooter(spans);
         hint(spans, "Tab", detailFocused ? "table" : "detail");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
 
@@ -472,51 +496,7 @@ class ConfigurationTab extends AbstractTableTab {
 
     @Override
     public String getHelpText() {
-        return """
-                # Configuration
-
-                The Configuration tab shows all configuration properties of the running
-                integration. This provides a complete view of how the integration is
-                configured at runtime — including Camel settings, component options,
-                and application properties.
-
-                Properties can come from multiple sources and Camel merges them with
-                a defined priority order.
-
-                ## Table Columns
-
-                - **KEY** — Property name following Camel's naming convention (e.g., `camel.main.name`, `camel.component.kafka.brokers`, `greeting.message`)
-                - **VALUE** — Current resolved property value. Sensitive values (passwords, tokens) are masked as `xxxxxx` for security
-                - **SOURCE** — Where the property was set:
-                  - `application.properties` — from the main properties file
-                  - `ENV` — from an environment variable
-                  - `JVM` — from a Java system property (`-D`)
-                  - `Spring Boot` — from Spring Boot configuration
-                  - `camel-component` — default from a Camel component
-                  - `override` — set programmatically in code
-                  - `initial` — set during context initialization
-
-                ## Detail View
-
-                Press `Enter` on a property to see its documentation from the Camel
-                catalog. For `camel.main.*` and `camel.component.*` properties, the
-                detail panel shows:
-
-                - **Description** — what the property does
-                - **Type** — expected value type (string, boolean, integer, etc.)
-                - **Default** — default value if not explicitly set
-                - **Enum values** — allowed values for enumerated properties
-                - **Required** / **Deprecated** / **Secret** flags
-                - **Group** — the configuration group this property belongs to
-
-                ## Keys
-
-                - `Up/Down` — select property
-                - `Enter` — view property detail / documentation
-                - `s` — cycle sort column
-                - `S` — reverse sort order
-                - `Esc` — close detail / back
-                """;
+        return DocHelper.loadHelpText("configuration");
     }
 
     @Override

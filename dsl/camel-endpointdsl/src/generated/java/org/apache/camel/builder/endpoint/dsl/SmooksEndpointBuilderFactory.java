@@ -62,6 +62,44 @@ public interface SmooksEndpointBuilderFactory {
             doSetProperty("reportPath", reportPath);
             return this;
         }
+        /**
+         * Whether to allow the XML reader used by Smooks to resolve external
+         * XML entities (external general and parameter entities) when parsing
+         * XML input. This is disabled by default so that external entities in
+         * the message body are not resolved; enable it only for trusted legacy
+         * configurations that rely on external entity resolution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowExternalEntities the value to set
+         * @return the dsl builder
+         */
+        default SmooksEndpointBuilder allowExternalEntities(boolean allowExternalEntities) {
+            doSetProperty("allowExternalEntities", allowExternalEntities);
+            return this;
+        }
+        /**
+         * Whether to allow the XML reader used by Smooks to resolve external
+         * XML entities (external general and parameter entities) when parsing
+         * XML input. This is disabled by default so that external entities in
+         * the message body are not resolved; enable it only for trusted legacy
+         * configurations that rely on external entity resolution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowExternalEntities the value to set
+         * @return the dsl builder
+         */
+        default SmooksEndpointBuilder allowExternalEntities(String allowExternalEntities) {
+            doSetProperty("allowExternalEntities", allowExternalEntities);
+            return this;
+        }
     }
 
     /**

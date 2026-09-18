@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.tensorflow.serving;
 
+import java.util.concurrent.TimeUnit;
+
 import io.grpc.ChannelCredentials;
 import io.grpc.Grpc;
 import io.grpc.InsecureChannelCredentials;
@@ -71,8 +73,11 @@ public class TensorFlowServingEndpoint extends DefaultEndpoint {
     public void doStop() throws Exception {
         super.doStop();
 
-        // Close the channel
-        channel.shutdown();
+        // Close the channel if it was created (doInit may have failed before assigning it)
+        if (channel != null) {
+            channel.shutdown();
+            channel.awaitTermination(5, TimeUnit.SECONDS);
+        }
     }
 
     @Override

@@ -138,7 +138,7 @@ class OpenAIProducerMcpMockTest extends CamelTestSupport {
                 McpToolConverter.convert(mcpTools),
                 toolClients,
                 Map.of(),
-                returnDirectToolNames));
+                returnDirectToolNames, Map.of()));
     }
 
     @Test

@@ -42,6 +42,7 @@ public class AvroDataFormatReifier extends DataFormatReifier<AvroDataFormat> {
                 properties.put("instanceClassName", definition.getInstanceClassName());
             }
             properties.put("schema", definition.getSchema());
+            properties.put("serializablePackages", definition.getSerializablePackages());
         } else if (definition.getLibrary() == AvroLibrary.Jackson) {
             properties.put("objectMapper", asRef(definition.getObjectMapper()));
             if (definition.getUseDefaultObjectMapper() == null) {

@@ -18,13 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -47,7 +44,6 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
@@ -89,8 +85,7 @@ class EndpointsTab extends AbstractTableTab {
     private int flowPanelWidth = 38;
     private final DragSplit hSplit = new DragSplit();
 
-    private final Map<String, CamelCatalog> catalogCache = new HashMap<>();
-    private final Set<String> catalogLoadFailed = new HashSet<>();
+    private final CatalogCache catalogCache = new CatalogCache();
 
     EndpointsTab(MonitorContext ctx, MetricsCollector metrics) {
         super(ctx, "component", "route", "dir", "total", "body", "hdr", "uri");
@@ -292,7 +287,7 @@ class EndpointsTab extends AbstractTableTab {
         widths.add(Constraint.fill());
 
         boolean showDetailFocus = panelMode == PANEL_DETAIL;
-        Style tableBorderStyle = showDetailFocus && detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableBorderStyle = ctx.paneBorder(!(showDetailFocus && detailFocused));
         Style tableTitleStyle = showDetailFocus && detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
         String tableTitle = " Endpoints"
                             + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
@@ -371,11 +366,17 @@ class EndpointsTab extends AbstractTableTab {
                         .sum();
 
                 if (hasSizeHistory) {
-                    List<Rect> chartSplit = Layout.horizontal()
-                            .constraints(Constraint.percentage(50), Constraint.percentage(50))
+                    // three-column layout: flow panel (fixed) | throughput chart | payload chart
+                    List<Rect> threeParts = Layout.horizontal()
+                            .constraints(Constraint.length(flowPanelWidth), Constraint.fill(), Constraint.fill())
                             .split(chunks.get(1));
-                    renderEndpointFlow(frame, chartSplit.get(0), inTotal, outTotal, info.name, info.pid);
-                    renderPayloadSizeChart(frame, chartSplit.get(1), info.pid);
+                    hSplit.setBorderPos(threeParts.get(1).x());
+                    FlowHelper.renderFlowPanel(frame, threeParts.get(0), inTotal, outTotal, info.name);
+                    int renderPoints = Math.min(
+                            FlowHelper.computeRenderPoints(threeParts.get(1)),
+                            FlowHelper.computeRenderPoints(threeParts.get(2)));
+                    renderThroughputChartDirect(frame, threeParts.get(1), info.pid, renderPoints);
+                    renderPayloadSizeChart(frame, threeParts.get(2), info.pid, renderPoints);
                 } else {
                     renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid);
                 }
@@ -386,7 +387,6 @@ class EndpointsTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "s", "sort");
         String[] filterLabels = { "all", "remote", "remote+stub" };
         hint(spans, "f", "filter [" + filterLabels[filter] + "]");
@@ -399,7 +399,6 @@ class EndpointsTab extends AbstractTableTab {
         hint(spans, "d", "detail " + (panelMode == PANEL_DETAIL ? "[on]" : "[off]"));
         if (panelMode == PANEL_DETAIL) {
             hint(spans, "Tab", detailFocused ? "table" : "detail");
-            hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
         }
     }
 
@@ -457,7 +456,7 @@ class EndpointsTab extends AbstractTableTab {
         return 2;
     }
 
-    private void renderEndpointFlow(
+    private int renderEndpointFlow(
             Frame frame, Rect area, long inTotal, long outTotal, String name, String pid) {
         flowPanelWidth = Math.max(20, Math.min(flowPanelWidth, area.width() - 20));
         List<Rect> hParts = Layout.horizontal()
@@ -480,7 +479,9 @@ class EndpointsTab extends AbstractTableTab {
         LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
 
-        FlowHelper.renderThroughputChart(frame, hParts.get(1), inHist, outHist);
+        int renderPoints = FlowHelper.computeRenderPoints(hParts.get(1));
+        FlowHelper.renderThroughputChart(frame, hParts.get(1), inHist, outHist, null, renderPoints);
+        return renderPoints;
     }
 
     private void renderSingleEndpointChart(Frame frame, Rect area, String selectedUri, IntegrationInfo info) {
@@ -519,21 +520,41 @@ class EndpointsTab extends AbstractTableTab {
             List<Rect> chartSplit = Layout.horizontal()
                     .constraints(Constraint.percentage(50), Constraint.percentage(50))
                     .split(hParts.get(1));
-            FlowHelper.renderThroughputChart(frame, chartSplit.get(0), inHist, outHist, selectedUri);
-            FlowHelper.renderPayloadSizeChart(frame, chartSplit.get(1), inSizeHist, outSizeHist);
+            // use the same render points for both charts so their x-axis timelines align
+            int renderPoints = Math.min(
+                    FlowHelper.computeRenderPoints(chartSplit.get(0)),
+                    FlowHelper.computeRenderPoints(chartSplit.get(1)));
+            FlowHelper.renderThroughputChart(frame, chartSplit.get(0), inHist, outHist, selectedUri, renderPoints);
+            FlowHelper.renderPayloadSizeChart(frame, chartSplit.get(1), inSizeHist, outSizeHist, renderPoints);
         } else {
             FlowHelper.renderThroughputChart(frame, hParts.get(1), inHist, outHist, selectedUri);
         }
     }
 
-    private void renderPayloadSizeChart(Frame frame, Rect area, String pid) {
+    private void renderThroughputChartDirect(Frame frame, Rect area, String pid, int renderPoints) {
+        Map<String, LinkedList<Long>> inHistMap = switch (filter) {
+            case 1 -> endpointRemoteInHistory;
+            case 2 -> endpointRemoteStubInHistory;
+            default -> endpointInHistory;
+        };
+        Map<String, LinkedList<Long>> outHistMap = switch (filter) {
+            case 1 -> endpointRemoteOutHistory;
+            case 2 -> endpointRemoteStubOutHistory;
+            default -> endpointOutHistory;
+        };
+        LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
+        LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
+        FlowHelper.renderThroughputChart(frame, area, inHist, outHist, null, renderPoints);
+    }
+
+    private void renderPayloadSizeChart(Frame frame, Rect area, String pid, int renderPoints) {
         LinkedList<Long> inHist = endpointInSizeHistory.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = endpointOutSizeHistory.getOrDefault(pid, new LinkedList<>());
-        FlowHelper.renderPayloadSizeChart(frame, area, inHist, outHist);
+        FlowHelper.renderPayloadSizeChart(frame, area, inHist, outHist, renderPoints);
     }
 
     private void renderDetail(Frame frame, Rect area, List<EndpointInfo> sortedEndpoints, IntegrationInfo info) {
-        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 
         Integer sel = tableState.selected();
@@ -545,6 +566,7 @@ class EndpointsTab extends AbstractTableTab {
                                     .borderStyle(detailBorderStyle)
                                     .title(Title.from(Line.from(Span.styled(" Endpoint Detail ", detailTitleStyle)))).build())
                             .styles(Theme.markdownStyles())
+                            .syntaxTheme(Theme.syntaxTheme())
                             .build(),
                     area);
             return;
@@ -561,6 +583,7 @@ class EndpointsTab extends AbstractTableTab {
                                     .borderStyle(detailBorderStyle)
                                     .title(Title.from(Line.from(Span.styled(" Endpoint Detail ", detailTitleStyle)))).build())
                             .styles(Theme.markdownStyles())
+                            .syntaxTheme(Theme.syntaxTheme())
                             .build(),
                     area);
             return;
@@ -662,34 +685,13 @@ class EndpointsTab extends AbstractTableTab {
                                 .borderStyle(detailBorderStyle)
                                 .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                         .styles(Theme.markdownStyles())
+                        .syntaxTheme(Theme.syntaxTheme())
                         .build(),
                 area);
     }
 
     private CamelCatalog getCatalog(IntegrationInfo info) {
-        String version = info.camelVersion;
-        if (version == null) {
-            return null;
-        }
-        CamelCatalog cached = catalogCache.get(version);
-        if (cached != null) {
-            return cached;
-        }
-        if (catalogLoadFailed.contains(version)) {
-            return null;
-        }
-        try {
-            cached = CatalogLoader.loadCatalog(null, version, true);
-            if (cached != null) {
-                catalogCache.put(version, cached);
-            } else {
-                catalogLoadFailed.add(version);
-            }
-            return cached;
-        } catch (Exception e) {
-            catalogLoadFailed.add(version);
-            return null;
-        }
+        return catalogCache.get(info);
     }
 
     @Override
@@ -725,107 +727,7 @@ class EndpointsTab extends AbstractTableTab {
 
     @Override
     public String getHelpText() {
-        return """
-                # Endpoints
-
-                Endpoints are the addresses that messages flow to and from. Every Camel
-                component (kafka, http, file, log, etc.) provides endpoints that routes
-                use to receive and send data. An endpoint URI like `kafka://my-topic`
-                identifies both the component and the specific resource.
-
-                ## Table Columns
-
-                - **COMPONENT** — The Camel component name (e.g., `kafka`, `http`, `file`, `log`, `seda`). This is the scheme part of the endpoint URI
-                - **ROUTE** — Which route uses this endpoint
-                - **DIR** — Direction of message flow: `in` (consuming/receiving from this endpoint), `out` (producing/sending to this endpoint), or `both` (used in both directions)
-                - **TOTAL** — Hit count: how many times a message has passed through this endpoint in the given direction
-                - **BODY** — Average message body size in bytes passing through this endpoint. Helps identify which endpoints handle large payloads
-                - **HDR** — Average message headers size in bytes. Large headers may indicate excessive metadata being passed
-                - **STUB** — Marked `x` if the endpoint has been replaced by a stub component (useful during testing to avoid connecting to real external systems)
-                - **REMOTE** — Marked `x` if the endpoint connects to an external system outside the JVM (e.g., `kafka`, `http`, `ftp`). Local endpoints like `seda`, `direct`, `log` are not remote
-                - **URI** — Full endpoint URI with parameters (e.g., `timer://hello?period=2000`)
-
-                ## Example Screen
-
-                ```
-                 COMPONENT  ROUTE          DIR  TOTAL  BODY  HDR  STUB  REMOTE  URI
-                 timer      timer-to-log   in   21     0     0                  timer://hello?period=2000
-                 timer      timer-to-seda  in   14     0     0                  timer://pump?period=3000
-                 seda       seda-consumer  in   14     14    0                  seda://queue
-                 seda       timer-to-seda  out  14     14    0                  seda://queue
-                ```
-
-                Notice that `seda://queue` appears twice — once as `in` (the
-                `seda-consumer` route reads from it) and once as `out` (the
-                `timer-to-seda` route writes to it). The BODY column shows 14
-                bytes for seda because the message `Pumped message` is 14 bytes.
-
-                ## Flow Chart
-
-                The top-left panel shows a visual flow of messages through the
-                integration:
-
-                ```
-                ┌─────────┐                      ┌──────────┐
-                │  kafka  │ ──▸ [integration] ──▸ │   http   │
-                │  file   │                      │   log    │
-                └─────────┘                      └──────────┘
-                 inbound                          outbound
-                ```
-
-                The left box lists all inbound components (consumers), the right
-                box lists all outbound components (producers). The integration
-                name sits in the middle, showing the overall message flow direction.
-
-                ## Throughput Chart
-
-                A mirrored sparkline chart shows message rates over time:
-
-                - **Top half (green)**: inbound messages per second
-                - **Bottom half (cyan)**: outbound messages per second
-
-                This helps you see if input and output rates are balanced. If
-                inbound consistently exceeds outbound, messages may be queuing up.
-
-                ## Payload Size Chart
-
-                When message size tracking is available, a separate chart shows
-                body sizes over time. Sudden increases in message size may indicate
-                unexpected large payloads that could cause memory pressure.
-
-                ## Filter Modes
-
-                Use `f` to cycle between filter modes:
-                - **all** — show all endpoints
-                - **remote** — show only remote endpoints (external connections)
-                - **stub** — show only stubbed endpoints
-
-                ## Endpoint Documentation
-
-                Press `d` to toggle the documentation panel. When enabled, the
-                bottom panel shows detailed documentation for the selected endpoint's
-                configured options — parsed from the endpoint URI and looked up in
-                the Camel catalog matching the integration's Camel version.
-
-                For each configured option you'll see:
-                - **Name** and **current value** (highlighted)
-                - **Description** — what the option does
-                - **Type** — the expected value type
-                - **Default** — the default value if not set
-                - **Enum values** — valid choices for enum options
-                - **Group** — whether it's a common, consumer, producer, or advanced option
-
-                Use `PgUp/PgDn` to scroll the documentation panel.
-
-                ## Keys
-
-                - `Up/Down` — select endpoint
-                - `s` — cycle sort column
-                - `S` — reverse sort order
-                - `f` — cycle filter mode
-                - `d` — toggle endpoint documentation panel
-                - `PgUp/PgDn` — scroll documentation (when doc panel is open)
-                """;
+        return DocHelper.loadHelpText("endpoints");
     }
 
     @Override

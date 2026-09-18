@@ -36,6 +36,7 @@ import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.PojoBeanHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -68,13 +69,17 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             }
 
             ObjectHelper.notNull(bean.getName(), "The bean name must be set");
-            ObjectHelper.notNull(bean.getType(), "The bean type must be set");
-            if (!bean.getType().startsWith("#class:")) {
-                bean.setType("#class:" + bean.getType());
-            }
             if (bean.getScriptLanguage() != null || bean.getScript() != null) {
                 ObjectHelper.notNull(bean.getScriptLanguage(), "The bean script language must be set");
                 ObjectHelper.notNull(bean.getScript(), "The bean script must be set");
+            }
+            boolean script = bean.getScriptLanguage() != null && bean.getScript() != null;
+            // the type (class name) is optional for a bean created by a script or a builder
+            if (!script && bean.getBuilderClass() == null) {
+                ObjectHelper.notNull(bean.getType(), "The bean type must be set");
+            }
+            if (bean.getType() != null && !bean.getType().startsWith("#class:")) {
+                bean.setType("#class:" + bean.getType());
             }
 
             // due to yaml-dsl is pre parsing beans which gets created eager
@@ -125,7 +130,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             } else {
                 String msg
                         = name != null ? "Error creating bean: " + name + " of type: " + type : "Error creating bean: " + type;
-                throw new RuntimeException(msg, e);
+                throw new RuntimeException(msg + classNotFoundHint(camelContext, e), e);
             }
         }
     }
@@ -188,6 +193,26 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         // register bean in model
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
         model.addCustomBean(def);
+    }
+
+    /**
+     * The cause of a bean that could not be created is a ClassNotFoundException more often than not (a wrong package, a
+     * missing dependency); say so, and for a built-in Camel bean written with the wrong package name (or with no
+     * package) the right one, from the bean metadata on the classpath.
+     */
+    static String classNotFoundHint(CamelContext camelContext, Throwable e) {
+        String cls = PojoBeanHelper.missingClassName(e);
+        if (cls == null) {
+            return "";
+        }
+        String hint = ": class " + cls + " was not found";
+        PojoBeanHelper.PojoBean bean = PojoBeanHelper.findByName(camelContext, cls);
+        if (bean != null && !bean.javaType().equals(cls)) {
+            return hint + " (did you mean " + bean.javaType()
+                   + (bean.interfaceType() != null ? " (" + bean.interfaceType() + ")" : "")
+                   + "? write: type: " + bean.javaType() + ")";
+        }
+        return hint + PojoBeanHelper.classNotFoundHint(camelContext, cls, null);
     }
 
 }

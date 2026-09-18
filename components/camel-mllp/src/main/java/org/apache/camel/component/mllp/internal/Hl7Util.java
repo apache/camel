@@ -33,6 +33,11 @@ import org.slf4j.LoggerFactory;
 public final class Hl7Util {
     public static final String NULL_REPLACEMENT_VALUE = "<null>";
     public static final String EMPTY_REPLACEMENT_VALUE = "<>";
+    /**
+     * Substituted for message content when {@code logPhi} is disabled. The conversion methods are reached from log
+     * statements and from exception messages, so honouring the flag here covers both.
+     */
+    public static final String PHI_SUPPRESSED_REPLACEMENT_VALUE = "<PHI suppressed>";
 
     public static final Map<Character, String> CHARACTER_REPLACEMENTS;
 
@@ -90,6 +95,31 @@ public final class Hl7Util {
 
     public int getLogPhiMaxBytes() {
         return logPhiMaxBytes;
+    }
+
+    public boolean isLogPhi() {
+        return logPhi;
+    }
+
+    /**
+     * Message content for a log statement: the content itself when {@code logPhi} is enabled, a placeholder otherwise.
+     * <p>
+     * Deliberately separate from {@link #convertToPrintFriendlyString(byte[])}, which is not a logging helper - it also
+     * extracts the MSH-9 field when an acknowledgement is generated, so redacting inside it corrupts the
+     * acknowledgement rather than the log.
+     */
+    public String convertToLoggableString(byte[] phiBytes) {
+        if (!logPhi) {
+            return PHI_SUPPRESSED_REPLACEMENT_VALUE;
+        }
+        return convertToPrintFriendlyString(phiBytes);
+    }
+
+    public String convertToLoggableString(byte[] phiBytes, int startPosition, int endPosition) {
+        if (!logPhi) {
+            return PHI_SUPPRESSED_REPLACEMENT_VALUE;
+        }
+        return convertToPrintFriendlyString(phiBytes, startPosition, endPosition);
     }
 
     public String generateInvalidPayloadExceptionMessage(final byte[] hl7Bytes) {

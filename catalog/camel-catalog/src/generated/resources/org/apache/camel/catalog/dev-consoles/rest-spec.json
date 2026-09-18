@@ -6,6 +6,7 @@
     "title": "Rest Spec",
     "description": "OpenAPI specification content for contract-first REST services",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.RestSpecDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -25,6 +26,32 @@
       "autowired": false,
       "secret": false,
       "description": "Filters specifications matching the given URI pattern"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "specs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "specificationUri": {
+              "type": "string",
+              "description": "The OpenAPI specification URI"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID (only present when known)"
+            },
+            "content": {
+              "type": "string",
+              "description": "The specification content (only present when it could be loaded)"
+            }
+          }
+        },
+        "description": "The OpenAPI specifications"
+      }
     }
   }
 }

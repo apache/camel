@@ -36,16 +36,63 @@ import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DevConsole(name = "processor", description = "Processor information")
+@DevConsole(name = "processor", description = "Processor information", readOnly = false)
 public class ProcessorDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorDevConsole.class);
+
+    public record CodeLine(
+            @Metadata(description = "The source line number (only present when known)") Integer line,
+            @Metadata(description = "The source code line") String code,
+            @Metadata(description = "Whether this is the matched line (only present when true)") Boolean match) {
+    }
+
+    public record Statistics(
+            @Metadata(description = "Epoch time in milliseconds since the processor has been idle") long idleSince,
+            @Metadata(description = "Total number of exchanges") long exchangesTotal,
+            @Metadata(description = "Number of failed exchanges") long exchangesFailed,
+            @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Messages per second throughput (only present when available)") String exchangesThroughput,
+            @Metadata(description = "Mean processing time in milliseconds") long meanProcessingTime,
+            @Metadata(description = "Max processing time in milliseconds") long maxProcessingTime,
+            @Metadata(description = "Min processing time in milliseconds") long minProcessingTime,
+            @Metadata(description = "50th percentile processing time in milliseconds (only present when available)") Long p50ProcessingTime,
+            @Metadata(description = "95th percentile processing time in milliseconds (only present when available)") Long p95ProcessingTime,
+            @Metadata(description = "99th percentile processing time in milliseconds (only present when available)") Long p99ProcessingTime,
+            @Metadata(description = "Processing time in milliseconds of the last exchange (only present once an exchange has completed)") Long lastProcessingTime,
+            @Metadata(description = "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)") Long deltaProcessingTime,
+            @Metadata(description = "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)") Long lastCreatedExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)") Long lastCompletedExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)") Long lastFailureHandledExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange failed (only present once one has occurred)") Long lastFailedExchangeTimestamp) {
+    }
+
+    public record ProcessorEntry(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The processor ID") String id,
+            @Metadata(description = "The node prefix ID (only present when known)") String nodePrefixId,
+            @Metadata(description = "The processor description (only present when configured)") String description,
+            @Metadata(description = "The processor note (only present when configured)") String note,
+            @Metadata(description = "The source location, optionally with a line number suffix (only present when known)") String source,
+            @Metadata(description = "The processor state") String state,
+            @Metadata(description = "Whether the processor is disabled (only present when known)") Boolean disabled,
+            @Metadata(description = "The step ID (only present when known)") String stepId,
+            @Metadata(description = "A snippet of source code around the processor (only present when known)") List<CodeLine> code,
+            @Metadata(description = "The processor name") String processor,
+            @Metadata(description = "The processor level in the route tree") int level,
+            @Metadata(description = "The destination URI, for processors that send to a destination (only present when applicable)") String uri,
+            @Metadata(description = "Runtime statistics") Statistics statistics) {
+    }
+
+    public record Response(
+            @Metadata(description = "The processors (only present when no action was requested)") List<ProcessorEntry> processors) {
+    }
 
     @Metadata(label = "query",
               description = "Filters the processors matching by processor id, route id, or route group, and source location",
@@ -187,28 +234,27 @@ public class ProcessorDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String action = optionString(options, ACTION);
         String filter = optionString(options, FILTER);
         final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
         if (action != null) {
             doAction(getCamelContext(), action, filter);
-            return new JsonObject();
+            return JsonRecordSupport.toJsonObject(new Response(null));
         }
 
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
+        List<ProcessorEntry> list = new ArrayList<>();
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         for (Route r : getCamelContext().getRoutes()) {
             ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
-            includeProcessorsJson(mrb, arr, filter, max);
+            includeProcessorsJson(mrb, list, filter, max);
         }
 
-        root.put("processors", arr);
-        return root;
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private void includeProcessorsJson(ManagedRouteMBean mrb, JsonArray arr, String filter, int max) {
+    private void includeProcessorsJson(ManagedRouteMBean mrb, List<ProcessorEntry> list, String filter, int max) {
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
@@ -230,42 +276,24 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         // sort processors by index
         mps.sort(Comparator.comparingInt(ManagedProcessorMBean::getIndex));
 
-        // include processors into the array
-        includeProcessorsJSon(getCamelContext(), arr, max, mps);
+        // include processors into the list
+        includeProcessorsJSon(getCamelContext(), list, max, mps);
     }
 
     public static void includeProcessorsJSon(
-            CamelContext camelContext, JsonArray arr, int max, List<ManagedProcessorMBean> mps) {
+            CamelContext camelContext, List<ProcessorEntry> list, int max, List<ManagedProcessorMBean> mps) {
         for (int i = 0; i < mps.size(); i++) {
             ManagedProcessorMBean mp = mps.get(i);
-            if (arr.size() > max) {
+            if (list.size() > max) {
                 return;
             }
-            JsonObject jo = new JsonObject();
-            arr.add(jo);
 
-            jo.put("routeId", mp.getRouteId());
-            jo.put("id", mp.getProcessorId());
-            if (mp.getNodePrefixId() != null) {
-                jo.put("nodePrefixId", mp.getNodePrefixId());
-            }
-            if (mp.getDescription() != null) {
-                jo.put("description", mp.getDescription());
-            }
-            if (mp.getNote() != null) {
-                jo.put("note", mp.getNote());
-            }
+            String source = null;
             if (mp.getSourceLocation() != null) {
-                String loc = mp.getSourceLocation();
+                source = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {
-                    loc += ":" + mp.getSourceLineNumber();
+                    source += ":" + mp.getSourceLineNumber();
                 }
-                jo.put("source", loc);
-            }
-            jo.put("state", mp.getState());
-            jo.put("disabled", mp.getDisabled());
-            if (mp.getStepId() != null) {
-                jo.put("stepId", mp.getStepId());
             }
 
             // calculate end line number
@@ -280,36 +308,25 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 }
             }
 
-            JsonArray ca = new JsonArray();
+            List<CodeLine> code = new ArrayList<>();
             List<String> lines
                     = ConsoleHelper.loadSourceLines(camelContext, mp.getSourceLocation(), mp.getSourceLineNumber(), end);
             Integer pos = mp.getSourceLineNumber();
             for (String line : lines) {
-                JsonObject c = new JsonObject();
-                c.put("line", pos);
-                c.put("code", Jsoner.escape(line));
-                if (pos != null && pos.equals(mp.getSourceLineNumber())) {
-                    c.put("match", true);
-                }
-                ca.add(c);
+                Boolean match = pos != null && pos.equals(mp.getSourceLineNumber()) ? true : null;
+                code.add(new CodeLine(pos, Jsoner.escape(line), match));
                 if (pos != null) {
                     pos++;
                 }
             }
-            if (!ca.isEmpty()) {
-                jo.put("code", ca);
-            }
-            jo.put("processor", mp.getProcessorName());
-            jo.put("level", mp.getLevel());
 
             // processors which can send to a destination (such as to/toD/poll etc)
             String destination = getDestination(camelContext, mp);
-            if (destination != null) {
-                jo.put("uri", destination);
-            }
 
-            final JsonObject stats = gatherProcessorStats(mp);
-            jo.put("statistics", stats);
+            list.add(new ProcessorEntry(
+                    mp.getRouteId(), mp.getProcessorId(), mp.getNodePrefixId(), mp.getDescription(), mp.getNote(),
+                    source, mp.getState(), mp.getDisabled(), mp.getStepId(), code.isEmpty() ? null : code,
+                    mp.getProcessorName(), mp.getLevel(), destination, buildStatistics(mp)));
         }
     }
 
@@ -328,47 +345,48 @@ public class ProcessorDevConsole extends AbstractDevConsole {
     }
 
     public static JsonObject gatherProcessorStats(ManagedProcessorMBean mp) {
-        JsonObject stats = new JsonObject();
-        stats.put("idleSince", mp.getIdleSince());
-        stats.put("exchangesTotal", mp.getExchangesTotal());
-        stats.put("exchangesFailed", mp.getExchangesFailed());
-        stats.put("exchangesInflight", mp.getExchangesInflight());
+        return JsonRecordSupport.toJsonObject(buildStatistics(mp));
+    }
+
+    private static Statistics buildStatistics(ManagedProcessorMBean mp) {
         String thp = mp.getThroughput();
         if (thp != null) {
             thp = thp.replace(',', '.');
-            if (!thp.isEmpty()) {
-                stats.put("exchangesThroughput", thp);
+            if (thp.isEmpty()) {
+                thp = null;
             }
         }
-        stats.put("meanProcessingTime", mp.getMeanProcessingTime());
-        stats.put("maxProcessingTime", mp.getMaxProcessingTime());
-        stats.put("minProcessingTime", mp.getMinProcessingTime());
+
+        Long p50 = null;
+        Long p95 = null;
+        Long p99 = null;
         if (mp.getProcessingTimeP50() >= 0) {
-            stats.put("p50ProcessingTime", mp.getProcessingTimeP50());
-            stats.put("p95ProcessingTime", mp.getProcessingTimeP95());
-            stats.put("p99ProcessingTime", mp.getProcessingTimeP99());
+            p50 = mp.getProcessingTimeP50();
+            p95 = mp.getProcessingTimeP95();
+            p99 = mp.getProcessingTimeP99();
         }
+
+        Long lastProcessingTime = null;
+        Long deltaProcessingTime = null;
         if (mp.getExchangesTotal() > 0) {
-            stats.put("lastProcessingTime", mp.getLastProcessingTime());
-            stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
+            lastProcessingTime = mp.getLastProcessingTime();
+            deltaProcessingTime = mp.getDeltaProcessingTime();
         }
-        Date last = mp.getLastExchangeCreatedTimestamp();
-        if (last != null) {
-            stats.put("lastCreatedExchangeTimestamp", last.getTime());
-        }
-        last = mp.getLastExchangeCompletedTimestamp();
-        if (last != null) {
-            stats.put("lastCompletedExchangeTimestamp", last.getTime());
-        }
-        last = mp.getLastExchangeFailureHandledTimestamp();
-        if (last != null) {
-            stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
-        }
-        last = mp.getLastExchangeFailureTimestamp();
-        if (last != null) {
-            stats.put("lastFailedExchangeTimestamp", last.getTime());
-        }
-        return stats;
+
+        Long lastCreated = timestampOf(mp.getLastExchangeCreatedTimestamp());
+        Long lastCompleted = timestampOf(mp.getLastExchangeCompletedTimestamp());
+        Long lastFailureHandled = timestampOf(mp.getLastExchangeFailureHandledTimestamp());
+        Long lastFailed = timestampOf(mp.getLastExchangeFailureTimestamp());
+
+        return new Statistics(
+                mp.getIdleSince(), mp.getExchangesTotal(), mp.getExchangesFailed(), mp.getExchangesInflight(), thp,
+                mp.getMeanProcessingTime(), mp.getMaxProcessingTime(), mp.getMinProcessingTime(),
+                p50, p95, p99, lastProcessingTime, deltaProcessingTime,
+                lastCreated, lastCompleted, lastFailureHandled, lastFailed);
+    }
+
+    private static Long timestampOf(Date date) {
+        return date != null ? date.getTime() : null;
     }
 
     private static boolean accept(ManagedProcessorMBean mrb, String filter) {

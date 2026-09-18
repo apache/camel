@@ -19,8 +19,11 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Function;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -238,6 +241,51 @@ public final class CatalogLoader {
         answer.enableCache();
 
         return answer;
+    }
+
+    /**
+     * The YAML DSL JSON schema of a Camel version, read from the {@code org.apache.camel:camel-yaml-dsl} jar of that
+     * version (every 4.x release ships {@code schema/camelYamlDsl.json}; the canonical schema exists from 4.22).
+     *
+     * @param  repos     extra Maven repositories, comma separated; null for the defaults
+     * @param  version   the Camel version
+     * @param  canonical whether to read the canonical schema
+     * @param  download  whether to download when the jar is not in the local repository
+     * @return           the schema document as JSON, or null when the version is the one of the CLI, whose schema is on
+     *                   the classpath
+     * @throws Exception when the jar cannot be downloaded or has no such schema
+     */
+    public static String loadYamlDslSchema(String repos, String version, boolean canonical, boolean download)
+            throws Exception {
+        if (version == null || version.isBlank() || version.equals(new DefaultCamelCatalog().getCatalogVersion())) {
+            return null;
+        }
+        String entry = canonical ? "schema/camelYamlDsl-canonical.json" : "schema/camelYamlDsl.json";
+        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+        downloader.setRepositories(repos);
+        downloader.setDownload(download);
+        try {
+            downloader.start();
+            MavenArtifact ma = downloader.downloadArtifact("org.apache.camel", "camel-yaml-dsl", version);
+            if (ma == null || ma.getFile() == null) {
+                throw new IOException("Cannot download org.apache.camel:camel-yaml-dsl:" + version);
+            }
+            try (ZipFile jar = new ZipFile(ma.getFile())) {
+                ZipEntry ze = jar.getEntry(entry);
+                if (ze == null) {
+                    throw new IOException(
+                            canonical
+                                    ? "Camel " + version + " has no canonical YAML DSL schema (it exists from Camel 4.22)"
+                                    : "org.apache.camel:camel-yaml-dsl:" + version + " has no " + entry);
+                }
+                try (InputStream is = jar.getInputStream(ze)) {
+                    return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                }
+            }
+        } finally {
+            downloader.stop();
+            downloader.close();
+        }
     }
 
     public static String resolveCamelVersionFromSpringBoot(String repos, String camelSpringBootVersion, boolean download)

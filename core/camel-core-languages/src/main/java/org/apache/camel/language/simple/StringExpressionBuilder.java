@@ -28,6 +28,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.builder.PredicateBuilder;
+import org.apache.camel.util.EscapeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -565,6 +566,48 @@ public final class StringExpressionBuilder {
     /**
      * Normalizes the whitespaces in the given expressions (uses message body if expression is null)
      */
+    /**
+     * Returns an expression that escapes special characters in the given expression (or message body if <tt>null</tt>)
+     * according to the escape kind.
+     *
+     * @param kind       the kind of escaping (html, xml, json, js, sql, url)
+     * @param expression the expression to escape, or <tt>null</tt> to use the message body
+     */
+    public static Expression escapeExpression(final EscapeHelper.Kind kind, final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                return EscapeHelper.escape(kind, value);
+            }
+
+            @Override
+            public String toString() {
+                String name = kind.name().toLowerCase(Locale.ROOT);
+                if (expression != null) {
+                    return "escape(" + name + "," + expression + ")";
+                } else {
+                    return "escape(" + name + ")";
+                }
+            }
+        };
+    }
+
     public static Expression normalizeWhitespaceExpression(final String expression) {
         return new ExpressionAdapter() {
             private Expression exp;

@@ -23,12 +23,27 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "aws2-s3", displayName = "AWS S3", description = "AWS S3 Consumer")
 public class AWS2S3Console extends AbstractDevConsole {
+
+    public record ConsumerEntry(
+            @Metadata(description = "The S3 bucket name") String bucket,
+            @Metadata(description = "Whether static access keys are used") boolean accessKeys,
+            @Metadata(description = "Whether the default credentials provider is used") boolean defaultCredentialsProvider,
+            @Metadata(description = "Whether the profile credentials provider is used") boolean profileCredentialsProvider,
+            @Metadata(description = "Maximum number of messages per poll") int maxMessages,
+            @Metadata(description = "Whether the object is moved after being read") boolean moveAfterRead,
+            @Metadata(description = "Whether the object is deleted after being read") boolean deleteAfterRead) {
+    }
+
+    public record Response(
+            @Metadata(description = "The AWS S3 consumers (only present when there are any)") List<ConsumerEntry> consumers) {
+    }
 
     public AWS2S3Console() {
         super("camel", "aws2-s3", "AWS S3", "AWS S3 Consumer");
@@ -57,33 +72,25 @@ public class AWS2S3Console extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         List<Consumer> list = getCamelContext().getRoutes()
                 .stream().map(Route::getConsumer)
                 .filter(c -> c instanceof AWS2S3Consumer)
                 .collect(Collectors.toList());
 
-        List<JsonObject> arr = new ArrayList<>();
+        List<ConsumerEntry> arr = new ArrayList<>();
         for (Consumer c : list) {
             AWS2S3Consumer nc = (AWS2S3Consumer) c;
             AWS2S3Configuration conf = nc.getEndpoint().getConfiguration();
 
-            JsonObject jo = new JsonObject();
-            jo.put("bucket", conf.getBucketName());
-            jo.put("accessKeys", !conf.isUseDefaultCredentialsProvider() && !conf.isUseProfileCredentialsProvider());
-            jo.put("defaultCredentialsProvider", conf.isUseDefaultCredentialsProvider());
-            jo.put("profileCredentialsProvider", conf.isUseProfileCredentialsProvider());
-            jo.put("maxMessages", nc.getMaxMessagesPerPoll());
-            jo.put("moveAfterRead", conf.isMoveAfterRead());
-            jo.put("deleteAfterRead", conf.isDeleteAfterRead());
-            arr.add(jo);
-        }
-        if (!arr.isEmpty()) {
-            root.put("consumers", arr);
+            arr.add(new ConsumerEntry(
+                    conf.getBucketName(),
+                    !conf.isUseDefaultCredentialsProvider() && !conf.isUseProfileCredentialsProvider(),
+                    conf.isUseDefaultCredentialsProvider(), conf.isUseProfileCredentialsProvider(),
+                    nc.getMaxMessagesPerPoll(), conf.isMoveAfterRead(), conf.isDeleteAfterRead()));
         }
 
-        return root;
+        Response response = new Response(arr.isEmpty() ? null : arr);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

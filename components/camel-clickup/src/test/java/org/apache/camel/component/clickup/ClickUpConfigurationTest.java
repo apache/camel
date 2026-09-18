@@ -24,37 +24,33 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.clickup.util.ClickUpTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class ClickUpConfigurationTest extends ClickUpTestSupport {
+class ClickUpConfigurationTest extends ClickUpTestSupport {
 
-    private final static Long WORKSPACE_ID = 12345L;
-    private final static String BASE_URL = "https://mock-api.clickup.com";
-    private final static String AUTHORIZATION_TOKEN = "mock-authorization-token";
-    private final static String WEBHOOK_SECRET = "mock-webhook-secret";
-    private final static Set<String> EVENTS = new HashSet<>(Arrays.asList("taskTimeTrackedUpdated"));
+    private static final String BASE_URL = "https://mock-api.clickup.com";
+    private static final Set<String> EVENTS = new HashSet<>(Arrays.asList("taskTimeTrackedUpdated"));
 
     @Test
-    public void testClickUpConfiguration() {
+    void testClickUpConfiguration() {
         ClickUpEndpoint endpoint = (ClickUpEndpoint) context().getEndpoints().stream()
                 .filter(e -> e instanceof ClickUpEndpoint).findAny().get();
         ClickUpConfiguration config = endpoint.getConfiguration();
 
-        assertEquals(WORKSPACE_ID, config.getWorkspaceId());
-        assertEquals(BASE_URL, config.getBaseUrl());
-        assertEquals(AUTHORIZATION_TOKEN, config.getAuthorizationToken());
-        assertEquals(WEBHOOK_SECRET, config.getWebhookSecret());
-        assertEquals(EVENTS, config.getEvents());
+        assertThat(config.getWorkspaceId()).isEqualTo(WORKSPACE_ID);
+        assertThat(config.getBaseUrl()).isEqualTo(BASE_URL);
+        assertThat(config.getAuthorizationToken()).isEqualTo(AUTHORIZATION_TOKEN);
+        assertThat(config.getWebhookSecret()).isEqualTo(WEBHOOK_SECRET);
+        assertThat(config.getEvents()).isEqualTo(EVENTS);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("webhook:clickup:" + WORKSPACE_ID + "?baseUrl=" + BASE_URL + "&authorizationToken=" + AUTHORIZATION_TOKEN
-                     + "&webhookSecret=" + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS)
-                     + "&webhookAutoRegister=false")
+                fromF("webhook:clickup:%s?baseUrl=%s&authorizationToken=%s&webhookSecret=%s&events=%s&webhookAutoRegister=false",
+                        WORKSPACE_ID, BASE_URL, AUTHORIZATION_TOKEN, WEBHOOK_SECRET, String.join(",", EVENTS))
                         .log("Received: ${body}");
             }
         };

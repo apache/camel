@@ -19,19 +19,22 @@ package org.apache.camel.language.js;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExpressionSupport;
 import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-
-import static org.graalvm.polyglot.Source.newBuilder;
 
 public class JavaScriptExpression extends ExpressionSupport {
 
     private final String expressionString;
     private final Class<?> type;
+    private volatile JavaScriptLanguage language;
 
     public JavaScriptExpression(String expressionString, Class<?> type) {
+        this(expressionString, type, null);
+    }
+
+    JavaScriptExpression(String expressionString, Class<?> type, JavaScriptLanguage language) {
         this.expressionString = expressionString;
         this.type = type;
+        this.language = language;
     }
 
     public static JavaScriptExpression js(String expression) {
@@ -46,7 +49,8 @@ public class JavaScriptExpression extends ExpressionSupport {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        try (Context cx = JavaScriptHelper.newContext()) {
+        JavaScriptLanguage lang = language(exchange);
+        try (Context cx = lang.newContext()) {
             Value b = cx.getBindings("js");
 
             b.putMember("exchange", exchange);
@@ -57,15 +61,26 @@ public class JavaScriptExpression extends ExpressionSupport {
             b.putMember("properties", exchange.getAllProperties());
             b.putMember("body", exchange.getMessage().getBody());
 
-            Source source = newBuilder("js", expressionString, "Unnamed")
-                    .mimeType("application/javascript+module").buildLiteral();
-            Value o = cx.eval(source);
-            Object answer = o != null ? o.as(Object.class) : null;
+            Value o = cx.eval(lang.source(expressionString));
+            Object answer = JavaScriptLanguage.materialize(o);
             if (type == Object.class) {
                 return (T) answer;
             }
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, answer);
         }
+    }
+
+    /**
+     * The language owning the shared engine. Expressions created through the language already have it; expressions
+     * created directly (for example via {@link #js(String)}) resolve it from the exchange on first use.
+     */
+    private JavaScriptLanguage language(Exchange exchange) {
+        JavaScriptLanguage lang = language;
+        if (lang == null) {
+            lang = (JavaScriptLanguage) exchange.getContext().resolveLanguage("js");
+            language = lang;
+        }
+        return lang;
     }
 
     public Class<?> getType() {

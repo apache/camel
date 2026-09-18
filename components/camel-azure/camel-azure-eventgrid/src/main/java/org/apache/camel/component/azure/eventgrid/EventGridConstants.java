@@ -33,9 +33,6 @@ public final class EventGridConstants {
     @Metadata(description = "The unique identifier for the event.", javaType = "String")
     public static final String ID = HEADER_PREFIX + "Id";
 
-    @Metadata(description = "The schema version of the data object.", javaType = "String")
-    public static final String DATA_VERSION = HEADER_PREFIX + "DataVersion";
-
     private EventGridConstants() {
     }
 }

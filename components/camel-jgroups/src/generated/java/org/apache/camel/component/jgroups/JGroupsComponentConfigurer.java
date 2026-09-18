@@ -30,6 +30,8 @@ public class JGroupsComponentConfigurer extends PropertyConfigurerSupport implem
         case "channel": target.setChannel(property(camelContext, org.jgroups.JChannel.class, value)); return true;
         case "channelproperties":
         case "channelProperties": target.setChannelProperties(property(camelContext, java.lang.String.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "enableviewmessages":
         case "enableViewMessages": target.setEnableViewMessages(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -48,6 +50,8 @@ public class JGroupsComponentConfigurer extends PropertyConfigurerSupport implem
         case "channel": return org.jgroups.JChannel.class;
         case "channelproperties":
         case "channelProperties": return java.lang.String.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "enableviewmessages":
         case "enableViewMessages": return boolean.class;
         case "lazystartproducer":
@@ -67,6 +71,8 @@ public class JGroupsComponentConfigurer extends PropertyConfigurerSupport implem
         case "channel": return target.getChannel();
         case "channelproperties":
         case "channelProperties": return target.getChannelProperties();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "enableviewmessages":
         case "enableViewMessages": return target.isEnableViewMessages();
         case "lazystartproducer":

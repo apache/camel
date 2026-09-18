@@ -66,6 +66,9 @@ class SyntaxHighlighter {
     private static final Pattern XML_ATTR_NAME = Pattern.compile("\\s([\\w:.-]+)=");
     private static final Pattern XML_ENTITY = Pattern.compile("&[^;]+;");
 
+    // Fallback palettes used when a theme defines no syntax-* tokens (see Theme). Package-private so ThemeTest can
+    // assert the fallback colors; not a stable API for other callers.
+
     // Monokai color palette (dark themes)
     static final Color MONOKAI_COMMENT = Color.rgb(117, 113, 94);
     static final Color MONOKAI_STRING = Color.rgb(230, 219, 116);
@@ -76,40 +79,42 @@ class SyntaxHighlighter {
     static final Color MONOKAI_TEXT = Color.rgb(248, 248, 242);
 
     // Light color palette (readable on light backgrounds)
-    private static final Color LIGHT_COMMENT = Color.rgb(106, 115, 125);
-    private static final Color LIGHT_STRING = Color.rgb(3, 47, 98);
-    private static final Color LIGHT_KEYWORD = Color.rgb(215, 58, 73);
-    private static final Color LIGHT_FUNCTION = Color.rgb(0, 92, 197);
-    private static final Color LIGHT_TYPE = Color.rgb(0, 92, 197);
-    private static final Color LIGHT_CONSTANT = Color.rgb(111, 66, 193);
-    private static final Color LIGHT_TEXT = Color.rgb(36, 41, 46);
+    static final Color LIGHT_COMMENT = Color.rgb(106, 115, 125);
+    static final Color LIGHT_STRING = Color.rgb(3, 47, 98);
+    static final Color LIGHT_KEYWORD = Color.rgb(215, 58, 73);
+    static final Color LIGHT_FUNCTION = Color.rgb(0, 92, 197);
+    static final Color LIGHT_TYPE = Color.rgb(0, 92, 197);
+    static final Color LIGHT_CONSTANT = Color.rgb(111, 66, 193);
+    static final Color LIGHT_TEXT = Color.rgb(36, 41, 46);
 
+    // Theme-aware palette: a theme may override these through optional syntax-* stylesheet tokens (see Theme);
+    // otherwise the Monokai (dark) or light palette above applies.
     private static Color comment() {
-        return Theme.isDark() ? MONOKAI_COMMENT : LIGHT_COMMENT;
+        return Theme.syntaxComment();
     }
 
     private static Color string() {
-        return Theme.isDark() ? MONOKAI_STRING : LIGHT_STRING;
+        return Theme.syntaxString();
     }
 
     private static Color keyword() {
-        return Theme.isDark() ? MONOKAI_KEYWORD : LIGHT_KEYWORD;
+        return Theme.syntaxKeyword();
     }
 
     private static Color function() {
-        return Theme.isDark() ? MONOKAI_FUNCTION : LIGHT_FUNCTION;
+        return Theme.syntaxFunction();
     }
 
     private static Color type() {
-        return Theme.isDark() ? MONOKAI_TYPE : LIGHT_TYPE;
+        return Theme.syntaxType();
     }
 
     private static Color constant() {
-        return Theme.isDark() ? MONOKAI_CONSTANT : LIGHT_CONSTANT;
+        return Theme.syntaxConstant();
     }
 
     private static Color text() {
-        return Theme.isDark() ? MONOKAI_TEXT : LIGHT_TEXT;
+        return Theme.syntaxText();
     }
 
     // Java styles

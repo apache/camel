@@ -45,13 +45,9 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
         super(parent);
         this.originalPattern = parent.getPattern();
 
-        Clock parentClock = parent.getClock();
-
-        if (parentClock instanceof ResetableClock rs) {
-            this.clock = rs;
-        } else {
-            this.clock = new ResetableClock(parent.getClock());
-        }
+        // the copy must own its clock: sharing the parent's clock makes done() on the parent unset the
+        // created time of the copy as well, and the copy is then returned to the pool without being reset
+        this.clock = new ResetableClock(parent.getClock());
     }
 
     public DefaultPooledExchange(CamelContext context, ExchangePattern pattern) {

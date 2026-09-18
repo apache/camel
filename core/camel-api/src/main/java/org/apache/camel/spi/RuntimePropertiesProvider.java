@@ -26,9 +26,11 @@ import java.util.Collection;
  * properties, .properties files, override properties). Application properties managed by external configuration systems
  * (e.g. Spring {@code Environment}, SmallRye {@code Config}) are not included.
  * <p>
- * This SPI bridges that gap: runtimes register an implementation that enumerates their properties, and the dev console
- * merges them with the Camel-managed properties. The properties returned by this SPI are read-only and are NOT used for
- * placeholder resolution — they are purely for display and introspection.
+ * This SPI bridges that gap: runtimes register an implementation that enumerates their properties. When a provider is
+ * present, the dev console uses it as the authoritative source instead of {@link PropertiesComponent#loadProperties()},
+ * avoiding noisy duplicates from runtime-managed config sources (environment variables, system properties, etc.). The
+ * properties returned by this SPI are read-only and are NOT used for placeholder resolution — they are purely for
+ * display and introspection.
  *
  * @since 4.22
  */

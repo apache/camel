@@ -17,15 +17,16 @@
 package org.apache.camel.component.quartz;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
@@ -35,6 +36,47 @@ import org.quartz.impl.matchers.GroupMatcher;
 
 @DevConsole(name = "quartz", description = "Quartz Scheduler")
 public class QuartzConsole extends AbstractDevConsole {
+
+    public record JobEntry(
+            @Metadata(description = "The job fire instance id") String jobId,
+            @Metadata(description = "The trigger type: cron or simple") String triggerType,
+            @Metadata(description = "The cron expression (only present for a cron trigger)") String cron,
+            @Metadata(description = "The route id (only present when known)") String routeId,
+            @Metadata(description = "The endpoint URI (only present when a cron expression is set)") String uri,
+            @Metadata(description = "Epoch time in milliseconds of the previous fire time (only present when known)") Long prevFireTime,
+            @Metadata(description = "Epoch time in milliseconds of the fire time (only present when known)") Long fireTime,
+            @Metadata(description = "Epoch time in milliseconds of the next fire time (only present when known)") Long nextFireTime,
+            @Metadata(description = "Epoch time in milliseconds of the final fire time (only present when known)") Long finalFireTime,
+            @Metadata(description = "Whether the job is recovering") boolean recovering,
+            @Metadata(description = "The number of times the job has been refired") int refireCount,
+            @Metadata(description = "The trigger's misfire instruction") int misfireInstruction) {
+    }
+
+    public record TriggerEntry(
+            @Metadata(description = "The route id (only present when known)") String routeId,
+            @Metadata(description = "The trigger type: cron or simple (only present when known)") String triggerType,
+            @Metadata(description = "The cron expression (only present when known)") String cron,
+            @Metadata(description = "The simple trigger repeat interval (only present when known)") String repeatInterval) {
+    }
+
+    public record Response(
+            @Metadata(description = "The scheduler name") String schedulerName,
+            @Metadata(description = "The scheduler instance id") String schedulerInstanceId,
+            @Metadata(description = "The Quartz version (only present when known)") String quartzVersion,
+            @Metadata(description = "Epoch time in milliseconds the scheduler started running (only present when known)") Long runningSince,
+            @Metadata(description = "The total number of jobs executed (only present when known)") Integer totalCounter,
+            @Metadata(description = "Whether the scheduler is started (only present when known)") Boolean started,
+            @Metadata(description = "Whether the scheduler is shutdown (only present when known)") Boolean shutdown,
+            @Metadata(description = "Whether the scheduler is in standby mode (only present when known)") Boolean inStandbyMode,
+            @Metadata(description = "The thread pool class name (only present when known)") String threadPoolClass,
+            @Metadata(description = "The thread pool size (only present when known)") Integer threadPoolSize,
+            @Metadata(description = "The job store class name (field kept as jpbStoreClass for backwards compatibility, only present when known)") String jpbStoreClass,
+            @Metadata(description = "Whether the job store is clustered (field kept as jpbStoreClustered for backwards compatibility, only present when known)") Boolean jpbStoreClustered,
+            @Metadata(description = "Whether the job store supports persistence (field kept as jpbStoreSupportsPersistence for backwards compatibility, only present when known)") Boolean jpbStoreSupportsPersistence,
+            @Metadata(description = "The number of currently executing jobs") Integer currentExecutingJobs,
+            @Metadata(description = "Only present when there are any currently executing jobs") List<JobEntry> jobs,
+            @Metadata(description = "Only present when there are any scheduled triggers") List<TriggerEntry> triggers) {
+    }
 
     public QuartzConsole() {
         super("camel", "quartz", "Quartz", "Quartz Scheduler");
@@ -127,111 +169,99 @@ public class QuartzConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+        String schedulerName = null;
+        String schedulerInstanceId = null;
+        String quartzVersion = null;
+        Long runningSince = null;
+        Integer totalCounter = null;
+        Boolean started = null;
+        Boolean shutdown = null;
+        Boolean inStandbyMode = null;
+        String threadPoolClass = null;
+        Integer threadPoolSize = null;
+        String jpbStoreClass = null;
+        Boolean jpbStoreClustered = null;
+        Boolean jpbStoreSupportsPersistence = null;
+        Integer currentExecutingJobs = null;
+        List<JobEntry> jobs = null;
+        List<TriggerEntry> triggers = null;
 
         QuartzComponent quartz = getCamelContext().getComponent("quartz", QuartzComponent.class);
         if (quartz != null) {
             Scheduler scheduler = quartz.getScheduler();
             try {
-                root.put("schedulerName", scheduler.getSchedulerName());
-                root.put("schedulerInstanceId", scheduler.getSchedulerInstanceId());
+                schedulerName = scheduler.getSchedulerName();
+                schedulerInstanceId = scheduler.getSchedulerInstanceId();
                 SchedulerMetaData meta = scheduler.getMetaData();
                 if (meta != null) {
-                    root.put("quartzVersion", meta.getVersion());
-                    root.put("runningSince", meta.getRunningSince().getTime());
-                    root.put("totalCounter", meta.getNumberOfJobsExecuted());
-                    root.put("started", meta.isStarted());
-                    root.put("shutdown", meta.isShutdown());
-                    root.put("inStandbyMode", meta.isInStandbyMode());
-                    root.put("threadPoolClass", meta.getThreadPoolClass().getName());
-                    root.put("threadPoolSize", meta.getThreadPoolSize());
-                    root.put("jpbStoreClass", meta.getJobStoreClass().getName());
-                    root.put("jpbStoreClustered", meta.isJobStoreClustered());
-                    root.put("jpbStoreSupportsPersistence", meta.isJobStoreSupportsPersistence());
+                    quartzVersion = meta.getVersion();
+                    runningSince = meta.getRunningSince().getTime();
+                    totalCounter = meta.getNumberOfJobsExecuted();
+                    started = meta.isStarted();
+                    shutdown = meta.isShutdown();
+                    inStandbyMode = meta.isInStandbyMode();
+                    threadPoolClass = meta.getThreadPoolClass().getName();
+                    threadPoolSize = meta.getThreadPoolSize();
+                    jpbStoreClass = meta.getJobStoreClass().getName();
+                    jpbStoreClustered = meta.isJobStoreClustered();
+                    jpbStoreSupportsPersistence = meta.isJobStoreSupportsPersistence();
                 }
 
-                List<JobExecutionContext> jobs = scheduler.getCurrentlyExecutingJobs();
-                root.put("currentExecutingJobs", jobs.size());
-                if (!jobs.isEmpty()) {
-                    JsonArray arr = new JsonArray();
-                    root.put("jobs", arr);
-                    for (JobExecutionContext job : jobs) {
-                        JsonObject jo = new JsonObject();
-                        jo.put("jobId", job.getFireInstanceId());
-
+                List<JobExecutionContext> executingJobs = scheduler.getCurrentlyExecutingJobs();
+                currentExecutingJobs = executingJobs.size();
+                if (!executingJobs.isEmpty()) {
+                    List<JobEntry> arr = new ArrayList<>();
+                    for (JobExecutionContext job : executingJobs) {
                         String type = (String) job.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE);
-                        jo.put("triggerType", type);
                         String cron = (String) job.getJobDetail().getJobDataMap()
                                 .get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION);
-                        if (cron != null) {
-                            jo.put("cron", cron);
-                        }
                         String routeId = (String) job.getJobDetail().getJobDataMap().get("routeId");
-                        if (routeId != null) {
-                            jo.put("routeId", routeId);
-                        }
-                        String uri = (String) job.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT_URI);
+                        String uri = null;
                         if (cron != null) {
-                            jo.put("uri", uri);
+                            uri = (String) job.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT_URI);
                         }
-                        Date d = job.getTrigger().getPreviousFireTime();
-                        if (d != null) {
-                            jo.put("prevFireTime", d.getTime());
-                        }
-                        d = job.getFireTime();
-                        if (d != null) {
-                            jo.put("fireTime", d.getTime());
-                        }
-                        d = job.getTrigger().getNextFireTime();
-                        if (d != null) {
-                            jo.put("nextFireTime", d.getTime());
-                        }
-                        d = job.getTrigger().getFinalFireTime();
-                        if (d != null) {
-                            jo.put("finalFireTime", d.getTime());
-                        }
-                        jo.put("recovering", job.isRecovering());
-                        jo.put("refireCount", job.getRefireCount());
-                        jo.put("misfireInstruction", job.getTrigger().getMisfireInstruction());
-                        arr.add(jo);
+                        Date prevFireTimeD = job.getTrigger().getPreviousFireTime();
+                        Date fireTimeD = job.getFireTime();
+                        Date nextFireTimeD = job.getTrigger().getNextFireTime();
+                        Date finalFireTimeD = job.getTrigger().getFinalFireTime();
+
+                        arr.add(new JobEntry(
+                                job.getFireInstanceId(), type, cron, routeId, uri,
+                                prevFireTimeD != null ? prevFireTimeD.getTime() : null,
+                                fireTimeD != null ? fireTimeD.getTime() : null,
+                                nextFireTimeD != null ? nextFireTimeD.getTime() : null,
+                                finalFireTimeD != null ? finalFireTimeD.getTime() : null, job.isRecovering(),
+                                job.getRefireCount(), job.getTrigger().getMisfireInstruction()));
                     }
+                    jobs = arr;
                 }
 
                 // all scheduled triggers (for TUI consumer schedule display)
                 Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.anyGroup());
                 if (!jobKeys.isEmpty()) {
-                    JsonArray arr = new JsonArray();
-                    root.put("triggers", arr);
+                    List<TriggerEntry> arr = new ArrayList<>();
                     for (JobKey jobKey : jobKeys) {
                         JobDetail job = scheduler.getJobDetail(jobKey);
                         if (job != null) {
-                            JsonObject jo = new JsonObject();
                             String routeId = (String) job.getJobDataMap().get("routeId");
-                            if (routeId != null) {
-                                jo.put("routeId", routeId);
-                            }
                             String type = (String) job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE);
-                            if (type != null) {
-                                jo.put("triggerType", type);
-                            }
                             String cron = (String) job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION);
-                            if (cron != null) {
-                                jo.put("cron", cron);
-                            }
                             String interval
                                     = (String) job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL);
-                            if (interval != null) {
-                                jo.put("repeatInterval", interval);
-                            }
-                            arr.add(jo);
+                            arr.add(new TriggerEntry(routeId, type, cron, interval));
                         }
                     }
+                    triggers = arr;
                 }
             } catch (Exception e) {
                 // ignore
             }
         }
 
-        return root;
+        Response response = new Response(
+                schedulerName, schedulerInstanceId, quartzVersion, runningSince, totalCounter, started, shutdown,
+                inStandbyMode, threadPoolClass, threadPoolSize, jpbStoreClass, jpbStoreClustered,
+                jpbStoreSupportsPersistence, currentExecutingJobs, jobs, triggers);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

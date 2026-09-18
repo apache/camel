@@ -48,6 +48,18 @@ public class ContextDevConsoleTest extends ContextTestSupport {
         JsonObject out = (JsonObject) con.call(DevConsole.MediaType.JSON);
         Assertions.assertNotNull(out);
         Assertions.assertEquals(context.getName(), out.getString("name"));
+        Assertions.assertEquals(context.getVersion(), out.getString("version"));
+        Assertions.assertEquals(context.getStatus().name(), out.getString("state"));
+        Assertions.assertNotNull(out.getLong("uptime"));
+        Assertions.assertNotNull(out.getBoolean("devMode"));
+
+        JsonObject statistics = out.getJsonObject("statistics");
+        if (statistics != null) {
+            JsonObject reload = statistics.getJsonObject("reload");
+            Assertions.assertNotNull(reload);
+            Assertions.assertNotNull(reload.getInteger("reloaded"));
+            Assertions.assertNotNull(reload.getInteger("failed"));
+        }
     }
 
 }

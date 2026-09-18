@@ -33,6 +33,7 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         map.put("Enabled", boolean.class);
         map.put("LogMetricsOnShutdown", boolean.class);
         map.put("LogMetricsOnShutdownFilters", java.lang.String.class);
+        map.put("LogMetricsOnShutdownFormat", java.lang.String.class);
         map.put("NamingStrategy", java.lang.String.class);
         map.put("Path", java.lang.String.class);
         map.put("RoutePolicyLevel", java.lang.String.class);
@@ -65,6 +66,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "logMetricsOnShutdown": target.setLogMetricsOnShutdown(property(camelContext, boolean.class, value)); return true;
         case "logmetricsonshutdownfilters":
         case "logMetricsOnShutdownFilters": target.setLogMetricsOnShutdownFilters(property(camelContext, java.lang.String.class, value)); return true;
+        case "logmetricsonshutdownformat":
+        case "logMetricsOnShutdownFormat": target.setLogMetricsOnShutdownFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
@@ -106,6 +109,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "logMetricsOnShutdown": return boolean.class;
         case "logmetricsonshutdownfilters":
         case "logMetricsOnShutdownFilters": return java.lang.String.class;
+        case "logmetricsonshutdownformat":
+        case "logMetricsOnShutdownFormat": return java.lang.String.class;
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
         case "path": return java.lang.String.class;
@@ -143,6 +148,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "logMetricsOnShutdown": return target.isLogMetricsOnShutdown();
         case "logmetricsonshutdownfilters":
         case "logMetricsOnShutdownFilters": return target.getLogMetricsOnShutdownFilters();
+        case "logmetricsonshutdownformat":
+        case "logMetricsOnShutdownFormat": return target.getLogMetricsOnShutdownFormat();
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
         case "path": return target.getPath();

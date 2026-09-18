@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -27,12 +28,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.sun.management.OperatingSystemMXBean;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonArray;
@@ -53,6 +57,25 @@ public class LlmClient {
     private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
     private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
     private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
+    /**
+     * Keep the model (and its prompt cache) loaded between turns of a conversation. Ollama's default of five minutes is
+     * shorter than a slow local answer plus the time the user spends reading it, after which the next request pays for
+     * a full model reload and re-processes the whole prompt.
+     */
+    private static final String OLLAMA_KEEP_ALIVE = "30m";
+    /**
+     * Smallest context window requested from Ollama. The tool-calling system prompt and the tool schemas alone are
+     * several thousand tokens, and Ollama's memory-based default is 4k on machines with less than 24 GiB, which would
+     * silently truncate the prompt. See {@link #ollamaContextWindow()} for the whole policy;
+     * {@code OLLAMA_CONTEXT_LENGTH} in the environment overrides it.
+     */
+    public static final int OLLAMA_MIN_CONTEXT = 32_768;
+    /**
+     * Largest context window requested on the client's own initiative. Every token of history is prefill time again
+     * after a cache loss (idle unload, another client with a different window, a restart), and 64k at a few hundred
+     * tokens per second is already well over a minute.
+     */
+    public static final int OLLAMA_MAX_CONTEXT = 65_536;
     private static final String DEFAULT_WATSONX_URL = "https://us-south.ml.cloud.ibm.com";
     private static final String DEFAULT_WATSONX_MODEL = "ibm/granite-4-1-8b-instruct";
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
@@ -112,14 +135,43 @@ public class LlmClient {
         }
     }
 
-    public record TokenUsage(int inputTokens, int outputTokens, int totalTokens) {
+    /**
+     * Token usage of one request, plus whatever the provider reveals about its prompt cache and timing: hosted APIs
+     * report how many input tokens were served from cache ({@code cachedTokens}: OpenAI {@code cached_tokens},
+     * Anthropic {@code cache_read_input_tokens}, Gemini {@code cachedContentTokenCount}). Ollama reports the prompt
+     * tokens served from its KV cache ({@code prompt_eval_cached_count}) and how long each phase took: prompt
+     * processing ({@code prefillMillis}), generation ({@code generationMillis}), loading the model into memory
+     * ({@code loadMillis}, near zero for a warm model), and the whole request wall time ({@code totalMillis}, Ollama's
+     * {@code total_duration}). Zero means not reported.
+     */
+    public record TokenUsage(int inputTokens, int outputTokens, int totalTokens,
+            int cachedTokens, long prefillMillis, long generationMillis, long loadMillis, long totalMillis) {
         public static final TokenUsage EMPTY = new TokenUsage(0, 0, 0);
+
+        public TokenUsage(int inputTokens, int outputTokens, int totalTokens) {
+            this(inputTokens, outputTokens, totalTokens, 0, 0, 0, 0, 0);
+        }
+
+        public TokenUsage(int inputTokens, int outputTokens, int totalTokens,
+                          int cachedTokens, long prefillMillis, long generationMillis) {
+            this(inputTokens, outputTokens, totalTokens, cachedTokens, prefillMillis, generationMillis, 0, 0);
+        }
 
         public TokenUsage add(TokenUsage other) {
             return new TokenUsage(
                     inputTokens + other.inputTokens,
                     outputTokens + other.outputTokens,
-                    totalTokens + other.totalTokens);
+                    totalTokens + other.totalTokens,
+                    cachedTokens + other.cachedTokens,
+                    prefillMillis + other.prefillMillis,
+                    generationMillis + other.generationMillis,
+                    loadMillis + other.loadMillis,
+                    totalMillis + other.totalMillis);
+        }
+
+        /** Whether the provider reported a prompt-cache figure or a timing split. */
+        public boolean hasCacheSignal() {
+            return cachedTokens > 0 || prefillMillis > 0 || generationMillis > 0;
         }
     }
 
@@ -128,6 +180,10 @@ public class LlmClient {
     }
 
     public static String formatTokens(int tokens) {
+        // context windows are powers of two and known by their binary names: 32k, 64k, 256k
+        if (tokens >= 1024 && tokens % 1024 == 0 && tokens < 1_048_576) {
+            return (tokens / 1024) + "k";
+        }
         if (tokens >= 1000) {
             double k = tokens / 1000.0;
             if (k == (int) k) {
@@ -185,6 +241,34 @@ public class LlmClient {
 
     public ApiType apiType() {
         return apiType;
+    }
+
+    /**
+     * Resolved LLM endpoint URL after {@link #detectEndpoint()}, or the configured URL when set explicitly.
+     */
+    public String endpointUrl() {
+        return url;
+    }
+
+    /**
+     * Whether the model runs on this machine: the Ollama provider, or any provider whose endpoint host is a loopback
+     * address (LM Studio, llama.cpp server, vLLM and similar OpenAI-compatible servers). Local models process prompts
+     * far slower than hosted ones, so callers use this to trim what they send per request.
+     */
+    public boolean isLocalEndpoint() {
+        if (apiType == ApiType.ollama) {
+            return true;
+        }
+        if (url == null) {
+            return false;
+        }
+        try {
+            String host = URI.create(url).getHost();
+            return host != null && (host.equalsIgnoreCase("localhost") || host.equals("127.0.0.1")
+                    || host.equals("::1") || host.equals("[::1]") || host.equals("0.0.0.0"));
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     // -- Builder --
@@ -295,8 +379,8 @@ public class LlmClient {
                 if (openAiAuthMode == OpenAiAuthMode.api_key
                         || (url != null && isAzureOpenAiEndpoint(url))) {
                     resolveAzureOpenAiModel();
-                } else if (model == null || model.isBlank()) {
-                    model = DEFAULT_OPENAI_MODEL;
+                } else if (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model)) {
+                    model = isOpenAiCompatibleServer() ? resolveOpenAiCompatibleModel() : DEFAULT_OPENAI_MODEL;
                 }
             }
             case gemini -> {
@@ -552,10 +636,8 @@ public class LlmClient {
         request.put("prompt", userPrompt);
         request.put("system", systemPrompt);
         request.put("stream", stream);
-
-        JsonObject options = new JsonObject();
-        options.put("temperature", temperature);
-        request.put("options", options);
+        request.put("keep_alive", OLLAMA_KEEP_ALIVE);
+        request.put("options", ollamaOptions());
 
         if (stream) {
             return sendStreamingRequest(url + "/api/generate", request, null, "response");
@@ -808,7 +890,7 @@ public class LlmClient {
         if (total == 0) {
             total = input + output;
         }
-        return new TokenUsage(input, output, total);
+        return new TokenUsage(input, output, total, getIntValue(usageMetadata, "cachedContentTokenCount"), 0, 0);
     }
 
     private JsonObject sendGeminiRequest(String requestUrl, JsonObject body) {
@@ -929,6 +1011,253 @@ public class LlmClient {
         return parseOpenAiChatResponse(response);
     }
 
+    private JsonObject ollamaOptions() {
+        JsonObject options = new JsonObject();
+        options.put("temperature", temperature);
+        options.put("num_ctx", ollamaContextWindow());
+        return options;
+    }
+
+    // ---- Ollama context window ----
+
+    /** The window resolved for one model at one endpoint; replaced as a whole so readers need no lock. */
+    private record ResolvedOllamaContext(String model, String url, int window) {
+    }
+
+    private volatile ResolvedOllamaContext resolvedOllamaContext;
+
+    /**
+     * The context window ({@code num_ctx}) this client asks Ollama for with the current model, resolved once per model
+     * and endpoint:
+     * <ol>
+     * <li>{@code OLLAMA_CONTEXT_LENGTH} in the environment wins when set.</li>
+     * <li>If Ollama already has the model loaded, its window is adopted (raised to {@link #OLLAMA_MIN_CONTEXT} when
+     * smaller), because a request with a different {@code num_ctx} makes Ollama reload the model, which costs a cold
+     * start and throws away the prompt cache of every other client.</li>
+     * <li>Otherwise {@link #OLLAMA_MAX_CONTEXT} when the model's weights plus the KV cache of that window fit the
+     * machine's memory, else {@link #OLLAMA_MIN_CONTEXT}. Overshooting is worse than being conservative: Ollama then
+     * moves layers to the CPU and generation slows to a crawl.</li>
+     * </ol>
+     * Callers that manage a conversation should budget their history against {@code min(window, OLLAMA_MAX_CONTEXT)}
+     * even when a larger window was adopted, so a cache loss never means minutes of prefill.
+     */
+    public int ollamaContextWindow() {
+        Integer cached = resolvedOllamaContextWindow();
+        if (cached != null) {
+            return cached;
+        }
+        synchronized (this) {
+            cached = resolvedOllamaContextWindow();
+            if (cached != null) {
+                return cached;
+            }
+            int window = resolveOllamaContextWindow(totalPhysicalMemory());
+            resolvedOllamaContext = new ResolvedOllamaContext(model, url, window);
+            return window;
+        }
+    }
+
+    /** The window already resolved for the current model and endpoint, or null when the next request resolves it. */
+    public Integer resolvedOllamaContextWindow() {
+        ResolvedOllamaContext r = resolvedOllamaContext;
+        return r != null && Objects.equals(r.model(), model) && Objects.equals(r.url(), url) ? r.window() : null;
+    }
+
+    /**
+     * Resolves the window on a daemon thread so it is known before the first request needs it. Resolution asks Ollama
+     * three questions ({@code /api/ps}, {@code /api/tags}, {@code /api/show}); against a local server that is
+     * milliseconds, but done lazily it would sit between the user's question and the first request. Call it when the
+     * client is connected and after a model switch; a request arriving earlier resolves synchronously as before.
+     */
+    public void resolveOllamaContextWindowInBackground() {
+        if (apiType != ApiType.ollama || resolvedOllamaContextWindow() != null) {
+            return;
+        }
+        Thread t = new Thread(this::ollamaContextWindow, "llm-ollama-context");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /** Forgets the resolved window, e.g. after the user switched model; the next request resolves it again. */
+    public void resetOllamaContextWindow() {
+        resolvedOllamaContext = null;
+    }
+
+    int resolveOllamaContextWindow(long totalMemoryBytes) {
+        Integer env = ollamaContextLengthFromEnv();
+        if (env != null) {
+            return env;
+        }
+        if (url == null || model == null) {
+            return OLLAMA_MIN_CONTEXT;
+        }
+        long loaded = loadedOllamaContext();
+        if (loaded > 0) {
+            return (int) Math.max(OLLAMA_MIN_CONTEXT, Math.min(loaded, Integer.MAX_VALUE));
+        }
+        return ollamaContextFits(OLLAMA_MAX_CONTEXT, totalMemoryBytes) ? OLLAMA_MAX_CONTEXT : OLLAMA_MIN_CONTEXT;
+    }
+
+    static Integer ollamaContextLengthFromEnv() {
+        String env = System.getenv("OLLAMA_CONTEXT_LENGTH");
+        if (env != null && !env.isBlank()) {
+            try {
+                int value = Integer.parseInt(env.trim());
+                if (value > 0) {
+                    return value;
+                }
+            } catch (NumberFormatException e) {
+                // fall through to the policy
+            }
+        }
+        return null;
+    }
+
+    /** Context length of the current model if Ollama already has it loaded ({@code /api/ps}), 0 otherwise. */
+    long loadedOllamaContext() {
+        JsonObject ps = sendGetRequest(url + "/api/ps", Map.of());
+        if (ps == null) {
+            return 0;
+        }
+        Collection<?> loaded = ps.getCollection("models");
+        if (loaded == null) {
+            return 0;
+        }
+        for (Object o : loaded) {
+            if (o instanceof JsonObject m && ollamaModelMatches(model, m.getString("name"))) {
+                return getLongValue(m, "context_length");
+            }
+        }
+        return 0;
+    }
+
+    /** {@code llama3.2} matches {@code llama3.2:latest}; a name with a tag must match exactly. */
+    static boolean ollamaModelMatches(String wanted, String candidate) {
+        if (wanted == null || candidate == null) {
+            return false;
+        }
+        if (wanted.equals(candidate)) {
+            return true;
+        }
+        return !wanted.contains(":") && candidate.startsWith(wanted + ":");
+    }
+
+    /**
+     * Whether the current model's weights plus the KV cache of a {@code contextTokens} window fit in
+     * {@code totalMemoryBytes}: weights from {@code /api/tags}, the KV cost per token from the architecture facts in
+     * {@code /api/show}. Unknown facts count as "does not fit".
+     */
+    boolean ollamaContextFits(int contextTokens, long totalMemoryBytes) {
+        if (totalMemoryBytes <= 0) {
+            return false;
+        }
+        long weights = ollamaWeightBytes();
+        if (weights <= 0) {
+            return false;
+        }
+        JsonObject body = new JsonObject();
+        body.put("model", model);
+        JsonObject show = postJsonQuietly(url + "/api/show", body);
+        long perToken = ollamaKvBytesPerToken(show);
+        if (perToken <= 0) {
+            return false;
+        }
+        return ollamaContextFits(weights, perToken, contextTokens, totalMemoryBytes);
+    }
+
+    /**
+     * Four fifths of the memory less a gibibyte for compute buffers: roughly what Apple silicon lets the GPU wire and a
+     * fair share of a machine that also runs the integration and the TUI. A heuristic, deliberately on the safe side.
+     */
+    static boolean ollamaContextFits(long weightBytes, long kvBytesPerToken, int contextTokens, long totalMemoryBytes) {
+        long budget = totalMemoryBytes / 5 * 4 - (1L << 30);
+        return weightBytes + kvBytesPerToken * contextTokens <= budget;
+    }
+
+    /**
+     * Bytes of KV cache per context token: 16-bit keys and values for each KV head of each layer that keeps a full
+     * attention cache. Hybrid models (Qwen 3.5/3.6 MoE) report {@code full_attention_interval}; only every n-th layer
+     * holds a cache, the others carry a fixed-size state. Head dimensions come from {@code attention.key_length} and
+     * {@code attention.value_length} when reported, else from the embedding size over the head count.
+     */
+    static long ollamaKvBytesPerToken(JsonObject show) {
+        if (show == null || !(show.get("model_info") instanceof JsonObject info)) {
+            return 0;
+        }
+        String arch = info.getString("general.architecture");
+        if (arch == null) {
+            return 0;
+        }
+        long layers = getLongValue(info, arch + ".block_count");
+        long heads = getLongValue(info, arch + ".attention.head_count");
+        long kvHeads = getLongValue(info, arch + ".attention.head_count_kv");
+        long embedding = getLongValue(info, arch + ".embedding_length");
+        long keyLength = getLongValue(info, arch + ".attention.key_length");
+        long valueLength = getLongValue(info, arch + ".attention.value_length");
+        long interval = getLongValue(info, arch + ".full_attention_interval");
+        if (kvHeads <= 0) {
+            kvHeads = heads;
+        }
+        if (keyLength <= 0) {
+            keyLength = heads > 0 ? embedding / heads : 0;
+        }
+        if (valueLength <= 0) {
+            valueLength = keyLength;
+        }
+        long cacheLayers = interval > 1 ? layers / interval : layers;
+        if (cacheLayers <= 0 || kvHeads <= 0 || keyLength <= 0) {
+            return 0;
+        }
+        return cacheLayers * kvHeads * (keyLength + valueLength) * 2L;
+    }
+
+    /** A short POST with the health-check timeout and no console output, for probes outside a chat request. */
+    private JsonObject postJsonQuietly(String requestUrl, JsonObject body) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(requestUrl))
+                    .timeout(Duration.ofSeconds(HEALTH_CHECK_TIMEOUT_SECONDS))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(body.toJson()))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                return (JsonObject) Jsoner.deserialize(response.body());
+            }
+        } catch (Exception e) {
+            // the caller treats an unknown answer as "does not fit"
+        }
+        return null;
+    }
+
+    private long ollamaWeightBytes() {
+        JsonObject tags = sendGetRequest(url + "/api/tags", Map.of());
+        if (tags == null) {
+            return 0;
+        }
+        Collection<?> models = tags.getCollection("models");
+        if (models == null) {
+            return 0;
+        }
+        for (Object o : models) {
+            if (o instanceof JsonObject m && ollamaModelMatches(model, m.getString("name"))) {
+                return getLongValue(m, "size");
+            }
+        }
+        return 0;
+    }
+
+    static long totalPhysicalMemory() {
+        try {
+            if (ManagementFactory.getOperatingSystemMXBean() instanceof OperatingSystemMXBean os) {
+                return os.getTotalMemorySize();
+            }
+        } catch (Throwable e) {
+            // not available on this JVM
+        }
+        return 0;
+    }
+
     // ---- Ollama native chat with tools ----
 
     private ChatResponse chatOllamaFormat(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
@@ -942,10 +1271,8 @@ public class LlmClient {
         if (jsonTools != null) {
             request.put("tools", jsonTools);
         }
-
-        JsonObject options = new JsonObject();
-        options.put("temperature", temperature);
-        request.put("options", options);
+        request.put("keep_alive", OLLAMA_KEEP_ALIVE);
+        request.put("options", ollamaOptions());
 
         if (stream) {
             request.put("stream", true);
@@ -981,7 +1308,8 @@ public class LlmClient {
             StringBuilder fullText = new StringBuilder();
             List<ToolCall> toolCalls = new ArrayList<>();
             String[] doneReasonHolder = { null };
-            int[] tokenHolder = { 0, 0 };
+            int[] tokenHolder = { 0, 0, 0 };
+            long[] durationHolder = { 0, 0, 0, 0 };
 
             response.body().forEach(line -> {
                 if (line.isBlank()) {
@@ -1033,6 +1361,11 @@ public class LlmClient {
                         doneReasonHolder[0] = chunk.getString("done_reason");
                         tokenHolder[0] = getIntValue(chunk, "prompt_eval_count");
                         tokenHolder[1] = getIntValue(chunk, "eval_count");
+                        tokenHolder[2] = getIntValue(chunk, "prompt_eval_cached_count");
+                        durationHolder[0] = getLongValue(chunk, "prompt_eval_duration") / 1_000_000;
+                        durationHolder[1] = getLongValue(chunk, "eval_duration") / 1_000_000;
+                        durationHolder[2] = getLongValue(chunk, "load_duration") / 1_000_000;
+                        durationHolder[3] = getLongValue(chunk, "total_duration") / 1_000_000;
                     }
                 } catch (Exception e) {
                     // skip malformed chunks
@@ -1047,7 +1380,9 @@ public class LlmClient {
             String stopReason
                     = !toolCalls.isEmpty() ? "tool_calls" : (doneReasonHolder[0] != null ? doneReasonHolder[0] : "stop");
 
-            TokenUsage usage = new TokenUsage(tokenHolder[0], tokenHolder[1], tokenHolder[0] + tokenHolder[1]);
+            TokenUsage usage = new TokenUsage(
+                    tokenHolder[0], tokenHolder[1], tokenHolder[0] + tokenHolder[1], tokenHolder[2],
+                    durationHolder[0], durationHolder[1], durationHolder[2], durationHolder[3]);
             if (verbose) {
                 printer.println("[verbose] Streamed Ollama: text=" + (text != null ? truncateVerbose(text) : "null")
                                 + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReasonHolder[0]
@@ -1226,9 +1561,13 @@ public class LlmClient {
     private String resolveAnthropicUrl() {
         if (isVertexAi()) {
             String vertexModel = resolveVertexModel(model);
+            // The "global" location uses the global host with no region prefix;
+            // regional locations (e.g. us-east5) prefix the host with the region.
+            String host
+                    = "global".equals(vertexRegion) ? "aiplatform.googleapis.com" : vertexRegion + "-aiplatform.googleapis.com";
             return String.format(
-                    "https://%s-aiplatform.googleapis.com/v1/projects/%s/locations/%s/publishers/anthropic/models/%s:rawPredict",
-                    vertexRegion, vertexProjectId, vertexRegion, vertexModel);
+                    "https://%s/v1/projects/%s/locations/%s/publishers/anthropic/models/%s:rawPredict",
+                    host, vertexProjectId, vertexRegion, vertexModel);
         }
         String base = url != null ? url : DEFAULT_ANTHROPIC_URL;
         if (base.endsWith("/")) {
@@ -1391,7 +1730,13 @@ public class LlmClient {
 
         int inputTokens = getIntValue(response, "prompt_eval_count");
         int outputTokens = getIntValue(response, "eval_count");
-        TokenUsage usage = new TokenUsage(inputTokens, outputTokens, inputTokens + outputTokens);
+        TokenUsage usage = new TokenUsage(
+                inputTokens, outputTokens, inputTokens + outputTokens,
+                getIntValue(response, "prompt_eval_cached_count"),
+                getLongValue(response, "prompt_eval_duration") / 1_000_000,
+                getLongValue(response, "eval_duration") / 1_000_000,
+                getLongValue(response, "load_duration") / 1_000_000,
+                getLongValue(response, "total_duration") / 1_000_000);
 
         if (verbose) {
             printer.println("[verbose] Parsed Ollama: text=" + (content != null ? truncateVerbose(content) : "null")
@@ -1440,10 +1785,12 @@ public class LlmClient {
         int prompt = getIntValue(usage, "prompt_tokens");
         int completion = getIntValue(usage, "completion_tokens");
         int total = getIntValue(usage, "total_tokens");
+        int cached = usage.get("prompt_tokens_details") instanceof JsonObject details
+                ? getIntValue(details, "cached_tokens") : 0;
         if (total == 0) {
             total = prompt + completion;
         }
-        return new TokenUsage(prompt, completion, total);
+        return new TokenUsage(prompt, completion, total, cached, 0, 0);
     }
 
     private TokenUsage extractAnthropicUsage(JsonObject response) {
@@ -1453,13 +1800,21 @@ public class LlmClient {
         }
         int input = getIntValue(usage, "input_tokens");
         int output = getIntValue(usage, "output_tokens");
-        return new TokenUsage(input, output, input + output);
+        return new TokenUsage(input, output, input + output, getIntValue(usage, "cache_read_input_tokens"), 0, 0);
     }
 
     private static int getIntValue(JsonObject obj, String key) {
         Object val = obj.get(key);
         if (val instanceof Number n) {
             return n.intValue();
+        }
+        return 0;
+    }
+
+    private static long getLongValue(JsonObject obj, String key) {
+        Object val = obj.get(key);
+        if (val instanceof Number n) {
+            return n.longValue();
         }
         return 0;
     }
@@ -1791,7 +2146,17 @@ public class LlmClient {
             apiKey = key;
             openAiAuthMode = OpenAiAuthMode.bearer;
             if (url == null || url.isBlank()) {
-                url = "https://api.openai.com";
+                // LLM_BASE_URL / OPENAI_BASE_URL let users point at any OpenAI-compatible
+                // server (LM Studio, vLLM, LocalAI, Jan, …) without a CLI flag
+                String baseUrl = System.getenv("OPENAI_BASE_URL");
+                if (baseUrl == null || baseUrl.isBlank()) {
+                    // Only consult LLM_BASE_URL when the key came from LLM_API_KEY to avoid
+                    // redirecting a real OPENAI_API_KEY to an unintended server
+                    if (System.getenv("OPENAI_API_KEY") == null || System.getenv("OPENAI_API_KEY").isBlank()) {
+                        baseUrl = System.getenv("LLM_BASE_URL");
+                    }
+                }
+                url = (baseUrl != null && !baseUrl.isBlank()) ? stripTrailingSlash(baseUrl) : "https://api.openai.com";
             }
             return true;
         }
@@ -1917,6 +2282,33 @@ public class LlmClient {
                 .orElse(available.get(0));
     }
 
+    /**
+     * Whether the OpenAI-style endpoint is something other than OpenAI itself (LM Studio, vLLM, llama.cpp server,
+     * LocalAI and friends reached through {@code LLM_BASE_URL} / {@code OPENAI_BASE_URL}). Those servers only know the
+     * models they host, so OpenAI's default model name is rejected there.
+     */
+    private boolean isOpenAiCompatibleServer() {
+        return url != null && !url.contains("api.openai.com");
+    }
+
+    /**
+     * Picks the first model an OpenAI-compatible server reports on {@code /v1/models}, since a hard-coded OpenAI model
+     * name would be rejected with "model not found". Falls back to the OpenAI default when the list is empty or the
+     * endpoint does not implement it.
+     */
+    private String resolveOpenAiCompatibleModel() {
+        try {
+            List<String> available = listOpenAiModels();
+            if (!available.isEmpty()) {
+                printer.println("Auto-selected model: " + available.get(0) + " (first model reported by " + url + ")");
+                return available.get(0);
+            }
+        } catch (Exception e) {
+            // best-effort, keep default
+        }
+        return DEFAULT_OPENAI_MODEL;
+    }
+
     private void resolveOllamaModel() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -1944,7 +2336,7 @@ public class LlmClient {
             }
 
             List<String> preferred
-                    = List.of("qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo",
+                    = List.of("qwen3.6", "qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo",
                             "qwen2.5", "granite4.1", "llama3.1", "llama3.3", "mistral");
             for (String pref : preferred) {
                 for (String avail : available) {

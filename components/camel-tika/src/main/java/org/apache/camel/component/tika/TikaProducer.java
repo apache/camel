@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
@@ -35,13 +36,17 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.tika.config.TikaConfig;
+import org.apache.tika.config.loader.TikaLoader;
 import org.apache.tika.detect.Detector;
+import org.apache.tika.exception.TikaConfigException;
 import org.apache.tika.exception.TikaException;
+import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
-import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
@@ -53,7 +58,11 @@ public class TikaProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(TikaProducer.class);
 
+    private static final HeaderFilterStrategy HEADER_FILTER_STRATEGY = createHeaderFilterStrategy();
+
     private final TikaConfiguration tikaConfiguration;
+
+    private final TikaLoader tikaLoader;
 
     private final Parser parser;
 
@@ -69,13 +78,31 @@ public class TikaProducer extends DefaultProducer {
         super(endpoint);
         this.tikaConfiguration = endpoint.getTikaConfiguration();
         this.encoding = this.tikaConfiguration.getTikaParseOutputEncoding();
-        TikaConfig config = this.tikaConfiguration.getTikaConfig();
-        this.detector = config.getDetector();
-        if (parser == null) {
-            this.parser = new AutoDetectParser(this.tikaConfiguration.getTikaConfig());
-        } else {
-            this.parser = parser;
+        try {
+            this.tikaLoader = createTikaLoader(endpoint);
+            this.detector = tikaLoader.loadDetectors();
+            this.parser = parser == null ? tikaLoader.loadAutoDetectParser() : parser;
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
         }
+    }
+
+    private TikaLoader createTikaLoader(TikaEndpoint endpoint) throws TikaConfigException, IOException {
+        TikaLoader configuredLoader = tikaConfiguration.getTikaLoader();
+        if (configuredLoader != null) {
+            return configuredLoader;
+        }
+
+        ClassLoader classLoader = endpoint.getCamelContext().getApplicationContextClassLoader();
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
+        if (classLoader == null) {
+            classLoader = TikaProducer.class.getClassLoader();
+        }
+
+        String configFile = tikaConfiguration.getTikaConfigFile();
+        return configFile == null ? TikaLoader.loadDefault(classLoader) : TikaLoader.load(Path.of(configFile), classLoader);
     }
 
     @Override
@@ -98,25 +125,28 @@ public class TikaProducer extends DefaultProducer {
         exchange.getMessage().setBody(result);
     }
 
-    private Object doDetect(Exchange exchange) throws IOException {
+    private Object doDetect(Exchange exchange) throws IOException, TikaConfigException {
         MediaType result;
-        try (InputStream inputStream = exchange.getIn().getBody(InputStream.class)) {
-            Metadata metadata = new Metadata();
-            result = this.detector.detect(inputStream, metadata);
+        Metadata metadata = new Metadata();
+        ParseContext context = tikaLoader.loadParseContext();
+        try (InputStream stream = exchange.getIn().getBody(InputStream.class);
+             TikaInputStream inputStream = TikaInputStream.get(stream, metadata)) {
+            result = this.detector.detect(inputStream, metadata, context);
             convertMetadataToHeaders(metadata, exchange);
         }
         return result.toString();
     }
 
     private Object doParse(Exchange exchange)
-            throws TikaException, IOException, SAXException, TransformerConfigurationException {
+            throws TikaException, TikaConfigException, IOException, SAXException, TransformerConfigurationException {
 
         OutputStream result = new ByteArrayOutputStream();
-        try (InputStream inputStream = exchange.getIn().getBody(InputStream.class)) {
+        Metadata metadata = new Metadata();
+        try (InputStream stream = exchange.getIn().getBody(InputStream.class);
+             TikaInputStream inputStream = TikaInputStream.get(stream, metadata)) {
             ContentHandler contentHandler = getContentHandler(this.tikaConfiguration, result);
-            ParseContext context = new ParseContext();
+            ParseContext context = tikaLoader.loadParseContext();
             context.set(Parser.class, this.parser);
-            Metadata metadata = new Metadata();
             this.parser.parse(inputStream, contentHandler, metadata, context);
             convertMetadataToHeaders(metadata, exchange);
         }
@@ -127,11 +157,15 @@ public class TikaProducer extends DefaultProducer {
         if (metadata != null) {
             for (String metaname : metadata.names()) {
                 String[] values = metadata.getValues(metaname);
-                if (values.length == 1) {
-                    exchange.getIn().setHeader(metaname, values[0]);
-                } else {
-                    exchange.getIn().setHeader(metaname, values);
+                Object value = values.length == 1 ? values[0] : values;
+                // The names come out of the parsed document, so they are chosen by whoever produced it.
+                // Filter them the same way a consumer filters names supplied by an external sender, so a
+                // document cannot declare a metadata name that lands in the Camel-internal namespace.
+                if (HEADER_FILTER_STRATEGY.applyFilterToExternalHeaders(metaname, value, exchange)) {
+                    LOG.debug("Skipping parsed metadata {} as the name is in the Camel-internal namespace", metaname);
+                    continue;
                 }
+                exchange.getIn().setHeader(metaname, value);
             }
         }
     }
@@ -178,4 +212,13 @@ public class TikaProducer extends DefaultProducer {
 
         return handler;
     }
+
+    private static HeaderFilterStrategy createHeaderFilterStrategy() {
+        DefaultHeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();
+        // Match case-insensitively, and cover the fully qualified form as well as the Camel prefix
+        strategy.setLowerCase(true);
+        strategy.setInFilterStartsWith("Camel", "camel", "org.apache.camel.");
+        return strategy;
+    }
+
 }

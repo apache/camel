@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import org.slf4j.Logger;
@@ -28,6 +29,8 @@ import org.slf4j.LoggerFactory;
 public class ChatScriptBot {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ChatScriptBot.class);
+    private static final int CONNECT_TIMEOUT_MILLIS = 30000;
+    private static final int READ_TIMEOUT_MILLIS = 30000;
     String host;
     int port;
     String message;
@@ -64,7 +67,9 @@ public class ChatScriptBot {
     private String doMessage(String msg) throws Exception {
         String resp = "";
 
-        try (Socket echoSocket = new Socket(this.host, this.port)) {
+        try (Socket echoSocket = new Socket()) {
+            echoSocket.connect(new InetSocketAddress(this.host, this.port), CONNECT_TIMEOUT_MILLIS);
+            echoSocket.setSoTimeout(READ_TIMEOUT_MILLIS);
             try (PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true)) {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()))) {
                     out.println(msg);
@@ -92,6 +97,12 @@ public class ChatScriptBot {
     }
 
     public void reset() {
+        try {
+            doMessage(new ChatScriptMessage(this.userName, this.botName, ":reset").toCSFormat());
+            initialized = false;
+        } catch (Exception e) {
+            LOG.warn("Failed to reset the ChatScript conversation: {}", e.getMessage(), e);
+        }
     }
 
     public String getHost() {

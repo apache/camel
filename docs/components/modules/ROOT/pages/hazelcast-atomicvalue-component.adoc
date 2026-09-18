@@ -1,1 +1,0 @@
-../../../../../components/camel-hazelcast/src/main/docs/hazelcast-atomicvalue-component.adoc

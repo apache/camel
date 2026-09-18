@@ -125,8 +125,7 @@ public class Jt400Configuration {
     @Metadata(required = true)
     private String objectPath;
 
-    @UriPath
-    @Metadata(required = true)
+    // derived from the suffix of the object path by the component, not an option of its own
     private Jt400Type type;
 
     @UriParam
@@ -147,10 +146,16 @@ public class Jt400Configuration {
     @UriParam(label = "consumer", defaultValue = "EQ")
     private SearchType searchType = SearchType.EQ;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer",
+              description = "Specifies which fields (program parameters) are output parameters, as a comma-separated list of 0-based indexes.")
+    private String outputFieldsIdx;
+
+    @UriParam(label = "producer",
+              description = "Specifies the fields (program parameters) length as in the IBM i program definition, as a comma-separated list.")
+    private String fieldsLength;
+
     private Integer[] outputFieldsIdxArray;
 
-    @UriParam(label = "producer")
     private Integer[] outputFieldsLengthArray;
 
     @UriParam(label = "consumer", defaultValue = "30000")
@@ -187,7 +192,8 @@ public class Jt400Configuration {
     }
 
     /**
-     * Whether to work with data queues or remote program call
+     * Whether to work with a data queue, a message queue, a program or a service program. The component sets this from
+     * the suffix of the object path.
      */
     public void setType(Jt400Type type) {
         this.type = type;
@@ -227,7 +233,9 @@ public class Jt400Configuration {
     }
 
     /**
-     * Returns the fully qualified integrated file system path name of the target object of this endpoint.
+     * The integrated file system path of the target object, such as QSYS.LIB/MYLIB.LIB/MYQUEUE.DTAQ. The suffix of the
+     * object selects what the endpoint works with: .DTAQ a data queue, .MSGQ a message queue, .PGM a program call and
+     * .SRVPGM a service program call.
      */
     public String getObjectPath() {
         return objectPath;
@@ -411,23 +419,33 @@ public class Jt400Configuration {
         this.sendingReply = sendingReply;
     }
 
+    public String getOutputFieldsIdx() {
+        return outputFieldsIdx;
+    }
+
     public void setOutputFieldsIdx(String outputFieldsIdx) {
+        this.outputFieldsIdx = outputFieldsIdx;
         if (outputFieldsIdx != null) {
             String[] outputArray = outputFieldsIdx.split(",");
             outputFieldsIdxArray = new Integer[outputArray.length];
             for (int i = 0; i < outputArray.length; i++) {
-                String str = outputArray[i];
+                String str = outputArray[i].trim();
                 outputFieldsIdxArray[i] = Integer.parseInt(str);
             }
         }
     }
 
+    public String getFieldsLength() {
+        return fieldsLength;
+    }
+
     public void setFieldsLength(String fieldsLength) {
+        this.fieldsLength = fieldsLength;
         if (fieldsLength != null) {
             String[] outputArray = fieldsLength.split(",");
             outputFieldsLengthArray = new Integer[outputArray.length];
             for (int i = 0; i < outputArray.length; i++) {
-                String str = outputArray[i];
+                String str = outputArray[i].trim();
                 outputFieldsLengthArray[i] = Integer.parseInt(str);
             }
         }

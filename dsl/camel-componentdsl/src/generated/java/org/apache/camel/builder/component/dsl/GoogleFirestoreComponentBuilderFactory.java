@@ -179,6 +179,27 @@ public interface GoogleFirestoreComponentBuilderFactory {
         }
     
         /**
+         * Maximum number of realtime document changes buffered between two
+         * polls. The changes reported by the snapshot listener are buffered
+         * until the next poll picks them up, so a collection changing faster
+         * than the route consumes it makes that buffer grow. When the buffer is
+         * full the oldest buffered change is discarded and a warning is logged.
+         * Use 0 for an unbounded buffer. Only used when realtimeUpdates is
+         * enabled.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param maxPendingChanges the value to set
+         * @return the dsl builder
+         */
+        default GoogleFirestoreComponentBuilder maxPendingChanges(int maxPendingChanges) {
+            doSetProperty("maxPendingChanges", maxPendingChanges);
+            return this;
+        }
+    
+        /**
          * The document ID to use for document-specific operations.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -321,6 +342,7 @@ public interface GoogleFirestoreComponentBuilderFactory {
             case "serviceAccountKey": getOrCreateConfiguration((GoogleFirestoreComponent) component).setServiceAccountKey((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleFirestoreComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "realtimeUpdates": getOrCreateConfiguration((GoogleFirestoreComponent) component).setRealtimeUpdates((boolean) value); return true;
+            case "maxPendingChanges": getOrCreateConfiguration((GoogleFirestoreComponent) component).setMaxPendingChanges((int) value); return true;
             case "documentId": getOrCreateConfiguration((GoogleFirestoreComponent) component).setDocumentId((java.lang.String) value); return true;
             case "lazyStartProducer": ((GoogleFirestoreComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((GoogleFirestoreComponent) component).setOperation((org.apache.camel.component.google.firestore.GoogleFirestoreOperations) value); return true;

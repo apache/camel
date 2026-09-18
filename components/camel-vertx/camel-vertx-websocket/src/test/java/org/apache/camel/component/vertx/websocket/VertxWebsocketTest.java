@@ -105,8 +105,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
 
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -136,8 +135,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/paramA/other/paramB",
                         VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -168,8 +166,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/paramA/other/paramB",
                         VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -207,8 +204,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/wildcarded/path",
                         VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -245,8 +241,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test/wildcarded/path",
                         VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(2, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 2);
 
         String connectionKey = connectedPeers.keySet().iterator().next();
 
@@ -287,8 +282,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
 
         VertxWebsocketEndpoint endpoint
                 = context.getEndpoint("vertx-websocket:localhost:" + port + "/test", VertxWebsocketEndpoint.class);
-        Map<String, ServerWebSocket> connectedPeers = endpoint.findPeersForHostPort();
-        assertEquals(5, connectedPeers.size());
+        Map<String, ServerWebSocket> connectedPeers = awaitConnectedPeers(endpoint, 5);
 
         StringJoiner joiner = new StringJoiner(",");
         Iterator<String> iterator = connectedPeers.keySet().iterator();

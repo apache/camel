@@ -151,7 +151,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         executeUriEndpoint();
     }
 
-    private void executeUriEndpoint() {
+    private void executeUriEndpoint() throws MojoExecutionException {
         List<Class<?>> classes = new ArrayList<>();
         for (AnnotationInstance ai : getIndex().getAnnotations(URI_ENDPOINT)) {
             Class<?> classElement = loadClass(ai.target().asClass().name().toString());
@@ -195,7 +195,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private void processSchemas(
             Map<Class<?>, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label,
             String[] schemes,
-            String[] titles, String[] extendsSchemes) {
+            String[] titles, String[] extendsSchemes)
+            throws MojoExecutionException {
         for (int i = 0; i < schemes.length; i++) {
             final String alias = schemes[i];
             final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
@@ -262,7 +263,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected ComponentModel writeJSonSchemeAndPropertyConfigurer(
             Class<?> classElement, UriEndpoint uriEndpoint, String title,
             String scheme, String extendsScheme, String label,
-            String[] schemes, ComponentModel parentData) {
+            String[] schemes, ComponentModel parentData)
+            throws MojoExecutionException {
         // gather component information
         ComponentModel componentModel
                 = findComponentProperties(uriEndpoint, classElement, title, scheme, extendsScheme, label, schemes);
@@ -407,6 +409,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 getLog().debug(String.format("The field %s in class %s has no Metadata", field.getName(),
                         field.getDeclaringClass().getName()));
             }
+            return false;
+        }
+        if (metadata.skip()) {
             return false;
         }
         final String[] applicableFor = metadata.applicableFor();
@@ -578,7 +583,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * Used for enhancing the component model with apiProperties for API based components (such as twilio, olingo and
      * others)
      */
-    private void enhanceComponentModelWithApiModel(ComponentModel componentModel) {
+    private void enhanceComponentModelWithApiModel(ComponentModel componentModel) throws MojoExecutionException {
         for (AnnotationInstance ai : getIndex().getAnnotations(API_PARAMS)) {
             Class<?> classElement = loadClass(ai.target().asClass().name().toString());
             final ApiParams apiParams = classElement.getAnnotation(ApiParams.class);
@@ -817,7 +822,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     protected ComponentModel findComponentProperties(
             UriEndpoint uriEndpoint, Class<?> endpointClassElement, String title, String scheme,
-            String extendsScheme, String label, String[] schemes) {
+            String extendsScheme, String label, String[] schemes)
+            throws MojoExecutionException {
         ComponentModel model = new ComponentModel();
         model.setScheme(scheme);
         model.setName(scheme);
@@ -854,6 +860,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         if (!Strings.isNullOrEmpty(firstVersion)) {
             model.setFirstVersion(firstVersion);
+        }
+
+        // aliases (protocol or product names people use for the component) come from @Metadata on the endpoint class
+        Metadata endpointMetadata = endpointClassElement.getAnnotation(Metadata.class);
+        if (endpointMetadata != null && endpointMetadata.aliases().length > 0) {
+            model.setAliases(new ArrayList<>(Arrays.asList(endpointMetadata.aliases())));
         }
 
         model.setDescription(project.getDescription());
@@ -1280,11 +1292,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     }
 
                     // if the field type is a nested parameter then iterate
-                    // through its fields
+                    // through its fields (unless the option declares its javaType: then it is a
+                    // reference to such a bean, not a nested set of options)
                     Class<?> fieldTypeElement = fieldElement.getType();
                     String fieldTypeName = getTypeName(GenericsUtil.resolveType(orgClassElement, fieldElement));
                     UriParams fieldParams = fieldTypeElement.getAnnotation(UriParams.class);
-                    if (fieldParams != null) {
+                    if (fieldParams != null && Strings.isNullOrEmpty(param.javaType())) {
                         String nestedPrefix = prefix;
                         String extraPrefix = fieldParams.prefix();
                         if (!Strings.isNullOrEmpty(extraPrefix)) {
@@ -1775,9 +1788,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
     }
 
-    private IndexView getIndex() {
+    private IndexView getIndex() throws MojoExecutionException {
         if (indexView == null) {
-            indexView = PackagePluginUtils.readJandexIndexQuietly(project);
+            indexView = PackagePluginUtils.readJandexIndex(project);
         }
 
         return indexView;

@@ -242,7 +242,7 @@ public interface IBMSecretsManagerEndpointBuilderFactory {
             return "CamelIbmSecretsManagerProducerOperation";
         }
         /**
-         * Set the desired secret path as header.
+         * Set the desired secret name as header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -267,7 +267,7 @@ public interface IBMSecretsManagerEndpointBuilderFactory {
             return "CamelIbmSecretsManagerSecretVersion";
         }
         /**
-         * Set the desired secret version as header.
+         * Set the desired secret ID as header.
          * 
          * The option is a: {@code String} type.
          * 

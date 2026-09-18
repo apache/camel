@@ -185,10 +185,10 @@ XML::
 ----
 <onException>
     <exception>com.foo.MyUserException</exception>
-    <redeliveryPolicy maximumRedeliveries="1" redeliveryDelay="0"/>
     <onWhen>
         <simple>${header.user} != null</simple>
     </onWhen>
+    <redeliveryPolicy maximumRedeliveries="1" redeliveryDelay="0"/>
     <to uri="mock:error"/>
 </onException>
 
@@ -206,14 +206,12 @@ YAML::
 - onException:
     exception:
       - com.foo.MyUserException
+    redeliveryPolicy:
+      maximumRedeliveries: 1
+      redeliveryDelay: 0
+    onWhen:
+      simple: "${header.user} != null"
     steps:
-      - redeliveryPolicy:
-          maximumRedeliveries: 1
-          redeliveryDelay: 0
-      - onWhen:
-          expression:
-            simple:
-              expression: "${header.user} != null"
       - to:
           uri: mock:error
 - onException:
@@ -282,8 +280,8 @@ In XML then you refer to the redelivery process using `onRedeliveryRef` which is
 [source,xml]
 ----
 <onException onRedeliveryRef="myIORedeliverProcessor">
-    <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0"/>
     <exception>java.io.IOException</exception>
+    <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0"/>
 </onException>
 ----
 

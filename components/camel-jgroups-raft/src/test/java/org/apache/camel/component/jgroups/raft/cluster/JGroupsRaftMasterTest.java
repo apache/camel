@@ -71,18 +71,20 @@ public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
         Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
 
         contextA.stop();
-        waitForLeader(50, handleA, handleB, handleC);
+        chA.close();
+        waitForLeader(50, handleB, handleC);
         Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
 
         contextB.stop();
-        JGroupsRaftClusterService service = new JGroupsRaftClusterService();
-        service.setId("A");
-        service.setRaftId("A");
-        service.setRaftHandle(handleA);
-        service.setJgroupsClusterName("JGroupsRaftMasterTest");
-        contextA.addService(service);
+        chB.close();
+        waitForViewSize(chC, 1, 30);
+        // Create a completely new channel, handle and context for A
+        chA = new JChannel("raftABC.xml").name("A");
+        handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
+        contextA = createContext("A", handleA);
+        lcc.set(0, contextA);
         contextA.start();
-        waitForLeader(50, handleA, handleB, handleC);
+        waitForLeader(50, handleA, handleC);
         Awaitility.await().untilAsserted(() -> assertEquals(1, countActiveFromEndpoints(lcc, rn)));
     }
 

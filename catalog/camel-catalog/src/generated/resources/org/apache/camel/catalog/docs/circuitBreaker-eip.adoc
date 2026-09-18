@@ -34,6 +34,54 @@ include::partial$eip-options.adoc[]
 include::partial$eip-exchangeProperties.adoc[]
 // eip exchangeProperties: END
 
+Inside the `onFallback` these properties tell why the fallback runs. `CamelCircuitBreakerResponseFromFallback`
+and `CamelCircuitBreakerResponseShortCircuited` are `true` whenever the fallback runs, whatever the cause. To know
+what happened to the call itself:
+
+[width="100%",cols="3,1,1",options="header"]
+|===
+| What happened | `CamelCircuitBreakerResponseRejected` | `CamelCircuitBreakerResponseTimedOut`
+| The call was made and failed | `false` | not set
+| The call was made and timed out | `false` | `true`
+| The call was not attempted: the breaker is open, or the bulkhead is full | `true` | not set
+|===
+
+`CamelCircuitBreakerState` is the state of the breaker after the call was recorded, so the call that opens the
+breaker reports `OPEN` although it was attempted; use the rejected property to know whether a call was made.
+The caught exception is available in the fallback, for example as `${exception.message}` in the Simple language.
+
+For example, a fallback that answers differently when the service is down rather than failing once:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:stock?period=1000
+      steps:
+        - circuitBreaker:
+            steps:
+              - to:
+                  uri: direct:supplier
+            onFallback:
+              steps:
+                - choice:
+                    when:
+                      - expression:
+                          simple:
+                            expression: "${exchangeProperty.CamelCircuitBreakerResponseRejected} == true"
+                        steps:
+                          - setBody:
+                              expression:
+                                constant:
+                                  expression: "supplier is down, using the last known stock"
+                    otherwise:
+                      steps:
+                        - setBody:
+                            expression:
+                              constant:
+                                expression: "stock check failed, will try again"
+----
+
 == Example
 
 Below is an example route showing a circuit breaker endpoint that protects against
@@ -86,12 +134,12 @@ YAML::
             steps:
               - to:
                   uri: http://fooservice.com/slow
-              - onFallback:
-                  steps:
-                    - transform:
-                        expression:
-                          constant:
-                            expression: Fallback message
+            onFallback:
+              steps:
+                - transform:
+                    expression:
+                      constant:
+                        expression: Fallback message
         - to:
             uri: mock:result
 ----

@@ -87,6 +87,20 @@ public interface ComponentsBuilderFactory {
         return Activemq6ComponentBuilderFactory.activemq6();
     }
     /**
+     * AI Resource (camel-ai-resource)
+     * Framework-agnostic consumer endpoint that registers a Camel route as a
+     * read-only AI resource in the shared AiResourceRegistry.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-ai-resource
+     * 
+     * @return the dsl builder
+     */
+    static AiResourceComponentBuilderFactory.AiResourceComponentBuilder aiResource() {
+        return AiResourceComponentBuilderFactory.aiResource();
+    }
+    /**
      * AI Tool (camel-ai-tool)
      * Framework-agnostic consumer endpoint that registers a Camel route as an
      * LLM tool in the shared AiToolRegistry.
@@ -99,6 +113,111 @@ public interface ComponentsBuilderFactory {
      */
     static AiToolComponentBuilderFactory.AiToolComponentBuilder aiTool() {
         return AiToolComponentBuilderFactory.aiTool();
+    }
+    /**
+     * Alibaba EventBridge (camel-alibaba-eventbridge)
+     * Publish events to Alibaba Cloud EventBridge.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-eventbridge
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaEventbridgeComponentBuilderFactory.AlibabaEventbridgeComponentBuilder alibabaEventbridge() {
+        return AlibabaEventbridgeComponentBuilderFactory.alibabaEventbridge();
+    }
+    /**
+     * Alibaba Function Compute (FC) (camel-alibaba-fc)
+     * Invoke serverless functions on Alibaba Cloud Function Compute (FC).
+     * 
+     * Category: cloud,serverless
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-fc
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaFcComponentBuilderFactory.AlibabaFcComponentBuilder alibabaFc() {
+        return AlibabaFcComponentBuilderFactory.alibabaFc();
+    }
+    /**
+     * Alibaba Key Management Service (KMS) (camel-alibaba-kms)
+     * Encrypt and decrypt data using Alibaba Cloud Key Management Service
+     * (KMS).
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-kms
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaKmsComponentBuilderFactory.AlibabaKmsComponentBuilder alibabaKms() {
+        return AlibabaKmsComponentBuilderFactory.alibabaKms();
+    }
+    /**
+     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-mns
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaMnsComponentBuilderFactory.AlibabaMnsComponentBuilder alibabaMns() {
+        return AlibabaMnsComponentBuilderFactory.alibabaMns();
+    }
+    /**
+     * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
+     * Alibaba Cloud Object Storage Service (OSS) component
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-oss
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaOssComponentBuilderFactory.AlibabaOssComponentBuilder alibabaOss() {
+        return AlibabaOssComponentBuilderFactory.alibabaOss();
+    }
+    /**
+     * Alibaba Tablestore (OTS) (camel-alibaba-ots)
+     * Perform row operations on Alibaba Cloud Tablestore (OTS).
+     * 
+     * Category: cloud,database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-ots
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaOtsComponentBuilderFactory.AlibabaOtsComponentBuilder alibabaOts() {
+        return AlibabaOtsComponentBuilderFactory.alibabaOts();
+    }
+    /**
+     * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
+     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * 
+     * Category: cloud,monitoring
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sls
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaSlsComponentBuilderFactory.AlibabaSlsComponentBuilder alibabaSls() {
+        return AlibabaSlsComponentBuilderFactory.alibabaSls();
+    }
+    /**
+     * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
+     * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sms
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaSmsComponentBuilderFactory.AlibabaSmsComponentBuilder alibabaSms() {
+        return AlibabaSmsComponentBuilderFactory.alibabaSms();
     }
     /**
      * AMQP (camel-amqp)
@@ -1377,19 +1496,6 @@ public interface ComponentsBuilderFactory {
         return Dhis2ComponentBuilderFactory.dhis2();
     }
     /**
-     * DigitalOcean (camel-digitalocean)
-     * Manage Droplets and resources within the DigitalOcean cloud.
-     * 
-     * Category: cloud,management
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-digitalocean
-     * 
-     * @return the dsl builder
-     */
-    static DigitaloceanComponentBuilderFactory.DigitaloceanComponentBuilder digitalocean() {
-        return DigitaloceanComponentBuilderFactory.digitalocean();
-    }
-    /**
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
      * 
@@ -2068,20 +2174,6 @@ public interface ComponentsBuilderFactory {
         return HashicorpVaultComponentBuilderFactory.hashicorpVault();
     }
     /**
-     * Hazelcast Atomic Number (camel-hazelcast)
-     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
-     * number).
-     * 
-     * Category: cache,clustering
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * @return the dsl builder
-     */
-    static HazelcastAtomicvalueComponentBuilderFactory.HazelcastAtomicvalueComponentBuilder hazelcastAtomicvalue() {
-        return HazelcastAtomicvalueComponentBuilderFactory.hazelcastAtomicvalue();
-    }
-    /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
@@ -2225,6 +2317,19 @@ public interface ComponentsBuilderFactory {
      */
     static HazelcastTopicComponentBuilderFactory.HazelcastTopicComponentBuilder hazelcastTopic() {
         return HazelcastTopicComponentBuilderFactory.hazelcastTopic();
+    }
+    /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     * 
+     * @return the dsl builder
+     */
+    static HivemqComponentBuilderFactory.HivemqComponentBuilder hivemq() {
+        return HivemqComponentBuilderFactory.hivemq();
     }
     /**
      * HTTP (camel-http)
@@ -2470,34 +2575,6 @@ public interface ComponentsBuilderFactory {
         return IbmWatsonxDataComponentBuilderFactory.ibmWatsonxData();
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder
-     */
-    static Iec60870ClientComponentBuilderFactory.Iec60870ClientComponentBuilder iec60870Client() {
-        return Iec60870ClientComponentBuilderFactory.iec60870Client();
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder
-     */
-    static Iec60870ServerComponentBuilderFactory.Iec60870ServerComponentBuilder iec60870Server() {
-        return Iec60870ServerComponentBuilderFactory.iec60870Server();
-    }
-    /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
      * 
@@ -2683,33 +2760,6 @@ public interface ComponentsBuilderFactory {
         return Influxdb2ComponentBuilderFactory.influxdb2();
     }
     /**
-     * IRC (camel-irc)
-     * Send and receive messages to/from an IRC chat.
-     * 
-     * Category: chat
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-irc
-     * 
-     * @return the dsl builder
-     */
-    static IrcComponentBuilderFactory.IrcComponentBuilder irc() {
-        return IrcComponentBuilderFactory.irc();
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * @return the dsl builder
-     */
-    static IronmqComponentBuilderFactory.IronmqComponentBuilder ironmq() {
-        return IronmqComponentBuilderFactory.ironmq();
-    }
-    /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 
@@ -2878,19 +2928,6 @@ public interface ComponentsBuilderFactory {
      */
     static JsltComponentBuilderFactory.JsltComponentBuilder jslt() {
         return JsltComponentBuilderFactory.jslt();
-    }
-    /**
-     * JsonPatch (camel-json-patch)
-     * Transforms JSON using JSON patch (RFC 6902).
-     * 
-     * Category: transformation
-     * Since: 3.12
-     * Maven coordinates: org.apache.camel:camel-json-patch
-     * 
-     * @return the dsl builder
-     */
-    static JsonPatchComponentBuilderFactory.JsonPatchComponentBuilder jsonPatch() {
-        return JsonPatchComponentBuilderFactory.jsonPatch();
     }
     /**
      * JSON Schema Validator (camel-json-validator)
@@ -3310,17 +3347,18 @@ public interface ComponentsBuilderFactory {
         return Langchain4jEmbeddingstoreComponentBuilderFactory.langchain4jEmbeddingstore();
     }
     /**
-     * LangChain4j Tools (camel-langchain4j-tools)
-     * LangChain4j Tools and Function Calling Features
+     * LangChain4j Ingest (camel-langchain4j-ingest)
+     * Ingest documents into a LangChain4j EmbeddingStore: split, embed and
+     * store the message body.
      * 
      * Category: ai
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-langchain4j-ingest
      * 
      * @return the dsl builder
      */
-    static Langchain4jToolsComponentBuilderFactory.Langchain4jToolsComponentBuilder langchain4jTools() {
-        return Langchain4jToolsComponentBuilderFactory.langchain4jTools();
+    static Langchain4jIngestComponentBuilderFactory.Langchain4jIngestComponentBuilder langchain4jIngest() {
+        return Langchain4jIngestComponentBuilderFactory.langchain4jIngest();
     }
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
@@ -3802,6 +3840,20 @@ public interface ComponentsBuilderFactory {
         return OnceComponentBuilderFactory.once();
     }
     /**
+     * OPA (camel-opa)
+     * Evaluate Open Policy Agent (Rego) policies against an Exchange and record
+     * the allow/deny decision on it.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-opa
+     * 
+     * @return the dsl builder
+     */
+    static OpaComponentBuilderFactory.OpaComponentBuilder opa() {
+        return OpaComponentBuilderFactory.opa();
+    }
+    /**
      * OpenAI (camel-openai)
      * LLM endpoint for chat completion, Responses API, embeddings, audio
      * transcription, audio translation, and text-to-speech using
@@ -4268,6 +4320,19 @@ public interface ComponentsBuilderFactory {
         return RestOpenapiComponentBuilderFactory.restOpenapi();
     }
     /**
+     * REST Postman (camel-rest-postman)
+     * To call and expose REST services using a Postman Collection as contract.
+     * 
+     * Category: rest,api
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-rest-postman
+     * 
+     * @return the dsl builder
+     */
+    static RestPostmanComponentBuilderFactory.RestPostmanComponentBuilder restPostman() {
+        return RestPostmanComponentBuilderFactory.restPostman();
+    }
+    /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
      * 
@@ -4601,17 +4666,18 @@ public interface ComponentsBuilderFactory {
         return SolrComponentBuilderFactory.solr();
     }
     /**
-     * Splunk (camel-splunk)
-     * Publish or search for events in Splunk.
+     * SPIFFE (camel-spiffe)
+     * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
+     * from the SPIFFE Workload API.
      * 
-     * Category: iot,monitoring
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-splunk
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-spiffe
      * 
      * @return the dsl builder
      */
-    static SplunkComponentBuilderFactory.SplunkComponentBuilder splunk() {
-        return SplunkComponentBuilderFactory.splunk();
+    static SpiffeComponentBuilderFactory.SpiffeComponentBuilder spiffe() {
+        return SpiffeComponentBuilderFactory.spiffe();
     }
     /**
      * Splunk HEC (camel-splunk-hec)
@@ -4808,6 +4874,20 @@ public interface ComponentsBuilderFactory {
      */
     static SshComponentBuilderFactory.SshComponentBuilder ssh() {
         return SshComponentBuilderFactory.ssh();
+    }
+    /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable KeyValueRepository
+     * backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * @return the dsl builder
+     */
+    static StateStoreComponentBuilderFactory.StateStoreComponentBuilder stateStore() {
+        return StateStoreComponentBuilderFactory.stateStore();
     }
     /**
      * StAX (camel-stax)
@@ -5334,20 +5414,6 @@ public interface ComponentsBuilderFactory {
      */
     static XsltSaxonComponentBuilderFactory.XsltSaxonComponentBuilder xsltSaxon() {
         return XsltSaxonComponentBuilderFactory.xsltSaxon();
-    }
-    /**
-     * Zeebe (camel-zeebe)
-     * Zeebe component which integrates with Camunda Zeebe to interact with the
-     * API.
-     * 
-     * Category: workflow,saas
-     * Since: 3.21
-     * Maven coordinates: org.apache.camel:camel-zeebe
-     * 
-     * @return the dsl builder
-     */
-    static ZeebeComponentBuilderFactory.ZeebeComponentBuilder zeebe() {
-        return ZeebeComponentBuilderFactory.zeebe();
     }
     /**
      * Zendesk (camel-zendesk)

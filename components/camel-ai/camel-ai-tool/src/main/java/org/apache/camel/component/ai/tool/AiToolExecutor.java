@@ -151,11 +151,28 @@ public final class AiToolExecutor {
 
             String result = exchange.getMessage().getBody(String.class);
             LOG.debug("Tool '{}' execution completed successfully", toolName);
-            return new AiToolResult.Success(result != null ? result : "No result");
+            return buildSuccessResult(spec, exchange, result);
         } catch (Exception e) {
             LOG.error("Error executing tool '{}': {}", toolName, e.getMessage(), e);
             return new AiToolResult.ExecutionError(
                     String.format("Error executing tool '%s': %s", toolName, e.getMessage()), e);
+        }
+    }
+
+    private static AiToolResult buildSuccessResult(AiToolSpec spec, Exchange exchange, String stringBody) {
+        String outputSchema = spec.getOutputJsonSchema();
+        if (outputSchema == null || outputSchema.isBlank()) {
+            return new AiToolResult.Success(stringBody != null ? stringBody : "No result");
+        }
+
+        Object body = exchange.getMessage().getBody();
+        try {
+            Object structured = AiToolParameterHelper.parseStructuredOutput(body);
+            String text = AiToolParameterHelper.structuredContentToText(structured, body);
+            return new AiToolResult.Success(text, structured);
+        } catch (IllegalArgumentException e) {
+            return new AiToolResult.ExecutionError(
+                    String.format("Error executing tool '%s': %s", spec.getName(), e.getMessage()), e);
         }
     }
 }

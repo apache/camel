@@ -38,6 +38,13 @@ public class SmooksDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(required = true, description = "Path to the Smooks configuration file.")
     private String smooksConfig;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "false", label = "security",
+              description = "Whether to allow the XML reader used by Smooks to resolve external XML entities (external"
+                            + " general and parameter entities) when parsing XML input. This is disabled by default so"
+                            + " that external entities in the message body are not resolved; enable it only for trusted"
+                            + " legacy configurations that rely on external entity resolution.")
+    private String allowExternalEntities;
 
     public SmooksDataFormat() {
         super("smooks");
@@ -46,11 +53,13 @@ public class SmooksDataFormat extends DataFormatDefinition {
     protected SmooksDataFormat(SmooksDataFormat source) {
         super(source);
         this.smooksConfig = source.smooksConfig;
+        this.allowExternalEntities = source.allowExternalEntities;
     }
 
     private SmooksDataFormat(Builder builder) {
         this();
         this.smooksConfig = builder.smooksConfig;
+        this.allowExternalEntities = builder.allowExternalEntities;
     }
 
     @Override
@@ -66,6 +75,14 @@ public class SmooksDataFormat extends DataFormatDefinition {
         return smooksConfig;
     }
 
+    public void setAllowExternalEntities(String allowExternalEntities) {
+        this.allowExternalEntities = allowExternalEntities;
+    }
+
+    public String getAllowExternalEntities() {
+        return allowExternalEntities;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link SmooksDataFormat}.
      */
@@ -73,12 +90,35 @@ public class SmooksDataFormat extends DataFormatDefinition {
     public static class Builder implements DataFormatBuilder<SmooksDataFormat> {
 
         private String smooksConfig;
+        private String allowExternalEntities;
 
         /**
          * Path to the Smooks configuration file.
          */
         public Builder smooksConfig(String smooksConfig) {
             this.smooksConfig = smooksConfig;
+            return this;
+        }
+
+        /**
+         * Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and
+         * parameter entities) when parsing XML input. This is disabled by default so that external entities in the
+         * message body are not resolved; enable it only for trusted legacy configurations that rely on external entity
+         * resolution.
+         */
+        public Builder allowExternalEntities(String allowExternalEntities) {
+            this.allowExternalEntities = allowExternalEntities;
+            return this;
+        }
+
+        /**
+         * Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and
+         * parameter entities) when parsing XML input. This is disabled by default so that external entities in the
+         * message body are not resolved; enable it only for trusted legacy configurations that rely on external entity
+         * resolution.
+         */
+        public Builder allowExternalEntities(boolean allowExternalEntities) {
+            this.allowExternalEntities = Boolean.toString(allowExternalEntities);
             return this;
         }
 

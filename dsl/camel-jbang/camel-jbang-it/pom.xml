@@ -34,7 +34,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.test.skip>true</maven.test.skip>
+        <skipITs>true</skipITs>
     </properties>
 
     <dependencyManagement>
@@ -212,7 +212,7 @@
                 <cli.jbang.docker.file/>
                 <cli.service.command>camel</cli.service.command>
                 <export.runtime/>
-                <maven.test.skip>false</maven.test.skip>
+                <skipITs>false</skipITs>
                 <shared.data.folder>target/data</shared.data.folder>
                 <shared.maven.local.repo>${settings.localRepository}</shared.maven.local.repo>
                 <failsafe.forkCount>1C</failsafe.forkCount>

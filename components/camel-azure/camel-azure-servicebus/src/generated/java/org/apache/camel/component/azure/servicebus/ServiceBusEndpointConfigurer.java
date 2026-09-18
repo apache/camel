@@ -52,6 +52,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxAutoLockRenewDuration": target.getConfiguration().setMaxAutoLockRenewDuration(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "maxconcurrentcalls":
         case "maxConcurrentCalls": target.getConfiguration().setMaxConcurrentCalls(property(camelContext, int.class, value)); return true;
+        case "maxconcurrentsessions":
+        case "maxConcurrentSessions": target.getConfiguration().setMaxConcurrentSessions(property(camelContext, int.class, value)); return true;
         case "prefetchcount":
         case "prefetchCount": target.getConfiguration().setPrefetchCount(property(camelContext, int.class, value)); return true;
         case "processorclient":
@@ -121,6 +123,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxAutoLockRenewDuration": return long.class;
         case "maxconcurrentcalls":
         case "maxConcurrentCalls": return int.class;
+        case "maxconcurrentsessions":
+        case "maxConcurrentSessions": return int.class;
         case "prefetchcount":
         case "prefetchCount": return int.class;
         case "processorclient":
@@ -186,6 +190,8 @@ public class ServiceBusEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxAutoLockRenewDuration": return target.getConfiguration().getMaxAutoLockRenewDuration();
         case "maxconcurrentcalls":
         case "maxConcurrentCalls": return target.getConfiguration().getMaxConcurrentCalls();
+        case "maxconcurrentsessions":
+        case "maxConcurrentSessions": return target.getConfiguration().getMaxConcurrentSessions();
         case "prefetchcount":
         case "prefetchCount": return target.getConfiguration().getPrefetchCount();
         case "processorclient":

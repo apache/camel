@@ -33,6 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 
 public class MessageTimestampRouter {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     public void process(
             @ExchangeProperty("topicFormat") String topicFormat, @ExchangeProperty("timestampFormat") String timestampFormat,
             @ExchangeProperty("timestampKeys") String timestampKeys,
@@ -45,10 +47,9 @@ public class MessageTimestampRouter {
         final SimpleDateFormat fmt = new SimpleDateFormat(timestampFormat);
         fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        ObjectMapper mapper = new ObjectMapper();
         List<String> splittedKeys = new ArrayList<>();
         JsonNode jsonNodeBody = ex.getMessage().getBody(JsonNode.class);
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
+        Map<Object, Object> body = OBJECT_MAPPER.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
         });
         if (ObjectHelper.isNotEmpty(timestampKeys)) {
             splittedKeys = Arrays.stream(timestampKeys.split(",")).collect(Collectors.toList());

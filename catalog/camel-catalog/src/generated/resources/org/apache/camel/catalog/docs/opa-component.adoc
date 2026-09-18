@@ -1,0 +1,363 @@
+= OPA Component
+:doctitle: OPA
+:shortname: opa
+:artifactid: camel-opa
+:description: Evaluate Open Policy Agent (Rego) policies against an Exchange and record the allow/deny decision on it.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The OPA component turns a Camel route into a Policy Enforcement Point (PEP) in front of
+https://www.openpolicyagent.org/[Open Policy Agent], the CNCF policy engine whose policies are written in Rego.
+Camel builds an `input` document out of the Exchange, OPA evaluates the policy against it, and the resulting
+decision is recorded on the Exchange.
+
+This keeps authorization *out* of the route: the rules live in Rego and can be updated, versioned and tested
+independently of the integration, instead of being hand-coded in a processor.
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-opa</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI Format
+
+------------------------------------------------------------
+opa:policyPath[?options]
+------------------------------------------------------------
+
+Where `policyPath` is the path of the Rego rule head to evaluate, relative to the OPA data document. For a rule
+named `allow` in a policy declaring `package authz.orders`, the path is `authz/orders/allow`, which OPA serves at
+`/v1/data/authz/orders/allow`.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+The component is used in one of two ways, depending on whether a denied message should be filtered out or should
+stop the route.
+
+=== As a producer, deciding with a filter
+
+The producer evaluates the policy and records the verdict in the `CamelOpaDecisionAllow` header, leaving the
+message body untouched. The route then decides what to do with it:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .to("opa:authz/orders/allow")
+    .filter(header(OpaConstants.DECISION_ALLOW).isEqualTo(true))
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+This is the right shape when a denied message is simply not routed further, or when the route wants to inspect
+the full decision document — a policy that returns obligations, row filters or deny reasons rather than a plain
+boolean puts them in the `CamelOpaDecision` header.
+
+=== As a security policy, enforcing on a route segment
+
+`OpaSecurityPolicy` is an `AuthorizationPolicy`, so it can wrap part of a route. A deny throws a
+`CamelAuthorizationException` and the wrapped part never runs, which makes it composable with `onException`:
+
+[source,java]
+------------------------------------------------------------
+OpaSecurityPolicy opaPolicy = new OpaSecurityPolicy("http://localhost:8181", "authz/orders/allow");
+
+from("platform-http:/orders")
+    .policy(opaPolicy)
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+The decision headers are set here too, so an `onException(CamelAuthorizationException.class)` handler can read
+`CamelOpaDecision` to build a meaningful error response.
+
+== The input document
+
+Camel sends OPA an `input` document shaped like this:
+
+[source,json]
+------------------------------------------------------------
+{
+  "headers": { "user": "alice", "CamelHttpMethod": "POST" },
+  "properties": { "CamelKeycloakTokenSubject": "alice" },
+  "body": "...",
+  "exchangeId": "1767DC33923810E-0000000000000000",
+  "routeId": "orders"
+}
+------------------------------------------------------------
+
+so a policy reads it as:
+
+[source,rego]
+------------------------------------------------------------
+package authz.orders
+
+default allow := false
+
+allow if {
+    input.headers.CamelHttpMethod == "GET"
+}
+------------------------------------------------------------
+
+The component's integration test runs a real OPA server against
+https://github.com/apache/camel/blob/main/components/camel-opa/src/test/resources/authz.rego[`authz.rego`],
+which is a worked example of both a plain boolean rule and a decision object with deny reasons; `OpaIT`
+alongside it shows the matching routes end to end.
+
+`headers` carries every message header by default, with one exception: the headers that carry a caller credential
+verbatim — `Authorization`, `Proxy-Authorization`, `Cookie` and `Set-Cookie` — are *withheld* from the wildcard.
+OPA's decision logging ships the whole `input` document, frequently to a remote collector, so the wildcard should
+not quietly export credentials off the box. A policy that genuinely needs one can still have it by naming the
+header: `includeHeaders=Authorization,user` sends it. Matching is case-insensitive, so `authorization` is withheld
+too. Set `includeHeaders` to a comma-separated list of names when the policy only needs a few of them.
+
+Prefer `includeProperties` for identity: a token that an earlier step has already *verified* belongs there, as
+<<authorizing-an-identity>> describes, rather than handing the raw credential to the policy to re-check.
+
+`body` is *not* sent unless `includeBody` is enabled: bodies can be large or streaming, and most authorization
+decisions do not need them. When you do enable it on a streaming body, enable stream caching so the body is still
+readable by the rest of the route.
+
+`properties` is empty unless you ask for it — see <<authorizing-an-identity>> below.
+
+Header and body values that are not JSON-native are converted to their string form. That conversion is
+shallow: a `Map` or `List` value is passed through as-is, so anything non-JSON-native nested inside it is left
+for the OPA SDK's serializer to render. A policy that reads nested structures should not assume the same string
+conversion applies at depth.
+
+The component's own `CamelOpa*` decision headers are never sent back to OPA, so a policy cannot be shown a
+verdict that an inbound message claimed for itself.
+
+== Reading the verdict
+
+`CamelOpaDecision` holds the decision document exactly as OPA returned it. `CamelOpaDecisionAllow` holds the
+boolean verdict read out of it:
+
+* a decision that *is* a boolean is the verdict;
+* a decision that is an object is searched for the `allowKey` entry (`allow` by default), which must itself be a
+  boolean. `allowKey` accepts a dotted path, so `allowKey=result.allow` reads a verdict nested inside the document
+  as `{"result": {"allow": true}}`;
+* anything else cannot be read as a verdict and counts as a deny, with the raw document still available for the
+  route to inspect. That case is logged at WARN rather than DEBUG: a document that arrived but could not be read is
+  a configuration problem, and from `CamelOpaDecisionAllow` alone it is indistinguishable from a genuine denial.
+
+Both headers are written on every evaluation, so a verdict set by an inbound message never survives into the
+route.
+
+[#authorizing-an-identity]
+== Authorizing an identity
+
+The component decides; it does not authenticate. Establish who the caller is first, then let the policy authorize
+the identity that step produced.
+
+The catch is that Camel's authentication components deliberately keep the identity they verified in *exchange
+properties* rather than in headers — `camel-keycloak` stores the access token and its subject that way and its
+`preferPropertyOverHeader` option defaults to `true`, precisely because a header can be set by the caller. So the
+identity you want to authorize is usually not in the header map.
+
+Name those properties in `includeProperties` and they arrive in the input document under `properties`:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .policy(keycloakPolicy)                                  // authenticates, stores the subject as a property
+    .to("opa:authz/orders/allow?includeProperties=CamelKeycloakTokenSubject")
+    .filter(header(OpaConstants.DECISION_ALLOW).isEqualTo(true))
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+and the policy reads them the same way it reads headers:
+
+[source,rego]
+------------------------------------------------------------
+allow if {
+    input.properties.CamelKeycloakTokenSubject == "alice"
+}
+------------------------------------------------------------
+
+`includeProperties` takes a comma-separated list, or `+*+` for all of them, and matches names case-insensitively.
+Unlike `includeHeaders` it is *empty by default*: exchange properties are mostly used to carry state between
+processors, so sending them all would be noise the policy has to wade through. Only custom properties are sent —
+Camel's own internal exchange properties are never included.
+
+Prefer this over copying the identity into a header before the `opa:` endpoint. A header is exactly the channel the
+authentication step treated as untrusted, so moving a verified identity into one to get it past this component
+undoes the check that produced it.
+
+`OpaSecurityPolicy` takes the same option through `setIncludeProperties`.
+
+== Evaluation modes
+
+By default the component calls a running OPA server over its Data API (`evaluationMode=rest`). It can instead
+evaluate a WebAssembly bundle in-process:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .to("opa:authz/orders/allow?evaluationMode=wasm&policyBundle=classpath:bundle.tar.gz")
+------------------------------------------------------------
+
+Build the bundle with OPA's compiler — note that `-e` names an *entrypoint*, which is fixed at build time and is
+not the same thing as a data path:
+
+[source,sh]
+------------------------------------------------------------
+opa build -t wasm -e authz/orders/allow policy.rego
+------------------------------------------------------------
+
+`policyBundle` accepts a `file:`, `classpath:` or `http:` location holding either the `bundle.tar.gz` that
+`opa build` emits or a bare `.wasm`. `entrypoint` defaults to the endpoint's policy path, which is the name
+`opa build` gives it. `evaluationMode` accepts only `rest` and `wasm`; anything else is rejected when the
+endpoint is created, rather than quietly falling back to a server call that ignores `policyBundle`.
+
+Prefer the `bundle.tar.gz`. A policy that reads `data.*` decides from the *data document*, and `opa build`
+packs that beside the module as `data.json` — a bare `.wasm` carries the rules but not the data, so such a
+policy evaluates against an empty data document and typically denies everything. Given the bundle, the
+component applies its data to every evaluation, so the decision matches what a server loading the same bundle
+would return:
+
+[source,sh]
+------------------------------------------------------------
+# roles.rego reads data.admins, which lives in data.json next to it
+opa build -t wasm -e authz/orders/allow roles.rego data.json
+------------------------------------------------------------
+
+Data that is *not* part of the bundle — what a server would receive through its Data API at runtime — has no
+equivalent in `wasm` mode. A policy depending on it needs `evaluationMode=rest`.
+
+Prefer `classpath:` or `file:` for a bundle shipped with the application, which is what a build-time artefact
+usually is. The bundle is fetched when the endpoint starts, and Camel resolves an `http:` resource with no
+connect or read timeout (CAMEL-24756), so a policy server that accepts the connection and then does not answer
+stalls `CamelContext` startup rather than failing the one route.
+
+Which to choose:
+
+[cols="1,2,2"]
+|===
+| | `rest` | `wasm`
+
+| Policy source | a server, centrally managed | a bundle built with your application
+| Updates | bundle polling, live | rebuild and redeploy
+| Decision logs | yes | none
+| Latency | a network round-trip per exchange | in-process
+| Unreachable decision point | a real failure mode | cannot happen
+|===
+
+`serverUrl`, `bearerToken` and `failOpen` have no meaning in `wasm` mode — there is no server to address,
+authenticate to, or fail to reach — and no health check is registered, because there is nothing to probe. An
+absent health check is not a healthy one.
+
+The decision contract is identical in both modes: the same headers, the same `allowKey` handling, and an
+undefined decision fails closed the same way. A route does not need to know which engine evaluated it.
+
+Evaluation instances carry mutable state and are not thread-safe, so `wasm` mode pools them; `poolSize`
+(default 8) bounds how many exchanges evaluate at once. An exchange that arrives when all of them are busy waits
+for one, up to `borrowTimeout` (default 30s), and then fails rather than waiting indefinitely — an authorization
+decision that never arrives is not better than one that is denied, and it is much harder to diagnose. That
+failure is an evaluation failure, not a deny, so it fails closed or proceeds under `failOpen` like any other.
+
+Size `poolSize` for the concurrency the route actually sees. A policy that takes a long time to evaluate holds
+its instance for that whole time, so the two options trade against each other: raise `poolSize` when many
+exchanges evaluate at once, and `borrowTimeout` when a single evaluation is legitimately slow. A policy that can
+run long enough to matter is usually better served by `evaluationMode=rest`, where the decision point is a
+separate process that a timeout can abandon.
+
+== Connecting to the server
+
+In `rest` mode the component talks to OPA over HTTP, and both waits are bounded:
+
+* `connectionTimeout` (default 10s) — establishing the connection.
+* `requestTimeout` (default 30s) — waiting for the decision once connected.
+
+Neither is optional in practice. A refused connection fails immediately, but a server that *accepts* and then
+stops answering — wedged, mid-restart, or behind a load balancer holding the socket — would otherwise park the
+routing thread indefinitely. For a component that fails closed that is worse than a denial: it never reaches the
+point of deciding. A timeout is treated as a failure to reach a verdict, so it denies, or proceeds if `failOpen`
+is set, like any other such failure.
+
+TLS is configured with `sslContextParameters`, the usual xref:manual::camel-configuration-utilities.adoc[JSSE
+utility]:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .to("opa:authz/orders/allow?serverUrl=https://opa:8181&sslContextParameters=#opaTls")
+------------------------------------------------------------
+
+Set `useGlobalSslContextParameters=true` on the component to pick up the context-wide configuration instead.
+
+That is what lets a workload present a client certificate to an OPA server requiring mutual TLS — a SPIFFE
+X.509-SVID, for example, so the application authenticates to the policy decision point as itself rather than
+relying on network position:
+
+[source,java]
+------------------------------------------------------------
+SpiffeSSLContextParameters spiffe = new SpiffeSSLContextParameters();
+spiffe.setCamelContext(context);
+context.getRegistry().bind("opaTls", spiffe);
+------------------------------------------------------------
+
+None of this applies in `wasm` mode, where there is no server to reach.
+
+== Failure handling
+
+The component fails closed. If the policy cannot be evaluated at all — the OPA server is unreachable, times out,
+or answers with an error — the producer throws an `OpaPolicyEvaluationException` and `OpaSecurityPolicy` throws a
+`CamelAuthorizationException`; in neither case does the message proceed as allowed. This is deliberately
+different from a deny, which is a decision rather than a failure, so a route can tell "denied" from "no policy
+decision point available".
+
+Setting `failOpen=true` reverses this and lets the exchange proceed when the policy cannot be evaluated. It exists
+for development and for non-critical policies, and should not be enabled in production.
+
+Note that OPA reports an *undefined* decision — no rule matched and the policy declares no default — as an error
+rather than as a deny, so it fails closed as well. Give every decision rule a default, as in the example above,
+so the policy always returns a verdict.
+
+== Health check
+
+Because the component fails closed, an OPA server that cannot be reached fails *every* exchange through the route.
+The producer registers a readiness check that probes the server's `/health` endpoint, so an unavailable policy
+decision point shows up in the health registry rather than only in the error logs once traffic starts failing.
+
+Camel disables producer health checks by default; turn them on with `camel.health.producersEnabled=true`, or per
+component with `healthCheckProducerEnabled`. The check reports DOWN with the underlying reason — an unreachable
+server and a server answering its health endpoint with an error are reported differently, so a deny is never
+confused with an outage.
+
+`OpaSecurityPolicy` registers an equivalent check, under an id starting `security-policy:opa-`. It is arguably the
+more important of the two: a denied producer merely records a verdict the route can inspect, while the policy throws
+`CamelAuthorizationException` and stops the exchange, so an unreachable server there fails every message outright.
+That is why the policy's check is on by default rather than opt-in like the producer's. Set
+`healthCheckEnabled=false` on the policy for a route that should stay ready regardless — one running `failOpen`, say
+— in preference to hiding the check with `camel.health.exclude-pattern`.
+
+Neither check is registered when an `opaClient` was injected: that client may point anywhere and neither the
+endpoint nor the policy has a way to ask it where, so probing the configured `serverUrl` would report on a server
+they may never talk to. The endpoint check is also skipped when no `serverUrl` was given.
+
+== Security notes
+
+* The policy path comes from the endpoint only. It is deliberately not overridable by a message header, so an
+  inbound message cannot pick which policy judges it.
+* OPA is a trusted component, typically running as a sidecar reachable only from the application. When it is not,
+  put the connection on a trusted network and authenticate to it with `bearerToken`.
+* The component decides; it does not authenticate. Establish *who* the caller is first — with SPIFFE workload
+  identity, a verified JWT, or the surrounding transport's authentication — and hand the policy that identity
+  through `includeProperties` rather than through a header, as <<authorizing-an-identity>> explains.

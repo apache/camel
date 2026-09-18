@@ -17,10 +17,13 @@
 package org.apache.camel.impl.console;
 
 import org.apache.camel.console.DevConsole;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -46,5 +49,36 @@ public class VariablesDevConsoleTest extends AbstractDevConsoleTest {
 
         JsonObject jsonOut = callJson(console);
         assertFalse(jsonOut.isEmpty());
+
+        JsonArray repositories = jsonOut.getCollection("repositories");
+        assertNotNull(repositories);
+        assertFalse(repositories.isEmpty());
+
+        JsonObject global = null;
+        for (Object o : repositories) {
+            JsonObject repo = (JsonObject) o;
+            if ("global".equals(repo.getString("id"))) {
+                global = repo;
+            }
+        }
+        assertNotNull(global, "global repository should be present");
+
+        JsonArray variables = global.getCollection("variables");
+        assertNotNull(variables);
+
+        boolean foundTestVar = false;
+        boolean foundAnotherVar = false;
+        for (Object o : variables) {
+            JsonObject entry = (JsonObject) o;
+            if ("testVar".equals(entry.getString("key"))) {
+                assertEquals("testValue", entry.getString("value"));
+                foundTestVar = true;
+            } else if ("anotherVar".equals(entry.getString("key"))) {
+                assertEquals(42, entry.getInteger("value"));
+                foundAnotherVar = true;
+            }
+        }
+        assertTrue(foundTestVar, "testVar should be present");
+        assertTrue(foundAnotherVar, "anotherVar should be present");
     }
 }

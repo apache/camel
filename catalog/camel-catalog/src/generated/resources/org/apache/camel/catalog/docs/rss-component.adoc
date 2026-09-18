@@ -218,7 +218,7 @@ protected RoutesBuilder createRouteBuilder() throws Exception {
     });
 
     from("timer://mytimer?fixedRate=false&period=60&synchronous=true")
-        .to("http://feeds.aps.org/rss/recent/prstper.xml?httpClientConfigurer=myHttpClientConfigurer")
+        .to("http://feeds.aps.org/rss/recent/prstper.xml?httpClientConfigurer=#myHttpClientConfigurer")
         .unmarshal(new RssDataFormat())
         .to("mock:result");
 }

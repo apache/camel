@@ -60,6 +60,7 @@ public final class ToolRegistry {
         registerAnalysisTools();
         registerCatalogTools();
         registerExampleTools();
+        AuthoringTools.register(ToolRegistry::register);
     }
 
     private ToolRegistry() {
@@ -71,6 +72,14 @@ public final class ToolRegistry {
 
     public static ToolDescriptor findTool(String name) {
         return BY_NAME.get(name);
+    }
+
+    /**
+     * The neutral authoring tools ({@code camel_*}, see {@link AuthoringTools}) that every Camel MCP server exposes
+     * under the same names, in registration order.
+     */
+    public static List<ToolDescriptor> authoringTools() {
+        return TOOLS.stream().filter(t -> t.name().startsWith("camel_")).toList();
     }
 
     public static Object execute(String name, ToolContext ctx, Map<String, String> args) {

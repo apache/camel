@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.impl.AbstractCachingCamelCatalog;
 import org.apache.camel.catalog.impl.CatalogHelper;
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -93,6 +94,7 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     public static final String LIST_OTHERS_AS_JSON = "listOthersAsJson";
 
     public static final String FIND_BEAN_NAMES = "findBeanNames";
+    public static final String FIND_API_REFERENCE_NAMES = "findApiReferenceNames";
     public static final String LIST_BEANS_AS_JSON = "listBeansAsJson";
 
     public static final String FIND_DOC_NAMES = "findDocNames";
@@ -285,6 +287,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public List<String> findApiReferenceNames() {
+        return cache(FIND_API_REFERENCE_NAMES, runtimeProvider::findApiReferenceNames);
+    }
+
+    @Override
     public List<String> findModelNames(String filter) {
         // should not cache when filter parameter can by any kind of value
         return findNames(filter, this::findModelNames, this::eipModel);
@@ -365,6 +372,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     @Override
     public PojoBeanModel pojoBeanModel(String name) {
         return cache("pojo-bean-model-" + name, name, super::pojoBeanModel);
+    }
+
+    @Override
+    public ApiReferenceModel apiReferenceModel(String name) {
+        return cache("api-reference-model-" + name, name, super::apiReferenceModel);
     }
 
     @Override
@@ -547,6 +559,11 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
     }
 
     @Override
+    public String devConsolesOpenApiSpec() {
+        return cache(BASE_RESOURCE_DIR + "/dev-consoles-openapi.json", this::loadResource);
+    }
+
+    @Override
     public String listModelsAsJson() {
         return cache(LIST_MODELS_AS_JSON, () -> JsonMapper.serialize(findModelNames().stream()
                 .map(this::modelJSonSchema)
@@ -584,6 +601,7 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
             obj.put("languages", findLanguageNames().size());
             obj.put("others", findOtherNames().size());
             obj.put("beans", findBeansNames().size());
+            obj.put("apis", findApiReferenceNames().size());
             obj.put("dev-consoles", findDevConsoleNames().size());
             obj.put("transformers", findTransformerNames().size());
             return JsonMapper.serialize(obj);

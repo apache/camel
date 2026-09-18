@@ -477,8 +477,12 @@ public class XsltEndpoint extends ProcessorEndpoint {
             }
 
             if (effectiveXpathTotalOpLimit > 0) {
-                LOG.debug("Setting jdk.xml.xpathTotalOpLimit={} on TransformerFactory", effectiveXpathTotalOpLimit);
-                factory.setAttribute("jdk.xml.xpathTotalOpLimit", effectiveXpathTotalOpLimit);
+                try {
+                    LOG.debug("Setting jdk.xml.xpathTotalOpLimit={} on TransformerFactory", effectiveXpathTotalOpLimit);
+                    factory.setAttribute("jdk.xml.xpathTotalOpLimit", effectiveXpathTotalOpLimit);
+                } catch (IllegalArgumentException e) {
+                    LOG.debug("TransformerFactory does not support jdk.xml.xpathTotalOpLimit");
+                }
             }
 
             LOG.debug("Using TransformerFactory {}", factory);

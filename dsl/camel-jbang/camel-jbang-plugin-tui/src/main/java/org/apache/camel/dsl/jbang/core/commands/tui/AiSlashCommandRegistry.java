@@ -69,6 +69,51 @@ final class AiSlashCommandRegistry {
                 "model", List.of("m"), "Show or switch the AI model", "<model>",
                 AiSlashCommandRegistry::executeModel));
         commands.add(new Descriptor(
+                "tools", List.of("t"), "Show or switch the tool set sent to the model", "[auto|core|full]",
+                AiSlashCommandRegistry::executeTools));
+        commands.add(new Descriptor(
+                "write", List.of("w"), "Show or switch how file writes by the model are confirmed", "[confirm|auto|live]",
+                AiSlashCommandRegistry::executeWrite));
+        commands.add(new Descriptor(
+                "context", List.of("ctx"), "Show what the next request costs: provider, tools, prompt and history size",
+                null,
+                (context, arguments) -> CommandResult.system(context.describeContext())));
+        commands.add(new Descriptor(
+                "compact", List.of(), "Shrink the conversation history sent to the model", null,
+                (context, arguments) -> CommandResult.system(context.compactHistoryNow())));
+        commands.add(new Descriptor(
+                "retry", List.of(), "Send the last question again", null,
+                (context, arguments) -> context.retryLastQuestion()
+                        ? CommandResult.system("")
+                        : CommandResult.error("No question to retry. Ask something first.")));
+        commands.add(new Descriptor(
+                "usage", List.of("u"),
+                "Show AI usage so far: requests, tokens, latency (Ctrl+U opens the full view); 'reset' clears it",
+                "[reset]",
+                (context, arguments) -> {
+                    if ("reset".equalsIgnoreCase(arguments == null ? "" : arguments.strip())) {
+                        context.resetUsage();
+                        return CommandResult.system("AI usage statistics reset");
+                    }
+                    return CommandResult.system(context.usageSummary());
+                }));
+        commands.add(new Descriptor(
+                "copy", List.of("y"),
+                "Copy the code from the last AI response, or the whole response, to the clipboard (Ctrl+Y)", null,
+                (context, arguments) -> {
+                    context.copyLastResponse();
+                    return CommandResult.system("");
+                }));
+        commands.add(new Descriptor(
+                "export", List.of("e"), "Export the conversation to a Markdown file (Ctrl+E)", null,
+                (context, arguments) -> {
+                    context.exportConversation();
+                    return CommandResult.system("");
+                }));
+        commands.add(new Descriptor(
+                "prompt", List.of(), "Show the system prompt sent to the model", null,
+                (context, arguments) -> CommandResult.system(context.systemPrompt())));
+        commands.add(new Descriptor(
                 "clear", List.of("c"), "Clear the conversation", null,
                 (context, arguments) -> {
                     context.clearConversation();
@@ -197,6 +242,38 @@ final class AiSlashCommandRegistry {
         return matchDescriptors(body);
     }
 
+    /**
+     * Like {@link #completionsFor(String)} but also offers {@code extra} descriptors, for example the slash commands an
+     * ACP agent advertised. Registry commands win: an extra descriptor whose name is a registry command or alias is
+     * dropped, and a complete extra command followed by a space hides the hints like a registry command does.
+     */
+    List<Descriptor> completionsFor(String input, List<Descriptor> extra) {
+        List<Descriptor> own = completionsFor(input);
+        if (extra.isEmpty() || input == null || !input.startsWith("/")) {
+            return own;
+        }
+        String body = input.substring(1);
+        int separator = firstWhitespace(body);
+        if (separator >= 0) {
+            String command = body.substring(0, separator);
+            if (!body.substring(separator).isBlank() || lookup(command).isPresent()
+                    || extra.stream().anyMatch(d -> d.name().equalsIgnoreCase(command)
+                            || d.aliases().stream().anyMatch(a -> a.equalsIgnoreCase(command)))) {
+                return own;
+            }
+            body = command;
+        }
+        String needle = body.strip().toLowerCase(Locale.ROOT);
+        List<Descriptor> merged = new ArrayList<>(own);
+        for (Descriptor descriptor : extra) {
+            if (lookup(descriptor.name()).isEmpty() && matchesPrefix(descriptor, needle)
+                    && merged.stream().noneMatch(m -> m.name().equals(descriptor.name()))) {
+                merged.add(descriptor);
+            }
+        }
+        return merged;
+    }
+
     private List<Descriptor> matchDescriptors(String prefix) {
         String needle = prefix.strip().toLowerCase(Locale.ROOT);
         return descriptors.stream().filter(descriptor -> matchesPrefix(descriptor, needle)).toList();
@@ -294,6 +371,28 @@ final class AiSlashCommandRegistry {
             return CommandResult.system("Switched model to " + arguments);
         }
         return CommandResult.listModels();
+    }
+
+    private static CommandResult executeTools(AiSlashCommandContext context, String arguments) {
+        if (arguments.isBlank()) {
+            return CommandResult.system("Tool set: " + context.describeToolMode());
+        }
+        String mode = arguments.trim().toLowerCase();
+        if (!context.switchToolMode(mode)) {
+            return CommandResult.error("Unknown tool mode '" + arguments.trim() + "'. Use auto, core or full.");
+        }
+        return CommandResult.system("Tool set: " + context.describeToolMode());
+    }
+
+    private static CommandResult executeWrite(AiSlashCommandContext context, String arguments) {
+        if (arguments.isBlank()) {
+            return CommandResult.system("File writes: " + context.describeWriteMode());
+        }
+        String mode = arguments.trim().toLowerCase();
+        if (!context.switchWriteMode(mode)) {
+            return CommandResult.error("Unknown write mode '" + arguments.trim() + "'. Use confirm, auto or live.");
+        }
+        return CommandResult.system("File writes: " + context.describeWriteMode());
     }
 
     private static int firstWhitespace(String value) {

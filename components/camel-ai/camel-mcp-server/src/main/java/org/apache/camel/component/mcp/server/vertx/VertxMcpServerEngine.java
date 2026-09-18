@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mcp.server.vertx;
 
+import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,12 +26,16 @@ import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
+import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
+import org.apache.camel.component.mcp.server.McpResourceReadResult;
 import org.apache.camel.component.mcp.server.McpServerConstants;
 import org.apache.camel.component.mcp.server.McpServerEngine;
+import org.apache.camel.component.mcp.server.McpServerIcon;
 import org.apache.camel.component.mcp.server.McpServerInfo;
+import org.apache.camel.component.mcp.server.McpServerResource;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
@@ -107,11 +113,16 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         transport = new VertxMcpStreamableServerTransportProvider(
                 jsonMapper, info.path(),
                 info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs());
-        server = McpServer.sync(transport)
-                .serverInfo(info.serverName(), info.version())
-                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-                .immediateExecution(true)
-                .build();
+        McpServer.SyncSpecification<?> specification = McpServer.sync(transport)
+                .serverInfo(buildServerInfo(info))
+                // resources(subscribe, listChanged): per-resource subscriptions are not offered, but clients are
+                // notified when ai-resource routes start or stop
+                .capabilities(McpSchema.ServerCapabilities.builder().tools(true).resources(false, true).build())
+                .immediateExecution(true);
+        if (info.instructions() != null && !info.instructions().isBlank()) {
+            specification.instructions(info.instructions());
+        }
+        server = specification.build();
         // register routes only once the server has set the session factory on the transport
         transport.registerRoutes(router);
 
@@ -121,7 +132,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             platformHttpComponent.addHttpEndpoint(info.path(), "GET,POST,DELETE", APPLICATION_JSON,
                     "application/json,text/event-stream", null);
         }
-        LOG.info("MCP server '{}' serving tools on path {}", info.serverName(), info.path());
+        LOG.info("MCP server '{}' serving tools and resources on path {}", info.serverName(), info.path());
     }
 
     @Override
@@ -136,7 +147,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         PlatformHttpComponent platformHttpComponent
                 = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
         if (platformHttpComponent != null && info != null) {
-            platformHttpComponent.removeHttpEndpoint(info.path());
+            platformHttpComponent.removeHttpEndpoint(info.path(), null);
         }
         transport = null;
     }
@@ -149,10 +160,13 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 .callHandler((exchange, request) -> {
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
                     McpToolCallResult result = tool.handler().call(arguments);
-                    return McpSchema.CallToolResult.builder()
+                    McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
                             .addTextContent(result.text())
-                            .isError(result.isError())
-                            .build();
+                            .isError(result.isError());
+                    if (result.structuredContent() != null) {
+                        builder.structuredContent(result.structuredContent());
+                    }
+                    return builder.build();
                 })
                 .build();
         server.addTool(spec);
@@ -169,14 +183,71 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         }
     }
 
+    @Override
+    public void resourceAdded(McpServerResource resource) {
+        McpSchema.Resource mcpResource = buildMcpResource(resource);
+        McpServerFeatures.SyncResourceSpecification spec = new McpServerFeatures.SyncResourceSpecification(
+                mcpResource,
+                (exchange, request) -> {
+                    McpResourceReadResult result = resource.handler().read();
+                    if (result.isError()) {
+                        throw McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+                                .message(result.errorMessage())
+                                .build();
+                    }
+                    McpSchema.ResourceContents contents;
+                    if (result.blob() != null) {
+                        contents = new McpSchema.BlobResourceContents(
+                                resource.uri(), resource.mimeType(),
+                                Base64.getEncoder().encodeToString(result.blob()));
+                    } else {
+                        contents = new McpSchema.TextResourceContents(
+                                resource.uri(), resource.mimeType(), result.text());
+                    }
+                    return new McpSchema.ReadResourceResult(List.of(contents));
+                });
+        server.addResource(spec);
+        LOG.debug("MCP resource added: {}", resource.uri());
+    }
+
+    @Override
+    public void resourceRemoved(String resourceUri) {
+        try {
+            server.removeResource(resourceUri);
+            LOG.debug("MCP resource removed: {}", resourceUri);
+        } catch (Exception e) {
+            LOG.debug("Failed to remove MCP resource {}: {}", resourceUri, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean supportsResources() {
+        return true;
+    }
+
     int sessionCount() {
         return transport != null ? transport.sessionCount() : 0;
+    }
+
+    private static McpSchema.Resource buildMcpResource(McpServerResource resource) {
+        McpSchema.Resource.Builder builder = McpSchema.Resource.builder()
+                .uri(resource.uri())
+                .name(resource.name())
+                .description(resource.description())
+                .mimeType(resource.mimeType());
+        if (resource.title() != null && !resource.title().isBlank()) {
+            builder.title(resource.title());
+        }
+        return builder.build();
     }
 
     private McpSchema.Tool buildMcpTool(McpServerTool tool) {
         String schema = tool.inputSchemaJson() != null ? tool.inputSchemaJson() : EMPTY_OBJECT_SCHEMA;
         McpSchema.Tool.Builder builder = McpSchema.Tool.builder(tool.name(), jsonMapper, schema)
                 .description(tool.description());
+        if (tool.outputSchemaJson() != null && !tool.outputSchemaJson().isBlank()) {
+            builder.outputSchema(jsonMapper, tool.outputSchemaJson());
+        }
         applyAnnotations(builder, tool.annotations());
         return builder.build();
     }
@@ -206,9 +277,49 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             hintBuilder.openWorldHint(annotations.openWorldHint());
             hasHints = true;
         }
+        if (annotations.returnDirect() != null) {
+            hintBuilder.returnDirect(annotations.returnDirect());
+            hasHints = true;
+        }
         if (hasHints) {
             builder.annotations(hintBuilder.build());
         }
+    }
+
+    private static McpSchema.Implementation buildServerInfo(McpServerInfo info) {
+        McpSchema.Implementation.Builder builder
+                = McpSchema.Implementation.builder(info.serverName(), info.version());
+        if (info.title() != null && !info.title().isBlank()) {
+            builder.title(info.title());
+        }
+        if (info.description() != null && !info.description().isBlank()) {
+            builder.description(info.description());
+        }
+        if (info.websiteUrl() != null && !info.websiteUrl().isBlank()) {
+            builder.websiteUrl(info.websiteUrl());
+        }
+        if (info.icons() != null && !info.icons().isEmpty()) {
+            builder.icons(mapIcons(info.icons()));
+        }
+        return builder.build();
+    }
+
+    private static List<McpSchema.Icon> mapIcons(List<McpServerIcon> icons) {
+        return icons.stream().map(VertxMcpServerEngine::mapIcon).toList();
+    }
+
+    private static McpSchema.Icon mapIcon(McpServerIcon icon) {
+        McpSchema.Icon.Builder builder = McpSchema.Icon.builder(icon.src());
+        if (icon.mimeType() != null && !icon.mimeType().isBlank()) {
+            builder.mimeType(icon.mimeType());
+        }
+        if (icon.sizes() != null && !icon.sizes().isEmpty()) {
+            builder.sizes(icon.sizes());
+        }
+        if (icon.theme() != null && !icon.theme().isBlank()) {
+            builder.theme(icon.theme());
+        }
+        return builder.build();
     }
 
     private VertxPlatformHttpRouter lookupRouter() {

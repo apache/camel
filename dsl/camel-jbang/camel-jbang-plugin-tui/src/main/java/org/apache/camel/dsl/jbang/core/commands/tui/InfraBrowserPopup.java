@@ -42,7 +42,6 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -195,7 +194,6 @@ class InfraBrowserPopup {
         if (showPortDialog) {
             boolean hasMultiImpl = selectedService != null && selectedService.implementations().size() > 1;
             if (hasMultiImpl) {
-                TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
                 if (portDialogRow == 0) {
                     TuiHelper.hint(spans, "Space", "cycle");
                 }
@@ -203,9 +201,8 @@ class InfraBrowserPopup {
             TuiHelper.hint(spans, "Enter", "run");
             TuiHelper.hintLast(spans, "Esc", "back");
         } else if (showBrowser) {
-            TuiHelper.hint(spans, "↑↓", "navigate");
             TuiHelper.hint(spans, "Enter", "select");
-            TuiHelper.hintLast(spans, "Esc", "back");
+            TuiHelper.hintLast(spans, "Esc", "close");
         }
     }
 
@@ -458,19 +455,7 @@ class InfraBrowserPopup {
         Rect portLabelArea = new Rect(ix, row, labelW, 1);
         frame.renderWidget(Paragraph.from(Line.from(Span.styled("Port:", portLabelStyle))), portLabelArea);
         Rect portArea = new Rect(ix + labelW, row, fieldW, 1);
-        if (portDialogRow == 1) {
-            TextInput textInput = TextInput.builder()
-                    .cursorStyle(Style.EMPTY.reversed())
-                    .placeholder("default")
-                    .build();
-            frame.renderStatefulWidget(textInput, portArea, portState);
-        } else {
-            String portText = portState != null ? portState.text() : "";
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(portText.isEmpty() ? "default" : portText,
-                            portText.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY))),
-                    portArea);
-        }
+        FormHelper.renderTextField(frame, portArea, portState, portDialogRow == 1, "default");
     }
 
     private void handlePortInput(KeyEvent ke) {

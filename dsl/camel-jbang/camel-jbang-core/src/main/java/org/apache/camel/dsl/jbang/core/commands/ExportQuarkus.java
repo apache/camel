@@ -26,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -60,6 +61,7 @@ import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CLASSPATH_FILES;
+import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CONSOLE;
 
 class ExportQuarkus extends Export {
 
@@ -129,6 +131,7 @@ class ExportQuarkus extends Export {
                 srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
+        Map<String, String> devProfile = new LinkedHashMap<>();
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!hasModeline(settings)) {
                 prop.remove("camel.main.modeline");
@@ -152,8 +155,15 @@ class ExportQuarkus extends Export {
             if (hawtio) {
                 prop.setProperty("quarkus.hawtio.authenticationEnabled", "false");
             }
+            // developer console (--console) is the camel-quarkus-console extension (/q/camel/dev-console), which
+            // only exposes the console in dev and test mode (quarkus.camel.console.exposure-mode) so an exported
+            // project has no console in prod mode (camel run sets the exposure mode for its temporary project)
+            if (settingsFlag(settings, CONSOLE)) {
+                addConsoleProperties(prop, devProfile, Map.of("camel.main.devConsoleEnabled", "true"));
+            }
             return prop;
         });
+        writeDevProfileProperties(srcResourcesDir, devProfile);
         // copy docker files
         if (docker) {
             copyDockerFiles(BUILD_DIR);
@@ -511,6 +521,11 @@ class ExportQuarkus extends Export {
         if (hawtio) {
             answer.add("mvn:org.apache.camel:camel-management");
             answer.add("mvn:io.hawt:hawtio-quarkus:" + hawtioVersion);
+        }
+        if (settingsFlag(settings, CONSOLE)) {
+            // developer console (--console) as the camel-quarkus-console extension
+            answer.add("mvn:org.apache.camel:camel-console");
+            answer.add("mvn:org.apache.camel:camel-management");
         }
 
         return answer;

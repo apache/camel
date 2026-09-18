@@ -42,6 +42,8 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "kind": target.getConfiguration().setKind(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "name": target.getConfiguration().setName(property(camelContext, java.lang.String.class, value)); return true;
         case "reply": target.getConfiguration().setReply(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "replywithcloudevent":
@@ -76,6 +78,8 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "kind": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "name": return java.lang.String.class;
         case "reply": return java.lang.Boolean.class;
         case "replywithcloudevent":
@@ -111,6 +115,8 @@ public class KnativeEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "kind": return target.getConfiguration().getKind();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "muteexception":
+        case "muteException": return target.getConfiguration().isMuteException();
         case "name": return target.getConfiguration().getName();
         case "reply": return target.getConfiguration().getReply();
         case "replywithcloudevent":

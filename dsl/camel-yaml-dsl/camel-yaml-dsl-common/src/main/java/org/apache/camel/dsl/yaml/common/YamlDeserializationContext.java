@@ -28,7 +28,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
 import org.apache.camel.dsl.yaml.common.exception.DuplicateKeyException;
+import org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException;
 import org.apache.camel.dsl.yaml.common.exception.UnknownNodeIdException;
+import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.OrderedComparator;
@@ -404,8 +406,22 @@ public class YamlDeserializationContext extends StandardConstructor implements C
             return constructor.construct(node);
         } catch (DuplicateKeyException | UnknownNodeIdException e) {
             throw e;
-        } catch (YamlDeserializationException e) {
+        } catch (YamlDeserializationException | InvalidExpressionException e) {
+            // already says what is wrong and where
             throw e;
+        } catch (UnsupportedFieldException e) {
+            // name the node and the field, and for a field that is a mistaken language name say what to write
+            String field = e.getProblem() != null && e.getProblem().startsWith("Unsupported field: ")
+                    ? e.getProblem().substring("Unsupported field: ".length()) : null;
+            String hint = "";
+            if ("bean".equals(field)) {
+                hint = " (the bean language is written as expression: {method: {ref: myBean, method: process}})";
+            } else if ("expression".equals(field) || "language".equals(field)) {
+                hint = " (an expression is written with the expression: wrapper and the language as the key: expression: {simple:"
+                       + " {expression: \"...\"}}, expression: {constant: {expression: \"...\"}})";
+            }
+            throw new YamlDeserializationException(
+                    node, "Error constructing YAML node id: " + id + ": unsupported field: " + field + hint, e);
         } catch (RuntimeException e) {
             throw new YamlDeserializationException(node, "Error constructing YAML node id: " + id, e);
         }

@@ -1,0 +1,39 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.ai.observability;
+
+/**
+ * GenAI operation names aligned with the OpenTelemetry GenAI semantic conventions where applicable. Custom values (for
+ * example {@link #MODERATION}) are Camel extensions for operations not yet defined in the stable OTel subset.
+ */
+public enum GenAiOperationName {
+    CHAT("chat"),
+    EMBEDDINGS("embeddings"),
+    GENERATE_CONTENT("generate_content"),
+    /** OpenAI moderation and similar content-policy checks. */
+    MODERATION("moderation");
+
+    private final String value;
+
+    GenAiOperationName(String value) {
+        this.value = value;
+    }
+
+    public String value() {
+        return value;
+    }
+}

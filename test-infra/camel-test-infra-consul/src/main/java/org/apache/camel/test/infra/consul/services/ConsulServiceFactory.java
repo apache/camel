@@ -17,8 +17,30 @@
 package org.apache.camel.test.infra.consul.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class ConsulServiceFactory {
+
+    private static class SingletonConsulService extends SingletonService<ConsulService> implements ConsulService {
+        public SingletonConsulService(ConsulService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getConsulUrl() {
+            return getService().getConsulUrl();
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+    }
 
     private ConsulServiceFactory() {
     }
@@ -32,6 +54,21 @@ public final class ConsulServiceFactory {
                 .addLocalMapping(ConsulLocalContainerTestService::new)
                 .addRemoteMapping(ConsulRemoteTestService::new)
                 .build();
+    }
+
+    public static ConsulService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final ConsulService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ConsulService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonConsulService(new ConsulLocalContainerTestService(), "consul"))
+                    .addRemoteMapping(ConsulRemoteTestService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class ConsulLocalContainerTestService extends ConsulLocalContainerInfraService implements ConsulService {

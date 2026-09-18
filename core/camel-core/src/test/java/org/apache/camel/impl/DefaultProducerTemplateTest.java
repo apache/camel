@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -257,6 +258,33 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
+    public void testNullBodyAndValues() throws Exception {
+        // ProducerTemplate marks body, header value and property value parameters as @Nullable;
+        // verify null values are accepted and routed end-to-end (CAMEL-24460)
+        MockEndpoint mock = getMockEndpoint("mock:echo");
+        mock.expectedMessageCount(3);
+
+        // null body
+        template.sendBody("direct:echo", null);
+        // null body and null header value (header key must be non-null, value may be null)
+        template.sendBodyAndHeader("direct:echo", null, "foo", null);
+        // null body and null property value
+        template.sendBodyAndProperty("direct:echo", null, "bar", null);
+
+        assertMockEndpointsSatisfied();
+
+        // all three bodies are null
+        for (Exchange exchange : mock.getExchanges()) {
+            assertNull(exchange.getIn().getBody(), "Body should be null");
+        }
+
+        // null header value propagated
+        assertNull(mock.getExchanges().get(1).getIn().getHeader("foo"), "Header value should be null");
+        // null property value propagated
+        assertNull(mock.getExchanges().get(2).getProperty("bar"), "Property value should be null");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -287,6 +315,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                 }).to("mock:result");
 
                 from("direct:inout").transform(constant(123));
+
+                from("direct:echo").to("mock:echo");
             }
         };
     }

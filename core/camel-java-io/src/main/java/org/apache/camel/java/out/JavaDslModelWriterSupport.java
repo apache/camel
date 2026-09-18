@@ -46,12 +46,10 @@ import org.apache.camel.model.ValueDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -430,7 +428,7 @@ public abstract class JavaDslModelWriterSupport {
     private void writeTemplateParameter(StringBuilder sb, RouteTemplateParameterDefinition param) {
         boolean hasDefault = param.getDefaultValue() != null;
         boolean hasDescription = param.getDescription() != null;
-        boolean isOptional = Boolean.FALSE.equals(param.getRequired());
+        boolean isOptional = "false".equalsIgnoreCase(param.getRequired());
 
         if (isOptional && !hasDefault) {
             sb.append(NL).append(indent()).append(".templateOptionalParameter(").append(quote(param.getName()));
@@ -966,12 +964,6 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof JqExpression) {
             return "jq(" + quotedValue + ")";
         }
-        if (expr instanceof JoorExpression) {
-            return "joor(" + quotedValue + ")";
-        }
-        if (expr instanceof CSimpleExpression) {
-            return "csimple(" + quotedValue + ")";
-        }
         if (expr instanceof DatasonnetExpression) {
             return "datasonnet(" + quotedValue + ")";
         }
@@ -1021,12 +1013,6 @@ public abstract class JavaDslModelWriterSupport {
         }
         if (expr instanceof JqExpression) {
             return "jq";
-        }
-        if (expr instanceof JoorExpression) {
-            return "joor";
-        }
-        if (expr instanceof CSimpleExpression) {
-            return "csimple";
         }
         if (expr instanceof DatasonnetExpression) {
             return "datasonnet";

@@ -54,6 +54,8 @@ public class KnativeConfiguration implements Cloneable {
     private boolean replyWithCloudEvent;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
     private Boolean reply;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
 
     // ************************
     //
@@ -219,6 +221,18 @@ public class KnativeConfiguration implements Cloneable {
      */
     public void setReply(Boolean reply) {
         this.reply = reply;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
+     * exception's stack trace.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     // ************************

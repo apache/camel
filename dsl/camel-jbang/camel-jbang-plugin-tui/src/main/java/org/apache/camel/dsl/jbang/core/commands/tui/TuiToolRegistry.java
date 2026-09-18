@@ -17,23 +17,31 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -67,38 +75,162 @@ class TuiToolRegistry {
     private volatile AnimationState currentAnimation;
 
     private volatile List<ToolDef> cachedTools;
-    private volatile LaunchManager launchManager;
     private volatile List<JsonObject> exampleCatalog;
 
     TuiToolRegistry(McpFacade facade) {
         this.facade = facade;
     }
 
-    void setLaunchManager(LaunchManager launchManager) {
-        this.launchManager = launchManager;
+    /** The launcher the TUI wired into the facade, or null when there is none to launch with. */
+    private LaunchManager launcher() {
+        return facade != null ? facade.getLaunchManager() : null;
     }
 
     /**
-     * Returns all 42 tool definitions. The result is cached since it is immutable.
+     * Runs a shared {@code camel_} tool with the TUI's extras: the file tools work on the selected integration's source
+     * directory unless a directory is given (a write then goes through the TUI's confirm dialog or live replay),
+     * camel_control knows the TUI's own actions, camel_get_log also reads an infra service log.
+     */
+    private String executeSharedWithTuiExtras(String name, Map<String, Object> args) {
+        if (facade != null && args.get("directory") instanceof String d && !d.isBlank() && !d.contains("/")
+                && !d.contains("\\") && facade.hasIntegration(d)) {
+            // a model often passes the integration's name where the tool asks for its directory
+            Map<String, Object> byName = new HashMap<>(args);
+            byName.remove("directory");
+            byName.put("name", d);
+            args = byName;
+        }
+        boolean hasDirectory = args.get("directory") instanceof String d && !d.isBlank();
+        boolean named = args.get("name") instanceof String n && !n.isBlank();
+        boolean facadeSelection = facade != null && (named || facade.getSelectedIntegrationName() != null);
+        return switch (name) {
+            case CONTROL_TOOL -> facade != null ? callControl(args) : executeShared(name, args);
+            case LOG_TOOL -> facade != null ? callGetLog(args) : executeShared(name, args);
+            case FILES_TOOL -> !hasDirectory && facadeSelection ? callGetFiles(args) : executeShared(name, args);
+            case WRITE_TOOL -> !hasDirectory && facadeSelection ? callWriteFile(args) : executeShared(name, args);
+            case VALIDATE_TOOL -> !hasDirectory && facadeSelection && args.get("content") == null
+                    ? callValidateSource(args) : executeShared(name, args);
+            default -> executeShared(name, args);
+        };
+    }
+
+    /**
+     * Runs a shared tool from the registry over a context built from the TUI's selection: the selected integration's
+     * pid, Camel version and source directory, and the editor's Spring Boot property check.
+     */
+    private String executeShared(String name, Map<String, Object> args) {
+        ToolDescriptor descriptor = ToolRegistry.findTool(name);
+        if (descriptor == null) {
+            throw new IllegalArgumentException("Unknown tool: " + name);
+        }
+        Map<String, String> stringArgs = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> e : args.entrySet()) {
+            if (e.getValue() != null) {
+                stringArgs.put(e.getKey(), String.valueOf(e.getValue()));
+            }
+        }
+        ToolContext ctx = new ToolContext();
+        // what the user selected is the integration; nothing selected means nothing, not the only one running
+        ctx.setAutoSelectSingleProcess(false);
+        if (facade != null) {
+            String pid = facade.getSelectedPid();
+            if (pid != null) {
+                try {
+                    ctx.selectProcess(Long.parseLong(pid));
+                } catch (NumberFormatException e) {
+                    // a phantom project has no process
+                }
+            }
+            ctx.setCamelVersion(facade.getSelectedCamelVersion());
+            ctx.setDefaultDirectory(facade.getSelectedSourceDirectory());
+            ctx.setPropertyLineValidator(facade.getPropertyLineValidator());
+        }
+        try {
+            Object result = ToolRegistry.execute(name, ctx, stringArgs);
+            return result != null ? result.toString() : "";
+        } catch (ToolExecutionException e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    /**
+     * The tools needed to answer questions and troubleshoot from the built-in AI panel. The remaining tools drive the
+     * screen (drawing, animation, key presses, tape recording, themes) and exist for external MCP agents. Every tool
+     * schema is sent on every request, and a local model pays for that in prompt-processing time, so the AI panel sends
+     * only this subset to local providers unless configured otherwise.
+     */
+    static final String SHARED_PREFIX = "camel_";
+    static final String CONTROL_TOOL = "camel_control";
+    static final String LOG_TOOL = "camel_get_log";
+    static final String FILES_TOOL = "camel_get_files";
+    static final String WRITE_TOOL = "camel_write_file";
+    static final String VALIDATE_TOOL = "camel_validate_source";
+
+    /** The TUI's own tools in the core subset; the shared tools add those flagged core in the registry. */
+    // CAMEL-24760: a tool earns its place here by the questions a local model gets asked, not by its size.
+    // tui_get_diagram is the ASCII drawing of what tui_get_topology returns as JSON, tui_filter a screen nicety
+    // (tui_get_table returns the whole table), tui_set_log_level a rare request the prompt guards anyway.
+    private static final Set<String> CORE_TUI_TOOLS = Set.of(
+            "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_topology",
+            "tui_get_processor_detail", "tui_get_history", "tui_get_spans", "tui_send_message",
+            "tui_get_readme", "tui_navigate", "tui_get_status", "tui_infra");
+
+    static final Set<String> CORE_TOOLS = Stream.concat(
+            CORE_TUI_TOOLS.stream(),
+            ToolRegistry.authoringTools().stream().filter(ToolDescriptor::isCore).map(ToolDescriptor::name))
+            .collect(Collectors.toUnmodifiableSet());
+
+    /** The TUI's own read-only tools; the shared tools add those flagged read-only in the registry. */
+    private static final Set<String> READ_ONLY_TUI_TOOLS = Set.of(
+            "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
+            "tui_get_ollama", "tui_get_options", "tui_get_processor_detail", "tui_get_readme", "tui_get_screen",
+            "tui_get_spans",
+            "tui_get_state", "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology",
+            "tui_list_examples", "tui_locate", "tui_wait_for_idle");
+
+    /**
+     * Tools that only return information and never change the TUI, the integration or its data. The ACP permission
+     * handler approves calls to these without asking; anything else, including camel_control, tui_send_message and
+     * tui_execute_sql, is put in front of the user. camel_eval_expression is read-only because it evaluates an
+     * expression against a scratch exchange and sends nothing through a route.
+     */
+    static final Set<String> READ_ONLY_TOOLS = Stream.concat(
+            READ_ONLY_TUI_TOOLS.stream(),
+            ToolRegistry.authoringTools().stream().filter(ToolDescriptor::isReadOnly).map(ToolDescriptor::name))
+            .collect(Collectors.toUnmodifiableSet());
+
+    /**
+     * Returns all tool definitions. The result is cached since it is immutable.
      */
     List<ToolDef> getToolDefinitions() {
         List<ToolDef> tools = cachedTools;
         if (tools != null) {
             return tools;
         }
-        tools = buildToolDefinitions();
+        tools = TuiToolDefinitions.all();
         cachedTools = tools;
         return tools;
+    }
+
+    /**
+     * Returns only the {@link #CORE_TOOLS} definitions, in registry order.
+     */
+    List<ToolDef> getCoreToolDefinitions() {
+        return getToolDefinitions().stream().filter(t -> CORE_TOOLS.contains(t.name())).toList();
     }
 
     /**
      * Executes a tool by name, returns result string.
      */
     String execute(String name, Map<String, Object> args) throws Exception {
+        if (name != null && name.startsWith(SHARED_PREFIX)) {
+            return executeSharedWithTuiExtras(name, args);
+        }
         return switch (name) {
             case "tui_get_screen" -> callGetScreen(args);
             case "tui_get_events" -> callGetEvents(args);
             case "tui_get_state" -> callGetState();
+            case "tui_get_status" -> callGetStatus(args);
             case "tui_show_caption" -> callShowCaption(args);
             case "tui_navigate" -> callNavigate(args);
             case "tui_send_keys" -> callSendKeys(args);
@@ -113,8 +245,6 @@ class TuiToolRegistry {
             case "tui_action" -> callAction(args);
             case "tui_get_themes" -> callGetThemes();
             case "tui_set_theme" -> callSetTheme(args);
-            case "tui_get_log" -> callGetLog(args);
-            case "tui_get_errors" -> callGetErrors();
             case "tui_get_diagram" -> callGetDiagram();
             case "tui_get_history" -> callGetHistory(args);
             case "tui_get_topology" -> callGetTopology();
@@ -126,17 +256,16 @@ class TuiToolRegistry {
             case "tui_set_input" -> callSetInput(args);
             case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
             case "tui_get_readme" -> callGetReadme(args);
-            case "tui_control" -> callControl(args);
+            case "tui_infra" -> callInfra(args);
             case "tui_open_project" -> callOpenProject(args);
-            case "tui_get_files" -> callGetFiles(args);
             case "tui_get_spans" -> callGetSpans(args);
+            case "tui_get_ollama" -> callGetOllama(args);
             case "tui_locate" -> callLocate(args);
             case "tui_draw_shape" -> callDrawShape(args);
             case "tui_canvas_open" -> callCanvasOpen(args);
             case "tui_canvas_close" -> callCanvasClose();
             case "tui_animate" -> callAnimate(args);
             case "tui_animate_status" -> callAnimateStatus(args);
-            case "tui_catalog_doc" -> callCatalogDoc(args);
             case "tui_get_processor_detail" -> callGetProcessorDetail(args);
             case "tui_get_ai_log" -> callGetAiLog(args);
             case "tui_get_mcp_log" -> callGetMcpLog(args);
@@ -144,515 +273,6 @@ class TuiToolRegistry {
             case "tui_run_example" -> callRunExample(args);
             default -> throw new IllegalArgumentException("Unknown tool: " + name);
         };
-    }
-
-    // --- Tool definitions ---
-
-    private List<ToolDef> buildToolDefinitions() {
-        List<ToolDef> tools = new ArrayList<>();
-        tools.add(toToolDef(toolDef(
-                "tui_get_screen",
-                "Returns the current TUI screen content as text. "
-                                  + "Shows exactly what the user sees in their terminal. "
-                                  + "Use ansi=true to include ANSI color codes for color-related questions. "
-                                  + "Also returns a 'selection' field with structured metadata about the active list/table "
-                                  + "(type, items, selectedIndex, totalItems, label) when available. "
-                                  + "On tabs with master/detail panels, includes 'detailFocused' (true=detail, false=table).",
-                Map.of("ansi", propDef("boolean", "Include ANSI color codes in the output (default false)")))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_events",
-                "Returns recent user input events (key presses, navigation). "
-                                  + "Each event has a key, human-readable label, and timestamp.",
-                Map.of("limit", propDef("integer", "Maximum number of events to return (default 50)")))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_state",
-                "Returns the current TUI navigation state: active tab, selected integration, "
-                                 + "and integration count. "
-                                 + "Includes a 'selection' field with structured metadata about the active list/table. "
-                                 + "captionVisible indicates if a caption overlay is on screen. "
-                                 + "keystrokesVisible indicates if the keystroke overlay is on. "
-                                 + "detailFocused (boolean, present on tabs with master/detail panels) indicates "
-                                 + "which panel has focus: true=detail panel, false=table panel. "
-                                 + "Press Tab to toggle focus. Up/Down and PgUp/PgDn operate on the focused panel.",
-                Map.of())));
-        tools.add(toToolDef(toolDef(
-                "tui_show_caption",
-                "Shows a caption message on the TUI screen with a typewriter animation. "
-                                    + "Use this to display messages to the user. "
-                                    + "Supports \\n for newlines.",
-                Map.of("text", propDef("string", "The caption text to display"),
-                        "duration", propDef("integer",
-                                "Auto-dismiss after this many seconds. Caption won't block key events. "
-                                                       + "If omitted, caption stays until dismissed by a key press.")),
-                List.of("text"))));
-        tools.add(toToolDef(toolDef(
-                "tui_navigate",
-                "Navigates the TUI: switch tabs and/or select an integration. "
-                                + "All parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Activity, Diagram, Routes, Endpoints, HTTP, Inspect, "
-                                + "Circuit Breaker, Health, Spans, Process. "
-                                + "Use 'route' to select a route in the Diagram topology, "
-                                + "and 'node' to drill down into a route and select a specific processor/EIP node. "
-                                + "Returns screen content and selection metadata after navigating.",
-                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Activity', 'Diagram')"),
-                        "integration", propDef("string", "Integration name or PID to select"),
-                        "route", propDef("string",
-                                "Route ID to select in the Diagram tab topology (e.g. 'order-dispatcher')"),
-                        "node", propDef("string",
-                                "Processor/EIP node ID to select within a drilled-down route (e.g. 'multicast1'). "
-                                                  + "If 'route' is also provided, drills into that route first")))));
-
-        tools.add(toToolDef(toolDef(
-                "tui_send_keys",
-                "Sends key presses to the TUI. A human is watching the screen, "
-                                 + "so keys should be paced naturally like a skilled user would type. "
-                                 + "Key names: Enter, Esc, Tab, Backspace, Delete, Up, Down, Left, Right, "
-                                 + "Home, End, PgUp, PgDn, Space, F1-F12, or any single character. "
-                                 + "Modifiers: Ctrl+x, Shift+x, Ctrl+Shift+x.",
-                Map.of("keys", propDef("array", "Array of key name strings to send"),
-                        "delay", propDef("integer",
-                                "Delay in milliseconds between keys (default 150, minimum 80)"),
-                        "wait", propDef("boolean",
-                                "Wait for all keys to be processed and return the resulting screen "
-                                                   + "with selection metadata (default false)")),
-                List.of("keys"))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_options",
-                "IMPORTANT: Call this FIRST before any other tui_ tool when starting a new task. "
-                                   + "Returns all available tabs with descriptions and running integrations. "
-                                   + "Each tab description says what data it provides — match the user's question "
-                                   + "keywords to tab descriptions to find the right data source in one step "
-                                   + "(e.g. 'kafka offset' → find Kafka tab → tui_get_table(tab='Kafka')). "
-                                   + "This avoids wasting calls piecing data from logs, spans, and endpoints "
-                                   + "when a dedicated tab already has exactly the needed information.",
-                Map.of())));
-        tools.add(toToolDef(toolDef(
-                "tui_wait_for_idle",
-                "Waits for the TUI to render new frames after an action. "
-                                     + "Blocks until the specified number of new frames have been rendered, "
-                                     + "ensuring the action has been processed. "
-                                     + "Returns the screen content with selection metadata after settling. "
-                                     + "Use after tui_navigate or tui_send_keys.",
-                Map.of("timeout", propDef("integer",
-                        "Maximum wait time in milliseconds (default 5000, max 30000)"),
-                        "frames", propDef("integer",
-                                "Number of new frames to wait for (default 2)")))));
-        tools.add(toToolDef(toolDef(
-                "tui_tape_start",
-                "Start recording TUI interactions as a .tape file for demo playback. "
-                                  + "All subsequent tui_send_keys calls will be captured as tape commands. "
-                                  + "Stop recording with tui_tape_stop to get the tape content. "
-                                  + "Replay with: camel tui monitor --record=<file>.tape",
-                Map.of("title", propDef("string", "Description comment for the tape header")))));
-        tools.add(toToolDef(toolDef(
-                "tui_tape_stop",
-                "Stop tape recording and return the generated .tape content. "
-                                 + "The tape can be replayed with: camel tui monitor --record=<file>.tape",
-                Map.of("save", propDef("boolean",
-                        "If true, also save the tape to a local file (camel-tui-tape-<timestamp>.tape). Default false.")))));
-        tools.add(toToolDef(toolDef(
-                "tui_sleep",
-                "Pauses for the specified duration. "
-                             + "When tape recording is active, inserts a Sleep command into the tape. "
-                             + "Use this to pace demos and wait for captions to dismiss.",
-                Map.of("seconds", propDef("integer",
-                        "Number of seconds to sleep (1-30)")),
-                List.of("seconds"))));
-        tools.add(toToolDef(toolDef(
-                "tui_draw",
-                "Draws characters at specific screen coordinates as an overlay on top of the TUI. "
-                            + "Use this to highlight areas, annotate the screen for the human, "
-                            + "draw shapes, or create fun emoji art. "
-                            + "All cells are sent in a single call to avoid chatty networking. "
-                            + "Coordinates are 0-based and match the screen grid from tui_get_screen. "
-                            + "Characters can be any unicode including emoji. "
-                            + "The drawing overlays on top of existing content without modifying it. "
-                            + "Use with tui_show_caption to explain what you drew.",
-                Map.of("cells", propDef("array",
-                        "Array of cell objects to draw. Each cell has: "
-                                                 + "x (integer, column), y (integer, row), "
-                                                 + "char (string, character to draw), "
-                                                 + "fg (string, optional foreground color: red/green/blue/yellow/cyan/magenta/white/gray/black), "
-                                                 + "bg (string, optional background color, same values), "
-                                                 + "bold (boolean, optional)"),
-                        "shapes", propDef("array",
-                                "Array of shape objects to draw (batch mode). Each shape has: "
-                                                   + "shape (string, required: box/highlight/underline/arrow-down/arrow-up/arrow-left/arrow-right/text), "
-                                                   + "x (integer, column), y (integer, row), "
-                                                   + "width (integer, for box/highlight/underline), "
-                                                   + "height (integer, for box/highlight), "
-                                                   + "length (integer, for arrows), "
-                                                   + "text (string, for text shape), "
-                                                   + "color (string: red/green/blue/yellow/cyan/magenta/white/gray/black). "
-                                                   + "Use shapes instead of cells for high-level drawing in a single call."),
-                        "duration", propDef("integer",
-                                "Auto-dismiss drawing after this many seconds. "
-                                                       + "If omitted, drawing stays until cleared with tui_draw_clear or replaced by another tui_draw call."),
-                        "append", propDef("boolean",
-                                "If true, add cells to the existing drawing instead of replacing it. Default false.")),
-                List.of())));
-        tools.add(toToolDef(toolDef(
-                "tui_draw_clear",
-                "Clears the drawing overlay and restores the screen to its normal state. "
-                                  + "The underlying content is unchanged since drawing is an overlay.",
-                Map.of())));
-
-        tools.add(toToolDef(toolDef(
-                "tui_draw_shape",
-                "Draws a predefined shape on the TUI screen overlay. "
-                                  + "Much easier than constructing individual cells with tui_draw. "
-                                  + "Combine with tui_locate for precise positioning.",
-                Map.of("shape", propDef("string",
-                        "Shape to draw: box (rectangle border), highlight (background color on existing text like a marker pen), "
-                                                  + "underline (horizontal line), arrow-down, arrow-up, arrow-left, arrow-right, "
-                                                  + "text (draw text string at position)"),
-                        "x", propDef("integer", "X coordinate (column) of the shape origin"),
-                        "y", propDef("integer", "Y coordinate (row) of the shape origin"),
-                        "width", propDef("integer", "Width of the shape (for box, highlight, underline)"),
-                        "height", propDef("integer", "Height of the shape (for box, highlight). Defaults to 1."),
-                        "length", propDef("integer", "Length of arrows"),
-                        "text", propDef("string", "Text content to draw (for text shape)"),
-                        "color", propDef("string",
-                                "Color: red, green, blue, yellow, cyan, magenta, white, gray, black. Default: red for box/underline/arrow, yellow for highlight."),
-                        "duration",
-                        propDef("integer", "Auto-dismiss after this many seconds. If omitted, stays until cleared."),
-                        "append", propDef("boolean",
-                                "If true, add to existing drawing instead of replacing it. Default false.")),
-                List.of("shape", "x", "y"))));
-
-        tools.add(toToolDef(toolDef(
-                "tui_canvas_open",
-                "Opens a full blank canvas screen for free-form drawing. "
-                                   + "Use tui_draw / tui_draw_shape to draw on the canvas. "
-                                   + "The user can press Esc to dismiss.",
-                Map.of("shapes", propDef("array",
-                        "Optional array of shapes to draw immediately on the canvas. "
-                                                  + "Same format as tui_draw shapes parameter. "
-                                                  + "Saves a round-trip vs separate tui_canvas_open + tui_draw calls.")))));
-        tools.add(toToolDef(toolDef(
-                "tui_canvas_close",
-                "Closes the canvas and returns to the normal TUI screen. Also clears any drawing.",
-                Map.of())));
-        tools.add(toToolDef(toolDef(
-                "tui_animate",
-                "Run a keyframe animation on the canvas. Auto-opens the canvas, "
-                               + "plays frames sequentially with specified delays, then optionally auto-closes. "
-                               + "User can press Esc to stop early. Returns immediately; "
-                               + "use tui_animate_status to check progress. "
-                               + "Use 'name' for built-in animations (instant start, no token cost): "
-                               + String.join(", ", BuiltinAnimations.names()) + ".",
-                Map.of("frames", propDef("array",
-                        "Array of keyframes. Each keyframe is an object with: "
-                                                  + "delay (integer, milliseconds to wait before drawing this frame), "
-                                                  + "shapes (array of shape objects, same format as tui_draw shapes). "
-                                                  + "Not required when 'name' is provided."),
-                        "name", propDef("string",
-                                "Name of a built-in animation: "
-                                                  + String.join(", ", BuiltinAnimations.names())
-                                                  + ". When set, 'frames' is ignored."),
-                        "autoClose", propDef("boolean",
-                                "If true, close the canvas when animation finishes (default: false)")))));
-        tools.add(toToolDef(toolDef(
-                "tui_animate_status",
-                "Check progress of a running animation. Returns animationId, status "
-                                      + "(running/completed/cancelled), currentFrame, and totalFrames.",
-                Map.of("animationId", propDef("string",
-                        "Animation ID to check. If omitted, returns status of the latest animation.")))));
-
-        // --- Structured data tools ---
-
-        tools.add(toToolDef(toolDef(
-                "tui_get_table",
-                "Returns structured JSON table data for any tab — the primary way to read tab data. "
-                                 + "Much more reliable than parsing screen text. "
-                                 + "Returns tab name, rows array with all fields, totalRows, and selectedIndex. "
-                                 + "Tip: call tui_get_options first to discover all available tab names "
-                                 + "and their descriptions, so you pick the right tab in one call.",
-                Map.of("tab", propDef("string",
-                        "Tab name to get data from (e.g. 'Routes', 'Endpoints', 'Kafka'). "
-                                                + "Use tui_get_options to discover available tab names. "
-                                                + "If omitted, uses the active tab.")))));
-        tools.add(toToolDef(toolDef(
-                "tui_action",
-                "Invokes a TUI action by name, bypassing fragile key sequences. "
-                              + "Actions: reset-stats, reset-screen, screenshot, show-keystrokes, "
-                              + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme.",
-                Map.of("action", propDef("string", "Action name in kebab-case (e.g. 'reset-stats', 'screenshot')")),
-                List.of("action"))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_themes",
-                "Returns available TUI themes grouped by dark and light, "
-                                  + "with the currently active theme marked.",
-                Map.of())));
-        tools.add(toToolDef(toolDef(
-                "tui_set_theme",
-                "Switches the TUI to a named theme. Use tui_get_themes to list available theme IDs.",
-                Map.of("theme", propDef("string", "Theme ID (e.g. 'dracula', 'nord', 'catppuccin-mocha')")),
-                List.of("theme"))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_log",
-                "Returns recent log lines as structured data with optional filtering. "
-                               + "Returns newest entries first.",
-                Map.of("limit", propDef("integer", "Maximum lines to return (default 50)"),
-                        "filter", propDef("string", "Case-insensitive substring filter on log message"),
-                        "level", propDef("string", "Filter by log level (INFO, WARN, ERROR, DEBUG, TRACE)")))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_errors",
-                "Returns structured error data from the Errors tab. "
-                                  + "Includes routeId, exchangeId, exception details, stack trace, body, and headers.",
-                Map.of())));
-        tools.add(toToolDef(toolDef(
-                "tui_get_diagram",
-                "Returns the route topology diagram as text. "
-                                   + "Shows the ASCII/Unicode art diagram of routes and their connections.",
-                Map.of())));
-        tools.add(toToolDef(toolDef(
-                "tui_get_history",
-                "Returns rich trace and history data from the History tab as structured JSON. "
-                                   + "Includes ALL exchange details: body with type, headers with types, "
-                                   + "exchange properties, exchange variables, thread name, source location, "
-                                   + "node level, and node labels. Much richer than tui_get_table on History. "
-                                   + "Returns different shapes depending on the History tab's current mode: "
-                                   + "Traces (exchange ID list), Trace Steps (per-step detail), "
-                                   + "or History (message history steps).",
-                Map.of("exchangeId", propDef("string",
-                        "If provided, returns trace steps for this specific exchange ID. "
-                                                       + "Otherwise returns data for the current History tab view.")))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_topology",
-                "Returns the route topology as a structured JSON graph with nodes and edges arrays. "
-                                    + "Each node has: routeId, nodeType (route/external-in/external-out/trigger), "
-                                    + "layer, description, from (consumer URI), exchangesTotal, exchangesFailed. "
-                                    + "Each edge has: from (routeId), to (routeId), endpoint, connectionType, "
-                                    + "selfLoop, backEdge. "
-                                    + "Use this instead of tui_get_diagram when you need to reason about "
-                                    + "route connectivity programmatically.",
-                Map.of())));
-        tools.add(toToolDef(toolDef(
-                "tui_send_message",
-                "Sends a message to a Camel endpoint in the selected integration. "
-                                    + "Uses the file-based IPC protocol to deliver the message directly.",
-                Map.of("endpoint", propDef("string", "Endpoint URI to send to (e.g. 'direct:myRoute', 'seda:queue')"),
-                        "body", propDef("string", "Message body to send"),
-                        "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
-                List.of("endpoint"))));
-        tools.add(toToolDef(toolDef(
-                "tui_execute_sql",
-                "Executes a SQL query against a DataSource in the selected integration. "
-                                   + "Returns structured JSON with columns, rows, and metadata for SELECT queries, "
-                                   + "or an update count for INSERT/UPDATE/DELETE. "
-                                   + "Requires dev console to be enabled in the running application.",
-                Map.of("query", propDef("string", "The SQL query to execute"),
-                        "datasource", propDef("string",
-                                "Name of the DataSource bean (auto-detected if only one exists)"),
-                        "maxRows", propDef("integer",
-                                "Maximum number of rows to return (default 100)"),
-                        "queryTimeout", propDef("integer",
-                                "Query timeout in seconds (default 30)")),
-                List.of("query"))));
-        tools.add(toToolDef(toolDef(
-                "tui_update_row",
-                "Updates a single row in a database table. Use after tui_execute_sql returns "
-                                  + "editable=true with tableName and primaryKeys. Builds and executes "
-                                  + "an UPDATE statement using PreparedStatement for safety.",
-                Map.of("table", propDef("string", "The table name to update"),
-                        "primaryKeyValues", propDef("string",
-                                "JSON object of primary key column-value pairs, e.g. {\"id\": 1}"),
-                        "columnValues", propDef("string",
-                                "JSON object of column-value pairs to update, e.g. {\"name\": \"new\"}"),
-                        "datasource", propDef("string",
-                                "Name of the DataSource bean (auto-detected if only one exists)")),
-                List.of("table", "primaryKeyValues", "columnValues"))));
-        tools.add(toToolDef(toolDef(
-                "tui_set_log_level",
-                "Changes the runtime log level of the selected integration. "
-                                     + "This sends a command to the running Camel application to change "
-                                     + "the root logger level.",
-                Map.of("level", propDef("string",
-                        "Log level to set: ERROR, WARN, INFO, DEBUG, or TRACE")),
-                List.of("level"))));
-        tools.add(toToolDef(toolDef(
-                "tui_filter",
-                "Sets or clears the fuzzy text filter on a tab that supports typing-to-filter. "
-                              + "Currently supported on the Classpath tab. "
-                              + "Use an empty string to clear the filter.",
-                Map.of("filter", propDef("string",
-                        "Filter text to apply. Empty string clears the filter."),
-                        "tab", propDef("string",
-                                "Tab name to filter (e.g. 'Classpath'). If omitted, uses the active tab.")),
-                List.of("filter"))));
-        tools.add(toToolDef(toolDef(
-                "tui_set_input",
-                "Sets the value of a text input field on a TUI tab directly, without simulating keystrokes. "
-                                 + "The text appears in the TUI input widget so the user can see it. "
-                                 + "Supported fields by tab: SQL Query (field='sql'), "
-                                 + "HTTP probe (field='path', 'body', 'method', 'content-type', or 'accept'), "
-                                 + "Spans (field='filter'), Classpath (field='filter').",
-                Map.of("field", propDef("string",
-                        "Field name to set: 'sql', 'path', 'body', 'method', 'content-type', 'accept', or 'filter'"),
-                        "value", propDef("string",
-                                "The text value to set in the input field"),
-                        "tab", propDef("string",
-                                "Tab name (e.g. 'SQL Query', 'HTTP'). If omitted, uses the active tab.")),
-                List.of("field", "value"))));
-        tools.add(toToolDef(toolDef(
-                "tui_toggle_trace_display",
-                "Toggles which sections are visible in the History tab's detail view. "
-                                            + "Controls what data is shown when inspecting trace steps or history entries.",
-                Map.of("section", propDef("string",
-                        "Section to toggle: headers, properties, variables, body, or wrap"),
-                        "enabled", propDef("boolean",
-                                "If provided, forces the section on (true) or off (false). "
-                                                      + "If omitted, toggles the current state.")),
-                List.of("section"))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_readme",
-                "Returns the README/documentation content from a running integration. "
-                                  + "Useful for understanding what the integration does, its configuration, and usage. "
-                                  + "If no name is provided, returns the README for the currently selected integration.",
-                Map.of("name", propDef("string",
-                        "Integration name. If omitted, uses the currently selected integration.")))));
-        tools.add(toToolDef(toolDef(
-                "tui_control",
-                "Controls the selected integration: stop/start routes, restart, stop, or kill the process. "
-                               + "Actions: stop-routes (or pause) — suspend all routes; "
-                               + "start-routes (or resume) — resume all routes; "
-                               + "restart — gracefully restart the integration; "
-                               + "stop — gracefully stop the process; "
-                               + "kill — forcefully terminate the process; "
-                               + "stop-all — stop all running processes; "
-                               + "close — close a phantom (opened but not running) project.",
-                Map.of("action", propDef("string",
-                        "Control action: stop-routes, start-routes, pause, resume, restart, stop, kill, stop-all, or close")),
-                List.of("action"))));
-        tools.add(toToolDef(toolDef(
-                "tui_open_project",
-                "Opens a project directory as a phantom integration (shown as Stopped in Overview). "
-                                    + "The project can then be browsed in the Source tab and run via tui_control. "
-                                    + "Supports Maven projects (Spring Boot, Quarkus, Camel Main detected via pom.xml) "
-                                    + "and flat directories with Camel route files.",
-                Map.of("directory", propDef("string",
-                        "Absolute path to the project directory to open")),
-                List.of("directory"))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_files",
-                "Returns source files from the selected integration's directory. "
-                                 + "Without a file parameter, returns the list of files (name, size, type). "
-                                 + "With a file parameter, returns the file's content. "
-                                 + "Useful for reading route source code, configuration, and other integration files.",
-                Map.of("name", propDef("string",
-                        "Integration name. If omitted, uses the currently selected integration."),
-                        "file", propDef("string",
-                                "Filename to read. If omitted, returns the file list instead.")))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_spans",
-                "Returns raw OpenTelemetry span data as structured JSON from the selected integration. "
-                                 + "Each span includes: traceId, spanId, parentSpanId, name, kind, status, "
-                                 + "startEpochNanos, endEpochNanos, durationMs, routeId, processorId, and attributes. "
-                                 + "Use traceId to filter spans for a specific trace. "
-                                 + "The parentSpanId chain shows the span hierarchy for building waterfall views.",
-                Map.of("traceId", propDef("string",
-                        "Filter to spans matching this trace ID (substring match). "
-                                                    + "If omitted, returns all recent spans."),
-                        "limit", propDef("integer",
-                                "Maximum number of spans to return (default 500)")))));
-        tools.add(toToolDef(toolDef(
-                "tui_locate",
-                "Locates elements on the TUI screen and returns their exact screen coordinates (x, y, width, height). "
-                              + "Use 'text' to find text on screen with proper wide-character handling (emoji, CJK). "
-                              + "Use 'node' or 'nodes' to find diagram nodes by ID. "
-                              + "Returns coordinates suitable for tui_draw.",
-                Map.of("text", propDef("string",
-                        "Text to search for on screen. Returns all matches with screen coordinates."),
-                        "node", propDef("string",
-                                "Single diagram node ID to locate (routeId or nodeId)."),
-                        "nodes", propDef("array",
-                                "Array of diagram node IDs to locate. Returns individual rects plus combined bounds.")))));
-
-        // --- Catalog tools ---
-
-        tools.add(toToolDef(toolDef(
-                "tui_catalog_doc",
-                "Get documentation for a Camel catalog artifact (component, data format, language, EIP) "
-                                   + "including description, options, and Maven coordinates. "
-                                   + "Use optionsFilter to search options by keyword (e.g., 'security', 'ssl', 'timeout'). "
-                                   + "This enables queries like 'what options are there on kafka about security'. "
-                                   + "Set includeDoc=true to get the full AsciiDoc documentation for deep-dive questions. "
-                                   + "Uses the Camel version from the selected integration.",
-                Map.of("name", propDef("string",
-                        "Artifact name (e.g., kafka, json-jackson, simple, timer, choice, split)"),
-                        "kind", propDef("string",
-                                "Artifact kind: component, dataformat, language, or eip. "
-                                                  + "If omitted, auto-detects by trying component first, then dataformat, then language, then eip."),
-                        "includeOptions", propDef("boolean",
-                                "Whether to include configuration options in the response (default: true). "
-                                                             + "Set to false for a lightweight response with just metadata."),
-                        "includeDoc", propDef("boolean",
-                                "Whether to include the full AsciiDoc documentation text in the response (default: false). "
-                                                         + "Useful for deep-dive questions about usage, examples, and configuration patterns."),
-                        "optionsFilter", propDef("string",
-                                "Filter options by keyword in name or description (case-insensitive substring match). "
-                                                           + "Only used when includeOptions is true.")),
-                List.of("name"))));
-
-        tools.add(toToolDef(toolDef(
-                "tui_get_processor_detail",
-                "Returns configured options for all processors in a route as structured JSON. "
-                                            + "Each processor entry includes type, id, endpointUri (for from/to), "
-                                            + "and the configured options (attributes, expressions). "
-                                            + "Use includeDocs=true to enrich the response with documentation from "
-                                            + "the Camel catalog for each EIP option and component endpoint option. "
-                                            + "This is the programmatic equivalent of the Diagram tab's detail panel.",
-                Map.of("routeId", propDef("string",
-                        "Route ID to inspect (use * for all routes). Defaults to * if omitted."),
-                        "includeDocs", propDef("boolean",
-                                "If true, enrich each processor's options with documentation from the Camel catalog "
-                                                          + "(description, type, group, defaultValue, required, deprecated, enum values)")))));
-
-        // --- AI and MCP log tools ---
-
-        tools.add(toToolDef(toolDef(
-                "tui_get_ai_log",
-                "Returns the TUI's built-in AI panel activity log as structured JSON. "
-                                  + "Shows the AI panel's questions, tool calls, tool results, responses, and errors. "
-                                  + "Useful to see what the built-in AI has already investigated "
-                                  + "before repeating the same work.",
-                Map.of("limit", propDef("integer",
-                        "Maximum number of entries to return (default 50)")))));
-
-        tools.add(toToolDef(toolDef(
-                "tui_get_mcp_log",
-                "Returns the TUI MCP server's tool call log as structured JSON. "
-                                   + "Shows external MCP client connections and tool call requests/responses. "
-                                   + "Useful for debugging and auditing MCP interactions.",
-                Map.of("limit", propDef("integer",
-                        "Maximum number of entries to return (default 50)")))));
-
-        // --- Example tools ---
-
-        tools.add(toToolDef(toolDef(
-                "tui_list_examples",
-                "Returns the list of available bundled Camel examples as structured JSON. "
-                                     + "Each example has: name, title, description, level, category, tags, "
-                                     + "bundled, requiresDocker, infraServices. "
-                                     + "Use the 'name' field with tui_run_example to launch one.",
-                Map.of("filter", propDef("string",
-                        "Case-insensitive substring filter on name, title, description, level, or tags"),
-                        "level", propDef("string",
-                                "Filter by difficulty level: beginner, intermediate, or advanced")))));
-        tools.add(toToolDef(toolDef(
-                "tui_run_example",
-                "Launches a named bundled example as a background process. "
-                                   + "Bypasses the F2 menu entirely — no UI navigation needed. "
-                                   + "Automatically starts required infra services (Docker containers) if needed. "
-                                   + "Use tui_list_examples to discover available example names.",
-                Map.of("name", propDef("string",
-                        "Example name from the catalog (e.g. 'beginner/timer-log', 'ai/ollama')"),
-                        "profile", propDef("string",
-                                "Camel profile to use (e.g. 'dev'). Optional.")),
-                List.of("name"))));
-
-        return List.copyOf(tools);
     }
 
     // --- Tool execution methods ---
@@ -714,6 +334,7 @@ class TuiToolRegistry {
             result.put("selectedIntegration", name);
         }
         result.put("integrationCount", facade.getIntegrationCount());
+        addInfraContext(result);
         result.put("keystrokesVisible", facade.isKeystrokesVisible());
         result.put("captionVisible", facade.isCaptionVisible());
         addSelectionContext(result);
@@ -931,19 +552,22 @@ class TuiToolRegistry {
             result.put("selectedIntegration", selected);
         }
         result.put("integrationCount", facade.getIntegrationCount());
+        JsonArray infraArray = new JsonArray();
+        for (InfraInfo info : facade.liveInfraServices()) {
+            infraArray.add(InfraSupport.toJson(info));
+        }
+        result.put("infraServices", infraArray);
+        addInfraContext(result);
 
-        List<String> actions = facade.getActionLabels();
+        // Menu entries by label only: tui_action takes a label, which is sturdier (and far smaller on the wire) than
+        // the F2 + n x Down + Enter key sequences this used to spell out per entry.
         JsonArray actionsArray = new JsonArray();
-        for (int i = 0; i < actions.size(); i++) {
-            JsonObject action = new JsonObject();
-            action.put("index", i);
-            action.put("label", actions.get(i));
-            action.put("keys", actionKeys(i, actions.size()));
-            actionsArray.add(action);
+        for (String label : facade.getActionLabels()) {
+            if (!label.startsWith("─")) {
+                actionsArray.add(label);
+            }
         }
         result.put("actions", actionsArray);
-        result.put("actionsHint",
-                "Press F2 to open the Actions menu, then use Down arrow to reach the item by index, then Enter to select.");
 
         return Jsoner.serialize(result);
     }
@@ -1310,9 +934,62 @@ class TuiToolRegistry {
         String tab = args.get("tab") instanceof String s ? s : null;
         JsonObject data = facade.getTableData(tab);
         if (data == null) {
-            return "No table data available" + (tab != null ? " for tab: " + tab : "");
+            return facade.tableDataError(tab);
         }
         return Jsoner.serialize(data);
+    }
+
+    private String callGetStatus(Map<String, Object> args) {
+        String section = args.get("section") instanceof String s ? s.trim() : "";
+        if (section.isEmpty()) {
+            return "Error: section is required (use 'sections' to list the available names)";
+        }
+        String pid = args.get("pid") instanceof String s && !s.isBlank() ? s.trim() : facade.getSelectedPid();
+        if (pid == null || pid.isBlank()) {
+            return "No integration selected";
+        }
+        StatusFileReader reader = facade.statusFiles();
+        List<String> sections = reader.sections(pid);
+        if (sections.isEmpty()) {
+            return "No status document available for PID " + pid;
+        }
+        if (StatusFileReader.SECTION_LIST.equals(section)) {
+            JsonObject result = new JsonObject();
+            result.put("pid", pid);
+            result.put("sections", new JsonArray(sections));
+            return Jsoner.serialize(result);
+        }
+        Object value = reader.section(pid, section);
+        if (value == null) {
+            return "Unknown section '" + section + "' for PID " + pid + ". Available: " + String.join(", ", sections);
+        }
+        addUptimeText(value);
+        JsonObject result = new JsonObject();
+        result.put("pid", pid);
+        result.put("section", section);
+        result.put("data", value);
+        return Jsoner.serialize(result);
+    }
+
+    /**
+     * Adds a human-readable {@code uptimeText} ("3h13m") next to every numeric {@code uptime}, which the status
+     * document holds in milliseconds without saying so; a small model otherwise guesses the unit (13,800,803 was read
+     * as 13.8 seconds). The route entries already carry their uptime as text and are left alone.
+     */
+    static void addUptimeText(Object value) {
+        if (value instanceof JsonObject jo) {
+            Object uptime = jo.get("uptime");
+            if (uptime instanceof Number n && !jo.containsKey("uptimeText")) {
+                jo.put("uptimeText", TimeUtils.printDuration(n.longValue()));
+            }
+            for (Object child : jo.values()) {
+                addUptimeText(child);
+            }
+        } else if (value instanceof JsonArray arr) {
+            for (Object child : arr) {
+                addUptimeText(child);
+            }
+        }
     }
 
     private String callAction(Map<String, Object> args) {
@@ -1325,8 +1002,9 @@ class TuiToolRegistry {
             return "Action '" + action + "' executed";
         }
         return "Unknown or unsupported action: " + action
-               + ". Available: reset-stats, reset-screen, screenshot, show-keystrokes, "
-               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme";
+               + ". Use a name (reset-stats, reset-screen, screenshot, show-keystrokes, "
+               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme) "
+               + "or a menu label from tui_get_options actions";
     }
 
     private String callGetThemes() {
@@ -1366,27 +1044,112 @@ class TuiToolRegistry {
         return "Theme switched to '" + themeId + "'";
     }
 
+    /** The shared camel_get_log tool with the TUI extra: infra=<alias> reads the log of an infra service instead. */
     private String callGetLog(Map<String, Object> args) {
-        int limit = 50;
-        if (args.get("limit") instanceof Number n) {
-            limit = Math.max(1, Math.min(1000, n.intValue()));
+        if (args.get("infra") instanceof String alias && !alias.isBlank()) {
+            int limit = 50;
+            if (args.get("limit") instanceof Number n) {
+                limit = Math.max(1, Math.min(1000, n.intValue()));
+            }
+            String filter = args.get("filter") instanceof String v ? v : null;
+            return infraLog(alias, limit, filter);
         }
-        String filter = args.get("filter") instanceof String s ? s : null;
-        String level = args.get("level") instanceof String s ? s : null;
-        JsonObject data = facade.getLogData(limit, filter, level);
-        return Jsoner.serialize(data);
+        return executeShared(LOG_TOOL, args);
     }
 
-    private String callGetErrors() {
-        JsonObject data = facade.getTableData("Errors");
-        if (data == null) {
-            JsonObject empty = new JsonObject();
-            empty.put("tab", "Errors");
-            empty.put("rows", new JsonArray());
-            empty.put("totalRows", 0);
-            return Jsoner.serialize(empty);
+    private void addInfraContext(JsonObject result) {
+        result.put("infraCount", facade.liveInfraServices().size());
+        String selectedInfra = facade.getSelectedInfraAlias();
+        if (selectedInfra != null) {
+            result.put("selectedInfra", selectedInfra);
         }
-        return Jsoner.serialize(data);
+    }
+
+    private String infraLog(String alias, int limit, String filter) {
+        InfraInfo info = facade.findInfra(alias);
+        if (info == null) {
+            return unknownInfra(alias);
+        }
+        try {
+            return Jsoner.serialize(facade.getInfraLogData(info, limit, filter));
+        } catch (Exception e) {
+            return "Error: cannot read log of infra service " + info.alias + ": " + e.getMessage();
+        }
+    }
+
+    private String unknownInfra(String alias) {
+        List<String> running = facade.liveInfraServices().stream().map(i -> i.alias).toList();
+        return "Error: no running infra service named '" + alias + "'. Running: "
+               + (running.isEmpty() ? "none" : String.join(", ", running));
+    }
+
+    private String callInfra(Map<String, Object> args) {
+        String action = args.get("action") instanceof String s ? s.strip().toLowerCase(Locale.ROOT) : "";
+        if (action.isEmpty()) {
+            return "Error: action is required (list, log, start, stop, restart)";
+        }
+        if ("list".equals(action) || "ps".equals(action)) {
+            JsonArray arr = new JsonArray();
+            for (InfraInfo info : facade.liveInfraServices()) {
+                arr.add(InfraSupport.toJson(info));
+            }
+            JsonObject result = new JsonObject();
+            result.put("infraServices", arr);
+            result.put("count", arr.size());
+            return Jsoner.serialize(result);
+        }
+        String alias = args.get("alias") instanceof String s ? s.strip() : "";
+        if (alias.isEmpty()) {
+            return "Error: alias is required for " + action;
+        }
+        return switch (action) {
+            case "log" -> {
+                int limit = 50;
+                if (args.get("limit") instanceof Number n) {
+                    limit = Math.max(1, Math.min(1000, n.intValue()));
+                }
+                String filter = args.get("filter") instanceof String s ? s : null;
+                yield infraLog(alias, limit, filter);
+            }
+            case "start", "run" -> {
+                if (facade.findInfra(alias) != null) {
+                    yield "Infra service " + alias + " is already running";
+                }
+                yield startInfra(alias);
+            }
+            case "stop" -> {
+                InfraInfo info = facade.findInfra(alias);
+                if (info == null) {
+                    yield unknownInfra(alias);
+                }
+                yield facade.stopInfra(info)
+                        ? "Stopping infra service " + info.alias + " (pid " + info.pid + ")"
+                        : "Error: infra service " + info.alias + " (pid " + info.pid + ") is not running";
+            }
+            case "restart" -> {
+                InfraInfo info = facade.findInfra(alias);
+                if (info == null) {
+                    yield unknownInfra(alias);
+                }
+                facade.stopInfra(info);
+                yield startInfra(info.alias).replace("Starting", "Restarting");
+            }
+            default -> "Unknown action: " + action + ". Available: list, log, start, stop, restart";
+        };
+    }
+
+    private String startInfra(String alias) {
+        LaunchManager lm = launcher();
+        if (lm == null) {
+            return "Error: launching is not available";
+        }
+        try {
+            lm.startInfra(alias);
+            return "Starting infra service " + alias + " (Docker/Podman required); "
+                   + "it appears in tui_infra list once ready, typically within a few seconds";
+        } catch (Exception e) {
+            return "Error: failed to start infra service " + alias + ": " + e.getMessage();
+        }
     }
 
     private String callGetDiagram() {
@@ -1418,6 +1181,14 @@ class TuiToolRegistry {
         return Jsoner.serialize(data);
     }
 
+    private String callGetOllama(Map<String, Object> args) {
+        int limit = 50;
+        if (args.get("limit") instanceof Number n) {
+            limit = Math.max(1, n.intValue());
+        }
+        return Jsoner.serialize(facade.getOllamaData(limit));
+    }
+
     private String callGetSpans(Map<String, Object> args) {
         String traceId = args.get("traceId") instanceof String s ? s : null;
         int limit = 500;
@@ -1439,7 +1210,45 @@ class TuiToolRegistry {
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
+        String hint = unknownSchemeHint(endpoint, Jsoner.serialize(response));
+        if (hint != null) {
+            response.put("hint", hint);
+        }
         return Jsoner.serialize(response);
+    }
+
+    /**
+     * When a send failed because the endpoint scheme is not a Camel component (a model guessing {@code mqt t:} for
+     * {@code paho-mqtt5:}), names the catalog components that look like what was meant so the next call can use one.
+     */
+    private String unknownSchemeHint(String endpoint, String result) {
+        int colon = endpoint.indexOf(':');
+        if (colon <= 0 || result == null) {
+            return null;
+        }
+        String lower = result.toLowerCase();
+        if (!(lower.contains("no component found") || lower.contains("nosuchendpoint")
+                || lower.contains("failed to resolve endpoint") || lower.contains("cannot find component"))) {
+            return null;
+        }
+        String scheme = endpoint.substring(0, colon).toLowerCase();
+        List<String> similar;
+        try {
+            CamelCatalog catalog = CatalogLoader.loadCatalog(null, facade.getSelectedCamelVersion(), true);
+            if (catalog.findComponentNames().contains(scheme)) {
+                return null;
+            }
+            similar = catalog.suggestComponentNames(scheme, 5);
+        } catch (Exception e) {
+            return null;
+        }
+        if (similar.isEmpty()) {
+            return "Camel has no component named '" + scheme + "'. Use camel_catalog_find to find the right component, "
+                   + "then send again with its scheme.";
+        }
+        return "Camel has no component named '" + scheme + "'. Similar components in the catalog: "
+               + String.join(", ", similar) + ". Send again with one of those schemes, e.g. '" + similar.get(0)
+               + endpoint.substring(colon) + "'.";
     }
 
     private String callExecuteSql(Map<String, Object> args) {
@@ -1573,6 +1382,27 @@ class TuiToolRegistry {
         return Jsoner.serialize(response);
     }
 
+    /** Time the last tool call spent waiting for the user (a camel_write_file confirmation), see the AI panel. */
+    long consumeConfirmWaitMs() {
+        return facade != null ? facade.consumeConfirmWaitMs() : 0;
+    }
+
+    private String callWriteFile(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        String file = args.get("file") instanceof String s ? s : null;
+        String content = args.get("content") instanceof String s ? s : null;
+        boolean confirm = !Boolean.FALSE.equals(args.get("confirm"));
+        boolean validate = !Boolean.FALSE.equals(args.get("validate"));
+        return Jsoner.serialize(facade.writeFile(name, file, content, confirm, validate));
+    }
+
+    private String callValidateSource(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        String file = args.get("file") instanceof String s ? s : null;
+        String content = args.get("content") instanceof String s ? s : null;
+        return Jsoner.serialize(facade.validateSource(name, file, content));
+    }
+
     @SuppressWarnings("unchecked")
     private String callLocate(Map<String, Object> args) {
         String text = args.get("text") instanceof String s ? s : null;
@@ -1681,274 +1511,6 @@ class TuiToolRegistry {
             return DrawOverlay.generateText(x, y, text != null ? text : "", color);
         }
         return DrawOverlay.generateShape(shape, x, y, width, height, length, color);
-    }
-
-    private String callCatalogDoc(Map<String, Object> args) {
-        String name = args.get("name") instanceof String v ? v : null;
-        if (name == null || name.isEmpty()) {
-            return "{\"error\": \"'name' parameter is required\"}";
-        }
-        String kind = args.get("kind") instanceof String v ? v : null;
-        String optionsFilter = args.get("optionsFilter") instanceof String v ? v : null;
-        boolean includeOptions = !Boolean.FALSE.equals(args.get("includeOptions"));
-        boolean includeDoc = Boolean.TRUE.equals(args.get("includeDoc"));
-
-        String version = facade.getSelectedCamelVersion();
-        try {
-            CamelCatalog catalog = CatalogLoader.loadCatalog(null, version, true);
-            if (catalog == null) {
-                return "{\"error\": \"Could not load catalog" + (version != null ? " for version " + version : "") + "\"}";
-            }
-            return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions, includeDoc);
-        } catch (Exception e) {
-            JsonObject err = new JsonObject();
-            err.put("error", "Failed to load catalog: " + e.getMessage());
-            return Jsoner.serialize(err);
-        }
-    }
-
-    private String buildCatalogDocResult(
-            CamelCatalog catalog, String name, String kind, String optionsFilter,
-            boolean includeOptions, boolean includeDoc) {
-        String lowerFilter = optionsFilter != null ? optionsFilter.toLowerCase() : null;
-
-        if (kind == null || "component".equals(kind)) {
-            ComponentModel cm = catalog.componentModel(name);
-            if (cm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-component") : null;
-                return buildComponentDocJson(cm, lowerFilter, includeOptions, doc);
-            }
-            if (kind != null) {
-                return "{\"error\": \"Component not found: " + name + "\"}";
-            }
-        }
-        if (kind == null || "dataformat".equals(kind)) {
-            DataFormatModel dm = catalog.dataFormatModel(name);
-            if (dm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-dataformat") : null;
-                return buildDataFormatDocJson(dm, lowerFilter, includeOptions, doc);
-            }
-            if (kind != null) {
-                return "{\"error\": \"Data format not found: " + name + "\"}";
-            }
-        }
-        if (kind == null || "language".equals(kind)) {
-            LanguageModel lm = catalog.languageModel(name);
-            if (lm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-language") : null;
-                return buildLanguageDocJson(lm, lowerFilter, includeOptions, doc);
-            }
-            if (kind != null) {
-                return "{\"error\": \"Language not found: " + name + "\"}";
-            }
-        }
-        if (kind == null || "eip".equals(kind)) {
-            EipModel em = catalog.eipModel(name);
-            if (em != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-eip") : null;
-                return buildEipDocJson(em, lowerFilter, includeOptions, doc);
-            }
-            if (kind != null) {
-                return "{\"error\": \"EIP not found: " + name + "\"}";
-            }
-        }
-        return "{\"error\": \"Artifact not found: " + name + "\"}";
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void addCommonModelFields(JsonObject result, BaseModel<?> model) {
-        if (model.getFirstVersion() != null) {
-            result.put("since", model.getFirstVersion());
-        }
-        if (model.getSupportLevel() != null) {
-            result.put("supportLevel", model.getSupportLevel().name());
-        }
-        if (model.isNativeSupported()) {
-            result.put("nativeSupported", true);
-        }
-        if (model.isDeprecated()) {
-            result.put("deprecated", true);
-            if (model.getDeprecatedSince() != null) {
-                result.put("deprecatedSince", model.getDeprecatedSince());
-            }
-            if (model.getDeprecationNote() != null) {
-                result.put("deprecationNote", model.getDeprecationNote());
-            }
-        }
-    }
-
-    private String buildComponentDocJson(ComponentModel model, String filter, boolean includeOptions, String doc) {
-        JsonObject result = new JsonObject();
-        result.put("kind", "component");
-        result.put("name", model.getScheme());
-        result.put("title", model.getTitle());
-        result.put("description", model.getDescription());
-        if (model.getLabel() != null) {
-            result.put("label", model.getLabel());
-        }
-        if (model.getSyntax() != null) {
-            result.put("syntax", model.getSyntax());
-        }
-        result.put("consumerOnly", model.isConsumerOnly());
-        result.put("producerOnly", model.isProducerOnly());
-        result.put("remote", model.isRemote());
-        result.put("groupId", model.getGroupId());
-        result.put("artifactId", model.getArtifactId());
-        addCommonModelFields(result, model);
-
-        if (includeOptions) {
-            JsonArray options = new JsonArray();
-            if (model.getComponentOptions() != null) {
-                for (BaseOptionModel opt : model.getComponentOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, "component"));
-                    }
-                }
-            }
-            if (model.getEndpointOptions() != null) {
-                for (BaseOptionModel opt : model.getEndpointOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, "endpoint"));
-                    }
-                }
-            }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
-        }
-        if (doc != null) {
-            result.put("doc", doc);
-        }
-        return Jsoner.serialize(result);
-    }
-
-    private String buildDataFormatDocJson(DataFormatModel model, String filter, boolean includeOptions, String doc) {
-        JsonObject result = new JsonObject();
-        result.put("kind", "dataformat");
-        result.put("name", model.getName());
-        result.put("title", model.getTitle());
-        result.put("description", model.getDescription());
-        if (model.getLabel() != null) {
-            result.put("label", model.getLabel());
-        }
-        result.put("groupId", model.getGroupId());
-        result.put("artifactId", model.getArtifactId());
-        addCommonModelFields(result, model);
-
-        if (includeOptions) {
-            JsonArray options = new JsonArray();
-            if (model.getOptions() != null) {
-                for (BaseOptionModel opt : model.getOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, null));
-                    }
-                }
-            }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
-        }
-        if (doc != null) {
-            result.put("doc", doc);
-        }
-        return Jsoner.serialize(result);
-    }
-
-    private String buildLanguageDocJson(LanguageModel model, String filter, boolean includeOptions, String doc) {
-        JsonObject result = new JsonObject();
-        result.put("kind", "language");
-        result.put("name", model.getName());
-        result.put("title", model.getTitle());
-        result.put("description", model.getDescription());
-        if (model.getLabel() != null) {
-            result.put("label", model.getLabel());
-        }
-        result.put("groupId", model.getGroupId());
-        result.put("artifactId", model.getArtifactId());
-        addCommonModelFields(result, model);
-
-        if (includeOptions) {
-            JsonArray options = new JsonArray();
-            if (model.getOptions() != null) {
-                for (BaseOptionModel opt : model.getOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, null));
-                    }
-                }
-            }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
-        }
-        if (doc != null) {
-            result.put("doc", doc);
-        }
-        return Jsoner.serialize(result);
-    }
-
-    private String buildEipDocJson(EipModel model, String filter, boolean includeOptions, String doc) {
-        JsonObject result = new JsonObject();
-        result.put("kind", "eip");
-        result.put("name", model.getName());
-        result.put("title", model.getTitle());
-        result.put("description", model.getDescription());
-        if (model.getLabel() != null) {
-            result.put("label", model.getLabel());
-        }
-        result.put("input", model.isInput());
-        result.put("output", model.isOutput());
-        addCommonModelFields(result, model);
-
-        if (includeOptions) {
-            JsonArray options = new JsonArray();
-            if (model.getOptions() != null) {
-                for (BaseOptionModel opt : model.getOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, null));
-                    }
-                }
-            }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
-        }
-        if (doc != null) {
-            result.put("doc", doc);
-        }
-        return Jsoner.serialize(result);
-    }
-
-    private static boolean matchesOptionFilter(BaseOptionModel opt, String filter) {
-        if (filter == null) {
-            return true;
-        }
-        return (opt.getName() != null && opt.getName().toLowerCase().contains(filter))
-                || (opt.getDescription() != null && opt.getDescription().toLowerCase().contains(filter))
-                || (opt.getGroup() != null && opt.getGroup().toLowerCase().contains(filter))
-                || (opt.getLabel() != null && opt.getLabel().toLowerCase().contains(filter));
-    }
-
-    private static JsonObject optionToJson(BaseOptionModel opt, String scope) {
-        JsonObject o = new JsonObject();
-        o.put("name", opt.getName());
-        o.put("description", opt.getDescription());
-        o.put("type", opt.getType());
-        o.put("required", opt.isRequired());
-        if (opt.getDefaultValue() != null) {
-            o.put("defaultValue", opt.getDefaultValue().toString());
-        }
-        if (opt.getGroup() != null) {
-            o.put("group", opt.getGroup());
-        }
-        if (scope != null) {
-            o.put("scope", scope);
-        }
-        if (opt.isDeprecated()) {
-            o.put("deprecated", true);
-        }
-        if (opt.isSecret()) {
-            o.put("secret", true);
-        }
-        if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
-            o.put("enumValues", toJsonArray(opt.getEnums()));
-        }
-        return o;
     }
 
     private String callGetProcessorDetail(Map<String, Object> args) {
@@ -2188,7 +1750,7 @@ class TuiToolRegistry {
             return "{\"error\": \"'name' parameter is required\"}";
         }
 
-        LaunchManager lm = launchManager;
+        LaunchManager lm = launcher();
         if (lm == null) {
             return "{\"error\": \"Launching examples is not available in this session\"}";
         }
@@ -2253,15 +1815,6 @@ class TuiToolRegistry {
         return camelArgs;
     }
 
-    private static String actionKeys(int index, int totalActions) {
-        StringBuilder sb = new StringBuilder("F2");
-        for (int i = 0; i < index; i++) {
-            sb.append(",Down");
-        }
-        sb.append(",Enter");
-        return sb.toString();
-    }
-
     private static JsonArray toJsonArray(List<String> list) {
         JsonArray arr = new JsonArray();
         arr.addAll(list);
@@ -2270,42 +1823,4 @@ class TuiToolRegistry {
 
     // --- Tool definition helpers ---
 
-    private static JsonObject toolDef(String name, String description, Map<String, JsonObject> properties) {
-        return toolDef(name, description, properties, List.of());
-    }
-
-    private static JsonObject toolDef(
-            String name, String description, Map<String, JsonObject> properties, List<String> required) {
-        JsonObject schema = new JsonObject();
-        schema.put("type", "object");
-        if (!properties.isEmpty()) {
-            JsonObject props = new JsonObject();
-            props.putAll(properties);
-            schema.put("properties", props);
-        }
-        if (!required.isEmpty()) {
-            JsonArray req = new JsonArray();
-            req.addAll(required);
-            schema.put("required", req);
-        }
-        JsonObject tool = new JsonObject();
-        tool.put("name", name);
-        tool.put("description", description);
-        tool.put("inputSchema", schema);
-        return tool;
-    }
-
-    private static JsonObject propDef(String type, String description) {
-        JsonObject prop = new JsonObject();
-        prop.put("type", type);
-        prop.put("description", description);
-        return prop;
-    }
-
-    private static ToolDef toToolDef(JsonObject json) {
-        return new ToolDef(
-                (String) json.get("name"),
-                (String) json.get("description"),
-                (JsonObject) json.get("inputSchema"));
-    }
 }

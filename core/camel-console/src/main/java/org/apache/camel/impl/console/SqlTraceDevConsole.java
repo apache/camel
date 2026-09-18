@@ -35,8 +35,7 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "sql-trace", displayName = "SQL Trace", description = "Trace SQL query executions")
 @Configurer(extended = true)
@@ -46,9 +45,41 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
               description = "Maximum capacity of traced SQL statements (capacity must be between 25 and 1000)")
     private int capacity = 200;
 
-    private JsonObject[] events;
+    private StatementEntry[] events;
     private final AtomicInteger pos = new AtomicInteger();
     private final ConsoleEventNotifier listener = new ConsoleEventNotifier();
+
+    public record StatementEntry(
+            @Metadata(description = "Epoch time in milliseconds when the statement was executed") long timestamp,
+            @Metadata(description = "The exchange ID") String exchangeId,
+            @Metadata(description = "The route ID (only present when known)") String routeId,
+            @Metadata(description = "The processor node ID (only present when known)") String nodeId,
+            @Metadata(description = "The source location of the processor (only present when known)") String location,
+            @Metadata(description = "The endpoint URI") String endpoint,
+            @Metadata(description = "The SQL query (or the endpoint URI when the query could not be determined)") String query,
+            @Metadata(description = "The SQL statement category") String category,
+            @Metadata(description = "Duration in milliseconds") long duration,
+            @Metadata(description = "Whether the exchange failed") boolean failed,
+            @Metadata(description = "Number of rows returned (only present when known)") Integer rowCount,
+            @Metadata(description = "Number of rows updated (only present when known)") Integer updateCount) {
+    }
+
+    public record Summary(
+            @Metadata(description = "Total number of queries") long totalQueries,
+            @Metadata(description = "Average duration in milliseconds") long avgTime,
+            @Metadata(description = "Slowest duration in milliseconds") long slowestTime,
+            @Metadata(description = "Number of queries considered slow (duration >= 100 ms)") long slowCount,
+            @Metadata(description = "Number of failed queries") long failedCount,
+            @Metadata(description = "Number of SELECT statements") long selectCount,
+            @Metadata(description = "Number of INSERT statements") long insertCount,
+            @Metadata(description = "Number of UPDATE statements") long updateCount,
+            @Metadata(description = "Number of DELETE statements") long deleteCount) {
+    }
+
+    public record Response(
+            @Metadata(description = "The traced SQL statements, most recent first (only present when statements have been traced)") List<StatementEntry> statements,
+            @Metadata(description = "Summary statistics across the traced statements (only present when statements have been traced)") Summary summary) {
+    }
 
     public SqlTraceDevConsole() {
         super("camel", "sql-trace", "SQL Trace", "Trace SQL query executions");
@@ -67,7 +98,7 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
         if (capacity > 1000 || capacity < 25) {
             throw new IllegalArgumentException("Capacity must be between 25 and 1000");
         }
-        this.events = new JsonObject[capacity];
+        this.events = new StatementEntry[capacity];
     }
 
     @Override
@@ -84,14 +115,10 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        List<JsonObject> list = collectEvents();
-        for (JsonObject jo : list) {
+        List<StatementEntry> list = collectEvents();
+        for (StatementEntry e : list) {
             sb.append(String.format("    %s %s %s (%d ms) route:%s%n",
-                    jo.getString("category"),
-                    jo.getString("query"),
-                    jo.getBooleanOrDefault("failed", false) ? "FAILED" : "OK",
-                    jo.getLongOrDefault("duration", 0),
-                    jo.getString("routeId")));
+                    e.category(), e.query(), e.failed() ? "FAILED" : "OK", e.duration(), e.routeId()));
         }
         if (!list.isEmpty()) {
             sb.insert(0, String.format("Last %d SQL Statements:%n", list.size()));
@@ -101,17 +128,14 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<StatementEntry> list = collectEvents();
 
-        List<JsonObject> list = collectEvents();
+        List<StatementEntry> statements = null;
+        Summary summary = null;
         if (!list.isEmpty()) {
-            JsonArray arr = new JsonArray();
-            arr.addAll(list);
-            root.put("statements", arr);
+            statements = list;
 
-            // compute summary
-            JsonObject summary = new JsonObject();
             long total = list.size();
             long totalTime = 0;
             long slowest = 0;
@@ -122,8 +146,8 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
             long updateCount = 0;
             long deleteCount = 0;
 
-            for (JsonObject jo : list) {
-                long duration = jo.getLongOrDefault("duration", 0);
+            for (StatementEntry e : list) {
+                long duration = e.duration();
                 totalTime += duration;
                 if (duration > slowest) {
                     slowest = duration;
@@ -131,11 +155,10 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                 if (duration >= 100) {
                     slowCount++;
                 }
-                if (jo.getBooleanOrDefault("failed", false)) {
+                if (e.failed()) {
                     failedCount++;
                 }
-                String cat = jo.getStringOrDefault("category", "");
-                switch (cat) {
+                switch (e.category()) {
                     case "SELECT":
                         selectCount++;
                         break;
@@ -153,28 +176,22 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                 }
             }
 
-            summary.put("totalQueries", total);
-            summary.put("avgTime", total > 0 ? totalTime / total : 0);
-            summary.put("slowestTime", slowest);
-            summary.put("slowCount", slowCount);
-            summary.put("failedCount", failedCount);
-            summary.put("selectCount", selectCount);
-            summary.put("insertCount", insertCount);
-            summary.put("updateCount", updateCount);
-            summary.put("deleteCount", deleteCount);
-            root.put("summary", summary);
+            summary = new Summary(
+                    total, total > 0 ? totalTime / total : 0, slowest, slowCount, failedCount, selectCount,
+                    insertCount, updateCount, deleteCount);
         }
 
-        return root;
+        Response response = new Response(statements, summary);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private List<JsonObject> collectEvents() {
-        List<JsonObject> list = new ArrayList<>();
+    private List<StatementEntry> collectEvents() {
+        List<StatementEntry> list = new ArrayList<>();
         int cursor = pos.get();
         // cursor points to the NEXT write slot, so walk backward from cursor-1
         for (int i = 0; i < capacity; i++) {
             cursor = (cursor - 1 + capacity) % capacity;
-            JsonObject event = events[cursor];
+            StatementEntry event = events[cursor];
             if (event != null) {
                 list.add(event);
             }
@@ -270,47 +287,29 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                         query = resolveResource(query.substring("resource:".length()));
                     }
 
-                    JsonObject jo = new JsonObject();
-                    jo.put("timestamp", event.getTimestamp());
-                    jo.put("exchangeId", exchange.getExchangeId());
-                    jo.put("routeId", exchange.getFromRouteId());
                     String nodeId = exchange.getExchangeExtension().getHistoryNodeId();
-                    if (nodeId != null) {
-                        jo.put("nodeId", nodeId);
-                    }
-                    String nodeSource = exchange.getExchangeExtension().getHistoryNodeSource();
-                    if (nodeSource != null) {
-                        jo.put("location", nodeSource);
-                    }
-                    jo.put("endpoint", uri);
-                    if (query != null) {
-                        jo.put("query", query);
-                        jo.put("category", detectCategory(query));
-                    } else {
-                        jo.put("query", uri);
-                        jo.put("category", "OTHER");
-                    }
-                    jo.put("duration", ese.getTimeTaken());
-                    jo.put("failed", exchange.isFailed());
+                    String location = exchange.getExchangeExtension().getHistoryNodeSource();
+                    String finalQuery = query != null ? query : uri;
+                    String category = query != null ? detectCategory(query) : "OTHER";
 
                     // row/update counts from sql and jdbc component headers
                     Object rc = exchange.getMessage().getHeader("CamelSqlRowCount");
                     if (rc == null) {
                         rc = exchange.getMessage().getHeader("CamelJdbcRowCount");
                     }
-                    if (rc instanceof Number) {
-                        jo.put("rowCount", ((Number) rc).intValue());
-                    }
+                    Integer rowCount = rc instanceof Number ? ((Number) rc).intValue() : null;
                     Object uc = exchange.getMessage().getHeader("CamelSqlUpdateCount");
                     if (uc == null) {
                         uc = exchange.getMessage().getHeader("CamelJdbcUpdateCount");
                     }
-                    if (uc instanceof Number) {
-                        jo.put("updateCount", ((Number) uc).intValue());
-                    }
+                    Integer updateCount = uc instanceof Number ? ((Number) uc).intValue() : null;
+
+                    StatementEntry entry = new StatementEntry(
+                            event.getTimestamp(), exchange.getExchangeId(), exchange.getFromRouteId(), nodeId, location,
+                            uri, finalQuery, category, ese.getTimeTaken(), exchange.isFailed(), rowCount, updateCount);
 
                     int p = pos.getAndUpdate(operand -> ++operand % capacity);
-                    events[p] = jo;
+                    events[p] = entry;
                 }
             }
         }

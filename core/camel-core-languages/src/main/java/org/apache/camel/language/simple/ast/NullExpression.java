@@ -47,9 +47,4 @@ public class NullExpression extends BaseSimpleNode {
     public Expression createExpression(CamelContext camelContext, String expression) throws SimpleParserException {
         return NULL_EXPRESSION;
     }
-
-    @Override
-    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        return "null";
-    }
 }

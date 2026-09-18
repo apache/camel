@@ -18,6 +18,8 @@ package org.apache.camel.impl.console;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.Configurer;
@@ -25,11 +27,22 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "jvm", displayName = "JVM", description = "Displays JVM information")
 @Configurer(extended = true)
 public class JvmDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "The JVM name") String vmName,
+            @Metadata(description = "The JVM version") String vmVersion,
+            @Metadata(description = "The JVM vendor") String vmVendor,
+            @Metadata(description = "The JVM uptime") String vmUptime,
+            @Metadata(description = "The process ID") Long pid,
+            @Metadata(description = "The JVM input arguments (only present when any are set)") String inputArguments,
+            @Metadata(description = "The boot classpath entries (only present when supported)") List<String> bootClasspath,
+            @Metadata(description = "The classpath entries") List<String> classpath) {
+    }
 
     @Metadata(defaultValue = "true", description = "Show classpath information")
     private boolean showClasspath = true;
@@ -76,28 +89,20 @@ public class JvmDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
+        Response response;
         if (mb != null) {
-            root.put("vmName", mb.getVmName());
-            root.put("vmVersion", mb.getVmVersion());
-            root.put("vmVendor", mb.getVmVendor());
-            root.put("vmUptime", TimeUtils.printDuration(mb.getUptime()));
-            root.put("pid", mb.getPid());
-            if (!mb.getInputArguments().isEmpty()) {
-                String arg = String.join(" ", mb.getInputArguments());
-                root.put("inputArguments", arg);
-            }
-            if (mb.isBootClassPathSupported()) {
-                String[] cp = mb.getBootClassPath().split("[:|;]");
-                root.put("bootClasspath", cp);
-            }
-            String[] cp = mb.getClassPath().split("[:|;]");
-            root.put("classpath", cp);
+            String inputArguments = !mb.getInputArguments().isEmpty() ? String.join(" ", mb.getInputArguments()) : null;
+            List<String> bootClasspath
+                    = mb.isBootClassPathSupported() ? Arrays.asList(mb.getBootClassPath().split("[:|;]")) : null;
+            List<String> classpath = Arrays.asList(mb.getClassPath().split("[:|;]"));
+            response = new Response(
+                    mb.getVmName(), mb.getVmVersion(), mb.getVmVendor(), TimeUtils.printDuration(mb.getUptime()),
+                    mb.getPid(), inputArguments, bootClasspath, classpath);
+        } else {
+            response = new Response(null, null, null, null, null, null, null, null);
         }
-
-        return root;
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

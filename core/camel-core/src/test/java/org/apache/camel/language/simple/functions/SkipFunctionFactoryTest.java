@@ -83,11 +83,4 @@ public class SkipFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
                 IllegalArgumentException.class,
                 () -> evaluate("skip(${header.missingNum})"));
     }
-
-    @Test
-    public void testCreateCode() {
-        assertEquals("skip(exchange, 10)", createCode("skip(10)"));
-        assertEquals("skip(exchange, ${header.max})", createCode("skip(${header.max})"));
-        assertEquals("skip(exchange, ${random(2,3)})", createCode("skip(${random(2,3)})"));
-    }
 }

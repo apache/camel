@@ -384,10 +384,46 @@ public class BeanExpression implements Expression, Predicate {
                 exchange.setException(resultExchange.getException());
             }
         } catch (Exception e) {
-            throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
+            throw new RuntimeBeanExpressionException(
+                    exchange, describeBean(beanHolder, beanName, exchange), methodHint(methodName, e), e);
         }
 
         return result;
+    }
+
+    /**
+     * ${body.toUpperCase} without parentheses binds the body as the parameter of the one argument overload, which fails
+     * on the conversion; say that a method call needs parentheses.
+     */
+    private static String methodHint(String methodName, Throwable e) {
+        if (methodName != null && !methodName.contains("(") && !methodName.contains("[")) {
+            for (Throwable t = e; t != null; t = t.getCause()) {
+                String n = t.getClass().getSimpleName();
+                if (n.equals("NoTypeConversionAvailableException") || n.equals("InvalidPayloadException")) {
+                    return methodName + " (a method call needs parentheses: " + methodName + "())";
+                }
+            }
+        }
+        return methodName;
+    }
+
+    /**
+     * The bean name, or for an OGNL on the message body (${body.foo()}) what the body is, so the message does not say
+     * "on null".
+     */
+    private static String describeBean(BeanHolder beanHolder, String beanName, Exchange exchange) {
+        if (beanName != null) {
+            return beanName;
+        }
+        try {
+            Object bean = beanHolder != null ? beanHolder.getBean(exchange) : null;
+            if (bean != null) {
+                return "the message body of type " + ObjectHelper.className(bean);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return "the message body";
     }
 
     /**
@@ -491,9 +527,32 @@ public class BeanExpression implements Expression, Predicate {
         }
         Object newResult = invokeBean(holder, beanName, methodName, resultExchange);
         if (resultExchange.getException() != null) {
-            throw new RuntimeBeanExpressionException(exchange, beanName, methodName, resultExchange.getException());
+            throw new RuntimeBeanExpressionException(
+                    exchange, describeBean(holder, beanName, exchange),
+                    keyHint(holder, exchange, methodName, methodHint(methodName, resultExchange.getException())),
+                    resultExchange.getException());
         }
         return newResult;
+    }
+
+    /**
+     * ${body.type} on a Map body looks for a method named type; a key is read with ${body[type]}. Say so when the bean
+     * is a Map and the name is not a method call.
+     */
+    private static String keyHint(BeanHolder holder, Exchange exchange, String methodName, String hint) {
+        if (methodName == null || methodName.contains("(") || methodName.contains("[")) {
+            return hint;
+        }
+        try {
+            Object bean = holder != null ? holder.getBean(exchange) : null;
+            if (bean instanceof Map) {
+                return hint + " (the value is a Map: a key is read with [" + methodName + "], as in ${body[" + methodName
+                       + "]}, not with ." + methodName + ")";
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return hint;
     }
 
     private Object lookupByKeyIfPresent(

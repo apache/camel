@@ -22,7 +22,7 @@
 //JAVA_OPTIONS --enable-native-access=ALL-UNNAMED
 //DEPS org.apache.camel:camel-bom:${camel.jbang.version:4.22.0}@pom
 //DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:4.22.0}
-//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:4.21.0}
+//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:4.22.0}
 
 package main;
 

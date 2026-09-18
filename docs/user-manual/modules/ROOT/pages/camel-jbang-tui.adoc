@@ -49,8 +49,10 @@ camel tui
 . Press *Enter* to launch the selected example
 
 Before launching, a run options form lets you choose the *runtime*: Camel Main (standalone),
-Spring Boot, or Quarkus. This makes it easy to try any example on all three runtimes without
-changing a single line of code. You can also set the integration name, toggle dev mode, and
+Spring Boot, Quarkus, or JBang. This makes it easy to try any example on all three runtimes without
+changing a single line of code. The first three run the example in a separate JVM that only
+contains the dependencies of the example (like a production deployment), while JBang runs it
+in-process in the Camel CLI JVM, which starts faster but has the CLI on the classpath as well. You can also set the integration name, toggle dev mode, and
 add extra dependencies.
 
 The example starts running in the background. The TUI auto-selects it as soon as it appears.
@@ -79,8 +81,10 @@ camel tui /path/to/my-project
 
 The TUI opens the directory in the Source tab so you can browse the project files immediately.
 When a `pom.xml` is present, the runtime is auto-detected (Spring Boot, Quarkus, or Camel Main).
-Press *F10* to run the project -- Maven projects are launched with the appropriate goal
-(`spring-boot:run`, `quarkus:dev`, or `camel:run`), and plain directories are run with `camel run`.
+Press *F10* to run the project -- Maven projects are run with `camel run pom.xml`, which launches
+them with the appropriate goal (`spring-boot:run`, `quarkus:dev`, or `camel:run`), and plain
+directories are run with `camel run`. Either way the application logs to `~/.camel` so the Log tab
+shows its logs.
 
 This is a quick way to explore and run any Camel project without starting it separately first.
 
@@ -115,10 +119,9 @@ Once added, start your application normally and the TUI will discover it automat
 No additional configuration is needed -- the connector auto-detects on the classpath and
 registers the application with the local Camel CLI.
 
-TIP: When you open a Spring Boot project via *F2 > Open Project* and run it with *F10*,
-the TUI automatically injects the `camel-cli-connector-starter` dependency if it's not
-already in your `pom.xml`. This means the TUI can monitor the application without
-modifying your project.
+TIP: When you open a Spring Boot, Quarkus or Camel Main project via *F2 > Open Project* and run
+it with *F10*, the CLI connector dependency is automatically injected if it's not already in your
+`pom.xml`. This means the TUI can monitor the application without modifying your project.
 
 See xref:camel-jbang-managing.adoc[Managing Integrations] for more details.
 
@@ -147,6 +150,7 @@ The *More* menu (key *0*) opens a popup with tabs organized into groups:
 
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
 * *Observability* -- Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
+* *AI* -- Ollama (listed when an Ollama server is detected)
 * *Data* -- JDBC DataSource, Kafka, SQL Query, SQL Trace
 * *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads
 * *Project* -- Beans, Catalog, Configuration, CVE Audit, Maven Dependencies, Type Converters, Data Type Transformers
@@ -159,6 +163,10 @@ classpath. The TUI adapts to show only what's relevant to your integration.
 Tab badges show live counts -- the Errors tab shows a red badge when errors exist
 and Routes shows the route count.
 
+Two panels can be opened on top of any tab: *F6* opens an <<_embedded_shell_f6,embedded shell>>
+for running `camel` commands, and *F8* opens the <<_ai_integration_mcp,AI prompt>> for asking
+questions about the running integrations.
+
 == Source Code Browser
 
 The Source tab (Tab 2) gives you a file explorer into your project code. The left panel shows
@@ -168,7 +176,7 @@ right panel with full syntax highlighting.
 For Camel source files (YAML, XML, Java routes, and `application.properties`), press *i* to toggle
 inline documentation. The TUI uses the Camel catalog to look up every component, EIP, language,
 and data format used in your route and shows their documentation right next to the source code.
-For properties files, it resolves `camel.component.*` and `camel.main.*` keys to their catalog
+For properties files, it resolves `+camel.component.*+` and `+camel.main.*+` keys to their catalog
 descriptions. This makes it easy to understand unfamiliar routes without leaving the terminal.
 
 Additional features:
@@ -193,8 +201,11 @@ Camel routes:
 * *Delete line* -- *Ctrl+K* to delete the current line
 * *Word navigation* -- *Ctrl+Left/Right* to jump by word
 * *Smart Home* -- *Home* key alternates between content indent and column 0
-* *Tab completion* -- press *Tab* for context-aware YAML completion (EIP names, component URIs,
-  option keys and values)
+* *Tab completion* -- press *Tab* for context-aware completion:
+** In `application.properties`: Camel configuration options (`+camel.main.*+`, `+camel.component.*+`, etc.)
+   and Spring Boot auto-configuration properties (`+server.*+`, `+spring.*+`, `+management.*+`, etc.)
+   resolved from starter JARs in the local Maven repository — works even for stopped projects
+** In YAML DSL routes: EIP names, component URIs, option keys and values
 
 The editor shows *gutter change markers* -- a green background on line numbers that have been
 modified or added since the file was opened. This gives an at-a-glance view of what you've changed.
@@ -401,6 +412,48 @@ Features:
 This is especially useful for understanding latency in multi-route integrations and for
 correlating Camel processing with external service calls (HTTP, database, messaging).
 
+== Ollama
+
+The Ollama tab (under More, in the *AI* group) shows how the model served by a local
+https://ollama.com[Ollama] is performing, in the spirit of an LLM dashboard. It works with or without a
+running integration: it finds Ollama at `localhost:11434`, at the address of `camel infra run ollama`,
+or at the endpoint the AI panel (*F8*) is using. The tab is listed only while an Ollama server answers;
+the TUI checks every ten seconds, so it appears shortly after `ollama serve` starts.
+
+* *Model* -- the loaded model with its family, parameters, quantization, layers, experts (and how many
+  are active per token for a mixture-of-experts model), how much of it sits in GPU memory, the
+  allocated context length and when Ollama will unload it. With no model loaded, the installed models
+  are listed instead.
+* *Throughput* -- decode and prefill tokens per second, *live* while the model is generating and
+  otherwise from the last request; time to first token and load time (a load of a second or more
+  is a cold start); session averages and a sparkline of the decode rate.
+* *Context* -- how full the context window is, the share of the prompt served from Ollama's cache,
+  whether the model is working or idle, the speculative decoding method in use, and a per-turn trend
+  of how much of the window each AI panel prompt filled, with the session peak and the compactions seen.
+* *Host* -- GPU utilization and memory (Apple silicon through `ioreg`, NVIDIA through `nvidia-smi`),
+  and CPU and memory of the Ollama server and its model runner.
+* *Requests* -- one line per question asked in the AI panel (a question with tool calls costs one
+  request per step; *Enter* unfolds the steps) with the question text, prompt and generated tokens,
+  cache hit, the share of the context window reached, prefill and decode tokens per second, time to
+  first token, the time you waited and the stop reason. Calls made by Camel routes are listed as
+  their own lines.
+
+Two kinds of requests appear in the log. Questions asked in the AI panel with Ollama as the provider
+come with the timings Ollama reports for each request (prompt evaluation, generation, model load,
+total). Calls made by Camel routes through `camel-langchain4j-chat`, `camel-openai` or
+`camel-spring-ai-chat` appear when the integration runs with GenAI observability (`--observe`, or
+`--dep=camel:ai-observability`), tagged with the route id; Camel records tokens and duration for those,
+not the phase split.
+
+The live figures, the context panel and the host panel need the model runner on the same machine:
+Ollama starts a `llama-server` process per loaded model and the tab reads its slot state a few times a
+second. Against a remote or containerised Ollama the tab keeps the model, per-request and session data
+and says which panels are unavailable.
+
+Press *r* to reset the request log and the session totals, *F5* to refresh immediately. The same data
+is available to AI agents through the `tui_get_ollama` MCP tool. For what the figures mean for the AI
+panel and which knobs to turn, see <<_working_with_a_local_ollama_model>>.
+
 == Process Information
 
 The Process tab (under More, shortcut *p*) shows JVM process details for the selected
@@ -481,6 +534,7 @@ Press *F2* to open the actions menu with quick access to common operations:
 | Settings... | Change the theme, the starting tab, and the default run-from-folder.
 | Take Screenshot | Export the current screen as SVG, text, or ANSI art.
 | Start/Stop Tape Recording | Record your session as a `.tape` file for demos.
+| Quit | Quit the TUI, with the same confirmation as pressing *q*. The last entry of the menu, so quitting is one menu away on tabs and in input fields where *q* is taken by something else.
 |===
 
 === Sending Test Messages
@@ -510,21 +564,39 @@ The Doctor checks your development environment and reports issues:
 * Common port conflicts (8080, 8443, 9090)
 * Disk space in temp directory
 
+== Embedded Shell (F6)
+
+Press *F6* to open an embedded Camel JBang shell at the bottom (or top) of the screen. Any `camel`
+command can be run there -- `camel run`, `camel infra run kafka`, `camel cmd send`, `camel get` and
+so on -- without leaving the dashboard, and the tabs keep updating while the command runs. Press
+*F6* again to close the panel, *Shift+F6* to cycle its height, *PgUp*/*PgDn* to scroll the output
+and *↑*/*↓* to recall earlier commands (see <<_input_history>>).
+
+The shell and the AI prompt panel (*F8*) share the same space: opening one closes the other. Both
+open at the bottom by default; see *Panel Position* in <<_settings>>.
+
 == Theme
 
-The TUI ships with 15 color themes defined as CSS stylesheets:
+The TUI ships with 21 color themes defined as CSS stylesheets:
 
 * *Dark themes* -- Dark (default), Dracula, Nord, Solarized Dark, Gruvbox Dark,
-  Catppuccin Mocha, Tokyo Night, Rosé Pine, Kanagawa, Everforest, Monochrome, CRT
-* *Light themes* -- Light, Solarized Light, Catppuccin Latte
+  Catppuccin Mocha, Catppuccin Frappé, Tokyo Night, Rosé Pine, Rosé Pine Moon, Kanagawa,
+  Everforest, Monochrome, CRT, Turbo Pascal
+* *Light themes* -- Light, Nord Light, Solarized Light, Gruvbox Light, Catppuccin Latte,
+  Everforest Light
 
 Open the *F2* actions menu and choose *Settings...* to switch themes, or pass
 `--theme=<name>` on the command line (e.g., `--theme=tokyo-night`). The CLI value
 overrides the persisted preference from `.camel-cli.properties`; runtime toggles and
 the config file still apply on later launches when `--theme` is omitted.
 
-The brand orange accent is consistent across all themes; status colors (success,
-warning, error) and borders adapt for readability on each palette.
+The brand orange accent is consistent across most themes; status colors (success,
+warning, error) and borders adapt for readability on each palette. A few themes trade
+the brand accent for their own identity: Monochrome, CRT and Turbo Pascal. The Turbo
+Pascal theme recreates Borland's IDE (yellow text on the blue editor field, cyan window
+frames, grey menu bar) and also restyles source code the way that editor did: reserved
+words in white, code in yellow, comments in grey. Other themes highlight code with a
+fixed Monokai (dark) or GitHub-inspired (light) palette.
 
 Your choice is remembered: it is saved as `camel.tui.theme` in `.camel-cli.properties`
 and restored the next time you open the TUI.
@@ -533,7 +605,7 @@ and restored the next time you open the TUI.
 
 Open the *F2* actions menu and choose *Settings...* to change TUI preferences in one place:
 
-* *Theme* -- cycle through 15 available themes (applied immediately on save).
+* *Theme* -- cycle through 21 available themes (applied immediately on save).
 * *Starting Tab* -- the tab shown when the TUI launches; any tab (primary or under *More*) can be
   chosen. Defaults to *Overview*.
 * *Select Tab* -- the tab to switch to when selecting an integration from the Overview tab.
@@ -543,13 +615,19 @@ Open the *F2* actions menu and choose *Settings...* to change TUI preferences in
   of this setting.
 * *Default Folder* -- the folder pre-filled in *Run from Folder*. The most recently used folder
   still takes precedence; this default is used only when there is no remembered folder.
+* *Panel Position* -- where the shell (*F6*) and AI (*F8*) panels open: *bottom* (default) or
+  *top*.
+* *Panel Space* -- whether those panels push the tab content aside (*move*, default) or are drawn
+  on top of it (*overlay*), so the tab keeps its full height underneath.
 
 Use *↑*/*↓* to move between rows, *Space* (or *←*/*→*) to cycle the theme and tab settings, type to
 edit the default folder, *Enter* to save, and *Esc* to cancel.
 
 Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.startTab`,
 `camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
-`camel.tui.shell.history`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
+`camel.tui.panelPosition`, `camel.tui.panelSpace`,
+`camel.tui.shell.history`, `camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`,
+`camel.tui.ai.tools`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
 written back to the file where it currently lives: a key present in the local
 `./camel-cli.properties` is treated as a project-level override and stays local, while every
 other key defaults to the global `~/.camel-cli.properties`. This means a project can
@@ -565,6 +643,13 @@ respectively. Use *↑*/*↓* on the input line to walk previous entries. Limits
 `100` each; set to `0` to disable recall and persistence). Shell history is stored in
 `~/.camel/tui-shell.history`; AI prompt history in `~/.camel/tui-ai-prompt.history`.
 
+=== Pasting
+
+Both panels accept text pasted from the terminal (for example a model name such as
+`qwen3.6:35b-a3b` after `/model`). In the AI prompt, line breaks in the pasted text are collapsed
+to spaces so the paste stays a single prompt you can review before pressing *Enter*. In the shell,
+line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a regular terminal.
+
 == Keyboard Shortcuts
 
 === Global (All Tabs)
@@ -578,9 +663,12 @@ respectively. Use *↑*/*↓* on the input line to walk previous entries. Limits
 | *F1* / *?* | Context-sensitive help (toggle)
 | *F2* | Actions menu
 | *F3* | Switch between integrations (when multiple running)
+| *Ctrl+F* | Browse the selected integration's source files (the Overview tab also has plain *f*)
+| *F6* / *Shift+F6* | Toggle the embedded shell panel / cycle its height
+| *F8* / *Shift+F8* | Toggle the AI prompt panel / cycle its height
 | *F10* | Run menu (run, stop, restart, kill)
 | *Shift+F5* | Take screenshot
-| *Ctrl+C* / *Q* | Quit
+| *Ctrl+C* / *Q* / *F2* → Quit | Quit
 | *Esc* | Close popup / go back / return to Overview
 |===
 
@@ -735,6 +823,185 @@ server that lets AI coding assistants interact with the dashboard.
 
 The TUI is fully functional on its own -- AI integration is entirely optional.
 
+=== Choosing an AI provider
+
+Press *F8* to open the built-in AI prompt panel. The panel auto-detects a provider in this order:
+
+1. `ANTHROPIC_API_KEY` → Anthropic Claude
+2. `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` → Vertex AI
+3. `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` → Azure OpenAI
+4. `GEMINI_API_KEY` → Google Gemini
+5. `OPENAI_API_KEY` → OpenAI
+6. `LLM_API_KEY` + optional `LLM_BASE_URL` → any OpenAI-compatible server
+7. Ollama at `localhost:11434` → local Ollama (auto-detected, no key needed)
+
+Press *Ctrl+P* inside the AI panel to switch provider or model at any time.
+
+A question can span several lines: *Ctrl+N* starts a new line (terminals deliver *Shift+Enter* and
+*Alt+Enter* as a plain *Enter*, so they cannot be used), pasted text keeps its line breaks, and *Up* and
+*Down* move between the lines of the question before they recall earlier prompts. *Enter* sends it.
+
+The same guidance, together with the provider that is currently detected, is available inside the TUI
+via *F2* -> _AI & MCP_ -> _Setup AI_. Use *F2* -> _Settings_ to pin a provider, model or base URL
+(`camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`) regardless of the environment.
+`camel.tui.ai.acp.command` sets the command line of the custom ACP agent (`acp:custom`).
+
+==== Using Ollama (local, no API key)
+
+Install Ollama natively for best performance — the native binary uses GPU acceleration
+(Metal on macOS, CUDA/ROCm on Linux):
+
+[source,bash]
+----
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a model — then open the TUI and press F8
+ollama pull qwen3.6:35b-a3b
+camel tui
+----
+
+Ollama at `localhost:11434` is auto-detected. No configuration needed.
+
+IMPORTANT: The F8 AI panel works by invoking built-in tools to inspect your running Camel process.
+Models smaller than ~14B do not reliably call tools and answer from training knowledge instead.
+Use at least a 14B model. Prefer a mixture-of-experts model such as `qwen3.6:35b-a3b`: with only
+3B parameters active per token it processes the tool-heavy prompt many times faster than a dense
+27B/32B model, so answers start in seconds instead of a minute.
+
+*Models that work well* (tool-calling capable, ≥14B, default Q4_K_M quantization):
+
+[options="header"]
+|===
+| Model | RAM | Notes
+| `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+
+| `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines
+| `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing
+| `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing
+| `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+
+| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+
+|===
+
+NOTE: `camel infra run ollama` runs Ollama in Docker and bypasses GPU acceleration,
+making inference significantly slower. Native install is preferred for development.
+
+NOTE: On Apple Silicon, use the default (GGUF) tags rather than the `-mlx` tags. The Ollama MLX
+engine cannot yet reuse the cached prompt for Qwen 3.x models, so every question re-processes the
+whole prompt, while the default engine reuses it and only processes what is new.
+
+==== Tool set for local models
+
+Every question sends the definitions of the `tui_*` tools the model may call, and a local model
+pays for each of them in prompt-processing time. The panel therefore sends only the core set of
+tools (state, tables, logs, errors, diagrams, topology, processor details, catalog docs, traces,
+spans, route control, sending messages, source files, infra services, navigation, log level and
+filters) to Ollama
+and to any provider on `localhost`, which roughly halves the prompt. Hosted providers get every
+tool, including the drawing, animation and automation tools. Use `/tools full` in the panel to send
+all tools to a local model too, `/tools core` to trim the set for a hosted one, pick *AI Tools* in
+*F2 -> Settings*, or set `camel.tui.ai.tools` in `.camel-cli.properties`. Ollama requests also ask the server to keep the
+model loaded for 30 minutes and for a context window of 32k or 64k (see <<_working_with_a_local_ollama_model>>;
+`OLLAMA_CONTEXT_LENGTH` overrides it), so follow-up questions reuse the cached prompt instead of reloading
+the model.
+
+==== Working with a local Ollama model
+
+A local model is not a slower version of a hosted one; it spends its time differently, and the TUI
+shows you where. This section explains what a question costs with Ollama and which knobs matter,
+with figures measured on an Apple M4 Pro (64 GB) running `qwen3.6:35b-a3b`.
+
+*How a question is spent.* Ollama answers in three phases, and every timing the TUI shows maps to one
+of them:
+
+1. *Load*: if the model is not in memory (first question, the keep-alive expired, or a request asked for
+   a different context size) Ollama starts a runner and loads the weights: 10 to 20 seconds for a 22 GB
+   model. The TUI asks Ollama to keep the model loaded for 30 minutes after each request.
+2. *Prefill*: the prompt (system prompt, tool definitions, conversation history, your question) is
+   processed in one batch, at roughly 600 to 700 tokens per second when nothing is cached.
+3. *Decode*: the answer is generated token by token, at 50 to 60 tokens per second for this model.
+
+The wait before anything appears, the time to first token, is load plus prefill. A cold first question
+therefore takes 20 seconds before the first word; a warm one under a second.
+
+*One question, many requests.* The panel answers by calling the `tui_*` tools, and every tool call the
+model makes costs a new request that sends the whole prompt again. A simple question can take 3 to 13
+requests. This is affordable only because Ollama caches the prompt prefix: the system prompt, the tool
+definitions and the history are identical from one step to the next, so each step prefills only the new
+tokens and takes about half a second. Across a session the cache hit is typically above 90%. The
+Ollama tab shows the request count per question as `×N` and the cache hit per question; a question
+with a high count and a short answer is the model exploring, which a smaller, sharper tool set reduces
+(see <<_tool_set_for_local_models>>).
+
+*The context window.* The TUI decides the window it asks Ollama for (`num_ctx`) once per model:
+
+1. `OLLAMA_CONTEXT_LENGTH` in the environment wins when set.
+2. If the model is already loaded, its window is adopted (raised to 32k when smaller), so the TUI never
+   makes Ollama reload a model another client is using. A request with a different `num_ctx` costs a
+   cold start and throws away everyone's prompt cache.
+3. Otherwise 64k when the model's weights plus the KV cache of a 64k window fit the machine's memory,
+   computed from what `ollama show` reports (layers, KV heads, head size), else 32k. Overshooting is
+   worse than being conservative: Ollama then moves layers to the CPU and generation slows to a crawl.
+
+The static prefix of system prompt and core tools is about 4.5k tokens, and each question with tool
+calls adds another 2k to 4k of history. The panel compacts the history once the prompt Ollama measured
+for the last request passes half the window, capped at half of 64k even when a larger window was
+adopted: every token of history is prefill time again after a cache loss (an idle unload after 30
+minutes, another client, a restart), and 64k at a few hundred tokens per second is already well over a
+minute. Compacting rewrites the history, which invalidates Ollama's prompt cache, so the request after
+a compaction prefills the whole prompt again: about 40 seconds for a 21k-token prompt. The panel
+therefore compacts local history rarely and then thoroughly, down to about a quarter of the window,
+and prints one line saying what it did and how long the next reply will take to start. `/compact` does
+the same on demand with the same line; `/context` shows the window, the compaction point and the last
+measured prompt; the panel title shows the fill as `ctx 34%`.
+
+*Choosing the model.* With no `camel.tui.ai.model` set the panel takes `llama3.2` when it is installed,
+otherwise the first installed model; run `/model <name>` in the panel or set *AI Model* in
+*F2 -> Settings* to pin one. The model must support tool calling and should have at least 14B
+parameters; a mixture-of-experts model such as `qwen3.6:35b-a3b` prefills several times faster than a
+dense model of similar quality, which is what matters for a tool-heavy prompt. *F2 -> Run Doctor* shows
+whether Ollama was found, which models are installed and whether they are large enough.
+
+*Where to look.* The <<_ollama>> tab is the instrument for all of the above: tokens per second live and
+per request, time to first token with cold starts marked, cache hit, how full the context window is
+and how it grows per question, GPU and process load, and one line per question with the requests it
+took, the question being answered right now on top with `working` as its reason and its time counting
+up, and a footer with the average per question. In the AI panel, `/context` prints what the next request will cost, `/usage` and *Ctrl+U* the
+session totals per question.
+
+*Remote and containerised Ollama.* Everything above applies to an Ollama on another host or inside
+`camel infra run ollama` as well, with two differences: the container runs without GPU acceleration,
+and the live runner state and host load on the Ollama tab need the server on the same machine.
+
+For the wider picture see the blog posts
+link:/blog/2026/09/camel-local-model-benchmark/[We had a frontier AI coach a small local model through Camel]
+on what a local model can do with Camel and what was changed to help it, and
+link:/blog/2026/09/camel-genai-observability-jbang/[Observe Your Camel AI Routes with GenAI OpenTelemetry]
+on observing routes that call Ollama.
+
+==== Using an OpenAI-compatible local server
+
+Set `LLM_API_KEY` and `LLM_BASE_URL` to connect to any OpenAI-compatible server
+(LM Studio, vLLM, llama.cpp, GPT4All, …):
+
+[source,bash]
+----
+export LLM_API_KEY=any-value
+export LLM_BASE_URL=http://localhost:1234
+camel tui
+----
+
+`OPENAI_BASE_URL` is also accepted as an alternative to `LLM_BASE_URL`.
+
+The panel uses the first model the server lists on `/v1/models`. To use another one, run
+`/model <name>` in the panel (`/model` alone lists what the server offers), set *AI Model* in
+*F2 -> Settings*, or set `camel.tui.ai.model`. The model must support tool calling, otherwise the
+panel answers from training data instead of inspecting your integration. When a request fails, the
+panel shows the HTTP status and the server's error message, for example a model that the server
+does not host.
+
 === Why This Matters
 
 When an AI agent connects to the TUI via MCP, it gains the same level of visibility that you
@@ -765,9 +1032,37 @@ The server is bound to `127.0.0.1` only -- it never listens on external interfac
 When MCP is active, the TUI footer shows the connection status.
 Use *F2* -> _MCP Info_ to see server details and _MCP Log_ to view the tool call history.
 
+=== Status document resources
+
+Every running integration keeps a full status document in `~/.camel/<pid>-status.json`, written
+once a second by `camel-cli-connector`. The tabs show a digest of it; the MCP server exposes the
+whole document as resources so an agent can fetch exactly the section it needs instead of
+paging through tabs:
+
+* `camel://log/<pid>` -- the last 200 lines of the integration's log (`~/.camel/<pid>.log`);
+  `camel://log/<pid>?lines=<n>` for a different tail length (up to 5000). The Log tab shows only a
+  window of this file, so an agent that needs to know which lines the user is looking at should
+  use the `tui_get_screen` tool instead.
+* `camel://status/<pid>` -- the whole document
+* `camel://status/<pid>/<section>` -- one top-level section, for example `context` (name, version,
+  state, uptime, start timestamp, statistics), `runtime`, `routes`, `endpoints`, `healthChecks`,
+  `properties`, `main-configuration`, `routeController`, `memory`, `threads`, `gc` or `events`
+
+`resources/list` enumerates the log, the document and its sections for every monitored
+integration, and `resources/templates/list` describes the URI shapes. The same data is available to the
+F8 AI panel (and as an MCP tool) through `tui_get_status`, which takes a `section` argument and
+returns that section only; pass `sections` to list what the document contains. Sections such as
+`events` can be large, so ask for the one you need.
+
 === AI panel slash commands
 
 When the AI panel is open, input that starts with `/` runs a local panel command instead of sending a question to the configured AI provider. `/provider` and `/model` are unavailable while a response or command is already in progress; the panel shows a message asking you to wait.
+
+Press *Tab* to complete a command name. After `++/model ++` *Tab* completes the model name against the
+models the current provider reports (the list is fetched in the background on the first press, so
+press *Tab* again once it has arrived), and after `/tools ` it completes `auto`, `core` or `full`.
+With several matches *Tab* fills in the common prefix and then cycles through them; *Shift+Tab*
+cycles backward.
 
 [cols="1,3",options="header"]
 |===
@@ -781,6 +1076,30 @@ When the AI panel is open, input that starts with `/` runs a local panel command
 
 | `/model [model-name]` (`/m`)
 | Show the current model, or switch the session model.
+
+| `/write [confirm\|auto\|live]` (`/w`)
+| Show or switch how file writes by the model (`camel_write_file`) are handled. `confirm` (default) shows the confirm dialog for every write, whatever the model passes; `auto` lets the model skip the dialog with `confirm=false`; `live` replays the edit in the Source editor so you watch it happen (see below). The mode lasts for the session.
+
+| `/tools [auto\|core\|full]` (`/t`)
+| Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
+
+| `/context` (`/ctx`)
+| Show what the next request costs: provider and model, tool set, static prefix size, history size and the session total, and with Ollama the context window, the prompt size above which the history is compacted and the last measured prompt. Useful with local models, where prompt size is time.
+
+| `/compact`
+| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. With a hosted provider the panel does this automatically after each answer for all but the latest turn. With Ollama or another `localhost` provider it waits until the prompt Ollama measured passes half the context window (see <<_working_with_a_local_ollama_model>>), then compacts thoroughly, because a local server can reuse its cached prompt only while the conversation is appended to and rewriting the history makes it process the whole prompt again. Both the command and the automatic compaction print one line with the sizes before and after and, locally, how long the next reply will take to start.
+
+| `/retry`
+| Send the last question again, starting from a clean turn in the model history.
+
+| `/usage [reset]` (`/u`)
+| Print the AI usage so far in the chat: requests, tokens in and out, average latency, one line per model (and per route when GenAI spans are observed), and the last request. *Ctrl+U* opens the full view with the per-question chart. `/usage reset` clears the counters and the chart without touching the conversation; GenAI spans recorded before the reset are hidden from the view as well.
+
+| `/copy` (`/y`), `/export` (`/e`)
+| The same as *Ctrl+Y* (copy the last response) and *Ctrl+E* (export the conversation to Markdown). Copying is code-aware: when the response has one fenced code block only the code is copied (without the fences and the prose, which is what selecting it with the mouse cannot give you because of the panel borders); when it has several, a picker lists the blocks with their language and size plus the whole response; when it has none, the whole response is copied.
+
+| `/prompt`
+| Show the system prompt the panel sends with every request.
 
 | `/clear` (`/c`)
 | Clear the AI conversation, usage counters, and model context without changing the provider or model.
@@ -804,6 +1123,116 @@ When the AI panel is open, input that starts with `/` runs a local panel command
 Submitted prompts (including slash commands) participate in AI prompt history when
 `camel.tui.ai.promptHistory` is not `0`. Use *↑*/*↓* on the prompt line to recall them.
 
+Every answer ends with a byline saying what the question cost: the time it took, how many tools the
+model called and the time spent in them, the number of requests, the tokens and, with Ollama, how full
+the context window got (for example `61.1s · 25 tool calls, limit reached (2.5s in tools) · 26 requests
+· 231.3k tokens · ctx 18%`). The panel allows 25 tool calls per question. When the model reaches that
+the byline says `limit reached`, the panel asks the model to answer from what it has found so far, and
+the <<_ollama>> tab shows the question's request count in red with `limit` as its reason (the count is
+yellow from 10 requests, and the total time yellow from 30 seconds and orange from a minute). A question
+that runs into the limit is usually a tool that makes the model guess, not a weak model: the AI log
+shows which one.
+
+What the model says is checked like what it writes. A file goes through the validator before
+`camel_write_file` writes it; the answer shown in the chat is what you copy, so its simple expressions
+are checked against the catalog too: the `${...}` placeholders in the text and in Java or XML code
+blocks, and the `simple:` values and log messages of YAML blocks. A small model tends to put the
+operator inside the placeholder (`${header.user ?: 'Guest'}` instead of `${header.user} ?: 'Guest'`).
+When the check finds such an expression the panel sends the answer back to the model once, with what is
+wrong and the rule, and shows the corrected answer with `1 correction` in the byline. When the model
+does not fix it the answer is shown as it is with a *Simple check* line under it naming the expression
+and the error, and the AI log has the exchange. Placeholders that are not simple (a Maven
+`$\{camel-version}`, a shell variable) are left alone.
+
+Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
+the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),
+the latter taken from OpenTelemetry GenAI spans when observability is enabled on the integration. The
+*Tokens per question* chart has one bar per question you asked, so a question that needed several tool
+calls shows as a single bar. The summary line splits the session time into *AI time* (waiting for the
+model) and *Tool time* (running the TUI tools the model called, with the number of calls), the summary line gives the
+average time per question (and per request in brackets), the model table has an *AVG/REQ* column with
+the average per request for that model, and the *Time per question* chart next to the token chart shows the
+two side by side for each question, so you can see whether a slow answer was the model or the tools.
+
+=== AI log
+
+Every request the panel makes is recorded in the AI log (*F2* -> _AI & MCP_ -> _AI Log_, or the
+`tui_get_ai_log` tool): the question, each tool the model called with its arguments, the result with
+how long the tool took, and a `Response` line with the elapsed time and the token counts. When the
+model called tools, the elapsed time is broken down into the time spent waiting for the model and the
+time spent in tool calls (for example `5.2s, ai 4.1s, tools 1.1s/3`). The `Response` line
+also shows whether the provider reused its cached prompt. For Ollama it prints the prompt-processing
+(`prefill`) and generation (`gen`) time reported by the server -- a prefill of a fraction of a second
+on a 10k-token prompt means the cache was hit, while a prefill of several seconds means the whole
+prompt was processed again. For OpenAI, Anthropic and Gemini it prints the number of `cached` input
+tokens the provider reported. Use it to check that follow-up questions are cheap before blaming the
+model for being slow.
+
+=== Using a coding agent (ACP)
+
+Instead of talking to a model directly, the AI panel can hand the conversation to an external coding agent that
+speaks the https://agentclientprotocol.com[Agent Client Protocol] (ACP). The TUI starts the agent as a subprocess,
+gives it the TUI's own MCP server, and shows the agent's answer, tool calls and questions in the panel. The agent
+drives the TUI through the same `tui_*` tools that external MCP clients use, and can also read and edit your
+route sources with its own tools.
+
+Press *Ctrl+P* in the AI panel and pick one of the agents:
+
+[options="header"]
+|===
+| Provider | Command the TUI runs | Before the first question
+| `acp:claude` | `npx -y @agentclientprotocol/claude-agent-acp` | log in with the `claude` CLI, or set `ANTHROPIC_API_KEY`
+| `acp:codex` | `npx -y @agentclientprotocol/codex-acp` | `codex login`, or set `OPENAI_API_KEY`
+| `acp:bob` | `bob acp` | set `BOBSHELL_API_KEY`, or run `bob` once to sign in
+| `acp:qwen` | `qwen --acp` | set `OPENAI_API_KEY` and `OPENAI_BASE_URL`
+| `acp:opencode` | `opencode acp` | `opencode auth login`
+| `acp:dsh` | `npx -y @deepseek-ai/dsh --profile acp` | configure the model key in DeepSeek Harness (developer preview)
+| `acp:custom` | the value of `camel.tui.ai.acp.command` | depends on the agent
+|===
+
+The `npx` entries need Node.js 22 or newer (the Claude adapter requires it). The agent starts with your first
+question; the first start can take a while when `npx` has to download the adapter. Once the session is open the
+panel shows a two-row header with the agent's coloured glyph, the agent's name and version, the session id, the
+working directory and the number of commands it advertises. Use *F2* -> _Settings_ to make an
+agent the default provider or to set the custom command (a plain command line split on whitespace, no quoting).
+
+The MCP server is started automatically on a random localhost port when an agent needs it, so `--mcp` is not
+required. *F2* -> _MCP Info_ shows the port and the tool calls the agent makes. Like the server started with
+`--mcp`, it is bound to `127.0.0.1` with no authentication, and it rejects requests that carry an `Origin`
+header (so a web page cannot reach it) or that are not JSON.
+
+Permissions: calls to the TUI's read-only tools (the `tui_get_*` tools, catalog documentation, expression
+evaluation, locate, validate) are approved without asking. So is `camel_write_file` while the write mode is
+`confirm` or `live`, because the TUI itself asks before the file is touched (the diff dialog or the live replay
+in the Source editor); with `/write auto` the permission popup is the only question and stays. A tool that
+changes anything else, such as `camel_control`, `tui_send_message` or `tui_execute_sql`, opens the same popup as
+any other request; answering "Always allow" makes it a one-time question per tool. For anything else the agent
+wants to do, such as editing a file with its own tools or running a command, a popup shows the agent's options;
+*Enter* selects, *Esc* rejects that one call and lets the turn continue, and *Ctrl+C* cancels the whole turn.
+The preamble tells the agent to edit route sources through `camel_write_file` rather than its own file tools, so
+that you see the diff or watch the edit; when it still asks to edit a file directly, the popup says so and *Esc*
+sends it back to `camel_write_file`.
+"Always allow" choices are remembered by the agent for the session. The model, reasoning settings and any
+"always allow" rules are configured in the agent, not in the TUI; `/model` only reports the agent in use.
+
+The agent's own slash commands, for example Claude Code skills, appear as `/agent:<name>` in the `/` completion
+hints once the session is open; `/agent:` alone lists them. `/agent:<name> …` always reaches the agent, even when
+the name is also a panel command (`/agent:clear` clears the agent's context, `/clear` the panel). Anything else
+starting with `/` that is not a panel command is sent to the agent as is.
+
+The panel's own `/retry` resends the last question (or `/agent:` command) to the agent. `/context` shows the agent,
+its session, working directory, MCP server and the size of the preamble instead of a model history, and `/prompt`
+shows that preamble, sent once per session ahead of the first prompt. `/compact` and `/tools` do not apply while an
+agent is selected: the agent manages its own history and reaches the camel-tui tools through the MCP server; the panel
+says so and points to `/agent:compact` when the agent offers that command.
+
+If the agent asks for authentication and can sign you in itself, the TUI triggers that flow once; otherwise the
+panel shows the login command from the table above.
+
+NOTE: Gemini CLI, Google Antigravity and Pi are not offered as presets. Gemini CLI stopped serving personal Google
+accounts in June 2026, Antigravity's CLI has no ACP mode yet, and Pi's community adapter does not pass MCP servers
+through. Any ACP agent can still be tried through `acp:custom`.
+
 === Connecting an AI Agent
 
 To connect Claude Code to the TUI, add the MCP server to your project configuration
@@ -823,14 +1252,103 @@ To connect Claude Code to the TUI, add the MCP server to your project configurat
 
 === What AI Agents Can Do
 
-The MCP server exposes tools organized by purpose:
+The MCP server exposes two kinds of tools. The `camel_` tools are the Camel authoring set shared with the
+`camel mcp` server (see xref:camel-jbang-mcp.adoc[]): catalog documentation with the endpoint URI rules and the
+simple syntax (`camel_catalog_doc`, `camel_catalog_find`), source validation (`camel_validate_source`), reading
+and writing the source files (`camel_get_files`, `camel_write_file`), running an integration in dev mode and
+controlling it (`camel_run`, `camel_control`), its log and failed exchanges (`camel_get_log`, `camel_get_errors`),
+expression evaluation (`camel_eval_expression`) and error diagnosis (`camel_error_diagnose`). They are defined
+once in the Camel CLI, so an agent gets the same tools, names and answers through either server; in the TUI
+they work on the selected integration unless a `directory` or `name` argument says otherwise, and a write goes
+through the TUI's confirm dialog or live replay. The `tui_` tools are the ones only the TUI can offer, organized
+by purpose:
 
-* *Observe* -- read the screen, get structured state, query tables/logs/errors/traces/topology/diagram/files
+* *Observe* -- read the screen, get structured state, query tables/logs/errors/traces/topology/diagram/files,
+  list the running infra services (brokers, databases) and read their logs, read the performance of the
+  local Ollama server (`tui_get_ollama`: loaded model, tokens per second, context fill, host load, request log)
 * *Navigate* -- switch tabs, select integrations, select routes, send keystrokes, apply filters
-* *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels
+* *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels,
+  list and launch the bundled examples, start/stop/restart infra services, run any entry of
+  the *F2* actions menu by its label
+* *Edit* -- write a source file in the integration's source directory (`camel_write_file`), see below
 * *Annotate* -- locate text and diagram nodes by coordinates, draw shapes (boxes, highlights,
   arrows, underlines, text labels), show captions with typewriter animation
 * *Present* -- take screenshots, record tape sessions, control demo pacing
+
+=== Editing source files from an AI agent
+
+The TUI is for prototyping, human and AI together, so an agent (the built-in *F8* panel or an
+external MCP client) can change the routes it is looking at. `camel_get_files` tells the agent where
+the sources are, which differs with how the integration was started (plain files, `--source-dir`,
+an example extracted to a temporary folder, or an exported project), and whether editing makes
+sense: `devMode` (changes are reloaded automatically), `temporary` (a copy that is lost when the
+integration stops) and an `editing` hint. `camel_write_file` then writes the complete new content of
+a file in that directory.
+
+An integration started with `--runtime=spring-boot` or `--runtime=quarkus` runs from an exported Maven
+project, where the routes sit under `src/main/resources/camel` rather than next to a `pom.xml`. The
+listing understands that layout: it names the route and configuration files first, lists every file
+with its path relative to the project (build output skipped), and maps each running route to its file
+and line, so the agent reads the right file in one call instead of guessing names. File paths given to
+`camel_get_files` and `camel_write_file` are relative to that directory and may name a subdirectory.
+
+Every write is confirmed in the TUI first: a dialog names the file, the directory and the size of the
+change (`+3 -1` lines); press *d* to see the change as a unified diff, with removed lines on red and
+added lines on green like the Source tab's *F7* diff, and scroll it with the arrow keys; *Enter*, *Esc* or
+*d* returns to the summary. In the summary *Enter* applies the write and *Esc* rejects it, in which case the
+agent is told that the file is unchanged and not to retry. The dialog cannot be skipped by the agent on
+its own: `confirm=false` is honoured only after you switched to `/write auto` in the AI panel (the default
+`/write confirm` shows the dialog for every write, whatever the agent passes). Only plain file names in the source
+directory are accepted; the tool cannot write elsewhere, and there is no git integration, so the
+worst case is a wrong route file in a folder you are watching.
+
+Before writing, an agent can check its content with `camel_validate_source`, which runs the same checks as
+the Source tab's save: YAML routes against the Camel YAML DSL schema (a misspelled option such as `logLevel`
+instead of `loggingLevel` is reported) plus endpoint URIs and simple expressions, and `.properties` files
+against the catalog of `camel.*` and Spring Boot options. `camel_write_file` runs that validation itself and
+refuses to write an invalid file, returning the errors instead, so a model fixes them rather than the user
+finding them in the log after the reload (`validate=false` writes anyway). Both tools are part of the core
+tool set, so local models (Ollama) get them as well.
+
+Simple expressions get two more helpers, because they are what a small model gets wrong most often
+(functions belong inside the `${...}` placeholder, operators between placeholders: `${header.user} ?: 'Guest'`,
+not `${header.user ?: 'Guest'}`). `camel_catalog_doc` for the `simple` language returns those syntax rules
+together with the catalog's functions and operators (their count and names by group, or with `optionsFilter`
+the matching ones with parameters and examples), and `docPage` serves the operators, functions, OGNL and
+advanced documentation pages. `camel_eval_expression` evaluates an expression inside the running integration,
+like `camel cmd eval`, or locally when no integration is selected, and returns the value or the parser error,
+so the agent can try an expression before it answers or writes it. Component lookups get the same treatment for endpoint URIs: every endpoint option
+says whether it is part of the URI path or a query parameter, and the result spells out the URI rules for
+that component (its path options, the `?option=value&option=value` form, the YAML `uri` plus `parameters`
+form, placeholders, `RAW()`, and that component options belong in `application.properties`). With
+`endpoint` the same tool checks a URI against the catalog, the way the YAML validator does on a write:
+unknown options with the closest real names, values that are not among the allowed ones, missing path
+parts, consumer options on a producer endpoint and the like, plus the options the URI uses with their
+documentation, so the agent can check an endpoint before it answers or writes it.
+
+==== Watching the AI edit (live mode)
+
+With `/write live` the change is not shown as a diff but replayed in the Source tab's editor: the AI
+panel hides so the editor has the whole screen, the file opens in edit mode, the cursor jumps to the
+first change, removed lines disappear and added lines are typed at a readable pace. The AI panel comes
+back once you have saved or discarded. This is meant for learning Camel and the YAML DSL: you see the edit land in
+the full, syntax-highlighted file and can look up what the new lines mean. Every change is its own step,
+even when changes sit a line apart, and between them the replay pauses: *Enter* continues with the next change, *Esc* stops (what was typed stays in the editor), any
+other key finishes the current change at once, and *F4* (the editor's edit key) hands the keyboard to you
+so you can edit yourself; *F9* then continues with the remaining changes. Those are located by their surrounding lines,
+so your own edits elsewhere in the file shift them rather than break them; a change whose surroundings
+you edited is skipped and reported to the agent. When the replay is over you review with *F7* and
+save with *Ctrl+S* or *F5*, which is the confirmation, or discard with *Esc*. The agent waits until then
+and is told what was applied, what was skipped, and the content of the saved file if you changed it.
+
+While the replay pauses you can also ask the agent about the change it just made: *F8* opens the AI panel
+with the question prefilled (`About edit 2 of 3:`), you complete it and press *Enter*. The waiting
+`camel_write_file` call returns to the agent with the question, the edits applied so far and the editor's
+content, and the agent answers in the same turn -- nothing is written meanwhile. Close the panel with *F8*
+(or *Esc* to leave without asking) and the pause continues where it was. If your question makes the agent
+revise the change, its next `camel_write_file` of the same file continues in the editor from the current
+content instead of starting over. If you save or discard without the agent being involved again, it is
+told what became of the edit with your next question.
 
 === Example Workflows
 
@@ -885,6 +1403,23 @@ https://asciinema.org/[Asciinema] `.cast` recording:
 camel tui --record=demo.tape
 ----
 
+The `.cast` file is written next to the tape, with the `.tape` suffix replaced by `.cast`.
+Recording is headless: the TUI is driven entirely by the tape rather than by your terminal,
+so no keyboard input is read and nothing is drawn on screen.
+
+The recorded terminal is 200x50 by default, which is wider than a documentation page can
+display. Use `--record-size` to record at a size that fits, and `--record-fps` or
+`--record-duration` to control the capture rate and the cut-off:
+
+[source,bash]
+----
+camel tui --record=demo.tape --record-size=160x44 --record-fps=15
+----
+
+`--record` cannot be combined with `--web`. Recording drives a headless TUI from the tape, and
+the recording configuration applies to the whole process, so every browser session would be
+recorded into the same `.cast` file. Camel rejects the combination with an error instead.
+
 === Converting to GIF
 
 Convert recordings using https://github.com/asciinema/agg[agg] (for `.cast` files) or
@@ -927,10 +1462,22 @@ vhs demo.tape               # .tape -> .gif
 | `100`
 
 | `--theme`
-| Color theme for this session (e.g., `dark`, `tokyo-night`, `dracula`). See <<Theme>> for the full list of 15 themes. Overrides the persisted `camel.tui.theme` preference when set.
+| Color theme for this session (e.g., `dark`, `tokyo-night`, `dracula`). See <<Theme>> for the full list of 21 themes. Overrides the persisted `camel.tui.theme` preference when set.
 |
 
 | `--record`
 | Replay a `.tape` file and record the session to an Asciinema `.cast` file.
 |
+
+| `--record-size`
+| Size of the recorded terminal for `--record`, as `<cols>x<rows>`.
+| `200x50`
+
+| `--record-fps`
+| Frames per second captured by `--record`.
+| `10`
+
+| `--record-duration`
+| Maximum duration in milliseconds captured by `--record`.
+| `120000`
 |===

@@ -375,7 +375,11 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
     }
 
     /**
-     * Validates the issuer from an introspection result.
+     * Validates the issuer from an introspection result. A token whose "iss" claim is missing is rejected: issuer
+     * validation is opt-in, so an operator who turned it on is asking for tokens from other issuers to be refused, and
+     * a response that carries no issuer is not evidence that the token came from the expected one. RFC 7662 makes "iss"
+     * optional in an introspection response, so this is reachable wherever the introspection endpoint is a broker, a
+     * gateway or a minimal implementation rather than the realm that issued the token.
      */
     private void validateIssuerFromIntrospection(
             KeycloakTokenIntrospector.IntrospectionResult introspectionResult, Exchange exchange)
@@ -384,8 +388,12 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
         Object issuerClaim = introspectionResult.getClaim("iss");
 
         if (issuerClaim == null) {
-            LOG.warn("Token introspection result does not contain issuer claim");
-            return;
+            LOG.error("SECURITY: Token introspection result does not contain an issuer claim, expected '{}'",
+                    expectedIssuer);
+            throw new CamelAuthorizationException(
+                    String.format("Token issuer missing: expected '%s' but the introspection result carries no issuer",
+                            expectedIssuer),
+                    exchange);
         }
 
         String actualIssuer = issuerClaim.toString();
@@ -401,7 +409,7 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
     }
 
     /**
-     * Validates the audience from an introspection result. Unlike issuer validation, a token whose "aud" claim is
+     * Validates the audience from an introspection result. As with issuer validation, a token whose "aud" claim is
      * missing is rejected: the whole point of this check is to reject tokens that were not issued for this policy's
      * client(s).
      */

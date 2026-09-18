@@ -770,6 +770,48 @@ public interface GoogleFirestoreEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of realtime document changes buffered between two
+         * polls. The changes reported by the snapshot listener are buffered
+         * until the next poll picks them up, so a collection changing faster
+         * than the route consumes it makes that buffer grow. When the buffer is
+         * full the oldest buffered change is discarded and a warning is logged.
+         * Use 0 for an unbounded buffer. Only used when realtimeUpdates is
+         * enabled.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer (advanced)
+         * 
+         * @param maxPendingChanges the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGoogleFirestoreEndpointConsumerBuilder maxPendingChanges(int maxPendingChanges) {
+            doSetProperty("maxPendingChanges", maxPendingChanges);
+            return this;
+        }
+        /**
+         * Maximum number of realtime document changes buffered between two
+         * polls. The changes reported by the snapshot listener are buffered
+         * until the next poll picks them up, so a collection changing faster
+         * than the route consumes it makes that buffer grow. When the buffer is
+         * full the oldest buffered change is discarded and a warning is logged.
+         * Use 0 for an unbounded buffer. Only used when realtimeUpdates is
+         * enabled.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer (advanced)
+         * 
+         * @param maxPendingChanges the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGoogleFirestoreEndpointConsumerBuilder maxPendingChanges(String maxPendingChanges) {
+            doSetProperty("maxPendingChanges", maxPendingChanges);
+            return this;
+        }
+        /**
          * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
@@ -1341,6 +1383,19 @@ public interface GoogleFirestoreEndpointBuilderFactory {
          */
         public String googleFirestoreResponseReadTime() {
             return "CamelGoogleFirestoreResponseReadTime";
+        }
+        /**
+         * The type of change reported by the realtime listener: ADDED, MODIFIED
+         * or REMOVED. Only set when realtimeUpdates is enabled.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleFirestoreChangeType}.
+         */
+        public String googleFirestoreChangeType() {
+            return "CamelGoogleFirestoreChangeType";
         }
         /**
          * When true, merge the data with existing document data instead of

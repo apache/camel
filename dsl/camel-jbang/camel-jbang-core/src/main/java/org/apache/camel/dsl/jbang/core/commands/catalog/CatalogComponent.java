@@ -57,4 +57,9 @@ public class CatalogComponent extends CatalogBaseCommand {
         return rows;
     }
 
+    @Override
+    List<String> suggestNames(String term) {
+        return catalog.suggestComponentNames(term, 5);
+    }
+
 }

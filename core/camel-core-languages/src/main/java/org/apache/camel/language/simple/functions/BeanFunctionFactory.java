@@ -66,30 +66,6 @@ public final class BeanFunctionFactory implements SimpleLanguageFunctionFactory 
         return bean.createExpression(null, properties);
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public String createCode(CamelContext camelContext, String function, int index) {
-        String remainder = ifStartsWithReturnRemainder("bean:", function);
-        if (remainder == null) {
-            return null;
-        }
-
-        String[] parsed = parseBeanRemainder(remainder);
-        String ref = parsed[0];
-        String method = parsed[1];
-        String scope = parsed[2];
-
-        if (method != null && scope != null) {
-            return "bean(exchange, bean, \"" + ref + "\", \"" + method + "\", \"" + scope + "\")";
-        } else if (method != null) {
-            return "bean(exchange, bean, \"" + ref + "\", \"" + method + "\", null)";
-        } else if (scope != null) {
-            return "bean(exchange, bean, \"" + ref + "\", null, \"" + scope + "\")";
-        } else {
-            return "bean(exchange, bean, \"" + ref + "\", null, null)";
-        }
-    }
-
     private static String[] parseBeanRemainder(String remainder) {
         String ref = remainder;
         String method = null;

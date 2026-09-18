@@ -116,10 +116,16 @@ public class KnativeSslClientOptions extends WebClientOptions implements CamelCo
             } else if (trustCertPath.isPresent()) {
                 String[] trustCertPathItems = trustCertPath.get().split(",");
                 setTrustCertPath(trustCertPathItems);
-            } else {
+            } else if (Boolean.parseBoolean(
+                    propertiesComponent.resolveProperty(PROPERTY_PREFIX + "trust.all").orElse("false"))) {
+                // Explicitly asked for. Useful against a development cluster with a self-signed
+                // certificate, but it has to be requested rather than being what "no truststore" means.
                 trustOptions = TrustAllOptions.INSTANCE;
                 setTrustOptions(trustOptions);
             }
+            // Otherwise leave the trust options unset, so the JVM default trust anchors apply - the same
+            // fallback SSLContextParameters and the rest of Camel use. Turning TLS on must not be the
+            // thing that turns certificate validation off.
         }
     }
 

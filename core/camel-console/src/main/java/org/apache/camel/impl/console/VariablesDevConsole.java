@@ -22,13 +22,29 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.spi.BrowsableVariableRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "variables", description = "Displays variables")
 public class VariablesDevConsole extends AbstractDevConsole {
+
+    public record VariableEntry(
+            @Metadata(description = "The variable name") String key,
+            @Metadata(description = "The variable value type (only present when the value is known)") String type,
+            @Metadata(description = "The variable value (only present when known)") Object value) {
+    }
+
+    public record RepositoryEntry(
+            @Metadata(description = "The variable repository id") String id,
+            @Metadata(description = "The variables in this repository") List<VariableEntry> variables) {
+    }
+
+    public record Response(
+            @Metadata(description = "The variable repositories (only present when there are any with variables)") List<RepositoryEntry> repositories) {
+    }
 
     public VariablesDevConsole() {
         super("camel", "variables", "Variables", "Displays variables");
@@ -55,22 +71,23 @@ public class VariablesDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<RepositoryEntry> repositories = new ArrayList<>();
 
         Set<BrowsableVariableRepository> repos = getCamelContext().getRegistry().findByType(BrowsableVariableRepository.class);
         for (BrowsableVariableRepository repo : repos) {
-            final List<JsonObject> arr = toJsonObjects(repo);
-            if (!arr.isEmpty()) {
-                root.put(repo.getId(), arr);
+            final List<VariableEntry> entries = toEntries(repo);
+            if (!entries.isEmpty()) {
+                repositories.add(new RepositoryEntry(repo.getId(), entries));
             }
         }
 
-        return root;
+        Response response = new Response(repositories.isEmpty() ? null : repositories);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private static List<JsonObject> toJsonObjects(BrowsableVariableRepository repo) {
-        List<JsonObject> arr = new ArrayList<>();
+    private static List<VariableEntry> toEntries(BrowsableVariableRepository repo) {
+        List<VariableEntry> arr = new ArrayList<>();
         for (Map.Entry<String, Object> entry : repo.getVariables().entrySet()) {
             String k = entry.getKey();
             Object v = entry.getValue();
@@ -87,15 +104,7 @@ public class VariablesDevConsole extends AbstractDevConsole {
                 }
             }
 
-            JsonObject e = new JsonObject();
-            e.put("key", k);
-            if (type != null) {
-                e.put("type", type);
-            }
-            if (value != null) {
-                e.put("value", value);
-            }
-            arr.add(e);
+            arr.add(new VariableEntry(k, type, value));
         }
         return arr;
     }

@@ -58,6 +58,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeBeanFactoryDefinition(BeanFactoryDefinition def) {
         return wrapNode("beanFactory", doWriteBeanFactoryDefinition(def));
     }
+    public JsonObject writeCacheDefinition(CacheDefinition def) {
+        return wrapNode("cache", doWriteCacheDefinition(def));
+    }
     public JsonObject writeCatchDefinition(CatchDefinition def) {
         return wrapNode("doCatch", doWriteCatchDefinition(def));
     }
@@ -505,6 +508,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeThriftDataFormat(ThriftDataFormat def) {
         return wrapNode("thrift", doWriteThriftDataFormat(def));
     }
+    public JsonObject writeToonDataFormat(ToonDataFormat def) {
+        return wrapNode("toon", doWriteToonDataFormat(def));
+    }
+    public JsonObject writeUblDataFormat(UblDataFormat def) {
+        return wrapNode("ubl", doWriteUblDataFormat(def));
+    }
     public JsonObject writeUniVocityCsvDataFormat(UniVocityCsvDataFormat def) {
         return wrapNode("univocityCsv", doWriteUniVocityCsvDataFormat(def));
     }
@@ -547,9 +556,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeSpringTransactionErrorHandlerDefinition(SpringTransactionErrorHandlerDefinition def) {
         return wrapNode("springTransactionErrorHandler", doWriteSpringTransactionErrorHandlerDefinition(def));
     }
-    public JsonObject writeCSimpleExpression(CSimpleExpression def) {
-        return wrapNode("csimple", doWriteCSimpleExpression(def));
-    }
     public JsonObject writeConstantExpression(ConstantExpression def) {
         return wrapNode("constant", doWriteConstantExpression(def));
     }
@@ -580,9 +586,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeJavaScriptExpression(JavaScriptExpression def) {
         return wrapNode("js", doWriteJavaScriptExpression(def));
     }
-    public JsonObject writeJoorExpression(JoorExpression def) {
-        return wrapNode("joor", doWriteJoorExpression(def));
-    }
     public JsonObject writeJqExpression(JqExpression def) {
         return wrapNode("jq", doWriteJqExpression(def));
     }
@@ -601,8 +604,14 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeOgnlExpression(OgnlExpression def) {
         return wrapNode("ognl", doWriteOgnlExpression(def));
     }
+    public JsonObject writePython3Expression(Python3Expression def) {
+        return wrapNode("python3", doWritePython3Expression(def));
+    }
     public JsonObject writePythonExpression(PythonExpression def) {
         return wrapNode("python", doWritePythonExpression(def));
+    }
+    public JsonObject writeQuickjsExpression(QuickjsExpression def) {
+        return wrapNode("quickjs", doWriteQuickjsExpression(def));
     }
     public JsonObject writeRefExpression(RefExpression def) {
         return wrapNode("ref", doWriteRefExpression(def));
@@ -859,6 +868,15 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         }
         return jo;
     }
+    protected JsonObject doWriteCacheDefinition(CacheDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteProcessorDefinitionAttributes(jo, def);
+        doWriteAttribute(jo, "keyValueRepository", def.getKeyValueRepository(), null);
+        doWriteAttribute(jo, "ttl", def.getTtl(), "-1");
+        doWriteAttribute(jo, "cacheNull", def.getCacheNull(), "false");
+        doWriteOutputExpressionNodeElements(jo, def);
+        return jo;
+    }
     protected JsonObject doWriteCatchDefinition(CatchDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
@@ -879,7 +897,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "configuration", def.getConfiguration(), null);
-        doWriteAttribute(jo, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
+        doWriteAttribute(jo, "inheritErrorHandler", def.getInheritErrorHandler(), "false");
         doWriteChildElement(jo, "resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteChildElement(jo, "faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteChildElement(jo, "onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
@@ -1207,6 +1225,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(jo, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(jo, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(jo, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(jo, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(jo, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(jo, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(jo, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(jo, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
@@ -1647,7 +1667,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteAttribute(jo, "description", def.getDescription(), null);
         doWriteAttribute(jo, "name", def.getName(), null);
-        doWriteAttribute(jo, "required", toString(def.getRequired()), null);
+        doWriteAttribute(jo, "required", def.getRequired(), null);
         doWriteAttribute(jo, "defaultValue", def.getDefaultValue(), null);
         return jo;
     }
@@ -1985,6 +2005,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(jo, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(jo, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(jo, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(jo, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(jo, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(jo, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(jo, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(jo, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
@@ -2139,9 +2161,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteAvroDataFormat(AvroDataFormat def) {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
-        doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute(jo, "jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "instanceClassName", def.getInstanceClassName(), null);
         doWriteAttribute(jo, "library", toString(def.getLibrary()), "avroJackson");
         doWriteAttribute(jo, "objectMapper", def.getObjectMapper(), null);
@@ -2159,6 +2181,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute(jo, "schemaResolver", def.getSchemaResolver(), null);
         doWriteAttribute(jo, "autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute(jo, "serializablePackages", def.getSerializablePackages(), null);
         return jo;
     }
     protected JsonObject doWriteBarcodeDataFormat(BarcodeDataFormat def) {
@@ -2315,6 +2338,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                     case "SwiftMxDataFormat" -> doWriteChildElement(jo, "swiftMx", (SwiftMxDataFormat) item, this::doWriteSwiftMxDataFormat);
                     case "SyslogDataFormat" -> doWriteChildElement(jo, "syslog", (SyslogDataFormat) item, this::doWriteSyslogDataFormat);
                     case "TarFileDataFormat" -> doWriteChildElement(jo, "tarFile", (TarFileDataFormat) item, this::doWriteTarFileDataFormat);
+                    case "ToonDataFormat" -> doWriteChildElement(jo, "toon", (ToonDataFormat) item, this::doWriteToonDataFormat);
+                    case "UblDataFormat" -> doWriteChildElement(jo, "ubl", (UblDataFormat) item, this::doWriteUblDataFormat);
                     case "ThriftDataFormat" -> doWriteChildElement(jo, "thrift", (ThriftDataFormat) item, this::doWriteThriftDataFormat);
                     case "UniVocityCsvDataFormat" -> doWriteChildElement(jo, "univocityCsv", (UniVocityCsvDataFormat) item, this::doWriteUniVocityCsvDataFormat);
                     case "UniVocityFixedDataFormat" -> doWriteChildElement(jo, "univocityFixed", (UniVocityFixedDataFormat) item, this::doWriteUniVocityFixedDataFormat);
@@ -2570,6 +2595,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
         doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute(jo, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute(jo, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         return jo;
     }
     protected JsonObject doWritePQCDataFormat(PQCDataFormat def) {
@@ -2626,6 +2652,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "smooksConfig", def.getSmooksConfig(), null);
+        doWriteAttribute(jo, "allowExternalEntities", def.getAllowExternalEntities(), "false");
         return jo;
     }
     protected JsonObject doWriteSoapDataFormat(SoapDataFormat def) {
@@ -2675,6 +2702,22 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "instanceClass", def.getInstanceClass(), null);
         doWriteAttribute(jo, "contentTypeFormat", def.getContentTypeFormat(), "binary");
         doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
+        return jo;
+    }
+    protected JsonObject doWriteToonDataFormat(ToonDataFormat def) {
+        JsonObject jo = new JsonObject();
+        doWriteIdentifiedTypeAttributes(jo, def);
+        doWriteAttribute(jo, "indent", def.getIndent(), "2");
+        doWriteAttribute(jo, "delimiter", def.getDelimiter(), "COMMA");
+        doWriteAttribute(jo, "lengthMarker", def.getLengthMarker(), "false");
+        doWriteAttribute(jo, "strict", def.getStrict(), "true");
+        doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
+        return jo;
+    }
+    protected JsonObject doWriteUblDataFormat(UblDataFormat def) {
+        JsonObject jo = new JsonObject();
+        doWriteIdentifiedTypeAttributes(jo, def);
+        doWriteAttribute(jo, "prettyPrint", def.getPrettyPrint(), "false");
         return jo;
     }
     protected void doWriteUniVocityAbstractDataFormatAttributes(JsonObject jo, UniVocityAbstractDataFormat def) {
@@ -2738,7 +2781,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "namespace", def.getNamespaceRef(), null);
-        doWriteAttribute(jo, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute(jo, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES_256_GCM");
         doWriteAttribute(jo, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(jo, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(jo, "secureTag", def.getSecureTag(), null);
@@ -2849,14 +2892,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteDefaultErrorHandlerDefinitionElements(jo, def);
         return jo;
     }
-    protected JsonObject doWriteCSimpleExpression(CSimpleExpression def) {
-        JsonObject jo = new JsonObject();
-        doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "trimResult", def.getTrimResult(), "false");
-        doWriteAttribute(jo, "pretty", def.getPretty(), "false");
-        doWriteValue(jo, def.getExpression());
-        return jo;
-    }
     protected JsonObject doWriteConstantExpression(ConstantExpression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
@@ -2925,14 +2960,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
-    protected JsonObject doWriteJoorExpression(JoorExpression def) {
-        JsonObject jo = new JsonObject();
-        doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "preCompile", def.getPreCompile(), "true");
-        doWriteAttribute(jo, "singleQuotes", def.getSingleQuotes(), "true");
-        doWriteValue(jo, def.getExpression());
-        return jo;
-    }
     protected JsonObject doWriteJqExpression(JqExpression def) {
         JsonObject jo = new JsonObject();
         doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
@@ -2975,12 +3002,16 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
+    protected void doWriteNamespaceAwareExpressionAttributes(JsonObject jo, NamespaceAwareExpression def) {
+        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteAttribute(jo, "namespacesRef", def.getNamespacesRef(), null);
+    }
     protected void doWriteNamespaceAwareExpressionElements(JsonObject jo, NamespaceAwareExpression def) {
         doWriteChildList(jo, null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
     }
     protected JsonObject doWriteNamespaceAwareExpression(NamespaceAwareExpression def) {
         JsonObject jo = new JsonObject();
-        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteNamespaceAwareExpressionAttributes(jo, def);
         doWriteValue(jo, def.getExpression());
         doWriteNamespaceAwareExpressionElements(jo, def);
         return jo;
@@ -2991,7 +3022,19 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
+    protected JsonObject doWritePython3Expression(Python3Expression def) {
+        JsonObject jo = new JsonObject();
+        doWriteTypedExpressionDefinitionAttributes(jo, def);
+        doWriteValue(jo, def.getExpression());
+        return jo;
+    }
     protected JsonObject doWritePythonExpression(PythonExpression def) {
+        JsonObject jo = new JsonObject();
+        doWriteTypedExpressionDefinitionAttributes(jo, def);
+        doWriteValue(jo, def.getExpression());
+        return jo;
+    }
+    protected JsonObject doWriteQuickjsExpression(QuickjsExpression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
         doWriteValue(jo, def.getExpression());
@@ -3068,7 +3111,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected JsonObject doWriteXMLTokenizerExpression(XMLTokenizerExpression def) {
         JsonObject jo = new JsonObject();
-        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteNamespaceAwareExpressionAttributes(jo, def);
         doWriteAttribute(jo, "mode", def.getMode(), "i");
         doWriteAttribute(jo, "group", def.getGroup(), null);
         doWriteValue(jo, def.getExpression());
@@ -3077,7 +3120,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected JsonObject doWriteXPathExpression(XPathExpression def) {
         JsonObject jo = new JsonObject();
-        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteNamespaceAwareExpressionAttributes(jo, def);
         doWriteAttribute(jo, "documentType", def.getDocumentTypeName(), null);
         doWriteAttribute(jo, "resultQName", def.getResultQName(), "NODESET");
         doWriteAttribute(jo, "saxon", def.getSaxon(), null);
@@ -3092,7 +3135,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected JsonObject doWriteXQueryExpression(XQueryExpression def) {
         JsonObject jo = new JsonObject();
-        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteNamespaceAwareExpressionAttributes(jo, def);
         doWriteAttribute(jo, "configurationRef", def.getConfigurationRef(), null);
         doWriteValue(jo, def.getExpression());
         doWriteNamespaceAwareExpressionElements(jo, def);
@@ -3110,7 +3153,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "roundRobin", def.getRoundRobin(), null);
         doWriteAttribute(jo, "sticky", def.getSticky(), null);
         doWriteAttribute(jo, "maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
-        doWriteAttribute(jo, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
+        doWriteAttribute(jo, "inheritErrorHandler", def.getInheritErrorHandler(), "true");
         doWriteStringList(jo, null, "exception", def.getExceptions());
         return jo;
     }
@@ -3219,7 +3262,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "name", def.getName(), null);
         doWriteAttribute(jo, "type", toString(def.getType()), "path");
         doWriteAttribute(jo, "defaultValue", def.getDefaultValue(), null);
-        doWriteAttribute(jo, "required", toString(def.getRequired()), "true");
+        doWriteAttribute(jo, "required", def.getRequired(), "true");
         doWriteAttribute(jo, "collectionFormat", toString(def.getCollectionFormat()), "csv");
         doWriteAttribute(jo, "arrayType", def.getArrayType(), "string");
         doWriteAttribute(jo, "dataType", def.getDataType(), "string");
@@ -3503,6 +3546,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(jo, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(jo, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(jo, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(jo, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(jo, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(jo, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(jo, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(jo, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
@@ -3620,6 +3665,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "A2ASubTaskDefinition" -> wrapNode("a2aSubTask", doWriteA2ASubTaskDefinition((A2ASubTaskDefinition) v));
                 case "AggregateDefinition" -> wrapNode("aggregate", doWriteAggregateDefinition((AggregateDefinition) v));
                 case "BeanDefinition" -> wrapNode("bean", doWriteBeanDefinition((BeanDefinition) v));
+                case "CacheDefinition" -> wrapNode("cache", doWriteCacheDefinition((CacheDefinition) v));
                 case "CatchDefinition" -> wrapNode("doCatch", doWriteCatchDefinition((CatchDefinition) v));
                 case "ChoiceDefinition" -> wrapNode("choice", doWriteChoiceDefinition((ChoiceDefinition) v));
                 case "CircuitBreakerDefinition" -> wrapNode("circuitBreaker", doWriteCircuitBreakerDefinition((CircuitBreakerDefinition) v));
@@ -3732,6 +3778,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "A2ASubTaskDefinition" -> wrapNode("a2aSubTask", doWriteA2ASubTaskDefinition((A2ASubTaskDefinition) v));
                 case "AggregateDefinition" -> wrapNode("aggregate", doWriteAggregateDefinition((AggregateDefinition) v));
                 case "BeanDefinition" -> wrapNode("bean", doWriteBeanDefinition((BeanDefinition) v));
+                case "CacheDefinition" -> wrapNode("cache", doWriteCacheDefinition((CacheDefinition) v));
                 case "CatchDefinition" -> wrapNode("doCatch", doWriteCatchDefinition((CatchDefinition) v));
                 case "ChoiceDefinition" -> wrapNode("choice", doWriteChoiceDefinition((ChoiceDefinition) v));
                 case "CircuitBreakerDefinition" -> wrapNode("circuitBreaker", doWriteCircuitBreakerDefinition((CircuitBreakerDefinition) v));
@@ -3880,7 +3927,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteExpressionDefinitionRef(ExpressionDefinition v) {
         if (v != null) {
             return switch (v.getClass().getSimpleName()) {
-                case "CSimpleExpression" -> wrapNode("csimple", doWriteCSimpleExpression((CSimpleExpression) v));
                 case "ConstantExpression" -> wrapNode("constant", doWriteConstantExpression((ConstantExpression) v));
                 case "DatasonnetExpression" -> wrapNode("datasonnet", doWriteDatasonnetExpression((DatasonnetExpression) v));
                 case "ExchangePropertyExpression" -> wrapNode("exchangeProperty", doWriteExchangePropertyExpression((ExchangePropertyExpression) v));
@@ -3891,14 +3937,15 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "JactlExpression" -> wrapNode("jactl", doWriteJactlExpression((JactlExpression) v));
                 case "JavaExpression" -> wrapNode("java", doWriteJavaExpression((JavaExpression) v));
                 case "JavaScriptExpression" -> wrapNode("js", doWriteJavaScriptExpression((JavaScriptExpression) v));
-                case "JoorExpression" -> wrapNode("joor", doWriteJoorExpression((JoorExpression) v));
                 case "JqExpression" -> wrapNode("jq", doWriteJqExpression((JqExpression) v));
                 case "JsonPathExpression" -> wrapNode("jsonpath", doWriteJsonPathExpression((JsonPathExpression) v));
                 case "LanguageExpression" -> wrapNode("language", doWriteLanguageExpression((LanguageExpression) v));
                 case "MethodCallExpression" -> wrapNode("method", doWriteMethodCallExpression((MethodCallExpression) v));
                 case "MvelExpression" -> wrapNode("mvel", doWriteMvelExpression((MvelExpression) v));
                 case "OgnlExpression" -> wrapNode("ognl", doWriteOgnlExpression((OgnlExpression) v));
+                case "Python3Expression" -> wrapNode("python3", doWritePython3Expression((Python3Expression) v));
                 case "PythonExpression" -> wrapNode("python", doWritePythonExpression((PythonExpression) v));
+                case "QuickjsExpression" -> wrapNode("quickjs", doWriteQuickjsExpression((QuickjsExpression) v));
                 case "RefExpression" -> wrapNode("ref", doWriteRefExpression((RefExpression) v));
                 case "SimpleExpression" -> wrapNode("simple", doWriteSimpleExpression((SimpleExpression) v));
                 case "SpELExpression" -> wrapNode("spel", doWriteSpELExpression((SpELExpression) v));

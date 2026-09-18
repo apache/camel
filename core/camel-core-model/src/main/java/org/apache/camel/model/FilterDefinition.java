@@ -89,7 +89,8 @@ public class FilterDefinition extends OutputExpressionNode {
     }
 
     @Override
-    @Metadata(description = "The predicate expression to evaluate. Messages where the predicate returns false are filtered out and not routed further.")
+    @Metadata(required = true,
+              description = "The predicate expression to evaluate. Messages where the predicate returns false are filtered out and not routed further.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

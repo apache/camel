@@ -82,35 +82,35 @@ YAML::
     id: batch-convert
     from:
       uri: direct:documents
-    steps:
-      - to:
-          uri: docling:convert
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            batchParallelism: 4
-            batchFailOnFirstError: true
-      - log:
-          message: "Processed ${header.CamelDoclingBatchSuccessCount}/${header.CamelDoclingBatchTotalDocuments} documents successfully"
-      - split:
-          expression:
-            simple:
-              expression: "${body.results}"
-          steps:
-            - choice:
-                when:
-                  - expression:
-                      simple:
-                        expression: "${body.success}"
+      steps:
+        - to:
+            uri: docling:convert
+            parameters:
+              operation: "BATCH_CONVERT_TO_MARKDOWN"
+              useDoclingServe: true
+              batchParallelism: 4
+              batchFailOnFirstError: true
+        - log:
+            message: "Processed ${header.CamelDoclingBatchSuccessCount}/${header.CamelDoclingBatchTotalDocuments} documents successfully"
+        - split:
+            expression:
+              simple:
+                expression: "${body.results}"
+            steps:
+              - choice:
+                  when:
+                    - expression:
+                        simple:
+                          expression: "${body.success}"
+                      steps:
+                        - to:
+                            uri: file:///data/output
+                            parameters:
+                              fileName: "${body.documentId}.md"
+                  otherwise:
                     steps:
-                      - to:
-                          uri: file:///data/output
-                          parameters:
-                            fileName: "${body.documentId}.md"
-                otherwise:
-                  steps:
-                    - log:
-                        message: "Failed: ${body.originalPath} - ${body.errorMessage}"
+                      - log:
+                          message: "Failed: ${body.originalPath} - ${body.errorMessage}"
 ----
 ====
 
@@ -184,18 +184,18 @@ YAML::
       parameters:
         noop: true
         maxMessagesPerPoll: 50
-    steps:
-      - convertBodyTo:
-          type: "java.lang.String"
-      - setHeader:
-          name: "documentPath"
-          expression:
-            simple:
-              expression: "${body}"
-      - to:
-          uri: seda:document-queue
-          parameters:
-            waitForTaskToComplete: "Never"
+      steps:
+        - convertBodyTo:
+            type: "java.lang.String"
+        - setHeader:
+            name: "documentPath"
+            expression:
+              simple:
+                expression: "${body}"
+        - to:
+            uri: seda:document-queue
+            parameters:
+              waitForTaskToComplete: "Never"
 
 # Route 2: Aggregate into batches
 - route:
@@ -203,50 +203,50 @@ YAML::
       uri: seda:document-queue
       parameters:
         concurrentConsumers: 1
-    steps:
-      - aggregate:
-          aggregationStrategy:
-            bean: "documentListProcessor"
-          correlationExpression:
-            constant: true
-          completionSize: 10
-          completionTimeout: 5000
-      - to:
-          uri: direct:batch-process
+      steps:
+        - aggregate:
+            aggregationStrategy:
+              bean: "documentListProcessor"
+            correlationExpression:
+              constant: true
+            completionSize: 10
+            completionTimeout: 5000
+        - to:
+            uri: direct:batch-process
 
 # Route 3: Process batch
 - route:
     from:
       uri: direct:batch-process
-    steps:
-      - to:
-          uri: docling:convert
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            batchParallelism: 5
-            batchFailOnFirstError: false
-      - split:
-          expression:
-            simple:
-              expression: "${body.results}"
-          steps:
-            - choice:
-                when:
-                  - expression:
-                      simple:
-                        expression: "${body.success}"
+      steps:
+        - to:
+            uri: docling:convert
+            parameters:
+              operation: "BATCH_CONVERT_TO_MARKDOWN"
+              useDoclingServe: true
+              batchParallelism: 5
+              batchFailOnFirstError: false
+        - split:
+            expression:
+              simple:
+                expression: "${body.results}"
+            steps:
+              - choice:
+                  when:
+                    - expression:
+                        simple:
+                          expression: "${body.success}"
+                      steps:
+                        - to:
+                            uri: file:///data/output
+                            parameters:
+                              fileName: "${body.documentId}.md"
+                  otherwise:
                     steps:
                       - to:
-                          uri: file:///data/output
+                          uri: file:///data/failed
                           parameters:
-                            fileName: "${body.documentId}.md"
-                otherwise:
-                  steps:
-                    - to:
-                        uri: file:///data/failed
-                        parameters:
-                          fileName: "${body.documentId}.error"
+                            fileName: "${body.documentId}.error"
 ----
 ====
 
@@ -327,51 +327,51 @@ YAML::
     id: batch-strict
     from:
       uri: direct:batch-strict
-    steps:
-      - to:
-          uri: docling:convert
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            batchFailOnFirstError: true
-      - log:
-          message: "All documents converted successfully"
+      steps:
+        - to:
+            uri: docling:convert
+            parameters:
+              operation: "BATCH_CONVERT_TO_MARKDOWN"
+              useDoclingServe: true
+              batchFailOnFirstError: true
+        - log:
+            message: "All documents converted successfully"
 
 # Continue on errors and process failures
 - route:
     id: batch-lenient
     from:
       uri: direct:batch-lenient
-    steps:
-      - to:
-          uri: docling:convert
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            batchFailOnFirstError: false
-      - log:
-          message: "Batch completed: ${header.CamelDoclingBatchSuccessCount} succeeded, ${header.CamelDoclingBatchFailureCount} failed"
-      - choice:
-          when:
-            - expression:
-                simple:
-                  expression: "${header.CamelDoclingBatchFailureCount} > 0"
+      steps:
+        - to:
+            uri: docling:convert
+            parameters:
+              operation: "BATCH_CONVERT_TO_MARKDOWN"
+              useDoclingServe: true
+              batchFailOnFirstError: false
+        - log:
+            message: "Batch completed: ${header.CamelDoclingBatchSuccessCount} succeeded, ${header.CamelDoclingBatchFailureCount} failed"
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${header.CamelDoclingBatchFailureCount} > 0"
+                steps:
+                  - split:
+                      expression:
+                        simple:
+                          expression: "${body.failed}"
+                      steps:
+                        - log:
+                            message: "Failed document: ${body.originalPath} - ${body.errorMessage}"
+                        - to:
+                            uri: file:///data/failed
+                            parameters:
+                              fileName: "${body.documentId}.error"
+            otherwise:
               steps:
-                - split:
-                    expression:
-                      simple:
-                        expression: "${body.failed}"
-                    steps:
-                      - log:
-                          message: "Failed document: ${body.originalPath} - ${body.errorMessage}"
-                      - to:
-                          uri: file:///data/failed
-                          parameters:
-                            fileName: "${body.documentId}.error"
-          otherwise:
-            steps:
-              - log:
-                  message: "All documents processed successfully"
+                - log:
+                    message: "All documents processed successfully"
 ----
 ====
 
@@ -586,82 +586,82 @@ YAML::
 - route:
     from:
       uri: direct:batch-with-split
-    steps:
-      - to:
-          uri: docling:convert
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            splitBatchResults: true
-            contentInBody: true
-      - split:
-          expression:
-            simple:
-              expression: "${body}"
-          steps:
-            - choice:
-                when:
-                  - expression:
-                      simple:
-                        expression: "${body.success}"
+      steps:
+        - to:
+            uri: docling:convert
+            parameters:
+              operation: "BATCH_CONVERT_TO_MARKDOWN"
+              useDoclingServe: true
+              splitBatchResults: true
+              contentInBody: true
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - choice:
+                  when:
+                    - expression:
+                        simple:
+                          expression: "${body.success}"
+                      steps:
+                        - log:
+                            message: "Success: ${body.documentId}"
+                        - to:
+                            uri: file:///data/success
+                            parameters:
+                              fileName: "${body.documentId}.md"
+                  otherwise:
                     steps:
                       - log:
-                          message: "Success: ${body.documentId}"
+                          message: "Failed: ${body.documentId}"
                       - to:
-                          uri: file:///data/success
+                          uri: file:///data/failed
                           parameters:
-                            fileName: "${body.documentId}.md"
-                otherwise:
-                  steps:
-                    - log:
-                        message: "Failed: ${body.documentId}"
-                    - to:
-                        uri: file:///data/failed
-                        parameters:
-                          fileName: "${body.documentId}.error"
+                            fileName: "${body.documentId}.error"
 
 # Example 2: Split with parallel processing
 - route:
     id: batch-split-parallel
     from:
       uri: direct:batch-parallel
-    steps:
-      - to:
-          uri: docling:convert
-          parameters:
-            operation: "BATCH_CONVERT_TO_MARKDOWN"
-            useDoclingServe: true
-            splitBatchResults: true
-            batchParallelism: 4
-            contentInBody: true
-      - split:
-          expression:
-            simple:
-              expression: "${body}"
-          parallelProcessing: true
-          steps:
-            - log:
-                message: "Processing document ${body.documentId} (index ${body.batchIndex})"
-            - choice:
-                when:
-                  - expression:
-                      simple:
-                        expression: "${body.success}"
+      steps:
+        - to:
+            uri: docling:convert
+            parameters:
+              operation: "BATCH_CONVERT_TO_MARKDOWN"
+              useDoclingServe: true
+              splitBatchResults: true
+              batchParallelism: 4
+              contentInBody: true
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            parallelProcessing: true
+            steps:
+              - log:
+                  message: "Processing document ${body.documentId} (index ${body.batchIndex})"
+              - choice:
+                  when:
+                    - expression:
+                        simple:
+                          expression: "${body.success}"
+                      steps:
+                        - log:
+                            message: "Successfully converted ${body.documentId}"
+                        - to:
+                            uri: file:///data/processed
+                            parameters:
+                              fileName: "${body.documentId}.md"
+                  otherwise:
                     steps:
                       - log:
-                          message: "Successfully converted ${body.documentId}"
+                          message: "Failed to convert ${body.documentId}: ${body.errorMessage}"
                       - to:
-                          uri: file:///data/processed
+                          uri: file:///data/errors
                           parameters:
-                            fileName: "${body.documentId}.md"
-                otherwise:
-                  steps:
-                    - log:
-                        message: "Failed to convert ${body.documentId}: ${body.errorMessage}"
-                    - to:
-                        uri: file:///data/errors
-                        parameters:
-                          fileName: "${body.documentId}.error"
+                            fileName: "${body.documentId}.error"
 ----
 ====
 

@@ -96,16 +96,29 @@ public class HttpEndpointModel implements Comparable<HttpEndpointModel> {
             return false;
         }
         HttpEndpointModel that = (HttpEndpointModel) o;
-        return uri.equals(that.uri);
+        return uri.equals(that.uri) && consumer == that.consumer;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uri);
+        return Objects.hash(uri, consumer);
     }
 
     @Override
     public int compareTo(HttpEndpointModel o) {
-        return uri.compareTo(o.uri);
+        int cmp = uri.compareTo(o.uri);
+        if (cmp != 0) {
+            return cmp;
+        }
+        if (consumer == o.consumer) {
+            return 0;
+        }
+        if (consumer == null) {
+            return -1;
+        }
+        if (o.consumer == null) {
+            return 1;
+        }
+        return Integer.compare(System.identityHashCode(consumer), System.identityHashCode(o.consumer));
     }
 }

@@ -792,7 +792,8 @@ class SqlQueryTab extends AbstractTab {
                 TextInput input = TextInput.builder()
                         .cursorStyle(cursorStyle)
                         .build();
-                frame.renderStatefulWidget(input, valArea, editInputs[i]);
+                // renderWithCursor (not renderStatefulWidget) so the caret is painted on the focused field
+                input.renderWithCursor(valArea, frame.buffer(), editInputs[i], frame);
             } else {
                 String val = editInputs[i].text();
                 boolean changed = !val.equals(editOriginalValues[i]);
@@ -806,13 +807,8 @@ class SqlQueryTab extends AbstractTab {
         int footerY = inner.top() + visibleRows + 1;
         if (footerY < popup.bottom() - 1) {
             Rect footerArea = new Rect(inner.left(), footerY, inner.width(), 1);
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(" F5", Theme.label().bold()),
-                    Span.styled("=Save  ", Theme.muted()),
-                    Span.styled("Esc", Theme.label().bold()),
-                    Span.styled("=Cancel  ", Theme.muted()),
-                    Span.styled("*", Theme.muted()),
-                    Span.styled("=Primary Key", Theme.muted()))), footerArea);
+            frame.renderWidget(Paragraph.from(
+                    TuiHelper.hintLine("F5", "save", "Esc", "cancel", "*", "primary key")), footerArea);
         }
     }
 
@@ -836,7 +832,6 @@ class SqlQueryTab extends AbstractTab {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "Tab", "input");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             if (isEditable()) {
                 hint(spans, "F4", "edit");
             }
@@ -850,40 +845,7 @@ class SqlQueryTab extends AbstractTab {
 
     @Override
     public String getHelpText() {
-        return """
-                # SQL Query
-
-                Execute SQL queries against DataSource beans registered in the Camel application.
-
-                ## Usage
-                - Type a SQL query in the input field and press **F5** to execute
-                - Type **file:query.sql** to load SQL from a file
-                - Use **Enter** for new lines in the query
-                - Use **Up/Down** arrows to move cursor within the query
-                - Paste multi-line queries from clipboard
-                - Use **Ctrl+E** to open query history (select with Enter, dismiss with Esc)
-                - Use **Tab** to toggle focus between input and results table
-                - Use **Esc** to return focus to the input field from results
-                - Use **Ctrl+Left/Right** to switch between DataSources (when multiple exist)
-
-                ## Inline Editing
-                - For simple single-table SELECT queries, press **F4** on a result row to edit
-                - Primary key columns (marked with *) are read-only
-                - Changed values are highlighted in green
-                - Press **F5** to save changes (executes an UPDATE statement)
-                - Press **Esc** to cancel editing
-                - The query is automatically re-executed after a successful update
-
-                ## Supported Queries
-                - SELECT queries return a result table
-                - INSERT, UPDATE, DELETE return an update count
-                - Any valid SQL supported by the underlying database
-
-                ## Safety
-                - Results are limited to 100 rows by default
-                - Query timeout is 30 seconds by default
-                - This feature is only available when dev console is enabled (dev profile)
-                """;
+        return DocHelper.loadHelpText("sql-query");
     }
 
     @Override

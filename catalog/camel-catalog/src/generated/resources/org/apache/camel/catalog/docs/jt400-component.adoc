@@ -34,20 +34,28 @@ for this component:
 To send or receive data from a data queue
 
 ----
-jt400://user:password/system/QSYS.LIB/library.LIB/queue.DTAQ[?options]
+jt400://user:password@system/QSYS.LIB/library.LIB/queue.DTAQ[?options]
 ----
 
 To send or receive messages from a message queue
 
 ----
-jt400://user:password/system/QSYS.LIB/library.LIB/queue.MSGQ[?options]
+jt400://user:password@system/QSYS.LIB/library.LIB/queue.MSGQ[?options]
 ----
 
-To call program
+To call a program
 
 ----
-jt400://user:password/system/QSYS.LIB/library.LIB/program.PGM[?options]
+jt400://user:password@system/QSYS.LIB/library.LIB/program.PGM[?options]
 ----
+
+To call a service program
+
+----
+jt400://user:password@system/QSYS.LIB/library.LIB/program.SRVPGM[?options]
+----
+
+The suffix of the object path (`.DTAQ`, `.MSGQ`, `.PGM` or `.SRVPGM`) selects what the endpoint works with.
 
 
 // component options: START
@@ -111,8 +119,8 @@ Java::
 +
 [source,java]
 ----
-from(“direct:george”).to(“jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”);
-from(“jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”).to(“mock:ringo”);
+from("direct:george").to("jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ");
+from("jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ").to("mock:ringo");
 ----
 
 XML::
@@ -120,13 +128,13 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri=”direct:george”/>
-  <to uri=”jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”/>
+  <from uri="direct:george"/>
+  <to uri="jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ"/>
 </route>
 
 <route>
-  <from uri=”jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ”/>
-  <to uri=”mock:ringo”/>
+  <from uri="jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ"/>
+  <to uri="mock:ringo"/>
 </route>
 ----
 
@@ -137,16 +145,16 @@ YAML::
 - route:
     from:
       uri: direct:george
-    steps:
-      - to:
-          uri: jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
+      steps:
+        - to:
+            uri: jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
 
 - route:
     from:
       uri: jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
-    steps:
-      - to:
-          uri: mock:ringo
+      steps:
+        - to:
+            uri: mock:ringo
 ----
 ====
 
@@ -164,7 +172,7 @@ Java::
 +
 [source,java]
 ----
-from(“direct:work”).to(“jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3”).to(“direct:play”);
+from("direct:work").to("jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&outputFieldsIdx=2,3").to("direct:play");
 ----
 
 XML::
@@ -172,9 +180,9 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri=”direct:work”/>
-  <to uri=”jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&amp;ouputFieldsIdx=2,3”/>
-  <to uri=”direct:play”/>
+  <from uri="direct:work"/>
+  <to uri="jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&amp;outputFieldsIdx=2,3"/>
+  <to uri="direct:play"/>
 </route>
 ----
 
@@ -185,14 +193,14 @@ YAML::
 - route:
     from:
       uri: direct:work
-    steps:
-      - to:
-          uri: jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM
-          parameters:
-            fieldsLength: “10,10,512”
-            ouputFieldsIdx: “2,3”
-      - to:
-          uri: direct:play
+      steps:
+        - to:
+            uri: jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM
+            parameters:
+              fieldsLength: "10,10,512"
+              outputFieldsIdx: "2,3"
+        - to:
+            uri: direct:play
 ----
 ====
 
@@ -202,20 +210,20 @@ In this example, the camel route will call the QUSRTVUS API to retrieve
 ._Java-only: uses lambda Processor to set program call parameters_
 [source,java]
 ----
-from(“timer://foo?period=60000”)
+from("timer://foo?period=60000")
     .process( exchange -> {
-        String usrSpc = “MYUSRSPACEMYLIB     “;
+        String usrSpc = "MYUSRSPACEMYLIB     ";
         Object[] parms = new Object[] {
             usrSpc, // Qualified user space name
             1,      // starting position
             16,     // length of data
-            “” // output
+            "" // output
         };
         exchange.getIn().setBody(parms);
     })
-    .to(“jt400://*CURRENT:*CURRENt@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3”)
-    .setBody(simple(“${body[3]}”))
-    .to(“direct:foo”);
+    .to("jt400://*CURRENT:*CURRENT@localhost/qsys.lib/QUSRTVUS.PGM?fieldsLength=20,4,4,16&outputFieldsIdx=3")
+    .setBody(simple("${body[3]}"))
+    .to("direct:foo");
 ----
 
 === Writing to keyed data queues
@@ -247,11 +255,11 @@ YAML::
 - route:
     from:
       uri: jms:queue:input
-    steps:
-      - to:
-          uri: jt400://username:password@system/lib.lib/MSGINDQ.DTAQ
-          parameters:
-            keyed: true
+      steps:
+        - to:
+            uri: jt400://username:password@system/lib.lib/MSGINDQ.DTAQ
+            parameters:
+              keyed: true
 ----
 ====
 
@@ -288,9 +296,9 @@ YAML::
         keyed: true
         searchKey: MYKEY
         searchType: GE
-    steps:
-      - to:
-          uri: jms:queue:output
+      steps:
+        - to:
+            uri: jms:queue:output
 ----
 ====
 
@@ -323,9 +331,9 @@ YAML::
 - route:
     from:
       uri: jms:queue:input
-    steps:
-      - to:
-          uri: jt400://username:password@system/lib.lib/MSGINQ.MSGQ
+      steps:
+        - to:
+            uri: jt400://username:password@system/lib.lib/MSGINQ.MSGQ
 ----
 ====
 
@@ -358,9 +366,9 @@ YAML::
 - route:
     from:
       uri: jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ
-    steps:
-      - to:
-          uri: jms:queue:output
+      steps:
+        - to:
+            uri: jms:queue:output
 ----
 ====
 

@@ -17,15 +17,17 @@
 package org.apache.camel.impl.console;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "datasource", displayName = "DataSource", description = "Displays DataSource connection pool metrics")
 @Configurer(extended = true)
@@ -33,6 +35,24 @@ public class DataSourceDevConsole extends AbstractDevConsole {
 
     private static final String HIKARI_CLASS = "com.zaxxer.hikari.HikariDataSource";
     private static final String AGROAL_CLASS = "io.agroal.api.AgroalDataSource";
+
+    public record Entry(
+            @Metadata(description = "The registry bean name") String name,
+            @Metadata(description = "The DataSource implementation class") String type,
+            @Metadata(description = "The detected connection pool type: HikariCP, Agroal, or Unknown") String poolType,
+            @Metadata(description = "The pool name (HikariCP only)") String poolName,
+            @Metadata(description = "The maximum pool size (only present once the pool is initialized)") Long maxPoolSize,
+            @Metadata(description = "Number of active connections (only present once the pool is initialized)") Long active,
+            @Metadata(description = "Number of idle connections (only present once the pool is initialized)") Long idle,
+            @Metadata(description = "Total number of connections (only present once the pool is initialized)") Long total,
+            @Metadata(description = "Number of threads awaiting a connection (HikariCP only)") Long waiting,
+            @Metadata(description = "Maximum number of connections used at once (Agroal only)") Long maxUsed,
+            @Metadata(description = "Number of leak detections (Agroal only)") Long leakDetection,
+            @Metadata(description = "Number of connections created (Agroal only)") Long created) {
+    }
+
+    public record Response(@Metadata(description = "The DataSources") List<Entry> dataSources) {
+    }
 
     public DataSourceDevConsole() {
         super("camel", "datasource", "DataSource", "Displays DataSource connection pool metrics");
@@ -69,9 +89,8 @@ public class DataSourceDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<Entry> entries = new ArrayList<>();
 
         Map<String, DataSource> dataSources
                 = getCamelContext().getRegistry().findByTypeWithName(DataSource.class);
@@ -80,22 +99,21 @@ public class DataSourceDevConsole extends AbstractDevConsole {
             DataSource ds = entry.getValue();
             String poolType = detectPoolType(ds);
 
-            JsonObject jo = new JsonObject();
-            jo.put("name", entry.getKey());
-            jo.put("type", ds.getClass().getName());
-            jo.put("poolType", poolType);
-
+            Entry e;
             if ("HikariCP".equals(poolType)) {
-                collectHikariMetrics(jo, ds);
+                e = collectHikariMetrics(entry.getKey(), ds, poolType);
             } else if ("Agroal".equals(poolType)) {
-                collectAgroalMetrics(jo, ds);
+                e = collectAgroalMetrics(entry.getKey(), ds, poolType);
+            } else {
+                e = new Entry(
+                        entry.getKey(), ds.getClass().getName(), poolType, null, null, null, null, null, null, null,
+                        null, null);
             }
-
-            arr.add(jo);
+            entries.add(e);
         }
 
-        root.put("dataSources", arr);
-        return root;
+        Response response = new Response(entries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private static String detectPoolType(DataSource ds) {
@@ -110,23 +128,26 @@ public class DataSourceDevConsole extends AbstractDevConsole {
 
     // ---- HikariCP ----
 
-    private void collectHikariMetrics(JsonObject jo, DataSource ds) {
-        Object poolName = invokeMethod(ds, "getPoolName");
-        if (poolName != null) {
-            jo.put("poolName", String.valueOf(poolName));
-        }
-        Object maxPoolSize = invokeMethod(ds, "getMaximumPoolSize");
-        if (maxPoolSize instanceof Number n) {
-            jo.put("maxPoolSize", n.intValue());
-        }
+    private Entry collectHikariMetrics(String name, DataSource ds, String poolType) {
+        Object poolNameObj = invokeMethod(ds, "getPoolName");
+        String poolName = poolNameObj != null ? String.valueOf(poolNameObj) : null;
+        Long maxPoolSize = asLong(invokeMethod(ds, "getMaximumPoolSize"));
 
+        Long active = null;
+        Long idle = null;
+        Long total = null;
+        Long waiting = null;
         Object mxBean = invokeMethod(ds, "getHikariPoolMXBean");
         if (mxBean != null) {
-            putInt(jo, "active", invokeMethod(mxBean, "getActiveConnections"));
-            putInt(jo, "idle", invokeMethod(mxBean, "getIdleConnections"));
-            putInt(jo, "total", invokeMethod(mxBean, "getTotalConnections"));
-            putInt(jo, "waiting", invokeMethod(mxBean, "getThreadsAwaitingConnection"));
+            active = asLong(invokeMethod(mxBean, "getActiveConnections"));
+            idle = asLong(invokeMethod(mxBean, "getIdleConnections"));
+            total = asLong(invokeMethod(mxBean, "getTotalConnections"));
+            waiting = asLong(invokeMethod(mxBean, "getThreadsAwaitingConnection"));
         }
+
+        return new Entry(
+                name, ds.getClass().getName(), poolType, poolName, maxPoolSize, active, idle, total, waiting, null, null,
+                null);
     }
 
     private void appendHikariText(StringBuilder sb, DataSource ds) {
@@ -152,34 +173,37 @@ public class DataSourceDevConsole extends AbstractDevConsole {
 
     // ---- Agroal ----
 
-    private void collectAgroalMetrics(JsonObject jo, DataSource ds) {
+    private Entry collectAgroalMetrics(String name, DataSource ds, String poolType) {
+        Long active = null;
+        Long idle = null;
+        Long maxUsed = null;
+        Long leakDetection = null;
+        Long created = null;
         Object metrics = invokeMethod(ds, "getMetrics");
         if (metrics != null) {
-            putLong(jo, "active", invokeMethod(metrics, "activeCount"));
-            putLong(jo, "idle", invokeMethod(metrics, "availableCount"));
-            putLong(jo, "maxUsed", invokeMethod(metrics, "maxUsedCount"));
-            putLong(jo, "leakDetection", invokeMethod(metrics, "leakDetectionCount"));
-            putLong(jo, "created", invokeMethod(metrics, "creationCount"));
+            active = asLong(invokeMethod(metrics, "activeCount"));
+            idle = asLong(invokeMethod(metrics, "availableCount"));
+            maxUsed = asLong(invokeMethod(metrics, "maxUsedCount"));
+            leakDetection = asLong(invokeMethod(metrics, "leakDetectionCount"));
+            created = asLong(invokeMethod(metrics, "creationCount"));
         }
 
         // max pool size via configuration chain
+        Long maxPoolSize = null;
         Object config = invokeMethod(ds, "getConfiguration");
         if (config != null) {
             Object poolConfig = invokeMethod(config, "connectionPoolConfiguration");
             if (poolConfig != null) {
-                Object maxSize = invokeMethod(poolConfig, "maxSize");
-                if (maxSize instanceof Number n) {
-                    jo.put("maxPoolSize", n.intValue());
-                }
+                maxPoolSize = asLong(invokeMethod(poolConfig, "maxSize"));
             }
         }
 
         // compute total from active + idle
-        Object active = jo.get("active");
-        Object idle = jo.get("idle");
-        if (active instanceof Number a && idle instanceof Number i) {
-            jo.put("total", a.longValue() + i.longValue());
-        }
+        Long total = active != null && idle != null ? active + idle : null;
+
+        return new Entry(
+                name, ds.getClass().getName(), poolType, null, maxPoolSize, active, idle, total, null, maxUsed,
+                leakDetection, created);
     }
 
     private void appendAgroalText(StringBuilder sb, DataSource ds) {
@@ -211,15 +235,7 @@ public class DataSourceDevConsole extends AbstractDevConsole {
         }
     }
 
-    private static void putInt(JsonObject jo, String key, Object value) {
-        if (value instanceof Number n) {
-            jo.put(key, n.intValue());
-        }
-    }
-
-    private static void putLong(JsonObject jo, String key, Object value) {
-        if (value instanceof Number n) {
-            jo.put(key, n.longValue());
-        }
+    private static Long asLong(Object value) {
+        return value instanceof Number n ? n.longValue() : null;
     }
 }

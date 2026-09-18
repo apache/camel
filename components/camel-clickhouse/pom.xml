@@ -32,8 +32,7 @@
     <description>Camel ClickHouse component</description>
 
     <properties>
-        <!-- ClickHouse server container image is not available on these platforms -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <!-- ClickHouse server container image is not available on this platform -->
         <skipITs.s390x>true</skipITs.s390x>
     </properties>
 

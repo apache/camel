@@ -64,6 +64,7 @@ import org.slf4j.LoggerFactory;
 public class MinaConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinaConsumer.class);
+    private static final String MUTED_EXCEPTION_MESSAGE = "Exchange processing failed";
     private IoSession session;
     private IoConnector connector;
     private SocketAddress address;
@@ -313,6 +314,19 @@ public class MinaConsumer extends DefaultConsumer {
         addCodecFactory(service, codecFactory);
     }
 
+    /**
+     * The stand-in written back to the remote peer when {@code muteException} is enabled.
+     * <p>
+     * Still a {@link Exception}, so a peer that expects one - the object codec deserialises whatever was written -
+     * keeps getting one, but it carries neither the class nor the message of the route's exception. Its own stack trace
+     * is cleared as well: leaving it would serialise this consumer's frames to the peer instead.
+     */
+    private static Exception mutedException() {
+        Exception muted = new Exception(MUTED_EXCEPTION_MESSAGE);
+        muted.setStackTrace(new StackTraceElement[0]);
+        return muted;
+    }
+
     private void addCodecFactory(IoService service, ProtocolCodecFactory codecFactory) {
         service.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
     }
@@ -385,7 +399,7 @@ public class MinaConsumer extends DefaultConsumer {
         exchange.getIn().setHeader(MinaConstants.MINA_IOSESSION, session);
         exchange.getIn().setHeader(MinaConstants.MINA_LOCAL_ADDRESS, session.getLocalAddress());
         exchange.getIn().setHeader(MinaConstants.MINA_REMOTE_ADDRESS, session.getRemoteAddress());
-        MinaPayloadHelper.setIn(exchange, payload);
+        MinaPayloadHelper.setIn(getEndpoint(), exchange, payload);
         return exchange;
     }
 
@@ -450,7 +464,8 @@ public class MinaConsumer extends DefaultConsumer {
                 boolean failed = exchange.isFailed();
                 if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
                     if (exchange.getException() != null) {
-                        response = exchange.getException();
+                        response = getEndpoint().getConfiguration().isMuteException()
+                                ? mutedException() : exchange.getException();
                     } else {
                         // failed and no exception, must be a fault
                         response = exchange.getOut().getBody();

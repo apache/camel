@@ -55,8 +55,6 @@ import org.apache.camel.component.djl.model.nlp.ZooTextEmbeddingPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooTextGenerationPredictor;
 import org.apache.camel.component.djl.model.nlp.ZooTokenClassificationPredictor;
 import org.apache.camel.component.djl.model.tabular.CustomTabularPredictor;
-import org.apache.camel.component.djl.model.tabular.ZooLinearRegressionPredictor;
-import org.apache.camel.component.djl.model.tabular.ZooSoftmaxRegressionPredictor;
 import org.apache.camel.component.djl.model.timeseries.CustomForecastingPredictor;
 import org.apache.camel.component.djl.model.timeseries.ZooForecastingPredictor;
 
@@ -135,11 +133,14 @@ public final class ModelPredictorProducer {
             return new ZooTextEmbeddingPredictor(endpoint);
         }
 
-        // Tabular
-        if (LINEAR_REGRESSION.getPath().equals(applicationPath)) {
-            return new ZooLinearRegressionPredictor(endpoint);
-        } else if (SOFTMAX_REGRESSION.getPath().equals(applicationPath)) {
-            return new ZooSoftmaxRegressionPredictor(endpoint);
+        // Tabular: the DJL model zoo does not publish tabular regression models, and the input and
+        // output types of a tabular model are specific to the user's data, so there is no generic zoo
+        // predictor for these applications. Users must supply their own model and translator and use
+        // the custom variant (see getCustomPredictor / CustomTabularPredictor) instead.
+        if (LINEAR_REGRESSION.getPath().equals(applicationPath) || SOFTMAX_REGRESSION.getPath().equals(applicationPath)) {
+            throw new RuntimeCamelException(
+                    "Zoo models are not available for tabular application: " + applicationPath
+                                            + ". Provide your own model and translator and use the custom predictor instead.");
         }
 
         // Audio

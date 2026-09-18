@@ -64,6 +64,33 @@ public abstract class AbstractOAuthProcessor implements Processor {
         });
     }
 
+    /**
+     * Rejects the current request and stops the route, so that no subsequent step runs for a request this processor did
+     * not authenticate. Absence of credentials must be rejected at least as strongly as invalid credentials.
+     *
+     * @param exchange   the exchange to reject and stop
+     * @param statusCode the HTTP status code to reply with
+     * @param body       the response body
+     */
+    protected void reject(Exchange exchange, int statusCode, String body) {
+        var msg = exchange.getMessage();
+        msg.setHeader(Exchange.HTTP_RESPONSE_CODE, statusCode);
+        msg.setBody(body);
+        exchange.setRouteStop(true);
+    }
+
+    /**
+     * Rejects the current request as unauthenticated with a {@code 401} and a {@code WWW-Authenticate: Bearer}
+     * challenge, as required by RFC 6750, and stops the route.
+     *
+     * @param exchange the exchange to reject and stop
+     * @param body     the response body
+     */
+    protected void rejectUnauthorized(Exchange exchange, String body) {
+        exchange.getMessage().setHeader("WWW-Authenticate", "Bearer");
+        reject(exchange, 401, body);
+    }
+
     protected void sendRedirect(Message msg, String redirectUrl) {
         log.debug("Redirect to: {}", redirectUrl);
         msg.setHeader(Exchange.HTTP_RESPONSE_CODE, 302);

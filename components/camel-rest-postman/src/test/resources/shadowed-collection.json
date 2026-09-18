@@ -1,0 +1,46 @@
+{
+  "info": {
+    "name": "Shadowed",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.example.com"
+    }
+  ],
+  "item": [
+    {
+      "name": "Get User Success",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/users/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            ":id"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get User Error",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/users/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            ":id"
+          ]
+        }
+      }
+    }
+  ]
+}

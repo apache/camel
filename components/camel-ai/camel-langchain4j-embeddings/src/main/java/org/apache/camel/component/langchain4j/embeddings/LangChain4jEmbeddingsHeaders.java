@@ -32,8 +32,18 @@ public class LangChain4jEmbeddingsHeaders {
     @Metadata(description = "The Total Token Count.", javaType = "int")
     public static final String TOTAL_TOKEN_COUNT = "CamelLangChain4jEmbeddingsTotalTokenCount";
 
+    @Metadata(description = "The request model name.", javaType = "String")
+    public static final String REQUEST_MODEL = "CamelLangChain4jEmbeddingsRequestModel";
+
+    @Metadata(description = "The response model name.", javaType = "String")
+    public static final String RESPONSE_MODEL = "CamelLangChain4jEmbeddingsResponseModel";
+
     @Metadata(description = "Embedding representation of a text", javaType = "dev.langchain4j.data.embedding.Embedding")
     public static final String EMBEDDING = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING;
+
+    @Metadata(description = "List of embeddings from a batch embedAll operation",
+              javaType = "java.util.List<dev.langchain4j.data.embedding.Embedding>")
+    public static final String EMBEDDINGS = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDINGS;
 
     @Metadata(description = "A dense vector embedding of a text", javaType = "float[]")
     public static final String VECTOR = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR;
@@ -41,4 +51,8 @@ public class LangChain4jEmbeddingsHeaders {
     @Metadata(description = "A TextSegment representation of the vector embedding input text",
               javaType = " dev.langchain4j.data.segment.TextSegment")
     public static final String TEXT_SEGMENT = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_TEXT_SEGMENT;
+
+    @Metadata(description = "List of text segments from a batch embedAll operation",
+              javaType = "java.util.List<dev.langchain4j.data.segment.TextSegment>")
+    public static final String TEXT_SEGMENTS = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_TEXT_SEGMENTS;
 }

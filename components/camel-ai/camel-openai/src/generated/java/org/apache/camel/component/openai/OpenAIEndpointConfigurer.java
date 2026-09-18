@@ -45,12 +45,17 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": target.getConfiguration().setAudioTimestampGranularities(property(camelContext, java.lang.String.class, value)); return true;
         case "autotoolexecution":
         case "autoToolExecution": target.getConfiguration().setAutoToolExecution(property(camelContext, boolean.class, value)); return true;
+        case "background": target.getConfiguration().setBackground(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "builtintools":
         case "builtinTools": target.getConfiguration().setBuiltinTools(property(camelContext, java.lang.String.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, long.class, value)); return true;
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": target.getConfiguration().setConversationHistoryProperty(property(camelContext, java.lang.String.class, value)); return true;
+        case "conversationid":
+        case "conversationId": target.getConfiguration().setConversationId(property(camelContext, java.lang.String.class, value)); return true;
         case "conversationmemory":
         case "conversationMemory": target.getConfiguration().setConversationMemory(property(camelContext, boolean.class, value)); return true;
         case "developermessage":
@@ -66,6 +71,30 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "hallucinatedToolNameStrategy": target.getConfiguration().setHallucinatedToolNameStrategy(property(camelContext, org.apache.camel.component.openai.HallucinatedToolNameStrategy.class, value)); return true;
         case "hostedmcptools":
         case "hostedMcpTools": target.getConfiguration().setHostedMcpTools(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagebackground":
+        case "imageBackground": target.getConfiguration().setImageBackground(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagecount":
+        case "imageCount": target.getConfiguration().setImageCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "imageinputfidelity":
+        case "imageInputFidelity": target.getConfiguration().setImageInputFidelity(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagemodel":
+        case "imageModel": target.getConfiguration().setImageModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagemoderation":
+        case "imageModeration": target.getConfiguration().setImageModeration(property(camelContext, java.lang.String.class, value)); return true;
+        case "imageoutputcompression":
+        case "imageOutputCompression": target.getConfiguration().setImageOutputCompression(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "imageoutputformat":
+        case "imageOutputFormat": target.getConfiguration().setImageOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "imageprompt":
+        case "imagePrompt": target.getConfiguration().setImagePrompt(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagequality":
+        case "imageQuality": target.getConfiguration().setImageQuality(property(camelContext, java.lang.String.class, value)); return true;
+        case "imageresponseformat":
+        case "imageResponseFormat": target.getConfiguration().setImageResponseFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagesize":
+        case "imageSize": target.getConfiguration().setImageSize(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagestyle":
+        case "imageStyle": target.getConfiguration().setImageStyle(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschema":
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -93,6 +122,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptoolrefresh":
         case "mcpToolRefresh": target.getConfiguration().setMcpToolRefresh(property(camelContext, boolean.class, value)); return true;
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "moderationmodel":
+        case "moderationModel": target.getConfiguration().setModerationModel(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
@@ -103,6 +134,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parallelToolTimeout": target.getConfiguration().setParallelToolTimeout(property(camelContext, long.class, value)); return true;
         case "previousresponseid":
         case "previousResponseId": target.getConfiguration().setPreviousResponseId(property(camelContext, java.lang.String.class, value)); return true;
+        case "readtimeout":
+        case "readTimeout": target.getConfiguration().setReadTimeout(property(camelContext, long.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "speechinstructions":
@@ -146,6 +179,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "stripThinking": target.getConfiguration().setStripThinking(property(camelContext, boolean.class, value)); return true;
         case "systemmessage":
         case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": target.getConfiguration().setToolExecutionErrorStrategy(property(camelContext, org.apache.camel.component.openai.ToolExecutionErrorStrategy.class, value)); return true;
@@ -153,6 +187,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": target.getConfiguration().setTopP(property(camelContext, java.lang.Double.class, value)); return true;
         case "usermessage":
         case "userMessage": target.getConfiguration().setUserMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "writetimeout":
+        case "writeTimeout": target.getConfiguration().setWriteTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }
@@ -182,12 +218,17 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": return java.lang.String.class;
         case "autotoolexecution":
         case "autoToolExecution": return boolean.class;
+        case "background": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
         case "builtintools":
         case "builtinTools": return java.lang.String.class;
+        case "connecttimeout":
+        case "connectTimeout": return long.class;
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": return java.lang.String.class;
+        case "conversationid":
+        case "conversationId": return java.lang.String.class;
         case "conversationmemory":
         case "conversationMemory": return boolean.class;
         case "developermessage":
@@ -203,6 +244,30 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "hallucinatedToolNameStrategy": return org.apache.camel.component.openai.HallucinatedToolNameStrategy.class;
         case "hostedmcptools":
         case "hostedMcpTools": return java.lang.String.class;
+        case "imagebackground":
+        case "imageBackground": return java.lang.String.class;
+        case "imagecount":
+        case "imageCount": return java.lang.Integer.class;
+        case "imageinputfidelity":
+        case "imageInputFidelity": return java.lang.String.class;
+        case "imagemodel":
+        case "imageModel": return java.lang.String.class;
+        case "imagemoderation":
+        case "imageModeration": return java.lang.String.class;
+        case "imageoutputcompression":
+        case "imageOutputCompression": return java.lang.Integer.class;
+        case "imageoutputformat":
+        case "imageOutputFormat": return java.lang.String.class;
+        case "imageprompt":
+        case "imagePrompt": return java.lang.String.class;
+        case "imagequality":
+        case "imageQuality": return java.lang.String.class;
+        case "imageresponseformat":
+        case "imageResponseFormat": return java.lang.String.class;
+        case "imagesize":
+        case "imageSize": return java.lang.String.class;
+        case "imagestyle":
+        case "imageStyle": return java.lang.String.class;
         case "jsonschema":
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
@@ -230,6 +295,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptoolrefresh":
         case "mcpToolRefresh": return boolean.class;
         case "model": return java.lang.String.class;
+        case "moderationmodel":
+        case "moderationModel": return java.lang.String.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
         case "outputclass":
@@ -240,6 +307,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parallelToolTimeout": return long.class;
         case "previousresponseid":
         case "previousResponseId": return java.lang.String.class;
+        case "readtimeout":
+        case "readTimeout": return long.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "speechinstructions":
@@ -283,6 +352,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "stripThinking": return boolean.class;
         case "systemmessage":
         case "systemMessage": return java.lang.String.class;
+        case "tags": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": return org.apache.camel.component.openai.ToolExecutionErrorStrategy.class;
@@ -290,6 +360,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": return java.lang.Double.class;
         case "usermessage":
         case "userMessage": return java.lang.String.class;
+        case "writetimeout":
+        case "writeTimeout": return long.class;
         default: return null;
         }
     }
@@ -320,12 +392,17 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": return target.getConfiguration().getAudioTimestampGranularities();
         case "autotoolexecution":
         case "autoToolExecution": return target.getConfiguration().isAutoToolExecution();
+        case "background": return target.getConfiguration().isBackground();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "builtintools":
         case "builtinTools": return target.getConfiguration().getBuiltinTools();
+        case "connecttimeout":
+        case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": return target.getConfiguration().getConversationHistoryProperty();
+        case "conversationid":
+        case "conversationId": return target.getConfiguration().getConversationId();
         case "conversationmemory":
         case "conversationMemory": return target.getConfiguration().isConversationMemory();
         case "developermessage":
@@ -341,6 +418,30 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "hallucinatedToolNameStrategy": return target.getConfiguration().getHallucinatedToolNameStrategy();
         case "hostedmcptools":
         case "hostedMcpTools": return target.getConfiguration().getHostedMcpTools();
+        case "imagebackground":
+        case "imageBackground": return target.getConfiguration().getImageBackground();
+        case "imagecount":
+        case "imageCount": return target.getConfiguration().getImageCount();
+        case "imageinputfidelity":
+        case "imageInputFidelity": return target.getConfiguration().getImageInputFidelity();
+        case "imagemodel":
+        case "imageModel": return target.getConfiguration().getImageModel();
+        case "imagemoderation":
+        case "imageModeration": return target.getConfiguration().getImageModeration();
+        case "imageoutputcompression":
+        case "imageOutputCompression": return target.getConfiguration().getImageOutputCompression();
+        case "imageoutputformat":
+        case "imageOutputFormat": return target.getConfiguration().getImageOutputFormat();
+        case "imageprompt":
+        case "imagePrompt": return target.getConfiguration().getImagePrompt();
+        case "imagequality":
+        case "imageQuality": return target.getConfiguration().getImageQuality();
+        case "imageresponseformat":
+        case "imageResponseFormat": return target.getConfiguration().getImageResponseFormat();
+        case "imagesize":
+        case "imageSize": return target.getConfiguration().getImageSize();
+        case "imagestyle":
+        case "imageStyle": return target.getConfiguration().getImageStyle();
         case "jsonschema":
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":
@@ -368,6 +469,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptoolrefresh":
         case "mcpToolRefresh": return target.getConfiguration().isMcpToolRefresh();
         case "model": return target.getConfiguration().getModel();
+        case "moderationmodel":
+        case "moderationModel": return target.getConfiguration().getModerationModel();
         case "oauthprofile":
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
@@ -378,6 +481,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parallelToolTimeout": return target.getConfiguration().getParallelToolTimeout();
         case "previousresponseid":
         case "previousResponseId": return target.getConfiguration().getPreviousResponseId();
+        case "readtimeout":
+        case "readTimeout": return target.getConfiguration().getReadTimeout();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "speechinstructions":
@@ -421,6 +526,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "stripThinking": return target.getConfiguration().isStripThinking();
         case "systemmessage":
         case "systemMessage": return target.getConfiguration().getSystemMessage();
+        case "tags": return target.getConfiguration().getTags();
         case "temperature": return target.getConfiguration().getTemperature();
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": return target.getConfiguration().getToolExecutionErrorStrategy();
@@ -428,6 +534,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": return target.getConfiguration().getTopP();
         case "usermessage":
         case "userMessage": return target.getConfiguration().getUserMessage();
+        case "writetimeout":
+        case "writeTimeout": return target.getConfiguration().getWriteTimeout();
         default: return null;
         }
     }

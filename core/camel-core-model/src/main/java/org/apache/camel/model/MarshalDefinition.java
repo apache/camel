@@ -64,6 +64,8 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
+import org.apache.camel.model.dataformat.ToonDataFormat;
+import org.apache.camel.model.dataformat.UblDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
@@ -124,6 +126,8 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
             @XmlElement(name = "swiftMx", type = SwiftMxDataFormat.class),
             @XmlElement(name = "syslog", type = SyslogDataFormat.class),
             @XmlElement(name = "tarFile", type = TarFileDataFormat.class),
+            @XmlElement(name = "toon", type = ToonDataFormat.class),
+            @XmlElement(name = "ubl", type = UblDataFormat.class),
             @XmlElement(name = "thrift", type = ThriftDataFormat.class),
             @XmlElement(name = "univocityCsv", type = UniVocityCsvDataFormat.class),
             @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),
@@ -132,7 +136,8 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
-    @Metadata(description = "The data format to use for marshalling the message body into a specific format such as JSON, XML, CSV, Avro, Protobuf, etc.")
+    @Metadata(required = true,
+              description = "The data format to use for marshalling the message body into a specific format such as JSON, XML, CSV, Avro, Protobuf, etc.")
     private DataFormatDefinition dataFormatType;
     @XmlAttribute
     @Metadata(description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")

@@ -75,7 +75,7 @@ public class LangChain4jAgentMcpAndCamelToolsIT extends CamelTestSupport {
     static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @RegisterExtension
-    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createService();
+    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -85,6 +85,8 @@ public class LangChain4jAgentMcpAndCamelToolsIT extends CamelTestSupport {
         // MCP Time Server via Docker stdio transport - configured as pre-built McpClient bean
         timeClient = new DefaultMcpClient.Builder()
                 .key("time")
+                // mcp/time supports MCP 2024-11-05 and terminates when protocol auto-detection sends server/discover.
+                .protocolVersion("2025-11-25")
                 .transport(new StdioMcpTransport.Builder()
                         .command(Arrays.asList("docker", "run", "-i", "--rm", "mcp/time"))
                         .logEvents(true)

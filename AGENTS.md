@@ -50,6 +50,15 @@ These rules apply to ALL AI agents working on this codebase.
 - An agent MUST ONLY pick up **Unassigned** JIRA tickets.
 - If a ticket is already assigned to a human, the agent must not reassign it or work on it.
 - Before starting work, the agent must assign the ticket to its operator and transition it to "In Progress".
+  The CAMEL workflow (ASF JIRA) uses these numeric transition IDs:
+  - `4` → Start Progress (In Progress)
+  - `5` → Resolve Issue (Resolved)
+  - `2` → Close Issue (Closed)
+
+  Still query the issue's `/transitions` endpoint before firing one of these IDs. Availability
+  depends on both the current state and on the caller — `4` is only offered once the issue is
+  assigned to you, which is why the assign step above comes first. The list saves a lookup, it
+  does not replace the availability check.
 - Before closing a ticket, always set the correct `fixVersions` field.
   Note: `fixVersions` cannot be set on an already-closed issue — set it before closing,
   or reopen/set/close if needed.
@@ -75,6 +84,30 @@ marked ready for review.
 - For cross-cutting changes (core, API), include committers with broader project knowledge.
 - Request review from **at least 2 relevant committers** using `gh pr edit --add-reviewer`.
 - When all comments on the Pull Request are addressed (by providing a fix or providing more explanation) and the PR checks are green, re-request review on existing reviewers so that they are aware that the new changeset is ready to be reviewed.
+- **Exception — backport PRs:** do not request reviewers on a PR that is a straight backport
+  (cherry-pick) of a PR already reviewed and merged on `main`. See "Backport PRs" below.
+
+### Backport PRs
+
+A backport PR that cherry-picks a commit from a PR already reviewed and merged on `main` onto an
+older LTS maintenance branch (e.g. `camel-4.14.x`, `camel-4.18.x`) does not need a fresh review —
+the code change already went through human review on the PR it was backported from.
+
+- A backport PR MUST NOT be assigned any reviewers.
+- A backport PR MAY be merged as-is, once CI is green, without waiting for a new human approval.
+  This is the one exception to the "at least one human approval" rule in "Merge Requirements" below.
+- This exception applies only to straight cherry-picks. If a backport required manual conflict
+  resolution that changed the code beyond a mechanical port, treat it as a normal PR and request
+  review.
+- **Verifying a straight cherry-pick:** diff the backport PR against the original PR it was
+  cherry-picked from — an empty (or whitespace/context-only) diff confirms a mechanical port.
+  ```bash
+  gh pr diff <backport-pr> --repo apache/camel > /tmp/backport.diff
+  gh pr diff <original-pr> --repo apache/camel > /tmp/original.diff
+  diff /tmp/backport.diff /tmp/original.diff
+  ```
+  Any semantic difference means the backport diverged from the original — treat it as a normal
+  PR and request review.
 
 ### Doing a review
 
@@ -87,7 +120,8 @@ When an AI agent is doing a review:
 ### Merge Requirements
 
 - An agent MUST NOT merge a PR if there are any **unresolved review conversations**.
-- An agent MUST NOT merge a PR without at least **one human approval**.
+- An agent MUST NOT merge a PR without at least **one human approval**
+  (exception: backport PRs — see "Backport PRs" above).
 - An agent MUST NOT approve its own PRs — human review is always required.
 
 ### Merge Procedure
@@ -125,12 +159,15 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 
 5. **Merge the PR**:
    - Verify all merge requirements above are satisfied (human approval, no unresolved conversations).
+     Exception: a straight-cherry-pick backport PR (see "Backport PRs" above) may be merged without
+     a new human approval once CI is green.
    - If any commit in the PR was AI-assisted, the squash-merge commit message MUST include the
      AI co-authorship trailer (e.g., `Co-authored-by: Claude Opus 4.6 <noreply@anthropic.com>`).
    - Merge the PR: `gh pr merge <PR> --squash` (or `--merge` / `--rebase` as appropriate).
 
 6. **Close the JIRA issue**:
    - Transition the JIRA issue to **Resolved/Fixed** (ensure `fixVersions` is already set from step 2).
+     The transition IDs are listed under "JIRA Ticket Ownership" above.
    - Add a comment linking to the merged PR.
 
 7. **Clean up the branch**:
@@ -188,8 +225,13 @@ assertTrue(list.contains("a"));
 
 - New test code is preferred to use AssertJ assertions (`assertThat(...)`) instead of JUnit assertions
   (`assertEquals`, `assertTrue`, `assertFalse`, `assertNotNull`, etc.).
+- Do NOT mix styles within a project/module. Check the assertion style already used by the other
+  test classes in the component/module being touched: if they are predominantly JUnit assertions,
+  write new tests in that same JUnit style rather than introducing AssertJ as an outlier. Only
+  default to AssertJ when the module has no established convention either way.
 - When modifying existing test code that uses JUnit assertions, migrate touched assertions to
-  AssertJ where it improves readability. No need to migrate the entire file.
+  AssertJ where it improves readability and the surrounding module isn't predominantly JUnit.
+  No need to migrate the entire file.
 - Do NOT mix AssertJ and JUnit assertions in the same test method — pick one style per method.
 - `MockEndpoint.assertIsSatisfied()` and other Camel-specific assertion methods are NOT JUnit
   assertions — keep using them as-is.
@@ -250,57 +292,6 @@ await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2)
 - Always set an explicit `atMost` timeout to avoid hanging builds.
 - Use `untilAsserted` or `until` with a clear predicate — do not replace a sleep with a
   busy-wait loop.
-
-### Test Visibility: Drop `public` From Test Classes and Methods
-
-JUnit 5 does **not** require test classes or test methods to be `public` — package-private
-(the default, no modifier) is sufficient and preferred. Removing the unnecessary `public`
-qualifier reduces visual noise and follows modern JUnit 5 conventions.
-
-**Examples:**
-
-```java
-// Preferred — package-private (no modifier):
-class MyComponentTest extends CamelTestSupport {
-    @Test
-    void testSendMessage() { ... }
-
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {   // stays public — overrides RouteBuilder.configure()
-                from("direct:start").to("mock:result");
-            }
-        };
-    }
-}
-
-// Avoid — unnecessary public:
-public class MyComponentTest extends CamelTestSupport {
-    @Test
-    public void testSendMessage() { ... }
-}
-```
-
-**Rules:**
-
-- New test classes and test methods MUST NOT use the `public` modifier.
-- When modifying an existing test file, remove the `public` modifier from the class declaration
-  and from any test methods you touch. Do NOT sweep the entire file — only change what you are
-  already modifying.
-- `@BeforeAll`, `@AfterAll`, `@BeforeEach` and `@AfterEach` methods follow the same rule: drop
-  `public` when adding or modifying them.
-- **Exception — methods that override or implement a supertype method keep the supertype's
-  visibility.** Java forbids reducing visibility on an override (JLS 8.4.8.3), so
-  `public void configure()` in a `RouteBuilder`, and any override of a public method from
-  `CamelTestSupport` or an implemented interface, MUST stay `public`.
-- **Exception — base and support classes stay `public`** when they are extended from another
-  package or module (a package-private class cannot be), and anything under
-  `components/camel-test/**` or `test-infra/**` stays `public` because those are released
-  artifacts consumed by downstream projects and by users' own tests.
-- Do NOT create a standalone PR solely to remove `public` from test files in bulk — apply the
-  convention incrementally as part of other work.
 
 ### Issue Investigation (Before Implementation)
 
@@ -372,6 +363,17 @@ When writing or modifying `.adoc` documentation:
   version-aware reference.
 - **When reviewing doc PRs**, check that all `xref:` links and anchors resolve correctly, especially
   cross-component references that may span versions.
+- **Avoid explicit `[[anchor]]` blocks before a heading.** AsciiDoc already auto-generates an id from
+  the heading text (prefixed with `_`, e.g. `=== Structured error exchange properties` becomes
+  `#_structured_error_exchange_properties`). An explicit `[[structured_error_exchange_properties]]`
+  anchor sets the id *without* that prefix, so it silently diverges from the id every other `xref:`
+  in the codebase expects and breaks the website link checker. Only add an explicit anchor when a
+  stable id is needed that must survive a heading rename — never as a matter of habit.
+- **Component doc changes require regenerating the catalog.** Editing a component's
+  `src/main/docs/*.adoc` also requires regenerating and committing the mirrored copy under
+  `catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs/`. CI's
+  "uncommitted changes" check fails otherwise — this applies even to small doc-only edits like
+  removing an anchor, not just code-driven metadata changes.
 
 ## Security Model
 

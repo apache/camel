@@ -683,6 +683,15 @@ public class Hl7UtilTest {
     }
 
     @Test
+    public void testConvertToLoggableStringHonorsLogPhi() {
+        Hl7Util suppressed = new Hl7Util(5120, false);
+
+        assertEquals(Hl7Util.PHI_SUPPRESSED_REPLACEMENT_VALUE,
+                suppressed.convertToLoggableString(TEST_MESSAGE_BYTES));
+        assertEquals(EXPECTED_MESSAGE, hl7util.convertToLoggableString(TEST_MESSAGE_BYTES));
+    }
+
+    @Test
     public void testGenerateAcknowledgementPayloadWithOnlyMsh91() throws Exception {
         final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "ORM" + MSH_SEGMENT_AFTER_MSH9;

@@ -55,6 +55,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.eclipse.microprofile.faulttolerance.exceptions.BulkheadException;
 import org.eclipse.microprofile.faulttolerance.exceptions.CircuitBreakerOpenException;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.slf4j.Logger;
@@ -85,6 +86,10 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
     private final AtomicLong successfulCalls = new AtomicLong();
     private final AtomicLong failedCalls = new AtomicLong();
     private final AtomicLong notPermittedCalls = new AtomicLong();
+    // counters for what the circuit breaker listeners do not tell apart
+    private final AtomicLong fallbackCalls = new AtomicLong();
+    private final AtomicLong timedOutCalls = new AtomicLong();
+    private final AtomicLong bulkheadRejectedCalls = new AtomicLong();
 
     public FaultToleranceProcessor(
                                    FaultToleranceConfiguration config,
@@ -224,6 +229,21 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
         return notPermittedCalls.get();
     }
 
+    @ManagedAttribute(description = "Returns the number of calls answered by the onFallback (failed, timed out and rejected calls alike)")
+    public long getNumberOfFallbackCalls() {
+        return fallbackCalls.get();
+    }
+
+    @ManagedAttribute(description = "Returns the number of calls that timed out (the circuit breaker counts them as failed calls)")
+    public long getNumberOfTimedOutCalls() {
+        return timedOutCalls.get();
+    }
+
+    @ManagedAttribute(description = "Returns the number of calls rejected because the bulkhead was full (not included in the not permitted calls)")
+    public long getNumberOfBulkheadRejectedCalls() {
+        return bulkheadRejectedCalls.get();
+    }
+
     @ManagedOperation(description = "Resets the circuit breaker to CLOSED state and clears call counters.")
     public void transitionToCloseState() {
         try {
@@ -231,6 +251,9 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             successfulCalls.set(0);
             failedCalls.set(0);
             notPermittedCalls.set(0);
+            fallbackCalls.set(0);
+            timedOutCalls.set(0);
+            bulkheadRejectedCalls.set(0);
         } catch (Exception e) {
             // ignored
         }
@@ -292,10 +315,19 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
         } catch (TimeoutException e) {
             // the circuit breaker triggered a timeout (no fallback)
+            timedOutCalls.incrementAndGet();
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
+            exchange.setException(e);
+        } catch (BulkheadException e) {
+            // the bulkhead is full (no fallback)
+            bulkheadRejectedCalls.incrementAndGet();
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, true);
             exchange.setException(e);
         } catch (Exception e) {
             // some other kind of exception
@@ -565,7 +597,17 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, true);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+            // rejected means the call was never attempted (breaker open or bulkhead full),
+            // so the fallback can tell that apart from a call that was made and failed
+            boolean rejected = exchange.getException() instanceof CircuitBreakerOpenException
+                    || exchange.getException() instanceof BulkheadException;
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, rejected);
+            fallbackCalls.incrementAndGet();
+            if (exchange.getException() instanceof BulkheadException) {
+                bulkheadRejectedCalls.incrementAndGet();
+            }
             if (exchange.getException() instanceof TimeoutException) {
+                timedOutCalls.incrementAndGet();
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
             }
 

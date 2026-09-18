@@ -73,12 +73,14 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
         }
         Path handlerPath = tmpDir.resolve("handler.py");
         String pythonScript = getPythonScript();
-        Files.writeString(handlerPath, pythonScript);
-        Path reqPath = tmpDir.resolve("requirements.txt");
-        Files.writeString(reqPath, getRequirements());
+        // logged before the token is prepended: withAuthToken writes the configured token into the
+        // script, and this now runs for every task rather than only chat
         if (LOG.isDebugEnabled()) {
             LOG.debug("Generated Python script for task {}:\n{}", config.getTask(), pythonScript);
         }
+        Files.writeString(handlerPath, withAuthToken(pythonScript));
+        Path reqPath = tmpDir.resolve("requirements.txt");
+        Files.writeString(reqPath, getRequirements());
         String modelUrl = "file://" + tmpDir.toAbsolutePath();
         Criteria.Builder<Input, Output> criteriaBuilder = Criteria.builder()
                 .setTypes(Input.class, Output.class)
@@ -106,6 +108,22 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
     }
 
     protected abstract String getPythonScript();
+
+    /**
+     * Prepends the configured Hugging Face token to the generated handler as the {@code HF_TOKEN} environment variable
+     * so that every task can load gated or private models. {@code transformers.pipeline()} reads {@code HF_TOKEN} from
+     * the environment when no explicit token is passed; previously only the chat task passed a token, so the other
+     * tasks failed with 401 on gated models. The token comes from the {@code authToken} option or is resolved from an
+     * OAuth profile (see {@link org.apache.camel.component.huggingface.HuggingFaceProducer}), both surfaced through
+     * {@code config.getAuthToken()}.
+     */
+    protected String withAuthToken(String pythonScript) {
+        String authToken = config.getAuthToken();
+        if (authToken == null || authToken.isEmpty()) {
+            return pythonScript;
+        }
+        return "import os\nos.environ['HF_TOKEN'] = '" + authToken.replace("'", "\\'") + "'\n\n" + pythonScript;
+    }
 
     protected String loadPythonScript(String resourcePath, Object... args) {
         InputStream is = null;

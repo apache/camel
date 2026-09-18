@@ -448,7 +448,7 @@ Netty producers.
 ====
 
 Then in the Camel routes we can refer to this worker pools by
-configuring the `workerPool` option in the URI as shown below:
+configuring the `workerGroup` option in the URI as shown below:
 
 [tabs]
 ====
@@ -456,7 +456,7 @@ Java::
 +
 [source,java]
 ----
-from("netty:tcp://0.0.0.0:5021?textline=true&sync=true&workerPool=#sharedPool&usingExecutorService=false")
+from("netty:tcp://0.0.0.0:5021?textline=true&sync=true&workerGroup=#sharedPool&usingExecutorService=false")
     .to("log:result");
 ----
 
@@ -465,7 +465,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="netty:tcp://0.0.0.0:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <from uri="netty:tcp://0.0.0.0:5021?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
 </route>
 ----
@@ -480,7 +480,7 @@ YAML::
       parameters:
         textline: true
         sync: true
-        workerPool: "#sharedPool"
+        workerGroup: "#sharedPool"
         usingExecutorService: false
       steps:
         - to:
@@ -496,7 +496,7 @@ Java::
 +
 [source,java]
 ----
-from("netty:tcp://0.0.0.0:5022?textline=true&sync=true&workerPool=#sharedPool&usingExecutorService=false")
+from("netty:tcp://0.0.0.0:5022?textline=true&sync=true&workerGroup=#sharedPool&usingExecutorService=false")
     .to("log:result");
 ----
 
@@ -505,7 +505,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="netty:tcp://0.0.0.0:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <from uri="netty:tcp://0.0.0.0:5022?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
 </route>
 ----
@@ -520,7 +520,7 @@ YAML::
       parameters:
         textline: true
         sync: true
-        workerPool: "#sharedPool"
+        workerGroup: "#sharedPool"
         usingExecutorService: false
       steps:
         - to:
@@ -622,6 +622,23 @@ from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
     .to("bean:poetryProcessor");
 ----
 
+[NOTE]
+====
+Since Camel 4.23, `ObjectDecoder` and `DatagramPacketObjectDecoder` always install a JEP-290
+`java.io.ObjectInputFilter` while decoding, as a defense-in-depth measure against unsafe Java deserialization. When no
+explicit pattern is passed, the JVM-wide `jdk.serialFilter` is honoured if set, otherwise the shared Camel default
+allow-list is applied (it permits standard Java and Apache Camel types, denies `java.net.**`, and enforces JEP-290
+graph-shape limits).
+
+For decoders exposed to untrusted peers, configure a stricter allow-list by passing a filter pattern (same syntax as
+`jdk.serialFilter`) to the two-argument constructor:
+
+[source,java]
+----
+return new DatagramPacketObjectDecoder(ClassResolvers.weakCachingResolver(null), "com.example.model.**;java.**;!*");
+----
+====
+
 === A TCP-based Netty consumer endpoint using One-way communication
 
 [tabs]
@@ -651,9 +668,9 @@ YAML::
 - route:
     from:
       uri: netty:tcp://0.0.0.0:5150
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -705,7 +722,7 @@ Spring DSL based configuration of endpoint
     </camel:keyManagers>
   </camel:sslContextParameters>...
 ...
-  <to uri="netty:tcp://0.0.0.0:5150?sync=true&ssl=true&sslContextParameters=#sslContextParameters"/>
+  <to uri="netty:tcp://0.0.0.0:5150?sync=true&amp;ssl=true&amp;sslContextParameters=#sslContextParameters"/>
 ...
 ----
 

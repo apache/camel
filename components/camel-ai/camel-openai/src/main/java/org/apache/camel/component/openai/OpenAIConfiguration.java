@@ -48,9 +48,27 @@ public class OpenAIConfiguration implements Cloneable {
     private String baseUrl = ClientOptions.PRODUCTION_URL;
 
     @UriParam(defaultValue = "0")
-    @Metadata(description = "HTTP request timeout in milliseconds for the OpenAI SDK client. "
-                            + "When 0 or negative, the SDK default (10 minutes) is used.")
+    @Metadata(description = "Overall HTTP request timeout in milliseconds for the OpenAI SDK client. "
+                            + "When 0 or negative, the SDK default (10 minutes) is used. "
+                            + "Acts as the fallback for readTimeout and writeTimeout when those are not set.")
     private long requestTimeout;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Timeout in milliseconds for establishing the TCP connection to the API. "
+                            + "A connect timeout means the endpoint was unreachable, so the request never ran and is "
+                            + "safe to retry. When 0 or negative, the SDK default (1 minute) is used.")
+    private long connectTimeout;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Timeout in milliseconds for reading the response. A read timeout means the model was slow "
+                            + "mid-generation, so the request may have been processed. "
+                            + "When 0 or negative, requestTimeout applies.")
+    private long readTimeout;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Timeout in milliseconds for writing the request body, which matters for large payloads "
+                            + "such as audio and image uploads. When 0 or negative, requestTimeout applies.")
+    private long writeTimeout;
 
     @UriParam(defaultValue = "2")
     @Metadata(description = "Maximum number of times the OpenAI SDK client retries failed requests. "
@@ -98,12 +116,27 @@ public class OpenAIConfiguration implements Cloneable {
     private String previousResponseId;
 
     @UriParam
+    @Metadata(description = "Id of a conversation created with the OpenAI Conversations API to run the request in. "
+                            + "The conversation keeps its items across exchanges. Cannot be combined with "
+                            + "previousResponseId (Responses API only)")
+    private String conversationId;
+
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "Run the model response in the background (Responses API only). The exchange completes as "
+                            + "soon as the response is queued, with an empty body and the CamelOpenAIResponseStatus "
+                            + "header, and the response is stored so that it can be retrieved later. Cannot be "
+                            + "combined with automatic tool execution")
+    private boolean background;
+
+    @UriParam
     @Metadata(description = "Comma-separated hosted tools for the Responses API: web_search, file_search, code_interpreter")
     private String builtinTools;
 
-    @UriParam
-    @Metadata(description = "JSON array of hosted MCP tool definitions (OpenAI Tool.Mcp) passed through to the Responses API",
-              inputLanguage = "json", largeInput = true)
+    @UriParam(security = "secret")
+    @Metadata(description = "JSON array of hosted MCP tool definitions passed to the Responses API as OpenAI mcp tools. "
+                            + "Every field of the API is sent, such as server_label, server_url, require_approval, "
+                            + "allowed_tools, headers and authorization. Marked secret because it can carry credentials.",
+              inputLanguage = "json", largeInput = true, security = "secret")
     private String hostedMcpTools;
 
     @UriParam
@@ -111,7 +144,10 @@ public class OpenAIConfiguration implements Cloneable {
     private String fileSearchVectorStoreIds;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Enable conversation memory per Exchange")
+    @Metadata(description = "Enable conversation memory per Exchange. The chat-completion operation keeps the message "
+                            + "history in the conversationHistoryProperty exchange property. The responses operation "
+                            + "keeps the conversation on the server, stores the last response id in that property and "
+                            + "sends it as previous_response_id, which requires a server that stores responses")
     private boolean conversationMemory = false;
 
     @UriParam(defaultValue = "CamelOpenAIConversationHistory")
@@ -149,7 +185,12 @@ public class OpenAIConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "false")
     @Metadata(description = "Store the full SDK response in non-streaming mode: chat-completion uses exchange property "
-                            + "'CamelOpenAIResponse'; responses uses 'CamelOpenAIResponsesResponse'")
+                            + "'CamelOpenAIResponse'; responses uses 'CamelOpenAIResponsesResponse'; "
+                            + "moderation uses 'CamelOpenAIModerationResponse'; "
+                            + "image-generation and image-edit use 'CamelOpenAIImageResponse'; "
+                            + "embeddings uses 'CamelOpenAIEmbeddingsResponse'; "
+                            + "audio transcription uses 'CamelOpenAIAudioTranscriptionResponse'; "
+                            + "audio translation uses 'CamelOpenAIAudioTranslationResponse'")
     private boolean storeFullResponse = false;
 
     @UriParam(defaultValue = "false")
@@ -164,7 +205,7 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam(prefix = "additionalResponseHeader.", multiValue = true)
     @Metadata(description = "Map additional fields from the response message to Camel headers. "
                             + "The key is the field name in the API response, the value is the Camel header name "
-                            + "(e.g. additionalResponseHeader.reasoning_content=CamelMyReasoningHeader)")
+                            + "(e.g. additionalResponseHeader.reasoning_content=MyReasoningHeader)")
     private Map<String, Object> additionalResponseHeader;
 
     @UriParam(prefix = "mcpServer.", multiValue = true)
@@ -192,6 +233,11 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "When true and MCP servers are configured, automatically execute tool calls "
                             + "and loop back to the model. When false, tool calls are returned as the message body for manual handling.")
     private boolean autoToolExecution = true;
+
+    @UriParam
+    @Metadata(description = "Comma-separated tags for discovering route-based tools registered via the ai-tool component. "
+                            + "When set, matching tools from the shared AiToolRegistry are exposed to the model alongside MCP tools.")
+    private String tags;
 
     @UriParam
     @Metadata(description = "Comma-separated list of MCP protocol versions to advertise when connecting to MCP servers "
@@ -290,6 +336,12 @@ public class OpenAIConfiguration implements Cloneable {
                             + "Only applicable with verbose_json response format.")
     private String audioTimestampGranularities;
 
+    // ========== MODERATION CONFIGURATION ==========
+
+    @UriParam(defaultValue = "omni-moderation-latest")
+    @Metadata(description = "The model to use for moderation")
+    private String moderationModel = "omni-moderation-latest";
+
     // ========== AUDIO SPEECH (TEXT-TO-SPEECH) CONFIGURATION ==========
 
     @UriParam
@@ -313,6 +365,75 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Optional instructions to control the voice of the generated audio. "
                             + "Does not work with tts-1 or tts-1-hd.")
     private String speechInstructions;
+
+    // ========== IMAGE GENERATION/EDIT CONFIGURATION ==========
+
+    @UriParam
+    @Metadata(description = "The model to use for image generation or editing (e.g., gpt-image-1, gpt-image-1-mini, "
+                            + "gpt-image-1.5, gpt-image-2). Required for the image-generation and image-edit "
+                            + "operations, because the model determines which of the other image options are "
+                            + "accepted. The DALL-E models are no longer offered by OpenAI, but remain valid values "
+                            + "for OpenAI-compatible providers.")
+    private String imageModel;
+
+    @UriParam
+    @Metadata(description = "The prompt describing the image to generate, or the edit to apply. For image-generation "
+                            + "the message body is used when this is not set; for image-edit the body carries the "
+                            + "input image, so the prompt must come from this option or from the "
+                            + "CamelOpenAIImagePrompt header.",
+              largeInput = true)
+    private String imagePrompt;
+
+    @UriParam
+    @Metadata(description = "The size of the generated image (e.g., 1024x1024, 1536x1024, 1024x1536, auto). "
+                            + "The accepted values depend on the model.")
+    private String imageSize;
+
+    @UriParam(enums = "auto,high,medium,low,hd,standard")
+    @Metadata(description = "The quality of the generated image. GPT image models accept auto, high, medium and "
+                            + "low; hd and standard are DALL-E values kept for OpenAI-compatible providers.")
+    private String imageQuality;
+
+    @UriParam(enums = "url,b64_json")
+    @Metadata(description = "The response format of the generated image. The OpenAI images endpoint rejects this "
+                            + "option: the GPT image models always return base64, and the DALL-E models that used to "
+                            + "accept it are no longer offered. It is only sent when explicitly set, and is kept for "
+                            + "OpenAI-compatible providers that still implement the older images API.")
+    private String imageResponseFormat;
+
+    @UriParam
+    @Metadata(description = "The number of images to generate, between 1 and 10. dall-e-3 only supports 1.")
+    private Integer imageCount;
+
+    @UriParam(enums = "transparent,opaque,auto")
+    @Metadata(description = "The background of the generated image. Only supported by the GPT image models, and a "
+                            + "transparent background requires the png or webp output format.")
+    private String imageBackground;
+
+    @UriParam(enums = "png,jpeg,webp")
+    @Metadata(description = "The output format of the generated image. Only supported by the GPT image models, "
+                            + "which default to png.")
+    private String imageOutputFormat;
+
+    @UriParam
+    @Metadata(description = "The compression level from 0 to 100 for the webp and jpeg output formats. "
+                            + "Only supported by the GPT image models.")
+    private Integer imageOutputCompression;
+
+    @UriParam(enums = "vivid,natural")
+    @Metadata(description = "The style of the generated image. A dall-e-3 option, so only useful with "
+                            + "OpenAI-compatible providers.")
+    private String imageStyle;
+
+    @UriParam(enums = "low,auto")
+    @Metadata(description = "The content moderation level applied to image generation. Only supported by the "
+                            + "GPT image models.")
+    private String imageModeration;
+
+    @UriParam(enums = "high,low")
+    @Metadata(description = "How closely the edit must match the style and features of the input image. "
+                            + "Only supported by the image-edit operation on gpt-image-1 and gpt-image-1.5.")
+    private String imageInputFidelity;
 
     // ========== SSL CONFIGURATION ==========
 
@@ -400,6 +521,30 @@ public class OpenAIConfiguration implements Cloneable {
         this.requestTimeout = requestTimeout;
     }
 
+    public long getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(long connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public long getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(long readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    public long getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    public void setWriteTimeout(long writeTimeout) {
+        this.writeTimeout = writeTimeout;
+    }
+
     public int getMaxRetries() {
         return maxRetries;
     }
@@ -454,6 +599,22 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setPreviousResponseId(String previousResponseId) {
         this.previousResponseId = previousResponseId;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public boolean isBackground() {
+        return background;
+    }
+
+    public void setBackground(boolean background) {
+        this.background = background;
     }
 
     public String getBuiltinTools() {
@@ -664,6 +825,14 @@ public class OpenAIConfiguration implements Cloneable {
         this.audioTimestampGranularities = audioTimestampGranularities;
     }
 
+    public String getModerationModel() {
+        return moderationModel;
+    }
+
+    public void setModerationModel(String moderationModel) {
+        this.moderationModel = moderationModel;
+    }
+
     public String getSpeechModel() {
         return speechModel;
     }
@@ -734,6 +903,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAutoToolExecution(boolean autoToolExecution) {
         this.autoToolExecution = autoToolExecution;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public String getMcpProtocolVersions() {
@@ -894,6 +1071,102 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setSslEndpointAlgorithm(String sslEndpointAlgorithm) {
         this.sslEndpointAlgorithm = sslEndpointAlgorithm;
+    }
+
+    public String getImageModel() {
+        return imageModel;
+    }
+
+    public void setImageModel(String imageModel) {
+        this.imageModel = imageModel;
+    }
+
+    public String getImagePrompt() {
+        return imagePrompt;
+    }
+
+    public void setImagePrompt(String imagePrompt) {
+        this.imagePrompt = imagePrompt;
+    }
+
+    public String getImageSize() {
+        return imageSize;
+    }
+
+    public void setImageSize(String imageSize) {
+        this.imageSize = imageSize;
+    }
+
+    public String getImageQuality() {
+        return imageQuality;
+    }
+
+    public void setImageQuality(String imageQuality) {
+        this.imageQuality = imageQuality;
+    }
+
+    public String getImageResponseFormat() {
+        return imageResponseFormat;
+    }
+
+    public void setImageResponseFormat(String imageResponseFormat) {
+        this.imageResponseFormat = imageResponseFormat;
+    }
+
+    public Integer getImageCount() {
+        return imageCount;
+    }
+
+    public void setImageCount(Integer imageCount) {
+        this.imageCount = imageCount;
+    }
+
+    public String getImageBackground() {
+        return imageBackground;
+    }
+
+    public void setImageBackground(String imageBackground) {
+        this.imageBackground = imageBackground;
+    }
+
+    public String getImageOutputFormat() {
+        return imageOutputFormat;
+    }
+
+    public void setImageOutputFormat(String imageOutputFormat) {
+        this.imageOutputFormat = imageOutputFormat;
+    }
+
+    public Integer getImageOutputCompression() {
+        return imageOutputCompression;
+    }
+
+    public void setImageOutputCompression(Integer imageOutputCompression) {
+        this.imageOutputCompression = imageOutputCompression;
+    }
+
+    public String getImageStyle() {
+        return imageStyle;
+    }
+
+    public void setImageStyle(String imageStyle) {
+        this.imageStyle = imageStyle;
+    }
+
+    public String getImageModeration() {
+        return imageModeration;
+    }
+
+    public void setImageModeration(String imageModeration) {
+        this.imageModeration = imageModeration;
+    }
+
+    public String getImageInputFidelity() {
+        return imageInputFidelity;
+    }
+
+    public void setImageInputFidelity(String imageInputFidelity) {
+        this.imageInputFidelity = imageInputFidelity;
     }
 
     public OpenAIConfiguration copy() {

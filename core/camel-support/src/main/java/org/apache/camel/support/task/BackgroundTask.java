@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 
 import org.apache.camel.CamelContext;
@@ -81,6 +82,10 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
     private Duration elapsed = Duration.ZERO;
     private final AtomicBoolean running = new AtomicBoolean();
     private final AtomicBoolean completed = new AtomicBoolean();
+    // only set when scheduled via schedule(), run() cancels the future it owns itself
+    private final AtomicReference<Future<?>> scheduledFuture = new AtomicReference<>();
+    // the context the schedule was made with, so cancel() can deregister without being handed it again
+    private final AtomicReference<CamelContext> scheduledContext = new AtomicReference<>();
     private volatile boolean registeredByRun;
     private volatile boolean attempting;
 
@@ -93,6 +98,8 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
     private void runTaskWrapper(CamelContext camelContext, BooleanSupplier supplier) {
         LOG.trace("Current latch value: {}", latch.getCount());
         if (latch.getCount() == 0) {
+            // the task is done and every further run is a no-op, so stop being rescheduled
+            unschedule(false);
             return;
         }
 
@@ -101,6 +108,12 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
             registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
             if (!registeredByRun) {
                 registry.addTask(this);
+                if (latch.getCount() == 0) {
+                    // cancelled while this run was starting up, so undo the registration just made
+                    registry.removeTask(this);
+                    unschedule(false);
+                    return;
+                }
             }
         }
         if (!budget.next()) {
@@ -111,6 +124,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
                 registry.removeTask(this);
             }
             latch.countDown();
+            unschedule(false);
             return;
         }
 
@@ -126,6 +140,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
                     registry.removeTask(this);
                 }
                 latch.countDown();
+                unschedule(false);
                 LOG.trace("Task {} succeeded and the current task is unscheduled: {}", getName(), latch.getCount());
             }
         } catch (Exception e) {
@@ -154,8 +169,64 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
      */
     public Future<?> schedule(CamelContext camelContext, BooleanSupplier supplier) {
         running.set(true);
-        return service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
-                budget.interval(), TimeUnit.MILLISECONDS);
+        Future<?> future = service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier),
+                budget.initialDelay(), budget.interval(), TimeUnit.MILLISECONDS);
+        scheduledContext.set(camelContext);
+        scheduledFuture.set(future);
+        if (latch.getCount() == 0) {
+            // the task already finished before the future was published, so it could not unschedule itself
+            unschedule(false);
+        }
+        return future;
+    }
+
+    /**
+     * Cancels a task scheduled with {@link #schedule(CamelContext, BooleanSupplier)} that is no longer needed, and
+     * removes it from the {@link TaskManagerRegistry}. A scheduled task deregisters itself from one of its runs, which
+     * is not going to happen once the schedule is cancelled, so cancelling the returned {@link Future} directly leaves
+     * the task behind in the registry.
+     * <p/>
+     * This does not wait for an attempt that is already running: with {@code mayInterruptIfRunning} false, a supplier
+     * call that is in progress runs to completion after this method returns. {@link #isRunning()} answers for the
+     * schedule and turns false here even then, so {@link #isAttempting()} is the one to ask whether an attempt is still
+     * in flight.
+     * <p/>
+     * A task that already completed, failed or exhausted its budget keeps the outcome of its last run. Only the
+     * schedule of a task that is still {@link Status#Active} is cancelled, which turns it {@link Status#Inactive}.
+     *
+     * @param mayInterruptIfRunning whether the thread of an attempt that is currently running should be interrupted
+     */
+    public void cancel(boolean mayInterruptIfRunning) {
+        // any run that has not started yet becomes a no-op
+        latch.countDown();
+        unschedule(mayInterruptIfRunning);
+        if (status == Status.Active) {
+            status = Status.Inactive;
+            completed.set(false);
+        }
+        deregister();
+        running.set(false);
+    }
+
+    /**
+     * Cancels the repeating schedule created by {@link #schedule(CamelContext, BooleanSupplier)}, so a task that has
+     * nothing left to do does not keep occupying the scheduler for the lifetime of its executor.
+     */
+    private void unschedule(boolean mayInterruptIfRunning) {
+        Future<?> future = scheduledFuture.getAndSet(null);
+        if (future != null) {
+            future.cancel(mayInterruptIfRunning);
+        }
+    }
+
+    private void deregister() {
+        CamelContext context = scheduledContext.getAndSet(null);
+        if (context != null) {
+            TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(context.getCamelContextExtension());
+            if (registry != null) {
+                registry.removeTask(this);
+            }
+        }
     }
 
     @Override

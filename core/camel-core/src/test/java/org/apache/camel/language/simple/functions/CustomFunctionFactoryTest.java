@@ -88,13 +88,6 @@ public class CustomFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
                 () -> createFactory().createFunction(context, "function()", 0));
     }
 
-    // --- createCode always returns null (no CSimple support) ---
-
-    @Test
-    public void testCreateCodeReturnsNull() {
-        assertNull(createFactory().createCode(context, "function(shout)", 0));
-    }
-
     // --- unrecognized ---
 
     @Test

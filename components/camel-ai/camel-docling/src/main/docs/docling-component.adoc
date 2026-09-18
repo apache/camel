@@ -118,10 +118,57 @@ include::partial$component-endpoint-headers.adoc[]
 
 The component accepts the following input types in the message body:
 
-- `String` - File path or document content
+- `String` - Document content. It is only read as a location when the endpoint opts in - see <<_input_sources>> below
 - `byte[]` - Binary document content
 - `File` - File object
 - `InputStream` - Input stream containing document data
+
+For the batch operations the body may also be a `List<String>` or `String[]` of file paths, a `List<File>`
+or `File[]`, or a single directory path `String`.
+
+[#_input_sources]
+=== Input Sources
+
+A `String` body is ambiguous: it could be the document itself, a URL to fetch, or a path to read. By default
+the component treats it as the document, and the two location readings must be enabled explicitly:
+
+[cols="1,1,3", options="header"]
+|===
+| Option | Default | Effect when enabled
+
+| `allowUrlSource`
+| `false`
+| A body starting with `http://` or `https://` is handed to Docling as a remote URL to fetch.
+
+| `allowFilePathSource`
+| `false`
+| A body starting with `/`, or containing `\`, is read from the local filesystem. This also covers the single
+directory-or-file `String` body accepted by the batch operations.
+
+| `inputBaseDirectory`
+| _(none)_
+| When set, every local input path must resolve inside this directory once normalized. Applies to the
+`CamelDoclingInputFilePath` header, to file path bodies, and to the paths used by the batch operations.
+|===
+
+With both options left at their defaults, a body that is neither a URL nor a path is written to a temporary
+file and converted as document content, exactly as before.
+
+The `CamelDoclingInputFilePath` header is an explicit "the document lives here" signal from the route, so it
+keeps working without `allowFilePathSource`. It is still subject to `inputBaseDirectory` when one is set.
+Typed bodies - `File`, `byte[]`, `InputStream`, and the explicit path collections used by the batch
+operations - are unambiguous and are likewise unaffected.
+
+[source,java]
+----
+// the body is the document itself - no opt-in needed
+from("direct:content")
+    .to("docling:convert?operation=CONVERT_TO_MARKDOWN");
+
+// the body is a path, confined to /var/docs
+from("direct:paths")
+    .to("docling:convert?operation=CONVERT_TO_MARKDOWN&allowFilePathSource=true&inputBaseDirectory=/var/docs");
+----
 
 === Output Behavior
 
@@ -154,11 +201,11 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:CONVERT_TO_MARKDOWN
-      - to:
-          uri: file:///data/output
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN
+        - to:
+            uri: file:///data/output
 ----
 ====
 
@@ -187,13 +234,13 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:CONVERT_TO_HTML
-          parameters:
-            contentInBody: true
-      - process:
-          ref: "htmlProcessor"
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_HTML
+            parameters:
+              contentInBody: true
+        - process:
+            ref: "htmlProcessor"
 ----
 ====
 
@@ -230,14 +277,14 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:EXTRACT_STRUCTURED_DATA
-          parameters:
-            useDoclingServe: true
-            contentInBody: true
-      - process:
-          ref: "structuredDataProcessor"
+      steps:
+        - to:
+            uri: docling:EXTRACT_STRUCTURED_DATA
+            parameters:
+              useDoclingServe: true
+              contentInBody: true
+        - process:
+            ref: "structuredDataProcessor"
 ----
 ====
 
@@ -272,13 +319,13 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:CONVERT_TO_MARKDOWN
-          parameters:
-            enableOCR: false
-      - to:
-          uri: file:///data/output
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN
+            parameters:
+              enableOCR: false
+        - to:
+            uri: file:///data/output
 
 # API mode
 - route:
@@ -286,33 +333,27 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:CONVERT_TO_MARKDOWN
-          parameters:
-            useDoclingServe: true
-            doOcr: false
-            contentInBody: true
-      - to:
-          uri: file:///data/output
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN
+            parameters:
+              useDoclingServe: true
+              doOcr: false
+              contentInBody: true
+        - to:
+            uri: file:///data/output
 ----
 ====
 
 === OCR and page headers/footers
 
 Docling recognizes page headers and footers (page numbers, copyright lines, running titles, footnotes, and similar
-content) during OCR, but it classifies them as page _furniture_: they are assigned to docling's `FURNITURE` content
-layer rather than the document `BODY`. Docling's Markdown, text and HTML exports include only the `BODY` layer by
-default, so header and footer text is omitted from the converted output even though the OCR engine read it correctly.
+content) during OCR, classifying them as page _furniture_ in docling's `FURNITURE` content layer.
 
-When using `useDoclingServe=true`, the component cannot currently change this, because the docling-serve API does not
-expose an option to choose which content layers are included in the export — even though docling's Python library can
-include the `FURNITURE` layer. This is tracked upstream in
-https://github.com/docling-project/docling-serve/issues/271[docling-serve#271]. The docling CLI
-(`useDoclingServe=false`) has the same limitation.
-
-If you need header or footer content in the output, restructure the source document so the text is part of the body,
-or track the upstream issue for a future option to include the furniture layer.
+Docling's Markdown, text and HTML exports include only the `BODY` layer by default, so header and footer text is
+omitted from the converted output even though the OCR engine read it correctly. When using `useDoclingServe=true`,
+the component cannot currently include the `FURNITURE` layer because docling-serve does not expose a content-layer
+selection option. This is tracked in https://github.com/docling-project/docling-serve/issues/271[docling-serve#271].
 
 === Using headers to control processing
 
@@ -339,20 +380,20 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - setHeader:
-          name: "CamelDoclingOperation"
-          constant: "CONVERT_TO_HTML"
-      - setHeader:
-          name: "CamelDoclingEnableOCR"
-          constant: true
-      - setHeader:
-          name: "CamelDoclingOCRLanguage"
-          constant: "es"
-      - to:
-          uri: docling:CONVERT_TO_MARKDOWN  # Operation will be overridden by header
-      - to:
-          uri: file:///data/output
+      steps:
+        - setHeader:
+            name: "CamelDoclingOperation"
+            constant: "CONVERT_TO_HTML"
+        - setHeader:
+            name: "CamelDoclingEnableOCR"
+            constant: true
+        - setHeader:
+            name: "CamelDoclingOCRLanguage"
+            constant: "es"
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN  # Operation will be overridden by header
+        - to:
+            uri: file:///data/output
 ----
 ====
 
@@ -382,17 +423,17 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - setHeader:
-          name: "CamelDoclingCustomArguments"
-          expression:
-            method:
-              ref: "customArgsBean"
-              method: "createCustomArgs"
-      - to:
-          uri: docling:CONVERT_TO_MARKDOWN
-      - to:
-          uri: file:///data/output
+      steps:
+        - setHeader:
+            name: "CamelDoclingCustomArguments"
+            expression:
+              method:
+                ref: "customArgsBean"
+                method: "createCustomArgs"
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN
+        - to:
+            uri: file:///data/output
 ----
 ====
 
@@ -485,15 +526,15 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:EXTRACT_METADATA
-      - log:
-          message: "Document: ${header.CamelDoclingMetadataTitle} (${header.CamelDoclingMetadataDocumentType})"
-      - log:
-          message: "Pages: ${header.CamelDoclingMetadataPageCount}"
-      - process:
-          ref: "metadataProcessor"
+      steps:
+        - to:
+            uri: docling:EXTRACT_METADATA
+        - log:
+            message: "Document: ${header.CamelDoclingMetadataTitle} (${header.CamelDoclingMetadataDocumentType})"
+        - log:
+            message: "Pages: ${header.CamelDoclingMetadataPageCount}"
+        - process:
+            ref: "metadataProcessor"
 ----
 ====
 
@@ -527,13 +568,13 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:EXTRACT_METADATA
-          parameters:
-            includeRawMetadata: true
-      - process:
-          ref: "fullMetadataProcessor"
+      steps:
+        - to:
+            uri: docling:EXTRACT_METADATA
+            parameters:
+              includeRawMetadata: true
+        - process:
+            ref: "fullMetadataProcessor"
 ----
 ====
 
@@ -554,9 +595,6 @@ from("file:///data/documents?include=.*\\.pdf")
         .when(simple("${header.CamelDoclingMetadataLanguage} == 'fr'"))
             .log("French document")
             .to("file:///data/french-docs")
-        .when(simple("${header.CamelDoclingMetadataAuthor} contains 'Smith'"))
-            .log("Document by Smith")
-            .to("file:///data/smith-docs")
         .otherwise()
             .to("file:///data/other-docs")
     .end();
@@ -571,39 +609,31 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:EXTRACT_METADATA
-      - choice:
-          when:
-            - expression:
-                simple:
-                  expression: "${header.CamelDoclingMetadataPageCount} > 100"
+      steps:
+        - to:
+            uri: docling:EXTRACT_METADATA
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${header.CamelDoclingMetadataPageCount} > 100"
+                steps:
+                  - log:
+                      message: "Large document with ${header.CamelDoclingMetadataPageCount} pages"
+                  - to:
+                      uri: file:///data/large-docs
+              - expression:
+                  simple:
+                    expression: "${header.CamelDoclingMetadataLanguage} == 'fr'"
+                steps:
+                  - log:
+                      message: "French document"
+                  - to:
+                      uri: file:///data/french-docs
+            otherwise:
               steps:
-                - log:
-                    message: "Large document with ${header.CamelDoclingMetadataPageCount} pages"
                 - to:
-                    uri: file:///data/large-docs
-            - expression:
-                simple:
-                  expression: "${header.CamelDoclingMetadataLanguage} == 'fr'"
-              steps:
-                - log:
-                    message: "French document"
-                - to:
-                    uri: file:///data/french-docs
-            - expression:
-                simple:
-                  expression: "${header.CamelDoclingMetadataAuthor} contains 'Smith'"
-              steps:
-                - log:
-                    message: "Document by Smith"
-                - to:
-                    uri: file:///data/smith-docs
-          otherwise:
-            steps:
-              - to:
-                  uri: file:///data/other-docs
+                    uri: file:///data/other-docs
 ----
 ====
 
@@ -635,13 +665,13 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:EXTRACT_METADATA
-          parameters:
-            includeMetadataInHeaders: false
-      - process:
-          ref: "metadataBodyProcessor"
+      steps:
+        - to:
+            uri: docling:EXTRACT_METADATA
+            parameters:
+              includeMetadataInHeaders: false
+        - process:
+            ref: "metadataBodyProcessor"
 ----
 ====
 
@@ -680,13 +710,13 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:CONVERT_TO_MARKDOWN
-          parameters:
-            contentInBody: true
-      - process:
-          ref: "contentProcessor"
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN
+            parameters:
+              contentInBody: true
+        - process:
+            ref: "contentProcessor"
 
 # Get file path (file is preserved)
 - route:
@@ -694,13 +724,13 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:CONVERT_TO_MARKDOWN
-          parameters:
-            contentInBody: false
-      - process:
-          ref: "filePathProcessor"
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN
+            parameters:
+              contentInBody: false
+        - process:
+            ref: "filePathProcessor"
 ----
 ====
 
@@ -815,27 +845,27 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - setHeader:
-          name: CamelDoclingInputFilePath
-          expression:
-            simple:
-              expression: "${file:absolute.path}"
-      - to:
-          uri: docling:CHUNK_HYBRID
-          parameters:
-            useDoclingServe: true
-            contentInBody: true
-            chunkingTokenizer: "sentence-transformers/all-MiniLM-L6-v2"
-            chunkingMaxTokens: 128
-            chunkingMergePeers: true
-      - split:
-          expression:
-            simple:
-              expression: "${body}"
-          steps:
-            - log:
-                message: "Chunk ${body.chunkIndex}: ${body.text}"
+      steps:
+        - setHeader:
+            name: CamelDoclingInputFilePath
+            expression:
+              simple:
+                expression: "${file:absolute.path}"
+        - to:
+            uri: docling:CHUNK_HYBRID
+            parameters:
+              useDoclingServe: true
+              contentInBody: true
+              chunkingTokenizer: "sentence-transformers/all-MiniLM-L6-v2"
+              chunkingMaxTokens: 128
+              chunkingMergePeers: true
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - log:
+                  message: "Chunk ${body.chunkIndex}: ${body.text}"
 ----
 ====
 
@@ -873,35 +903,35 @@ YAML::
     id: ingest-pdf
     from:
       uri: direct:ingest-pdf
-    steps:
-      - setHeader:
-          name: CamelDoclingInputFilePath
-          expression:
-            simple:
-              expression: "${header.pdfFilePath}"
-      - to:
-          uri: docling:CHUNK_HYBRID
-          parameters:
-            useDoclingServe: true
-            contentInBody: true
-            chunkingTokenizer: "{{embedding.tokenizer}}"
-            chunkingMaxTokens: "{{embedding.max-tokens}}"
-            chunkingMergePeers: true
-      - split:
-          expression:
-            simple:
-              expression: "${body}"
-          steps:
-            - setBody:
-                expression:
-                  simple:
-                    expression: "${body.text}"
-            - to:
-                uri: openai:embeddings
-                parameters:
-                  embeddingModel: "{{embedding.model}}"
-            - to:
-                uri: direct:store-embedding
+      steps:
+        - setHeader:
+            name: CamelDoclingInputFilePath
+            expression:
+              simple:
+                expression: "${header.pdfFilePath}"
+        - to:
+            uri: docling:CHUNK_HYBRID
+            parameters:
+              useDoclingServe: true
+              contentInBody: true
+              chunkingTokenizer: "{{embedding.tokenizer}}"
+              chunkingMaxTokens: "{{embedding.max-tokens}}"
+              chunkingMergePeers: true
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - setBody:
+                  expression:
+                    simple:
+                      expression: "${body.text}"
+              - to:
+                  uri: openai:embeddings
+                  parameters:
+                    embeddingModel: "{{embedding.model}}"
+              - to:
+                  uri: direct:store-embedding
 ----
 ====
 
@@ -934,24 +964,24 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - setHeader:
-          name: CamelDoclingInputFilePath
-          expression:
-            simple:
-              expression: "${file:absolute.path}"
-      - to:
-          uri: docling:CHUNK_HIERARCHICAL
-          parameters:
-            useDoclingServe: true
-            contentInBody: true
-      - split:
-          expression:
-            simple:
-              expression: "${body}"
-          steps:
-            - log:
-                message: "Section [${body.headings}] page ${body.pageNumbers}: ${body.text}"
+      steps:
+        - setHeader:
+            name: CamelDoclingInputFilePath
+            expression:
+              simple:
+                expression: "${file:absolute.path}"
+        - to:
+            uri: docling:CHUNK_HIERARCHICAL
+            parameters:
+              useDoclingServe: true
+              contentInBody: true
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - log:
+                  message: "Section [${body.headings}] page ${body.pageNumbers}: ${body.text}"
 ----
 ====
 
@@ -1099,21 +1129,21 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:EXTRACT_STRUCTURED_DATA
-          parameters:
-            useDoclingServe: true
-            doOcr: true
-            ocrEngine: "TESSERACT"
-            doTableStructure: true
-            tableMode: "ACCURATE"
-            doCodeEnrichment: true
-            pdfBackend: "DLPARSE_V4"
-            processTimeout: 120000
-            contentInBody: true
-      - process:
-          ref: "structuredDataProcessor"
+      steps:
+        - to:
+            uri: docling:EXTRACT_STRUCTURED_DATA
+            parameters:
+              useDoclingServe: true
+              doOcr: true
+              ocrEngine: "TESSERACT"
+              doTableStructure: true
+              tableMode: "ACCURATE"
+              doCodeEnrichment: true
+              pdfBackend: "DLPARSE_V4"
+              processTimeout: 120000
+              contentInBody: true
+        - process:
+            ref: "structuredDataProcessor"
 ----
 ====
 
@@ -1161,14 +1191,14 @@ YAML::
       uri: file:///data/documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:CONVERT_TO_JSON
-          parameters:
-            useDoclingServe: true
-            contentInBody: true
-      - process:
-          ref: "doclingDocumentProcessor"
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_JSON
+            parameters:
+              useDoclingServe: true
+              contentInBody: true
+        - process:
+            ref: "doclingDocumentProcessor"
 ----
 ====
 
@@ -1264,17 +1294,17 @@ YAML::
       uri: file:///data/large-documents
       parameters:
         include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: docling:CONVERT_TO_MARKDOWN
-          parameters:
-            useDoclingServe: true
-            useAsyncMode: true
-            asyncPollInterval: 5000
-            asyncTimeout: 600000
-            contentInBody: true
-      - to:
-          uri: file:///data/output
+      steps:
+        - to:
+            uri: docling:CONVERT_TO_MARKDOWN
+            parameters:
+              useDoclingServe: true
+              useAsyncMode: true
+              asyncPollInterval: 5000
+              asyncTimeout: 600000
+              contentInBody: true
+        - to:
+            uri: file:///data/output
 ----
 ====
 
@@ -1287,4 +1317,3 @@ YAML::
 3. **Set appropriate timeouts**: Adjust `asyncTimeout` based on your largest expected document size. The default 5 minutes is suitable for most documents.
 
 4. **Monitor with logging**: Use DEBUG level logging to monitor API calls and async task status.
-

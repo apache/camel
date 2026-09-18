@@ -32,6 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class MaskField {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Map<Class<?>, Function<String, ?>> MAPPING_FUNC = new HashMap<>();
     private static final Map<Class<?>, Object> BASIC_MAPPING = new HashMap<>();
 
@@ -62,10 +63,9 @@ public class MaskField {
     public JsonNode process(
             @ExchangeProperty("fields") String fields, @ExchangeProperty("replacement") String replacement, Exchange ex)
             throws InvalidPayloadException {
-        ObjectMapper mapper = new ObjectMapper();
         List<String> splittedFields = new ArrayList<>();
         JsonNode jsonNodeBody = ex.getMessage().getBody(JsonNode.class);
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
+        Map<Object, Object> body = OBJECT_MAPPER.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
         });
         if (ObjectHelper.isNotEmpty(fields)) {
             splittedFields = Arrays.stream(fields.split(",")).collect(Collectors.toList());
@@ -79,9 +79,9 @@ public class MaskField {
                     filterNames(fieldName, splittedFields) ? masked(origFieldValue, replacement) : origFieldValue);
         }
         if (!updatedBody.isEmpty()) {
-            return mapper.valueToTree(updatedBody);
+            return OBJECT_MAPPER.valueToTree(updatedBody);
         } else {
-            return mapper.valueToTree(body);
+            return OBJECT_MAPPER.valueToTree(body);
         }
     }
 

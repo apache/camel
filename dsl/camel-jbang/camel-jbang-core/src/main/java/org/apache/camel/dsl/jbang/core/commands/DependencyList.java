@@ -263,7 +263,7 @@ public class DependencyList extends Export {
                 // ignore
             }
             if (this.runtime == null && prop.containsKey(RUNTIME)) {
-                this.runtime = RuntimeType.fromValue(prop.getProperty(RUNTIME));
+                this.runtime = RuntimeType.fromValue(prop.getProperty(RUNTIME)).exportRuntime();
             }
             if (this.gav == null) {
                 this.gav = prop.getProperty(GAV);

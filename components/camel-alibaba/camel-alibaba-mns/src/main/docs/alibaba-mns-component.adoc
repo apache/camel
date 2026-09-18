@@ -1,0 +1,128 @@
+= Alibaba Message Service (MNS) Component
+:doctitle: Alibaba Message Service (MNS)
+:shortname: alibaba-mns
+:artifactid: camel-alibaba-mns
+:description: Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Alibaba Cloud
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Alibaba Cloud Message Service (MNS) component allows you to integrate with
+https://www.alibabacloud.com/product/mns[Alibaba Cloud MNS] for queue and topic messaging.
+
+NOTE: Alibaba Cloud recommends RocketMQ for new messaging workloads. MNS remains supported,
+but evaluate https://www.alibabacloud.com/product/rocketmq[RocketMQ] or the Camel RocketMQ
+component for greenfield projects.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-alibaba-mns</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+Queue endpoints:
+
+[source]
+----
+alibaba-mns:queueName[?options]
+----
+
+Topic endpoints:
+
+[source]
+----
+alibaba-mns:topic:topicName[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Operations
+
+The component supports the following operations:
+
+* `sendMessage` - send a message to a queue (producer)
+* `receiveMessage` - receive messages from a queue (consumer)
+* `deleteMessage` - delete a message from a queue using its receipt handle (producer)
+* `publishMessage` - publish a message to a topic (producer)
+
+=== Queue producer example
+
+[source,java]
+----
+from("direct:start")
+    .setBody(constant("Hello MNS"))
+    .to("alibaba-mns:myQueue?operation=sendMessage&region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
+----
+
+=== Topic producer example
+
+[source,java]
+----
+from("direct:start")
+    .setBody(constant("Hello Topic"))
+    .to("alibaba-mns:topic:myTopic?operation=publishMessage&region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
+----
+
+=== Queue consumer example
+
+[source,java]
+----
+from("alibaba-mns:myQueue?region=cn-hangzhou&accountEndpoint=https://123456.mns.cn-hangzhou.aliyuncs.com&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)&deleteAfterRead=true")
+    .to("bean:processMessage");
+----
+
+=== Exchange properties evaluated by the producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Property |Type |Description
+
+|`CamelAlibabaMnsOperation` |`String` |Operation to perform
+
+|`CamelAlibabaMnsQueueName` |`String` |Queue name override
+
+|`CamelAlibabaMnsTopicName` |`String` |Topic name for publish operations
+
+|`CamelAlibabaMnsReceiptHandle` |`String` |Receipt handle for delete operations
+
+|=======================================================================
+
+=== Exchange properties set by the producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Property |Type |Description
+
+|`CamelAlibabaMnsMessageId` |`String` |Message id returned by MNS
+
+|`CamelAlibabaMnsRequestId` |`String` |Request id returned by MNS
+
+|`CamelAlibabaMnsMessageBodyMd5` |`String` |MD5 digest of the message body
+
+|=======================================================================
+
+== Examples
+
+For more examples, see the unit tests in the `camel-alibaba-mns` module.

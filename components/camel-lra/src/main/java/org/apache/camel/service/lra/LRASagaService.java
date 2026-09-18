@@ -75,6 +75,15 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
                 .thenApply(url -> new LRASagaCoordinator(LRASagaService.this, url));
     }
 
+    /**
+     * The LRA protocol carries the coordinator id in the {@code Long-Running-Action} header, so a saga started by
+     * another participant is joined through it.
+     */
+    @Override
+    public boolean isLongRunningActionHeaderSupported() {
+        return true;
+    }
+
     @Override
     public CompletableFuture<CamelSagaCoordinator> getSaga(String id) {
         CompletableFuture<CamelSagaCoordinator> coordinator;

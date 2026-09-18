@@ -302,6 +302,75 @@ Enable `useStreaming=true` on the platform-http endpoint when passing large stre
 | High-concurrency fan-out where Camel adds little value between HTTP and the LLM SDK
 |===
 
+== Error handling and retries
+
+None of the AI components wrap what the underlying SDK throws. Whatever the model client raises lands on the exchange unchanged, so `onException` can separate a rate limit worth retrying from a validation error that will fail identically on every attempt. Which types you match depends on the component.
+
+[cols="2,2,4",options="header"]
+|===
+| Component | Exception package | Retryable vs terminal
+
+| xref:openai-component.adoc[OpenAI]
+| `com.openai.errors`
+| No base type per category. Treat `RateLimitException`, `InternalServerException` and `OpenAIIoException` as retryable, and `BadRequestException`, `UnprocessableEntityException`, `UnauthorizedException` as terminal. All HTTP errors share `OpenAIServiceException`, which exposes `statusCode()`, `code()` and `headers()`
+
+| xref:langchain4j-chat-component.adoc[LangChain4j Chat], Agent, Embeddings
+| `dev.langchain4j.exception`
+| The hierarchy encodes it. `RetriableException` and `NonRetriableException` are the only two types most routes need
+
+| xref:spring-ai-chat-component.adoc[Spring AI Chat]
+| Depends on the `ChatModel` bean
+| Spring AI 2.0 builds its OpenAI model on the same `openai-java` SDK, so an OpenAI-backed `ChatModel` throws `com.openai.errors.*`. Other model implementations throw their own types, so check before matching
+|===
+
+A minimum viable policy, written against the LangChain4j hierarchy because it is the clearest:
+
+[source,java]
+----
+onException(RetriableException.class)
+    .maximumRedeliveries(3)
+    .redeliveryDelay(2000)
+    .backOffMultiplier(2)
+    .useExponentialBackOff();
+
+onException(NonRetriableException.class)
+    .maximumRedeliveries(0)
+    .handled(true)
+    .to("direct:dead-letter");
+----
+
+WARNING: These SDKs retry internally before Camel sees the failure, twice by default, and Camel redelivery multiplies with that layer instead of replacing it. Three SDK attempts under `maximumRedeliveries(3)` means twelve requests to a provider that is already rate limiting you. Either turn the SDK layer off (`maxRetries=0` on the OpenAI component, `maxRetries(0)` on a LangChain4j model builder) so the retry is visible to the Camel error handler, or leave it on and skip Camel redelivery for transient errors.
+
+=== Structured error exchange properties
+
+All LangChain4j-based producers (`langchain4j-chat`, `langchain4j-agent`, `langchain4j-embeddings`), the OpenAI component, and Spring AI chat set two exchange properties on failure **before** the underlying exception propagates. Classification is independent of GenAI observability — it works when observability is disabled or `camel-ai-observability` is not on the classpath.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category: `RATE_LIMIT`, `SERVER_ERROR`, `VALIDATION`, `AUTH`, or `UNKNOWN`
+| `CamelAiRetryAfterMillis` | Retry delay in milliseconds parsed from OpenAI `Retry-After` / `Retry-After-Ms` headers; populated for OpenAI SDK failures only
+|===
+
+Use categories when one error handler should cover every AI component on a route. Keep matching on SDK exception types when you need provider-specific detail — both approaches compose:
+
+[source,java]
+----
+onException(RetriableException.class, RateLimitException.class)
+    .process(exchange -> {
+        String category = exchange.getProperty("CamelAiErrorCategory", String.class);
+        Long retryAfter = exchange.getProperty("CamelAiRetryAfterMillis", Long.class);
+        // category is RATE_LIMIT; retryAfter set only for OpenAI
+    })
+    .maximumRedeliveries(3)
+    .redeliveryDelay(2000);
+----
+
+For OpenAI-specific detail see xref:openai-component.adoc#_structured_error_exchange_properties[OpenAI structured error properties]. For LangChain4j chat see xref:langchain4j-chat-component.adoc#_structured_error_exchange_properties[LangChain4j Chat structured error properties]. For LangChain4j agent and embeddings see xref:langchain4j-agent-component.adoc#_structured_error_exchange_properties[LangChain4j Agent structured error properties] and xref:langchain4j-embeddings-component.adoc#_structured_error_exchange_properties[LangChain4j Embeddings structured error properties]. For Spring AI chat see xref:spring-ai-chat-component.adoc#_structured_error_exchange_properties[Spring AI Chat structured error properties].
+
+For the per-component detail see xref:openai-component.adoc#_targeting_sdk_exceptions_with_onexception[OpenAI error handling] and xref:langchain4j-chat-component.adoc#_error_handling[LangChain4j Chat error handling].
+
 == End-to-end example: document extraction pipeline
 
 A typical resume-processing pipeline (the use case from community feedback):

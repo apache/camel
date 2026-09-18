@@ -39,8 +39,8 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
 
         ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
 
-        Queue q = new Queue("myqueue");
-        DirectExchange t = new DirectExchange("foo");
+        Queue q = new Queue(uniqueName("myqueue"));
+        DirectExchange t = new DirectExchange(uniqueName("foo"));
         AmqpAdmin admin = new RabbitAdmin(cf);
         admin.declareQueue(q);
         admin.declareExchange(t);
@@ -57,8 +57,10 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
         Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("spring-rabbitmq:foo?queues=myqueue&routingKey=mykey", String.class);
-            template.sendBody("spring-rabbitmq:foo?routingKey=mykey2", body + " Claus");
+            String body = consumer.receiveBody(
+                    "spring-rabbitmq:" + uniqueName("foo") + "?queues=" + uniqueName("myqueue") + "&routingKey=mykey",
+                    String.class);
+            template.sendBody("spring-rabbitmq:" + uniqueName("foo") + "?routingKey=mykey2", body + " Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -77,10 +79,12 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
         Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("spring-rabbitmq:foo?queues=myqueue&routingKey=mykey", 100, String.class);
+            String body = consumer.receiveBody(
+                    "spring-rabbitmq:" + uniqueName("foo") + "?queues=" + uniqueName("myqueue") + "&routingKey=mykey",
+                    100, String.class);
             assertNull(body, "Should be null");
 
-            template.sendBody("spring-rabbitmq:foo?routingKey=mykey2", "Hello Claus");
+            template.sendBody("spring-rabbitmq:" + uniqueName("foo") + "?routingKey=mykey2", "Hello Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -99,8 +103,10 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
         Executors.newSingleThreadExecutor().execute(() -> {
-            String body = consumer.receiveBody("spring-rabbitmq:foo?queues=myqueue&routingKey=mykey", 3000, String.class);
-            template.sendBody("spring-rabbitmq:foo?routingKey=mykey2", body + " Claus");
+            String body = consumer.receiveBody(
+                    "spring-rabbitmq:" + uniqueName("foo") + "?queues=" + uniqueName("myqueue") + "&routingKey=mykey",
+                    3000, String.class);
+            template.sendBody("spring-rabbitmq:" + uniqueName("foo") + "?routingKey=mykey2", body + " Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -116,9 +122,11 @@ public class RabbitMQPollingConsumerIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").log("Sending ${body} to myqueue").to("spring-rabbitmq:foo?routingKey=mykey");
+                from("direct:start").log("Sending ${body} to myqueue")
+                        .to("spring-rabbitmq:" + uniqueName("foo") + "?routingKey=mykey");
 
-                from("spring-rabbitmq:foo?queues=myqueue2&routingKey=mykey2").log("Received ${body} from myqueue2")
+                from("spring-rabbitmq:" + uniqueName("foo") + "?queues=" + uniqueName("myqueue2") + "&routingKey=mykey2")
+                        .log("Received ${body} from myqueue2")
                         .to("mock:result");
             }
         };

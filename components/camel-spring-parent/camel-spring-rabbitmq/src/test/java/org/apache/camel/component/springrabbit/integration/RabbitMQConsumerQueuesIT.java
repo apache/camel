@@ -106,9 +106,9 @@ public class RabbitMQConsumerQueuesIT extends RabbitMQITSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo");
+                        .to("spring-rabbitmq:" + uniqueName("foo"));
 
-                from("spring-rabbitmq:foo?queues=myqueue")
+                from("spring-rabbitmq:" + uniqueName("foo") + "?queues=" + uniqueName("myqueue"))
                         .to("log:result")
                         .to("mock:result");
             }

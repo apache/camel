@@ -20,12 +20,16 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.jcraft.jsch.JSch;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "sftp", displayName = "SFTP", description = "Secure FTP using JSCH")
 public class SftpDevConsole extends AbstractDevConsole {
+
+    public record Response(@Metadata(description = "The SFTP (JSCH) configuration") Map<String, Object> config) {
+    }
 
     public SftpDevConsole() {
         super("camel", "sftp", "SFTP", "Secure FTP using JSCH");
@@ -50,18 +54,11 @@ public class SftpDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
         // sort configs
         Map<String, Object> map = new TreeMap<>(String::compareToIgnoreCase);
         map.putAll(JSch.getConfig());
 
-        JsonObject jo = new JsonObject();
-        for (var e : map.entrySet()) {
-            jo.put(e.getKey(), e.getValue());
-        }
-        root.put("config", jo);
-
-        return root;
+        Response response = new Response(map);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

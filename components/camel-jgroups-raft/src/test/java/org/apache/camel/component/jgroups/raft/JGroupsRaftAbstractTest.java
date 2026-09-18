@@ -19,10 +19,10 @@ package org.apache.camel.component.jgroups.raft;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jgroups.raft.RaftHandle;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
@@ -36,15 +36,29 @@ public abstract class JGroupsRaftAbstractTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_RAFT_ID, String.class));
     }
 
-    protected void waitForLeader(int attempts, RaftHandle rh, RaftHandle rh2, RaftHandle rh3) throws InterruptedException {
-        boolean thereIsLeader = rh.isLeader() || rh2.isLeader() || rh3.isLeader();
-        while (!thereIsLeader && attempts > 0) {
-            thereIsLeader = rh.isLeader() || rh2.isLeader() || rh3.isLeader();
-            TimeUnit.SECONDS.sleep(1);
-            attempts--;
-        }
-        if (attempts <= 0) {
-            throw new RuntimeCamelException("No leader in time!");
-        }
+    /**
+     * Wait until a leader has been elected AND all given handles know who the leader is. Only connected handles are
+     * checked; disconnected or closed handles are skipped. Without checking leader() on every active handle, a follower
+     * node may not yet have discovered the leader, causing set() to throw when the REDIRECT protocol has no leader
+     * address to forward to.
+     */
+    protected void waitForLeader(int attempts, RaftHandle... handles) {
+        await().atMost(attempts, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .until(() -> {
+                    boolean hasLeader = false;
+                    for (RaftHandle rh : handles) {
+                        if (!rh.channel().isConnected()) {
+                            continue;
+                        }
+                        if (rh.isLeader()) {
+                            hasLeader = true;
+                        }
+                        if (rh.leader() == null) {
+                            return false;
+                        }
+                    }
+                    return hasLeader;
+                });
     }
 }

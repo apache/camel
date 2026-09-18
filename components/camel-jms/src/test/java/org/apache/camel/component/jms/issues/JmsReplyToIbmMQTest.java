@@ -26,17 +26,20 @@ import org.apache.camel.test.infra.ibmmq.services.IbmMQService;
 import org.apache.camel.test.infra.ibmmq.services.IbmMQServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com",
+                          disabledReason = "The IBM MQ image on icr.io is not reliably pullable from GitHub Actions")
 @DisabledOnOs(architectures = { "aarch64", "aarch_64" }, disabledReason = "IBM MQ has no Linux ARM64 native image")
 class JmsReplyToIbmMQTest extends CamelTestSupport {
 
     @RegisterExtension
-    static IbmMQService service = IbmMQServiceFactory.createService();
+    static IbmMQService service = IbmMQServiceFactory.createSingletonService();
 
     @Test
     void testCustomJMSReplyToInOut() {

@@ -104,7 +104,7 @@ duration=2017]
 ---------------------------------
 
 If you do not want to see these logs, you can turn this off by setting
-the option logInflightExchangesOnTimeout to false.
+the option `shutdownLogInflightExchangesOnTimeout` to false.
 
 [tabs]
 ====
@@ -122,7 +122,7 @@ Or in `application.properties`:
 +
 [source,properties]
 ----
-camel.main.logInflightExchangesOnTimeout = false
+camel.main.shutdownLogInflightExchangesOnTimeout = false
 ----
 ====
 

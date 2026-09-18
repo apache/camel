@@ -35,6 +35,47 @@ public final class StringQuoteHelper {
     }
 
     /**
+     * Returns the given text as a JSON string literal with proper escaping of quotes, backslashes and control
+     * characters.
+     */
+    public static String jsonQuote(String text) {
+        if (text == null) {
+            return "null";
+        }
+        StringBuilder sb = new StringBuilder(text.length() + 8);
+        sb.append('"');
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            switch (c) {
+                case '"':
+                    sb.append("\\\"");
+                    break;
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                case '\r':
+                    sb.append("\\r");
+                    break;
+                case '\t':
+                    sb.append("\\t");
+                    break;
+                default:
+                    if (c < 0x20) {
+                        sb.append("\\u");
+                        sb.append(String.format("%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+            }
+        }
+        sb.append('"');
+        return sb.toString();
+    }
+
+    /**
      * Returns the text wrapped single quotes
      */
     public static String singleQuote(String text) {

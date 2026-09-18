@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class NatsITSupport extends CamelTestSupport {
     @RegisterExtension
-    static NatsService service = NatsServiceFactory.createService();
+    static NatsService service = NatsServiceFactory.createSingletonService();
 
     static {
         try (InputStream is = NatsITSupport.class.getClassLoader().getResourceAsStream("logging.properties")) {

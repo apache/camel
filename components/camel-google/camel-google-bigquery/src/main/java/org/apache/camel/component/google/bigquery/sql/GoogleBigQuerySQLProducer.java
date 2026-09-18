@@ -37,6 +37,7 @@ import com.google.cloud.bigquery.StandardSQLTypeName;
 import com.google.cloud.bigquery.TableResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.support.DefaultProducer;
@@ -157,10 +158,18 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             var job = ObjectHelper.isNotEmpty(jobId)
                     ? bigquery.getJob(jobId)
                     : bigquery.create(getJobInfo(queryJobConfiguration));
+            if (job == null) {
+                throw new RuntimeCamelException("BigQuery job " + jobId + " does not exist");
+            }
 
-            return job.waitFor();
+            Job completed = job.waitFor();
+            if (completed == null) {
+                // waitFor returns null when the job does not exist any more, for example when it expired
+                throw new RuntimeCamelException("BigQuery job " + job.getJobId() + " is no longer available");
+            }
+            return completed;
         } catch (BigQueryException e) {
-            throw new Exception("Query " + translatedQuery + " failed: " + e.getError(), e);
+            throw new RuntimeCamelException("Query " + translatedQuery + " failed: " + e.getError(), e);
         }
     }
 
@@ -186,7 +195,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             QueryResultsOption[] queryResultsOptions = getQueryResultsOptions(pageSize, pageToken);
             return job.getQueryResults(queryResultsOptions);
         } catch (BigQueryException e) {
-            throw new Exception("Query " + translatedQuery + " failed: " + e.getError(), e);
+            throw new RuntimeCamelException("Query " + translatedQuery + " failed: " + e.getError(), e);
         }
     }
 

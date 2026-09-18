@@ -193,11 +193,11 @@ YAML::
         repoOwner: apache
         repoName: camel
         oauthToken: mytoken
-    steps:
-      - log:
-          message: "New commit: ${header.CamelGitHubCommitSha} by ${header.CamelGitHubCommitAuthor}"
-      - to:
-          uri: direct:processCommit
+      steps:
+        - log:
+            message: "New commit: ${header.CamelGitHubCommitSha} by ${header.CamelGitHubCommitAuthor}"
+        - to:
+            uri: direct:processCommit
 ----
 ====
 
@@ -238,17 +238,17 @@ YAML::
 - route:
     from:
       uri: direct:createIssue
-    steps:
-      - setHeader:
-          name: CamelGitHubIssueTitle
-          constant: Bug Report
-      - setBody:
-          constant: This is the issue description
-      - to:
-          uri: github2:createIssue
-          parameters:
-            repoOwner: apache
-            repoName: camel
-            oauthToken: mytoken
+      steps:
+        - setHeader:
+            name: CamelGitHubIssueTitle
+            constant: Bug Report
+        - setBody:
+            constant: This is the issue description
+        - to:
+            uri: github2:createIssue
+            parameters:
+              repoOwner: apache
+              repoName: camel
+              oauthToken: mytoken
 ----
 ====

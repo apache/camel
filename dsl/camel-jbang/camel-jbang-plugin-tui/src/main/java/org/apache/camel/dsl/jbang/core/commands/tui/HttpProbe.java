@@ -1273,7 +1273,7 @@ class HttpProbe {
                 Span.raw(" " + probePathState.text() + " ")));
 
         boolean requestFocused = probeField != PROBE_HISTORY;
-        Style borderStyle = requestFocused ? Style.EMPTY.fg(Theme.accent()) : Style.EMPTY;
+        Style borderStyle = ctx.paneBorder(requestFocused, Style.EMPTY);
         Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .borderStyle(borderStyle).title(title).build();
         frame.renderWidget(block, area);
@@ -1309,7 +1309,8 @@ class HttpProbe {
         Rect pathArea = new Rect(innerX + labelW, row, fieldW, 1);
         if (probeField == PROBE_PATH && !probeSending.get()) {
             TextInput textInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-            frame.renderStatefulWidget(textInput, pathArea, probePathState);
+            // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+            textInput.renderWithCursor(pathArea, frame.buffer(), probePathState, frame);
         } else {
             String pathText = probePathState.text();
             frame.renderWidget(Paragraph.from(Line.from(
@@ -1342,7 +1343,8 @@ class HttpProbe {
                             .cursorStyle(Style.EMPTY.reversed())
                             .placeholder("value for {" + pp.name + "}")
                             .build();
-                    frame.renderStatefulWidget(textInput, paramInputArea, pp.input);
+                    // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+                    textInput.renderWithCursor(paramInputArea, frame.buffer(), pp.input, frame);
                 } else {
                     String val = pp.input.text();
                     frame.renderWidget(Paragraph.from(Line.from(
@@ -1380,7 +1382,7 @@ class HttpProbe {
         int bodyH = 6;
         FormHelper.renderLabel(frame, innerX, row, labelW, "Body:", probeField == PROBE_BODY);
         Rect bodyArea = new Rect(innerX + labelW, row, fieldW, bodyH);
-        Style bodyBorderStyle = probeField == PROBE_BODY ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style bodyBorderStyle = ctx.paneBorder(probeField == PROBE_BODY);
         Block bodyBlock = Block.builder()
                 .borders(Borders.ALL)
                 .borderType(BorderType.ROUNDED)
@@ -1436,7 +1438,8 @@ class HttpProbe {
             Rect keyArea = new Rect(fieldX, row, keyW, 1);
             if (isSelected && editingKey && !probeSending.get()) {
                 TextInput keyInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-                frame.renderStatefulWidget(keyInput, keyArea, he.keyInput());
+                // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+                keyInput.renderWithCursor(keyArea, frame.buffer(), he.keyInput(), frame);
             } else {
                 String keyText = he.keyInput().text();
                 Style keyStyle = keyText.isEmpty() ? Style.EMPTY.dim()
@@ -1452,7 +1455,8 @@ class HttpProbe {
             Rect valArea = new Rect(fieldX + keyW + 3, row, valW, 1);
             if (isSelected && !editingKey && !probeSending.get()) {
                 TextInput valInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-                frame.renderStatefulWidget(valInput, valArea, he.valueInput());
+                // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+                valInput.renderWithCursor(valArea, frame.buffer(), he.valueInput(), frame);
             } else {
                 String valText = he.valueInput().text();
                 Style valStyle = valText.isEmpty() ? Style.EMPTY.dim()
@@ -1623,7 +1627,7 @@ class HttpProbe {
     private void renderProbeHistory(Frame frame, Rect area) {
         String title = " History [" + probeHistory.size() + "] ";
         boolean historyFocused = probeField == PROBE_HISTORY;
-        Style histBorderStyle = historyFocused ? Style.EMPTY.fg(Theme.accent()) : Style.EMPTY;
+        Style histBorderStyle = ctx.paneBorder(historyFocused, Style.EMPTY);
 
         if (probeHistory.isEmpty()) {
             frame.renderWidget(

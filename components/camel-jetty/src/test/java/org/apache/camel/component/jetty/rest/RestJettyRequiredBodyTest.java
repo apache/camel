@@ -26,10 +26,14 @@ import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestJettyRequiredBodyTest extends BaseJettyTest {
+
+    // bytes that are not valid UTF-8, so they would be replaced if the body was turned into a String
+    private static final byte[] BINARY_BODY = { 0x00, 0x01, (byte) 0xFF, (byte) 0xFE, (byte) 0x80, 0x7F, (byte) 0xC3, 0x28 };
 
     @Test
     public void testJettyValid() {
@@ -70,6 +74,18 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
         assertEquals("The request body is missing.", cause.getResponseBody());
     }
 
+    @Test
+    public void testJettyBinaryBodyNotCorrupted() {
+        byte[] out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/octet-stream")
+                .withHeader("Accept", "application/octet-stream")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody(BINARY_BODY)
+                .to("http://localhost:" + getPort() + "/users/123/upload")
+                .request(byte[].class);
+
+        assertArrayEquals(BINARY_BODY, out);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -85,6 +101,13 @@ public class RestJettyRequiredBodyTest extends BaseJettyTest {
                         .name("body").required(true).type(RestParamType.body)
                         .endParam().to("direct:update");
                 from("direct:update").setBody(constant("{ \"status\": \"ok\" }"));
+
+                // a binary service that echoes back what it received
+                rest("/users/").post("{id}/upload").consumes("application/octet-stream")
+                        .produces("application/octet-stream").param()
+                        .name("body").required(true).type(RestParamType.body)
+                        .endParam().to("direct:upload");
+                from("direct:upload").setBody(bodyAs(byte[].class));
             }
         };
     }

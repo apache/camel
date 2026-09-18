@@ -96,6 +96,13 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
     abstract List<Row> collectRows();
 
+    /**
+     * Names the catalog suggests for a filter that matched nothing, such as a protocol or product name (mqtt, s3).
+     */
+    List<String> suggestNames(String term) {
+        return List.of();
+    }
+
     String getGAV(ArtifactModel<?> model) {
         return model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion();
     }
@@ -186,7 +193,12 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         } else if (filterName != null) {
             // suggest similar names when filter returns no results
             List<String> allNames = collectRows().stream().map(r -> r.name).collect(Collectors.toList());
-            List<String> suggestions = SuggestSimilarHelper.didYouMean(allNames, filterName);
+            List<String> suggestions = new ArrayList<>(suggestNames(filterName));
+            for (String similar : SuggestSimilarHelper.didYouMean(allNames, filterName)) {
+                if (!suggestions.contains(similar)) {
+                    suggestions.add(similar);
+                }
+            }
             if (!suggestions.isEmpty()) {
                 printer().println("No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
             } else {

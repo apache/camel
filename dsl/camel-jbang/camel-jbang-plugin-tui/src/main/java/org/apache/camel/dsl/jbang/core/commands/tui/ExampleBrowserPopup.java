@@ -224,11 +224,11 @@ class ExampleBrowserPopup {
     }
 
     void renderFooter(List<Span> spans) {
-        TuiHelper.hint(spans, "↑↓", "navigate");
         TuiHelper.hint(spans, "r", "run");
-        TuiHelper.hint(spans, "Enter", currentFolder != null ? "run..." : "open/run...");
+        TuiHelper.hint(spans, "Enter", currentFolder != null ? "run..." : "open");
         TuiHelper.hint(spans, "d", "docs");
-        TuiHelper.hintLast(spans, "Esc", "back");
+        // inside a category Esc returns to the top level, at the top level it closes the browser
+        TuiHelper.hintLast(spans, "Esc", currentFolder != null ? "back" : "close");
     }
 
     SelectionContext getSelectionContext() {

@@ -20,10 +20,15 @@ package org.apache.camel.component.mcp.server;
  * Result of an MCP tool invocation, pre-sanitized by the bridge: the text is safe to return to a remote MCP client and
  * never contains raw route exception messages.
  *
- * @param text    the tool output, or a safe error message when {@code isError} is true
- * @param isError whether the invocation failed
+ * @param text              the tool output, or a safe error message when {@code isError} is true
+ * @param isError           whether the invocation failed
+ * @param structuredContent typed JSON output when the tool declares an output schema, otherwise {@code null}
  *
- * @since         4.22
+ * @since                   4.22
  */
-public record McpToolCallResult(String text, boolean isError) {
+public record McpToolCallResult(String text, boolean isError, Object structuredContent) {
+
+    public McpToolCallResult(String text, boolean isError) {
+        this(text, isError, null);
+    }
 }

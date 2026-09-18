@@ -25,12 +25,14 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
  * Send messages to (or consume from) Apache ActiveMQ 6.x. This component extends the Camel JMS component.
  */
+@Metadata(aliases = { "amq" })
 @UriEndpoint(firstVersion = "4.7.0", extendsScheme = "jms", scheme = "activemq6", title = "ActiveMQ 6.x",
              syntax = "activemq6:destinationType:destinationName",
              category = { Category.MESSAGING })

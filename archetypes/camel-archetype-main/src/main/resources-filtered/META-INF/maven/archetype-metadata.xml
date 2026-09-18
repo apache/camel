@@ -73,7 +73,8 @@
     <fileSet encoding="UTF-8">
       <directory></directory>
       <includes>
-        <include>ReadMe.txt</include>
+        <include>README.md</include>
+        <include>AGENTS.md</include>
       </includes>
     </fileSet>
   </fileSets>

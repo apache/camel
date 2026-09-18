@@ -17,8 +17,32 @@
 package org.apache.camel.test.infra.hashicorp.vault.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class HashicorpServiceFactory {
+
+    private static class SingletonHashicorpVaultService extends SingletonService<HashicorpVaultService>
+            implements HashicorpVaultService {
+        public SingletonHashicorpVaultService(HashicorpVaultService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String token() {
+            return getService().token();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+    }
+
     private HashicorpServiceFactory() {
 
     }
@@ -31,6 +55,20 @@ public final class HashicorpServiceFactory {
         return builder()
                 .addLocalMapping(HashicorpVaultLocalContainerService::new)
                 .build();
+    }
+
+    public static HashicorpVaultService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final HashicorpVaultService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<HashicorpVaultService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonHashicorpVaultService(new HashicorpVaultLocalContainerService(), "hashicorp-vault"));
+            INSTANCE = instance.build();
+        }
     }
 
     public static class HashicorpVaultLocalContainerService extends HashicorpVaultLocalContainerInfraService

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jgroups;
 
+import java.io.ObjectInputFilter;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Category;
@@ -29,6 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DeserializationFilterHelper;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
@@ -55,6 +57,18 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     private String channelProperties;
     @UriParam(label = "consumer")
     private boolean enableViewMessages;
+    @UriParam(label = "consumer,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied as a defense-in-depth"
+                            + " check on the class of the message body deserialized by org.jgroups.Message.getObject()."
+                            + " The pattern is evaluated after JGroups has deserialized the payload, so this option alone"
+                            + " does not prevent gadget-chain execution that happens inside the JGroups receive path;"
+                            + " to block such attacks, also configure the JVM-wide -Djdk.serialFilter and secure the"
+                            + " channel with AUTH and encryption. When this option is not set and no JVM-wide filter is"
+                            + " configured, a conservative default filter denying java.net.** and otherwise allowing"
+                            + " java.**, javax.** and org.apache.camel.** is applied. Use * to accept any type.")
+    private String deserializationFilter;
+
+    private volatile ObjectInputFilter resolvedDeserializationFilter;
 
     public JGroupsEndpoint(String endpointUri, Component component, JChannel channel, String clusterName,
                            String channelProperties, boolean enableViewMessages) {
@@ -82,8 +96,27 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE, message);
         exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_SRC, message.getSrc());
         exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, message.getDest());
-        exchange.getIn().setBody(message.getObject());
+        Object body = message.getObject();
+        if (body != null) {
+            checkDeserializedType(body.getClass());
+        }
+        exchange.getIn().setBody(body);
         return exchange;
+    }
+
+    private void checkDeserializedType(Class<?> type) {
+        ObjectInputFilter filter = resolvedDeserializationFilter;
+        if (filter == null) {
+            // the endpoint was not started, so resolve the filter on the fly rather than skipping the check
+            filter = resolveDeserializationFilter();
+            resolvedDeserializationFilter = filter;
+        }
+        if (DeserializationFilterHelper.checkClass(filter, type) == ObjectInputFilter.Status.REJECTED) {
+            throw new JGroupsException(
+                    "JGroups message deserialization blocked for class: " + type.getName()
+                                       + ". Configure the 'deserializationFilter' endpoint option or -Djdk.serialFilter"
+                                       + " to allow it.");
+        }
     }
 
     public Exchange createExchange(View view) {
@@ -103,6 +136,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
         resolvedChannel = resolveChannel();
+        resolvedDeserializationFilter = resolveDeserializationFilter();
     }
 
     @Override
@@ -112,6 +146,11 @@ public class JGroupsEndpoint extends DefaultEndpoint {
             resolvedChannel.close();
         }
         super.doStop();
+    }
+
+    private ObjectInputFilter resolveDeserializationFilter() {
+        return DeserializationFilterHelper.resolveDeserializationFilter(
+                deserializationFilter, DeserializationFilterHelper.DEFAULT_CLASS_DESERIALIZATION_FILTER);
     }
 
     private JChannel resolveChannel() throws Exception {
@@ -190,6 +229,24 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      */
     public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied as a defense-in-depth
+     * check on the class of the message body deserialized by {@code org.jgroups.Message#getObject()}. The pattern is
+     * evaluated after JGroups has deserialized the payload, so this option alone does not prevent gadget-chain
+     * execution that happens inside the JGroups receive path; to block such attacks, also configure the JVM-wide
+     * {@code -Djdk.serialFilter} and secure the channel with {@code AUTH} and encryption. When this option is not set
+     * and no JVM-wide filter is configured, a conservative default filter denying {@code java.net.**} and otherwise
+     * allowing {@code java.**}, {@code javax.**} and {@code org.apache.camel.**} is applied. Use {@code *} to accept
+     * any type.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
 }

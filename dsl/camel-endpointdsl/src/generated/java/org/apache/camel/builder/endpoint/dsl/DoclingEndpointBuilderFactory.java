@@ -607,6 +607,80 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether a String message body that starts with / or contains \ is
+         * interpreted as a local filesystem path to read. When disabled, such a
+         * body is rejected instead of being read. This does not affect the
+         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * collection bodies used by the batch operations.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowFilePathSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder allowFilePathSource(boolean allowFilePathSource) {
+            doSetProperty("allowFilePathSource", allowFilePathSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with / or contains \ is
+         * interpreted as a local filesystem path to read. When disabled, such a
+         * body is rejected instead of being read. This does not affect the
+         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * collection bodies used by the batch operations.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowFilePathSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder allowFilePathSource(String allowFilePathSource) {
+            doSetProperty("allowFilePathSource", allowFilePathSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with http:// or https:// is
+         * interpreted as a remote URL for Docling to fetch. When disabled, such
+         * a body is rejected instead of being fetched. This does not affect the
+         * CamelDoclingInputFilePath header, nor bodies of any other type.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder allowUrlSource(boolean allowUrlSource) {
+            doSetProperty("allowUrlSource", allowUrlSource);
+            return this;
+        }
+        /**
+         * Whether a String message body that starts with http:// or https:// is
+         * interpreted as a remote URL for Docling to fetch. When disabled, such
+         * a body is rejected instead of being fetched. This does not affect the
+         * CamelDoclingInputFilePath header, nor bodies of any other type.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder allowUrlSource(String allowUrlSource) {
+            doSetProperty("allowUrlSource", allowUrlSource);
+            return this;
+        }
+        /**
          * Header name for API key authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -667,6 +741,23 @@ public interface DoclingEndpointBuilderFactory {
          */
         default DoclingEndpointBuilder authenticationToken(String authenticationToken) {
             doSetProperty("authenticationToken", authenticationToken);
+            return this;
+        }
+        /**
+         * When set, every local input file path must resolve inside this
+         * directory once normalized. Applies to the CamelDoclingInputFilePath
+         * header, to file path message bodies, and to the paths used by the
+         * batch operations. When empty, no directory restriction is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param inputBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder inputBaseDirectory(String inputBaseDirectory) {
+            doSetProperty("inputBaseDirectory", inputBaseDirectory);
             return this;
         }
         /**

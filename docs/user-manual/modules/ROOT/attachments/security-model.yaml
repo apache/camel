@@ -43,14 +43,20 @@ roles:
   - role: external_message_senders
     trust: untrusted
     note: "Primary adversary model - body, headers, attachments, transport metadata."
+  - role: component_far_side          # remote services, object stores, brokers, AI models
+    trust: trusted_to_hold_data_untrusted_for_what_they_return
+    note: "Object/blob names, listing entries and LLM output are attacker-influenced."
 
 trust_boundary:
   trusted: "the route plus everything the operator configured"
   untrusted: "the data flowing through the route (Exchange body, headers, attachments)"
 
 adversary_in_scope:
-  controls: [message_body, message_headers, attachments, transport_metadata]
-  goals: [rce, endpoint_or_bean_redirect, unsafe_deserialization, xxe_ssrf, path_traversal, auth_bypass, secret_disclosure, backend_query_injection]
+  controls: [message_body, message_headers, attachments, transport_metadata,
+             remote_store_object_names_and_metadata,   # CVE-2026-66906/60093/66907
+             llm_output_and_tool_call_arguments,       # CVE-2026-49042
+             query_parameters_and_path_segments]       # CVE-2026-55993
+  goals: [rce, endpoint_or_bean_redirect, unsafe_deserialization, xxe_ssrf, path_traversal, auth_bypass, secret_disclosure, backend_query_injection, external_process_argument_injection]
 adversary_out_of_scope:
   - route_authors
   - deployment_operators
@@ -73,6 +79,9 @@ component_families:
     in_scope: false
   - family: examples_and_samples
     in_scope: false
+  - family: sibling_subprojects        # Camel K, Camel Quarkus, Camel Spring Boot, Camel Kafka Connector, Camel Karaf
+    in_scope: false
+    reason: "own release trains and deployment surfaces; core routing behaviour inherits this model (e.g. CVE-2026-45760 is Camel K)"
 
 config_variants:
   profiles:
@@ -119,10 +128,10 @@ config_variants:
 properties_provided:
   # id, violation symptom, indicative severity tier
   - id: no_untrusted_code_execution
-    symptom: "deserialization gadget / bean-method-command dispatch / expression eval not requested by route"
+    symptom: "deserialization gadget / bean-method-command dispatch / expression eval not requested by route / splice into external-process argv"
     severity: critical
   - id: no_untrusted_endpoint_redirect
-    symptom: "wire-injected internal header changes dispatch target (CamelBeanMethodName, CamelHttpUri, ...)"
+    symptom: "wire-injected control header changes dispatch target, operation, or transport+credentials - inside the namespace (CamelBeanMethodName, CamelHttpUri, ...) or outside it (websocket.connectionKey, gridfs.*, irc.sendTo, operationName, mail.smtp.*)"
     severity: critical
   - id: no_arbitrary_deserialization
     symptom: "attacker-chosen types instantiated via ObjectInputStream/XStream/Hessian/polymorphic-Jackson without filter"
@@ -131,10 +140,10 @@ properties_provided:
     symptom: "XML/XSLT/XSD/XPath parse of attacker input reads file / SSRF / fetches remote DTD/stylesheet"
     severity: high
   - id: no_path_escape
-    symptom: "file/mail/ftp path escapes configured root via ../ or absolute header"
+    symptom: "file/mail/ftp/object-store path escapes configured root via ../ or absolute name, whether supplied in a header or reported back by the remote store"
     severity: high
   - id: auth_components_enforce
-    symptom: "request served without valid token / unvalidated issuer-audience-signature / uncovered subpath"
+    symptom: "request served without valid token / unvalidated issuer-audience-signature / uncovered subpath / check silently skipped because its option was unset / authorization computed from a differently-normalized value than dispatch"
     severity: critical
   - id: no_secret_or_state_disclosure
     symptom: "secrets/bodies/config reach a log (INFO/WARN/ERROR), event, world-readable file, or HTTP response"
@@ -155,7 +164,7 @@ core_router_engine_invariants:
 properties_not_provided:
   - jvm_or_route_sandboxing
   - availability_under_attacker_volume         # DoS / resource exhaustion
-  - application_level_header_sanitisation      # only Camel* namespace is filtered
+  - application_level_semantic_header_sanitisation  # payload-data headers only; a component's own control headers ARE in scope whatever they are named
   - transitive_dependency_cve_shielding
   - production_guarantees_under_dev_or_test_profile
   - information_hiding_at_debug_or_trace_log_levels
@@ -164,27 +173,42 @@ properties_not_provided:
 
 false_friends:
   - "DefaultHeaderFilterStrategy filters the internal Camel* namespace only, not application headers"
-  - "removeHeaders(Camel*) strips internal-dispatch headers, not every untrusted header"
+  - "removeHeaders(Camel*) strips internal-dispatch headers, not every untrusted header, and does not match control headers spelled outside the namespace"
+  - "a HeaderFilterStrategy that is constructed but overwritten, or applied on one entry point only, filters nothing on the path that matters (CVE-2026-78329)"
   - "security policy framework is a startup linter, not a runtime sandbox"
   - "component deprecation is not a security boundary"
   - "TLS-by-default is not peer authentication"
 
 in_scope_classes:
   - id: unsafe_deserialization
-    examples: [CVE-2026-40860, CVE-2026-43866, CVE-2026-40859, CVE-2026-43865, CVE-2026-46590, CVE-2026-40473]
+    examples: [CVE-2026-40860, CVE-2026-43866, CVE-2026-40859, CVE-2026-43865, CVE-2026-46590, CVE-2026-40473, CVE-2026-42527]
+    mitigation_default: "CamelObjectInputStream installs a JEP-290 filter by default since 4.22 (CAMEL-24296), honouring jdk.serialFilter when set"
+    note: "an under-strength filter (CVE-2026-42527) and an indirect route via a third-party JDK-serialization API both fall in this class"
   - id: xxe_and_remote_resource_resolution
     examples: [CVE-2014-0002, CVE-2018-8027, CVE-2019-0188]
   - id: expression_or_template_injection
     examples: [CVE-2013-4330, CVE-2020-11994]
   - id: path_traversal
-    examples: [CVE-2018-8041, CVE-2019-0194]
+    examples: [CVE-2018-8041, CVE-2019-0194, CVE-2026-66906, CVE-2026-60093, CVE-2026-66907]
+    note: "the escaping name may be reported back by the remote store, not supplied in a message"
   - id: ssrf_or_remote_fetch_on_parse
     examples: [CVE-2017-5643]
   - id: camel_header_bean_dispatch_abuse
     examples: [CVE-2025-27636, CVE-2026-40453, CVE-2026-46456, CVE-2026-46457, CVE-2026-46726, CVE-2026-48205, CVE-2026-48206, CVE-2026-49098, CVE-2026-49099]
     mitigation_default: "DefaultHeaderFilterStrategy blocks Camel* by default since 4.21 (CAMEL-23543)"
+    control_header_test: "a header is in scope when it selects a target, an operation, or the transport and its credentials - regardless of prefix"
+    control_headers_outside_namespace: [CVE-2026-71300, CVE-2026-48204, CVE-2026-49097, CVE-2026-46592, CVE-2026-46587, CVE-2026-46588, CVE-2026-46453, CVE-2026-46584, CVE-2026-49086]
+    inbound_mapping_sites: [consumer, data_format_unmarshal, structured_content_mode, transport_metadata]
+    mapping_site_examples: [CVE-2026-59230, CVE-2026-63621, CVE-2026-55993, CVE-2026-55994, CVE-2026-46454, CVE-2026-49042]
+    inert_filter_examples: [CVE-2026-78329]
+  - id: argument_injection_into_external_process
+    examples: [CVE-2026-40047]
+    note: "framework builds the argv on the route author's behalf; route-author exec is out of scope"
   - id: auth_or_authz_bypass
-    examples: [CVE-2026-23552, CVE-2026-40022, CVE-2026-46455, CVE-2026-53913]
+    examples: [CVE-2026-23552, CVE-2026-40022, CVE-2026-46455, CVE-2026-53913, CVE-2026-66908]
+    sub_rules:
+      - "an unconfigured check must fail closed, never silently drop out of the chain (CVE-2026-66908, CVE-2026-53913, CAMEL-24411)"
+      - "authorization and dispatch must be computed from the same normalized value (CVE-2026-40022, CAMEL-24412)"
   - id: information_disclosure
     examples: [CVE-2023-34442, CVE-2024-22371, CVE-2026-49365, CVE-2026-56139]
   - id: insecure_defaults
@@ -197,7 +221,7 @@ known_non_findings:
   - "route-author simple/xpath/groovy/jexl/mvel evaluation"
   - "route-author .bean/.process/Runtime.exec/Class reference"
   - "Camel* header controls dispatch (intentional contract)"
-  - "application-level header (To/Subject/HTTP X-/JMS/AMQP/MQTT/CoAP/Kafka) not stripped"
+  - "application-level SEMANTIC header (To/Subject/HTTP X-/JMS/AMQP/MQTT/CoAP/Kafka) not stripped - NOT applicable when the header selects a target, an operation, or the transport and its credentials; see control_header_test"
   - "DefaultHeaderFilterStrategy case bypass (it is case-insensitive by default)"
   - "management surface (dev console, backlog debugger, tracer, JMX, jolokia) exposes code/state"
   - "finding only under camel.main.profile=dev or test"
@@ -206,10 +230,14 @@ known_non_findings:
   - "deprecated component still ships and has a CVE"
   - "documented opt-in option enables unsafe behaviour"
   - "finding in core/camel-* where every core invariant held"
+  # not a non-finding, recorded here so triage does not mistake it for one:
+  # "the component declares a HeaderFilterStrategy" is not evidence the strategy runs on the live path
+
+incomplete_fix_rule: "residue of a published advisory is triaged from scratch and, if VALID, gets its own advisory; shapes: not-all-call-sites (CAMEL-24413/24420), under-strength mitigation (CVE-2026-42527), alternate route to the same sink (CVE-2026-43866, CVE-2026-46591)"
 
 dispositions:
   - VALID
-  - VALID-HARDENING
+  - VALID-HARDENING          # may still carry an advisory, e.g. CVE-2026-56140
   - "OUT-OF-MODEL: trusted-input"
   - "OUT-OF-MODEL: adversary-not-in-scope"
   - "OUT-OF-MODEL: unsupported-component"

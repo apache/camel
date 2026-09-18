@@ -89,17 +89,22 @@ public class ListVariable extends ProcessWatchCommand {
 
                         JsonObject jv = (JsonObject) root.get("variables");
                         if (jv != null) {
-                            for (String id : jv.keySet()) {
-                                JsonArray arr = jv.getCollection(id);
-                                if (arr != null) {
-                                    for (int i = 0; i < arr.size(); i++) {
-                                        row = row.copy();
-                                        JsonObject jo = (JsonObject) arr.get(i);
-                                        row.id = id;
-                                        row.key = jo.getString("key");
-                                        row.type = jo.getString("type");
-                                        row.value = jo.get("value");
-                                        rows.add(row);
+                            JsonArray repositories = jv.getCollection("repositories");
+                            if (repositories != null) {
+                                for (Object r : repositories) {
+                                    JsonObject repo = (JsonObject) r;
+                                    String id = repo.getString("id");
+                                    JsonArray arr = repo.getCollection("variables");
+                                    if (arr != null) {
+                                        for (int i = 0; i < arr.size(); i++) {
+                                            row = row.copy();
+                                            JsonObject jo = (JsonObject) arr.get(i);
+                                            row.id = id;
+                                            row.key = jo.getString("key");
+                                            row.type = jo.getString("type");
+                                            row.value = jo.get("value");
+                                            rows.add(row);
+                                        }
                                     }
                                 }
                             }

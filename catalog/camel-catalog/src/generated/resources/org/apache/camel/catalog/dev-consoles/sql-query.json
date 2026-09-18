@@ -6,6 +6,7 @@
     "title": "SQL Query",
     "description": "Execute SQL queries on DataSource beans",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.SqlQueryDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -130,6 +131,90 @@
       "autowired": false,
       "secret": false,
       "description": "Table name for update-row action"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "description": "The execution status, success or error"
+      },
+      "message": {
+        "type": "string",
+        "description": "The error message (only present on error)"
+      },
+      "datasource": {
+        "type": "string",
+        "description": "The resolved DataSource bean name (only present once resolved)"
+      },
+      "availableDataSources": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The available DataSource bean names (only present when multiple exist and none was specified)"
+      },
+      "elapsed": {
+        "type": "integer",
+        "description": "Elapsed time in milliseconds (only present once a query attempt was made)"
+      },
+      "columns": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The column name"
+            },
+            "type": {
+              "type": "string",
+              "description": "The column SQL type name"
+            },
+            "primaryKey": {
+              "type": "boolean",
+              "description": "Whether the column is part of the primary key (only present when the query targets a single, editable table)"
+            }
+          }
+        },
+        "description": "The result set columns (only present for queries returning a result set)"
+      },
+      "rows": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "description": "The result set rows, one opaque JSON object per row (only present for queries returning a result set)"
+      },
+      "rowCount": {
+        "type": "integer",
+        "description": "Number of rows returned (only present for queries returning a result set)"
+      },
+      "truncated": {
+        "type": "boolean",
+        "description": "Whether the result set was truncated by maxRows (only present for queries returning a result set)"
+      },
+      "updateCount": {
+        "type": "integer",
+        "description": "Number of rows affected (only present for queries\/updates not returning a result set)"
+      },
+      "tableName": {
+        "type": "string",
+        "description": "The single table the result set maps to (only present when the result is a single, editable table)"
+      },
+      "primaryKeys": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The primary key column names (only present when the result is a single, editable table)"
+      },
+      "editable": {
+        "type": "boolean",
+        "description": "Whether the result set rows can be edited (only present when true)"
+      }
     }
   }
 }

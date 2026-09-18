@@ -11,7 +11,239 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.22.0 to 4.22.1
+
+=== camel-docling
+
+A `String` message body is no longer interpreted as a location by default. Previously the producer
+inspected the body and, when it started with `http://` or `https://`, handed it to Docling as a remote
+URL to fetch; when it started with `/` or contained `\`, it read it from the local filesystem; otherwise
+it converted it as document content.
+
+The two location readings must now be enabled explicitly:
+
+* `allowUrlSource` (default `false`) - interpret a body starting with `http://` or `https://` as a URL.
+* `allowFilePathSource` (default `false`) - interpret a body starting with `/`, or containing `\`, as a
+  local file path. This also covers the single directory-or-file `String` body accepted by the batch
+  operations.
+
+A route that passes the document itself in the body is unaffected. A route that passes a URL or a path in
+the body must set the matching option, otherwise the exchange fails with an `IllegalArgumentException`
+naming the option to enable.
+
+The `CamelDoclingInputFilePath` header is unchanged and still accepts a path without any opt-in, as are
+`File`, `byte[]` and `InputStream` bodies and the explicit path collections (`List<String>`, `String[]`,
+`List<File>`, `File[]`) used by the batch operations.
+
+A new `inputBaseDirectory` option is also available. When set, every local input path - from the header,
+from a file path body, and from the batch operations - must resolve inside that directory once normalized.
+It is unset by default, which keeps the previous behaviour of accepting any path.
+
+Additionally, a local input path that does not exist is now reported as a `File not found` `IOException`
+before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
+the failure surfaced later, from the Docling process or API call.
+
+=== camel-dynamic-router
+
+The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
+`expressionLanguage` used to compile it, from the incoming control message. A control message that
+supplies either is now rejected with an `IllegalArgumentException`.
+
+The predicate is compiled and then evaluated against every exchange on the channel, so letting the
+control message choose both the language and the expression means the sender of that message decides
+what runs inside the Camel process. Only enable this when control messages can only come from a
+trusted source:
+
+[source,java]
+----
+from("kafka:subscriptions")
+    .unmarshal().json(DynamicRouterControlMessage.class)
+    .to("dynamic-router-control:subscribe?allowPredicateFromMessage=true");
+----
+
+Two alternatives avoid the flag entirely. A control message may still name a `predicateBean`, which
+selects a `Predicate` that the route author bound in the registry; that path is unchanged. The
+control endpoint may also carry `predicate` and `expressionLanguage` as URI parameters, in which case
+every subscription made through that endpoint uses the route author's expression. Subscription
+parameters that the control message does not carry now fall back to the values configured on the
+endpoint.
+
+The option is annotated `security = "insecure:dev"`, so with `camel.main.profile = prod` the default
+policy for that category is `fail`, and an endpoint that sets `allowPredicateFromMessage=true` will
+not start unless you relax `camel.security.insecureDevPolicy`.
+
+The `dynamic-router` endpoint gained an `allowedSchemes` option, an optional comma-separated
+allow-list of component schemes that a subscription destination may resolve to. It is unset by
+default, which allows any scheme, matching the previous behaviour.
+
+=== camel-exec
+
+`allowControlHeaders` is now annotated `security = "insecure:dev"`.
+With `camel.main.profile = prod` the default policy for that category is `fail`,
+so an endpoint or component that sets `allowControlHeaders=true` will not start
+unless you relax `camel.security.insecureDevPolicy`.
+
+When the flag is `false` (the default), any remaining `CamelExecCommand*`,
+`CamelExecExitValues`, or `CamelExecUseStderrOnEmptyStdout` headers are ignored
+and a WARN is logged once per exec endpoint. Those headers never overrode the
+URI without the flag; they were just silent before.
+
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
+
+The remote-file consumers now ensure the path resolved for a polled file stays within the directory being
+polled. The file name that path is built from is reported by the remote server in its directory listing and is
+not guaranteed to be a single path segment, so a listing entry containing `../` sequences could previously
+resolve to a path outside the configured directory and be used as the operand for retrieving, deleting or
+renaming a file.
+
+The containment check honours the existing `jailStartingDirectory` option (default `true`), consistent with the
+file producer and with the `localWorkDirectory` download path; set `jailStartingDirectory=false` to disable it.
+A file that resolves outside the configured directory is now skipped, and a warning is logged.
+
+Ordinary listings are unaffected, as a listed name is normally a single path segment, and a `../` that still
+resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
+server that reports names navigating above the polled directory, and a `fileName` expression (used when
+`useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+
+=== camel-azure-storage-blob and camel-azure-storage-datalake
+
+Local downloads configured with `fileDir` now resolve existing filesystem path segments before checking
+that the destination remains inside the configured directory. Downloads through a symbolic link that
+resolves outside `fileDir` are rejected. Valid nested download paths continue to work.
+
+=== camel-google-storage
+
+Local downloads configured with a plain `downloadFileName` directory now resolve existing filesystem
+path segments before checking that the destination remains inside that directory. Downloads through a
+symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
+as a pseudo-directory separator continue to work.
+
+=== camel-spring-redis - the default serializer applies a deserialization filter
+
+The default serializer, `JdkSerializationRedisSerializer`, now installs a JEP-290
+`java.io.ObjectInputFilter` while reading Redis payloads, resolved through
+`DeserializationFilterHelper`. Previously no filter was applied at all. This affects both the
+consumer, which deserializes the payload of every message published to the subscribed channels,
+and the producer read commands, which deserialize the values stored in Redis.
+
+When no explicit pattern is configured, the JVM-wide `jdk.serialFilter` is honoured if set,
+otherwise the shared Camel default allow-list is applied (it permits standard Java and Apache Camel
+types, denies `java.net.**`, and enforces JEP-290 graph-shape limits). Routes that exchange classes
+outside that allow-list must widen it through the new `deserializationFilter` endpoint option, for
+example:
+
+[source,java]
+----
+from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
+     + "&deserializationFilter=com.example.model.**;java.**;!*")
+----
+
+Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
+Camel then no longer controls how the payload is read.
+
+=== camel-infinispan - the aggregation repository keeps completed exchanges for recovery
+
+`InfinispanAggregationRepository` implements `RecoverableAggregationRepository`, but it had no recovery
+store: `remove` deleted the completed exchange outright, `confirm` removed the exchange id from a cache
+keyed by correlation key, and `scan` returned the correlation keys of the aggregations still in progress.
+The recovery task therefore re-delivered aggregations that were still accumulating, marked them
+`CamelRedelivered`, and sent them to the dead letter channel once `maximumRedeliveries` was reached, while
+exchanges that genuinely failed after completion could never be recovered.
+
+A completed exchange is now kept in the same cache under a `camel-recovery:<exchange id>` key until it is
+confirmed, which is what `scan` reports and `recover` reads. `getKeys` continues to report only the
+aggregations in progress.
+
+Routes that set `useRecovery=false` are unaffected. Routes that left recovery enabled, which is the
+default, stop seeing in-progress aggregations re-delivered, and start seeing genuine recovery. The cache
+now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
+confirmation.
+
+=== camel-vertx-http - the REST producer applies the outbound header filter
+
+`VertxHttpRestHeaderFilterStrategy.applyFilterToCamelHeaders` delegated to
+`applyFilterToExternalHeaders`, so it consulted the inbound filter while implementing the outbound
+direction. The outbound filter that `VertxHttpHeaderFilterStrategy` installs was therefore never
+applied, and the sibling REST strategies in `camel-http-common`, `camel-netty-http` and
+`camel-undertow` all delegate to the matching method.
+
+A REST producer that resolves to `vertx-http` and does not configure its own `headerFilterStrategy`
+now filters the common HTTP headers on the outbound direction, as the other HTTP components already
+did. A message header named `Content-Length`, `Content-Type`, `Host`, `Cache-Control`, `Connection`,
+`Date`, `Pragma`, `Trailer`, `Transfer-Encoding`, `Upgrade`, `Via` or `Warning` is no longer copied
+onto the outgoing request; the `Content-Type` of the request is still taken from the exchange as
+before. Headers consumed by the URI template or the query parameters continue to be filtered, and a
+custom `headerFilterStrategy` is used as-is and is unaffected.
+
+Routes that relied on one of those headers reaching the wire must set it through the endpoint
+configuration or supply a `headerFilterStrategy` that permits it.
+
+
+=== camel-jgroups - the consumer applies a deserialization filter by default
+
+The consumer maps an incoming cluster message to the exchange body by calling
+`org.jgroups.Message.getObject()`, which Java-deserializes the payload. The class of that body is
+now checked against a JEP-290 `java.io.ObjectInputFilter`, resolved through
+`DeserializationFilterHelper`. Previously no filter was applied at all, and any type a cluster peer
+sent was routed.
+
+When no explicit pattern is configured, the JVM-wide `jdk.serialFilter` is honoured if set,
+otherwise the shared Camel default allow-list is applied (it permits standard Java and Apache Camel
+types and denies `java.net.**`). Routes that exchange their own classes over the cluster must widen
+it through the new `deserializationFilter` endpoint option, for example:
+
+[source,java]
+----
+from("jgroups:clusterName?deserializationFilter=com.example.model.**;java.**;!*")
+----
+
+Setting `deserializationFilter=*` accepts any type and so restores the previous behavior. A refused
+message is not routed; it is reported to the consumer's `ExceptionHandler`, which logs it at WARN
+level by default.
+
+Note that JGroups deserializes the payload inside its own receive path, so this check is a
+defense-in-depth allow-list on the resulting body type. The JVM-wide `jdk.serialFilter`, together
+with a channel secured with `AUTH` and encryption, remain the primary mitigations.
+
+=== camel-smooks - external XML entity resolution disabled by default
+
+The Smooks data format and the Smooks component now parse XML input with a reader that does not
+resolve external general or parameter entities, aligning camel-smooks with the XML parser
+configuration already applied by the other Camel XML components. When a Smooks configuration parses
+XML with the default reader, an untrusted body can no longer pull in external entities (for example
+`<!ENTITY x SYSTEM "file:///...">` or an `http://` reference).
+
+This only affects configurations that use the default XML reader. Configurations that declare their
+own reader — EDI, CSV, JSON, DFDL, or a custom reader — are unchanged, and marshalling is unchanged.
+Documents carrying an internal DTD subset still parse.
+
+To restore the previous behaviour and allow external entity resolution, set the new
+`allowExternalEntities` option to `true` on the data format or on the endpoint
+(`smooks:config.xml?allowExternalEntities=true`).
+
+=== camel-openai
+
+When `storeFullResponse=true`, the embeddings and audio operations now store their full SDK response
+under an operation-specific exchange property instead of the chat-completion property `CamelOpenAIResponse`.
+That property is typed as the chat-completion response (`com.openai.models.chat.completions.ChatCompletion`),
+so a downstream reader that expected that type received an incompatible object.
+
+* embeddings now use `CamelOpenAIEmbeddingsResponse` (`com.openai.models.embeddings.CreateEmbeddingResponse`).
+* audio transcription now uses `CamelOpenAIAudioTranscriptionResponse` (`com.openai.models.audio.transcriptions.TranscriptionCreateResponse`).
+* audio translation now uses `CamelOpenAIAudioTranslationResponse` (`com.openai.models.audio.translations.TranslationCreateResponse`).
+
+A route that reads the full embeddings or audio response from `CamelOpenAIResponse` must switch to the
+matching property. The chat-completion and responses operations are unchanged.
+
 == Upgrading Camel 4.21 to 4.22
+
+=== camel-tika
+
+The `tikaConfig` and `tikaConfigUri` component options are deprecated for removal in Camel 4.23.
+Apache Tika 4 removes the `TikaConfig` class and XML configuration support; Camel 4.23 provides the
+replacement `tikaLoader` and `tikaConfigFile` options based on Tika's `TikaLoader` and JSON configuration.
+See the https://tika.apache.org/docs/4.0.x/migration-to-4x/migrating-to-4x.html[Tika 4 migration guide]
+for migration details.
 
 === camel-reactive-executor-tomcat
 
@@ -30,6 +262,18 @@ every 30 seconds (evict after consecutive failures on sessions with an open SSE 
 TTL of 5 minutes (evict sessions with no POST/GET activity). Configure with
 `camel.server.mcp-session-keep-alive-interval` and `camel.server.mcp-session-idle-ttl`; set either
 option to `0` to disable that mechanism.
+
+=== camel-ai-tool
+
+`AiToolResult.Success` now carries an optional `structuredContent` field when the tool declares an
+output schema (`outputParameter.*` or `outputSchema`). The MCP bridge maps this to
+`CallToolResult.structuredContent` and publishes `Tool.outputSchema` to MCP clients. LangChain4j
+and Spring AI adapters continue to use the string `value()` only.
+
+SPI extensions in this release (before 4.22 ships): `McpToolCallResult` gains a third
+`structuredContent` component; `McpServerTool` adds `outputSchemaJson()`; `AiToolSpec` constructor
+accepts output schema fields. Custom `McpServerEngine` implementations should forward structured
+content when present.
 
 === camel-core
 
@@ -1132,6 +1376,7 @@ on the bytes of a non-ASCII payload and make verification fail.
 already UTF-8 (JEP 400), so this is a no-op there; on Java 17 with a non-UTF-8 default, the
 signature of a non-ASCII `String` payload changes. Binary bodies (`byte[]`, `InputStream`) are
 unaffected, as they are signed byte-for-byte.
+
 === camel-sql - Schema-qualified aggregation repository names
 
 The table-name validation in `JdbcAggregationRepository` now accepts schema-qualified names
@@ -1698,8 +1943,8 @@ from("direct:next")
 ----
 
 The sibling websocket components are not affected by this change: `camel-undertow`
-keeps the `websocket.*` values in `UndertowConstants` (as documented in the 4.18
-upgrade guide), and `camel-vertx-websocket` keeps its `CamelVertxWebsocket.*` values.
+keeps the `+websocket.*+` values in `UndertowConstants` (as documented in the 4.18
+upgrade guide), and `camel-vertx-websocket` keeps its `+CamelVertxWebsocket.*+` values.
 
 Note that `WebsocketConstants.SEND_TO_ALL` is not read by this component. Broadcast is
 selected through the `sendToAll` endpoint option, not through the header; the constant
@@ -1744,3 +1989,83 @@ they say:
   `CamelGoogleVertexAIStreamOutputMode` header.
 * `jsonMode=true` sets the response MIME type of the request to `application/json`, so the model is
   asked to answer with JSON. The default `false` leaves the request untouched.
+
+=== camel-core - REST client request validation and binary bodies
+
+When `clientRequestValidation` is enabled and the REST service declares a required body, the incoming
+message body is no longer replaced with a `String` version of itself. That conversion corrupted binary
+payloads such as `application/octet-stream`. The body is still read to check that it is present, using
+stream caching so it stays re-readable, but it now keeps its original type.
+
+=== camel-support
+
+`BackgroundTask.schedule` now cancels the repeating schedule it created once the task has completed or has
+run out of budget. Previously the returned `Future` stayed armed and the task kept being re-run as a no-op
+for the lifetime of the executor. Callers that inspect the returned `Future` will see `isCancelled()`
+return `true` after the task is done, where it previously stayed live. Callers that already cancel the
+`Future` themselves are unaffected.
+
+=== camel-master
+
+The `backOffMaxAttempts` option now bounds the attempts to start the delegated consumer as documented.
+The retry task previously also carried the default five second duration of its budget, which ended the
+task before the second attempt for any `backOffDelay` at or above the default of five seconds. A delegate
+that fails to start is therefore retried for longer than before, up to `backOffMaxAttempts` times.
+
+=== camel-servlet, camel-jetty - the multipart upload whitelist is enforced against the submitted file name
+
+`fileNameExtWhitelist` accepts file name extensions, but `camel-servlet`'s `AttachmentHttpBinding`
+checked it against `Part.getName()`, which is the multipart *field* name rather than the submitted
+file name. A field named `file` carries no extension, so the check found nothing to compare and every
+upload was accepted. The option is now checked against `Part.getSubmittedFileName()`, which is what
+`camel-platform-http-vertx` already does.
+
+A `camel-servlet` consumer that sets `fileNameExtWhitelist` together with `attachmentMultipartBinding=true`
+therefore starts rejecting uploads whose file extension is not listed, which is what the option always
+advertised. Uploads with no file name, such as plain form fields, are unaffected, and a route that does
+not set the option is unaffected. Review the configured extension list before upgrading.
+
+The `camel-jetty` binding performed no whitelist check at all, although `fileNameExtWhitelist` can be
+set on its `HttpBinding`. It now applies the same check.
+
+The `camel-jetty` binding also stored the attachment under the multipart field name but looked it up
+again by the submitted file name, and passed that file name to `HttpHelper.appendHeader`. The lookup
+therefore only succeeded when the two happened to be equal, and when it did the header was named by
+the client-supplied file name. The attachment is now looked up and exposed under the field name it is
+stored with, and only for parts that carry a file name — a plain form field is mapped by
+`populateRequestParameters` as before. Because the old lookup by file name returned `null` whenever the
+two names differed, that header never carried a usable `DataHandler` in the first place; only when the
+names happened to be equal did it resolve, and then the name is unchanged. A route that expected the
+attachment header under the uploaded file name should read it under the multipart field name.
+
+=== camel-tensorflow-serving - the Target and Credentials headers are deprecated
+
+`TensorFlowServingConstants.TARGET` (`CamelTensorFlowServingTarget`) and
+`TensorFlowServingConstants.CREDENTIALS` (`CamelTensorFlowServingCredentials`) are deprecated. Both
+were declared with `@Metadata` and advertised through the endpoint's `headersClass`, but neither has
+ever been read by the component.
+
+The gRPC channel and its stubs are built once in `TensorFlowServingEndpoint.doInit()` from
+`configuration.getTarget()` and `configuration.getCredentials()`, so a per-exchange override supplied
+as a header cannot take effect. A route that set either header was silently ignored. The sibling
+`camel-kserve` component declares neither.
+
+Configure the `target` and `credentials` endpoint options instead, or route to a different endpoint
+with `toD` when the destination varies per message. The constants remain in place for backwards
+compatibility and are now marked deprecated in the component metadata.
+
+=== camel-hazelcast - ReplicatedHazelcastAggregationRepository now applies the default serialization filter
+
+`ReplicatedHazelcastAggregationRepository` now applies the same default
+`JavaSerializationFilterConfig` that the other repositories and the component endpoints have applied
+since 4.14.8/4.18.3/4.21.0, when it bootstraps its own `HazelcastInstance` (that is, when no
+`hazelcastInstance` is supplied). It overrides `doStart()` without calling `super.doStart()` and was
+therefore left out of that change.
+
+The default whitelists the class name prefixes `java.`, `javax.`, `org.apache.camel.` and blacklists
+`java.net.`, and a user-supplied `JavaSerializationFilterConfig` is still respected and never
+overwritten.
+
+Applications that aggregate classes outside the default whitelist through the replicated repository
+without supplying their own `hazelcastInstance` must now provide a `Config` with a
+`JavaSerializationFilterConfig` covering their class names.

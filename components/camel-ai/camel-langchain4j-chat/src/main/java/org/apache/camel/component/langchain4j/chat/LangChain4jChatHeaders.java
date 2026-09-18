@@ -36,4 +36,10 @@ public class LangChain4jChatHeaders {
 
     @Metadata(description = "The Total Token Count.", javaType = "int")
     public static final String TOTAL_TOKEN_COUNT = "CamelLangChain4jChatTotalTokenCount";
+
+    @Metadata(description = "The request model name.", javaType = "String")
+    public static final String REQUEST_MODEL = "CamelLangChain4jChatRequestModel";
+
+    @Metadata(description = "The response model name.", javaType = "String")
+    public static final String RESPONSE_MODEL = "CamelLangChain4jChatResponseModel";
 }

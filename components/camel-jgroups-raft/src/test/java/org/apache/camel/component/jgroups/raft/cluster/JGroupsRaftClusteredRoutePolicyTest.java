@@ -67,16 +67,21 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstr
         assertEquals(1, countActiveFromEndpoints(lcc, rn));
 
         contextA.stop();
-        waitForLeader(50, handleA, handleB, handleC);
+        // Ensure channel A is fully closed before checking for a new leader
+        chA.close();
+        waitForLeader(50, handleB, handleC);
         assertEquals(1, countActiveFromEndpoints(lcc, rn));
 
         contextB.stop();
-        // NOTE: to be closed by component lifecycle.
+        // Ensure channel B is fully closed before creating a new channel with the same member name
+        chB.close();
+        waitForViewSize(chC, 1, 30);
         chA = new JChannel("raftABC.xml").name("A");
         handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
         contextA = createContext("A", handleA);
+        lcc.set(0, contextA);
         contextA.start();
-        waitForLeader(50, handleA, handleB, handleC);
+        waitForLeader(50, handleA, handleC);
         assertEquals(1, countActiveFromEndpoints(lcc, rn));
     }
 

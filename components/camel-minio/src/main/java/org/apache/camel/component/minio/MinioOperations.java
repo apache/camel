@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.minio;
 
+@Deprecated(since = "4.23")
 public enum MinioOperations {
     copyObject,
     listObjects,

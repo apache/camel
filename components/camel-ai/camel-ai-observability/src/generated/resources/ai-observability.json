@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "ai-observability",
+    "title": "AI Observability",
+    "description": "GenAI observability support for Camel AI components (OpenTelemetry and Micrometer)",
+    "deprecated": false,
+    "firstVersion": "4.23.0",
+    "label": "ai",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-ai-observability",
+    "version": "4.23.0-SNAPSHOT"
+  }
+}

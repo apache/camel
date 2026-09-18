@@ -43,7 +43,6 @@
         <module>camel-archetype-dataformat</module>
         <module>camel-archetype-java</module>
         <module>camel-archetype-main</module>
-        <module>camel-archetype-spring</module>
     </modules>
 
     <dependencies>

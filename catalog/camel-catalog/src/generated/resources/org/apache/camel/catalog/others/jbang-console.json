@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "jbang-console",
+    "title": "Jbang Console",
+    "description": "Camel CLI Console",
+    "deprecated": false,
+    "firstVersion": "3.21.0",
+    "label": "jbang",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jbang-console",
+    "version": "4.23.0-SNAPSHOT"
+  }
+}

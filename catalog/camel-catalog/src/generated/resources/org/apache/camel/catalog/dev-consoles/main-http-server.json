@@ -6,10 +6,44 @@
     "title": "Main HTTP Server",
     "description": "Camel Main HTTP Server",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.platform.http.main.MainHttpServerDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-platform-http-main",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "host": {
+        "type": "string",
+        "description": "The bind host (only present when the server is running)"
+      },
+      "port": {
+        "type": "integer",
+        "description": "The bind port (only present when the server is running)"
+      },
+      "path": {
+        "type": "string",
+        "description": "The context path (only present when the server is running)"
+      },
+      "maxBodySize": {
+        "type": "integer",
+        "description": "Maximum HTTP body size in bytes (only present when configured)"
+      },
+      "fileUploadEnabled": {
+        "type": "boolean",
+        "description": "Whether file upload is enabled (only present when the server is running)"
+      },
+      "fileUploadDirectory": {
+        "type": "string",
+        "description": "The file upload directory (only present when configured)"
+      },
+      "useGlobalSslContextParameters": {
+        "type": "boolean",
+        "description": "Whether global SSL context parameters are used (only present when the server is running)"
+      }
+    }
   }
 }
 

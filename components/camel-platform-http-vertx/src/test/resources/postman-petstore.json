@@ -1,0 +1,88 @@
+{
+  "info": {
+    "_postman_id": "9c6b0f52-4c1e-4a3a-9e57-3a2b4a1f9c22",
+    "name": "Petstore",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.example.com/api/v3"
+    },
+    {
+      "key": "apiToken",
+      "value": "s3cr3t",
+      "type": "secret"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiToken}}"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Get Pet By Id",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/pet/:petId",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            ":petId"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "found",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\"pet\": \"mocked tiger\"}"
+        }
+      ]
+    },
+    {
+      "name": "Add Pet",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Rex\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pet",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet"
+          ]
+        }
+      }
+    }
+  ]
+}

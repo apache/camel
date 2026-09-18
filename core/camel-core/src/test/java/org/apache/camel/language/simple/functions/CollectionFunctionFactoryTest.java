@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
@@ -46,13 +44,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals("hello", exchange.getIn().getHeader("myKey"));
     }
 
-    @Test
-    public void testCreateCodeSetHeader() {
-        assertEquals(
-                "Object value = body;\n        return setHeader(exchange, \"myKey\", null, value);",
-                createCode("setHeader(myKey,body)"));
-    }
-
     // --- setVariable ---
 
     @Test
@@ -60,13 +51,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         exchange.getIn().setBody("world");
         evaluate("setVariable(myVar,${body})");
         assertEquals("world", exchange.getVariable("myVar"));
-    }
-
-    @Test
-    public void testCreateCodeSetVariable() {
-        assertEquals(
-                "Object value = body;\n        return setVariable(exchange, \"myVar\", null, value);",
-                createCode("setVariable(myVar,body)"));
     }
 
     // --- range ---
@@ -85,18 +69,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         // range(max) uses min=1, exclusive upper: range(3) -> [1,2]
         List<Integer> result = evaluate("range(3)", List.class);
         assertEquals(List.of(1, 2), result);
-    }
-
-    @Test
-    public void testCreateCodeRangeMinMax() {
-        assertEquals("rangeList(exchange, 1, 5)", createCode("range(1,5)"));
-    }
-
-    @Test
-    public void testCreateCodeRangeMax() {
-        // pre-fix: csimple generated rangeList(exchange, 0, N) while simple used min=1,
-        // causing ${range(N)} to produce different results in the two execution modes.
-        assertEquals("rangeList(exchange, 1, 3)", createCode("range(3)"));
     }
 
     // --- shuffle toString ---
@@ -141,11 +113,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertTrue(result.containsAll(List.of("a", "b", "c")));
     }
 
-    @Test
-    public void testCreateCodeDistinct() {
-        assertEquals("distinct(exchange, body)", createCode("distinct()"));
-    }
-
     // --- reverse ---
 
     @Test
@@ -154,11 +121,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         exchange.getIn().setBody(List.of("a", "b", "c"));
         List<String> result = evaluate("reverse()", List.class);
         assertEquals(List.of("c", "b", "a"), result);
-    }
-
-    @Test
-    public void testCreateCodeReverse() {
-        assertEquals("reverse(exchange, body)", createCode("reverse()"));
     }
 
     // --- split ---
@@ -179,13 +141,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals(List.of("x", "y", "z"), result);
     }
 
-    @Test
-    public void testCreateCodeSplit() {
-        assertEquals(
-                "Object value = body;\n        String separator = \":\";\n        return stringSplit(exchange, value, separator);",
-                createCode("split(:)"));
-    }
-
     // --- sort ---
 
     @Test
@@ -204,27 +159,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals(List.of("c", "b", "a"), result);
     }
 
-    @Test
-    public void testCreateCodeSortReturnsNull() {
-        assertNull(createFactory().createCode(context, "sort()", 0));
-    }
-
-    // --- forEach ---
-
-    @Test
-    public void testCreateCodeForEachThrows() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> createFactory().createCode(context, "forEach(${body},${body})", 0));
-    }
-
-    // --- filter ---
-
-    @Test
-    public void testCreateCodeFilterThrows() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> createFactory().createCode(context, "filter(${body},${body})", 0));
-    }
-
     // --- listAdd ---
 
     @Test
@@ -233,11 +167,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         exchange.getIn().setBody(list);
         evaluate("listAdd(c)");
         assertEquals(List.of("a", "b", "c"), exchange.getIn().getBody(List.class));
-    }
-
-    @Test
-    public void testCreateCodeListAddReturnsNull() {
-        assertNull(createFactory().createCode(context, "listAdd(c)", 0));
     }
 
     // --- listRemove ---
@@ -250,11 +179,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals(List.of("a", "c"), exchange.getIn().getBody(List.class));
     }
 
-    @Test
-    public void testCreateCodeListRemoveReturnsNull() {
-        assertNull(createFactory().createCode(context, "listRemove(b)", 0));
-    }
-
     // --- mapAdd ---
 
     @Test
@@ -263,11 +187,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         exchange.getIn().setBody(map);
         evaluate("mapAdd(key,val)");
         assertEquals("val", exchange.getIn().getBody(Map.class).get("key"));
-    }
-
-    @Test
-    public void testCreateCodeMapAddReturnsNull() {
-        assertNull(createFactory().createCode(context, "mapAdd(key,val)", 0));
     }
 
     // --- mapRemove ---
@@ -281,11 +200,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertTrue(exchange.getIn().getBody(Map.class).isEmpty());
     }
 
-    @Test
-    public void testCreateCodeMapRemoveReturnsNull() {
-        assertNull(createFactory().createCode(context, "mapRemove(key)", 0));
-    }
-
     // --- list ---
 
     @Test
@@ -293,12 +207,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
     public void testList() {
         List<String> result = evaluate("list('a','b','c')", List.class);
         assertEquals(List.of("a", "b", "c"), result);
-    }
-
-    @Test
-    public void testCreateCodeList() {
-        assertEquals("list(exchange, null)", createCode("list()"));
-        assertEquals("list(exchange, \"a\", \"b\")", createCode("list('a','b')"));
     }
 
     // --- map ---
@@ -310,12 +218,6 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals(2, result.size());
         assertEquals("v1", result.get("k1"));
         assertEquals("v2", result.get("k2"));
-    }
-
-    @Test
-    public void testCreateCodeMap() {
-        assertEquals("map(exchange, null)", createCode("map()"));
-        assertEquals("map(exchange, \"k\", \"v\")", createCode("map('k','v')"));
     }
 
 }

@@ -57,6 +57,8 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
+import org.apache.camel.model.dataformat.ToonDataFormat;
+import org.apache.camel.model.dataformat.UblDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
@@ -348,6 +350,20 @@ public final class DataFormatBuilderFactory {
      */
     public TarFileDataFormat.Builder tarFile() {
         return new TarFileDataFormat.Builder();
+    }
+
+    /**
+     * Uses the TOON (Token-Oriented Object Notation) data format
+     */
+    public ToonDataFormat.Builder toon() {
+        return new ToonDataFormat.Builder();
+    }
+
+    /**
+     * Uses the UBL (Universal Business Language) 2.1 data format
+     */
+    public UblDataFormat.Builder ubl() {
+        return new UblDataFormat.Builder();
     }
 
     /**

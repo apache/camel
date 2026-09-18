@@ -7,25 +7,25 @@
       "children" : [ {
         "name" : "beans",
         "type" : "object",
-        "ref" : "beansDeserializer"
+        "ref" : "beans"
       }, {
         "name" : "dataFormats",
         "type" : "object",
-        "ref" : "dataFormatsDefinitionDeserializer",
+        "ref" : "dataFormats",
         "title" : "Data formats",
         "description" : "Container for defining data format configurations",
         "label" : "dataformat,transformation"
       }, {
         "name" : "errorHandler",
         "type" : "object",
-        "ref" : "errorHandlerDeserializer",
+        "ref" : "errorHandler",
         "title" : "Error Handler",
         "description" : "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered",
         "label" : "configuration,error,errorhandling"
       }, {
         "name" : "from",
         "type" : "object",
-        "ref" : "routeFromDefinitionDeserializer",
+        "ref" : "from",
         "title" : "From",
         "description" : "Defines the consumer endpoint that acts as the input source for a route",
         "label" : "eip,endpoint,routing"
@@ -95,7 +95,7 @@
       }, {
         "name" : "sslContextParameters",
         "type" : "object",
-        "ref" : "sSLContextParameters"
+        "ref" : "sslContextParameters"
       }, {
         "name" : "restConfiguration",
         "type" : "object",
@@ -133,7 +133,7 @@
       "children" : [ {
         "name" : "a2aSubTask",
         "type" : "object",
-        "ref" : "a2ASubTask",
+        "ref" : "a2aSubTask",
         "title" : "A2A Sub Task",
         "description" : "Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails",
         "label" : "eip,routing,ai"
@@ -151,6 +151,13 @@
         "title" : "Bean",
         "description" : "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties",
         "label" : "eip,endpoint"
+      }, {
+        "name" : "cache",
+        "type" : "object",
+        "ref" : "cache",
+        "title" : "Cache",
+        "description" : "Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.",
+        "label" : "eip,routing,caching"
       }, {
         "name" : "choice",
         "type" : "object",
@@ -175,21 +182,21 @@
       }, {
         "name" : "convertBodyTo",
         "type" : "object",
-        "ref" : "convertBody",
+        "ref" : "convertBodyTo",
         "title" : "Convert Body To",
         "description" : "Converts the message body to a specified Java type using Camel's built-in type converters",
         "label" : "eip,messaging,transformation"
       }, {
         "name" : "convertHeaderTo",
         "type" : "object",
-        "ref" : "convertHeader",
+        "ref" : "convertHeaderTo",
         "title" : "Convert Header To",
         "description" : "Converts a message header value to a specified Java type using Camel's built-in type converters",
         "label" : "eip,messaging,transformation"
       }, {
         "name" : "convertVariableTo",
         "type" : "object",
-        "ref" : "convertVariable",
+        "ref" : "convertVariableTo",
         "title" : "Convert Variable To",
         "description" : "Converts a variable value to a specified Java type using Camel's built-in type converters",
         "label" : "eip,messaging,transformation"
@@ -203,21 +210,21 @@
       }, {
         "name" : "doCatch",
         "type" : "object",
-        "ref" : "catch",
+        "ref" : "doCatch",
         "title" : "Do Catch",
         "description" : "Catches specific exceptions within a doTry block, allowing fine-grained exception handling within the route",
         "label" : "error,errorhandling"
       }, {
         "name" : "doFinally",
         "type" : "object",
-        "ref" : "finally",
+        "ref" : "doFinally",
         "title" : "Do Finally",
         "description" : "Defines steps to always execute after a doTry block completes, regardless of whether an exception was thrown or caught",
         "label" : "error,errorhandling"
       }, {
         "name" : "doTry",
         "type" : "object",
-        "ref" : "try",
+        "ref" : "doTry",
         "title" : "Do Try",
         "description" : "Wraps route steps in a try-catch-finally block for fine-grained exception handling within the route",
         "label" : "eip,error,errorhandling,routing"
@@ -413,7 +420,7 @@
       }, {
         "name" : "sample",
         "type" : "object",
-        "ref" : "sampling",
+        "ref" : "sample",
         "title" : "Sample",
         "description" : "Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest",
         "label" : "eip,flowcontrol,routing"
@@ -532,7 +539,7 @@
       }, {
         "name" : "toD",
         "type" : "object",
-        "ref" : "toDynamic",
+        "ref" : "toD",
         "title" : "To D",
         "description" : "Sends the message to an endpoint URI computed dynamically from an expression, allowing the destination to vary per message",
         "label" : "eip,endpoint,routing"
@@ -599,14 +606,6 @@
         "description" : "A fixed value set only once during the route startup",
         "label" : "language,core"
       }, {
-        "name" : "csimple",
-        "type" : "object",
-        "ref" : "cSimple",
-        "title" : "CSimple",
-        "description" : "Evaluate a compiled simple expression",
-        "label" : "language,java",
-        "deprecated" : true
-      }, {
         "name" : "datasonnet",
         "type" : "object",
         "ref" : "datasonnet",
@@ -655,14 +654,6 @@
         "title" : "Java",
         "description" : "Evaluates a Java (Java compiled once at runtime) expression",
         "label" : "language"
-      }, {
-        "name" : "joor",
-        "type" : "object",
-        "ref" : "joor",
-        "title" : "jOOR",
-        "description" : "Evaluates a jOOR (Java compiled once at runtime) expression",
-        "label" : "language",
-        "deprecated" : true
       }, {
         "name" : "jq",
         "type" : "object",
@@ -717,6 +708,20 @@
         "title" : "Python",
         "description" : "Evaluates a Python expression",
         "label" : "language,python"
+      }, {
+        "name" : "python3",
+        "type" : "object",
+        "ref" : "python3",
+        "title" : "Python 3",
+        "description" : "Evaluates a Python 3 expression",
+        "label" : "language,python"
+      }, {
+        "name" : "quickjs",
+        "type" : "object",
+        "ref" : "quickjs",
+        "title" : "QuickJS",
+        "description" : "Evaluates a JavaScript expression using QuickJS4J",
+        "label" : "language,javascript"
       }, {
         "name" : "ref",
         "type" : "object",
@@ -782,17 +787,32 @@
         "label" : "language,core,xml"
       } ]
     },
-    "beansDeserializer" : {
+    "beans" : {
       "isListItem" : true,
       "children" : [ ]
     },
-    "dataFormatsDefinitionDeserializer" : {
+    "dataFormats" : {
+      "title" : "Data formats",
+      "description" : "Container for defining data format configurations",
+      "label" : "dataformat,transformation",
       "isListItem" : true,
       "children" : [ ]
     },
-    "errorHandlerDeserializer" : {
+    "errorHandler" : {
+      "title" : "Error Handler",
+      "description" : "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered",
+      "label" : "configuration,error,errorhandling",
       "isListItem" : true,
       "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
         "name" : "deadLetterChannel",
         "type" : "object",
         "ref" : "deadLetterChannel"
@@ -800,11 +820,6 @@
         "name" : "defaultErrorHandler",
         "type" : "object",
         "ref" : "defaultErrorHandler"
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id"
       }, {
         "name" : "jtaTransactionErrorHandler",
         "type" : "object",
@@ -850,17 +865,48 @@
         "type" : "string"
       } ]
     },
-    "routeFromDefinitionDeserializer" : {
+    "from" : {
+      "title" : "From",
+      "description" : "Defines the consumer endpoint that acts as the input source for a route",
+      "label" : "eip,endpoint,routing",
+      "aliases" : [ "source", "ingress" ],
       "isListItem" : true,
       "children" : [ {
-        "name" : "description",
-        "type" : "string"
-      }, {
         "name" : "id",
-        "type" : "string"
+        "type" : "string",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
       }, {
         "name" : "note",
-        "type" : "string"
+        "type" : "string",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "description",
+        "type" : "string",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "uri",
+        "type" : "string",
+        "required" : true,
+        "displayName" : "Uri",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "common"
+      }, {
+        "name" : "variableReceive",
+        "type" : "string",
+        "displayName" : "Variable Receive",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
       }, {
         "name" : "parameters",
         "type" : "object"
@@ -869,61 +915,90 @@
         "type" : "array",
         "ref" : "steps",
         "required" : true
-      }, {
-        "name" : "uri",
-        "type" : "string",
-        "required" : true
-      }, {
-        "name" : "variableReceive",
-        "type" : "string"
       } ]
     },
-    "a2ASubTask" : {
+    "a2aSubTask" : {
       "title" : "A2A Sub Task",
       "description" : "Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails",
+      "label" : "eip,routing,ai",
+      "input" : true,
+      "output" : true,
       "isListItem" : true,
       "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
         "name" : "description",
         "type" : "string",
         "description" : "The description for this node",
-        "title" : "Description"
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
       }, {
         "name" : "disabled",
         "type" : "boolean",
         "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
         "title" : "Disabled",
-        "default" : "false"
-      }, {
-        "name" : "emitAfter",
-        "type" : "string",
-        "description" : "Simple expression template to emit after the nested steps complete successfully",
-        "title" : "Emit After"
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "emitBefore",
         "type" : "string",
         "description" : "Simple expression template to emit before the nested steps run",
-        "title" : "Emit Before"
+        "title" : "Emit Before",
+        "displayName" : "Emit Before",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
+      }, {
+        "name" : "emitAfter",
+        "type" : "string",
+        "description" : "Simple expression template to emit after the nested steps complete successfully",
+        "title" : "Emit After",
+        "displayName" : "Emit After",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
       }, {
         "name" : "emitOnError",
         "type" : "string",
         "description" : "Simple expression template to emit when the nested steps fail",
-        "title" : "Emit On Error"
+        "title" : "Emit On Error",
+        "displayName" : "Emit On Error",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "common"
       }, {
         "name" : "failIfNoTaskContext",
         "type" : "boolean",
         "description" : "Whether to fail if the current Exchange does not have an active A2A task context",
         "title" : "Fail If No Task Context",
-        "default" : "false"
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id"
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "description" : "The note for this node",
-        "title" : "Note"
+        "default" : "false",
+        "displayName" : "Fail If No Task Context",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "common"
       }, {
         "name" : "steps",
         "type" : "array",
@@ -1375,9 +1450,8 @@
       }, {
         "name" : "type",
         "type" : "string",
-        "description" : "The class name (fully qualified) of the bean.",
+        "description" : "The class name (fully qualified) of the bean. Required unless the bean is created by a script (scriptLanguage) or a builder (builderClass), where the type is optional and is then the type the bean is registered as.",
         "title" : "Type",
-        "required" : true,
         "displayName" : "Type",
         "kind" : "attribute",
         "index" : 1,
@@ -1493,42 +1567,161 @@
         "label" : "advanced"
       } ]
     },
-    "catch" : {
-      "title" : "Do Catch",
-      "description" : "Catches specific exceptions within a doTry block, allowing fine-grained exception handling within the route",
+    "cache" : {
+      "title" : "Cache",
+      "description" : "Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.",
+      "label" : "eip,routing,caching",
+      "input" : true,
+      "output" : true,
       "isListItem" : true,
       "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
         "name" : "description",
         "type" : "string",
         "description" : "The description for this node",
-        "title" : "Description"
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
       }, {
         "name" : "disabled",
         "type" : "boolean",
         "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
         "title" : "Disabled",
-        "default" : "false"
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
-        "name" : "exception",
+        "name" : "expression",
+        "type" : "object",
+        "ref" : "expression",
+        "description" : "Expression to compute the cache key. Messages with the same key share the cached result.",
+        "title" : "Expression",
+        "displayName" : "Expression",
+        "kind" : "expression",
+        "index" : 4,
+        "group" : "common",
+        "required" : true
+      }, {
+        "name" : "keyValueRepository",
+        "type" : "string",
+        "description" : "Sets the reference name of the KeyValueRepository to use as the cache backing store. If not set, a MemoryKeyValueRepository is auto-created.",
+        "title" : "Key Value Repository",
+        "displayName" : "Key Value Repository",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
+      }, {
+        "name" : "ttl",
+        "type" : "string",
+        "description" : "Sets the time-to-live for cached entries. Supports duration syntax (e.g. 10m, 1h) or milliseconds. Default: -1 (no expiration).",
+        "title" : "Ttl",
+        "default" : "-1",
+        "displayName" : "Ttl",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "common"
+      }, {
+        "name" : "cacheNull",
+        "type" : "boolean",
+        "description" : "Whether to cache null results. By default, null message bodies are not cached.",
+        "title" : "Cache Null",
+        "default" : "false",
+        "displayName" : "Cache Null",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "common"
+      }, {
+        "name" : "steps",
         "type" : "array",
-        "description" : "The exception class names (fully qualified) to catch.",
-        "title" : "Exception"
-      }, {
+        "ref" : "steps"
+      } ]
+    },
+    "doCatch" : {
+      "title" : "Do Catch",
+      "description" : "Catches specific exceptions within a doTry block, allowing fine-grained exception handling within the route",
+      "label" : "error,errorhandling",
+      "input" : true,
+      "output" : true,
+      "isListItem" : true,
+      "children" : [ {
         "name" : "id",
         "type" : "string",
         "description" : "The id of this node",
-        "title" : "Id"
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
       }, {
         "name" : "note",
         "type" : "string",
         "description" : "The note for this node",
-        "title" : "Note"
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "description",
+        "type" : "string",
+        "description" : "The description for this node",
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "disabled",
+        "type" : "boolean",
+        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+        "title" : "Disabled",
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "exception",
+        "type" : "array",
+        "description" : "The exception class names (fully qualified) to catch.",
+        "title" : "Exception",
+        "displayName" : "Exception",
+        "kind" : "element",
+        "index" : 4,
+        "group" : "common"
       }, {
         "name" : "onWhen",
         "type" : "object",
         "ref" : "onWhen",
         "description" : "An additional predicate that must evaluate to true for this doCatch to trigger. Allows fine-grained control over which exceptions are caught based on the exchange state.",
-        "title" : "On When"
+        "title" : "On When",
+        "displayName" : "On When",
+        "kind" : "element",
+        "index" : 5,
+        "group" : "common"
       }, {
         "name" : "steps",
         "type" : "array",
@@ -1668,6 +1861,17 @@
         "kind" : "attribute",
         "index" : 4,
         "group" : "common"
+      }, {
+        "name" : "inheritErrorHandler",
+        "type" : "boolean",
+        "description" : "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.",
+        "title" : "Inherit Error Handler",
+        "default" : "false",
+        "displayName" : "Inherit Error Handler",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "resilience4jConfiguration",
         "type" : "object",
@@ -1837,158 +2041,273 @@
         "group" : "common"
       } ]
     },
-    "convertBody" : {
+    "convertBodyTo" : {
       "title" : "Convert Body To",
       "description" : "Converts the message body to a specified Java type using Camel's built-in type converters",
+      "label" : "eip,messaging,transformation",
+      "input" : true,
       "isListItem" : true,
       "children" : [ {
-        "name" : "charset",
+        "name" : "id",
         "type" : "string",
-        "description" : "To use a specific charset when converting.",
-        "title" : "Charset"
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
       }, {
         "name" : "description",
         "type" : "string",
         "description" : "The description for this node",
-        "title" : "Description"
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
       }, {
         "name" : "disabled",
         "type" : "boolean",
         "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
         "title" : "Disabled",
-        "default" : "false"
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id"
-      }, {
-        "name" : "mandatory",
-        "type" : "boolean",
-        "description" : "Whether the conversion is mandatory. If mandatory and conversion is not possible, a NoTypeConversionAvailableException is thrown. Setting this to false means null may be returned if conversion is not possible.",
-        "title" : "Mandatory",
-        "default" : "true"
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "description" : "The note for this node",
-        "title" : "Note"
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "type",
         "type" : "string",
         "description" : "The java type to convert to.",
         "title" : "Type",
-        "required" : true
-      } ]
-    },
-    "convertHeader" : {
-      "title" : "Convert Header To",
-      "description" : "Converts a message header value to a specified Java type using Camel's built-in type converters",
-      "isListItem" : true,
-      "children" : [ {
-        "name" : "charset",
-        "type" : "string",
-        "description" : "To use a specific charset when converting.",
-        "title" : "Charset"
-      }, {
-        "name" : "description",
-        "type" : "string",
-        "description" : "The description for this node",
-        "title" : "Description"
-      }, {
-        "name" : "disabled",
-        "type" : "boolean",
-        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
-        "title" : "Disabled",
-        "default" : "false"
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id"
+        "required" : true,
+        "displayName" : "Type",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
       }, {
         "name" : "mandatory",
         "type" : "boolean",
         "description" : "Whether the conversion is mandatory. If mandatory and conversion is not possible, a NoTypeConversionAvailableException is thrown. Setting this to false means null may be returned if conversion is not possible.",
         "title" : "Mandatory",
-        "default" : "true"
+        "default" : "true",
+        "displayName" : "Mandatory",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "charset",
+        "type" : "string",
+        "description" : "To use a specific charset when converting.",
+        "title" : "Charset",
+        "displayName" : "Charset",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "advanced",
+        "label" : "advanced"
+      } ]
+    },
+    "convertHeaderTo" : {
+      "title" : "Convert Header To",
+      "description" : "Converts a message header value to a specified Java type using Camel's built-in type converters",
+      "label" : "eip,messaging,transformation",
+      "input" : true,
+      "isListItem" : true,
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "description",
+        "type" : "string",
+        "description" : "The description for this node",
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "disabled",
+        "type" : "boolean",
+        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+        "title" : "Disabled",
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "name",
         "type" : "string",
         "description" : "Name of message header to convert its value. The simple language can be used to define a dynamic evaluated header name.",
         "title" : "Name",
-        "required" : true
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "description" : "The note for this node",
-        "title" : "Note"
-      }, {
-        "name" : "toName",
-        "type" : "string",
-        "description" : "To use another header to store the result. By default, the result is stored in the same header.",
-        "title" : "To Name"
+        "required" : true,
+        "displayName" : "Name",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
       }, {
         "name" : "type",
         "type" : "string",
         "description" : "The java type to convert to.",
         "title" : "Type",
-        "required" : true
-      } ]
-    },
-    "convertVariable" : {
-      "title" : "Convert Variable To",
-      "description" : "Converts a variable value to a specified Java type using Camel's built-in type converters",
-      "isListItem" : true,
-      "children" : [ {
-        "name" : "charset",
-        "type" : "string",
-        "description" : "To use a specific charset when converting.",
-        "title" : "Charset"
+        "required" : true,
+        "displayName" : "Type",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
       }, {
-        "name" : "description",
+        "name" : "toName",
         "type" : "string",
-        "description" : "The description for this node",
-        "title" : "Description"
-      }, {
-        "name" : "disabled",
-        "type" : "boolean",
-        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
-        "title" : "Disabled",
-        "default" : "false"
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id"
+        "description" : "To use another header to store the result. By default, the result is stored in the same header.",
+        "title" : "To Name",
+        "displayName" : "To Name",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "common"
       }, {
         "name" : "mandatory",
         "type" : "boolean",
         "description" : "Whether the conversion is mandatory. If mandatory and conversion is not possible, a NoTypeConversionAvailableException is thrown. Setting this to false means null may be returned if conversion is not possible.",
         "title" : "Mandatory",
-        "default" : "true"
+        "default" : "true",
+        "displayName" : "Mandatory",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "charset",
+        "type" : "string",
+        "description" : "To use a specific charset when converting.",
+        "title" : "Charset",
+        "displayName" : "Charset",
+        "kind" : "attribute",
+        "index" : 8,
+        "group" : "advanced",
+        "label" : "advanced"
+      } ]
+    },
+    "convertVariableTo" : {
+      "title" : "Convert Variable To",
+      "description" : "Converts a variable value to a specified Java type using Camel's built-in type converters",
+      "label" : "eip,messaging,transformation",
+      "input" : true,
+      "isListItem" : true,
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "description",
+        "type" : "string",
+        "description" : "The description for this node",
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "disabled",
+        "type" : "boolean",
+        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+        "title" : "Disabled",
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "name",
         "type" : "string",
         "description" : "Name of variable to convert its value. The simple language can be used to define a dynamic evaluated variable name.",
         "title" : "Name",
-        "required" : true
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "description" : "The note for this node",
-        "title" : "Note"
-      }, {
-        "name" : "toName",
-        "type" : "string",
-        "description" : "To use another variable to store the result. By default, the result is stored in the same variable.",
-        "title" : "To Name"
+        "required" : true,
+        "displayName" : "Name",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
       }, {
         "name" : "type",
         "type" : "string",
         "description" : "The java type to convert to.",
         "title" : "Type",
-        "required" : true
+        "required" : true,
+        "displayName" : "Type",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
+      }, {
+        "name" : "toName",
+        "type" : "string",
+        "description" : "To use another variable to store the result. By default, the result is stored in the same variable.",
+        "title" : "To Name",
+        "displayName" : "To Name",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "common"
+      }, {
+        "name" : "mandatory",
+        "type" : "boolean",
+        "description" : "Whether the conversion is mandatory. If mandatory and conversion is not possible, a NoTypeConversionAvailableException is thrown. Setting this to false means null may be returned if conversion is not possible.",
+        "title" : "Mandatory",
+        "default" : "true",
+        "displayName" : "Mandatory",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "charset",
+        "type" : "string",
+        "description" : "To use a specific charset when converting.",
+        "title" : "Charset",
+        "displayName" : "Charset",
+        "kind" : "attribute",
+        "index" : 8,
+        "group" : "advanced",
+        "label" : "advanced"
       } ]
     },
     "dataFormat" : {
@@ -2366,54 +2685,11 @@
         "label" : "advanced,security"
       } ]
     },
-    "errorHandler" : {
-      "title" : "Error Handler",
-      "description" : "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered",
-      "label" : "configuration,error,errorhandling",
-      "children" : [ {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id",
-        "displayName" : "Id",
-        "kind" : "attribute",
-        "index" : 0,
-        "group" : "common"
-      }, {
-        "name" : "deadLetterChannel",
-        "type" : "object",
-        "ref" : "deadLetterChannel"
-      }, {
-        "name" : "defaultErrorHandler",
-        "type" : "object",
-        "ref" : "defaultErrorHandler"
-      }, {
-        "name" : "jtaTransactionErrorHandler",
-        "type" : "object",
-        "ref" : "jtaTransactionErrorHandler"
-      }, {
-        "name" : "noErrorHandler",
-        "type" : "object",
-        "ref" : "noErrorHandler"
-      }, {
-        "name" : "refErrorHandler",
-        "type" : "object",
-        "ref" : "refErrorHandler"
-      }, {
-        "name" : "springTransactionErrorHandler",
-        "type" : "object",
-        "ref" : "springTransactionErrorHandler"
-      } ]
-    },
     "expressionSubElement" : {
       "children" : [ {
         "name" : "constant",
         "type" : "object",
         "ref" : "constant"
-      }, {
-        "name" : "csimple",
-        "type" : "object",
-        "ref" : "cSimple"
       }, {
         "name" : "datasonnet",
         "type" : "object",
@@ -2442,10 +2718,6 @@
         "name" : "java",
         "type" : "object",
         "ref" : "java"
-      }, {
-        "name" : "joor",
-        "type" : "object",
-        "ref" : "joor"
       }, {
         "name" : "jq",
         "type" : "object",
@@ -2478,6 +2750,14 @@
         "name" : "python",
         "type" : "object",
         "ref" : "python"
+      }, {
+        "name" : "python3",
+        "type" : "object",
+        "ref" : "python3"
+      }, {
+        "name" : "quickjs",
+        "type" : "object",
+        "ref" : "quickjs"
       }, {
         "name" : "ref",
         "type" : "object",
@@ -2716,45 +2996,18 @@
         "ref" : "steps"
       } ]
     },
-    "finally" : {
+    "doFinally" : {
       "title" : "Do Finally",
       "description" : "Defines steps to always execute after a doTry block completes, regardless of whether an exception was thrown or caught",
+      "label" : "error,errorhandling",
+      "input" : true,
+      "output" : true,
       "isListItem" : true,
       "children" : [ {
-        "name" : "description",
-        "type" : "string",
-        "description" : "The description for this node",
-        "title" : "Description"
-      }, {
-        "name" : "disabled",
-        "type" : "boolean",
-        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
-        "title" : "Disabled",
-        "default" : "false"
-      }, {
         "name" : "id",
         "type" : "string",
         "description" : "The id of this node",
-        "title" : "Id"
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "description" : "The note for this node",
-        "title" : "Note"
-      }, {
-        "name" : "steps",
-        "type" : "array",
-        "ref" : "steps"
-      } ]
-    },
-    "from" : {
-      "title" : "From",
-      "description" : "Defines the consumer endpoint that acts as the input source for a route",
-      "label" : "eip,endpoint,routing",
-      "aliases" : [ "source", "ingress" ],
-      "children" : [ {
-        "name" : "id",
-        "type" : "string",
+        "title" : "Id",
         "displayName" : "Id",
         "kind" : "attribute",
         "index" : 0,
@@ -2762,6 +3015,8 @@
       }, {
         "name" : "note",
         "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
         "displayName" : "Note",
         "kind" : "attribute",
         "index" : 1,
@@ -2769,33 +3024,27 @@
       }, {
         "name" : "description",
         "type" : "string",
+        "description" : "The description for this node",
+        "title" : "Description",
         "displayName" : "Description",
         "kind" : "attribute",
         "index" : 2,
         "group" : "common"
       }, {
-        "name" : "uri",
-        "type" : "string",
-        "required" : true,
-        "displayName" : "Uri",
+        "name" : "disabled",
+        "type" : "boolean",
+        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+        "title" : "Disabled",
+        "default" : "false",
+        "displayName" : "Disabled",
         "kind" : "attribute",
         "index" : 3,
-        "group" : "common"
-      }, {
-        "name" : "variableReceive",
-        "type" : "string",
-        "displayName" : "Variable Receive",
-        "kind" : "attribute",
-        "index" : 4,
-        "group" : "common"
-      }, {
-        "name" : "parameters",
-        "type" : "object"
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "steps",
         "type" : "array",
-        "ref" : "steps",
-        "required" : true
+        "ref" : "steps"
       } ]
     },
     "globalOption" : {
@@ -3789,6 +4038,14 @@
         "name" : "thrift",
         "type" : "object",
         "ref" : "thrift"
+      }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon"
+      }, {
+        "name" : "ubl",
+        "type" : "object",
+        "ref" : "ubl"
       }, {
         "name" : "univocityCsv",
         "type" : "object",
@@ -5128,11 +5385,11 @@
         "ref" : "expression",
         "description" : "The property value as an expression.",
         "title" : "Expression",
-        "required" : true,
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 1,
-        "group" : "common"
+        "group" : "common",
+        "required" : true
       } ]
     },
     "recipientList" : {
@@ -5981,11 +6238,11 @@
         "ref" : "expression",
         "description" : "Expression to use for re-ordering the messages, such as a header with a sequence number.",
         "title" : "Expression",
-        "required" : true,
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 4,
-        "group" : "common"
+        "group" : "common",
+        "required" : true
       }, {
         "name" : "batchConfig",
         "type" : "object",
@@ -6641,14 +6898,16 @@
         "displayName" : "Group",
         "kind" : "attribute",
         "index" : 3,
-        "group" : "common"
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "nodePrefixId",
         "type" : "string",
         "displayName" : "Node Prefix Id",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common"
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "routeConfigurationId",
         "type" : "string",
@@ -6694,7 +6953,8 @@
         "displayName" : "Message History",
         "kind" : "attribute",
         "index" : 10,
-        "group" : "common",
+        "group" : "advanced",
+        "label" : "advanced",
         "default" : "false"
       }, {
         "name" : "logMask",
@@ -6702,8 +6962,18 @@
         "displayName" : "Log Mask",
         "kind" : "attribute",
         "index" : 11,
-        "group" : "common",
+        "group" : "advanced",
+        "label" : "advanced",
         "default" : "false"
+      }, {
+        "name" : "delayer",
+        "type" : "string",
+        "description" : "Whether to slow down processing messages by a given delay in msec.",
+        "displayName" : "Delayer",
+        "kind" : "attribute",
+        "index" : 12,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "errorHandlerRef",
         "type" : "string",
@@ -7083,42 +7353,70 @@
         "ref" : "steps"
       } ]
     },
-    "sampling" : {
+    "sample" : {
       "title" : "Sample",
       "description" : "Samples a subset of messages passing through the route, either by frequency count or time interval, and discards the rest",
+      "label" : "eip,flowcontrol,routing",
+      "aliases" : [ "sample" ],
+      "input" : true,
       "isListItem" : true,
       "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
         "name" : "description",
         "type" : "string",
         "description" : "The description for this node",
-        "title" : "Description"
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
       }, {
         "name" : "disabled",
         "type" : "boolean",
         "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
         "title" : "Disabled",
-        "default" : "false"
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id"
-      }, {
-        "name" : "messageFrequency",
-        "type" : "number",
-        "description" : "The frequency of samples as a message count, using a message-frequency approach. For example, a value of 5 means every 5th message is sampled.",
-        "title" : "Message Frequency"
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "description" : "The note for this node",
-        "title" : "Note"
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "samplePeriod",
         "type" : "string",
         "description" : "The period between samples, using a time-based approach. Default is 1 second.",
         "title" : "Sample Period",
-        "default" : "1000"
+        "default" : "1000",
+        "displayName" : "Sample Period",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
+      }, {
+        "name" : "messageFrequency",
+        "type" : "number",
+        "description" : "The frequency of samples as a message count, using a message-frequency approach. For example, a value of 5 means every 5th message is sampled.",
+        "title" : "Message Frequency",
+        "displayName" : "Message Frequency",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
       } ]
     },
     "script" : {
@@ -7661,8 +7959,7 @@
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       }, {
         "name" : "comparator",
         "type" : "string",
@@ -8656,84 +8953,146 @@
         "type" : "object"
       } ]
     },
-    "toDynamic" : {
+    "toD" : {
       "title" : "To D",
       "description" : "Sends the message to an endpoint URI computed dynamically from an expression, allowing the destination to vary per message",
+      "label" : "eip,endpoint,routing",
+      "aliases" : [ "sink", "egress" ],
+      "input" : true,
       "isListItem" : true,
       "children" : [ {
-        "name" : "allowOptimisedComponents",
-        "type" : "boolean",
-        "description" : "Whether to allow components to optimise toD if they are SendDynamicAware.",
-        "title" : "Allow Optimised Components",
-        "default" : "true"
-      }, {
-        "name" : "allowedSchemes",
+        "name" : "id",
         "type" : "string",
-        "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.",
-        "title" : "Allowed Schemes"
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
       }, {
-        "name" : "autoStartComponents",
-        "type" : "boolean",
-        "description" : "Whether to auto startup components when toD is starting up.",
-        "title" : "Auto Start Components",
-        "default" : "true"
-      }, {
-        "name" : "cacheSize",
-        "type" : "number",
-        "description" : "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.",
-        "title" : "Cache Size"
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
       }, {
         "name" : "description",
         "type" : "string",
         "description" : "The description for this node",
-        "title" : "Description"
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
       }, {
         "name" : "disabled",
         "type" : "boolean",
         "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
         "title" : "Disabled",
-        "default" : "false"
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id"
-      }, {
-        "name" : "ignoreInvalidEndpoint",
-        "type" : "boolean",
-        "description" : "Whether to ignore invalid endpoint URIs and skip sending the message.",
-        "title" : "Ignore Invalid Endpoint",
-        "default" : "false"
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "description" : "The note for this node",
-        "title" : "Note"
-      }, {
-        "name" : "parameters",
-        "type" : "object"
-      }, {
-        "name" : "pattern",
-        "type" : "enum",
-        "enum" : [ "InOnly", "InOut" ],
-        "description" : "Sets the optional ExchangePattern used to invoke this endpoint.",
-        "title" : "Pattern"
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "uri",
         "type" : "string",
         "description" : "The uri of the endpoint to send to. The uri can be dynamic computed using the simple language.",
         "title" : "Uri",
-        "required" : true
-      }, {
-        "name" : "variableReceive",
-        "type" : "string",
-        "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.",
-        "title" : "Variable Receive"
+        "required" : true,
+        "displayName" : "Uri",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
       }, {
         "name" : "variableSend",
         "type" : "string",
         "description" : "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.",
-        "title" : "Variable Send"
+        "title" : "Variable Send",
+        "displayName" : "Variable Send",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
+      }, {
+        "name" : "variableReceive",
+        "type" : "string",
+        "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.",
+        "title" : "Variable Receive",
+        "displayName" : "Variable Receive",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "common"
+      }, {
+        "name" : "pattern",
+        "type" : "enum",
+        "enum" : [ "InOnly", "InOut" ],
+        "description" : "Sets the optional ExchangePattern used to invoke this endpoint.",
+        "title" : "Pattern",
+        "displayName" : "Pattern",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "cacheSize",
+        "type" : "number",
+        "description" : "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.",
+        "title" : "Cache Size",
+        "displayName" : "Cache Size",
+        "kind" : "attribute",
+        "index" : 8,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "ignoreInvalidEndpoint",
+        "type" : "boolean",
+        "description" : "Whether to ignore invalid endpoint URIs and skip sending the message.",
+        "title" : "Ignore Invalid Endpoint",
+        "default" : "false",
+        "displayName" : "Ignore Invalid Endpoint",
+        "kind" : "attribute",
+        "index" : 9,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "allowOptimisedComponents",
+        "type" : "boolean",
+        "description" : "Whether to allow components to optimise toD if they are SendDynamicAware.",
+        "title" : "Allow Optimised Components",
+        "default" : "true",
+        "displayName" : "Allow Optimised Components",
+        "kind" : "attribute",
+        "index" : 10,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "autoStartComponents",
+        "type" : "boolean",
+        "description" : "Whether to auto startup components when toD is starting up.",
+        "title" : "Auto Start Components",
+        "default" : "true",
+        "displayName" : "Auto Start Components",
+        "kind" : "attribute",
+        "index" : 11,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "allowedSchemes",
+        "type" : "string",
+        "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.",
+        "title" : "Allowed Schemes",
+        "displayName" : "Allowed Schemes",
+        "kind" : "attribute",
+        "index" : 12,
+        "group" : "security",
+        "label" : "advanced,security"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
       } ]
     },
     "tokenizer" : {
@@ -8990,43 +9349,71 @@
         "required" : true
       } ]
     },
-    "try" : {
+    "doTry" : {
       "title" : "Do Try",
       "description" : "Wraps route steps in a try-catch-finally block for fine-grained exception handling within the route",
+      "label" : "eip,error,errorhandling,routing",
+      "input" : true,
+      "output" : true,
       "isListItem" : true,
       "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
         "name" : "description",
         "type" : "string",
         "description" : "The description for this node",
-        "title" : "Description"
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
       }, {
         "name" : "disabled",
         "type" : "boolean",
         "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
         "title" : "Disabled",
-        "default" : "false"
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "doCatch",
         "type" : "array",
-        "ref" : "catch",
+        "ref" : "doCatch",
         "description" : "Catches exceptions as part of a try, catch, finally block",
-        "title" : "Do Catch"
+        "title" : "Do Catch",
+        "displayName" : "Do Catch",
+        "kind" : "element",
+        "index" : 5,
+        "group" : "common"
       }, {
         "name" : "doFinally",
         "type" : "object",
-        "ref" : "finally",
+        "ref" : "doFinally",
         "description" : "Path traversed when a try, catch, finally block exits",
-        "title" : "Do Finally"
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node",
-        "title" : "Id"
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "description" : "The note for this node",
-        "title" : "Note"
+        "title" : "Do Finally",
+        "displayName" : "Do Finally",
+        "kind" : "element",
+        "index" : 6,
+        "group" : "common"
       }, {
         "name" : "steps",
         "type" : "array",
@@ -9110,243 +9497,203 @@
       }, {
         "name" : "asn1",
         "type" : "object",
-        "ref" : "aSN1",
-        "required" : true
+        "ref" : "aSN1"
       }, {
         "name" : "avro",
         "type" : "object",
-        "ref" : "avro",
-        "required" : true
+        "ref" : "avro"
       }, {
         "name" : "barcode",
         "type" : "object",
-        "ref" : "barcode",
-        "required" : true
+        "ref" : "barcode"
       }, {
         "name" : "base64",
         "type" : "object",
-        "ref" : "base64",
-        "required" : true
+        "ref" : "base64"
       }, {
         "name" : "beanio",
         "type" : "object",
-        "ref" : "beanio",
-        "required" : true
+        "ref" : "beanio"
       }, {
         "name" : "bindy",
         "type" : "object",
-        "ref" : "bindy",
-        "required" : true
+        "ref" : "bindy"
       }, {
         "name" : "cbor",
         "type" : "object",
-        "ref" : "cBOR",
-        "required" : true
+        "ref" : "cBOR"
       }, {
         "name" : "crypto",
         "type" : "object",
-        "ref" : "crypto",
-        "required" : true
+        "ref" : "crypto"
       }, {
         "name" : "csv",
         "type" : "object",
-        "ref" : "csv",
-        "required" : true
+        "ref" : "csv"
       }, {
         "name" : "custom",
         "type" : "object",
-        "ref" : "custom",
-        "required" : true
+        "ref" : "custom"
       }, {
         "name" : "dfdl",
         "type" : "object",
-        "ref" : "dfdl",
-        "required" : true
+        "ref" : "dfdl"
       }, {
         "name" : "fhirJson",
         "type" : "object",
-        "ref" : "fhirJson",
-        "required" : true
+        "ref" : "fhirJson"
       }, {
         "name" : "fhirXml",
         "type" : "object",
-        "ref" : "fhirXml",
-        "required" : true
+        "ref" : "fhirXml"
       }, {
         "name" : "flatpack",
         "type" : "object",
-        "ref" : "flatpack",
-        "required" : true
+        "ref" : "flatpack"
       }, {
         "name" : "fory",
         "type" : "object",
-        "ref" : "fory",
-        "required" : true
+        "ref" : "fory"
       }, {
         "name" : "grok",
         "type" : "object",
-        "ref" : "grok",
-        "required" : true
+        "ref" : "grok"
       }, {
         "name" : "groovyJson",
         "type" : "object",
-        "ref" : "groovyJSon",
-        "required" : true
+        "ref" : "groovyJSon"
       }, {
         "name" : "groovyXml",
         "type" : "object",
-        "ref" : "groovyXml",
-        "required" : true
+        "ref" : "groovyXml"
       }, {
         "name" : "gzipDeflater",
         "type" : "object",
-        "ref" : "gzipDeflater",
-        "required" : true
+        "ref" : "gzipDeflater"
       }, {
         "name" : "hl7",
         "type" : "object",
-        "ref" : "hL7",
-        "required" : true
+        "ref" : "hL7"
       }, {
         "name" : "ical",
         "type" : "object",
-        "ref" : "ical",
-        "required" : true
+        "ref" : "ical"
       }, {
         "name" : "iso8583",
         "type" : "object",
-        "ref" : "iso8583",
-        "required" : true
+        "ref" : "iso8583"
       }, {
         "name" : "jacksonXml",
         "type" : "object",
-        "ref" : "jacksonXML",
-        "required" : true
+        "ref" : "jacksonXML"
       }, {
         "name" : "jaxb",
         "type" : "object",
-        "ref" : "jaxb",
-        "required" : true
+        "ref" : "jaxb"
       }, {
         "name" : "json",
         "type" : "object",
-        "ref" : "json",
-        "required" : true
+        "ref" : "json"
       }, {
         "name" : "jsonApi",
         "type" : "object",
-        "ref" : "jsonApi",
-        "required" : true
+        "ref" : "jsonApi"
       }, {
         "name" : "lzf",
         "type" : "object",
-        "ref" : "lZF",
-        "required" : true
+        "ref" : "lZF"
       }, {
         "name" : "mimeMultipart",
         "type" : "object",
-        "ref" : "mimeMultipart",
-        "required" : true
+        "ref" : "mimeMultipart"
       }, {
         "name" : "ocsf",
         "type" : "object",
-        "ref" : "ocsf",
-        "required" : true
+        "ref" : "ocsf"
       }, {
         "name" : "parquetAvro",
         "type" : "object",
-        "ref" : "parquetAvro",
-        "required" : true
+        "ref" : "parquetAvro"
       }, {
         "name" : "pgp",
         "type" : "object",
-        "ref" : "pGP",
-        "required" : true
+        "ref" : "pGP"
       }, {
         "name" : "pqc",
         "type" : "object",
-        "ref" : "pQC",
-        "required" : true
+        "ref" : "pQC"
       }, {
         "name" : "protobuf",
         "type" : "object",
-        "ref" : "protobuf",
-        "required" : true
+        "ref" : "protobuf"
       }, {
         "name" : "rss",
         "type" : "object",
-        "ref" : "rss",
-        "required" : true
+        "ref" : "rss"
       }, {
         "name" : "smooks",
         "type" : "object",
-        "ref" : "smooks",
-        "required" : true
+        "ref" : "smooks"
       }, {
         "name" : "soap",
         "type" : "object",
-        "ref" : "soap",
-        "required" : true
+        "ref" : "soap"
       }, {
         "name" : "swiftMt",
         "type" : "object",
-        "ref" : "swiftMt",
-        "required" : true
+        "ref" : "swiftMt"
       }, {
         "name" : "swiftMx",
         "type" : "object",
-        "ref" : "swiftMx",
-        "required" : true
+        "ref" : "swiftMx"
       }, {
         "name" : "syslog",
         "type" : "object",
-        "ref" : "syslog",
-        "required" : true
+        "ref" : "syslog"
       }, {
         "name" : "tarFile",
         "type" : "object",
-        "ref" : "tarFile",
-        "required" : true
+        "ref" : "tarFile"
       }, {
         "name" : "thrift",
         "type" : "object",
-        "ref" : "thrift",
-        "required" : true
+        "ref" : "thrift"
+      }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon"
+      }, {
+        "name" : "ubl",
+        "type" : "object",
+        "ref" : "ubl"
       }, {
         "name" : "univocityCsv",
         "type" : "object",
-        "ref" : "uniVocityCsv",
-        "required" : true
+        "ref" : "uniVocityCsv"
       }, {
         "name" : "univocityFixed",
         "type" : "object",
-        "ref" : "uniVocityFixed",
-        "required" : true
+        "ref" : "uniVocityFixed"
       }, {
         "name" : "univocityTsv",
         "type" : "object",
-        "ref" : "uniVocityTsv",
-        "required" : true
+        "ref" : "uniVocityTsv"
       }, {
         "name" : "xmlSecurity",
         "type" : "object",
-        "ref" : "xMLSecurity",
-        "required" : true
+        "ref" : "xMLSecurity"
       }, {
         "name" : "yaml",
         "type" : "object",
-        "ref" : "yAML",
-        "required" : true
+        "ref" : "yAML"
       }, {
         "name" : "zipDeflater",
         "type" : "object",
-        "ref" : "zipDeflater",
-        "required" : true
+        "ref" : "zipDeflater"
       }, {
         "name" : "zipFile",
         "type" : "object",
-        "ref" : "zipFile",
-        "required" : true
+        "ref" : "zipFile"
       } ]
     },
     "validate" : {
@@ -9710,7 +10057,7 @@
         "type" : "string"
       } ]
     },
-    "sSLContextParameters" : {
+    "sslContextParameters" : {
       "isListItem" : true,
       "children" : [ {
         "name" : "certAlias",
@@ -10101,6 +10448,16 @@
         "index" : 20,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "serializablePackages",
+        "type" : "string",
+        "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.",
+        "title" : "Serializable Packages",
+        "displayName" : "Serializable Packages",
+        "kind" : "attribute",
+        "index" : 21,
+        "group" : "security",
+        "label" : "security"
       } ]
     },
     "barcode" : {
@@ -10868,204 +11225,6 @@
         "kind" : "attribute",
         "index" : 1,
         "group" : "common"
-      } ]
-    },
-    "dataFormats" : {
-      "title" : "Data formats",
-      "description" : "Container for defining data format configurations",
-      "label" : "dataformat,transformation",
-      "children" : [ {
-        "name" : "asn1",
-        "type" : "object",
-        "ref" : "aSN1"
-      }, {
-        "name" : "avro",
-        "type" : "object",
-        "ref" : "avro"
-      }, {
-        "name" : "barcode",
-        "type" : "object",
-        "ref" : "barcode"
-      }, {
-        "name" : "base64",
-        "type" : "object",
-        "ref" : "base64"
-      }, {
-        "name" : "beanio",
-        "type" : "object",
-        "ref" : "beanio"
-      }, {
-        "name" : "bindy",
-        "type" : "object",
-        "ref" : "bindy"
-      }, {
-        "name" : "cbor",
-        "type" : "object",
-        "ref" : "cBOR"
-      }, {
-        "name" : "crypto",
-        "type" : "object",
-        "ref" : "crypto"
-      }, {
-        "name" : "csv",
-        "type" : "object",
-        "ref" : "csv"
-      }, {
-        "name" : "custom",
-        "type" : "object",
-        "ref" : "custom"
-      }, {
-        "name" : "dfdl",
-        "type" : "object",
-        "ref" : "dfdl"
-      }, {
-        "name" : "fhirJson",
-        "type" : "object",
-        "ref" : "fhirJson"
-      }, {
-        "name" : "fhirXml",
-        "type" : "object",
-        "ref" : "fhirXml"
-      }, {
-        "name" : "flatpack",
-        "type" : "object",
-        "ref" : "flatpack"
-      }, {
-        "name" : "fory",
-        "type" : "object",
-        "ref" : "fory"
-      }, {
-        "name" : "grok",
-        "type" : "object",
-        "ref" : "grok"
-      }, {
-        "name" : "groovyJson",
-        "type" : "object",
-        "ref" : "groovyJSon"
-      }, {
-        "name" : "groovyXml",
-        "type" : "object",
-        "ref" : "groovyXml"
-      }, {
-        "name" : "gzipDeflater",
-        "type" : "object",
-        "ref" : "gzipDeflater"
-      }, {
-        "name" : "hl7",
-        "type" : "object",
-        "ref" : "hL7"
-      }, {
-        "name" : "ical",
-        "type" : "object",
-        "ref" : "ical"
-      }, {
-        "name" : "iso8583",
-        "type" : "object",
-        "ref" : "iso8583"
-      }, {
-        "name" : "jacksonXml",
-        "type" : "object",
-        "ref" : "jacksonXML"
-      }, {
-        "name" : "jaxb",
-        "type" : "object",
-        "ref" : "jaxb"
-      }, {
-        "name" : "json",
-        "type" : "object",
-        "ref" : "json"
-      }, {
-        "name" : "jsonApi",
-        "type" : "object",
-        "ref" : "jsonApi"
-      }, {
-        "name" : "lzf",
-        "type" : "object",
-        "ref" : "lZF"
-      }, {
-        "name" : "mimeMultipart",
-        "type" : "object",
-        "ref" : "mimeMultipart"
-      }, {
-        "name" : "ocsf",
-        "type" : "object",
-        "ref" : "ocsf"
-      }, {
-        "name" : "parquetAvro",
-        "type" : "object",
-        "ref" : "parquetAvro"
-      }, {
-        "name" : "pgp",
-        "type" : "object",
-        "ref" : "pGP"
-      }, {
-        "name" : "pqc",
-        "type" : "object",
-        "ref" : "pQC"
-      }, {
-        "name" : "protobuf",
-        "type" : "object",
-        "ref" : "protobuf"
-      }, {
-        "name" : "rss",
-        "type" : "object",
-        "ref" : "rss"
-      }, {
-        "name" : "smooks",
-        "type" : "object",
-        "ref" : "smooks"
-      }, {
-        "name" : "soap",
-        "type" : "object",
-        "ref" : "soap"
-      }, {
-        "name" : "swiftMt",
-        "type" : "object",
-        "ref" : "swiftMt"
-      }, {
-        "name" : "swiftMx",
-        "type" : "object",
-        "ref" : "swiftMx"
-      }, {
-        "name" : "syslog",
-        "type" : "object",
-        "ref" : "syslog"
-      }, {
-        "name" : "tarFile",
-        "type" : "object",
-        "ref" : "tarFile"
-      }, {
-        "name" : "thrift",
-        "type" : "object",
-        "ref" : "thrift"
-      }, {
-        "name" : "univocityCsv",
-        "type" : "object",
-        "ref" : "uniVocityCsv"
-      }, {
-        "name" : "univocityFixed",
-        "type" : "object",
-        "ref" : "uniVocityFixed"
-      }, {
-        "name" : "univocityTsv",
-        "type" : "object",
-        "ref" : "uniVocityTsv"
-      }, {
-        "name" : "xmlSecurity",
-        "type" : "object",
-        "ref" : "xMLSecurity"
-      }, {
-        "name" : "yaml",
-        "type" : "object",
-        "ref" : "yAML"
-      }, {
-        "name" : "zipDeflater",
-        "type" : "object",
-        "ref" : "zipDeflater"
-      }, {
-        "name" : "zipFile",
-        "type" : "object",
-        "ref" : "zipFile"
       } ]
     },
     "dfdl" : {
@@ -12702,6 +12861,12 @@
         "description" : "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider.",
         "title" : "Provider"
       }, {
+        "name" : "requireIntegrityProtection",
+        "type" : "boolean",
+        "description" : "Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still emits the legacy packet.",
+        "title" : "Require Integrity Protection",
+        "default" : "true"
+      }, {
         "name" : "signatureKeyFileName",
         "type" : "string",
         "description" : "Filename of the keyring to use for signing (during encryption) or for signature verification (during decryption); must be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).",
@@ -13079,6 +13244,17 @@
         "kind" : "attribute",
         "index" : 1,
         "group" : "common"
+      }, {
+        "name" : "allowExternalEntities",
+        "type" : "boolean",
+        "description" : "Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and parameter entities) when parsing XML input. This is disabled by default so that external entities in the message body are not resolved; enable it only for trusted legacy configurations that rely on external entity resolution.",
+        "title" : "Allow External Entities",
+        "default" : "false",
+        "displayName" : "Allow External Entities",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "security",
+        "label" : "security"
       } ]
     },
     "soap" : {
@@ -13359,6 +13535,97 @@
         "displayName" : "Content Type Header",
         "kind" : "attribute",
         "index" : 3,
+        "group" : "common"
+      } ]
+    },
+    "toon" : {
+      "title" : "TOON",
+      "description" : "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+      "label" : "dataformat,transformation,json",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "indent",
+        "type" : "number",
+        "description" : "Number of spaces per indentation level.",
+        "title" : "Indent",
+        "default" : "2",
+        "displayName" : "Indent",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "delimiter",
+        "type" : "enum",
+        "enum" : [ "COMMA", "TAB", "PIPE" ],
+        "description" : "Delimiter used for tabular array rows and inline primitive arrays.",
+        "title" : "Delimiter",
+        "default" : "COMMA",
+        "displayName" : "Delimiter",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "lengthMarker",
+        "type" : "boolean",
+        "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
+        "title" : "Length Marker",
+        "default" : "false",
+        "displayName" : "Length Marker",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "common"
+      }, {
+        "name" : "strict",
+        "type" : "boolean",
+        "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+        "title" : "Strict",
+        "default" : "true",
+        "displayName" : "Strict",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
+      }, {
+        "name" : "contentTypeHeader",
+        "type" : "boolean",
+        "description" : "Whether the data format should set the Content-Type header to text/toon when marshalling.",
+        "title" : "Content Type Header",
+        "default" : "true",
+        "displayName" : "Content Type Header",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
+      } ]
+    },
+    "ubl" : {
+      "title" : "UBL",
+      "description" : "Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.",
+      "label" : "dataformat,transformation,xml",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "prettyPrint",
+        "type" : "boolean",
+        "description" : "Whether to enable pretty printing (formatted) output of the XML",
+        "title" : "Pretty Print",
+        "default" : "false",
+        "displayName" : "Pretty Print",
+        "kind" : "attribute",
+        "index" : 1,
         "group" : "common"
       } ]
     },
@@ -13766,7 +14033,7 @@
         "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ],
         "description" : "The cipher algorithm to be used for encryption/decryption of the XML message content.",
         "title" : "Xml Cipher Algorithm",
-        "default" : "AES-256-GCM"
+        "default" : "AES_256_GCM"
       } ]
     },
     "yAML" : {
@@ -14577,46 +14844,6 @@
         "label" : "advanced"
       } ]
     },
-    "cSimple" : {
-      "title" : "CSimple",
-      "description" : "Evaluate a compiled simple expression",
-      "deprecated" : true,
-      "children" : [ {
-        "name" : "expression",
-        "type" : "string",
-        "description" : "The expression value in your chosen language syntax.",
-        "title" : "Expression",
-        "required" : true
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node.",
-        "title" : "Id"
-      }, {
-        "name" : "pretty",
-        "type" : "boolean",
-        "description" : "To pretty format the output (only JSon or XML supported).",
-        "title" : "Pretty",
-        "default" : "false"
-      }, {
-        "name" : "resultType",
-        "type" : "string",
-        "description" : "The class of the result type (type from output).",
-        "title" : "Result Type"
-      }, {
-        "name" : "trim",
-        "type" : "boolean",
-        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-        "title" : "Trim",
-        "default" : "true"
-      }, {
-        "name" : "trimResult",
-        "type" : "boolean",
-        "description" : "Whether to trim the returned values when this language is in use.",
-        "title" : "Trim Result",
-        "default" : "false"
-      } ]
-    },
     "constant" : {
       "title" : "Constant",
       "description" : "A fixed value set only once during the route startup",
@@ -15022,74 +15249,6 @@
         "default" : "true"
       } ]
     },
-    "joor" : {
-      "title" : "jOOR",
-      "description" : "Evaluates a jOOR (Java compiled once at runtime) expression",
-      "deprecated" : true,
-      "label" : "language",
-      "children" : [ {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node.",
-        "title" : "Id",
-        "displayName" : "Id",
-        "kind" : "attribute",
-        "index" : 0,
-        "group" : "common"
-      }, {
-        "name" : "expression",
-        "type" : "string",
-        "description" : "The expression value in your chosen language syntax.",
-        "title" : "Expression",
-        "required" : true,
-        "displayName" : "Expression",
-        "kind" : "value",
-        "index" : 1,
-        "group" : "common"
-      }, {
-        "name" : "preCompile",
-        "type" : "boolean",
-        "description" : "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.",
-        "title" : "Pre Compile",
-        "default" : "true",
-        "displayName" : "Pre Compile",
-        "kind" : "attribute",
-        "index" : 2,
-        "group" : "advanced",
-        "label" : "advanced"
-      }, {
-        "name" : "singleQuotes",
-        "type" : "boolean",
-        "description" : "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.",
-        "title" : "Single Quotes",
-        "default" : "true",
-        "displayName" : "Single Quotes",
-        "kind" : "attribute",
-        "index" : 3,
-        "group" : "advanced",
-        "label" : "advanced"
-      }, {
-        "name" : "resultType",
-        "type" : "string",
-        "description" : "The class of the result type (type from output).",
-        "title" : "Result Type",
-        "displayName" : "Result Type",
-        "kind" : "attribute",
-        "index" : 4,
-        "group" : "common"
-      }, {
-        "name" : "trim",
-        "type" : "boolean",
-        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-        "title" : "Trim",
-        "default" : "true",
-        "displayName" : "Trim",
-        "kind" : "attribute",
-        "index" : 5,
-        "group" : "advanced",
-        "label" : "advanced"
-      } ]
-    },
     "jq" : {
       "title" : "JQ",
       "description" : "Evaluates a JQ expression against a JSON message body",
@@ -15398,10 +15557,100 @@
         "label" : "advanced"
       } ]
     },
+    "python3" : {
+      "title" : "Python 3",
+      "description" : "Evaluates a Python 3 expression",
+      "label" : "language,python",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node.",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "expression",
+        "type" : "string",
+        "description" : "The expression value in your chosen language syntax.",
+        "title" : "Expression",
+        "required" : true,
+        "displayName" : "Expression",
+        "kind" : "value",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "resultType",
+        "type" : "string",
+        "description" : "The class of the result type (type from output).",
+        "title" : "Result Type",
+        "displayName" : "Result Type",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "trim",
+        "type" : "boolean",
+        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+        "title" : "Trim",
+        "default" : "true",
+        "displayName" : "Trim",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
+      } ]
+    },
     "python" : {
       "title" : "Python",
       "description" : "Evaluates a Python expression",
       "label" : "language,python",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node.",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "expression",
+        "type" : "string",
+        "description" : "The expression value in your chosen language syntax.",
+        "title" : "Expression",
+        "required" : true,
+        "displayName" : "Expression",
+        "kind" : "value",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "resultType",
+        "type" : "string",
+        "description" : "The class of the result type (type from output).",
+        "title" : "Result Type",
+        "displayName" : "Result Type",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "trim",
+        "type" : "boolean",
+        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+        "title" : "Trim",
+        "default" : "true",
+        "displayName" : "Trim",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
+      } ]
+    },
+    "quickjs" : {
+      "title" : "QuickJS",
+      "description" : "Evaluates a JavaScript expression using QuickJS4J",
+      "label" : "language,javascript",
       "children" : [ {
         "name" : "id",
         "type" : "string",
@@ -15791,6 +16040,11 @@
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
       }, {
+        "name" : "namespacesRef",
+        "type" : "string",
+        "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
+        "title" : "Namespaces Ref"
+      }, {
         "name" : "resultType",
         "type" : "string",
         "description" : "The class of the result type (type from output).",
@@ -15844,6 +16098,11 @@
         "ref" : "property",
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
+      }, {
+        "name" : "namespacesRef",
+        "type" : "string",
+        "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
+        "title" : "Namespaces Ref"
       }, {
         "name" : "objectModel",
         "type" : "string",
@@ -15917,6 +16176,11 @@
         "ref" : "property",
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
+      }, {
+        "name" : "namespacesRef",
+        "type" : "string",
+        "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
+        "title" : "Namespaces Ref"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -16012,6 +16276,17 @@
         "kind" : "attribute",
         "index" : 4,
         "group" : "common"
+      }, {
+        "name" : "inheritErrorHandler",
+        "type" : "boolean",
+        "description" : "Whether to inherit the error handler. If turned off, the load balancer will fail over immediately on an error instead of waiting for Camel error handler to exhaust retries.",
+        "title" : "Inherit Error Handler",
+        "default" : "true",
+        "displayName" : "Inherit Error Handler",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "advanced",
+        "label" : "advanced"
       } ]
     },
     "randomLoadBalancer" : {
@@ -18325,7 +18600,7 @@
         "name" : "component",
         "type" : "enum",
         "enum" : [ "platform-http", "servlet", "jetty", "undertow", "netty-http", "coap" ],
-        "description" : "The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow.",
+        "description" : "The Camel Rest component to use for the REST transport (consumer), such as platform-http, netty-http, jetty, servlet, undertow.",
         "title" : "Component",
         "displayName" : "Component",
         "kind" : "attribute",
@@ -19553,6 +19828,14 @@
         "name" : "thrift",
         "type" : "object",
         "ref" : "thrift"
+      }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon"
+      }, {
+        "name" : "ubl",
+        "type" : "object",
+        "ref" : "ubl"
       }, {
         "name" : "univocityCsv",
         "type" : "object",

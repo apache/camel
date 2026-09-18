@@ -185,6 +185,7 @@ camel cmd route-topology myApp --external
 ----
 
 The `--external` flag includes external systems (Kafka, databases, etc.) as nodes in the graph.
+Routes created by Kamelets are hidden, as they are an implementation detail of the Kamelet; use `--kamelets` to include them.
 Both commands include live metrics by default — use `--metric=false` to disable.
 
 TIP: The xref:camel-jbang-tui.adoc[Camel TUI] shows route diagrams and topology interactively.
@@ -286,6 +287,23 @@ camel run hello.java --console
 
 The console is accessible at http://localhost:8080/q/dev and provides insights into routes,
 performance, and EIP-level metrics. The endpoints support both HTTP GET and POST.
+
+When running with xref:camel-jbang-running.adoc#_runtimes[another runtime], the console is served where
+that runtime puts it:
+
+[width="100%",cols="2,4,4",options="header"]
+|===
+| Runtime | `--console` | `--console --observe`
+| jbang, Camel Main | `http://localhost:8080/q/dev` | `http://localhost:9876/q/dev` (on the management port)
+| Spring Boot | `http://localhost:8080/actuator/camel` (the `camel` actuator endpoint) | `http://localhost:9876/observe/camel`
+| Quarkus | `http://localhost:8080/q/camel/dev-console` | `http://localhost:8080/q/camel/dev-console`
+|===
+
+The console has no authentication, so it is meant for development only. `camel export --console` therefore
+includes the console dependency in the exported project, but only enables it in `application-dev.properties`,
+so the console is there when the project runs with the dev profile (`camel.main.profile=dev` with Camel Main,
+`spring.profiles.active=dev` with Spring Boot, and `quarkus:dev` with Quarkus) and not in a production build.
+With `camel export --profile=dev` the dev profile is flattened into `application.properties`, and so is the console.
 
 GET with query parameters:
 
@@ -622,9 +640,14 @@ View the state of xref:components:eips:circuitBreaker-eip.adoc[Circuit Breakers]
 [source,bash]
 ----
 camel get circuit-breaker
-  PID   NAME  COMPONENT     ROUTE   ID               STATE      PENDING  SUCCESS  FAIL  REJECT
- 56033  mycb  resilience4j  route1  circuitBreaker1  HALF_OPEN        5        2     3       0
+  PID   NAME  COMPONENT     ROUTE   ID               STATE      PENDING  SUCCESS  FAIL  REJECT  FALLBACK  TIMEOUT
+ 56033  mycb  resilience4j  route1  circuitBreaker1  HALF_OPEN        5        2     3       0         3        1
 ----
+
+REJECT counts the calls the open breaker refused without calling the service, FALLBACK the calls
+the `onFallback` answered (failed, timed out and rejected calls alike), and TIMEOUT the calls that hit
+the configured timeout, which the breaker otherwise counts as plain failures. A BULKHEAD column with
+the calls rejected by a full bulkhead is shown when a bulkhead is configured.
 
 TIP: Use `camel get circuit-breaker --watch` for continuous updates.
 

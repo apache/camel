@@ -237,7 +237,7 @@ XML::
 ----
 <route precondition="'{{format}}' == 'xml'">
   <from uri="direct:in"/>
-  <unmarshal><jaxb/></unmarshal>
+  <unmarshal><jaxb contextPath="com.foo.model"/></unmarshal>
   <to uri="direct:out"/>
 </route>
 ----
@@ -252,7 +252,8 @@ YAML::
       uri: "direct:in"
       steps:
         - unmarshal:
-            jaxb: {}
+            jaxb:
+              contextPath: com.foo.model
         - to:
             uri: direct:out
 ----

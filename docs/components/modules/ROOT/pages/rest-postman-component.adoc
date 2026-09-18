@@ -1,0 +1,1 @@
+../../../../../components/camel-rest-postman/src/main/docs/rest-postman-component.adoc

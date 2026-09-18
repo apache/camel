@@ -29,8 +29,19 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.ResourceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SqlHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlHelper.class);
+
+    /**
+     * Shape accepted for a placeholder substitution: a dot-separated sequence of project, dataset and table parts, each
+     * starting with a letter or an underscore.
+     */
+    private static final Pattern IDENTIFIER_PATTERN
+            = Pattern.compile("[A-Za-z_][A-Za-z0-9_-]*(\\.[A-Za-z_][A-Za-z0-9_-]*)*");
 
     private static Pattern pattern = Pattern.compile("\\$\\{(\\w+)}");
     private static Pattern parameterPattern = Pattern.compile("@(\\w+)");
@@ -58,6 +69,10 @@ public final class SqlHelper {
     /**
      * Replaces pattern in query in form of "${param}" with values from message header Raises an error if param value
      * not found in headers
+     * <p>
+     * The value is spliced into the query text verbatim, so this form is meant for dataset and table identifiers. A
+     * substitution that does not have the shape of an identifier is reported at WARN level; use a query parameter in
+     * the form {@code @name} to pass values.
      *
      * @param  exchange
      * @return          Translated query text
@@ -78,11 +93,33 @@ public final class SqlHelper {
                 }
             }
 
+            if (!isValidIdentifier(value)) {
+                LOG.warn("Placeholder '{}' was substituted with a value that is not a valid BigQuery identifier."
+                         + " Placeholders in the form ${name} are spliced into the query text verbatim and are"
+                         + " intended for dataset and table names; use a query parameter in the form @name to pass"
+                         + " values.",
+                        paramKey);
+            }
+
             String replacement = Matcher.quoteReplacement(value);
             matcher.appendReplacement(stringBuffer, replacement);
         }
         matcher.appendTail(stringBuffer);
         return stringBuffer.toString();
+    }
+
+    /**
+     * Whether the given value has the shape of a BigQuery identifier: a dot-separated sequence of project, dataset and
+     * table parts, each starting with a letter or an underscore.
+     * <p>
+     * Values that do not match are spliced into the query text verbatim and can therefore alter its structure, so
+     * {@link #translateQuery(String, Exchange)} reports them.
+     *
+     * @param  value the substituted value
+     * @return       true if the value has the shape of a BigQuery identifier
+     */
+    static boolean isValidIdentifier(String value) {
+        return IDENTIFIER_PATTERN.matcher(value).matches();
     }
 
     /**

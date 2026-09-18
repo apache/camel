@@ -36,7 +36,7 @@ import org.apache.hello_world_soap_http.Greeter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -46,12 +46,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @CamelSpringTest
 @ContextConfiguration(locations = { "camel-context.xml" })
-@EnabledIf(value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
-           disabledReason = "This test uses a fixed port that may not be available on certain hosts")
 public class GreeterClientTest {
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     private static final URL WSDL_LOC;
     static {
         WSDL_LOC = GreeterClientTest.class.getClassLoader().getResource("wsdl/hello_world.wsdl");
+        System.setProperty("GreeterClientTest.port", port.toString());
     }
     private static final QName SERVICE_QNAME = new QName("http://apache.org/hello_world_soap_http", "SOAPService");
 
@@ -74,7 +76,10 @@ public class GreeterClientTest {
         WSS4JOutInterceptor wss4jOut = new WSS4JOutInterceptor(props);
 
         client.getOutInterceptors().add(wss4jOut);
-        ((BindingProvider) greeter).getRequestContext().put("password", password);
+        Map<String, Object> requestContext = ((BindingProvider) greeter).getRequestContext();
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                "http://localhost:" + port + "/SoapContext/SoapPort");
+        requestContext.put("password", password);
 
         return greeter.greetMe(message);
     }
@@ -118,21 +123,10 @@ public class GreeterClientTest {
             fail("should fail");
         } catch (Exception ex) {
             assertTrue(ex instanceof SOAPFaultException, "Get a wrong type exception.");
-            assertTrue(ex.getMessage().startsWith("Cannot access the processor which has been protected."),
-                    "Get a wrong exception message");
-            assertTrue(
-                    ex.getMessage().endsWith(
-                            "Caused by: [org.springframework.security.authorization.AuthorizationDeniedException - Access Denied]"),
-                    "Get a wrong exception message");
+            // CxfEndpoint's muteException consumer option defaults to true (CAMEL-24477): an undeclared
+            // route failure - such as this authorization denial - no longer leaks its message to the caller.
+            assertEquals("Exchange processing failed", ex.getMessage(), "Get a wrong exception message");
         }
     }
 
-    public static boolean isPortAvailable() {
-        try {
-            AvailablePortFinder.probePort(9000);
-            return true;
-        } catch (IllegalStateException e) {
-            return false;
-        }
-    }
 }

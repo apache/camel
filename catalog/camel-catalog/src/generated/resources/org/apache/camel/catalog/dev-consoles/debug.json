@@ -6,6 +6,7 @@
     "title": "Debug",
     "description": "Camel route debugger",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.DebugDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -83,6 +84,87 @@
       "autowired": false,
       "secret": false,
       "description": "The position to step to"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "version": {
+        "type": "string",
+        "description": "The Camel version (only present when a backlog debugger is available)"
+      },
+      "enabled": {
+        "type": "boolean",
+        "description": "Whether the debugger is enabled (only present when a backlog debugger is available)"
+      },
+      "standby": {
+        "type": "boolean",
+        "description": "Whether the debugger is in standby mode (only present when a backlog debugger is available)"
+      },
+      "suspendedMode": {
+        "type": "boolean",
+        "description": "Whether suspended mode is active (only present when a backlog debugger is available)"
+      },
+      "fallbackTimeout": {
+        "type": "integer",
+        "description": "Fallback timeout in seconds (only present when a backlog debugger is available)"
+      },
+      "loggingLevel": {
+        "type": "string",
+        "description": "The logging level (only present when a backlog debugger is available)"
+      },
+      "includeExchangeProperties": {
+        "type": "boolean",
+        "description": "Whether exchange properties are included (only present when a backlog debugger is available)"
+      },
+      "includeFiles": {
+        "type": "boolean",
+        "description": "Whether file-based message bodies are included (only present when a backlog debugger is available)"
+      },
+      "includeStreams": {
+        "type": "boolean",
+        "description": "Whether streaming message bodies are included (only present when a backlog debugger is available)"
+      },
+      "maxChars": {
+        "type": "integer",
+        "description": "Maximum size of the message body to include (only present when a backlog debugger is available)"
+      },
+      "debugCounter": {
+        "type": "integer",
+        "description": "Total number of times a breakpoint has been hit (only present when a backlog debugger is available)"
+      },
+      "singleStepMode": {
+        "type": "boolean",
+        "description": "Whether single-step mode is active (only present when a backlog debugger is available)"
+      },
+      "breakpoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "nodeId": {
+              "type": "string",
+              "description": "The breakpoint node ID"
+            },
+            "suspended": {
+              "type": "boolean",
+              "description": "Whether the breakpoint is currently suspended"
+            }
+          },
+          "required": [
+            "suspended"
+          ]
+        },
+        "description": "The configured breakpoints (only present when there are any)"
+      },
+      "suspended": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "description": "The suspended breakpoint messages, as opaque JSON objects enriched with source code and message history (only present when there are any)"
+      }
     }
   }
 }

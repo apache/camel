@@ -17,27 +17,18 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
-import com.networknt.schema.Error;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.EndpointValidationResult;
-import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -49,114 +40,14 @@ import org.apache.camel.xml.in.ModelParser;
 import org.apache.camel.yaml.out.YamlModelWriter;
 
 /**
- * MCP Tools for validating and transforming Camel routes using Quarkus MCP Server.
+ * MCP tool transforming Camel routes between DSL formats using Quarkus MCP Server. Validation is the shared
+ * {@code camel_validate_source} tool.
  */
 @McpSecured
 @ApplicationScoped
 public class TransformTools {
 
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("(?:public\\s+)?class\\s+(\\w+)");
-
-    @Inject
-    CatalogService catalogService;
-
-    private YamlValidator yamlValidator;
-
-    /**
-     * Tool to validate a Camel route or endpoint URI.
-     */
-    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Validate a Camel endpoint URI or route definition. " +
-                        "Checks syntax, required options, and valid parameter names.")
-    public ValidationResult camel_validate_route(
-            @ToolArg(description = "Camel endpoint URI to validate (e.g., 'kafka:myTopic?brokers=localhost:9092')") String uri,
-            @ToolArg(description = "YAML route definition to validate") String route,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
-
-        if (uri == null && route == null) {
-            throw new ToolCallException("Either 'uri' or 'route' is required", null);
-        }
-
-        try {
-            CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
-
-            ValidationResult result = new ValidationResult();
-
-            if (uri != null) {
-                result.uri = uri;
-                EndpointValidationResult validation = catalog.validateEndpointProperties(uri);
-                result.valid = validation.isSuccess();
-
-                if (!validation.isSuccess()) {
-                    ValidationErrors errors = new ValidationErrors();
-                    if (validation.getUnknown() != null && !validation.getUnknown().isEmpty()) {
-                        errors.unknownOptions = String.join(", ", validation.getUnknown());
-                    }
-                    if (validation.getRequired() != null && !validation.getRequired().isEmpty()) {
-                        errors.missingRequired = String.join(", ", validation.getRequired());
-                    }
-                    if (validation.getInvalidEnum() != null && !validation.getInvalidEnum().isEmpty()) {
-                        errors.invalidEnumValues = validation.getInvalidEnum().toString();
-                    }
-                    if (validation.getInvalidInteger() != null && !validation.getInvalidInteger().isEmpty()) {
-                        errors.invalidIntegers = validation.getInvalidInteger().toString();
-                    }
-                    if (validation.getInvalidBoolean() != null && !validation.getInvalidBoolean().isEmpty()) {
-                        errors.invalidBooleans = validation.getInvalidBoolean().toString();
-                    }
-                    if (validation.getSyntaxError() != null) {
-                        errors.syntaxError = validation.getSyntaxError();
-                    }
-                    result.errors = errors;
-
-                    if (validation.getUnknown() != null && validation.getUnknownSuggestions() != null) {
-                        Map<String, String> suggestions = new HashMap<>();
-                        for (String unknown : validation.getUnknown()) {
-                            String[] suggestionArr = validation.getUnknownSuggestions().get(unknown);
-                            if (suggestionArr != null && suggestionArr.length > 0) {
-                                suggestions.put(unknown, String.join(", ", suggestionArr));
-                            }
-                        }
-                        if (!suggestions.isEmpty()) {
-                            result.suggestions = suggestions;
-                        }
-                    }
-                }
-            }
-
-            if (route != null) {
-                result.routeProvided = true;
-                result.note = "Full route validation requires loading the route into a CamelContext. " +
-                              "Use 'camel run --validate' for complete validation.";
-
-                List<String> uris = extractUrisFromRoute(route, catalog);
-                if (!uris.isEmpty()) {
-                    Map<String, Boolean> uriValidations = new HashMap<>();
-                    boolean allValid = true;
-                    for (String extractedUri : uris) {
-                        EndpointValidationResult validation = catalog.validateEndpointProperties(extractedUri);
-                        uriValidations.put(extractedUri, validation.isSuccess());
-                        if (!validation.isSuccess()) {
-                            allValid = false;
-                        }
-                    }
-                    result.uriValidations = uriValidations;
-                    result.valid = allValid;
-                } else {
-                    result.valid = true;
-                }
-            }
-
-            return result;
-        } catch (ToolCallException e) {
-            throw e;
-        } catch (Throwable e) {
-            throw new ToolCallException(
-                    "Failed to validate route (" + e.getClass().getName() + "): " + e.getMessage(), null);
-        }
-    }
 
     /**
      * Tool to transform routes between DSL formats.
@@ -323,106 +214,7 @@ public class TransformTools {
         return m.find() ? m.group(1) : "Route";
     }
 
-    /**
-     * Tool to validate a YAML DSL route definition against the Camel YAML DSL JSON schema.
-     */
-    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Validate a YAML DSL route definition against the Camel YAML DSL JSON schema. "
-                        + "Checks for valid DSL elements, correct route structure, and returns detailed schema validation errors.")
-    public YamlDslValidationResult camel_validate_yaml_dsl(
-            @ToolArg(description = "YAML DSL route definition to validate") String route) {
-
-        if (route == null || route.isBlank()) {
-            throw new ToolCallException("'route' parameter is required", null);
-        }
-
-        try {
-            if (yamlValidator == null) {
-                yamlValidator = new YamlValidator();
-                yamlValidator.init();
-            }
-
-            File tempFile = File.createTempFile("camel-validate-", ".yaml");
-            try {
-                Files.writeString(tempFile.toPath(), route);
-                List<Error> errors = yamlValidator.validate(tempFile);
-
-                List<YamlDslError> errorDetails = null;
-                if (!errors.isEmpty()) {
-                    errorDetails = errors.stream()
-                            .map(e -> new YamlDslError(
-                                    e.getMessage(),
-                                    e.getInstanceLocation() != null ? e.getInstanceLocation().toString() : null,
-                                    e.getMessageKey(),
-                                    e.getSchemaLocation() != null ? e.getSchemaLocation().toString() : null))
-                            .toList();
-                }
-
-                return new YamlDslValidationResult(errors.isEmpty(), errors.size(), errorDetails);
-            } finally {
-                tempFile.delete();
-            }
-        } catch (Throwable e) {
-            throw new ToolCallException(
-                    "Failed to validate YAML DSL (" + e.getClass().getName() + "): " + e.getMessage(), null);
-        }
-    }
-
-    /**
-     * Extract endpoint URIs from a YAML route definition.
-     */
-    private List<String> extractUrisFromRoute(String route, CamelCatalog catalog) {
-        List<String> uris = new ArrayList<>();
-
-        String[] lines = route.split("\n");
-        for (String line : lines) {
-            line = line.trim();
-            if (line.contains(":") && !line.startsWith("#")) {
-                int colonPos = line.indexOf(":");
-                if (colonPos > 0 && colonPos < line.length() - 1) {
-                    String key = line.substring(0, colonPos).trim();
-                    String value = line.substring(colonPos + 1).trim();
-
-                    if (value.startsWith("\"") && value.endsWith("\"")) {
-                        value = value.substring(1, value.length() - 1);
-                    } else if (value.startsWith("'") && value.endsWith("'")) {
-                        value = value.substring(1, value.length() - 1);
-                    }
-
-                    if ((key.equals("uri") || key.equals("from") || key.equals("to"))
-                            && value.contains(":") && !value.startsWith("$")) {
-                        String scheme = value.split(":")[0];
-                        if (catalog.findComponentNames().contains(scheme)) {
-                            uris.add(value);
-                        }
-                    }
-                }
-            }
-        }
-
-        return uris;
-    }
-
-    // Result classes for Jackson serialization
-
-    public static class ValidationResult {
-        public String uri;
-        public boolean valid;
-        public boolean routeProvided;
-        public String note;
-        public ValidationErrors errors;
-        public Map<String, String> suggestions;
-        public Map<String, Boolean> uriValidations;
-    }
-
-    public static class ValidationErrors {
-        public String unknownOptions;
-        public String missingRequired;
-        public String invalidEnumValues;
-        public String invalidIntegers;
-        public String invalidBooleans;
-        public String syntaxError;
-    }
+    // Result class for Jackson serialization
 
     public static class TransformResult {
         public String fromFormat;
@@ -430,11 +222,5 @@ public class TransformTools {
         public String note;
         public boolean supported;
         public String result;
-    }
-
-    public record YamlDslValidationResult(boolean valid, int numberOfErrors, List<YamlDslError> errors) {
-    }
-
-    public record YamlDslError(String error, String instancePath, String type, String schemaPath) {
     }
 }

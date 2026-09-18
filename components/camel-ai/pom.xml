@@ -35,6 +35,9 @@
 
     <modules>
         <module>camel-a2a</module>
+        <module>camel-ai-observability-api</module>
+        <module>camel-ai-observability</module>
+        <module>camel-ai-resource</module>
         <module>camel-ai-tool</module>
         <module>camel-chatscript</module>
         <module>camel-djl</module>
@@ -48,8 +51,8 @@
         <module>camel-langchain4j-embeddings</module>
         <module>camel-langchain4j-embeddingstore-api</module>
         <module>camel-langchain4j-embeddingstore</module>
+        <module>camel-langchain4j-ingest</module>
         <module>camel-langchain4j-tokenizer</module>
-        <module>camel-langchain4j-tools</module>
         <module>camel-langchain4j-web-search</module>
         <module>camel-mcp-server-api</module>
         <module>camel-mcp-server</module>

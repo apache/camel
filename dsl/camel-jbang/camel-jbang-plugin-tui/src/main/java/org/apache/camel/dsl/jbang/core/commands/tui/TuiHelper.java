@@ -452,6 +452,27 @@ final class TuiHelper {
         spans.add(Span.raw(" " + label));
     }
 
+    /**
+     * Builds one line of key hints in the footer style, e.g. {@code hintLine("Enter", "confirm", "Esc", "cancel")}. Use
+     * this for hints drawn inside a dialog so they match the footer bar.
+     *
+     * @param keyLabelPairs alternating key and label, must have an even length
+     */
+    static Line hintLine(String... keyLabelPairs) {
+        if (keyLabelPairs.length % 2 != 0) {
+            throw new IllegalArgumentException("keyLabelPairs must be key/label pairs");
+        }
+        List<Span> spans = new ArrayList<>();
+        for (int i = 0; i < keyLabelPairs.length; i += 2) {
+            if (i + 2 < keyLabelPairs.length) {
+                hint(spans, keyLabelPairs[i], keyLabelPairs[i + 1]);
+            } else {
+                hintLast(spans, keyLabelPairs[i], keyLabelPairs[i + 1]);
+            }
+        }
+        return Line.from(spans);
+    }
+
     static boolean contains(Rect rect, int x, int y) {
         return rect != null
                 && x >= rect.x() && x < rect.x() + rect.width()
@@ -723,7 +744,10 @@ final class TuiHelper {
         if ("pom.xml".equals(lower)) {
             return detectPomEmoji(path);
         }
-        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")
+                || lower.endsWith(".camel.yaml") || lower.endsWith(".camel.yml")) {
+            // the .camel.yaml / .kamelet.yaml naming convention denotes a Camel file by name, so a
+            // freshly created (still empty) file shows the Camel icon without needing content
             return TuiIcons.CAMEL;
         }
         if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
@@ -953,4 +977,41 @@ final class TuiHelper {
         t.setName("heap-dump-" + pid);
         t.start();
     }
+
+    /**
+     * Copies the given text to the system clipboard using the platform's native clipboard command ({@code pbcopy} on
+     * macOS, {@code clip} on Windows, {@code xclip} on Linux).
+     */
+    static void copyToClipboard(String text) throws IOException {
+        String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        String[] cmd;
+        if (os.contains("mac")) {
+            cmd = new String[] { "pbcopy" };
+        } else if (os.contains("win")) {
+            cmd = new String[] { "clip" };
+        } else {
+            cmd = new String[] { "xclip", "-selection", "clipboard" };
+        }
+        Process p = new ProcessBuilder(cmd).start();
+        try (java.io.OutputStream out = p.getOutputStream()) {
+            out.write(text.getBytes(StandardCharsets.UTF_8));
+        }
+        try {
+            p.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * Width (in characters) needed to right-align the largest absolute value in the given numbers.
+     */
+    static int numWidth(long... values) {
+        long max = 0;
+        for (long v : values) {
+            max = Math.max(max, Math.abs(v));
+        }
+        return Math.max(1, String.valueOf(max).length());
+    }
+
 }

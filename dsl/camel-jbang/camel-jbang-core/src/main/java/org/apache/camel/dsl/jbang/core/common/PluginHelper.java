@@ -170,8 +170,9 @@ public final class PluginHelper {
         // Maven resolution for plugins unrelated to the current command.
         Map<String, Plugin> plugins = getActivePlugins(main, repos, target);
         for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
-            // Skip if this plugin was already loaded from embedded plugins
-            if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(plugin.getKey())) {
+            // Skip if this plugin command is already registered (e.g. loaded from embedded plugins,
+            // or stale JSON config listing a plugin that is now built-in)
+            if (commandLine.getSubcommands().containsKey(plugin.getKey())) {
                 continue;
             }
 
@@ -476,12 +477,17 @@ public final class PluginHelper {
     }
 
     static void versionCheck(CamelJBangMain main, String version, String firstVersion, String command) {
-        // compare versions without SNAPSHOT
+        // compare versions without SNAPSHOT (on both sides) so a SNAPSHOT build is not
+        // rejected against a plugin whose firstVersion is the same SNAPSHOT release
         String source = version;
-        if (source.endsWith("-SNAPSHOT")) {
+        if (source != null && source.endsWith("-SNAPSHOT")) {
             source = source.replace("-SNAPSHOT", "");
         }
-        boolean accept = VersionHelper.isGE(source, firstVersion);
+        String first = firstVersion;
+        if (first != null && first.endsWith("-SNAPSHOT")) {
+            first = first.replace("-SNAPSHOT", "");
+        }
+        boolean accept = VersionHelper.isGE(source, first);
         if (!accept) {
             main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
                                   + " because plugin has first version: " + firstVersion + ". Exit");
@@ -754,6 +760,11 @@ public final class PluginHelper {
                     if (!version.isBlank() && !firstVersion.isBlank()) {
                         PluginHelper.versionCheck(main, version, firstVersion, command);
                     }
+                }
+
+                // Skip if this plugin command is already registered
+                if (command != null && commandLine.getSubcommands().containsKey(command)) {
+                    return true;
                 }
 
                 plugin.customize(commandLine, main);

@@ -95,11 +95,11 @@ YAML::
 - route:
     from:
       uri: direct:embeddings
-    steps:
-      - to:
-          uri: langchain4j-embeddings:test
-          parameters:
-            embeddingModel: "#embeddingModel"
+      steps:
+        - to:
+            uri: langchain4j-embeddings:test
+            parameters:
+              embeddingModel: "#embeddingModel"
 ----
 
 XML::
@@ -174,11 +174,11 @@ YAML::
 - route:
     from:
       uri: direct:embeddings
-    steps:
-      - to:
-          uri: langchain4j-embeddings:test
-          parameters:
-            embeddingModel: "#myEmbeddingModel"
+      steps:
+        - to:
+            uri: langchain4j-embeddings:test
+            parameters:
+              embeddingModel: "#myEmbeddingModel"
 ----
 ====
 
@@ -211,19 +211,19 @@ YAML::
 - route:
     from:
       uri: direct:store
-    steps:
-      - to:
-          uri: langchain4j-embeddings:embed
-      - setHeader:
-          name: CamelQdrantAction
-          constant: UPSERT
-      - setHeader:
-          name: CamelQdrantPointId
-          constant: 1
-      - transform:
-          dataType: "qdrant:embeddings"
-      - to:
-          uri: qdrant:myCollection
+      steps:
+        - to:
+            uri: langchain4j-embeddings:embed
+        - setHeader:
+            name: CamelQdrantAction
+            constant: UPSERT
+        - setHeader:
+            name: CamelQdrantPointId
+            constant: 1
+        - transformDataType:
+            toType: "qdrant:embeddings"
+        - to:
+            uri: qdrant:myCollection
 ----
 ====
 
@@ -253,21 +253,21 @@ YAML::
 - route:
     from:
       uri: direct:search
-    steps:
-      - to:
-          uri: langchain4j-embeddings:embed
-      - transform:
-          dataType: "qdrant:embeddings"
-      - setHeader:
-          name: CamelQdrantAction
-          constant: SIMILARITY_SEARCH
-      - setHeader:
-          name: CamelQdrantIncludePayload
-          constant: true
-      - to:
-          uri: qdrant:myCollection
-      - transform:
-          dataType: "qdrant:rag"
+      steps:
+        - to:
+            uri: langchain4j-embeddings:embed
+        - transformDataType:
+            toType: "qdrant:embeddings"
+        - setHeader:
+            name: CamelQdrantAction
+            constant: SIMILARITY_SEARCH
+        - setHeader:
+            name: CamelQdrantWithPayload
+            constant: true
+        - to:
+            uri: qdrant:myCollection
+        - transformDataType:
+            toType: "qdrant:rag"
 ----
 ====
 
@@ -295,16 +295,16 @@ YAML::
 - route:
     from:
       uri: direct:store
-    steps:
-      - to:
-          uri: langchain4j-embeddings:embed
-      - setHeader:
-          name: CamelPgVectorAction
-          constant: UPSERT
-      - transform:
-          dataType: "pgvector:embeddings"
-      - to:
-          uri: pgvector:myCollection
+      steps:
+        - to:
+            uri: langchain4j-embeddings:embed
+        - setHeader:
+            name: CamelPgVectorAction
+            constant: UPSERT
+        - transformDataType:
+            toType: "pgvector:embeddings"
+        - to:
+            uri: pgvector:myCollection
 ----
 ====
 
@@ -331,18 +331,18 @@ YAML::
 - route:
     from:
       uri: direct:search
-    steps:
-      - to:
-          uri: langchain4j-embeddings:embed
-      - transform:
-          dataType: "pgvector:embeddings"
-      - setHeader:
-          name: CamelPgVectorAction
-          constant: SIMILARITY_SEARCH
-      - to:
-          uri: pgvector:myCollection
-      - transform:
-          dataType: "pgvector:rag"
+      steps:
+        - to:
+            uri: langchain4j-embeddings:embed
+        - transformDataType:
+            toType: "pgvector:embeddings"
+        - setHeader:
+            name: CamelPgVectorAction
+            constant: SIMILARITY_SEARCH
+        - to:
+            uri: pgvector:myCollection
+        - transformDataType:
+            toType: "pgvector:rag"
 ----
 ====
 
@@ -372,25 +372,39 @@ YAML::
 - route:
     from:
       uri: direct:store
-    steps:
-      - to:
-          uri: langchain4j-embeddings:embed
-      - to:
-          uri: langchain4j-embeddingstore:myStore
-          parameters:
-            action: ADD
+      steps:
+        - to:
+            uri: langchain4j-embeddings:embed
+        - to:
+            uri: langchain4j-embeddingstore:myStore
+            parameters:
+              action: ADD
 
 - route:
     from:
       uri: direct:search
-    steps:
-      - to:
-          uri: langchain4j-embeddings:embed
-      - to:
-          uri: langchain4j-embeddingstore:myStore
-          parameters:
-            action: SEARCH
-            maxResults: 5
-            returnTextContent: true
+      steps:
+        - to:
+            uri: langchain4j-embeddings:embed
+        - to:
+            uri: langchain4j-embeddingstore:myStore
+            parameters:
+              action: SEARCH
+              maxResults: 5
+              returnTextContent: true
 ----
 ====
+
+=== Structured error exchange properties
+
+When a LangChain4j embeddings call fails, Camel sets structured metadata on the exchange **before** the model exception propagates. This works even when GenAI observability is disabled.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category derived from the LangChain4j exception: `RATE_LIMIT`, `SERVER_ERROR`, `VALIDATION`, `AUTH`, or `UNKNOWN`
+| `CamelAiRetryAfterMillis` | Not populated for LangChain4j providers (OpenAI-only today)
+|===
+
+Use categories when a route should branch on failure type without matching every LangChain4j exception class. See xref:langchain4j-chat-component.adoc#_structured_error_exchange_properties[LangChain4j Chat structured error properties] and xref:ai-llm-integration-guide.adoc#_structured_error_exchange_properties[AI LLM integration guide] for related detail.

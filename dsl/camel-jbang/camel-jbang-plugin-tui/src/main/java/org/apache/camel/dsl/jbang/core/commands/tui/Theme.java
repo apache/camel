@@ -31,6 +31,8 @@ import dev.tamboui.css.Styleable;
 import dev.tamboui.css.engine.StyleEngine;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import dev.tamboui.widgets.syntax.SyntaxTheme;
+import dev.tamboui.widgets.syntax.TokenType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +101,7 @@ public final class Theme {
     };
 
     private static final Map<String, Style> CACHE = new HashMap<>();
+    private static final Map<String, Color> COLOR_CACHE = new HashMap<>();
 
     private static boolean initialized;
     private static boolean persistedModeLoaded;
@@ -266,6 +269,23 @@ public final class Theme {
 
     /** Theme-aware markdown styles for MarkdownView headings and other elements. */
     public static dev.tamboui.markdown.MarkdownStyles markdownStyles() {
+        return markdownStylesBuilder().build();
+    }
+
+    /**
+     * Markdown styles for the AI chat conversation. The user's question is rendered as a blockquote, so the blockquote
+     * becomes an accent-coloured gutter bar with bold text that marks where each new turn starts, while the answer that
+     * follows is plain markdown.
+     */
+    public static dev.tamboui.markdown.MarkdownStyles chatMarkdownStyles() {
+        return markdownStylesBuilder()
+                .blockquotePrefix("\u258e")
+                .blockquote(Style.EMPTY.fg(accent()).bold())
+                .horizontalRule(Style.EMPTY.dim())
+                .build();
+    }
+
+    private static dev.tamboui.markdown.MarkdownStyles.Builder markdownStylesBuilder() {
         return dev.tamboui.markdown.MarkdownStyles.builder()
                 .heading(1, label().bold())
                 .heading(2, label().bold())
@@ -273,8 +293,76 @@ public final class Theme {
                 .inlineCode(Style.EMPTY.fg(accent()))
                 .codeBlock(muted())
                 .listMarker(Style.EMPTY.fg(accent()))
-                .link(Style.EMPTY.fg(accent()).underlined())
+                .link(Style.EMPTY.fg(accent()).underlined());
+    }
+
+    /**
+     * Theme-aware syntax highlighting palette for fenced code blocks in MarkdownView. Uses the same optional
+     * {@code syntax-*} stylesheet tokens as {@link SyntaxHighlighter}, so the Source tab and markdown code blocks
+     * agree.
+     */
+    public static synchronized SyntaxTheme syntaxTheme() {
+        return SyntaxTheme.builder()
+                .token(TokenType.COMMENT, Style.EMPTY.fg(syntaxComment()))
+                .token(TokenType.KEYWORD, Style.EMPTY.fg(syntaxKeyword()))
+                .token(TokenType.TYPE, Style.EMPTY.fg(syntaxType()))
+                .token(TokenType.STRING, Style.EMPTY.fg(syntaxString()))
+                .token(TokenType.NUMBER, Style.EMPTY.fg(syntaxConstant()))
+                .token(TokenType.CONSTANT, Style.EMPTY.fg(syntaxConstant()))
+                .token(TokenType.FUNCTION, Style.EMPTY.fg(syntaxFunction()))
+                .token(TokenType.ANNOTATION, Style.EMPTY.fg(syntaxFunction()))
+                .token(TokenType.TAG, Style.EMPTY.fg(syntaxKeyword()))
+                .token(TokenType.ATTRIBUTE, Style.EMPTY.fg(syntaxFunction()))
                 .build();
+    }
+
+    // ---- Syntax highlighting colors ----
+    //
+    // Optional stylesheet tokens: a theme may define #syntax-comment, #syntax-string, #syntax-keyword,
+    // #syntax-function, #syntax-type, #syntax-constant and #syntax-text to give code its own look (e.g. the
+    // Turbo Pascal theme). Themes that omit them fall back to the Monokai (dark) or GitHub-inspired (light)
+    // palettes in SyntaxHighlighter.
+
+    /** Syntax color for comments. */
+    public static synchronized Color syntaxComment() {
+        return color("syntax-comment",
+                isDark() ? SyntaxHighlighter.MONOKAI_COMMENT : SyntaxHighlighter.LIGHT_COMMENT);
+    }
+
+    /** Syntax color for string literals and values. */
+    public static synchronized Color syntaxString() {
+        return color("syntax-string",
+                isDark() ? SyntaxHighlighter.MONOKAI_STRING : SyntaxHighlighter.LIGHT_STRING);
+    }
+
+    /** Syntax color for keywords, YAML/properties keys and XML tags. */
+    public static synchronized Color syntaxKeyword() {
+        return color("syntax-keyword",
+                isDark() ? SyntaxHighlighter.MONOKAI_KEYWORD : SyntaxHighlighter.LIGHT_KEYWORD);
+    }
+
+    /** Syntax color for functions, annotations and XML attribute names. */
+    public static synchronized Color syntaxFunction() {
+        return color("syntax-function",
+                isDark() ? SyntaxHighlighter.MONOKAI_FUNCTION : SyntaxHighlighter.LIGHT_FUNCTION);
+    }
+
+    /** Syntax color for types. */
+    public static synchronized Color syntaxType() {
+        return color("syntax-type",
+                isDark() ? SyntaxHighlighter.MONOKAI_TYPE : SyntaxHighlighter.LIGHT_TYPE);
+    }
+
+    /** Syntax color for numbers, booleans, null and entities. */
+    public static synchronized Color syntaxConstant() {
+        return color("syntax-constant",
+                isDark() ? SyntaxHighlighter.MONOKAI_CONSTANT : SyntaxHighlighter.LIGHT_CONSTANT);
+    }
+
+    /** Syntax color for plain code text such as separators. */
+    public static synchronized Color syntaxText() {
+        return color("syntax-text",
+                isDark() ? SyntaxHighlighter.MONOKAI_TEXT : SyntaxHighlighter.LIGHT_TEXT);
     }
 
     /** Diagram box-drawing border color. */
@@ -426,6 +514,7 @@ public final class Theme {
         persistedModeLoaded = false;
         previewOriginal = null;
         CACHE.clear();
+        COLOR_CACHE.clear();
         engine = null;
         initialized = false;
         mode = ThemeMode.DARK;
@@ -437,6 +526,7 @@ public final class Theme {
             persistedModeLoaded = true;
         }
         CACHE.clear();
+        COLOR_CACHE.clear();
         engine = null;
         initialized = false;
         engine();
@@ -447,9 +537,18 @@ public final class Theme {
         if (e == null) {
             return fallback;
         }
+        Color cached = COLOR_CACHE.get(id);
+        if (cached != null) {
+            return cached;
+        }
         try {
-            return e.resolve(new Token(id)).foreground().orElse(fallback);
+            // A token the stylesheet does not define resolves to the fallback; that is cached too because the
+            // stylesheet cannot change without activate() clearing the cache.
+            Color resolved = e.resolve(new Token(id)).foreground().orElse(fallback);
+            COLOR_CACHE.put(id, resolved);
+            return resolved;
         } catch (RuntimeException ex) {
+            // Not cached: a transient resolution failure must not permanently lock this token to the fallback.
             logTokenFallbackOnce(ex);
             return fallback;
         }

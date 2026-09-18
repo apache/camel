@@ -557,7 +557,7 @@ public class DefaultModel implements Model {
                 } else if (temp.getDefaultValue() != null) {
                     addProperty(prop, temp.getName(), temp.getDefaultValue());
                     addProperty(propDefaultValues, temp.getName(), temp.getDefaultValue());
-                } else if (temp.isRequired() && !routeTemplateContext.hasParameter(temp.getName())) {
+                } else if (isTemplateParameterRequired(temp) && !routeTemplateContext.hasParameter(temp.getName())) {
                     // this is a required parameter which is missing
                     missingParameters.add(temp.getName());
                 }
@@ -652,6 +652,15 @@ public class DefaultModel implements Model {
         // add route and return the id it was assigned
         addRouteDefinition(def);
         return def.getId();
+    }
+
+    /**
+     * Whether the given route template parameter is required. The attribute is a String so that a property placeholder
+     * can be used, and it is assumed to be required unless explicitly set to false.
+     */
+    private boolean isTemplateParameterRequired(RouteTemplateParameterDefinition temp) {
+        Boolean required = CamelContextHelper.parseBoolean(camelContext, temp.getRequired());
+        return required == null || required;
     }
 
     private static void addProperty(Map<String, Object> prop, String key, Object value) {

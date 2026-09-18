@@ -17,7 +17,9 @@
 package org.apache.camel.impl.console;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,12 +31,20 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "rest-spec", displayName = "Rest Spec",
             description = "OpenAPI specification content for contract-first REST services")
 public class RestSpecDevConsole extends AbstractDevConsole {
+
+    public record SpecificationEntry(
+            @Metadata(description = "The OpenAPI specification URI") String specificationUri,
+            @Metadata(description = "The route ID (only present when known)") String routeId,
+            @Metadata(description = "The specification content (only present when it could be loaded)") String content) {
+    }
+
+    public record Response(@Metadata(description = "The OpenAPI specifications") List<SpecificationEntry> specs) {
+    }
 
     @Metadata(label = "query", description = "Filters specifications matching the given URI pattern",
               javaType = "java.lang.String")
@@ -72,23 +82,14 @@ public class RestSpecDevConsole extends AbstractDevConsole {
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String filter = optionString(options, FILTER);
-        JsonObject root = new JsonObject();
-        JsonArray list = new JsonArray();
-        root.put("specs", list);
+        List<SpecificationEntry> list = new ArrayList<>();
 
         for (SpecEntry entry : collectSpecs(filter)) {
-            JsonObject jo = new JsonObject();
-            jo.put("specificationUri", entry.uri());
-            if (entry.routeId() != null) {
-                jo.put("routeId", entry.routeId());
-            }
-            if (entry.content() != null) {
-                jo.put("content", entry.content());
-            }
-            list.add(jo);
+            list.add(new SpecificationEntry(entry.uri(), entry.routeId(), entry.content()));
         }
 
-        return root;
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private Set<SpecEntry> collectSpecs(String filter) {

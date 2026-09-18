@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -82,7 +83,8 @@ public interface CamelCatalog {
     boolean isCaching();
 
     /**
-     * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
+     * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options. An edit-distance based
+     * strategy is used by default (since 4.23); set null to turn suggestions off.
      */
     void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
 
@@ -225,6 +227,13 @@ public interface CamelCatalog {
     List<String> findBeansNames();
 
     /**
+     * Find all the API reference names (Exchange, Message, CamelContext, ...) from the Camel catalog
+     *
+     * @since 4.23
+     */
+    List<String> findApiReferenceNames();
+
+    /**
      * @param  kind the kind to look for
      * @return      the list of part names of the given {@link Kind} available in this {@link CamelCatalog}
      */
@@ -238,6 +247,7 @@ public interface CamelCatalog {
             case other -> findOtherNames();
             case eip, model -> findModelNames();
             case bean -> findBeansNames();
+            case api -> findApiReferenceNames();
         };
     }
 
@@ -265,6 +275,65 @@ public interface CamelCatalog {
      * Find all the other (miscellaneous) names from the Camel catalog that matches the label
      */
     List<String> findOtherNames(String filter);
+
+    /**
+     * Finds component names that match a term such as a protocol or product name, best match first: the exact scheme,
+     * then declared aliases, alternative schemes, words of the title, words of the scheme, and finally schemes
+     * containing the term. Components that share one implementation under several schemes (such as imap, pop3 and smtp)
+     * are returned once, by the scheme that matched or otherwise their primary scheme.
+     * <p>
+     * For example <tt>mqtt</tt> finds <tt>paho-mqtt5</tt>, <tt>s3</tt> finds <tt>aws2-s3</tt>, and <tt>amq</tt> finds
+     * <tt>activemq</tt>.
+     *
+     * @param  term the protocol, product, or component name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching component names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestComponentNames(String term, int max) {
+        return CatalogTermMatcher.suggestComponentNames(this, term, max);
+    }
+
+    /**
+     * Finds data format names that match a term such as a format or library name (for example <tt>yaml</tt> finds
+     * <tt>snakeYaml</tt>), best match first: the exact name, then declared aliases, words of the title, words of the
+     * name, and finally names containing the term.
+     *
+     * @param  term the format, library, or data format name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching data format names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestDataFormatNames(String term, int max) {
+        return CatalogTermMatcher.suggestNames(findDataFormatNames(), this::dataFormatModel, term, max);
+    }
+
+    /**
+     * Finds language names that match a term, best match first: the exact name, then declared aliases, words of the
+     * title, words of the name, and finally names containing the term.
+     *
+     * @param  term the language name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching language names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestLanguageNames(String term, int max) {
+        return CatalogTermMatcher.suggestNames(findLanguageNames(), this::languageModel, term, max);
+    }
+
+    /**
+     * Finds EIP names that match a term that need not be the EIP name (for example {@code fan-out} finds
+     * {@code multicast} and {@code dedup} finds {@code idempotentConsumer}), best match first: the exact name, then
+     * declared aliases, words of the title, words of the name, and finally names containing the term.
+     *
+     * @param  term the pattern, alias, or EIP name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching EIP names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestEipNames(String term, int max) {
+        return CatalogTermMatcher.suggestNames(findModelNames(), this::eipModel, term, max);
+    }
 
     /**
      * Returns the component information as JSON format.
@@ -600,6 +669,11 @@ public interface CamelCatalog {
     String listDevConsolesAsJson();
 
     /**
+     * The OpenAPI 3.0 specification describing every dev console endpoint, aggregated across all dev consoles.
+     */
+    String devConsolesOpenApiSpec();
+
+    /**
      * Lists all the models (EIPs) summary details in JSon
      */
     String listModelsAsJson();
@@ -668,6 +742,17 @@ public interface CamelCatalog {
     PojoBeanModel pojoBeanModel(String name);
 
     /**
+     * The compact API reference of a core Camel class a route author's code touches (Exchange, Message, CamelContext,
+     * Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter): the methods
+     * that matter with their signatures, a one-line description, usage examples and the common mistakes.
+     *
+     * @param  name the simple class name (Exchange) to look up
+     * @return      the requested API reference or {@code null} in case it is not available in this {@link CamelCatalog}
+     * @since       4.23
+     */
+    ApiReferenceModel apiReferenceModel(String name);
+
+    /**
      * @return the requested main model or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     MainModel mainModel();
@@ -694,6 +779,7 @@ public interface CamelCatalog {
             case other -> otherModel(name);
             case eip, model -> eipModel(name);
             case bean -> pojoBeanModel(name);
+            case api -> apiReferenceModel(name);
         };
     }
 

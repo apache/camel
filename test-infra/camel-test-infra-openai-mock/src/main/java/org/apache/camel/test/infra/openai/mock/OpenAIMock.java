@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,8 +44,12 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
     private final List<AudioTranscriptionExpectation> audioTranscriptionExpectations;
     private final List<AudioTranscriptionExpectation> audioTranslationExpectations;
     private final List<SpeechExpectation> speechExpectations;
+    private final List<ModerationExpectation> moderationExpectations;
+    private final List<ImageExpectation> imageGenerationExpectations;
+    private final List<ImageExpectation> imageEditExpectations;
     private final OpenAIMockBuilder builder;
     private final ObjectMapper objectMapper;
+    private final List<RecordedRequest> receivedRequests = new CopyOnWriteArrayList<>();
     private ExecutorService executor;
 
     public OpenAIMock() {
@@ -53,11 +58,15 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
         this.audioTranscriptionExpectations = new ArrayList<>();
         this.audioTranslationExpectations = new ArrayList<>();
         this.speechExpectations = new ArrayList<>();
+        this.moderationExpectations = new ArrayList<>();
+        this.imageGenerationExpectations = new ArrayList<>();
+        this.imageEditExpectations = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
         this.builder = new OpenAIMockBuilder(
                 this, this.expectations, this.embeddingExpectations,
                 this.audioTranscriptionExpectations, this.audioTranslationExpectations,
-                this.speechExpectations);
+                this.speechExpectations, this.moderationExpectations,
+                this.imageGenerationExpectations, this.imageEditExpectations);
     }
 
     public OpenAIMockBuilder builder() {
@@ -71,15 +80,35 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
         return "http://localhost:" + server.getAddress().getPort();
     }
 
+    /**
+     * Returns the requests received since the mock server started, in arrival order.
+     */
+    public List<RecordedRequest> getReceivedRequests() {
+        return List.copyOf(receivedRequests);
+    }
+
+    /**
+     * Returns the last request received since the mock server started.
+     */
+    public RecordedRequest getLastRequest() {
+        if (receivedRequests.isEmpty()) {
+            throw new IllegalStateException("The mock server has not received any request");
+        }
+        return receivedRequests.get(receivedRequests.size() - 1);
+    }
+
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        receivedRequests.clear();
         server = HttpServer.create(new InetSocketAddress(0), 0);
         server.createContext("/",
                 new OpenAIMockServerHandler(
                         new OpenAIMockExpectations(
                                 expectations, embeddingExpectations, audioTranscriptionExpectations,
-                                audioTranslationExpectations, speechExpectations),
-                        objectMapper));
+                                audioTranslationExpectations, speechExpectations, moderationExpectations,
+                                imageGenerationExpectations, imageEditExpectations),
+                        objectMapper))
+                .getFilters().add(new RequestRecordingFilter(receivedRequests));
 
         executor = Executors.newSingleThreadExecutor();
         server.setExecutor(executor);

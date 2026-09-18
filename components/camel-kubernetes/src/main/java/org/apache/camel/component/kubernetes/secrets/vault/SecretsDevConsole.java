@@ -24,14 +24,14 @@ import java.util.Map;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.component.kubernetes.properties.SecretPropertiesFunction;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.vault.KubernetesVaultConfiguration;
 
 @DevConsole(name = "kubernetes-secrets", displayName = "Kubernetes Secrets", description = "Kubernetes Cluster Secrets")
@@ -39,6 +39,17 @@ public class SecretsDevConsole extends AbstractDevConsole {
 
     private SecretPropertiesFunction propertiesFunction;
     private SecretsReloadTriggerTask secretsRefreshTask;
+
+    public record SecretEntry(@Metadata(description = "The secret name") String name) {
+    }
+
+    public record Response(
+            @Metadata(description = "The Kubernetes master URL (only present when configured)") String masterUrl,
+            @Metadata(description = "The login method (only present when configured)") String login,
+            @Metadata(description = "Whether secret refresh is enabled (only present when configured)") Boolean refreshEnabled,
+            @Metadata(description = "Epoch time in milliseconds the refresh task started (only present when known)") Long startCheckTimestamp,
+            @Metadata(description = "The secrets in use") List<SecretEntry> secrets) {
+    }
 
     public SecretsDevConsole() {
         super("camel", "kubernetes-secrets", "Kubernetes Secrets", "Kubernetes Cluster Secrets");
@@ -99,37 +110,40 @@ public class SecretsDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String masterUrl = null;
+        String login = null;
         if (propertiesFunction != null) {
             KubernetesClient client = propertiesFunction.getClient();
             if (client != null && client.getMasterUrl() != null) {
-                root.put("masterUrl", client.getMasterUrl().toString());
-                root.put("login", "OAuth Token");
+                masterUrl = client.getMasterUrl().toString();
+                login = "OAuth Token";
             }
         }
         KubernetesVaultConfiguration kubernetes = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
+        Boolean refreshEnabled = null;
         if (kubernetes != null) {
-            root.put("refreshEnabled", kubernetes.isRefreshEnabled());
+            refreshEnabled = kubernetes.isRefreshEnabled();
         }
+        Long startCheckTimestamp = null;
         if (secretsRefreshTask != null) {
             Instant start = secretsRefreshTask.getStartingTime();
             if (start != null) {
-                long timestamp = start.toEpochMilli();
-                root.put("startCheckTimestamp", timestamp);
+                startCheckTimestamp = start.toEpochMilli();
             }
         }
-        JsonArray arr = new JsonArray();
-        root.put("secrets", arr);
 
+        // NOTE: kubernetes is dereferenced unconditionally here, same as the original code - preserved
+        // as-is rather than fixed, since this migration is about the response contract
         List<String> sorted = new ArrayList<>(List.of(kubernetes.getSecrets().split(",")));
         Collections.sort(sorted);
 
+        List<SecretEntry> secrets = new ArrayList<>();
         for (String sec : sorted) {
-            JsonObject jo = new JsonObject();
-            jo.put("name", sec);
-            arr.add(jo);
+            secrets.add(new SecretEntry(sec));
         }
-        return root;
+
+        Response response = new Response(masterUrl, login, refreshEnabled, startCheckTimestamp, secrets);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

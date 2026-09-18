@@ -33,7 +33,9 @@ class AiSlashCommandRegistryTest {
     void descriptorsKeepStableOrder() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(List.of("help", "provider", "model", "clear", "clear-history", "close", "quit", "run", "infra", "send"),
+        assertEquals(
+                List.of("help", "provider", "model", "tools", "write", "context", "compact", "retry", "usage", "copy", "export",
+                        "prompt", "clear", "clear-history", "close", "quit", "run", "infra", "send"),
                 registry.descriptors().stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
     }
 
@@ -73,7 +75,7 @@ class AiSlashCommandRegistryTest {
     void completionsIncludeAllCommandsForBareSlash() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(10, registry.completionsFor("/").size());
+        assertEquals(19, registry.completionsFor("/").size());
         assertFalse(registry.completionsFor("/").stream().anyMatch(descriptor -> "exit".equals(descriptor.name())));
     }
 
@@ -90,6 +92,39 @@ class AiSlashCommandRegistryTest {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
         assertTrue(registry.completionsFor("/send ").isEmpty());
+    }
+
+    @Test
+    void completionsIncludeExtraDescriptorsButRegistryCommandsWin() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        List<AiSlashCommandRegistry.Descriptor> extra = List.of(
+                new AiSlashCommandRegistry.Descriptor("review", List.of(), "Review changes", "focus", null),
+                new AiSlashCommandRegistry.Descriptor("help", List.of(), "Agent help", null, null));
+        List<String> all = registry.completionsFor("/", extra).stream().map(AiSlashCommandRegistry.Descriptor::name).toList();
+        assertTrue(all.contains("review"));
+        assertEquals(1, all.stream().filter("help"::equals).count(), "the panel's /help wins over the agent's");
+        assertEquals(List.of("review"),
+                registry.completionsFor("/rev", extra).stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
+        assertTrue(registry.completionsFor("/review ", extra).isEmpty(),
+                "a complete command followed by a space hides the hints");
+        assertTrue(registry.completionsFor("/review focus", extra).isEmpty());
+    }
+
+    @Test
+    void prefixedAgentDescriptorsMatchByAliasAndHideWhenComplete() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        List<AiSlashCommandRegistry.Descriptor> extra = List.of(
+                new AiSlashCommandRegistry.Descriptor("agent:review", List.of("review"), "Review changes", "focus", null),
+                new AiSlashCommandRegistry.Descriptor("agent:clear", List.of("clear"), "Clear the agent context", null, null));
+        assertEquals(List.of("agent:review"),
+                registry.completionsFor("/rev", extra).stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
+        assertEquals(List.of("agent:review", "agent:clear"),
+                registry.completionsFor("/agent:", extra).stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
+        assertTrue(registry.completionsFor("/agent:review ", extra).isEmpty());
+        assertTrue(registry.completionsFor("/review ", extra).isEmpty(),
+                "a complete alias followed by a space hides the hints too");
+        assertTrue(registry.completionsFor("/clear", extra).stream().anyMatch(d -> "agent:clear".equals(d.name())),
+                "the agent's clear is offered next to the panel's because its display name does not collide");
     }
 
     @Test
@@ -272,7 +307,142 @@ class AiSlashCommandRegistryTest {
         }
     }
 
+    @Test
+    void toolsWithoutArgumentsDescribesCurrentToolSet() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        ToolModeContext context = new ToolModeContext();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/tools", context);
+
+        assertEquals("Tool set: core (18 of 46 tools), mode auto", result.text());
+        assertNull(context.switchedTo);
+    }
+
+    @Test
+    void toolsSwitchesModeCaseInsensitively() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        ToolModeContext context = new ToolModeContext();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/t Full", context);
+
+        assertEquals("full", context.switchedTo);
+        assertEquals(AiRole.SYSTEM, result.role());
+    }
+
+    @Test
+    void toolsRejectsUnknownMode() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        ToolModeContext context = new ToolModeContext();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/tools bogus", context);
+
+        assertEquals(AiRole.ERROR, result.role());
+        assertTrue(result.text().contains("bogus"));
+        assertNull(context.switchedTo);
+    }
+
+    @Test
+    void retryReportsWhenThereIsNothingToRetry() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/retry", new NoopSlashContext());
+
+        assertEquals(AiRole.ERROR, result.role());
+        assertTrue(result.text().contains("No question to retry"));
+    }
+
+    @Test
+    void contextCompactAndPromptRelayTheContextText() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        NoopSlashContext context = new NoopSlashContext() {
+            @Override
+            public String describeContext() {
+                return "Provider: ollama";
+            }
+
+            @Override
+            public String compactHistoryNow() {
+                return "Compacted history";
+            }
+
+            @Override
+            public String systemPrompt() {
+                return "You are an Apache Camel assistant";
+            }
+        };
+
+        assertEquals("Provider: ollama", registry.execute("/ctx", context).text());
+        assertEquals("Compacted history", registry.execute("/compact", context).text());
+        assertEquals("You are an Apache Camel assistant", registry.execute("/prompt", context).text());
+    }
+
+    private static final class ToolModeContext extends NoopSlashContext {
+
+        private String switchedTo;
+
+        @Override
+        public String describeToolMode() {
+            return "core (18 of 46 tools), mode auto";
+        }
+
+        @Override
+        public boolean switchToolMode(String mode) {
+            if (!List.of("auto", "core", "full").contains(mode)) {
+                return false;
+            }
+            switchedTo = mode;
+            return true;
+        }
+    }
+
     private static class NoopSlashContext implements AiSlashCommandContext {
+
+        @Override
+        public String describeToolMode() {
+            return "";
+        }
+
+        @Override
+        public boolean switchToolMode(String mode) {
+            return false;
+        }
+
+        @Override
+        public String describeContext() {
+            return "";
+        }
+
+        @Override
+        public String compactHistoryNow() {
+            return "";
+        }
+
+        @Override
+        public boolean retryLastQuestion() {
+            return false;
+        }
+
+        @Override
+        public String usageSummary() {
+            return "";
+        }
+
+        @Override
+        public void resetUsage() {
+        }
+
+        @Override
+        public void copyLastResponse() {
+        }
+
+        @Override
+        public void exportConversation() {
+        }
+
+        @Override
+        public String systemPrompt() {
+            return "";
+        }
 
         @Override
         public void closePanel() {

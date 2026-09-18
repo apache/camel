@@ -19,7 +19,6 @@ package org.apache.camel.component.tika;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -31,8 +30,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.tika.config.loader.TikaLoader;
+import org.apache.tika.detect.universal.UniversalEncodingDetector;
+import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.txt.UniversalEncodingDetector;
+import org.apache.tika.parser.ParseContext;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,10 +60,9 @@ public class TikaParseTest extends CamelTestSupport {
                 assertThat(body, instanceOf(String.class));
 
                 Charset detectedCharset = null;
-                try {
-                    InputStream bodyIs = new ByteArrayInputStream(body.getBytes());
+                try (TikaInputStream bodyIs = TikaInputStream.get(new ByteArrayInputStream(body.getBytes()))) {
                     UniversalEncodingDetector encodingDetector = new UniversalEncodingDetector();
-                    detectedCharset = encodingDetector.detect(bodyIs, new Metadata());
+                    detectedCharset = encodingDetector.detect(bodyIs, new Metadata(), new ParseContext()).get(0).getCharset();
                 } catch (IOException e1) {
                     fail();
                 }
@@ -89,10 +90,11 @@ public class TikaParseTest extends CamelTestSupport {
                 assertThat(body, instanceOf(String.class));
 
                 Charset detectedCharset = null;
-                try {
-                    InputStream bodyIs = new ByteArrayInputStream(((String) body).getBytes(StandardCharsets.UTF_16));
+                try (TikaInputStream bodyIs
+                        = TikaInputStream.get(
+                                new ByteArrayInputStream(((String) body).getBytes(StandardCharsets.UTF_16)))) {
                     UniversalEncodingDetector encodingDetector = new UniversalEncodingDetector();
-                    detectedCharset = encodingDetector.detect(bodyIs, new Metadata());
+                    detectedCharset = encodingDetector.detect(bodyIs, new Metadata(), new ParseContext()).get(0).getCharset();
                 } catch (IOException e1) {
                     fail();
                 }
@@ -174,9 +176,9 @@ public class TikaParseTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start").to("tika:parse").to("mock:result");
-                from("direct:start2").to("tika:parse?tikaConfigUri=src/test/resources/tika-empty.xml")
+                from("direct:start2").to("tika:parse?tikaConfigFile=src/test/resources/tika-empty.json")
                         .to("mock:result");
-                from("direct:start3").to("tika:parse?tikaConfig=#testConfig").to("mock:result");
+                from("direct:start3").to("tika:parse?tikaLoader=#testLoader").to("mock:result");
                 from("direct:start4").to("tika:parse?tikaParseOutputEncoding=" + StandardCharsets.UTF_16.name())
                         .to("mock:result");
             }
@@ -185,6 +187,6 @@ public class TikaParseTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        registry.bind("testConfig", new TikaEmptyConfig());
+        registry.bind("testLoader", TikaLoader.load(new File("src/test/resources/tika-empty.json").toPath()));
     }
 }

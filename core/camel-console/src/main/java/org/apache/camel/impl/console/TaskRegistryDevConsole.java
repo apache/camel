@@ -16,18 +16,36 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.support.task.Task;
 import org.apache.camel.support.task.TaskManagerRegistry;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "internal-tasks", displayName = "Internal Tasks", description = "Display information about internal tasks")
 public class TaskRegistryDevConsole extends AbstractDevConsole {
+
+    public record TaskEntry(
+            @Metadata(description = "The task name") String name,
+            @Metadata(description = "The task status") String status,
+            @Metadata(description = "Whether the task is currently attempting") boolean attempting,
+            @Metadata(description = "The current number of iterations") int attempts,
+            @Metadata(description = "The current computed delay") long delay,
+            @Metadata(description = "The current elapsed time") long elapsed,
+            @Metadata(description = "The time the first attempt was performed") long firstTime,
+            @Metadata(description = "The time the last attempt was performed") long lastTime,
+            @Metadata(description = "The time the next attempt will be made") long nextTime,
+            @Metadata(description = "The failure message (only present when known)") String error) {
+    }
+
+    public record Response(@Metadata(description = "The internal tasks") List<TaskEntry> tasks) {
+    }
 
     public TaskRegistryDevConsole() {
         super("camel", "internal-tasks", "Internal Tasks", "Display information about internal tasks");
@@ -53,30 +71,20 @@ public class TaskRegistryDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
-        root.put("tasks", arr);
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<TaskEntry> tasks = new ArrayList<>();
 
         TaskManagerRegistry reg = PluginHelper.getTaskManagerRegistry(getCamelContext().getCamelContextExtension());
         for (Task task : reg.getTasks()) {
-            JsonObject jo = new JsonObject();
-            jo.put("name", task.getName());
-            jo.put("status", task.getStatus().name());
-            jo.put("attempting", task.isAttempting());
-            jo.put("attempts", task.iteration());
-            jo.put("delay", task.getCurrentDelay());
-            jo.put("elapsed", task.getCurrentElapsedTime());
-            jo.put("firstTime", task.getFirstAttemptTime());
-            jo.put("lastTime", task.getLastAttemptTime());
-            jo.put("nextTime", task.getNextAttemptTime());
             String failure = task.getException() != null ? task.getException().getMessage() : "";
-            if (failure != null) {
-                jo.put("error", failure);
-            }
-            arr.add(jo);
+            tasks.add(new TaskEntry(
+                    task.getName(), task.getStatus().name(), task.isAttempting(), task.iteration(),
+                    task.getCurrentDelay(), task.getCurrentElapsedTime(), task.getFirstAttemptTime(),
+                    task.getLastAttemptTime(), task.getNextAttemptTime(), failure));
         }
-        return root;
+
+        Response response = new Response(tasks);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }

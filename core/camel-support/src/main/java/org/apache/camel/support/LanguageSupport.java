@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
@@ -176,11 +177,13 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
         if (value == null) {
             return null;
         }
-        if (camelContext != null) {
-            return camelContext.getTypeConverter().convertTo(type, value);
-        } else {
-            return (T) value;
+        TypeConverter converter = camelContext != null ? camelContext.getTypeConverter() : null;
+        if (converter != null) {
+            return converter.convertTo(type, value);
         }
+        // no type converter is available (e.g. when using a bare CamelContext for tooling/validation
+        // that has not been initialized) so return the value as-is
+        return (T) value;
     }
 
 }

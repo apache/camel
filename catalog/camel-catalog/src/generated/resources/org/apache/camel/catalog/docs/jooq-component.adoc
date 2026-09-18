@@ -52,7 +52,8 @@ Java::
 +
 [source,java]
 ----
-from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'")
+from("direct:start")
+    .to("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch&query=select * from book_store x where x.name = 'test'")
     .to("bean:myBusinessLogic");
 ----
 
@@ -61,7 +62,8 @@ XML::
 [source,xml]
 ----
 <route>
-    <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'"/>
+    <from uri="direct:start"/>
+    <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch&amp;query=select * from book_store x where x.name = 'test'"/>
     <to uri="bean:myBusinessLogic"/>
 </route>
 ----
@@ -72,12 +74,15 @@ YAML::
 ----
 - route:
     from:
-      uri: jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord
-      parameters:
-        query: "select * from book_store x where x.name = 'test'"
-    steps:
-      - to:
-          uri: bean:myBusinessLogic
+      uri: direct:start
+      steps:
+        - to:
+            uri: jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord
+            parameters:
+              operation: fetch
+              query: "select * from book_store x where x.name = 'test'"
+        - to:
+            uri: bean:myBusinessLogic
 ----
 ====
 
@@ -217,12 +222,6 @@ When using jooq as a producer you can use any of the following `JooqOperation` o
         <route id="sql-delete">
             <from uri="direct:sql-delete"/>
             <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute?query=delete from book_store x where x.name = 'test'"/>
-            <log message="Fetched ${body}"/>
-        </route>
-
-        <!-- SQL: consume -->
-        <route id="sql-consume">
-            <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'"/>
             <log message="Fetched ${body}"/>
         </route>
     </camelContext>

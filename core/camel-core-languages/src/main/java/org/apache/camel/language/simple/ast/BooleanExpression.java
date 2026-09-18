@@ -51,9 +51,4 @@ public class BooleanExpression extends BaseSimpleNode {
             }
         };
     }
-
-    @Override
-    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        return value ? "true" : "false";
-    }
 }

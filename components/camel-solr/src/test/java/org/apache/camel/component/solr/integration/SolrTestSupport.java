@@ -56,7 +56,7 @@ public abstract class SolrTestSupport implements CamelTestSupportHelper, Configu
 
     @Order(1)
     @RegisterExtension
-    public static final SolrService service = SolrServiceFactory.createService();
+    public static final SolrService service = SolrServiceFactory.createSingletonService();
 
     @Order(2)
     @RegisterExtension

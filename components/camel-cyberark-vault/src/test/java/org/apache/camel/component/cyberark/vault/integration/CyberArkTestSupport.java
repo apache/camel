@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 abstract class CyberArkTestSupport extends CamelTestSupport {
 
     @RegisterExtension
-    static CyberArkVaultService service = CyberArkVaultServiceFactory.createService();
+    static CyberArkVaultService service = CyberArkVaultServiceFactory.createSingletonService();
 
     static final Logger LOG = LoggerFactory.getLogger(CyberArkTestSupport.class);
 

@@ -32,6 +32,10 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abortonerror":
         case "abortOnError": getOrCreateConfiguration(target).setAbortOnError(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "allowfilepathsource":
+        case "allowFilePathSource": getOrCreateConfiguration(target).setAllowFilePathSource(property(camelContext, boolean.class, value)); return true;
+        case "allowurlsource":
+        case "allowUrlSource": getOrCreateConfiguration(target).setAllowUrlSource(property(camelContext, boolean.class, value)); return true;
         case "apikeyheader":
         case "apiKeyHeader": getOrCreateConfiguration(target).setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncpollinterval":
@@ -101,6 +105,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "includeMetadataInHeaders": getOrCreateConfiguration(target).setIncludeMetadataInHeaders(property(camelContext, boolean.class, value)); return true;
         case "includerawmetadata":
         case "includeRawMetadata": getOrCreateConfiguration(target).setIncludeRawMetadata(property(camelContext, boolean.class, value)); return true;
+        case "inputbasedirectory":
+        case "inputBaseDirectory": getOrCreateConfiguration(target).setInputBaseDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxfilesize":
@@ -142,6 +148,10 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abortonerror":
         case "abortOnError": return java.lang.Boolean.class;
+        case "allowfilepathsource":
+        case "allowFilePathSource": return boolean.class;
+        case "allowurlsource":
+        case "allowUrlSource": return boolean.class;
         case "apikeyheader":
         case "apiKeyHeader": return java.lang.String.class;
         case "asyncpollinterval":
@@ -211,6 +221,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "includeMetadataInHeaders": return boolean.class;
         case "includerawmetadata":
         case "includeRawMetadata": return boolean.class;
+        case "inputbasedirectory":
+        case "inputBaseDirectory": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxfilesize":
@@ -253,6 +265,10 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abortonerror":
         case "abortOnError": return getOrCreateConfiguration(target).getAbortOnError();
+        case "allowfilepathsource":
+        case "allowFilePathSource": return getOrCreateConfiguration(target).isAllowFilePathSource();
+        case "allowurlsource":
+        case "allowUrlSource": return getOrCreateConfiguration(target).isAllowUrlSource();
         case "apikeyheader":
         case "apiKeyHeader": return getOrCreateConfiguration(target).getApiKeyHeader();
         case "asyncpollinterval":
@@ -322,6 +338,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "includeMetadataInHeaders": return getOrCreateConfiguration(target).isIncludeMetadataInHeaders();
         case "includerawmetadata":
         case "includeRawMetadata": return getOrCreateConfiguration(target).isIncludeRawMetadata();
+        case "inputbasedirectory":
+        case "inputBaseDirectory": return getOrCreateConfiguration(target).getInputBaseDirectory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxfilesize":

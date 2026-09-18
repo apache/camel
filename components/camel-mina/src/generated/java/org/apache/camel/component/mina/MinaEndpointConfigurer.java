@@ -53,6 +53,8 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maximumPoolSize": target.getConfiguration().setMaximumPoolSize(property(camelContext, int.class, value)); return true;
         case "minalogger":
         case "minaLogger": target.getConfiguration().setMinaLogger(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "noreplyloglevel":
         case "noReplyLogLevel": target.getConfiguration().setNoReplyLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "objectcodecpattern":
@@ -107,6 +109,8 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maximumPoolSize": return int.class;
         case "minalogger":
         case "minaLogger": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "noreplyloglevel":
         case "noReplyLogLevel": return org.apache.camel.LoggingLevel.class;
         case "objectcodecpattern":
@@ -162,6 +166,8 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maximumPoolSize": return target.getConfiguration().getMaximumPoolSize();
         case "minalogger":
         case "minaLogger": return target.getConfiguration().isMinaLogger();
+        case "muteexception":
+        case "muteException": return target.getConfiguration().isMuteException();
         case "noreplyloglevel":
         case "noReplyLogLevel": return target.getConfiguration().getNoReplyLogLevel();
         case "objectcodecpattern":

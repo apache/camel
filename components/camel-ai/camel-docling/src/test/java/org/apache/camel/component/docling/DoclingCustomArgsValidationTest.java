@@ -278,9 +278,10 @@ class DoclingCustomArgsValidationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                // CLI mode (useDoclingServe=false is the default)
+                // CLI mode (useDoclingServe=false is the default). These tests hand the input file path in
+                // the message body, which has to be opted into via allowFilePathSource.
                 from("direct:cli-convert")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN");
+                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&allowFilePathSource=true");
             }
         };
     }

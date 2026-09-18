@@ -208,7 +208,7 @@ Java::
 ----
 from("direct:start")
     .marshal().xmlSecurity("//cheese:cheesesites/italy", namespaces, true,
-            "recipient", XMLCipher.AES_128_CBC, XMLCipher.RSA_v1dot5, trustStoreParams)
+            "recipient", XMLCipher.AES_128, XMLCipher.RSA_v1dot5, trustStoreParams)
     .to("...");
 ----
 
@@ -227,10 +227,10 @@ XML::
             <marshal>
                 <xmlSecurity secureTag="//cheese:cheesesites/italy"
                            secureTagContents="true"
-                           xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
-                           keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+                           xmlCipherAlgorithm="AES_128"
+                           keyCipherAlgorithm="RSA_v1dot5"
                            recipientKeyAlias="recipient"
-                           keyOrTrustStoreParametersRef="trustStoreParams"/>
+                           keyOrTrustStoreParameters="trustStoreParams"/>
             </marshal>
             ...
 ----
@@ -247,10 +247,10 @@ YAML::
             xmlSecurity:
               secureTag: "//cheese:cheesesites/italy"
               secureTagContents: true
-              xmlCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#aes128-cbc"
-              keyCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+              xmlCipherAlgorithm: AES_128
+              keyCipherAlgorithm: RSA_v1dot5
               recipientKeyAlias: recipient
-              keyOrTrustStoreParametersRef: "#trustStoreParams"
+              keyOrTrustStoreParameters: "#trustStoreParams"
 ----
 ====
 
@@ -265,7 +265,7 @@ Java::
 ----
 from("direct:encrypted")
     .unmarshal().xmlSecurity("//cheese:cheesesites/italy", namespaces, true,
-            "recipient", XMLCipher.AES_128_CBC, XMLCipher.RSA_v1dot5, keyStoreParams)
+            "recipient", XMLCipher.AES_128, XMLCipher.RSA_v1dot5, keyStoreParams)
     .to("...");
 ----
 
@@ -284,10 +284,10 @@ XML::
             <unmarshal>
                 <xmlSecurity secureTag="//cheese:cheesesites/italy"
                            secureTagContents="true"
-                           xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
-                           keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+                           xmlCipherAlgorithm="AES_128"
+                           keyCipherAlgorithm="RSA_v1dot5"
                            recipientKeyAlias="recipient"
-                           keyOrTrustStoreParametersRef="keyStoreParams"
+                           keyOrTrustStoreParameters="keyStoreParams"
                            keyPassword="privateKeyPassword" />
             </unmarshal>
             ...
@@ -305,10 +305,10 @@ YAML::
             xmlSecurity:
               secureTag: "//cheese:cheesesites/italy"
               secureTagContents: true
-              xmlCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#aes128-cbc"
-              keyCipherAlgorithm: "http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+              xmlCipherAlgorithm: AES_128
+              keyCipherAlgorithm: RSA_v1dot5
               recipientKeyAlias: recipient
-              keyOrTrustStoreParametersRef: "#keyStoreParams"
+              keyOrTrustStoreParameters: "#keyStoreParams"
               keyPassword: privateKeyPassword
 ----
 ====

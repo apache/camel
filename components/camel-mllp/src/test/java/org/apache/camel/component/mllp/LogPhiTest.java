@@ -106,9 +106,13 @@ public class LogPhiTest extends CamelTestSupport {
         testLogPhi(startLogPhi, exceptionMessage -> assertTrue(exceptionMessage.contains("hl7Message")));
     }
 
+    /**
+     * logPhi now defaults to false, so the default behaves like testLogPhiFalse: for a protocol whose payload is
+     * patient data by definition, content stays out of the log unless it is asked for.
+     */
     @Test
     public void testLogPhiDefault() throws Exception {
-        testLogPhi(startDefaultPhi, exceptionMessage -> assertTrue(exceptionMessage.contains("hl7Message")));
+        testLogPhi(startDefaultPhi, exceptionMessage -> assertFalse(exceptionMessage.contains("hl7Message")));
     }
 
     public void testLogPhi(Endpoint endpoint, Consumer<String> contains) {

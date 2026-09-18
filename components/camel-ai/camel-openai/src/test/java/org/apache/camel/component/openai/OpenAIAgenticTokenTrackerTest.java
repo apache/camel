@@ -42,4 +42,16 @@ class OpenAIAgenticTokenTrackerTest {
         assertThat(tracker.getCompletionTokens()).isEqualTo(25);
         assertThat(tracker.getTotalTokens()).isEqualTo(65);
     }
+
+    @Test
+    void shouldReportTokenUsageSinceSnapshot() {
+        OpenAIAgenticTokenTracker tracker = new OpenAIAgenticTokenTracker();
+        tracker.addUsage(CompletionUsage.builder().promptTokens(10).completionTokens(5).totalTokens(15).build());
+        OpenAIAgenticTokenTracker.Snapshot snapshot = tracker.snapshot();
+
+        tracker.addUsage(CompletionUsage.builder().promptTokens(3).completionTokens(2).totalTokens(5).build());
+
+        assertThat(tracker.promptTokensSince(snapshot)).isEqualTo(3);
+        assertThat(tracker.completionTokensSince(snapshot)).isEqualTo(2);
+    }
 }

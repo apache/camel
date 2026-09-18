@@ -18,19 +18,47 @@ package org.apache.camel.component.jgroups.raft.cluster;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.RuntimeCamelException;
+import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 
+import static org.awaitility.Awaitility.await;
+
 public abstract class JGroupsRaftClusterAbstractTest {
-    protected void waitForLeader(int attempts, RaftHandle rh, RaftHandle rh2, RaftHandle rh3) throws InterruptedException {
-        boolean thereIsLeader = rh.isLeader() || rh2.isLeader() || rh3.isLeader();
-        while (!thereIsLeader && attempts > 0) {
-            thereIsLeader = rh.isLeader() || rh2.isLeader() || rh3.isLeader();
-            TimeUnit.SECONDS.sleep(1);
-            attempts--;
-        }
-        if (attempts <= 0) {
-            throw new RuntimeCamelException("No leader in time!");
-        }
+
+    /**
+     * Wait until a leader has been elected AND all given handles know who the leader is. Only connected handles are
+     * checked; disconnected or closed handles are skipped. Without checking leader() on every active handle, a follower
+     * node may not yet have discovered the leader, causing set() to throw when the REDIRECT protocol has no leader
+     * address to forward to.
+     */
+    protected void waitForLeader(int attempts, RaftHandle... handles) {
+        await().atMost(attempts, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .until(() -> {
+                    boolean hasLeader = false;
+                    for (RaftHandle rh : handles) {
+                        if (!rh.channel().isConnected()) {
+                            continue;
+                        }
+                        if (rh.isLeader()) {
+                            hasLeader = true;
+                        }
+                        if (rh.leader() == null) {
+                            return false;
+                        }
+                    }
+                    return hasLeader;
+                });
+    }
+
+    /**
+     * Wait until the given channel's view has exactly the expected number of members. Use this after closing a channel
+     * to ensure the remaining nodes have processed the LEAVE before creating new channels with the same member name.
+     */
+    protected void waitForViewSize(JChannel channel, int expectedSize, int timeoutSeconds) {
+        await().atMost(timeoutSeconds, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS)
+                .until(() -> channel.isConnected() && channel.getView() != null
+                        && channel.getView().size() == expectedSize);
     }
 }

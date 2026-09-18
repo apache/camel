@@ -94,6 +94,9 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private boolean sessionEnabled;
     @UriParam(label = "producer", description = "Session ID for session-enabled queues or topics.")
     private String sessionId;
+    @UriParam(label = "consumer", defaultValue = "1",
+              description = "Sets the maximum number of concurrent sessions to process at any given time. Only applies when sessionEnabled is true.")
+    private int maxConcurrentSessions = 1;
 
     /**
      * Flag to enable sessions. Default is false. Used to create processor client for message consumer
@@ -104,6 +107,18 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
 
     public void setSessionEnabled(boolean sessionEnabled) {
         this.sessionEnabled = sessionEnabled;
+    }
+
+    /**
+     * Sets the maximum number of concurrent sessions to process at any given time. Only applies when sessionEnabled is
+     * true.
+     */
+    public int getMaxConcurrentSessions() {
+        return maxConcurrentSessions;
+    }
+
+    public void setMaxConcurrentSessions(int maxConcurrentSessions) {
+        this.maxConcurrentSessions = maxConcurrentSessions;
     }
 
     /**

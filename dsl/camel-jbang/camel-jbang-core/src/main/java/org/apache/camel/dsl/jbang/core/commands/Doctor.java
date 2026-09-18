@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
+import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
@@ -55,6 +56,7 @@ public class Doctor extends CamelCommand {
         checkJBang();
         checkMavenRepository();
         checkContainerRuntime();
+        checkOllama();
         checkCommonPorts();
         checkDiskSpace();
 
@@ -131,6 +133,18 @@ public class Doctor extends CamelCommand {
             }
         }
         printer().printf("  Container:   Not found (optional — needed for running external infra services)%n");
+    }
+
+    private void checkOllama() {
+        printOllamaStatus(OllamaDoctorSupport.detect());
+    }
+
+    void printOllamaStatus(OllamaDoctorSupport.Status status) {
+        if (status.running()) {
+            printer().printf("  Ollama:      %s%n", OllamaDoctorSupport.cliRunningLine(status));
+        } else {
+            printer().printf("  Ollama:      %s%n", OllamaDoctorSupport.cliNotDetectedLine());
+        }
     }
 
     private void checkCommonPorts() {

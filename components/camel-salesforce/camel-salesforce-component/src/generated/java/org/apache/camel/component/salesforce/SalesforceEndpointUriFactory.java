@@ -24,12 +24,13 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(73);
+        Set<String> props = new HashSet<>(74);
         props.add("allOrNone");
         props.add("apexMethod");
         props.add("apexQueryParams");
         props.add("apexUrl");
         props.add("apiVersion");
+        props.add("approval");
         props.add("backoffIncrement");
         props.add("batchId");
         props.add("bridgeErrorHandler");

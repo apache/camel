@@ -30,6 +30,7 @@ import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -42,6 +43,7 @@ import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICAT
 /**
  * Send and receive emails using imap, pop3 and smtp protocols.
  */
+@Metadata(aliases = { "mail", "email" })
 @UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
              syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
              category = { Category.MAIL }, headersClass = MailConstants.class)

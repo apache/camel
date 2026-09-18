@@ -28,7 +28,7 @@ import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DocumentMetadata;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Integration test for metadata extraction operations using test-infra for container management.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Too much resources on GitHub Actions")
 class MetadataExtractionIT extends DoclingITestSupport {
 
     @Test
@@ -65,13 +65,14 @@ class MetadataExtractionIT extends DoclingITestSupport {
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
                 testFile.toString(), DocumentMetadata.class);
 
-        assertNotNull(metadata, "Metadata should not be null");
-        assertNotNull(metadata.getFileName(), "File name should be extracted");
-        assertTrue(metadata.getFileSizeBytes() > 0, "File size should be greater than 0");
-        assertNotNull(metadata.getFilePath(), "File path should be set");
+        assertThat(metadata).isNotNull();
+        assertThat(metadata.getFileName()).isNotNull();
+        assertThat(metadata.getFileSizeBytes()).isPositive();
+        assertThat(metadata.getFilePath()).isNotNull();
         assertThat(metadata.getPageCount()).isEqualTo(5);
         assertThat(metadata.getFormat()).isEqualTo("application/pdf");
-        assertThat(metadata.getTitle()).isEqualTo("The Evolution of the Word Processor");
+        // Docling classifies the leading heading in this fixture as a section header, not a document title.
+        assertThat(metadata.getTitle()).isNull();
         assertThat(metadata.getDocumentType()).isEqualTo("PDF");
 
         LOG.info("Successfully extracted metadata: {}", metadata);
@@ -252,29 +253,29 @@ class MetadataExtractionIT extends DoclingITestSupport {
             public void configure() throws Exception {
                 // Basic metadata extraction
                 from("direct:extract-metadata")
-                        .to("docling:extract?operation=EXTRACT_METADATA");
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA");
 
                 // Metadata extraction with headers enabled (default)
                 from("direct:extract-metadata-with-headers")
-                        .to("docling:extract?operation=EXTRACT_METADATA")
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA")
                         .to("mock:afterMetadataExtraction");
 
                 // Metadata extraction without headers
                 from("direct:extract-metadata-no-headers")
-                        .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=false")
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA&includeMetadataInHeaders=false")
                         .to("mock:afterMetadataExtraction");
 
                 // Metadata extraction with raw metadata
                 from("direct:extract-metadata-with-raw")
-                        .to("docling:extract?operation=EXTRACT_METADATA&includeRawMetadata=true");
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA&includeRawMetadata=true");
 
                 // Metadata extraction from URL
                 from("direct:extract-metadata-url")
-                        .to("docling:extract?operation=EXTRACT_METADATA");
+                        .to("docling:extract?allowUrlSource=true&operation=EXTRACT_METADATA");
 
                 // Metadata extraction to verify headers are populated
                 from("direct:extract-metadata-verify-headers")
-                        .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=true")
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA&includeMetadataInHeaders=true")
                         .log("Headers should contain metadata fields")
                         .to("mock:afterMetadataExtraction");
             }

@@ -238,6 +238,25 @@ public interface AvroComponentBuilderFactory {
             doSetProperty("configuration", configuration);
             return this;
         }
+    
+        /**
+         * Comma-separated list of additional packages that contain trusted Avro
+         * model classes. Avro 1.12 validates classes resolved from schemas;
+         * Camel automatically trusts org.apache.avro for IPC and packages
+         * derived from the configured protocol. Use this option for any
+         * additional model packages not inferred from the protocol.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param serializablePackages the value to set
+         * @return the dsl builder
+         */
+        default AvroComponentBuilder serializablePackages(java.lang.String serializablePackages) {
+            doSetProperty("serializablePackages", serializablePackages);
+            return this;
+        }
     }
 
     class AvroComponentBuilderImpl
@@ -269,6 +288,7 @@ public interface AvroComponentBuilderFactory {
             case "lazyStartProducer": ((AvroComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((AvroComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((AvroComponent) component).setConfiguration((org.apache.camel.component.avro.AvroConfiguration) value); return true;
+            case "serializablePackages": getOrCreateConfiguration((AvroComponent) component).setSerializablePackages((java.lang.String) value); return true;
             default: return false;
             }
         }

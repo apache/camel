@@ -1,0 +1,1 @@
+../../../../../components/camel-opa/src/main/docs/opa-component.adoc

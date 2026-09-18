@@ -137,7 +137,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
     @Override
     public String getThreadNamePattern() {
-        return threadNamePattern;
+        return resolveThreadNamePattern();
     }
 
     @Override
@@ -162,7 +162,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
     @Override
     public String resolveThreadName(String name) {
-        return ThreadHelper.resolveThreadName(threadNamePattern, name);
+        return ThreadHelper.resolveThreadName(resolveThreadNamePattern(), name);
     }
 
     @Override
@@ -445,7 +445,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
         if (threadNamePattern == null) {
             // set default name pattern which includes the camel context name
-            threadNamePattern = "Camel (" + camelContext.getName() + ") thread ##counter# - #name#";
+            threadNamePattern = "Camel (#camelId#) thread ##counter# - #name#";
         }
 
         // discover thread pool factory
@@ -610,8 +610,15 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         onNewExecutorService(executorService);
     }
 
+    protected String resolveThreadNamePattern() {
+        if (threadNamePattern == null) {
+            return null;
+        }
+        return StringHelper.replaceFirst(threadNamePattern, "#camelId#", camelContext.getName());
+    }
+
     protected ThreadFactory createThreadFactory(Object source, String name, boolean daemon) {
-        ThreadFactory factory = new CamelThreadFactory(threadNamePattern, name, daemon);
+        ThreadFactory factory = new CamelThreadFactory(resolveThreadNamePattern(), name, daemon);
         for (ThreadFactoryListener listener : threadFactoryListeners) {
             factory = listener.onNewThreadFactory(source, factory);
         }

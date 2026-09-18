@@ -18,12 +18,11 @@ package org.apache.camel.component.tika;
 
 import java.nio.charset.Charset;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.tika.config.TikaConfig;
+import org.apache.tika.config.loader.TikaLoader;
 
 @UriParams
 public class TikaConfiguration {
@@ -35,10 +34,10 @@ public class TikaConfiguration {
     private TikaParseOutputFormat tikaParseOutputFormat = TikaParseOutputFormat.xml;
     @UriParam(description = "Tika Parse Output Encoding")
     private String tikaParseOutputEncoding = Charset.defaultCharset().name();
-    @UriParam(label = "advanced", description = "Tika Config")
-    private TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
-    @UriParam(label = "advanced", description = "Tika Config Url")
-    private String tikaConfigUri;
+    @UriParam(label = "advanced", description = "Tika loader used to configure parsers and detectors")
+    private TikaLoader tikaLoader;
+    @UriParam(label = "advanced", description = "Path to a Tika JSON configuration file")
+    private String tikaConfigFile;
 
     public TikaOperation getOperation() {
         return operation;
@@ -85,30 +84,25 @@ public class TikaConfiguration {
         this.tikaParseOutputEncoding = tikaParseOutputEncoding;
     }
 
-    public TikaConfig getTikaConfig() {
-        return tikaConfig;
+    public TikaLoader getTikaLoader() {
+        return tikaLoader;
     }
 
     /**
-     * To use a custom Tika config.
+     * To use a custom Tika loader.
      */
-    public void setTikaConfig(TikaConfig tikaConfig) {
-        this.tikaConfig = tikaConfig;
+    public void setTikaLoader(TikaLoader tikaLoader) {
+        this.tikaLoader = tikaLoader;
     }
 
-    public String getTikaConfigUri() {
-        return tikaConfigUri;
+    public String getTikaConfigFile() {
+        return tikaConfigFile;
     }
 
     /**
-     * Tika Config Uri: The URI of tika-config.xml file to use.
+     * Tika configuration file: The path of the Tika JSON configuration file to use.
      */
-    public void setTikaConfigUri(String tikaConfigUri) {
-        this.tikaConfigUri = tikaConfigUri;
-        try {
-            this.tikaConfig = new TikaConfig(tikaConfigUri);
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
+    public void setTikaConfigFile(String tikaConfigFile) {
+        this.tikaConfigFile = tikaConfigFile;
     }
 }

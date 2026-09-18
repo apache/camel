@@ -15,7 +15,7 @@ Java objects to and from http://www.yaml.org/[YAML].
 For YAML to object marshalling, Camel provides integration with three
 popular YAML libraries:
 
-* The http://www.snakeyaml.org/[SnakeYAML] library
+* The https://bitbucket.org/snakeyaml/snakeyaml[SnakeYAML] library
 
 Every library requires adding the special camel component (see
 "Dependency..." paragraphs further down). By default Camel uses the
@@ -117,12 +117,9 @@ tag.
   <!--
     here we define a YAML data format with the id snake-safe which restricts the
     classes to be loaded from YAML to TestPojo and those belonging to package
-    com.mycompany
+    com.mycompany (comma-separated names, wildcards or regular expressions)
   -->
-  <yaml id="snake-safe">
-    <typeFilter value="org.apache.camel.component.yaml.model.TestPojo"/>
-    <typeFilter value="com.mycompany\..*" type="regexp"/>
-  </yaml>
+  <yaml id="snake-safe" typeFilter="org.apache.camel.component.yaml.model.TestPojo,com.mycompany.*"/>
 </dataFormats>
 ----
 

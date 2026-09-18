@@ -81,6 +81,8 @@ public final class JsonMapper {
             return generateEipModel(obj);
         } else if (obj.containsKey("bean")) {
             return generatePojoBeanModel(obj);
+        } else if (obj.containsKey("api")) {
+            return generateApiReferenceModel(obj);
         } else {
             return null;
         }
@@ -337,6 +339,7 @@ public final class JsonMapper {
         PojoBeanModel model = new PojoBeanModel();
         parseModel(mobj, model);
         parseArtifact(mobj, model);
+        model.setInterfaceType(mobj.getString("interfaceType"));
         JsonObject mprp = (JsonObject) mobj.get("properties");
         if (mprp != null) {
             for (Map.Entry<String, Object> entry : mprp.entrySet()) {
@@ -347,6 +350,78 @@ public final class JsonMapper {
             }
         }
         return model;
+    }
+
+    public static ApiReferenceModel generateApiReferenceModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateApiReferenceModel(obj);
+    }
+
+    public static ApiReferenceModel generateApiReferenceModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("api");
+        ApiReferenceModel model = new ApiReferenceModel();
+        parseModel(mobj, model);
+        parseArtifact(mobj, model);
+        JsonObject methods = (JsonObject) mobj.get("methods");
+        if (methods != null) {
+            for (Map.Entry<String, Object> entry : methods.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                ApiReferenceModel.ApiMethodOptionModel method = new ApiReferenceModel.ApiMethodOptionModel();
+                method.setName(entry.getKey());
+                Integer idx = mp.getInteger("index");
+                if (idx != null) {
+                    method.setIndex(idx);
+                }
+                method.setJavaType(mp.getString("javaType"));
+                method.setDescription(mp.getString("description"));
+                method.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
+                method.setImportant(mp.getBooleanOrDefault("important", false));
+                mp.getCollectionOrDefault("signatures", List.of()).forEach(o -> method.addSignature(o.toString()));
+                mp.getCollectionOrDefault("examples", List.of()).forEach(o -> method.addExample(o.toString()));
+                model.addOption(method);
+            }
+        }
+        return model;
+    }
+
+    public static String createParameterJsonSchema(ApiReferenceModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static JsonObject asJsonObject(ApiReferenceModel model) {
+        JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject methods = new JsonObject();
+        List<ApiReferenceModel.ApiMethodOptionModel> options = model.getOptions();
+        for (int i = 0; i < options.size(); i++) {
+            ApiReferenceModel.ApiMethodOptionModel m = options.get(i);
+            JsonObject jo = new JsonObject();
+            jo.put("index", i);
+            jo.put("signatures", new JsonArray(m.getSignatures()));
+            if (m.getJavaType() != null) {
+                jo.put("javaType", m.getJavaType());
+            }
+            if (m.isDeprecated()) {
+                jo.put("deprecated", true);
+            }
+            if (m.isImportant()) {
+                jo.put("important", true);
+            }
+            if (m.getDescription() != null) {
+                jo.put("description", m.getDescription());
+            }
+            if (!m.getExamples().isEmpty()) {
+                jo.put("examples", new JsonArray(m.getExamples()));
+            }
+            methods.put(m.getName(), jo);
+        }
+        obj.put("methods", methods);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("api", obj);
+        return wrapper;
     }
 
     public static String createParameterJsonSchema(EipModel model) {
@@ -378,6 +453,9 @@ public final class JsonMapper {
     public static JsonObject asJsonObject(PojoBeanModel model) {
         JsonObject obj = new JsonObject();
         baseToJson(model, obj);
+        if (model.getInterfaceType() != null) {
+            obj.put("interfaceType", model.getInterfaceType());
+        }
         artifactToJson(model, obj);
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
@@ -494,6 +572,7 @@ public final class JsonMapper {
         DevConsoleModel model = new DevConsoleModel();
         parseModel(mobj, model);
         model.setGroup(mobj.getString("group"));
+        model.setReadOnly(mobj.getBooleanOrDefault("readOnly", true));
         parseArtifact(mobj, model);
         JsonObject options = (JsonObject) obj.get("options");
         if (options != null) {
@@ -504,6 +583,7 @@ public final class JsonMapper {
                 model.addOption(option);
             }
         }
+        model.setResponseSchema((JsonObject) obj.get("response"));
         return model;
     }
 
@@ -517,11 +597,15 @@ public final class JsonMapper {
         baseToJson(model, obj);
         artifactToJson(model, obj);
         obj.put("group", model.getGroup());
+        obj.put("readOnly", model.isReadOnly());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("console", obj);
         if (!model.getOptions().isEmpty()) {
             wrapper.put("options", asJsonObject(model.getOptions()));
+        }
+        if (model.getResponseSchema() != null) {
+            wrapper.put("response", model.getResponseSchema());
         }
         return wrapper;
     }

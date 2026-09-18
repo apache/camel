@@ -1942,6 +1942,46 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the maximum number of logs per redo thread the mining
+         * window grows to automatically when a long-running transaction holds
+         * the window start in place. Defaults to 4. A
+         * 'log.mining.log.count.min' above this value takes precedence. The
+         * mining window may exceed this count when re-covering previously mined
+         * logs; the value bounds automatic growth, not the window itself.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: oracle
+         * 
+         * @param logMiningLogCountGrowthMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningLogCountGrowthMax(int logMiningLogCountGrowthMax) {
+            doSetProperty("logMiningLogCountGrowthMax", logMiningLogCountGrowthMax);
+            return this;
+        }
+        /**
+         * Specifies the maximum number of logs per redo thread the mining
+         * window grows to automatically when a long-running transaction holds
+         * the window start in place. Defaults to 4. A
+         * 'log.mining.log.count.min' above this value takes precedence. The
+         * mining window may exceed this count when re-covering previously mined
+         * logs; the value bounds automatic growth, not the window itself.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: oracle
+         * 
+         * @param logMiningLogCountGrowthMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningLogCountGrowthMax(String logMiningLogCountGrowthMax) {
+            doSetProperty("logMiningLogCountGrowthMax", logMiningLogCountGrowthMax);
+            return this;
+        }
+        /**
          * Specifies the minimum number of logs to mine per redo thread. Setting
          * this to 0 disables the cap, and all available logs are mined in a
          * single pass.

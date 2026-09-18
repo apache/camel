@@ -28,7 +28,7 @@
 
     <artifactId>camel-catalog-suggest</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Catalog :: Suggest</name>
+    <name>Camel :: Catalog :: Suggest (deprecated)</name>
     <description>Camel Catalog Suggest</description>
 
     <properties>
@@ -41,10 +41,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-catalog</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
         </dependency>
 
         <!-- test -->

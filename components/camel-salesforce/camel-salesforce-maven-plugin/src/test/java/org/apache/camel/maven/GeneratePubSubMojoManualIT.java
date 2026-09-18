@@ -35,7 +35,7 @@ import com.google.testing.compile.JavaFileObjects;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
+import static org.apache.camel.maven.AbstractSalesforceMojoTest.setupUsernamePassword;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GeneratePubSubMojoManualIT {
@@ -74,7 +74,7 @@ public class GeneratePubSubMojoManualIT {
         final GeneratePubSubMojo mojo = new GeneratePubSubMojo();
 
         // set login properties
-        setup(mojo);
+        setupUsernamePassword(mojo);
 
         // set additional properties specific to this Mojo
         try (final InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES)) {

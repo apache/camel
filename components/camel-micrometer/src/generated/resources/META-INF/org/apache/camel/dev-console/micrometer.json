@@ -6,6 +6,7 @@
     "title": "Micrometer",
     "description": "Display runtime metrics",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.micrometer.MicrometerConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-micrometer",
@@ -40,6 +41,261 @@
       "secret": false,
       "defaultValue": true,
       "description": "Whether to include tags"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "meterRegistryClass": {
+        "type": "string",
+        "description": "The MeterRegistry implementation class name"
+      },
+      "counters": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The counter name"
+            },
+            "description": {
+              "type": "string",
+              "description": "The counter description (only present when configured)"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "The tag key"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The tag value"
+                  }
+                }
+              },
+              "description": "The counter tags (only present when requested)"
+            },
+            "count": {
+              "description": "The counter value (integer when whole, decimal otherwise)"
+            }
+          }
+        },
+        "description": "Only present when there are any counters"
+      },
+      "gauges": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The gauge name"
+            },
+            "description": {
+              "type": "string",
+              "description": "The gauge description (only present when configured)"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "The tag key"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The tag value"
+                  }
+                }
+              },
+              "description": "The gauge tags (only present when requested)"
+            },
+            "value": {
+              "type": "number",
+              "description": "The gauge value"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "description": "Only present when there are any gauges"
+      },
+      "timers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The timer name"
+            },
+            "description": {
+              "type": "string",
+              "description": "The timer description (only present when configured)"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "The tag key"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The tag value"
+                  }
+                }
+              },
+              "description": "The timer tags (only present when requested)"
+            },
+            "count": {
+              "type": "integer",
+              "description": "The number of recorded events"
+            },
+            "mean": {
+              "type": "integer",
+              "description": "The mean duration in milliseconds"
+            },
+            "max": {
+              "type": "integer",
+              "description": "The maximum duration in milliseconds"
+            },
+            "total": {
+              "type": "integer",
+              "description": "The total duration in milliseconds"
+            }
+          },
+          "required": [
+            "count",
+            "mean",
+            "max",
+            "total"
+          ]
+        },
+        "description": "Only present when there are any timers"
+      },
+      "longTaskTimers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The long task timer name"
+            },
+            "description": {
+              "type": "string",
+              "description": "The long task timer description (only present when configured)"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "The tag key"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The tag value"
+                  }
+                }
+              },
+              "description": "The long task timer tags (only present when requested)"
+            },
+            "activeTasks": {
+              "type": "integer",
+              "description": "The number of currently active tasks"
+            },
+            "mean": {
+              "type": "integer",
+              "description": "The mean duration in milliseconds"
+            },
+            "max": {
+              "type": "integer",
+              "description": "The maximum duration in milliseconds"
+            },
+            "duration": {
+              "type": "integer",
+              "description": "The total duration of active tasks in milliseconds"
+            }
+          },
+          "required": [
+            "activeTasks",
+            "mean",
+            "max",
+            "duration"
+          ]
+        },
+        "description": "Only present when there are any long task timers"
+      },
+      "distribution": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The distribution summary name"
+            },
+            "description": {
+              "type": "string",
+              "description": "The distribution summary description (only present when configured)"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "The tag key"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The tag value"
+                  }
+                }
+              },
+              "description": "The distribution summary tags (only present when requested)"
+            },
+            "count": {
+              "type": "integer",
+              "description": "The number of recorded events"
+            },
+            "mean": {
+              "type": "number",
+              "description": "The mean amount"
+            },
+            "max": {
+              "type": "number",
+              "description": "The maximum amount"
+            },
+            "totalAmount": {
+              "type": "number",
+              "description": "The total amount"
+            }
+          },
+          "required": [
+            "count",
+            "mean",
+            "max",
+            "totalAmount"
+          ]
+        },
+        "description": "Only present when there are any distribution summaries"
+      }
     }
   }
 }

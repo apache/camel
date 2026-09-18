@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SingleExchangeRoundAllHeadersIT extends PubsubTestSupport {
 
-    private static final String TOPIC_NAME = "singleSend";
-    private static final String SUBSCRIPTION_NAME = "singleReceive";
+    private static final String TOPIC_NAME = "singleAllHeadersSend";
+    private static final String SUBSCRIPTION_NAME = "singleAllHeadersReceive";
 
     @EndpointInject("direct:from")
     private Endpoint directIn;

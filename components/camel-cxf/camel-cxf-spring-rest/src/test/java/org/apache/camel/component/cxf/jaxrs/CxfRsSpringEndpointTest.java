@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.jaxrs.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.jaxrs.SpringJAXRSServerFactoryBean;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
+import org.apache.cxf.feature.AbstractFeature;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -36,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
 
     private static final String BEAN_SERVICE_ENDPOINT_NAME = "serviceEndpoint";
+    private static final String FIXED_SIZE_FEATURES_ENDPOINT_NAME = "fixedSizeFeaturesEndpoint";
     private static final String BEAN_SERVICE_ADDRESS = "http://localhost/programmatically";
     private static final String BEAN_SERVICE_USERNAME = "BEAN_SERVICE_USERNAME";
     private static final String BEAN_SERVICE_PASSWORD = "BEAN_SERVICE_PASSWORD";
@@ -88,6 +91,16 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         assertEquals(BEAN_SERVICE_PASSWORD, cfb.getPassword(), "Got the wrong password");
     }
 
+    @Test
+    public void testCreateCxfRsClientFactoryBeanWithFixedSizeFeatures() {
+        CxfRsEndpoint endpoint = resolveMandatoryEndpoint(
+                "cxfrs://bean://" + FIXED_SIZE_FEATURES_ENDPOINT_NAME, CxfRsEndpoint.class);
+
+        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) endpoint.createJAXRSClientFactoryBean();
+
+        assertEquals(2, cfb.getFeatures().size(), "The endpoint features must be appended to the copied feature list");
+    }
+
     public static SpringJAXRSClientFactoryBean serviceEndpoint() {
 
         SpringJAXRSClientFactoryBean clientFactoryBean = new SpringJAXRSClientFactoryBean();
@@ -96,6 +109,13 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         clientFactoryBean.setUsername(BEAN_SERVICE_USERNAME);
         clientFactoryBean.setPassword(BEAN_SERVICE_PASSWORD);
 
+        return clientFactoryBean;
+    }
+
+    public static SpringJAXRSClientFactoryBean fixedSizeFeaturesEndpoint() {
+        SpringJAXRSClientFactoryBean clientFactoryBean = serviceEndpoint();
+        clientFactoryBean.setFeatures(Arrays.asList(new AbstractFeature() {
+        }));
         return clientFactoryBean;
     }
 
@@ -115,5 +135,10 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
                 .rootBeanDefinition(CxfRsSpringEndpointTest.class.getName()).setFactoryMethod("serviceEndpoint");
         beanFactory.registerBeanDefinition(BEAN_SERVICE_ENDPOINT_NAME, definitionBuilder.getBeanDefinition());
+
+        BeanDefinitionBuilder fixedSizeFeaturesDefinitionBuilder = BeanDefinitionBuilder
+                .rootBeanDefinition(CxfRsSpringEndpointTest.class.getName()).setFactoryMethod("fixedSizeFeaturesEndpoint");
+        beanFactory.registerBeanDefinition(FIXED_SIZE_FEATURES_ENDPOINT_NAME,
+                fixedSizeFeaturesDefinitionBuilder.getBeanDefinition());
     }
 }

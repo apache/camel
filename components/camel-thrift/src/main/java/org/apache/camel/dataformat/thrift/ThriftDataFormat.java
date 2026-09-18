@@ -158,23 +158,31 @@ public class ThriftDataFormat extends ServiceSupport
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         TDeserializer deserializer;
         ObjectHelper.notNull(defaultInstance, "defaultInstance or instanceClassName must be set", this);
 
+        // The data format is shared by every exchange on the route and TBase.read() only assigns the
+        // fields present in the incoming bytes, so deserializing into defaultInstance would let one
+        // message read or overwrite another's fields. Deserialize into a copy instead, clearing it first
+        // so values set on defaultInstance are not inherited when they are absent from the input.
+        TBase instance = defaultInstance.deepCopy();
+        instance.clear();
+
         if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_JSON)) {
             deserializer = new TDeserializer(new TJSONProtocol.Factory());
-            deserializer.deserialize(defaultInstance, IOUtils.toByteArray(inputStream));
+            deserializer.deserialize(instance, IOUtils.toByteArray(inputStream));
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_BINARY)) {
             deserializer = new TDeserializer(new TBinaryProtocol.Factory());
-            deserializer.deserialize(defaultInstance, IOUtils.toByteArray(inputStream));
+            deserializer.deserialize(instance, IOUtils.toByteArray(inputStream));
         } else if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_SIMPLE_JSON)) {
             throw new CamelException("Simple JSON format is avalable for the message marshalling only");
         } else {
             throw new CamelException("Invalid thrift content type format: " + contentTypeFormat);
         }
 
-        return defaultInstance;
+        return instance;
     }
 
     @SuppressWarnings("rawtypes")

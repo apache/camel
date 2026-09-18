@@ -63,7 +63,67 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ai-observability</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ai-observability-api</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ai-resource</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ai-tool</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-common</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-eventbridge</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-fc</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-kms</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-mns</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-oss</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-ots</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-sls</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-sms</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -463,11 +523,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-lucene</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog-maven</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -629,16 +684,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-csimple-joor</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-csimple-maven-plugin</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-csv</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -770,11 +815,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-diagram</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-digitalocean</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -1064,12 +1104,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-headersmap</artifactId>
+        <artifactId>camel-health</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-health</artifactId>
+        <artifactId>camel-hivemq</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -1184,11 +1224,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-iec60870</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-iggy</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -1220,16 +1255,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-influxdb2</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-irc</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-ironmq</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -1439,11 +1464,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-json-patch</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-json-validator</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -1579,12 +1599,12 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-langchain4j-tokenizer</artifactId>
+        <artifactId>camel-langchain4j-ingest</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-langchain4j-tools</artifactId>
+        <artifactId>camel-langchain4j-tokenizer</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -1605,11 +1625,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ldif</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-leveldb</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -1859,6 +1874,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-opa</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-openai</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -2004,6 +2024,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-python3</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-qdrant</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -2019,12 +2044,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-reactive-executor-tomcat</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-reactive-executor-vertx</artifactId>
+        <artifactId>camel-quickjs</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2075,6 +2095,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rest-openapi</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-rest-postman</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2214,7 +2239,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-splunk</artifactId>
+        <artifactId>camel-spiffe</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2305,6 +2330,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ssh</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-state-store</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2414,11 +2444,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-threadpoolfactory-vertx</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-thrift</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -2454,6 +2479,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-toon</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-tracing</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -2465,6 +2495,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-twitter</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ubl</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2660,11 +2695,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-io</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-zeebe</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>

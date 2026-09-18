@@ -43,11 +43,13 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.DevConsoleModel;
+import org.apache.camel.tooling.model.DevConsoleOpenApiHelper;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
@@ -59,6 +61,8 @@ import org.apache.camel.tooling.model.TransformerModel;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -128,6 +132,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/beans")
     protected File beansOutDir;
+
+    /**
+     * The output directory for generated API reference catalog
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/apis")
+    protected File apisOutDir;
 
     /**
      * The output directory for generated dev-consoles catalog
@@ -406,6 +416,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                                         }
                                         om.setVersion(project.getVersion());
                                     }
+                                }
+                                if (m != null) {
                                     allModels.put(p, m);
                                 }
                             }
@@ -419,6 +431,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> languages = executeLanguages();
             Set<String> transformers = executeTransformers();
             Set<String> beans = executeBeans();
+            executeApis();
             Set<String> consoles = executeDevConsoles();
             Set<String> others = executeOthers();
             executeDocuments(components, dataformats, languages, others);
@@ -862,6 +875,44 @@ public class PrepareCatalogMojo extends AbstractMojo {
         return beanNames;
     }
 
+    protected Set<String> executeApis() throws Exception {
+        Path apisOutDir = this.apisOutDir.toPath();
+
+        getLog().info("Copying all Camel API reference json descriptors");
+
+        // lets use sorted set/maps
+        Set<Path> jsonFiles;
+        Set<Path> duplicateJsonFiles;
+
+        // find all API references (camel-api)
+        jsonFiles = allJsonFiles.stream().filter(p -> allModels.get(p) instanceof ApiReferenceModel)
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        getLog().info("Found " + jsonFiles.size() + " api json files");
+
+        // make sure to create out dir
+        Files.createDirectories(apisOutDir);
+
+        // Check duplicates
+        duplicateJsonFiles = getDuplicates(jsonFiles);
+
+        // Copy all descriptors
+        Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> apisOutDir.resolve(p.getFileName()));
+        try (Stream<Path> stream = list(apisOutDir).filter(p -> !newJsons.containsValue(p))) {
+            stream.forEach(this::delete);
+        }
+        newJsons.forEach(this::copy);
+
+        Path all = apisOutDir.resolve("../apis.properties");
+        Set<String> apiNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        FileUtil.updateFile(all, String.join("\n", apiNames) + "\n");
+
+        printApisReport(jsonFiles, duplicateJsonFiles);
+
+        return apiNames;
+    }
+
     protected Set<String> executeDevConsoles() throws Exception {
         Path consolesOutDir = this.consolesOutDir.toPath();
 
@@ -898,6 +949,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<String> consoleNames
                 = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
         FileUtil.updateFile(all, String.join("\n", consoleNames) + "\n");
+
+        // build and write a single consolidated OpenAPI document describing every dev console
+        List<DevConsoleModel> models = jsonFiles.stream()
+                .map(p -> (DevConsoleModel) allModels.get(p))
+                .collect(Collectors.toList());
+        JsonObject openApi = DevConsoleOpenApiHelper.buildOpenApiDocument(models, project.getVersion());
+        Path openApiFile = consolesOutDir.resolve("../dev-consoles-openapi.json");
+        FileUtil.updateFile(openApiFile, Jsoner.prettyPrint(openApi.toJson()) + "\n");
+        getLog().info("Generated dev-consoles-openapi.json containing " + models.size() + " Camel dev console paths");
 
         printConsolesReport(jsonFiles, duplicateJsonFiles);
 
@@ -958,6 +1018,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-debezium-common":
                 case "camel-fhir":
                 case "camel-google":
+                case "camel-alibaba":
                 case "camel-google-common":
                 case "camel-http-base":
                 case "camel-http-common":
@@ -1445,6 +1506,23 @@ public class PrepareCatalogMojo extends AbstractMojo {
         if (!duplicate.isEmpty()) {
             getLog().info("");
             getLog().warn("\tDuplicate pojo beans detected: " + duplicate.size());
+            printComponentWarning(duplicate);
+        }
+        getLog().info("");
+        getLog().info(SEPARATOR);
+    }
+
+    private void printApisReport(
+            Set<Path> json, Set<Path> duplicate) {
+        getLog().info(SEPARATOR);
+        getLog().info("");
+        getLog().info("Camel API reference catalog report");
+        getLog().info("");
+        getLog().info("\tAPI references found: " + json.size());
+        printComponentDebug(json);
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate API references detected: " + duplicate.size());
             printComponentWarning(duplicate);
         }
         getLog().info("");

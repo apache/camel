@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,12 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TransformToolsTest {
 
     private TransformTools createTools() {
-        CatalogService catalogService = new CatalogService();
-        catalogService.catalogRepos = Optional.empty();
-
-        TransformTools tools = new TransformTools();
-        tools.catalogService = catalogService;
-        return tools;
+        return new TransformTools();
     }
 
     @Test

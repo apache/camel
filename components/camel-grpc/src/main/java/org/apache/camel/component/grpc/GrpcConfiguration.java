@@ -100,10 +100,10 @@ public class GrpcConfiguration {
     @UriParam(label = "consumer", defaultValue = "PROPAGATION", enums = "AGGREGATION,PROPAGATION,DELEGATION")
     private GrpcConsumerStrategy consumerStrategy = GrpcConsumerStrategy.PROPAGATION;
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false")
     private boolean forwardOnCompleted;
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "common", defaultValue = "false")
     private boolean forwardOnError;
 
     @UriParam(defaultValue = "" + NettyChannelBuilder.DEFAULT_FLOW_CONTROL_WINDOW)
@@ -117,6 +117,9 @@ public class GrpcConfiguration {
 
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean routeControlledStreamObserver;
+
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
 
     private List<ServerInterceptor> serverInterceptors = Collections.emptyList();
 
@@ -447,6 +450,18 @@ public class GrpcConfiguration {
 
     public void setRouteControlledStreamObserver(boolean routeControlledStreamObserver) {
         this.routeControlledStreamObserver = routeControlledStreamObserver;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the status description returned to the client
+     * won't contain the exception's message.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public int getMaxConcurrentCallsPerConnection() {

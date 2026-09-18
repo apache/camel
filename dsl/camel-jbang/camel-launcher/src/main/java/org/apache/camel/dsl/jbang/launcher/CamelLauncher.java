@@ -16,9 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.launcher;
 
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 
 /**
  * Main class for the Camel CLI Fat-Jar Launcher.
@@ -34,46 +32,17 @@ public class CamelLauncher {
      * @param args command line arguments to pass to Camel CLI
      */
     public static void main(String... args) {
-        // Set system property to indicate we're running from the launcher
-        System.setProperty("camel.launcher", "true");
+        System.setProperty(LauncherHelper.CAMEL_LAUNCHER_PROPERTY, "true");
 
-        // Try to determine and set the JAR path
-        String jarPath = detectJarPath();
+        // Resolve JAR path via the shared helper so all downstream code uses one implementation
+        String jarPath = LauncherHelper.getLauncherJarPath();
         if (jarPath != null) {
-            System.setProperty("camel.launcher.jar", jarPath);
+            System.setProperty(LauncherHelper.CAMEL_LAUNCHER_JAR_PROPERTY, jarPath);
         }
 
         CamelLauncherMain main = new CamelLauncherMain();
         // allow to use 3rd-party plugins
         main.setDiscoverPlugins(true);
         main.execute(args);
-    }
-
-    private static String detectJarPath() {
-        try {
-            URL location = CamelLauncher.class.getProtectionDomain()
-                    .getCodeSource().getLocation();
-            if (location != null) {
-                String urlStr = location.toString();
-                String path = null;
-                // Handle nested JAR (Spring Boot loader)
-                if (urlStr.startsWith("jar:file:")) {
-                    int idx = urlStr.indexOf("!/");
-                    if (idx > 0) {
-                        path = urlStr.substring("jar:file:".length(), idx);
-                    }
-                } else if (urlStr.startsWith("file:")) {
-                    // Handle direct file URL
-                    path = urlStr.substring("file:".length());
-                }
-                if (path != null) {
-                    // Decode URL-encoded characters (spaces, special chars)
-                    return URLDecoder.decode(path, StandardCharsets.UTF_8);
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("WARN: Failed to detect launcher JAR path: " + e.getMessage());
-        }
-        return null;
     }
 }

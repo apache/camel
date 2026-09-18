@@ -30,11 +30,12 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ValueToKey {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     public void process(@ExchangeProperty("fields") String fields, Exchange ex) throws InvalidPayloadException {
         List<String> splittedFields = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNodeBody = ex.getMessage().getBody(JsonNode.class);
-        Map<Object, Object> body = mapper.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
+        Map<Object, Object> body = OBJECT_MAPPER.convertValue(jsonNodeBody, new TypeReference<Map<Object, Object>>() {
         });
         if (ObjectHelper.isNotEmpty(fields)) {
             splittedFields = Arrays.stream(fields.split(",")).collect(Collectors.toList());

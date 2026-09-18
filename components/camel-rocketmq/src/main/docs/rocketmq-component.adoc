@@ -67,7 +67,7 @@ If `requestTimeoutMillis` elapsed and no reply received, an exception will be th
 ._Java-only: uses ExchangePattern.InOut enum and string concatenation for the URI_
 [source,java]
 ----
-from("rocketmq:START_TOPIC?producerGroup=p1&consumerGroup=c1")
+from("rocketmq:START_TOPIC?consumerGroup=c1")
 
 .to(ExchangePattern.InOut, "rocketmq:INTERMEDIATE_TOPIC" +
         "?producerGroup=intermediaProducer" +
@@ -168,21 +168,21 @@ YAML::
       uri: rocketmq:FROM
       parameters:
         consumerGroup: consumer
-    steps:
-      - setHeader:
-          name: CamelRockerMQOverrideTopicName
-          constant: ACTUAL_TARGET
-      - setHeader:
-          name: CamelRockerMQOverrideTag
-          constant: OVERRIDE_TAG
-      - setHeader:
-          name: CamelRockerMQOverrideMessageKey
-          constant: OVERRIDE_MESSAGE_KEY
-      - to:
-          uri: rocketmq:ORIGIN_TARGET
-          parameters:
-            producerGroup: producer
-      - to:
-          uri: log:RocketRoute?showAll=true
+      steps:
+        - setHeader:
+            name: CamelRockerMQOverrideTopicName
+            constant: ACTUAL_TARGET
+        - setHeader:
+            name: CamelRockerMQOverrideTag
+            constant: OVERRIDE_TAG
+        - setHeader:
+            name: CamelRockerMQOverrideMessageKey
+            constant: OVERRIDE_MESSAGE_KEY
+        - to:
+            uri: rocketmq:ORIGIN_TARGET
+            parameters:
+              producerGroup: producer
+        - to:
+            uri: log:RocketRoute?showAll=true
 ----
 ====

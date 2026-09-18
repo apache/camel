@@ -788,6 +788,11 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
+        return doGetEndpoint(uri, null, parameters, normalized, prototype);
+    }
+
+    protected Endpoint doGetEndpoint(
+            String uri, String explicitRawUri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
         // ensure CamelContext are initialized before we can get an endpoint
         build();
 
@@ -802,7 +807,7 @@ public abstract class AbstractCamelContext extends BaseService
             uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(this, uri);
         }
 
-        final String rawUri = uri;
+        final String rawUri = explicitRawUri != null ? explicitRawUri : uri;
 
         // normalize uri so we can do endpoint hits with minor mistakes and
         // parameters is not in the same order
@@ -3802,6 +3807,12 @@ public abstract class AbstractCamelContext extends BaseService
      * Force some lazy initialization to occur upfront before we start any components and create routes
      */
     protected void forceLazyInitialization() {
+        if (firstStartDone) {
+            // on restart, null the lazy fields so they are re-created fresh on this start
+            camelContextExtension.resetInjector();
+            camelContextExtension.resetTypeConverterRegistry();
+            camelContextExtension.resetTypeConverter();
+        }
         final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, camelContextExtension.getName(),
                 "Start Mandatory Services");
@@ -3844,9 +3855,11 @@ public abstract class AbstractCamelContext extends BaseService
      * Force clear lazy initialization so they can be re-created on restart
      */
     protected void forceStopLazyInitialization() {
-        camelContextExtension.resetInjector();
-        camelContextExtension.resetTypeConverterRegistry();
-        camelContextExtension.resetTypeConverter();
+        // intentionally left empty: the lazy fields (injector, typeConverterRegistry, typeConverter)
+        // are kept alive after stop so that any in-flight work still running on the reactive executor
+        // (e.g. async Multicast continuations) can finish without hitting a NPE on getTypeConverter().
+        // The fields are nulled at the start of the next doStart() in forceLazyInitialization(), guarded
+        // by firstStartDone, so restart-in-place still works correctly.
     }
 
     /**

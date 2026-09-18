@@ -85,6 +85,8 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "swiftMx", type = SwiftMxDataFormat.class),
             @XmlElement(name = "syslog", type = SyslogDataFormat.class),
             @XmlElement(name = "tarFile", type = TarFileDataFormat.class),
+            @XmlElement(name = "toon", type = ToonDataFormat.class),
+            @XmlElement(name = "ubl", type = UblDataFormat.class),
             @XmlElement(name = "thrift", type = ThriftDataFormat.class),
             @XmlElement(name = "univocityCsv", type = UniVocityCsvDataFormat.class),
             @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),

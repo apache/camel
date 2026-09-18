@@ -192,6 +192,30 @@ class ShellPanel {
         return true;
     }
 
+    /**
+     * Forwards pasted text to the shell as if typed. Line breaks are sent as carriage returns, which is what a real
+     * terminal emulator sends for Enter, so multi-line pastes run line by line like they would in a normal terminal.
+     */
+    void handlePaste(String text) {
+        if (!visible || text == null || text.isEmpty()) {
+            return;
+        }
+        scrollOffset = 0;
+        if (virtualTerminal != null) {
+            try {
+                virtualTerminal.processInputBytes(encodePaste(text));
+            } catch (IOException e) {
+                LOG.log(Level.DEBUG, "Terminal I/O error forwarding pasted text", e);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                LOG.log(Level.DEBUG, "Buffer resize race during paste forwarding", e);
+            }
+        }
+    }
+
+    static byte[] encodePaste(String text) {
+        return text.replace("\r\n", "\r").replace('\n', '\r').getBytes(StandardCharsets.UTF_8);
+    }
+
     boolean handleMouseEvent(MouseEvent me) {
         if (!visible || lastArea == null) {
             return false;

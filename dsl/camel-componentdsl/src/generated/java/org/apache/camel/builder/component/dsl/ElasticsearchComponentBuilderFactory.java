@@ -141,6 +141,7 @@ public interface ElasticsearchComponentBuilderFactory {
          * @param maxRetryTimeout the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default ElasticsearchComponentBuilder maxRetryTimeout(int maxRetryTimeout) {
             doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;

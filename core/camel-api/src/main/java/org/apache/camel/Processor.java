@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * A <a href="https://camel.apache.org/processor.html">processor</a> is used to implement the
  * <a href="https://camel.apache.org/event-driven-consumer.html"> Event Driven Consumer</a> and
@@ -30,6 +32,11 @@ package org.apache.camel;
  * @see Exchange
  */
 @FunctionalInterface
+@Metadata(label = "api",
+          description = "A step written in Java: process(exchange) reads and writes the exchange in place, the result "
+                        + "goes into exchange.getMessage(). Used as .process(new MyProcessor()) or a lambda, or as a bean "
+                        + "(process: {ref: myProcessor}); a plain bean method taking the body (.bean(myBean, \"method\")) "
+                        + "is often simpler than a Processor.")
 public interface Processor {
 
     /**
@@ -38,5 +45,12 @@ public interface Processor {
      * @param  exchange  the message exchange
      * @throws Exception if an internal processing error has occurred.
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "Processes the exchange in place: read exchange.getMessage().getBody(type), put the result with "
+                            + "setBody; throw to fail the exchange.",
+              examples = {
+                      "exchange -> "
+                           + "exchange.getMessage().setBody(exchange.getMessage().getBody(String.class).toUpperCase())" })
     void process(Exchange exchange) throws Exception;
 }

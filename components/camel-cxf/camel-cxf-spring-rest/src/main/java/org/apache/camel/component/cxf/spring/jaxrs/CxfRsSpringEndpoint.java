@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf.spring.jaxrs;
 
+import java.util.ArrayList;
+
 import org.apache.camel.Component;
 import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
@@ -110,6 +112,7 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
 
         if (bean instanceof SpringJAXRSClientFactoryBean) {
             ReflectionUtils.shallowCopyFieldState(bean, cfb);
+            cfb.setFeatures(new ArrayList<>(cfb.getFeatures()));
         }
 
         return cfb;

@@ -53,12 +53,15 @@ public class ManagedRouteGroupTest extends ManagementTestSupport {
         String group = (String) mbeanServer.getAttribute(on, "RouteGroup");
         assertTrue(group.equals("first") || group.equals("second"));
         Long val = (Long) mbeanServer.getAttribute(on, "ExchangesTotal");
-        assertEquals(1, val);
         Integer size = (Integer) mbeanServer.getAttribute(on, "GroupSize");
         if ("first".equals(group)) {
             assertEquals(3, size);
+            // group stats aggregate across all member routes (start, a, e each processed the exchange)
+            assertEquals(3, val);
         } else {
             assertEquals(2, size);
+            // group stats aggregate across all member routes (c, d each processed the exchange)
+            assertEquals(2, val);
         }
 
         // stop all the route

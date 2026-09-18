@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -40,6 +43,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
@@ -48,6 +52,8 @@ import org.springframework.jms.support.destination.DestinationResolver;
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     final TemporaryReplyQueueDestinationResolver destinationResolver;
+    private ExecutorService refreshRecoveryExecutor;
+    private final AtomicBoolean refreshRecoveryScheduled = new AtomicBoolean();
 
     public TemporaryQueueReplyManager(CamelContext camelContext, TemporaryQueueResolver resolver) {
         super(camelContext);
@@ -57,7 +63,93 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        if (refreshRecoveryExecutor != null) {
+            camelContext.getExecutorServiceManager().shutdownNow(refreshRecoveryExecutor);
+            refreshRecoveryExecutor = null;
+        }
         ServiceHelper.stopService(destinationResolver);
+    }
+
+    private void triggerReplyDestinationRecovery() {
+        if (listenerContainer == null || isStopping() || isStopped()) {
+            return;
+        }
+        if (!destinationResolver.isRefreshPending()) {
+            return;
+        }
+        if (!refreshRecoveryScheduled.compareAndSet(false, true)) {
+            return;
+        }
+        try {
+            getRefreshRecoveryExecutor().execute(this::runReplyDestinationRecovery);
+        } catch (RejectedExecutionException e) {
+            refreshRecoveryScheduled.set(false);
+        }
+    }
+
+    private void runReplyDestinationRecovery() {
+        try {
+            long delay = endpoint.getRecoveryInterval() >= 0 ? endpoint.getRecoveryInterval() : 5000L;
+            if (!sleepQuietly(delay)) {
+                return;
+            }
+            int attempts = 0;
+            while (destinationResolver.isRefreshPending() && !isStopping() && !isStopped()
+                    && listenerContainer != null && listenerContainer.isRunning() && attempts < 20) {
+                try {
+                    if (listenerContainer instanceof DefaultJmsMessageListenerContainer dmlc) {
+                        if (dmlc.isRecovering()) {
+                            if (!sleepQuietly(delay)) {
+                                return;
+                            }
+                            attempts++;
+                            continue;
+                        }
+                        dmlc.recoverReplyDestinationAfterRefresh();
+                    } else if (listenerContainer instanceof SimpleMessageListenerContainer smlc) {
+                        smlc.stop();
+                        smlc.start();
+                    } else {
+                        listenerContainer.stop();
+                        listenerContainer.start();
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to trigger recovery of temporary reply destination on endpoint: {}",
+                            endpoint.getEndpointUri(), e);
+                }
+                if (!destinationResolver.isRefreshPending()) {
+                    break;
+                }
+                if (!sleepQuietly(delay)) {
+                    return;
+                }
+                attempts++;
+            }
+        } finally {
+            refreshRecoveryScheduled.set(false);
+            if (destinationResolver.isRefreshPending() && !isStopping() && !isStopped()
+                    && listenerContainer != null && listenerContainer.isRunning()) {
+                triggerReplyDestinationRecovery();
+            }
+        }
+    }
+
+    private boolean sleepQuietly(long millis) {
+        try {
+            Thread.sleep(millis);
+            return !isStopping() && !isStopped();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
+    private ExecutorService getRefreshRecoveryExecutor() {
+        if (refreshRecoveryExecutor == null) {
+            String name = "JmsTemporaryReplyToRefresh[" + endpoint.getDestinationName() + "]";
+            refreshRecoveryExecutor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, name);
+        }
+        return refreshRecoveryExecutor;
     }
 
     @Override
@@ -283,51 +375,76 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         // the destination, it would deadlock trying to acquire BaseService.lock.
         private final Lock destinationLock = new ReentrantLock();
         private volatile TemporaryQueue queue;
-        private final AtomicBoolean refreshWanted = new AtomicBoolean();
+        private final AtomicLong refreshGeneration = new AtomicLong();
+        private volatile long publishedGeneration;
         private final TemporaryQueueResolver custom;
 
         public TemporaryReplyQueueDestinationResolver(TemporaryQueueResolver custom) {
             this.custom = custom;
         }
 
+        boolean isRefreshPending() {
+            return refreshGeneration.get() != publishedGeneration;
+        }
+
         @Override
         public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
                 throws JMSException {
-            // fast path: queue already resolved and no refresh needed
-            TemporaryQueue answer = queue;
-            if (answer != null && !refreshWanted.get()) {
-                return answer;
-            }
             destinationLock.lock();
             try {
-                if (queue == null || refreshWanted.get()) {
-                    refreshWanted.set(false);
-                    if (custom != null) {
-                        if (queue != null) {
-                            try {
-                                custom.delete(queue);
-                            } catch (Exception e) {
-                                // ignore
-                            }
-                        }
-                        queue = custom.createTemporaryQueue(session);
-                    } else {
-                        queue = session.createTemporaryQueue();
-                    }
-                    setReplyTo(queue);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Refreshed Temporary ReplyTo Queue. New queue: {}", queue.getQueueName());
-                    }
+                TemporaryQueue answer = queue;
+                if (answer != null && !isRefreshPending()) {
+                    return answer;
                 }
+                long generationToHandle = refreshGeneration.get();
+                TemporaryQueue previousQueue = queue;
+                if (previousQueue != null) {
+                    try {
+                        if (custom != null) {
+                            custom.delete(previousQueue);
+                        } else {
+                            previousQueue.delete();
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    queue = null;
+                }
+                TemporaryQueue refreshedQueue;
+                if (custom != null) {
+                    refreshedQueue = custom.createTemporaryQueue(session);
+                } else {
+                    refreshedQueue = session.createTemporaryQueue();
+                }
+                if (refreshGeneration.get() == generationToHandle) {
+                    queue = refreshedQueue;
+                    setReplyTo(refreshedQueue);
+                    publishedGeneration = generationToHandle;
+                    if (log.isDebugEnabled()) {
+                        log.debug("Refreshed Temporary ReplyTo Queue. New queue: {}", refreshedQueue.getQueueName());
+                    }
+                    return refreshedQueue;
+                }
+                // a newer refresh was requested while creating the queue; discard this attempt
+                try {
+                    if (custom != null) {
+                        custom.delete(refreshedQueue);
+                    } else {
+                        refreshedQueue.delete();
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+                return null;
             } finally {
                 destinationLock.unlock();
             }
-            return queue;
         }
 
         public void scheduleRefresh() {
-            refreshWanted.set(true);
+            refreshGeneration.incrementAndGet();
             replyTo = null;
+            triggerReplyDestinationRecovery();
         }
 
         @Override
@@ -346,6 +463,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
                     }
                     queue = null;
                 }
+                publishedGeneration = refreshGeneration.get();
             } finally {
                 destinationLock.unlock();
             }

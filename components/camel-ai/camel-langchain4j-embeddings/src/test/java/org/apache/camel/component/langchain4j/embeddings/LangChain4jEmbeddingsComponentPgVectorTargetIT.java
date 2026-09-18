@@ -48,7 +48,7 @@ public class LangChain4jEmbeddingsComponentPgVectorTargetIT extends CamelTestSup
     public static final String PGVECTOR_URI = "pgvector:embeddings";
 
     @RegisterExtension
-    static PostgresService POSTGRES = PostgresVectorServiceFactory.createService();
+    static PostgresService POSTGRES = PostgresVectorServiceFactory.createSingletonService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

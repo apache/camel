@@ -39,6 +39,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
@@ -52,6 +53,43 @@ class DoctorPopup {
     private boolean mcpEnabled;
     private int mcpPort;
     private Supplier<String> mcpConnectedClient;
+
+    /** Fixed popup width; detail rows are word-wrapped to fit instead of widening the popup. */
+    private static final int POPUP_WIDTH = 64;
+    /** Detail rows are indented to line up with the value column. */
+    private static final String DETAIL_INDENT = "                    ";
+    private static final int DETAIL_WIDTH = POPUP_WIDTH - 2 - DETAIL_INDENT.length() - 1;
+
+    /**
+     * Adds a dimmed detail row under a check, word-wrapped so it never runs into the popup border.
+     */
+    private static void addDetail(List<Line> result, String text) {
+        for (String part : wrapWords(text, DETAIL_WIDTH)) {
+            result.add(Line.from(Span.styled(DETAIL_INDENT + part, Style.EMPTY.dim())));
+        }
+    }
+
+    static List<String> wrapWords(String text, int width) {
+        List<String> out = new ArrayList<>();
+        if (text == null || text.isBlank()) {
+            return out;
+        }
+        StringBuilder line = new StringBuilder();
+        for (String word : text.trim().split("\\s+")) {
+            if (line.length() > 0 && line.length() + 1 + word.length() > width) {
+                out.add(line.toString());
+                line.setLength(0);
+            }
+            if (line.length() > 0) {
+                line.append(' ');
+            }
+            line.append(word);
+        }
+        if (line.length() > 0) {
+            out.add(line.toString());
+        }
+        return out;
+    }
 
     boolean isVisible() {
         return visible;
@@ -70,9 +108,11 @@ class DoctorPopup {
         checkJBang(lines);
         checkMavenRepository(lines);
         checkContainerRuntime(lines);
+        OllamaDoctorSupport.Status ollamaStatus = OllamaDoctorSupport.detect();
+        checkOllama(lines, ollamaStatus);
         checkCommonPorts(lines);
         checkDiskSpace(lines);
-        checkAiProvider(lines);
+        checkAiProvider(lines, ollamaStatus);
         checkMcpConnection(lines);
         visible = true;
     }
@@ -95,7 +135,7 @@ class DoctorPopup {
         if (lines == null || lines.isEmpty()) {
             return;
         }
-        int popupW = Math.min(62, area.width() - 4);
+        int popupW = Math.min(POPUP_WIDTH, area.width() - 4);
         int popupH = Math.min(lines.size() + 2, area.height() - 4);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
@@ -113,7 +153,7 @@ class DoctorPopup {
     }
 
     void renderFooter(List<Span> spans) {
-        hintLast(spans, "Esc", "back");
+        hintLast(spans, "Esc", "close");
     }
 
     // ---- Checks ----
@@ -140,7 +180,7 @@ class DoctorPopup {
                 Span.raw(String.format("%-30s", version + " (" + vendor + ")")),
                 Span.raw(" " + emoji)));
         if (status != null) {
-            result.add(Line.from(Span.styled("                    " + status, Style.EMPTY.dim())));
+            addDetail(result, status);
         }
     }
 
@@ -198,16 +238,14 @@ class DoctorPopup {
                     Span.styled(String.format("%-14s", "Maven"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Resolution failed")),
                     Span.raw(" " + TuiIcons.FAIL)));
-            result.add(Line.from(Span.styled("                    " + TuiHelper.truncate(e.getMessage(), 40),
-                    Style.EMPTY.dim())));
+            addDetail(result, e.getMessage());
         } catch (Exception e) {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.INFRA)),
                     Span.styled(String.format("%-14s", "Maven"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Error")),
                     Span.raw(" " + TuiIcons.FAIL)));
-            result.add(Line.from(Span.styled("                    " + TuiHelper.truncate(e.getMessage(), 40),
-                    Style.EMPTY.dim())));
+            addDetail(result, e.getMessage());
         }
     }
 
@@ -282,38 +320,93 @@ class DoctorPopup {
         return v != null && !v.isBlank();
     }
 
-    private void checkAiProvider(List<Line> result) {
-        String provider = null;
-        if (envSet("ANTHROPIC_API_KEY")) {
-            provider = "Anthropic";
-        } else if (envSet("CLOUD_ML_REGION") && envSet("ANTHROPIC_VERTEX_PROJECT_ID")) {
-            provider = "Vertex AI";
-        } else if (envSet("AZURE_OPENAI_API_KEY") && envSet("AZURE_OPENAI_ENDPOINT")) {
-            provider = "Azure OpenAI";
-        } else if (envSet("GEMINI_API_KEY")) {
-            provider = "Gemini";
-        } else if (envSet("OPENAI_API_KEY")) {
-            provider = "OpenAI";
-        } else if (envSet("WATSONX_APIKEY")) {
-            provider = "watsonx.ai";
-        } else if (envSet("LLM_API_KEY")) {
-            provider = "Custom (LLM_API_KEY)";
+    private void checkAiProvider(List<Line> result, OllamaDoctorSupport.Status ollamaStatus) {
+        addAiProviderLines(result, resolveCloudAiProvider(), ollamaStatus);
+    }
+
+    static void addAiProviderLines(List<Line> result, String cloudProvider, OllamaDoctorSupport.Status ollama) {
+        String provider = cloudProvider;
+        boolean ollamaReady = ollama.running() && ollama.models() != null && !ollama.models().isEmpty();
+        if (provider == null && ollama.running()) {
+            provider = ollamaReady ? "Ollama (local)" : "Ollama (no models)";
         }
         if (provider != null) {
+            String emoji = (cloudProvider != null || ollamaReady) ? TuiIcons.OK : TuiIcons.WARN;
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                     Span.styled(String.format("%-14s", "AI"), Theme.muted()),
                     Span.raw(String.format("%-30s", provider)),
-                    Span.raw(" " + TuiIcons.OK)));
+                    Span.raw(" " + emoji)));
+            if (ollama.running() && !ollamaReady && cloudProvider == null) {
+                result.add(Line.from(Span.styled(
+                        "                    Run: ollama pull <model> for local AI (F8)",
+                        Style.EMPTY.dim())));
+            }
         } else {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                     Span.styled(String.format("%-14s", "AI"), Theme.muted()),
                     Span.raw(String.format("%-30s", "No API key configured")),
                     Span.raw(" " + TuiIcons.WARN)));
+            addDetail(result, "Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY,"
+                              + " WATSONX_APIKEY, or start Ollama");
+        }
+    }
+
+    static String resolveCloudAiProvider() {
+        if (envSet("ANTHROPIC_API_KEY")) {
+            return "Anthropic";
+        }
+        if (envSet("CLOUD_ML_REGION") && envSet("ANTHROPIC_VERTEX_PROJECT_ID")) {
+            return "Vertex AI";
+        }
+        if (envSet("AZURE_OPENAI_API_KEY") && envSet("AZURE_OPENAI_ENDPOINT")) {
+            return "Azure OpenAI";
+        }
+        if (envSet("GEMINI_API_KEY")) {
+            return "Gemini";
+        }
+        if (envSet("OPENAI_API_KEY")) {
+            return "OpenAI";
+        }
+        if (envSet("WATSONX_APIKEY")) {
+            return "watsonx.ai";
+        }
+        if (envSet("LLM_API_KEY")) {
+            return "Custom (LLM_API_KEY)";
+        }
+        return null;
+    }
+
+    private void checkOllama(List<Line> result, OllamaDoctorSupport.Status status) {
+        addOllamaLines(result, status);
+    }
+
+    static void addOllamaLines(List<Line> result, OllamaDoctorSupport.Status status) {
+        if (status.running()) {
+            boolean allSmall = OllamaDoctorSupport.allModelsSmall(status.models());
+            String icon = (status.models().isEmpty() || allSmall) ? TuiIcons.WARN : TuiIcons.OK;
+            result.add(Line.from(
+                    Span.raw(TuiIcons.indent(TuiIcons.MCP)),
+                    Span.styled(String.format("%-14s", "Ollama"), Theme.muted()),
+                    Span.raw(String.format("%-30s", OllamaDoctorSupport.tuiRunningSummary(status, 30))),
+                    Span.raw(" " + icon)));
+            String models = OllamaDoctorSupport.formatModels(status.models());
             result.add(Line.from(Span.styled(
-                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY, or WATSONX_APIKEY",
+                    "                    models: " + TuiHelper.truncate(models, 34),
                     Style.EMPTY.dim())));
+            if (allSmall) {
+                result.add(Line.from(Span.styled(
+                        "                    F8 needs ≥14B — run: ollama pull qwen3.6:35b-a3b",
+                        Style.EMPTY.dim())));
+            }
+        } else {
+            result.add(Line.from(
+                    Span.raw(TuiIcons.indent(TuiIcons.MCP)),
+                    Span.styled(String.format("%-14s", "Ollama"), Theme.muted()),
+                    Span.raw(String.format("%-30s", "Not detected (optional)")),
+                    Span.raw(" " + TuiIcons.WARN)));
+            addDetail(result, "Start Ollama (ollama serve) for local AI");
         }
     }
 
@@ -332,8 +425,7 @@ class DoctorPopup {
                         Span.styled(String.format("%-14s", "MCP"), Theme.muted()),
                         Span.raw(String.format("%-30s", "Listening on port " + mcpPort)),
                         Span.raw(" " + TuiIcons.WARN)));
-                result.add(Line.from(Span.styled("                    No AI client connected",
-                        Style.EMPTY.dim())));
+                addDetail(result, "No AI client connected");
             }
         } else {
             result.add(Line.from(

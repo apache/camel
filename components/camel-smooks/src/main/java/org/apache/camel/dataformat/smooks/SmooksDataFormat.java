@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.smooks.SmooksComponent;
 import org.apache.camel.component.smooks.SmooksProcessor;
+import org.apache.camel.component.smooks.SmooksSecuritySupport;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.CamelContextHelper;
@@ -40,6 +41,7 @@ import org.smooks.SmooksFactory;
 import org.smooks.api.ExecutionContext;
 import org.smooks.api.SmooksException;
 import org.smooks.api.io.Sink;
+import org.smooks.api.io.Source;
 import org.smooks.engine.lookup.ExportsLookup;
 import org.smooks.io.payload.Exports;
 import org.smooks.io.sink.StringSink;
@@ -63,6 +65,8 @@ public class SmooksDataFormat extends ServiceSupport implements DataFormat, Came
     private Smooks smooks;
     private CamelContext camelContext;
     private String smooksConfig;
+    private boolean allowExternalEntities;
+    private boolean hardenXmlInput;
 
     /**
      * Marshals the Object 'fromBody' to an OutputStream 'toStream'
@@ -100,7 +104,18 @@ public class SmooksDataFormat extends ServiceSupport implements DataFormat, Came
         final ExecutionContext executionContext = smooks.createExecutionContext();
         final Exports exports = smooks.getApplicationContext().getRegistry().lookup(new ExportsLookup());
         final Sink[] sinks = exports.createSinks();
-        smooks.filterSource(executionContext, new StreamSource<>(fromStream), sinks);
+        final Source source;
+        if (hardenXmlInput) {
+            // Untrusted XML: parse with a reader that does not resolve external entities before Smooks sees it
+            try {
+                source = SmooksSecuritySupport.secureXmlSource(fromStream);
+            } catch (IOException | SAXException e) {
+                throw new SmooksException(e.getMessage(), e);
+            }
+        } else {
+            source = new StreamSource<>(fromStream);
+        }
+        smooks.filterSource(executionContext, source, sinks);
         return getResult(exports, sinks, exchange);
     }
 
@@ -135,6 +150,7 @@ public class SmooksDataFormat extends ServiceSupport implements DataFormat, Came
         } catch (IOException | SAXException e) {
             throw new SmooksException(e.getMessage(), e);
         }
+        hardenXmlInput = !allowExternalEntities && SmooksSecuritySupport.usesDefaultXmlReader(smooks);
     }
 
     @Override
@@ -150,5 +166,13 @@ public class SmooksDataFormat extends ServiceSupport implements DataFormat, Came
 
     public void setSmooksConfig(String smooksConfig) {
         this.smooksConfig = smooksConfig;
+    }
+
+    public boolean isAllowExternalEntities() {
+        return allowExternalEntities;
+    }
+
+    public void setAllowExternalEntities(boolean allowExternalEntities) {
+        this.allowExternalEntities = allowExternalEntities;
     }
 }

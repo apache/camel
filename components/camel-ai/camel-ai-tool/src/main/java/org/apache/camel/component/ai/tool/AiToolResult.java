@@ -34,9 +34,14 @@ public sealed interface AiToolResult {
     /**
      * The route executed successfully and produced a result.
      *
-     * @param value the route result as a string
+     * @param value             the route result as a string (JSON text when structured output is configured)
+     * @param structuredContent typed JSON value when an output schema is declared, otherwise {@code null}
      */
-    record Success(String value) implements AiToolResult {
+    record Success(String value, Object structuredContent) implements AiToolResult {
+
+        public Success(String value) {
+            this(value, null);
+        }
     }
 
     /**

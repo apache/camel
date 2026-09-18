@@ -121,7 +121,7 @@ public class BrowsableQueueTest extends AbstractJMSTest {
 
     @Test
     public void testSendMessagesThenBrowseQueueNoMax() {
-        final String queueName = queueNameForClass("activemq:BrowsableQueueTest.b", this.getClass());
+        final String queueName = queueNameForClass("activemq:BrowsableQueueTest.e", this.getClass());
 
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
@@ -173,5 +173,12 @@ public class BrowsableQueueTest extends AbstractJMSTest {
         context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
         consumer = camelContextExtension.getConsumerTemplate();
+
+        for (String suffix : new String[] { "b", "c", "d", "e" }) {
+            String q = queueNameForClass("activemq:BrowsableQueueTest." + suffix, getClass());
+            while (consumer.receiveNoWait(q) != null) {
+                // drain leftover messages from previous runs/retries
+            }
+        }
     }
 }

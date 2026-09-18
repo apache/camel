@@ -92,6 +92,10 @@ class FilesBrowser {
     }
 
     private boolean loadDirectory(Path dir) {
+        return loadDirectory(dir, null);
+    }
+
+    private boolean loadDirectory(Path dir, String selectName) {
         List<FileEntry> dirs = new ArrayList<>();
         List<FileEntry> files = new ArrayList<>();
         try (var stream = Files.list(dir)) {
@@ -117,6 +121,12 @@ class FilesBrowser {
         dirs.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
         files.sort(Comparator.comparing(FileEntry::name, String.CASE_INSENSITIVE_ORDER));
 
+        // auto-descend through empty middle folders (no files and exactly one sub folder)
+        // when navigating forward (not when restoring position while navigating back)
+        if (selectName == null && files.isEmpty() && dirs.size() == 1) {
+            return loadDirectory(Path.of(dirs.get(0).path()));
+        }
+
         List<FileEntry> found = new ArrayList<>();
         if (!dir.equals(rootDir)) {
             found.add(new FileEntry(TuiIcons.FOLDER, "..", -1, dir.getParent().toString(), true));
@@ -128,9 +138,61 @@ class FilesBrowser {
             return false;
         }
         entries = found;
-        listState.select(0);
+        int sel = 0;
+        if (selectName != null) {
+            for (int i = 0; i < found.size(); i++) {
+                if (found.get(i).name().equals(selectName)) {
+                    sel = i;
+                    break;
+                }
+            }
+        }
+        listState.select(sel);
         currentDir = dir;
         return true;
+    }
+
+    private void navigateBack() {
+        if (currentDir == null || currentDir.equals(rootDir)) {
+            return;
+        }
+        Path child = currentDir;
+        Path parent = currentDir.getParent();
+        // skip back through empty middle folders (parent has no files and only this one sub folder),
+        // but never above the root directory
+        while (parent != null && !parent.equals(rootDir) && parent.getParent() != null
+                && isEmptyMiddleFolder(parent)) {
+            child = parent;
+            parent = parent.getParent();
+        }
+        loadDirectory(parent, child.getFileName().toString());
+    }
+
+    private boolean isEmptyMiddleFolder(Path dir) {
+        int dirCount = 0;
+        try (var stream = Files.list(dir)) {
+            var it = stream.iterator();
+            while (it.hasNext()) {
+                Path p = it.next();
+                String name = p.getFileName().toString();
+                if (Files.isDirectory(p)) {
+                    if (name.startsWith(".")) {
+                        // hidden directories are not shown
+                        continue;
+                    }
+                    dirCount++;
+                    if (dirCount > 1) {
+                        return false;
+                    }
+                } else if (Files.isRegularFile(p)) {
+                    // has at least one visible file
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return dirCount == 1;
     }
 
     boolean handleMouseEvent(MouseEvent me) {
@@ -152,7 +214,11 @@ class FilesBrowser {
                 listState.select(clicked);
                 FileEntry entry = entries.get(clicked);
                 if (entry.directory()) {
-                    loadDirectory(Path.of(entry.path()));
+                    if ("..".equals(entry.name())) {
+                        navigateBack();
+                    } else {
+                        loadDirectory(Path.of(entry.path()));
+                    }
                 } else {
                     sourceViewer.loadFile(Path.of(entry.path()));
                 }
@@ -206,9 +272,7 @@ class FilesBrowser {
                 return true;
             }
             if (ke.isDeleteBackward()) {
-                if (currentDir != null && !currentDir.equals(rootDir)) {
-                    loadDirectory(currentDir.getParent());
-                }
+                navigateBack();
                 return true;
             }
             if (ke.isConfirm()) {
@@ -216,7 +280,11 @@ class FilesBrowser {
                 if (sel != null && sel < entries.size()) {
                     FileEntry entry = entries.get(sel);
                     if (entry.directory()) {
-                        loadDirectory(Path.of(entry.path()));
+                        if ("..".equals(entry.name())) {
+                            navigateBack();
+                        } else {
+                            loadDirectory(Path.of(entry.path()));
+                        }
                     } else {
                         sourceViewer.loadFile(Path.of(entry.path()));
                     }
@@ -297,13 +365,22 @@ class FilesBrowser {
         if (sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
         } else {
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             TuiHelper.hint(spans, "Enter", "open");
-            TuiHelper.hint(spans, "Esc", "close");
+            TuiHelper.hintLast(spans, "Esc", "close");
         }
     }
 
     static Path resolveSourceDirectory(IntegrationInfo info) {
+        // dev mode reloads from a directory: that is where the original (editable) files are, also when the
+        // integration runs from an exported copy (camel run --runtime=main --dev) or from --source-dir
+        for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
+            if ("camel.main.routesReloadDirectory".equals(cp.key) && cp.value != null && !cp.value.isBlank()) {
+                Path dir = Path.of(cp.value);
+                if (Files.isDirectory(dir)) {
+                    return dir;
+                }
+            }
+        }
         for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
             if ("camel.main.routesIncludePattern".equals(cp.key) && cp.value != null) {
                 for (String part : cp.value.split(",")) {
@@ -343,6 +420,30 @@ class FilesBrowser {
             return Path.of(info.directory);
         }
         return null;
+    }
+
+    /**
+     * Whether the directory is a temporary copy of the sources (an example extracted by camel run, or an exported
+     * project in .camel-jbang-run), where edits are lost when the integration stops.
+     */
+    static boolean isTemporaryDirectory(Path dir) {
+        if (dir == null) {
+            return false;
+        }
+        String s = dir.toAbsolutePath().normalize().toString();
+        if (s.contains(".camel-jbang-run") || s.contains(".camel-jbang")) {
+            return true;
+        }
+        String tmp = System.getProperty("java.io.tmpdir");
+        if (tmp != null && !tmp.isBlank()) {
+            try {
+                Path tmpDir = Path.of(tmp).toRealPath();
+                return dir.toRealPath().startsWith(tmpDir);
+            } catch (IOException e) {
+                return s.startsWith(Path.of(tmp).toAbsolutePath().normalize().toString());
+            }
+        }
+        return false;
     }
 
     static String formatFileSize(long bytes) {

@@ -17,6 +17,8 @@
 package org.apache.camel.impl.console;
 
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.management.MBeanServer;
@@ -27,8 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "heap-histogram", displayName = "Heap Histogram", description = "Displays class-level heap memory usage")
 @Configurer(extended = true)
@@ -37,6 +38,19 @@ public class HeapHistogramDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Limits the number of classes displayed",
               defaultValue = "100", javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
+
+    public record ClassEntry(
+            @Metadata(description = "The class number") int num,
+            @Metadata(description = "Number of instances") long instances,
+            @Metadata(description = "Number of bytes used") long bytes,
+            @Metadata(description = "The class name") String className) {
+    }
+
+    public record Response(
+            @Metadata(description = "The classes in the histogram") List<ClassEntry> classes,
+            @Metadata(description = "Total number of instances") long totalInstances,
+            @Metadata(description = "Total number of bytes") long totalBytes) {
+    }
 
     public HeapHistogramDevConsole() {
         super("jvm", "heap-histogram", "Heap Histogram", "Displays class-level heap memory usage");
@@ -56,19 +70,16 @@ public class HeapHistogramDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String histogram = invokeGcClassHistogram();
+        Response response;
         if (histogram == null) {
-            root.put("classes", new JsonArray());
-            root.put("totalInstances", 0);
-            root.put("totalBytes", 0);
-            return root;
+            response = new Response(new ArrayList<>(), 0, 0);
+        } else {
+            int limit = getLimit(options);
+            response = parseHistogram(histogram, limit);
         }
-
-        int limit = getLimit(options);
-        return parseHistogram(histogram, limit);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private int getLimit(Map<String, Object> options) {
@@ -89,10 +100,8 @@ public class HeapHistogramDevConsole extends AbstractDevConsole {
         }
     }
 
-    private static JsonObject parseHistogram(String histogram, int limit) {
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
-        root.put("classes", arr);
+    private static Response parseHistogram(String histogram, int limit) {
+        List<ClassEntry> arr = new ArrayList<>();
 
         long totalInstances = 0;
         long totalBytes = 0;
@@ -129,19 +138,11 @@ public class HeapHistogramDevConsole extends AbstractDevConsole {
                 continue;
             }
 
-            JsonObject jo = new JsonObject();
-            jo.put("num", num);
-            jo.put("instances", instances);
-            jo.put("bytes", bytes);
-            jo.put("className", StringHelper.readableClassName(className));
-            arr.add(jo);
+            arr.add(new ClassEntry(num, instances, bytes, StringHelper.readableClassName(className)));
             count++;
         }
 
-        root.put("totalInstances", totalInstances);
-        root.put("totalBytes", totalBytes);
-
-        return root;
+        return new Response(arr, totalInstances, totalBytes);
     }
 
     private static long parseLong(String s) {

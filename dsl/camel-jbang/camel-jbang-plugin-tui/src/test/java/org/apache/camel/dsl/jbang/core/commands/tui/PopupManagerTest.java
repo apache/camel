@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,5 +143,49 @@ class PopupManagerTest {
         assertEquals(2, bUpperResult[1]);
         // 'z' matches nothing
         assertArrayEquals(new int[] { -1, 0 }, popupManager.morePopupShortcut(KeyEvent.ofChar('z', KeyModifiers.NONE)));
+    }
+
+    // ---- Confirm dialog key contract: Enter accepts, Esc cancels, anything else is swallowed ----
+
+    @Test
+    void confirmRunsCallbackOnEnter() {
+        boolean[] ran = { false };
+        popupManager.showConfirm("Confirm Quit", " Quit? ", () -> ran[0] = true);
+        assertTrue(popupManager.isConfirmVisible());
+
+        popupManager.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE), 0, 2);
+        assertTrue(ran[0], "Enter must run the confirm callback");
+        assertFalse(popupManager.isConfirmVisible(), "Confirm should close after Enter");
+    }
+
+    @Test
+    void confirmCancelsOnEscapeWithoutRunningCallback() {
+        boolean[] ran = { false };
+        popupManager.showConfirm("Confirm Quit", " Quit? ", () -> ran[0] = true);
+
+        popupManager.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE), 0, 2);
+        assertFalse(ran[0], "Esc must not run the confirm callback");
+        assertFalse(popupManager.isConfirmVisible(), "Confirm should close after Esc");
+    }
+
+    @Test
+    void confirmIgnoresOtherKeys() {
+        boolean[] ran = { false };
+        popupManager.showConfirm("Confirm Quit", " Quit? ", () -> ran[0] = true);
+
+        assertTrue(popupManager.handleKeyEvent(KeyEvent.ofChar('x'), 0, 2), "key is swallowed by the modal");
+        assertFalse(ran[0], "a stray key must not confirm");
+        assertTrue(popupManager.isConfirmVisible(), "a stray key must not dismiss the confirm");
+    }
+
+    @Test
+    void killConfirmIgnoresOtherKeysAndCancelsOnEscape() {
+        popupManager.showKillConfirm();
+
+        popupManager.handleKeyEvent(KeyEvent.ofChar('x'), 0, 2);
+        assertTrue(popupManager.isKillConfirmVisible(), "a stray key must not dismiss the kill confirm");
+
+        popupManager.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE), 0, 2);
+        assertFalse(popupManager.isKillConfirmVisible(), "Esc cancels the kill confirm");
     }
 }

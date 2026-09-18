@@ -167,6 +167,18 @@ public final class SimpleOperatorConstants {
               annotations = { "kind=binary", "syntax=LHS !endsWith RHS", "precedence=10" })
     public static final String NOT_ENDS_WITH = "!endsWith";
 
+    @Metadata(description = "Tests whether the left operand string equals the right operand string, compared as text without numeric coercion.",
+              label = "binary",
+              examples = { "${header.Account1} equals ${header.Account2}" },
+              annotations = { "kind=binary", "syntax=LHS equals RHS", "precedence=10" })
+    public static final String EQUALS = "equals";
+
+    @Metadata(description = "Tests whether the left operand string does not equal the right operand string, compared as text without numeric coercion.",
+              label = "binary",
+              examples = { "${header.Account1} !equals ${header.Account2}" },
+              annotations = { "kind=binary", "syntax=LHS !equals RHS", "precedence=10" })
+    public static final String NOT_EQUALS = "!equals";
+
     // --- Unary operators (precedence 1) ---
 
     @Metadata(description = "Increments the numeric value by one. Must immediately follow a function closing brace.",

@@ -266,11 +266,13 @@ public interface ExecEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow to use Camel headers or not (default false).
-         * Enabling this allows to specify dynamic command line arguments via
-         * message header. However this can be seen as a potential security
-         * vulnerability if the header is coming from a malicious user, so use
-         * this with care.
+         * Whether {code CamelExec} in-headers may override URI options (default
+         * false since Camel 4.20). When false, CamelExecCommandExecutable,
+         * CamelExecCommandArgs, CamelExecCommandOutFile,
+         * CamelExecCommandWorkingDir, CamelExecCommandTimeout,
+         * CamelExecExitValues, CamelExecUseStderrOnEmptyStdout, and
+         * CamelExecCommandLogLevel are ignored. Enable only when those headers
+         * come from a trusted route, not from an untrusted consumer.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -285,11 +287,13 @@ public interface ExecEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to allow to use Camel headers or not (default false).
-         * Enabling this allows to specify dynamic command line arguments via
-         * message header. However this can be seen as a potential security
-         * vulnerability if the header is coming from a malicious user, so use
-         * this with care.
+         * Whether {code CamelExec} in-headers may override URI options (default
+         * false since Camel 4.20). When false, CamelExecCommandExecutable,
+         * CamelExecCommandArgs, CamelExecCommandOutFile,
+         * CamelExecCommandWorkingDir, CamelExecCommandTimeout,
+         * CamelExecExitValues, CamelExecUseStderrOnEmptyStdout, and
+         * CamelExecCommandLogLevel are ignored. Enable only when those headers
+         * come from a trusted route, not from an untrusted consumer.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -445,7 +449,8 @@ public interface ExecEndpointBuilderFactory {
 
         /**
          * The name of the system command that will be executed. Overrides
-         * executable in the URI.
+         * executable in the URI. Requires allowControlHeaders=true on the exec
+         * endpoint or component (default is false since Camel 4.20).
          * 
          * The option is a: {@code String} type.
          * 
@@ -459,7 +464,8 @@ public interface ExecEndpointBuilderFactory {
         /**
          * Command-line argument(s) to pass to the executed process. The
          * argument(s) is/are used literally - no quoting is applied. Overrides
-         * any existing args in the URI.
+         * any existing args in the URI. Requires allowControlHeaders=true on
+         * the exec endpoint or component (default is false since Camel 4.20).
          * 
          * The option is a: {@code java.util.List<String> or String} type.
          * 
@@ -473,6 +479,8 @@ public interface ExecEndpointBuilderFactory {
         /**
          * The name of a file, created by the executable, that should be
          * considered as its output. Overrides any existing outFile in the URI.
+         * Requires allowControlHeaders=true on the exec endpoint or component
+         * (default is false since Camel 4.20).
          * 
          * The option is a: {@code String} type.
          * 
@@ -485,7 +493,8 @@ public interface ExecEndpointBuilderFactory {
         }
         /**
          * The directory in which the command should be executed. Overrides any
-         * existing workingDir in the URI.
+         * existing workingDir in the URI. Requires allowControlHeaders=true on
+         * the exec endpoint or component (default is false since Camel 4.20).
          * 
          * The option is a: {@code String} type.
          * 
@@ -498,7 +507,9 @@ public interface ExecEndpointBuilderFactory {
         }
         /**
          * The timeout, in milliseconds, after which the executable should be
-         * terminated. Overrides any existing timeout in the URI.
+         * terminated. Overrides any existing timeout in the URI. Requires
+         * allowControlHeaders=true on the exec endpoint or component (default
+         * is false since Camel 4.20).
          * 
          * The option is a: {@code long} type.
          * 
@@ -511,7 +522,9 @@ public interface ExecEndpointBuilderFactory {
         }
         /**
          * The exit values for successful execution of the process. Overrides
-         * any existing exitValues in the URI.
+         * any existing exitValues in the URI. Requires allowControlHeaders=true
+         * on the exec endpoint or component (default is false since Camel
+         * 4.20).
          * 
          * The option is a: {@code String} type.
          * 
@@ -552,7 +565,8 @@ public interface ExecEndpointBuilderFactory {
         /**
          * Indicates that when stdout is empty, this component will populate the
          * Camel Message Body with stderr. This behavior is disabled (false) by
-         * default.
+         * default. Requires allowControlHeaders=true on the exec endpoint or
+         * component (default is false since Camel 4.20).
          * 
          * The option is a: {@code boolean} type.
          * 
@@ -566,7 +580,9 @@ public interface ExecEndpointBuilderFactory {
         /**
          * Logging level to be used for commands during execution. The default
          * value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR
-         * or OFF (Values of LoggingLevel enum).
+         * or OFF (Values of LoggingLevel enum). Requires
+         * allowControlHeaders=true on the exec endpoint or component (default
+         * is false since Camel 4.20).
          * 
          * The option is a: {@code String} type.
          * 

@@ -5,6 +5,8 @@
 #
 # Format: source-artifact-id : it-module-path : command
 #
+# Salesforce Maven Plugin integration tests
+camel-salesforce-maven-plugin:components/camel-salesforce/camel-salesforce-maven-plugin:mvn verify -f components/camel-salesforce/camel-salesforce-maven-plugin -Pplugin-itest
 # JBang integration tests
 camel-jbang-core:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
 camel-jbang-main:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test

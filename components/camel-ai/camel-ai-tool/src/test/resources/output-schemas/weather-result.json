@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "temperature": { "type": "number" },
+    "unit": { "type": "string", "enum": ["celsius", "fahrenheit"] }
+  },
+  "required": ["temperature", "unit"],
+  "additionalProperties": false
+}

@@ -20,7 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpEndpoint;
@@ -46,12 +45,8 @@ public final class HttpMethodHelper {
             uriString = exchange.getIn().getHeader(HttpConstants.HTTP_URI, String.class);
         }
         if (uriString != null) {
-            // resolve placeholders in uriString
-            try {
-                uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
-            } catch (Exception e) {
-                throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
-            }
+            // NOTE: property placeholders are resolved at build time on the endpoint uri written in the route,
+            // never on this header value, which carries message content (see CAMEL-24282 / CAMEL-24418)
             // in case the URI string contains unsafe characters
             uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);
             URI uri = new URI(uriString);

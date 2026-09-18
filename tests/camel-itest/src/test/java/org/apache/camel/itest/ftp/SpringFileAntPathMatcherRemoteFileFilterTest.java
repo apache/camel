@@ -16,6 +16,9 @@
  */
 package org.apache.camel.itest.ftp;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -46,6 +49,8 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest {
 
     protected String expectedBody = "Godday World";
     @Autowired
+    protected CamelContext context;
+    @Autowired
     protected ProducerTemplate template;
     @EndpointInject("ref:myFTPEndpoint")
     protected Endpoint inputFTP;
@@ -63,6 +68,6 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest {
         template.sendBodyAndHeader(inputFTP, "Day world", Exchange.FILE_NAME, "day.xml");
         template.sendBodyAndHeader(inputFTP, expectedBody, Exchange.FILE_NAME, "subfolder/foo/godday.txt");
 
-        result.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 }

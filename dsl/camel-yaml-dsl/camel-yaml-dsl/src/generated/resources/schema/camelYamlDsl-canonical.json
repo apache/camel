@@ -19,6 +19,9 @@
           "bean" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.BeanDefinition"
           },
+          "cache" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.CacheDefinition"
+          },
           "doCatch" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.CatchDefinition"
           },
@@ -679,10 +682,67 @@
           "type" : {
             "type" : "string",
             "title" : "Type",
-            "description" : "The class name (fully qualified) of the bean."
+            "description" : "The class name (fully qualified) of the bean. Required unless the bean is created by a script (scriptLanguage) or a builder (builderClass), where the type is optional and is then the type the bean is registered as."
           }
         },
-        "required" : [ "name", "type" ]
+        "required" : [ "name" ]
+      },
+      "org.apache.camel.model.CacheDefinition" : {
+        "title" : "Cache",
+        "description" : "Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "cacheNull" : {
+            "type" : "boolean",
+            "title" : "Cache Null",
+            "description" : "Whether to cache null results. By default, null message bodies are not cached.",
+            "default" : false
+          },
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "The description for this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+            "default" : false
+          },
+          "expression" : {
+            "title" : "Expression",
+            "description" : "Expression to compute the cache key. Messages with the same key share the cached result.",
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "keyValueRepository" : {
+            "type" : "string",
+            "title" : "Key Value Repository",
+            "description" : "Sets the reference name of the KeyValueRepository to use as the cache backing store. If not set, a MemoryKeyValueRepository is auto-created."
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "The note for this node"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          },
+          "ttl" : {
+            "type" : "string",
+            "title" : "Ttl",
+            "description" : "Sets the time-to-live for cached entries. Supports duration syntax (e.g. 10m, 1h) or milliseconds. Default: -1 (no expiration).",
+            "default" : "-1"
+          }
+        }
       },
       "org.apache.camel.model.CatchDefinition" : {
         "title" : "Do Catch",
@@ -811,6 +871,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean",
+            "title" : "Inherit Error Handler",
+            "description" : "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.",
+            "default" : false
           },
           "note" : {
             "type" : "string",
@@ -1332,9 +1398,6 @@
           "constant" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
           },
-          "csimple" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
-          },
           "datasonnet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
           },
@@ -1355,9 +1418,6 @@
           },
           "java" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
-          },
-          "joor" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
           },
           "jq" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
@@ -1382,6 +1442,12 @@
           },
           "python" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.PythonExpression"
+          },
+          "python3" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+          },
+          "quickjs" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.QuickjsExpression"
           },
           "ref" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
@@ -2237,6 +2303,12 @@
           },
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+          },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+          },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
           },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
@@ -3103,7 +3175,7 @@
             "description" : "The property key."
           }
         },
-        "required" : [ "expression", "key" ]
+        "required" : [ "key" ]
       },
       "org.apache.camel.model.RecipientListDefinition" : {
         "title" : "Recipient List",
@@ -3615,8 +3687,7 @@
           "streamConfig" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.config.StreamResequencerConfig"
           }
-        },
-        "required" : [ "expression" ]
+        }
       },
       "org.apache.camel.model.Resilience4jConfigurationDefinition" : {
         "title" : "Resilience4j Configuration",
@@ -4038,6 +4109,10 @@
         "properties" : {
           "autoStartup" : {
             "type" : "boolean"
+          },
+          "delayer" : {
+            "type" : "string",
+            "description" : "Whether to slow down processing messages by a given delay in msec."
           },
           "description" : {
             "type" : "string"
@@ -5718,6 +5793,12 @@
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
           },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+          },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
+          },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
@@ -5749,8 +5830,7 @@
           "zipFile" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
-        },
-        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
+        }
       },
       "org.apache.camel.model.ValidateDefinition" : {
         "title" : "Validate",
@@ -6290,6 +6370,11 @@
             "type" : "string",
             "title" : "Schema Resolver",
             "description" : "Optional schema resolver used to lookup schemas for the data in transit."
+          },
+          "serializablePackages" : {
+            "type" : "string",
+            "title" : "Serializable Packages",
+            "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class."
           },
           "timezone" : {
             "type" : "string",
@@ -6940,6 +7025,12 @@
           },
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+          },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+          },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
           },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
@@ -8046,6 +8137,12 @@
             "title" : "Provider",
             "description" : "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider."
           },
+          "requireIntegrityProtection" : {
+            "type" : "boolean",
+            "title" : "Require Integrity Protection",
+            "description" : "Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still emits the legacy packet.",
+            "default" : true
+          },
           "signatureKeyFileName" : {
             "type" : "string",
             "title" : "Signature Key File Name",
@@ -8300,6 +8397,12 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "allowExternalEntities" : {
+            "type" : "boolean",
+            "title" : "Allow External Entities",
+            "description" : "Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and parameter entities) when parsing XML input. This is disabled by default so that external entities in the message body are not resolved; enable it only for trusted legacy configurations that rely on external entity resolution.",
+            "default" : false
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -8496,6 +8599,69 @@
             "type" : "string",
             "title" : "Instance Class",
             "description" : "Name of class to use when unmarshalling."
+          }
+        }
+      },
+      "org.apache.camel.model.dataformat.ToonDataFormat" : {
+        "title" : "TOON",
+        "description" : "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "contentTypeHeader" : {
+            "type" : "boolean",
+            "title" : "Content Type Header",
+            "description" : "Whether the data format should set the Content-Type header to text/toon when marshalling.",
+            "default" : true
+          },
+          "delimiter" : {
+            "type" : "string",
+            "title" : "Delimiter",
+            "description" : "Delimiter used for tabular array rows and inline primitive arrays.",
+            "default" : "COMMA",
+            "enum" : [ "COMMA", "TAB", "PIPE" ]
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "indent" : {
+            "type" : "number",
+            "title" : "Indent",
+            "description" : "Number of spaces per indentation level.",
+            "default" : 2
+          },
+          "lengthMarker" : {
+            "type" : "boolean",
+            "title" : "Length Marker",
+            "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
+            "default" : false
+          },
+          "strict" : {
+            "type" : "boolean",
+            "title" : "Strict",
+            "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+            "default" : true
+          }
+        }
+      },
+      "org.apache.camel.model.dataformat.UblDataFormat" : {
+        "title" : "UBL",
+        "description" : "Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "prettyPrint" : {
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "Whether to enable pretty printing (formatted) output of the XML",
+            "default" : false
           }
         }
       },
@@ -8923,7 +9089,7 @@
             "type" : "string",
             "title" : "Xml Cipher Algorithm",
             "description" : "The cipher algorithm to be used for encryption/decryption of the XML message content.",
-            "default" : "AES-256-GCM",
+            "default" : "AES_256_GCM",
             "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ]
           }
         }
@@ -9441,49 +9607,6 @@
           }
         }
       },
-      "org.apache.camel.model.language.CSimpleExpression" : {
-        "title" : "CSimple",
-        "description" : "Evaluate a compiled simple expression",
-        "deprecated" : true,
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "expression" : {
-            "type" : "string",
-            "title" : "Expression",
-            "description" : "The expression value in your chosen language syntax."
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node."
-          },
-          "pretty" : {
-            "type" : "boolean",
-            "title" : "Pretty",
-            "description" : "To pretty format the output (only JSon or XML supported).",
-            "default" : false
-          },
-          "resultType" : {
-            "type" : "string",
-            "title" : "Result Type",
-            "description" : "The class of the result type (type from output)."
-          },
-          "trim" : {
-            "type" : "boolean",
-            "title" : "Trim",
-            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-            "default" : true
-          },
-          "trimResult" : {
-            "type" : "boolean",
-            "title" : "Trim Result",
-            "description" : "Whether to trim the returned values when this language is in use.",
-            "default" : false
-          }
-        },
-        "required" : [ "expression" ]
-      },
       "org.apache.camel.model.language.ConstantExpression" : {
         "title" : "Constant",
         "description" : "A fixed value set only once during the route startup",
@@ -9591,9 +9714,6 @@
           "constant" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
           },
-          "csimple" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
-          },
           "datasonnet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
           },
@@ -9614,9 +9734,6 @@
           },
           "java" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
-          },
-          "joor" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
           },
           "jq" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
@@ -9641,6 +9758,12 @@
           },
           "python" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.PythonExpression"
+          },
+          "python3" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+          },
+          "quickjs" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.QuickjsExpression"
           },
           "ref" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
@@ -9853,49 +9976,6 @@
             "type" : "string",
             "title" : "Result Type",
             "description" : "The class of the result type (type from output)."
-          },
-          "trim" : {
-            "type" : "boolean",
-            "title" : "Trim",
-            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-            "default" : true
-          }
-        },
-        "required" : [ "expression" ]
-      },
-      "org.apache.camel.model.language.JoorExpression" : {
-        "title" : "jOOR",
-        "description" : "Evaluates a jOOR (Java compiled once at runtime) expression",
-        "deprecated" : true,
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "expression" : {
-            "type" : "string",
-            "title" : "Expression",
-            "description" : "The expression value in your chosen language syntax."
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node."
-          },
-          "preCompile" : {
-            "type" : "boolean",
-            "title" : "Pre Compile",
-            "description" : "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.",
-            "default" : true
-          },
-          "resultType" : {
-            "type" : "string",
-            "title" : "Result Type",
-            "description" : "The class of the result type (type from output)."
-          },
-          "singleQuotes" : {
-            "type" : "boolean",
-            "title" : "Single Quotes",
-            "description" : "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.",
-            "default" : true
           },
           "trim" : {
             "type" : "boolean",
@@ -10155,9 +10235,69 @@
         },
         "required" : [ "expression" ]
       },
+      "org.apache.camel.model.language.Python3Expression" : {
+        "title" : "Python 3",
+        "description" : "Evaluates a Python 3 expression",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "expression" : {
+            "type" : "string",
+            "title" : "Expression",
+            "description" : "The expression value in your chosen language syntax."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node."
+          },
+          "resultType" : {
+            "type" : "string",
+            "title" : "Result Type",
+            "description" : "The class of the result type (type from output)."
+          },
+          "trim" : {
+            "type" : "boolean",
+            "title" : "Trim",
+            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+            "default" : true
+          }
+        },
+        "required" : [ "expression" ]
+      },
       "org.apache.camel.model.language.PythonExpression" : {
         "title" : "Python",
         "description" : "Evaluates a Python expression",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "expression" : {
+            "type" : "string",
+            "title" : "Expression",
+            "description" : "The expression value in your chosen language syntax."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node."
+          },
+          "resultType" : {
+            "type" : "string",
+            "title" : "Result Type",
+            "description" : "The class of the result type (type from output)."
+          },
+          "trim" : {
+            "type" : "boolean",
+            "title" : "Trim",
+            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+            "default" : true
+          }
+        },
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.QuickjsExpression" : {
+        "title" : "QuickJS",
+        "description" : "Evaluates a JavaScript expression using QuickJS4J",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
@@ -10468,6 +10608,11 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
           },
+          "namespacesRef" : {
+            "type" : "string",
+            "title" : "Namespaces Ref",
+            "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10526,6 +10671,11 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "namespacesRef" : {
+            "type" : "string",
+            "title" : "Namespaces Ref",
+            "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
           },
           "objectModel" : {
             "type" : "string",
@@ -10605,6 +10755,11 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
           },
+          "namespacesRef" : {
+            "type" : "string",
+            "title" : "Namespaces Ref",
+            "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10661,6 +10816,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean",
+            "title" : "Inherit Error Handler",
+            "description" : "Whether to inherit the error handler. If turned off, the load balancer will fail over immediately on an error instead of waiting for Camel error handler to exhaust retries.",
+            "default" : true
           },
           "maximumFailoverAttempts" : {
             "type" : "string",
@@ -12200,7 +12361,7 @@
           "component" : {
             "type" : "string",
             "title" : "Component",
-            "description" : "The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow.",
+            "description" : "The Camel Rest component to use for the REST transport (consumer), such as platform-http, netty-http, jetty, servlet, undertow.",
             "enum" : [ "platform-http", "servlet", "jetty", "undertow", "netty-http", "coap" ]
           },
           "componentProperty" : {
@@ -12958,6 +13119,12 @@
             "type" : "string",
             "title" : "To Type",
             "description" : "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types."
+          },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+          },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
           },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"

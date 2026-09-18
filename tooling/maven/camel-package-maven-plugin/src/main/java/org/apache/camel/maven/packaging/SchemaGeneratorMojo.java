@@ -216,7 +216,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void processModelClass(ClassInfo element) {
+    private void processModelClass(ClassInfo element) throws MojoExecutionException {
         // skip abstract classes
         if (Modifier.isAbstract(element.flags())) {
             return;
@@ -312,9 +312,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 json);
     }
 
-    private IndexView getIndex() {
+    private IndexView getIndex() throws MojoExecutionException {
         if (indexView == null) {
-            indexView = PackagePluginUtils.readJandexIndexQuietly(project);
+            indexView = PackagePluginUtils.readJandexIndex(project);
         }
         return indexView;
     }
@@ -427,7 +427,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected void findClassProperties(
             Set<EipOptionModel> eipOptions,
             Class<?> originalClassType, Class<?> classElement,
-            String prefix, String modelName) {
+            String prefix, String modelName)
+            throws MojoExecutionException {
         while (true) {
             for (Field fieldElement : classElement.getDeclaredFields()) {
 
@@ -662,7 +663,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private void processElement(
             Class<?> originalClassType, Class<?> classElement, XmlElement element, Field fieldElement,
-            Set<EipOptionModel> eipOptions, String prefix) {
+            Set<EipOptionModel> eipOptions, String prefix)
+            throws MojoExecutionException {
         String fieldName = fieldElement.getName();
         if (element != null) {
             Metadata metadata = fieldElement.getAnnotation(Metadata.class);
@@ -812,19 +814,19 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         eipOptions.add(ep);
     }
 
-    private void processRoute(Class<?> classElement, Set<EipOptionModel> eipOptions) {
+    private void processRoute(Class<?> classElement, Set<EipOptionModel> eipOptions) throws MojoExecutionException {
 
         // group
         String docComment = findJavaDoc(null, "group", null, classElement, true);
         EipOptionModel ep
-                = createOption("group", "Group", "attribute", "java.lang.String", false, "", "", docComment, false, null,
-                        false, null, null, false, false, false);
+                = createOption("group", "Group", "attribute", "java.lang.String", false, "", "advanced", docComment, false,
+                        null, false, null, null, false, false, false);
         eipOptions.add(ep);
 
         // nodePrefixId
         docComment = findJavaDoc(null, "nodePrefixId", null, classElement, true);
-        ep = createOption("nodePrefixId", "Node Prefix Id", "attribute", "java.lang.String", false, "", "", docComment, false,
-                null,
+        ep = createOption("nodePrefixId", "Node Prefix Id", "attribute", "java.lang.String", false, "", "advanced", docComment,
+                false, null,
                 false, null, null, false, false, false);
         eipOptions.add(ep);
 
@@ -861,19 +863,19 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // message history
         docComment = findJavaDoc(null, "messageHistory", null, classElement, true);
-        ep = createOption("messageHistory", "Message History", "attribute", "java.lang.Boolean", false, "", "", docComment,
-                false, null, false, null, null, false, false, false);
+        ep = createOption("messageHistory", "Message History", "attribute", "java.lang.Boolean", false, "", "advanced",
+                docComment, false, null, false, null, null, false, false, false);
         eipOptions.add(ep);
 
         // log mask
         docComment = findJavaDoc(null, "logMask", null, classElement, true);
-        ep = createOption("logMask", "Log Mask", "attribute", "java.lang.Boolean", false, "false", "", docComment, false, null,
-                false, null, null, false, false, false);
+        ep = createOption("logMask", "Log Mask", "attribute", "java.lang.Boolean", false, "false", "advanced", docComment,
+                false, null, false, null, null, false, false, false);
         eipOptions.add(ep);
 
         // delayer
         docComment = findJavaDoc(null, "delayer", null, classElement, true);
-        ep = createOption("delayer", "Delayer", "attribute", "java.lang.Long", false, "advanced", "", docComment, false, null,
+        ep = createOption("delayer", "Delayer", "attribute", "java.lang.Long", false, "", "advanced", docComment, false, null,
                 false, null, null, false, true, false);
         eipOptions.add(ep);
 
@@ -1094,7 +1096,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
      */
     private void processOutputs(
             Class<?> originalClassType, XmlElementRef elementRef,
-            Field fieldElement, Method methodElement, String fieldOrMethodName, Set<EipOptionModel> eipOptions, String prefix) {
+            Field fieldElement, Method methodElement, String fieldOrMethodName, Set<EipOptionModel> eipOptions, String prefix)
+            throws MojoExecutionException {
 
         if ("outputs".equals(fieldOrMethodName) && supportOutputs(originalClassType)) {
             String name = fetchName(elementRef.name(), fieldOrMethodName, prefix);
@@ -1147,7 +1150,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
      */
     private void processVerbs(
             Class<?> originalClassType, XmlElementRef elementRef, Field fieldElement,
-            String fieldName, Set<EipOptionModel> eipOptions, String prefix) {
+            String fieldName, Set<EipOptionModel> eipOptions, String prefix)
+            throws MojoExecutionException {
 
         if ("verbs".equals(fieldName) && supportOutputs(originalClassType)) {
             String name = fetchName(elementRef.name(), fieldName, prefix);
@@ -1226,7 +1230,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     private void processRefExpression(
             Class<?> originalClassType, Class<?> classElement,
             XmlElementRef elementRef, Field fieldElement,
-            String fieldName, Set<EipOptionModel> eipOptions, String prefix) {
+            String fieldName, Set<EipOptionModel> eipOptions, String prefix)
+            throws MojoExecutionException {
 
         if ("expression".equals(fieldName)) {
             String name = fetchName(elementRef.name(), fieldName, prefix);
@@ -1268,7 +1273,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             final String kind = "expression";
-            final boolean required = expressionRequired(name);
+            final boolean required = expressionRequired(originalClassType, fieldElement, name);
             EipOptionModel ep
                     = createOption(name, displayName, kind, fieldTypeName, required, "", label, docComment, deprecated,
                             deprecationNote, false, null, oneOfTypes, asPredicate, false, important);
@@ -1276,7 +1281,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private Set<String> getOneOfs(String[] classes) {
+    private Set<String> getOneOfs(String[] classes) throws MojoExecutionException {
         Set<String> oneOfTypes = new TreeSet<>();
         for (String superclass : classes) {
             for (ClassInfo ci : getIndex().getAllKnownSubclasses(DotName.createSimple(superclass))) {
@@ -1391,6 +1396,29 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         return defaultValue;
+    }
+
+    /**
+     * Whether the expression of an expression node is required: the @Metadata(required) on the concrete class's
+     * setExpression override when it has one (sort says false), else the @Metadata(required) on the expression field
+     * (true on ExpressionNode), else required.
+     */
+    private boolean expressionRequired(Class<?> classElement, Field fieldElement, String name) {
+        for (Class<?> c = classElement; c != null && c != fieldElement.getDeclaringClass(); c = c.getSuperclass()) {
+            for (Method m : c.getDeclaredMethods()) {
+                if ("setExpression".equals(m.getName()) && m.getParameterCount() == 1) {
+                    Metadata md = m.getAnnotation(Metadata.class);
+                    if (md != null) {
+                        return md.required();
+                    }
+                }
+            }
+        }
+        Metadata md = fieldElement.getAnnotation(Metadata.class);
+        if (md != null) {
+            return md.required();
+        }
+        return expressionRequired(name);
     }
 
     private boolean expressionRequired(String modelName) {

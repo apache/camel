@@ -6,10 +6,78 @@
     "title": "Platform HTTP",
     "description": "Embedded HTTP Server",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.platform.http.PlatformHttpConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-platform-http",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "server": {
+        "type": "string",
+        "description": "The server base URL (only present when the platform-http component is active)"
+      },
+      "endpoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The full endpoint URL"
+            },
+            "path": {
+              "type": "string",
+              "description": "The endpoint path"
+            },
+            "verbs": {
+              "type": "string",
+              "description": "The HTTP verbs (only present when configured)"
+            },
+            "consumes": {
+              "type": "string",
+              "description": "The consumed media types (only present when configured)"
+            },
+            "produces": {
+              "type": "string",
+              "description": "The produced media types (only present when configured)"
+            }
+          }
+        },
+        "description": "The registered HTTP endpoints (only present when there are any)"
+      },
+      "managementEndpoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The full endpoint URL"
+            },
+            "path": {
+              "type": "string",
+              "description": "The endpoint path"
+            },
+            "verbs": {
+              "type": "string",
+              "description": "The HTTP verbs (only present when configured)"
+            },
+            "consumes": {
+              "type": "string",
+              "description": "The consumed media types (only present when configured)"
+            },
+            "produces": {
+              "type": "string",
+              "description": "The produced media types (only present when configured)"
+            }
+          }
+        },
+        "description": "The registered HTTP management endpoints (only present when there are any)"
+      }
+    }
   }
 }
 

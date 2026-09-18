@@ -17,8 +17,36 @@
 package org.apache.camel.test.infra.cassandra.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class CassandraServiceFactory {
+
+    private static class SingletonCassandraService extends SingletonService<CassandraService> implements CassandraService {
+        public SingletonCassandraService(CassandraService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public int getCQL3Port() {
+            return getService().getCQL3Port();
+        }
+
+        @Override
+        public String getCassandraHost() {
+            return getService().getCassandraHost();
+        }
+
+        @Override
+        public String hosts() {
+            return getService().hosts();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+    }
+
     private CassandraServiceFactory() {
 
     }
@@ -41,6 +69,21 @@ public final class CassandraServiceFactory {
                 .addLocalMapping(CassandraLocalContainerService::new)
                 .addRemoteMapping(RemoteCassandraService::new)
                 .build();
+    }
+
+    public static CassandraService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final CassandraService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<CassandraService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonCassandraService(new CassandraLocalContainerService(), "cassandra"))
+                    .addRemoteMapping(RemoteCassandraService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class RemoteCassandraService extends RemoteCassandraInfraService implements CassandraService {

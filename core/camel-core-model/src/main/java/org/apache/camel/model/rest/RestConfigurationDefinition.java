@@ -42,7 +42,7 @@ import org.apache.camel.support.CamelContextHelper;
 public class RestConfigurationDefinition {
 
     @XmlAttribute
-    @Metadata(description = "The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow.",
+    @Metadata(description = "The Camel Rest component to use for the REST transport (consumer), such as platform-http, netty-http, jetty, servlet, undertow.",
               enums = "platform-http,servlet,jetty,undertow,netty-http,coap")
     private String component;
     @XmlAttribute

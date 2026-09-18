@@ -28,7 +28,7 @@ permissions:
 
 jobs:
   upload:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     if: >
       github.repository == 'apache/camel'
     steps:

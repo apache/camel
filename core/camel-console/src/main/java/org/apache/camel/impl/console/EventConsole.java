@@ -29,11 +29,25 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "event", displayName = "Camel Events", description = "The most recent Camel events")
 @Configurer(extended = true)
 public class EventConsole extends AbstractDevConsole {
+
+    public record EventEntry(
+            @Metadata(description = "The event type") String type,
+            @Metadata(description = "Epoch time in milliseconds (only present when known)") Long timestamp,
+            @Metadata(description = "The exchange ID (only present for exchange events)") String exchangeId,
+            @Metadata(description = "The event's string representation") String message,
+            @Metadata(description = "Structured event metadata as JSON") Map<String, Object> details) {
+    }
+
+    public record Response(
+            @Metadata(description = "The most recent Camel events (only present when there are any)") List<EventEntry> events,
+            @Metadata(description = "The most recent route events (only present when there are any)") List<EventEntry> routeEvents,
+            @Metadata(description = "The most recent exchange events (only present when there are any)") List<EventEntry> exchangeEvents) {
+    }
 
     @Metadata(defaultValue = "25",
               description = "Maximum capacity of last number of events to capture (capacity must be between 25 and 1000)")
@@ -95,26 +109,21 @@ public class EventConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         int pos = posEvents.get();
-        List<JsonObject> arr = appendJSonEvents(events, pos, capacity);
-        if (!arr.isEmpty()) {
-            root.put("events", arr);
-        }
+        List<EventEntry> arr = appendJSonEvents(events, pos, capacity);
+        List<EventEntry> eventsOut = !arr.isEmpty() ? arr : null;
+
         pos = posRoutes.get();
         arr = appendJSonEvents(routeEvents, pos, capacity);
-        if (!arr.isEmpty()) {
-            root.put("routeEvents", arr);
-        }
+        List<EventEntry> routeEventsOut = !arr.isEmpty() ? arr : null;
+
         pos = posExchanges.get();
         arr = appendJSonEvents(exchangeEvents, pos, capacity);
-        if (!arr.isEmpty()) {
-            root.put("exchangeEvents", arr);
-        }
+        List<EventEntry> exchangeEventsOut = !arr.isEmpty() ? arr : null;
 
-        return root;
+        Response response = new Response(eventsOut, routeEventsOut, exchangeEventsOut);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private static String appendTextEvents(CamelEvent[] events, String kind, int cursor, int capacity) {
@@ -144,25 +153,29 @@ public class EventConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    private static List<JsonObject> appendJSonEvents(CamelEvent[] events, int cursor, int capacity) {
-        List<JsonObject> arr = new ArrayList<>();
+    private static List<EventEntry> appendJSonEvents(CamelEvent[] events, int cursor, int capacity) {
+        List<EventEntry> arr = new ArrayList<>();
         int pos = 0;
         // cursor is at last event, so move to back
         cursor = ++cursor % capacity;
         CamelEvent event = events[cursor];
         while (pos < capacity) {
             if (event != null) {
-                JsonObject jo = new JsonObject();
-                jo.put("type", event.getType().toString());
-                if (event.getTimestamp() > 0) {
-                    jo.put("timestamp", event.getTimestamp());
+                Map<String, Object> json = event.asJSon();
+                Long timestamp = null;
+                Object ts = json.get("timestamp");
+                if (ts instanceof Number number && number.longValue() > 0) {
+                    timestamp = number.longValue();
                 }
-                if (event instanceof CamelEvent.ExchangeEvent) {
-                    CamelEvent.ExchangeEvent ee = (CamelEvent.ExchangeEvent) event;
-                    jo.put("exchangeId", ee.getExchange().getExchangeId());
-                }
-                jo.put("message", event.toString());
-                arr.add(jo);
+                String exchangeId = (String) json.get("exchangeId");
+                Object type = json.get("type");
+                String message = (String) json.get("message");
+                arr.add(new EventEntry(
+                        type != null ? type.toString() : event.getType().toString(),
+                        timestamp,
+                        exchangeId,
+                        message,
+                        json));
             }
             // move to next
             pos++;

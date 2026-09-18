@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +55,11 @@ import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +120,12 @@ public class PQCProducer extends DefaultProducer {
     private Signature signer;
     private KeyGenerator keyGenerator;
     private KeyPair keyPair;
+
+    // Set only when this producer created the Signature itself, so it knows how to create another one.
+    // Left null when the user configured an instance, which then has to be shared and locked instead.
+    private String signerAlgorithm;
+    private String signerProvider;
+    private String classicalSignerAlgorithm;
 
     // Hybrid cryptography fields
     private Signature classicalSigner;
@@ -375,7 +385,9 @@ public class PQCProducer extends DefaultProducer {
 
             if (ObjectHelper.isEmpty(signer)) {
                 PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
-                signer = Signature.getInstance(sigAlg.getAlgorithm(), sigAlg.getBcProvider());
+                signerAlgorithm = sigAlg.getAlgorithm();
+                signerProvider = sigAlg.getBcProvider();
+                signer = Signature.getInstance(signerAlgorithm, signerProvider);
             }
         }
 
@@ -403,6 +415,15 @@ public class PQCProducer extends DefaultProducer {
             keyPair = getConfiguration().getKeyPair();
         }
 
+        // On JDK 25+, a JKS KeyStore (or user-supplied KeyPair) may contain JDK-native PQC keys
+        // (e.g. ML-DSA, ML-KEM) that Bouncy Castle's Signature / KeyGenerator SPI does not recognise,
+        // causing InvalidKeyException at initSign / initVerify time. Re-encoding through BC's KeyFactory
+        // transparently converts JDK-native keys into the BC types the rest of the component expects,
+        // and is a no-op for keys that are already BC instances.
+        if (keyPair != null) {
+            keyPair = ensureBcKeyPair(keyPair);
+        }
+
         // Initialize hybrid signature operations
         if (getConfiguration().getOperation().equals(PQCOperations.hybridSign)
                 || getConfiguration().getOperation().equals(PQCOperations.hybridVerify)) {
@@ -410,7 +431,9 @@ public class PQCProducer extends DefaultProducer {
             signer = getEndpoint().getConfiguration().getSigner();
             if (ObjectHelper.isEmpty(signer) && ObjectHelper.isNotEmpty(getConfiguration().getSignatureAlgorithm())) {
                 PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
-                signer = Signature.getInstance(sigAlg.getAlgorithm(), sigAlg.getBcProvider());
+                signerAlgorithm = sigAlg.getAlgorithm();
+                signerProvider = sigAlg.getBcProvider();
+                signer = Signature.getInstance(signerAlgorithm, signerProvider);
             }
 
             // Initialize classical signer
@@ -419,7 +442,8 @@ public class PQCProducer extends DefaultProducer {
                     && ObjectHelper.isNotEmpty(getConfiguration().getClassicalSignatureAlgorithm())) {
                 PQCClassicalSignatureAlgorithms classAlg
                         = PQCClassicalSignatureAlgorithms.valueOf(getConfiguration().getClassicalSignatureAlgorithm());
-                classicalSigner = Signature.getInstance(classAlg.getAlgorithm());
+                classicalSignerAlgorithm = classAlg.getAlgorithm();
+                classicalSigner = Signature.getInstance(classicalSignerAlgorithm);
             }
 
             // Initialize classical key pair
@@ -491,24 +515,61 @@ public class PQCProducer extends DefaultProducer {
             throws Exception {
         checkStatefulKeyBeforeSign();
 
-        signer.initSign(keyPair.getPrivate());
-        updateSignatureFromBody(signer, exchange.getMessage());
-
-        byte[] signature = signer.sign();
+        Signature signerForExchange = signerForExchange();
+        byte[] signature;
+        synchronized (signerForExchange) {
+            signerForExchange.initSign(keyPair.getPrivate());
+            updateSignatureFromBody(signerForExchange, exchange.getMessage());
+            signature = signerForExchange.sign();
+        }
         exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
 
         persistStatefulKeyStateAfterSign(exchange);
     }
 
     private void verification(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException {
-        signer.initVerify(keyPair.getPublic());
-        updateSignatureFromBody(signer, exchange.getMessage());
-        if (signer.verify(exchange.getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class))) {
-            exchange.getMessage().setHeader(PQCConstants.VERIFY, true);
-        } else {
-            exchange.getMessage().setHeader(PQCConstants.VERIFY, false);
+            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException,
+            NoSuchAlgorithmException, NoSuchProviderException {
+        Signature signerForExchange = signerForExchange();
+        boolean verified;
+        synchronized (signerForExchange) {
+            signerForExchange.initVerify(keyPair.getPublic());
+            updateSignatureFromBody(signerForExchange, exchange.getMessage());
+            verified = signerForExchange.verify(exchange.getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class));
         }
+        exchange.getMessage().setHeader(PQCConstants.VERIFY, verified);
+    }
+
+    /**
+     * Returns the {@link Signature} to use for a single exchange.
+     * <p>
+     * {@code java.security.Signature} carries per-operation state across its init - update - sign/verify sequence and
+     * is not thread-safe, while a Camel producer is a singleton invoked concurrently. Interleaving two sequences on one
+     * instance does not merely corrupt output: a concurrent {@code initVerify} can reset the object between another
+     * exchange's updates and its {@code verify()}, so the result no longer corresponds to the message it was called
+     * for.
+     * <p>
+     * When this producer created the instance it can simply create another the same way, which removes the sharing
+     * altogether. When the user configured one - {@code PQCDefault*Material.signer} are {@code public static final}, so
+     * a configured instance can be shared JVM-wide - that instance has to be handed back as-is, and the caller
+     * serializes on whatever it gets.
+     */
+    private Signature signerForExchange() throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (signerAlgorithm == null) {
+            return signer;
+        }
+        return signerProvider != null
+                ? Signature.getInstance(signerAlgorithm, signerProvider) : Signature.getInstance(signerAlgorithm);
+    }
+
+    /**
+     * The classical counterpart of {@link #signerForExchange()}, used by the hybrid operations.
+     */
+    private Signature classicalSignerForExchange() throws NoSuchAlgorithmException {
+        if (classicalSignerAlgorithm == null) {
+            return classicalSigner;
+        }
+        return Signature.getInstance(classicalSignerAlgorithm);
     }
 
     /**
@@ -630,7 +691,8 @@ public class PQCProducer extends DefaultProducer {
     // ========== Hybrid Signature Operations ==========
 
     private void hybridSignature(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException {
+            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException,
+            NoSuchAlgorithmException, NoSuchProviderException {
         checkStatefulKeyBeforeSign();
 
         byte[] data = bodyToByteArray(exchange.getMessage());
@@ -643,13 +705,22 @@ public class PQCProducer extends DefaultProducer {
             throw new IllegalStateException("PQC signer and key pair must be configured for hybrid signature operations");
         }
 
-        // Create hybrid signature
-        byte[] hybridSig = HybridSignature.sign(
-                data,
-                classicalKeyPair.getPrivate(),
-                classicalSigner,
-                keyPair.getPrivate(),
-                signer);
+        // Create hybrid signature. Both Signature instances need the same per-exchange isolation as the
+        // single-algorithm paths; see signerForExchange(). The two locks are always taken PQC-first so the
+        // nesting order is the same here and in hybridVerification().
+        Signature pqcSigner = signerForExchange();
+        Signature classical = classicalSignerForExchange();
+        byte[] hybridSig;
+        synchronized (pqcSigner) {
+            synchronized (classical) {
+                hybridSig = HybridSignature.sign(
+                        data,
+                        classicalKeyPair.getPrivate(),
+                        classical,
+                        keyPair.getPrivate(),
+                        pqcSigner);
+            }
+        }
 
         // Parse to get individual signatures for headers
         HybridSignature.HybridSignatureComponents components = HybridSignature.parse(hybridSig);
@@ -666,7 +737,8 @@ public class PQCProducer extends DefaultProducer {
     }
 
     private void hybridVerification(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException {
+            throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException,
+            NoSuchAlgorithmException, NoSuchProviderException {
         byte[] data = bodyToByteArray(exchange.getMessage());
 
         byte[] hybridSig = exchange.getMessage().getHeader(PQCConstants.HYBRID_SIGNATURE, byte[].class);
@@ -682,14 +754,22 @@ public class PQCProducer extends DefaultProducer {
             throw new IllegalStateException("PQC signer and key pair must be configured for hybrid verification operations");
         }
 
-        // Verify hybrid signature (both must pass)
-        boolean valid = HybridSignature.verify(
-                data,
-                hybridSig,
-                classicalKeyPair.getPublic(),
-                classicalSigner,
-                keyPair.getPublic(),
-                signer);
+        // Verify hybrid signature (both must pass). Same per-exchange isolation and same PQC-first lock order
+        // as hybridSignature().
+        Signature pqcSigner = signerForExchange();
+        Signature classical = classicalSignerForExchange();
+        boolean valid;
+        synchronized (pqcSigner) {
+            synchronized (classical) {
+                valid = HybridSignature.verify(
+                        data,
+                        hybridSig,
+                        classicalKeyPair.getPublic(),
+                        classical,
+                        keyPair.getPublic(),
+                        pqcSigner);
+            }
+        }
 
         exchange.getMessage().setHeader(PQCConstants.HYBRID_VERIFY, valid);
         exchange.getMessage().setHeader(PQCConstants.VERIFY, valid);
@@ -1196,6 +1276,58 @@ public class PQCProducer extends DefaultProducer {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Ensures both keys in the pair are Bouncy Castle key instances.
+     * <p>
+     * On JDK 25+, a JKS {@link KeyStore} may deserialise standardised PQC keys (ML-DSA, ML-KEM) into JDK-native key
+     * objects that Bouncy Castle's {@link Signature} / {@link KeyGenerator} SPI does not recognise, causing
+     * {@link InvalidKeyException} at {@code initSign} / {@code initVerify} time.
+     * <p>
+     * Re-encoding through BC's {@link KeyFactory} is a no-op for keys that are already BC instances and transparently
+     * converts JDK-native ones into the BC types the rest of the component expects.
+     */
+    private static KeyPair ensureBcKeyPair(KeyPair kp) {
+        PrivateKey priv = kp.getPrivate();
+        PublicKey pub = kp.getPublic();
+
+        boolean privIsBc = priv == null || priv.getClass().getName().startsWith("org.bouncycastle.");
+        boolean pubIsBc = pub == null || pub.getClass().getName().startsWith("org.bouncycastle.");
+        if (privIsBc && pubIsBc) {
+            return kp;
+        }
+
+        try {
+            String alg = priv != null ? priv.getAlgorithm() : pub.getAlgorithm();
+            KeyFactory kf = getBcKeyFactory(alg);
+
+            if (!privIsBc) {
+                priv = kf.generatePrivate(new PKCS8EncodedKeySpec(priv.getEncoded()));
+            }
+            if (!pubIsBc) {
+                pub = kf.generatePublic(new X509EncodedKeySpec(pub.getEncoded()));
+            }
+            return new KeyPair(pub, priv);
+        } catch (Exception e) {
+            // If conversion fails (e.g. algorithm not known to BC), return the original pair
+            // and let the caller deal with any resulting exception from the crypto operation
+            LOG.debug("Could not convert KeyPair to Bouncy Castle key types: {}", e.getMessage());
+            return kp;
+        }
+    }
+
+    /**
+     * Returns a BC {@link KeyFactory} for the given JCE algorithm name, trying the main BC provider first and falling
+     * back to the BC PQC provider.
+     */
+    private static KeyFactory getBcKeyFactory(String algorithm)
+            throws NoSuchAlgorithmException, NoSuchProviderException {
+        try {
+            return KeyFactory.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME);
+        } catch (NoSuchAlgorithmException e) {
+            return KeyFactory.getInstance(algorithm, BouncyCastlePQCProvider.PROVIDER_NAME);
         }
     }
 

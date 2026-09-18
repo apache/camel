@@ -203,6 +203,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private boolean skipPayloadMessagePartCheck;
     @UriParam(label = "logging")
     private boolean skipFaultLogging;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
     @UriParam(label = "advanced")
     private boolean mergeProtocolHeaders;
     @UriParam(label = "advanced")
@@ -1456,6 +1458,20 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
      */
     public void setSkipFaultLogging(boolean skipFaultLogging) {
         this.skipFaultLogging = skipFaultLogging;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, and the exception is not a SOAP fault the
+     * service contract declares, the SOAP fault returned to the caller won't contain the exception's class or message.
+     * Faults the route raises deliberately - a CXF {@code Fault}, an exception annotated {@code @WebFault}, or a
+     * {@code Throwable} set as the message body - are part of the contract and are always returned in full.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public boolean isMergeProtocolHeaders() {

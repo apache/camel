@@ -1182,63 +1182,33 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param outputFieldsIdxArray the value to set
-         * @return the dsl builder
-         */
-        default Jt400EndpointProducerBuilder outputFieldsIdxArray(Integer[] outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param outputFieldsIdxArray the value to set
-         * @return the dsl builder
-         */
-        default Jt400EndpointProducerBuilder outputFieldsIdxArray(String outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
          * Specifies the fields (program parameters) length as in the IBM i
-         * program definition.
+         * program definition, as a comma-separated list.
          * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
-         * @param outputFieldsLengthArray the value to set
+         * @param fieldsLength the value to set
          * @return the dsl builder
          */
-        default Jt400EndpointProducerBuilder outputFieldsLengthArray(Integer[] outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+        default Jt400EndpointProducerBuilder fieldsLength(String fieldsLength) {
+            doSetProperty("fieldsLength", fieldsLength);
             return this;
         }
         /**
-         * Specifies the fields (program parameters) length as in the IBM i
-         * program definition.
+         * Specifies which fields (program parameters) are output parameters, as
+         * a comma-separated list of 0-based indexes.
          * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          * 
-         * @param outputFieldsLengthArray the value to set
+         * @param outputFieldsIdx the value to set
          * @return the dsl builder
          */
-        default Jt400EndpointProducerBuilder outputFieldsLengthArray(String outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+        default Jt400EndpointProducerBuilder outputFieldsIdx(String outputFieldsIdx) {
+            doSetProperty("outputFieldsIdx", outputFieldsIdx);
             return this;
         }
         /**
@@ -1561,8 +1531,7 @@ public interface Jt400EndpointBuilderFactory {
          * Since: 1.5
          * Maven coordinates: org.apache.camel:camel-jt400
          * 
-         * Syntax:
-         * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
+         * Syntax: <code>jt400:userID:password@systemName/objectPath</code>
          * 
          * Path parameter: userID (required)
          * Returns the ID of the IBM i user.
@@ -1574,15 +1543,12 @@ public interface Jt400EndpointBuilderFactory {
          * Returns the name of the IBM i system.
          * 
          * Path parameter: objectPath (required)
-         * Returns the fully qualified integrated file system path name of the
-         * target object of this endpoint.
+         * The integrated file system path of the target object, such as
+         * QSYS.LIB/MYLIB.LIB/MYQUEUE.DTAQ. The suffix of the object selects
+         * what the endpoint works with: .DTAQ a data queue, .MSGQ a message
+         * queue, .PGM a program call and .SRVPGM a service program call.
          * 
-         * Path parameter: type (required)
-         * Whether to work with data queues or remote program call
-         * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM,
-         * MSGQ
-         * 
-         * @param path userID:password@systemName/QSYS.LIB/objectPath.type
+         * @param path userID:password@systemName/objectPath
          * @return the dsl builder
          */
         default Jt400EndpointBuilder jt400(String path) {
@@ -1598,8 +1564,7 @@ public interface Jt400EndpointBuilderFactory {
          * Since: 1.5
          * Maven coordinates: org.apache.camel:camel-jt400
          * 
-         * Syntax:
-         * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
+         * Syntax: <code>jt400:userID:password@systemName/objectPath</code>
          * 
          * Path parameter: userID (required)
          * Returns the ID of the IBM i user.
@@ -1611,17 +1576,14 @@ public interface Jt400EndpointBuilderFactory {
          * Returns the name of the IBM i system.
          * 
          * Path parameter: objectPath (required)
-         * Returns the fully qualified integrated file system path name of the
-         * target object of this endpoint.
-         * 
-         * Path parameter: type (required)
-         * Whether to work with data queues or remote program call
-         * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM,
-         * MSGQ
+         * The integrated file system path of the target object, such as
+         * QSYS.LIB/MYLIB.LIB/MYQUEUE.DTAQ. The suffix of the object selects
+         * what the endpoint works with: .DTAQ a data queue, .MSGQ a message
+         * queue, .PGM a program call and .SRVPGM a service program call.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path userID:password@systemName/QSYS.LIB/objectPath.type
+         * @param path userID:password@systemName/objectPath
          * @return the dsl builder
          */
         default Jt400EndpointBuilder jt400(String componentName, String path) {

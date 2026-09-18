@@ -33,9 +33,12 @@ public class ExceptionHelper {
      * Dumps the stack trace from the given exception to a String
      *
      * @param  e the exception to print the stack trace
-     * @return   A string instance with the stack trace for the given exception
+     * @return   A string instance with the stack trace for the given exception, or null if the exception is null
      */
     public static String stackTraceToString(Throwable e) {
+        if (e == null) {
+            return null;
+        }
         final StringWriter writer = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(writer, true);
         e.printStackTrace(printWriter);

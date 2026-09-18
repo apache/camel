@@ -43,14 +43,9 @@ public abstract class InfinispanIdempotentRepository
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        // need to check first as put will update the entry lifetime so it can not expire its cache lifespan
-        if (getCache().containsKey(key)) {
-            // there is already an entry so return false
-            return false;
-        }
-
-        Boolean put = getCache().put(key, true);
-        return put == null;
+        // putIfAbsent leaves an existing entry untouched, so its lifespan is not extended, and it takes a single
+        // round trip: the remote repository forces return values, so the previous value is always reported
+        return getCache().putIfAbsent(key, true) == null;
     }
 
     @Override

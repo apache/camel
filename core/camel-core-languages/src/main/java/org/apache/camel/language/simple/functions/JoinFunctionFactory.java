@@ -19,7 +19,6 @@ package org.apache.camel.language.simple.functions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.CollectionExpressionBuilder;
-import org.apache.camel.language.simple.SimpleFunctionHelper;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -62,46 +61,5 @@ public final class JoinFunctionFactory implements SimpleLanguageFunctionFactory 
             }
         }
         return CollectionExpressionBuilder.joinExpression(exp, separator, prefix);
-    }
-
-    @Override
-    public String createCode(CamelContext camelContext, String function, int index) {
-        String remainder = ifStartsWithReturnRemainder("join(", function);
-        if (remainder == null) {
-            return null;
-        }
-        String values = StringHelper.beforeLast(remainder, ")");
-        String separator = "\",\"";
-        String prefix = null;
-        String exp = "body";
-        if (ObjectHelper.isNotEmpty(values)) {
-            String[] tokens = SimpleFunctionHelper.codeSplitSafe(values, ',', true, true);
-            if (tokens.length > 3) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${join(separator,prefix,expression)} was: " + function, index);
-            }
-            for (int i = 0; i < tokens.length; i++) {
-                String s = tokens[i];
-                if (StringHelper.isSingleQuoted(s)) {
-                    s = StringHelper.removeLeadingAndEndingQuotes(s);
-                    s = StringQuoteHelper.doubleQuote(s);
-                    tokens[i] = s;
-                } else if (i < 2 && !StringHelper.isDoubleQuoted(s)) {
-                    s = StringQuoteHelper.doubleQuote(s);
-                    tokens[i] = s;
-                }
-            }
-            if (tokens.length == 3) {
-                separator = tokens[0];
-                prefix = tokens[1];
-                exp = tokens[2];
-            } else if (tokens.length == 2) {
-                separator = tokens[0];
-                prefix = tokens[1];
-            } else {
-                separator = tokens[0];
-            }
-        }
-        return "var val = " + exp + ";\n        return join(exchange, val, " + separator + ", " + prefix + ");";
     }
 }

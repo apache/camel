@@ -6,10 +6,85 @@
     "title": "Type Converters",
     "description": "Camel Type Converter information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.TypeConverterConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "size": {
+        "type": "integer",
+        "description": "Number of registered type converters"
+      },
+      "exists": {
+        "type": "string",
+        "description": "Whether a type converter must exist or not"
+      },
+      "existsLoggingLevel": {
+        "type": "string",
+        "description": "Logging level used when a type converter does not exist"
+      },
+      "statistics": {
+        "type": "object",
+        "properties": {
+          "attemptCounter": {
+            "type": "integer",
+            "description": "Number of attempted conversions"
+          },
+          "hitCounter": {
+            "type": "integer",
+            "description": "Number of successful conversions (cache hit)"
+          },
+          "missCounter": {
+            "type": "integer",
+            "description": "Number of cache misses"
+          },
+          "failedCounter": {
+            "type": "integer",
+            "description": "Number of failed conversions"
+          },
+          "noopCounter": {
+            "type": "integer",
+            "description": "Number of noop conversions"
+          }
+        },
+        "required": [
+          "attemptCounter",
+          "hitCounter",
+          "missCounter",
+          "failedCounter",
+          "noopCounter"
+        ],
+        "description": "Type converter usage statistics (only present when statistics are enabled)"
+      },
+      "converters": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "description": "The source type"
+            },
+            "to": {
+              "type": "string",
+              "description": "The target type"
+            },
+            "converterClass": {
+              "type": "string",
+              "description": "The type converter implementation class"
+            }
+          }
+        },
+        "description": "The registered type converters"
+      }
+    },
+    "required": [
+      "size"
+    ]
   }
 }
 

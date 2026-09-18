@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
 
     @RegisterExtension
-    static RedisService service = RedisServiceFactory.createService();
+    static RedisService service = RedisServiceFactory.createSingletonService();
 
     private RedisAggregationRepository createRepo(String mapName, boolean optimistic) {
         RedisAggregationRepository repo = new RedisAggregationRepository(mapName, service.getServiceAddress(), optimistic);

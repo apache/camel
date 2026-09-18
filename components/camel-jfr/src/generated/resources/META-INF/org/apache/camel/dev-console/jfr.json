@@ -6,6 +6,7 @@
     "title": "JFR Runtime Instrumentation",
     "description": "Status and live control of camel-jfr runtime instrumentation",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.runtime.jfr.CamelJfrDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jfr",
@@ -100,6 +101,261 @@
       "autowired": false,
       "secret": false,
       "description": "Filter snapshot results to the given route id"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "runtimeEvents": {
+        "type": "boolean",
+        "description": "Whether camel-jfr runtime instrumentation is registered (status command)"
+      },
+      "recordings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The recording name"
+            },
+            "state": {
+              "type": "string",
+              "description": "The recording state"
+            },
+            "destination": {
+              "type": "string",
+              "description": "The recording destination file (only present when configured)"
+            }
+          }
+        },
+        "description": "The active JFR recordings (status command)"
+      },
+      "events": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "boolean"
+        },
+        "description": "Whether each runtime event is enabled, keyed by short name (status command)"
+      },
+      "success": {
+        "type": "boolean",
+        "description": "Whether the toggle succeeded (enable\/disable command)"
+      },
+      "result": {
+        "type": "string",
+        "description": "The toggle result message (enable\/disable command)"
+      },
+      "jfc": {
+        "type": "string",
+        "description": "The generated jfc settings overlay (jfc command)"
+      },
+      "error": {
+        "type": "string",
+        "description": "An error message (jfc, snapshot, or unknown command)"
+      },
+      "snapshot": {
+        "type": "boolean",
+        "description": "Whether this is a snapshot response (snapshot command)"
+      },
+      "snapshotTimestamp": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds the snapshot was taken (snapshot command)"
+      },
+      "eventCount": {
+        "type": "integer",
+        "description": "The number of matched events in the snapshot (snapshot command)"
+      },
+      "routes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "description": "The number of spans"
+            },
+            "failed": {
+              "type": "integer",
+              "description": "The number of failed spans"
+            },
+            "minMs": {
+              "type": "number",
+              "description": "The minimum duration in milliseconds"
+            },
+            "meanMs": {
+              "type": "number",
+              "description": "The mean duration in milliseconds"
+            },
+            "maxMs": {
+              "type": "number",
+              "description": "The maximum duration in milliseconds"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route id"
+            }
+          },
+          "required": [
+            "total",
+            "failed",
+            "minMs",
+            "meanMs",
+            "maxMs"
+          ]
+        },
+        "description": "Per-route duration statistics (snapshot command)"
+      },
+      "processors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "description": "The number of spans"
+            },
+            "failed": {
+              "type": "integer",
+              "description": "The number of failed spans"
+            },
+            "minMs": {
+              "type": "number",
+              "description": "The minimum duration in milliseconds"
+            },
+            "meanMs": {
+              "type": "number",
+              "description": "The mean duration in milliseconds"
+            },
+            "maxMs": {
+              "type": "number",
+              "description": "The maximum duration in milliseconds"
+            },
+            "processorId": {
+              "type": "string",
+              "description": "The processor id"
+            },
+            "processorType": {
+              "type": "string",
+              "description": "The processor type"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route id"
+            }
+          },
+          "required": [
+            "total",
+            "failed",
+            "minMs",
+            "meanMs",
+            "maxMs"
+          ]
+        },
+        "description": "Per-processor duration statistics (snapshot command)"
+      },
+      "endpoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "description": "The number of spans"
+            },
+            "failed": {
+              "type": "integer",
+              "description": "The number of failed spans"
+            },
+            "minMs": {
+              "type": "number",
+              "description": "The minimum duration in milliseconds"
+            },
+            "meanMs": {
+              "type": "number",
+              "description": "The mean duration in milliseconds"
+            },
+            "maxMs": {
+              "type": "number",
+              "description": "The maximum duration in milliseconds"
+            },
+            "endpointUri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            }
+          },
+          "required": [
+            "total",
+            "failed",
+            "minMs",
+            "meanMs",
+            "maxMs"
+          ]
+        },
+        "description": "Per-endpoint duration statistics (snapshot command)"
+      },
+      "failures": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "timestamp": {
+              "type": "string",
+              "description": "The failure timestamp"
+            },
+            "exchangeId": {
+              "type": "string",
+              "description": "The exchange id"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route id"
+            },
+            "exceptionType": {
+              "type": "string",
+              "description": "The exception type"
+            },
+            "exceptionMessage": {
+              "type": "string",
+              "description": "The exception message"
+            }
+          }
+        },
+        "description": "The most recent failures, newest first (snapshot command)"
+      },
+      "redeliveries": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "timestamp": {
+              "type": "string",
+              "description": "The redelivery timestamp"
+            },
+            "exchangeId": {
+              "type": "string",
+              "description": "The exchange id"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route id"
+            },
+            "attempt": {
+              "type": "integer",
+              "description": "The redelivery attempt number"
+            },
+            "maxAttempts": {
+              "type": "integer",
+              "description": "The maximum number of redelivery attempts"
+            }
+          },
+          "required": [
+            "attempt",
+            "maxAttempts"
+          ]
+        },
+        "description": "The most recent redeliveries, newest first (snapshot command)"
+      }
     }
   }
 }

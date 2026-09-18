@@ -433,7 +433,8 @@ YAML::
               storeFullResponse: true
               mcpServer.api.transportType: streamableHttp
               mcpServer.api.url: http://localhost:9090/mcp
-        - loopDoWhile:
+        - loop:
+            doWhile: true
             expression:
               simple:
                 expression: "${header.CamelOpenAIFinishReason} == 'tool_calls'"
@@ -468,6 +469,8 @@ The `CamelOpenAIMcpReturnDirect` header is set to `true` when this occurs, so do
 
 NOTE: Tool execution errors always bypass `returnDirect` — errors are sent back to the model for graceful handling.
 
+Route-based tools registered via the xref:components::ai-tool-component.adoc[ai-tool component] can also declare `returnDirect=true` on the `ai-tool` endpoint. Configure the OpenAI endpoint with the `tags` option to expose matching route tools alongside MCP tools; their annotations (including `returnDirect`) are honoured in the agentic loop the same way as MCP tool annotations.
+
 === MCP Tool Call Headers
 
 The following headers are set after the agentic loop completes:
@@ -479,7 +482,23 @@ The following headers are set after the agentic loop completes:
 | `CamelOpenAIToolIterations` | Integer | Number of tool call iterations performed
 | `CamelOpenAIMcpToolCalls` | List<String> | Ordered list of tool names called during the loop
 | `CamelOpenAIMcpReturnDirect` | Boolean | `true` if the response came directly from a tool with `returnDirect`
+| `CamelOpenAIAgenticPromptTokens` | Long | Cumulative prompt tokens across all agentic loop iterations
+| `CamelOpenAIAgenticCompletionTokens` | Long | Cumulative completion tokens across all agentic loop iterations
+| `CamelOpenAIAgenticTotalTokens` | Long | Cumulative total tokens across all agentic loop iterations
 |===
+
+The exchange property `CamelOpenAIAgenticTrace` holds a `List<AgenticIterationTrace>` with per-iteration
+breakdown: iteration number, tool calls (name, truncated arguments and results, duration, success flag),
+token usage for that model call, and iteration duration. Downstream processors in the same route can inspect
+this property for debugging, auditing, or routing decisions without waiting for external observability backends.
+
+Custom `CamelEvent` instances are also emitted during the agentic loop for EventNotifier listeners:
+
+* `OpenAIAgenticLoopStartedEvent` — tool count and max iterations
+* `OpenAIAgenticToolCallExecutedEvent` — tool name, duration, success per tool call
+* `OpenAIAgenticLoopCompletedEvent` — iteration count, cumulative tokens, stop reason
+
+These events provide a lightweight integration point for future OpenTelemetry GenAI instrumentation.
 
 === Conversation Memory with MCP Tools
 

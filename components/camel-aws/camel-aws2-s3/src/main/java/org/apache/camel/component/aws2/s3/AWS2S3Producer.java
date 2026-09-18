@@ -241,6 +241,26 @@ public class AWS2S3Producer extends DefaultProducer {
             createMultipartUploadRequest.acl(objectAcl);
         }
 
+        String grantFullControl = exchange.getIn().getHeader(AWS2S3Constants.GRANT_FULL_CONTROL, String.class);
+        if (ObjectHelper.isNotEmpty(grantFullControl)) {
+            createMultipartUploadRequest.grantFullControl(grantFullControl);
+        }
+
+        String grantRead = exchange.getIn().getHeader(AWS2S3Constants.GRANT_READ, String.class);
+        if (ObjectHelper.isNotEmpty(grantRead)) {
+            createMultipartUploadRequest.grantRead(grantRead);
+        }
+
+        String grantReadACP = exchange.getIn().getHeader(AWS2S3Constants.GRANT_READ_ACP, String.class);
+        if (ObjectHelper.isNotEmpty(grantReadACP)) {
+            createMultipartUploadRequest.grantReadACP(grantReadACP);
+        }
+
+        String grantWriteACP = exchange.getIn().getHeader(AWS2S3Constants.GRANT_WRITE_ACP, String.class);
+        if (ObjectHelper.isNotEmpty(grantWriteACP)) {
+            createMultipartUploadRequest.grantWriteACP(grantWriteACP);
+        }
+
         BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
         if (ObjectHelper.isNotEmpty(acl)) {
             // note: if cannedacl and acl are both specified the last one will
@@ -394,6 +414,26 @@ public class AWS2S3Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(cannedAcl)) {
             ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
             putObjectRequest.acl(objectAcl);
+        }
+
+        String grantFullControl = exchange.getIn().getHeader(AWS2S3Constants.GRANT_FULL_CONTROL, String.class);
+        if (ObjectHelper.isNotEmpty(grantFullControl)) {
+            putObjectRequest.grantFullControl(grantFullControl);
+        }
+
+        String grantRead = exchange.getIn().getHeader(AWS2S3Constants.GRANT_READ, String.class);
+        if (ObjectHelper.isNotEmpty(grantRead)) {
+            putObjectRequest.grantRead(grantRead);
+        }
+
+        String grantReadACP = exchange.getIn().getHeader(AWS2S3Constants.GRANT_READ_ACP, String.class);
+        if (ObjectHelper.isNotEmpty(grantReadACP)) {
+            putObjectRequest.grantReadACP(grantReadACP);
+        }
+
+        String grantWriteACP = exchange.getIn().getHeader(AWS2S3Constants.GRANT_WRITE_ACP, String.class);
+        if (ObjectHelper.isNotEmpty(grantWriteACP)) {
+            putObjectRequest.grantWriteACP(grantWriteACP);
         }
 
         String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);

@@ -16,32 +16,22 @@
  */
 package org.apache.camel.opentelemetry.metrics.integration;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
-import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.exporter.logging.LoggingMetricExporter;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
+import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.opentelemetry.metrics.eventnotifier.OpenTelemetryExchangeEventNotifier;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,23 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class CounterRouteAutoConfigIT extends CamelTestSupport {
 
-    @BeforeAll
-    public static void init() {
-        // Open telemetry autoconfiguration using an exporter that writes to the console via logging.
-        // Other possible exporters include 'logging-otlp' and 'otlp'.
-        GlobalOpenTelemetry.resetForTest();
-        System.setProperty("otel.java.global-autoconfigure.enabled", "true");
-        System.setProperty("otel.metrics.exporter", "console");
-        System.setProperty("otel.traces.exporter", "none");
-        System.setProperty("otel.logs.exporter", "none");
-        System.setProperty("otel.propagators", "tracecontext");
-        System.setProperty("otel.metric.export.interval", "50");
-    }
-
-    @AfterEach
-    void cleanup() {
-        GlobalOpenTelemetry.resetForTest();
-    }
+    // Registers an in-memory OTel SDK as GlobalOpenTelemetry before the Camel context is
+    // created, so the component's GlobalOpenTelemetry.get() call returns this test SDK.
+    @RegisterExtension
+    static OpenTelemetryExtension otelExtension = OpenTelemetryExtension.create();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -80,25 +57,13 @@ public class CounterRouteAutoConfigIT extends CamelTestSupport {
 
     @Test
     public void testIncrement() throws Exception {
-        Logger logger = Logger.getLogger(LoggingMetricExporter.class.getName());
-        MemoryLogHandler handler = new MemoryLogHandler();
-        logger.addHandler(handler);
-
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
         template.sendBody("direct:in1", new Object());
+        MockEndpoint.assertIsSatisfied(context);
 
-        // capture logs from the LoggingMetricExporter
-        await().atMost(Duration.ofMillis(1000L)).until(handler::hasLogs);
-
-        List<LogRecord> logs = new ArrayList<>(handler.getLogs());
-        assertFalse(logs.isEmpty(), "No metrics were exported");
-        long dataCount = logs.stream()
-                .map(LogRecord::getParameters)
-                .filter(Objects::nonNull)
-                .flatMap(Arrays::stream)
-                .filter(MetricData.class::isInstance)
-                .map(MetricData.class::cast)
+        List<MetricData> metrics = otelExtension.getMetrics();
+        long dataCount = metrics.stream()
                 .filter(md -> "B".equals(md.getName()))
                 .peek(md -> {
                     PointData pd = md.getData()
@@ -106,13 +71,11 @@ public class CounterRouteAutoConfigIT extends CamelTestSupport {
                             .stream()
                             .findFirst()
                             .orElseThrow();
-
                     assertInstanceOf(LongPointData.class, pd, "Expected LongPointData");
                     assertEquals(5, ((LongPointData) pd).getValue());
                 })
                 .count();
         assertTrue(dataCount > 0, "No metric data found with name B");
-        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

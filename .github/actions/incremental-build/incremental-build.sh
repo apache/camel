@@ -29,6 +29,16 @@
 # All sets of affected modules are merged and deduplicated before testing.
 
 set -euo pipefail
+# Ignore SIGPIPE to prevent spurious failures on long GitHub Actions jobs.
+# When the runner closes the script's stdout (log line limit reached), external
+# commands writing to it (e.g. `tail -500 "$log"` in the failure report block)
+# are killed by SIGPIPE (exit 141).  Ignoring SIGPIPE lets children inherit
+# SIG_IGN, exit via EPIPE instead, and preserves Maven's real return code.
+trap '' PIPE
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=reactor_timing.sh
+source "${SCRIPT_DIR}/reactor_timing.sh"
 
 echo "Using MVND_OPTS=$MVND_OPTS"
 echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
@@ -36,7 +46,8 @@ echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
 maxNumberOfTestableProjects=50
 
 # Modules excluded from targeted testing (generated code, meta-modules, etc.)
-EXCLUSION_LIST="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-lucene,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-csimple-maven-plugin,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel,!:coverage"
+EXCLUSION_LIST="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel,!:coverage,!:camel-salesforce-maven-plugin"
+
 
 # Allow projects to override the exclusion list
 # (e.g., camel-spring-boot has different modules than main Camel)
@@ -251,6 +262,7 @@ runScalpelDetection() {
   # Base branch is pre-fetched by the CI workflow (fetchBaseBranch=false).
   # Run Maven validate with Scalpel in report mode:
   # - mode=report: write JSON report without trimming the reactor
+  # - explain=true: add per-module evidence[] to the report (exact file/property/dep that triggered each module)
   # - fullBuildTriggers="": override .mvn/** default (Scalpel lives in .mvn/extensions.xml)
   # - fetchBaseBranch=false: base branch is pre-fetched by the CI workflow
   # - skipTestsForDownstreamModules: derived from EXCLUSION_LIST — tells Scalpel which
@@ -261,7 +273,7 @@ runScalpelDetection() {
   # Always pass baseBranch explicitly — relying on Scalpel's env.GITHUB_BASE_REF
   # auto-detection is fragile across Maven wrappers and CI rerun contexts.
   local base_branch="origin/${GITHUB_BASE_REF:-main}"
-  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.baseBranch=${base_branch} -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
+  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.explain=true -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.baseBranch=${base_branch} -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
 
   # Verify merge base is reachable (pre-fetched by the CI workflow step)
   if ! git merge-base HEAD "${base_branch}" >/dev/null 2>&1; then
@@ -309,23 +321,22 @@ runScalpelDetection() {
   scalpel_managed_deps=$(jq -r '(.changedManagedDependencies // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
   scalpel_managed_plugins=$(jq -r '(.changedManagedPlugins // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
 
-  # Scalpel shadow comparison data:
-  # - Modules Scalpel skip-tests mode would test (testsSkipped != true)
-  # - Modules Scalpel would skip (testsSkipped == true, from skipTestsForDownstreamModules)
-  # - Breakdown by category (DIRECT, DOWNSTREAM)
+  # Scalpel shadow comparison data — read directly from report fields (0.4.x):
+  # - testedModulesCount: modules whose tests will run (report field, avoids manual counting)
+  # - reactorModuleCount: total reactor size for N-of-M display (report field, 0.4.1+)
+  # - Per-module lists derived from affectedModules (for the comment detail sections)
   scalpel_would_test=$(jq -r '[.affectedModules[] | select(.testsSkipped != true)] | map(.artifactId) | sort | join(",")' "$report" 2>/dev/null || true)
   scalpel_would_skip=$(jq -r '[.affectedModules[] | select(.testsSkipped == true)] | map(.artifactId) | sort | join(",")' "$report" 2>/dev/null || true)
   scalpel_direct_count=$(jq '[.affectedModules[] | select(.category == "DIRECT")] | length' "$report" 2>/dev/null || echo "0")
   scalpel_downstream_tested=$(jq '[.affectedModules[] | select(.category == "DOWNSTREAM" and .testsSkipped != true)] | length' "$report" 2>/dev/null || echo "0")
   scalpel_downstream_skipped=$(jq '[.affectedModules[] | select(.category == "DOWNSTREAM" and .testsSkipped == true)] | length' "$report" 2>/dev/null || echo "0")
+  # testedModulesCount and reactorModuleCount are written directly by Scalpel (0.4.x report fields)
+  scalpel_tested_count=$(jq '.testedModulesCount // (.affectedModules | map(select(.testsSkipped != true)) | length)' "$report" 2>/dev/null || echo "0")
+  scalpel_reactor_count=$(jq '.reactorModuleCount // 0' "$report" 2>/dev/null || echo "0")
 
   local mod_count
   mod_count=$(jq '.affectedModules | length' "$report" 2>/dev/null || echo "0")
-  local test_count=0
-  if [ -n "$scalpel_would_test" ]; then
-    test_count=$(echo "$scalpel_would_test" | tr ',' '\n' | grep -c . || true)
-  fi
-  echo "  Scalpel detected $mod_count affected modules ($test_count would be tested)"
+  echo "  Scalpel detected $mod_count affected modules ($scalpel_tested_count would be tested, reactor: $scalpel_reactor_count)"
   echo "    Direct: $scalpel_direct_count, Downstream tested: $scalpel_downstream_tested, Downstream skipped: $scalpel_downstream_skipped"
   if [ -n "$scalpel_props" ]; then
     echo "    Changed properties: $scalpel_props"
@@ -422,6 +433,7 @@ checkManualItTests() {
 writeScalpelComparison() {
   local comment_file="$1"
   local current_reactor_ids="${2:-}"
+  local report="${3:-target/scalpel-report.json}"
 
   # If Scalpel failed, show why in the PR comment
   if [ -n "$scalpel_failure_reason" ]; then
@@ -443,19 +455,16 @@ writeScalpelComparison() {
     return
   fi
 
-  # Count Scalpel modules
+  # Counts — use report fields directly (0.4.x); fall back to counting lists for older reports
   local scalpel_total=0
-  local scalpel_test_count=0
   local scalpel_skip_count=0
   if [ -n "$scalpel_module_ids" ]; then
     scalpel_total=$(echo "$scalpel_module_ids" | tr ',' '\n' | grep -c . || true)
   fi
-  if [ -n "$scalpel_would_test" ]; then
-    scalpel_test_count=$(echo "$scalpel_would_test" | tr ',' '\n' | grep -c . || true)
-  fi
   if [ -n "$scalpel_would_skip" ]; then
     scalpel_skip_count=$(echo "$scalpel_would_skip" | tr ',' '\n' | grep -c . || true)
   fi
+  # scalpel_tested_count and scalpel_reactor_count already set from report fields in runScalpelDetection
 
   # Compare Scalpel vs current reactor (file-path + grep + -amd expansion)
   local current_total=0
@@ -485,8 +494,14 @@ writeScalpelComparison() {
     only_current_count=$current_total
   fi
 
-  # One-line summary: what Scalpel would change
-  local summary="Scalpel: ${scalpel_test_count} tested, ${scalpel_skip_count} compile-only — current: ${current_total} all tested"
+  # N-of-M framing: use reactorModuleCount from report when available
+  local nm_suffix=""
+  if [ "$scalpel_reactor_count" -gt 0 ] 2>/dev/null; then
+    nm_suffix=" of ${scalpel_reactor_count}"
+  fi
+
+  # One-line summary with N-of-M framing
+  local summary="Scalpel: ${scalpel_tested_count}${nm_suffix} tested, ${scalpel_skip_count} compile-only — current: ${current_total} all tested"
 
   echo "" >> "$comment_file"
   echo "---" >> "$comment_file"
@@ -496,30 +511,6 @@ writeScalpelComparison() {
 
   echo "[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) detected **${scalpel_total} affected modules** (current approach: ${current_total})." >> "$comment_file"
   echo "" >> "$comment_file"
-
-  # Show modules only Scalpel found (not in current reactor)
-  if [ "$only_scalpel_count" -gt 0 ]; then
-    echo "<details><summary>:warning: Modules only in Scalpel (${only_scalpel_count})</summary>" >> "$comment_file"
-    echo "" >> "$comment_file"
-    echo "$only_in_scalpel" | while read -r m; do
-      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
-    done
-    echo "" >> "$comment_file"
-    echo "</details>" >> "$comment_file"
-    echo "" >> "$comment_file"
-  fi
-
-  # Show modules only current approach found (not in Scalpel)
-  if [ "$only_current_count" -gt 0 ]; then
-    echo "<details><summary>Modules only in current approach (${only_current_count})</summary>" >> "$comment_file"
-    echo "" >> "$comment_file"
-    echo "$only_in_current" | while read -r m; do
-      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
-    done
-    echo "" >> "$comment_file"
-    echo "</details>" >> "$comment_file"
-    echo "" >> "$comment_file"
-  fi
 
   # Show Scalpel-detected change details
   if [ -n "$scalpel_props" ]; then
@@ -535,15 +526,51 @@ writeScalpelComparison() {
     echo "" >> "$comment_file"
   fi
 
-  echo "**Skip-tests mode would test ${scalpel_test_count} modules** (${scalpel_direct_count} direct + ${scalpel_downstream_tested} downstream), **skip tests for ${scalpel_skip_count}** (generated code, meta-modules)" >> "$comment_file"
+  echo "**Skip-tests mode would test ${scalpel_tested_count} modules** (${scalpel_direct_count} direct + ${scalpel_downstream_tested} downstream), **skip tests for ${scalpel_skip_count}** (generated code, meta-modules)" >> "$comment_file"
 
-  # Show which modules Scalpel would test
+  # Show modules only Scalpel found (not in current reactor) — with explain evidence
+  if [ "$only_scalpel_count" -gt 0 ]; then
+    echo "" >> "$comment_file"
+    echo "<details><summary>:warning: Modules only in Scalpel (${only_scalpel_count})</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$only_in_scalpel" | while read -r m; do
+      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
+
+  # Show modules only current approach found (not in Scalpel)
+  if [ "$only_current_count" -gt 0 ]; then
+    echo "" >> "$comment_file"
+    echo "<details><summary>Modules only in current approach (${only_current_count})</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$only_in_current" | while read -r m; do
+      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    echo "" >> "$comment_file"
+  fi
+
+  # Show which modules Scalpel would test, with per-module evidence (explain=true)
   if [ -n "$scalpel_would_test" ]; then
     echo "" >> "$comment_file"
-    echo "<details><summary>Modules Scalpel would test (${scalpel_test_count})</summary>" >> "$comment_file"
+    echo "<details><summary>Modules Scalpel would test (${scalpel_tested_count})</summary>" >> "$comment_file"
     echo "" >> "$comment_file"
     echo "$scalpel_would_test" | tr ',' '\n' | while read -r m; do
-      [ -n "$m" ] && echo "- \`$m\`" >> "$comment_file"
+      if [ -n "$m" ]; then
+        # Pull evidence[] for this module from the report (explain=true populates it)
+        local evidence=""
+        evidence=$(jq -r --arg art "$m" '
+          .affectedModules[]
+          | select(.artifactId == $art and (.testsSkipped != true))
+          | (.evidence // [])
+          | if length > 0 then " ← " + join(", ") else "" end
+        ' "$report" 2>/dev/null | head -1 || true)
+        echo "- \`$m\`${evidence}" >> "$comment_file"
+      fi
     done
     echo "" >> "$comment_file"
     echo "</details>" >> "$comment_file"
@@ -716,6 +743,8 @@ main() {
   scalpel_direct_count="0"
   scalpel_downstream_tested="0"
   scalpel_downstream_skipped="0"
+  scalpel_tested_count="0"
+  scalpel_reactor_count="0"
   scalpel_failure_reason=""
 
   # Step 2a: Grep-based detection (existing approach)
@@ -859,6 +888,21 @@ main() {
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]]; then
         echo "Too many dependent modules (${totalTestableProjects} > ${maxNumberOfTestableProjects}), testing only the affected modules"
         testedDependents=false
+        # Strip dependency-detected modules (grep + Scalpel) from the build list.
+        # These are "dependents" just like -amd expansion and should be subject
+        # to the same threshold. Without this, Scalpel-detected modules bypass
+        # the threshold and all ~N dependents get tested anyway.
+        dep_module_ids=""
+        final_pl=""
+        if [ -n "$testable_pl" ]; then
+          final_pl="$testable_pl"
+        fi
+        if [ -n "$pom_only_pl" ]; then
+          final_pl="${final_pl:+${final_pl},}${pom_only_pl}"
+        fi
+        if [ -n "$extraModules" ]; then
+          final_pl="${final_pl:+${final_pl},}${extraModules}"
+        fi
       else
         echo "Testing affected modules and their dependents (${totalTestableProjects} modules)"
         use_amd=true
@@ -957,7 +1001,7 @@ main() {
       fi
     done)
   fi
-  writeScalpelComparison "$comment_file" "$tested_reactor_ids"
+  writeScalpelComparison "$comment_file" "$tested_reactor_ids" "target/scalpel-report.json"
 
   # Check for tests disabled in CI via @DisabledIfSystemProperty(named = "ci.env.name")
   local disabled_tests
@@ -971,42 +1015,15 @@ main() {
   # Check for excluded IT suites that should be run manually
   checkManualItTests "$final_pl" "$comment_file"
 
-  # Append reactor module list from build log
+  # Append reactor module list from build log (with per-module elapsed time)
   if [[ -f "$log" ]]; then
-    local reactor_modules
-    reactor_modules=$(grep '^\[INFO\] Camel ::' "$log" | sed 's/\[INFO\] //' | sed 's/ \..*$//' | sed 's/  *\[.*\]$//' | sed 's/ SUCCESS$//' | sed 's/ FAILURE$//' | sed 's/ SKIPPED$//' | sed 's/  *$//' | sort -u || true)
-    if [[ -n "$reactor_modules" ]]; then
-      local count
-      count=$(echo "$reactor_modules" | wc -l | tr -d ' ')
-      local reactor_label
-      if [[ "${testedDependents}" = "false" ]]; then
-        reactor_label="Build reactor — dependencies compiled but only changed modules were tested"
-      else
-        reactor_label="All tested modules"
-      fi
-
-      echo "" >> "$comment_file"
-      echo "<details><summary>${reactor_label} ($count modules)</summary>" >> "$comment_file"
-      echo "" >> "$comment_file"
-
-      if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-        echo "" >> "$GITHUB_STEP_SUMMARY"
-        echo "<details><summary><b>${reactor_label} ($count)</b></summary>" >> "$GITHUB_STEP_SUMMARY"
-        echo "" >> "$GITHUB_STEP_SUMMARY"
-      fi
-
-      echo "$reactor_modules" | while read -r m; do
-        [ -n "${GITHUB_STEP_SUMMARY:-}" ] && echo "- $m" >> "$GITHUB_STEP_SUMMARY"
-        echo "- $m" >> "$comment_file"
-      done
-
-      if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-        echo "" >> "$GITHUB_STEP_SUMMARY"
-        echo "</details>" >> "$GITHUB_STEP_SUMMARY"
-      fi
-      echo "" >> "$comment_file"
-      echo "</details>" >> "$comment_file"
+    local reactor_label
+    if [[ "${testedDependents}" = "false" ]]; then
+      reactor_label="Build reactor — dependencies compiled but only changed modules were tested"
+    else
+      reactor_label="All tested modules"
     fi
+    append_reactor_timing_report "$log" "$comment_file" "$reactor_label" "${GITHUB_STEP_SUMMARY:-}"
   fi
 
   # Write step summary header

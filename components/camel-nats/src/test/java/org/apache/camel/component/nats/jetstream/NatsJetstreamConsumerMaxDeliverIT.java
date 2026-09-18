@@ -42,7 +42,7 @@ public class NatsJetstreamConsumerMaxDeliverIT extends NatsITSupport {
         mockResultEndpoint.expectedMessageCount(0);
 
         mockInputEndpoint.expectedMessageCount(3);
-        mockInputEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic2");
+        mockInputEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic2-maxdeliver");
         mockInputEndpoint.message(0).header(NatsConstants.NATS_DELIVERY_COUNTER).isEqualTo(1);
         mockInputEndpoint.message(1).header(NatsConstants.NATS_DELIVERY_COUNTER).isEqualTo(2);
         mockInputEndpoint.message(2).header(NatsConstants.NATS_DELIVERY_COUNTER).isEqualTo(3);
@@ -60,7 +60,7 @@ public class NatsJetstreamConsumerMaxDeliverIT extends NatsITSupport {
             @Override
             public void configure() {
                 String uri
-                        = "nats:mytopic2?jetstreamEnabled=true&jetstreamName=mystream2&jetstreamAsync=false&durableName=camel2&pullSubscription=false&nackWait=10&maxDeliver=3";
+                        = "nats:mytopic2-maxdeliver?jetstreamEnabled=true&jetstreamName=mystream2-maxdeliver&jetstreamAsync=false&durableName=camel2-maxdeliver&pullSubscription=false&nackWait=10&maxDeliver=3";
 
                 from("direct:send")
                         // when running full test suite then send can fail due to nats server setup/teardown

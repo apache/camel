@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mcp.server;
 
+import java.util.List;
+
 /**
  * Identity and serving hints passed to an {@link McpServerEngine} before it is started.
  * <p>
@@ -29,6 +31,11 @@ package org.apache.camel.component.mcp.server;
  *                                   {@code 0} disables keep-alive pings
  * @param sessionIdleTtlMs           idle TTL in milliseconds; sessions with no activity for longer are evicted;
  *                                   {@code 0} disables idle eviction
+ * @param title                      optional display title advertised in {@code serverInfo}
+ * @param description                optional human-readable description advertised in {@code serverInfo}
+ * @param websiteUrl                 optional documentation or home page URL advertised in {@code serverInfo}
+ * @param instructions               optional top-level instructions returned to MCP clients on initialize
+ * @param icons                      optional icons advertised in {@code serverInfo}
  *
  * @since                            4.22
  */
@@ -37,12 +44,24 @@ public record McpServerInfo(
         String version,
         String path,
         long sessionKeepAliveIntervalMs,
-        long sessionIdleTtlMs) {
+        long sessionIdleTtlMs,
+        String title,
+        String description,
+        String websiteUrl,
+        String instructions,
+        List<McpServerIcon> icons) {
 
     public McpServerInfo(String serverName, String version, String path) {
         this(serverName, version, path,
              McpServerConstants.DEFAULT_SESSION_KEEP_ALIVE_INTERVAL,
-             McpServerConstants.DEFAULT_SESSION_IDLE_TTL);
+             McpServerConstants.DEFAULT_SESSION_IDLE_TTL,
+             null, null, null, null, null);
+    }
+
+    public McpServerInfo(String serverName, String version, String path,
+                         long sessionKeepAliveIntervalMs, long sessionIdleTtlMs) {
+        this(serverName, version, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs,
+             null, null, null, null, null);
     }
 
     public McpServerInfo {
@@ -51,6 +70,9 @@ public record McpServerInfo(
         }
         if (sessionIdleTtlMs < 0) {
             throw new IllegalArgumentException("sessionIdleTtlMs must be >= 0");
+        }
+        if (icons != null) {
+            icons = List.copyOf(icons);
         }
     }
 }

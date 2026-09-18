@@ -41,8 +41,17 @@ public class LangChain4jEmbeddingStoreHeaders {
     @Metadata(description = "Minimum similarity score for search results", javaType = "Double")
     public static final String MIN_SCORE = "CamelLangchain4jEmbeddingStoreMinScore";
 
-    /** Filter to apply to search operations for metadata-based filtering */
-    @Metadata(description = "Search filter for metadata-based constraints",
+    /** Filter to apply to search and remove operations for metadata-based filtering */
+    @Metadata(description = "Filter for metadata-based constraints (used in SEARCH and REMOVE operations)",
               javaType = "dev.langchain4j.store.embedding.filter.Filter")
     public static final String FILTER = "CamelLangchain4jEmbeddingStoreFilter";
+
+    /** Caller-supplied embedding ID for single ADD operations */
+    @Metadata(description = "Caller-supplied embedding ID for single ADD operations", javaType = "String")
+    public static final String EMBEDDING_ID = "CamelLangchain4jEmbeddingStoreEmbeddingId";
+
+    /** Caller-supplied embedding IDs for batch ADD operations */
+    @Metadata(description = "Caller-supplied embedding IDs for batch ADD operations",
+              javaType = "java.util.List<java.lang.String>")
+    public static final String EMBEDDING_IDS = "CamelLangchain4jEmbeddingStoreEmbeddingIds";
 }

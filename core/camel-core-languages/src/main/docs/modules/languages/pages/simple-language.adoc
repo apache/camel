@@ -31,11 +31,6 @@ uses `$simple{ }` as placeholders. This can be used in situations to avoid clash
 Spring property placeholder together with Camel.
 ====
 
-[NOTE]
-====
-See also the xref:csimple-language.adoc[CSimple] language which is *pre compiled*.
-====
-
 == A quick Simple Language example
 
 You often use Simple together with xref:components:eips:enterprise-integration-patterns.adoc[EIPs] such as xref:eips:choice-eip.adoc[Content-Based Router] EIP.

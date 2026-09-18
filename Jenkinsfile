@@ -41,7 +41,8 @@ pipeline {
         throttleJobProperty(
           categories: ['camel'],
           throttleEnabled: true,
-          throttleOption: 'category'
+          throttleOption: 'category',
+          maxConcurrentPerNode: 1
       )
 
         // This is required if you want to clean before build

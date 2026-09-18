@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,8 @@ import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.component.http.interceptor.RequestProxyBasicAuth;
 import org.apache.camel.component.http.interceptor.ResponseProxyBasicUnauthorized;
 import org.apache.camel.util.URISupport;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.HttpResponseInterceptor;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
@@ -37,6 +40,7 @@ import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProxyServerTest extends BaseHttpTest {
@@ -141,6 +145,30 @@ public class HttpProxyServerTest extends BaseHttpTest {
         http.setProxyPort(null);
 
         assertExchange(exchange);
+    }
+
+    @Test
+    public void httpsTargetWithProxyDefaultsToHttpProxyScheme() throws Exception {
+        // CAMEL-24632: proxy scheme must default to "http" regardless of the target endpoint scheme
+        HttpEndpoint endpoint = context.getEndpoint(
+                "https://www.example.com?proxyHost=myproxy&proxyPort=8080", HttpEndpoint.class);
+
+        HttpClientConfigurer configurer = endpoint.getHttpClientConfigurer();
+        assertThat(configurer).isNotNull();
+
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        configurer.configureHttpClient(builder);
+
+        Field proxyField = HttpClientBuilder.class.getDeclaredField("proxy");
+        proxyField.setAccessible(true);
+        HttpHost proxy = (HttpHost) proxyField.get(builder);
+
+        assertThat(proxy).isNotNull();
+        assertThat(proxy.getHostName()).isEqualTo("myproxy");
+        assertThat(proxy.getPort()).isEqualTo(8080);
+        assertThat(proxy.getSchemeName())
+                .as("Proxy scheme must be http even when the target endpoint is https")
+                .isEqualTo("http");
     }
 
     private String getHost() {

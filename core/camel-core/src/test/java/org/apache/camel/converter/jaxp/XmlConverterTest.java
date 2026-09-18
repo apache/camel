@@ -625,4 +625,22 @@ class XmlConverterTest extends ContextTestSupport {
         assertNotNull(node);
     }
 
+    @Test
+    void testToDOMDocumentReturnsNullForNonXmlByteArrayViaRegistry() {
+        // Exercises the bulk loader path (CamelXmlJaxpBulkConverterLoader) rather than
+        // calling XmlConverter.toDOMDocument() directly. When @Converter(allowNull=true)
+        // returns null, the loader returns Void.class, which the registry translates to null.
+        byte[] json = "{\"status\":\"error\"}".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        Document doc = context.getTypeConverter().convertTo(Document.class, json);
+        assertNull(doc, "Registry must return null (not throw) for non-XML byte[] via bulk loader");
+    }
+
+    @Test
+    void testToDOMDocumentParsesValidXmlByteArrayViaRegistry() throws Exception {
+        byte[] xml = "<root><child/></root>".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        Document doc = context.getTypeConverter().convertTo(Document.class, xml);
+        assertNotNull(doc, "Registry must parse valid XML byte[]");
+        assertEquals("root", doc.getDocumentElement().getTagName());
+    }
+
 }

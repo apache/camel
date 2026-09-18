@@ -190,6 +190,47 @@ public interface AiToolComponentBuilderFactory {
         }
     
         /**
+         * Tool output schema fields. Format: outputParameter.NAME=TYPE,
+         * outputParameter.NAME.description=TEXT. Supported types: string,
+         * integer, number, boolean. Mutually exclusive with outputSchema. This
+         * is a multi-value option with prefix: outputParameter.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param outputParameters the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder outputParameters(java.util.Map<java.lang.String, java.lang.String> outputParameters) {
+            doSetProperty("outputParameters", outputParameters);
+            return this;
+        }
+    
+        /**
+         * Raw JSON Schema describing the tool's structured output. Supports
+         * inline JSON and resource references (classpath:, file:, resource:).
+         * Mutually exclusive with the outputParameter multi-value options. When
+         * declared, the route body is parsed as JSON and exposed as structured
+         * content to MCP clients.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param outputSchema the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder outputSchema(java.lang.String outputSchema) {
+            doSetProperty("outputSchema", outputSchema);
+            return this;
+        }
+    
+        /**
          * Tool input parameters. Format: parameter.NAME=TYPE,
          * parameter.NAME.description=TEXT, parameter.NAME.required=true or
          * false, parameter.NAME.enum=val1,val2. Supported types: string,
@@ -224,6 +265,26 @@ public interface AiToolComponentBuilderFactory {
          */
         default AiToolComponentBuilder readOnlyHint(java.lang.Boolean readOnlyHint) {
             doSetProperty("readOnlyHint", readOnlyHint);
+            return this;
+        }
+    
+        
+        /**
+         * When true, AI producers that support agentic tool loops (such as
+         * camel-openai) return this tool's result directly to the caller
+         * without sending it back to the model. Also published as an MCP tool
+         * annotation when the tool is exposed via camel-mcp-server.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param returnDirect the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder returnDirect(java.lang.Boolean returnDirect) {
+            doSetProperty("returnDirect", returnDirect);
             return this;
         }
     
@@ -310,8 +371,11 @@ public interface AiToolComponentBuilderFactory {
             case "destructiveHint": getOrCreateConfiguration((AiToolComponent) component).setDestructiveHint((java.lang.Boolean) value); return true;
             case "idempotentHint": getOrCreateConfiguration((AiToolComponent) component).setIdempotentHint((java.lang.Boolean) value); return true;
             case "openWorldHint": getOrCreateConfiguration((AiToolComponent) component).setOpenWorldHint((java.lang.Boolean) value); return true;
+            case "outputParameters": getOrCreateConfiguration((AiToolComponent) component).setOutputParameters((java.util.Map) value); return true;
+            case "outputSchema": getOrCreateConfiguration((AiToolComponent) component).setOutputSchema((java.lang.String) value); return true;
             case "parameters": getOrCreateConfiguration((AiToolComponent) component).setParameters((java.util.Map) value); return true;
             case "readOnlyHint": getOrCreateConfiguration((AiToolComponent) component).setReadOnlyHint((java.lang.Boolean) value); return true;
+            case "returnDirect": getOrCreateConfiguration((AiToolComponent) component).setReturnDirect((java.lang.Boolean) value); return true;
             case "tags": getOrCreateConfiguration((AiToolComponent) component).setTags((java.lang.String) value); return true;
             case "title": getOrCreateConfiguration((AiToolComponent) component).setTitle((java.lang.String) value); return true;
             case "autowiredEnabled": ((AiToolComponent) component).setAutowiredEnabled((boolean) value); return true;

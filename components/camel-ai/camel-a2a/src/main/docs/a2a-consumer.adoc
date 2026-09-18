@@ -378,8 +378,9 @@ You can also emit with an explicit state:
 
 [source,yaml]
 ----
-- script:
-    simple: "${a2a:emit(INPUT_REQUIRED, 'Please provide your address')}"
+steps:
+  - script:
+      simple: "${a2a:emit(INPUT_REQUIRED, 'Please provide your address')}"
 ----
 
 NOTE: Use `script` EIP (not `setBody`) for `${a2a:emit()}` calls — `script` evaluates the expression for its side effect without changing the message body. Use `setBody` only for the final response.
@@ -595,6 +596,9 @@ The consumer enforces `maxPayloadSize` (default 6,291,456 bytes / 6 MiB) on inco
       uri: a2a:classpath:agent-card.json
       parameters:
         maxPayloadSize: 10485760
+      steps:
+        - setBody:
+            constant: "final response"
 ----
 
 === CORS Support

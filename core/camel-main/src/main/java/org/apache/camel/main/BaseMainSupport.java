@@ -150,6 +150,7 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String PREFIX_TRACE = "camel.trace.";
     private static final String PREFIX_ROUTE_CONTROLLER = "camel.routeController.";
     private static final String PREFIX_ERROR_REGISTRY = "camel.errorRegistry.";
+    private static final String PREFIX_AI_OBSERVABILITY = "camel.aiObservability.";
 
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
@@ -158,7 +159,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.telemetryDev.", "camel.management.", "camel.mdc.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             PREFIX_SERVER, PREFIX_SSL, PREFIX_SECURITY, PREFIX_DEBUG, PREFIX_TRACE,
-            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY };
+            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY, PREFIX_AI_OBSERVABILITY };
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
@@ -1421,6 +1422,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties tracerProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeControllerProperties = new OrderedLocationProperties();
         OrderedLocationProperties errorRegistryProperties = new OrderedLocationProperties();
+        OrderedLocationProperties aiObservabilityProperties = new OrderedLocationProperties();
 
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
@@ -1580,6 +1582,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 errorRegistryProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, PREFIX_AI_OBSERVABILITY)) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(PREFIX_AI_OBSERVABILITY.length());
+                validateOptionAndValue(key, option, value);
+                aiObservabilityProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1734,6 +1742,12 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        if (!aiObservabilityProperties.isEmpty() || mainConfigurationProperties.hasAiObservabilityConfiguration()) {
+            LOG.debug("Auto-configuring GenAI observability from loaded properties: {}", aiObservabilityProperties.size());
+            setAiObservabilityProperties(camelContext, aiObservabilityProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
 
         // configure which requires access to the model
         MainSupportModelConfigurer.configureModelCamelContext(camelContext, mainConfigurationProperties,
@@ -1801,6 +1815,11 @@ public abstract class BaseMainSupport extends BaseService {
         if (!errorRegistryProperties.isEmpty()) {
             errorRegistryProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.errorRegistry.{}={}", k, v);
+            });
+        }
+        if (!aiObservabilityProperties.isEmpty()) {
+            aiObservabilityProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.aiObservability.{}={}", k, v);
             });
         }
         if (!devConsoleProperties.isEmpty()) {
@@ -2604,6 +2623,26 @@ public abstract class BaseMainSupport extends BaseService {
         registry.setBodyIncludeFiles(config.isBodyIncludeFiles());
         registry.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
         registry.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
+    }
+
+    private void setAiObservabilityProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        AiObservabilityConfigurationProperties config = mainConfigurationProperties.aiObservability();
+        setPropertiesOnTarget(camelContext, config, properties, PREFIX_AI_OBSERVABILITY,
+                failIfNotSet, true, autoConfiguredProperties);
+
+        if (mainConfigurationProperties.hasAiObservabilityConfiguration() || !properties.isEmpty()) {
+            PropertiesComponent pc = camelContext.getPropertiesComponent();
+            Properties local = pc.getLocalProperties();
+            if (local == null) {
+                local = new Properties();
+                pc.setLocalProperties(local);
+            }
+            local.setProperty("camel.aiObservability.enabled", Boolean.toString(config.isEnabled()));
+        }
     }
 
     private void bindBeansToRegistry(

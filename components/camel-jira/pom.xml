@@ -71,8 +71,6 @@
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
             <version>${jira-sal-api-version}</version>
-            <!-- force jar type -->
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>

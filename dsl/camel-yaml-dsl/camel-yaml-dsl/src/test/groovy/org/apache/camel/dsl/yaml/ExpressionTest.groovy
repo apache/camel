@@ -135,6 +135,8 @@ class ExpressionTest extends YamlTestSupport {
         }
     }
 
+    // CAMEL-24707: an expression node without its expression is rejected when the file is loaded, not when the
+    // route is created (the schema marks the expression required; sort is the only node where it is optional)
     def "no expression"() {
         when:
         var route = '''
@@ -146,9 +148,47 @@ class ExpressionTest extends YamlTestSupport {
                             - steps:
                                 - to: "log:when-a"
             '''
-        loadRoutes(route)
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.getMessage().contains("when/0"), e.getMessage())
+        }
+    }
+
+    def "sort without expression is allowed"() {
+        when:
+        loadRoutes('''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - sort:
+                          comparator: "#myComparator"
+                      - to: "log:sorted"
+            ''')
         then:
         context.routeDefinitions.size() == 1
+    }
+
+    // CAMEL-24752: an unknown expression id says which built-in language was likely meant
+    def "Error: explicit not existing says did you mean"() {
+        when:
+        loadRoutesNoValidate('''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - setBody:
+                          expression:
+                            simpel: "${body}"
+            ''')
+        then:
+        def e = thrown(Exception)
+        def messages = []
+        for (Throwable t = e; t != null; t = t.cause) {
+            messages << t.message
+        }
+        messages.any { it != null && it.contains("Unknown expression with id: simpel (not a built-in Camel language; did you mean 'simple'?)") }
     }
 
 }

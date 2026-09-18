@@ -23,6 +23,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqlComponent target = (SqlComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowqueryfromheader":
+        case "allowQueryFromHeader": target.setAllowQueryFromHeader(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "batchautocommitdisabled":
@@ -57,6 +59,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowqueryfromheader":
+        case "allowQueryFromHeader": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "batchautocommitdisabled":
@@ -87,6 +91,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SqlComponent target = (SqlComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowqueryfromheader":
+        case "allowQueryFromHeader": return target.isAllowQueryFromHeader();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "batchautocommitdisabled":

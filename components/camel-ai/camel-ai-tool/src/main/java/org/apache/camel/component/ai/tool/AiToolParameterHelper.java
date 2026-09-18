@@ -172,6 +172,18 @@ public final class AiToolParameterHelper {
     }
 
     /**
+     * Validates that flat {@code outputParameter.*} metadata and {@code outputSchema} are not both configured.
+     */
+    public static void validateOutputSourceExclusive(Map<String, String> outputParameters, String outputSchema) {
+        boolean hasOutputParameters = outputParameters != null && !outputParameters.isEmpty();
+        boolean hasOutputSchema = outputSchema != null && !outputSchema.isBlank();
+        if (hasOutputParameters && hasOutputSchema) {
+            throw new IllegalArgumentException(
+                    "outputSchema and outputParameter.* are mutually exclusive on ai-tool endpoints");
+        }
+    }
+
+    /**
      * Resolves, validates, and normalizes a raw JSON Schema for tool input.
      */
     public static String resolveArgSchema(CamelContext camelContext, String argSchema) {
@@ -188,6 +200,73 @@ public final class AiToolParameterHelper {
         JsonObject root = parseJsonObject(resolved, argSchema);
         validateRootSchemaObject(root);
         return root.toJson();
+    }
+
+    /**
+     * Resolves and normalizes a raw JSON Schema describing tool output. Unlike
+     * {@link #resolveArgSchema(CamelContext, String)}, the schema may describe any JSON type (object, array, string,
+     * etc.).
+     */
+    public static String resolveOutputSchema(CamelContext camelContext, String outputSchema) {
+        if (outputSchema == null || outputSchema.isBlank()) {
+            throw new IllegalArgumentException("outputSchema must not be blank");
+        }
+
+        String resolved = camelContext.resolvePropertyPlaceholders(outputSchema);
+        String content = resolveResourceContent(camelContext, resolved, "outputSchema");
+        if (content != null) {
+            resolved = content;
+        }
+
+        JsonObject root = parseJsonObject(resolved, outputSchema, "outputSchema");
+        return root.toJson();
+    }
+
+    /**
+     * Parses a route body into structured JSON content when an output schema is declared.
+     */
+    public static Object parseStructuredOutput(Object body) {
+        if (body == null) {
+            throw new IllegalArgumentException(
+                    "Route body must not be null when an output schema is declared");
+        }
+        if (body instanceof Map<?, ?> || body instanceof List<?> || body instanceof Number || body instanceof Boolean) {
+            return body;
+        }
+        if (body instanceof String text) {
+            if (text.isBlank()) {
+                throw new IllegalArgumentException(
+                        "Route body must not be blank when an output schema is declared");
+            }
+            try {
+                return Jsoner.deserialize(text);
+            } catch (DeserializationException e) {
+                throw new IllegalArgumentException(
+                        "Route body must be valid JSON when an output schema is declared", e);
+            }
+        }
+        throw new IllegalArgumentException(
+                "Route body must be JSON (String, Map, or List) when an output schema is declared, but was: "
+                                           + body.getClass().getSimpleName());
+    }
+
+    /**
+     * Serializes structured JSON content to a text representation for LLM adapters.
+     */
+    public static String structuredContentToText(Object structuredContent, Object originalBody) {
+        if (structuredContent == null) {
+            return "No result";
+        }
+        if (originalBody instanceof String text && !text.isBlank()) {
+            return text.trim();
+        }
+        if (structuredContent instanceof JsonObject jsonObject) {
+            return jsonObject.toJson();
+        }
+        if (structuredContent instanceof JsonArray jsonArray) {
+            return jsonArray.toJson();
+        }
+        return Jsoner.serialize(structuredContent);
     }
 
     /**
@@ -227,19 +306,23 @@ public final class AiToolParameterHelper {
     }
 
     private static JsonObject parseJsonObject(String json, String originalValue) {
+        return parseJsonObject(json, originalValue, "argSchema");
+    }
+
+    private static JsonObject parseJsonObject(String json, String originalValue, String context) {
         try {
             Object parsed = Jsoner.deserialize(json);
             if (parsed == null) {
-                throw new IllegalArgumentException("argSchema must be a JSON object, but was: null");
+                throw new IllegalArgumentException(context + " must be a JSON object, but was: null");
             }
             if (!(parsed instanceof JsonObject root)) {
                 throw new IllegalArgumentException(
-                        "argSchema must be a JSON object, but was: " + parsed.getClass().getSimpleName());
+                        context + " must be a JSON object, but was: " + parsed.getClass().getSimpleName());
             }
             return root;
         } catch (DeserializationException e) {
             throw new IllegalArgumentException(
-                    "argSchema does not contain valid JSON. Provided value: " + originalValue, e);
+                    context + " does not contain valid JSON. Provided value: " + originalValue, e);
         }
     }
 
@@ -295,6 +378,10 @@ public final class AiToolParameterHelper {
     }
 
     private static String resolveResourceContent(CamelContext camelContext, String property) {
+        return resolveResourceContent(camelContext, property, "argSchema");
+    }
+
+    private static String resolveResourceContent(CamelContext camelContext, String property, String context) {
         try {
             if (ResourceHelper.hasScheme(property)) {
                 try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, property)) {
@@ -307,7 +394,7 @@ public final class AiToolParameterHelper {
                 }
             }
         } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to load argSchema resource: " + property, e);
+            throw new IllegalArgumentException("Failed to load " + context + " resource: " + property, e);
         } catch (Exception e) {
             // not a resolvable resource URI — fall through and treat as inline JSON content
         }

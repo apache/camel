@@ -45,7 +45,7 @@ public class KafkaSagaIT extends BaseKafkaTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                getCamelContext().addService(new InMemorySagaService());
+                getCamelContext().addService(new KafkaInteropSagaService());
 
                 from("direct:saga")
                         .saga()
@@ -61,6 +61,20 @@ public class KafkaSagaIT extends BaseKafkaTestSupport {
                         .to("saga:complete");
             }
         };
+    }
+}
+
+/**
+ * The saga id is stored in the exchange's internal state, which does not survive the Kafka produce/consume round-trip -
+ * only the {@code Long-Running-Action} header does. Advertise header support so the consumer route can join the saga
+ * started by the producer route, as documented for a {@code CamelSagaService} that relies on the header to join sagas
+ * started by another participant.
+ */
+final class KafkaInteropSagaService extends InMemorySagaService {
+
+    @Override
+    public boolean isLongRunningActionHeaderSupported() {
+        return true;
     }
 }
 

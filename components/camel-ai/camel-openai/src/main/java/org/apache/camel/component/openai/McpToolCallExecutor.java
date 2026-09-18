@@ -33,6 +33,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.ai.tool.AiToolExecutor;
+import org.apache.camel.component.ai.tool.AiToolResult;
+import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +76,8 @@ class McpToolCallExecutor extends ServiceSupport {
      * @param content      the textual result to feed back to the model
      * @param returnDirect whether the call succeeded and the tool is annotated with {@code returnDirect}
      */
-    record ToolResult(String toolCallId, String toolName, String content, boolean returnDirect) {
+    record ToolResult(String toolCallId, String toolName, String content, boolean returnDirect, long durationMs,
+            boolean success) {
     }
 
     @Override
@@ -156,7 +161,7 @@ class McpToolCallExecutor extends ServiceSupport {
                 if (timedOut != null) {
                     failure = failure != null ? failure : timedOut;
                 } else {
-                    results[i] = errorResult(toolCall, "Error: tool execution timed out after " + timeout + " ms");
+                    results[i] = timeoutResult(toolCall, timeout);
                 }
             } catch (ExecutionException e) {
                 // executeOne only throws when the configured strategy is to fail the exchange
@@ -207,9 +212,15 @@ class McpToolCallExecutor extends ServiceSupport {
     }
 
     private ToolResult executeOne(ChatCompletionMessageToolCall toolCall, McpToolState toolState) throws Exception {
+        long startNanos = System.nanoTime();
         OpenAIConfiguration config = endpoint.getConfiguration();
         String toolName = toolCall.asFunction().function().name();
         String argsJson = toolCall.asFunction().function().arguments();
+
+        AiToolSpec routeSpec = toolState.routeTools().get(toolName);
+        if (routeSpec != null) {
+            return timed(startNanos, executeRouteTool(toolCall, routeSpec, toolState, config));
+        }
 
         McpSyncClient mcpClient = toolState.toolClientMap().get(toolName);
         if (mcpClient == null) {
@@ -217,10 +228,10 @@ class McpToolCallExecutor extends ServiceSupport {
                 throw new IllegalStateException("Tool '" + toolName + "' not found in any configured MCP server");
             }
             // repromptModel: send a corrective tool result listing available tools
-            String available = String.join(", ", toolState.toolClientMap().keySet());
+            String available = String.join(", ", toolState.knownToolNames());
             LOG.warn("Hallucinated tool name '{}', sending corrective result to model", toolName);
-            return errorResult(toolCall,
-                    "Error: tool '" + toolName + "' does not exist. Available tools: " + available);
+            return timed(startNanos, errorResult(toolCall,
+                    "Error: tool '" + toolName + "' does not exist. Available tools: " + available));
         }
 
         LOG.debug("Executing MCP tool '{}' with args: {}", toolName, argsJson);
@@ -232,31 +243,97 @@ class McpToolCallExecutor extends ServiceSupport {
             if (Boolean.TRUE.equals(toolResult.isError())) {
                 String content = "Error: " + extractTextContent(toolResult.content());
                 LOG.warn("MCP tool '{}' returned error: {}", toolName, content);
-                return errorResult(toolCall, content);
+                return timed(startNanos, errorResult(toolCall, content));
             }
 
             String content = extractTextContent(toolResult.content());
             LOG.debug("Tool '{}' result: {}", toolName, content);
-            return new ToolResult(
-                    toolCall.asFunction().id(), toolName, content, toolState.returnDirectTools().contains(toolName));
+            return timed(startNanos, new ToolResult(
+                    toolCall.asFunction().id(), toolName, content, toolState.returnDirectTools().contains(toolName), 0,
+                    true));
         } catch (JsonProcessingException e) {
             if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
                 throw e;
             }
             LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
-            return errorResult(toolCall, "Error: invalid tool arguments: " + e.getMessage());
+            return timed(startNanos, errorResult(toolCall, "Error: invalid tool arguments: " + e.getMessage()));
         } catch (Exception e) {
             if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
                 throw e;
             }
             LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
-            return errorResult(toolCall, "Error: Tool execution failed: " + e.getMessage());
+            return timed(startNanos, errorResult(toolCall, "Error: Tool execution failed: " + e.getMessage()));
+        }
+    }
+
+    private ToolResult executeRouteTool(
+            ChatCompletionMessageToolCall toolCall,
+            AiToolSpec spec,
+            McpToolState toolState,
+            OpenAIConfiguration config)
+            throws Exception {
+        String toolName = toolCall.asFunction().function().name();
+        String argsJson = toolCall.asFunction().function().arguments();
+
+        LOG.debug("Executing route tool '{}' with args: {}", toolName, argsJson);
+
+        try {
+            Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
+            Exchange toolExchange = spec.getConsumer().createExchange(false);
+            try {
+                AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
+                if (result instanceof AiToolResult.Success success) {
+                    LOG.debug("Route tool '{}' result: {}", toolName, success.value());
+                    return new ToolResult(
+                            toolCall.asFunction().id(), toolName, success.value(),
+                            toolState.returnDirectTools().contains(toolName), 0, true);
+                } else if (result instanceof AiToolResult.ArgumentError error) {
+                    LOG.warn("Route tool '{}' argument error: {}", toolName, error.message());
+                    return errorResult(toolCall, "Error: invalid tool arguments: " + error.message());
+                } else {
+                    AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
+                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                        if (error.cause() != null) {
+                            throw error.cause();
+                        }
+                        throw new IllegalStateException(error.message());
+                    }
+                    LOG.warn("Route tool '{}' execution failed: {}", toolName, error.message(), error.cause());
+                    return errorResult(toolCall, "Error: Tool execution failed: " + error.message());
+                }
+            } finally {
+                spec.getConsumer().releaseExchange(toolExchange, false);
+            }
+        } catch (JsonProcessingException e) {
+            if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                throw e;
+            }
+            LOG.warn("Invalid tool arguments for route tool '{}': {}", toolName, argsJson, e);
+            return errorResult(toolCall, "Error: invalid tool arguments: " + e.getMessage());
         }
     }
 
     private static ToolResult errorResult(ChatCompletionMessageToolCall toolCall, String content) {
         return new ToolResult(
-                toolCall.asFunction().id(), toolCall.asFunction().function().name(), content, false);
+                toolCall.asFunction().id(), toolCall.asFunction().function().name(), content, false, 0, false);
+    }
+
+    private static ToolResult timeoutResult(ChatCompletionMessageToolCall toolCall, long timeoutMs) {
+        // Use the configured parallelToolTimeout as durationMs: the wait already consumed that budget.
+        return new ToolResult(
+                toolCall.asFunction().id(),
+                toolCall.asFunction().function().name(),
+                "Error: tool execution timed out after " + timeoutMs + " ms",
+                false,
+                timeoutMs,
+                false);
+    }
+
+    private static ToolResult timed(long startNanos, ToolResult result) {
+        long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+        return new ToolResult(
+                result.toolCallId(), result.toolName(), result.content(), result.returnDirect(), durationMs,
+                result.success());
     }
 
     private static String extractTextContent(List<McpSchema.Content> contents) {

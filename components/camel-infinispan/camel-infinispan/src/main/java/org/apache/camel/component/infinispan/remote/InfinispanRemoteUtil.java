@@ -42,6 +42,14 @@ public final class InfinispanRemoteUtil extends InfinispanUtil {
     public static Query<?> buildQuery(
             InfinispanRemoteConfiguration configuration, RemoteCache<Object, Object> cache, Message message) {
 
+        return buildQuery(resolveQueryBuilder(configuration, message), cache);
+    }
+
+    /**
+     * The query builder to use for a message: the one carried by the {@link InfinispanConstants#QUERY_BUILDER} header
+     * if there is one, the one configured on the endpoint otherwise. Returns {@code null} when neither is set.
+     */
+    public static InfinispanQueryBuilder resolveQueryBuilder(InfinispanRemoteConfiguration configuration, Message message) {
         InfinispanQueryBuilder builder = message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
         if (builder == null) {
             builder = configuration.getQueryBuilder();
@@ -52,7 +60,7 @@ public final class InfinispanRemoteUtil extends InfinispanUtil {
             vectorQueryBuilder.setTypeName(EmbeddingStoreUtil.getTypeName(configuration));
         }
 
-        return buildQuery(builder, cache);
+        return builder;
     }
 
     public static Query<?> buildQuery(InfinispanConfiguration configuration, RemoteCache<Object, Object> cache) {

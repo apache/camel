@@ -233,6 +233,18 @@ validate_homebrew() {
     # failure of the audit gate below caused by the tap copy itself, not by the formula.
     chmod 644 "$tap_dir/Formula/${fmla}.rb"
 
+    # The formula carries no dedicated `version` field (brew audit --strict rejects one that
+    # merely duplicates what it already scans from the url), so the expected post-install
+    # version is read from the url instead - captured now, before Step 2 below may rewrite that
+    # same url to a local file:// path for the offline install, which would otherwise wipe out
+    # the "<version>/<artifact>" path segment this parses.
+    local expected_version
+    expected_version=$(sed -n 's#.*/camel-launcher/\([^/]*\)/[^/]*"$#\1#p' "$tap_dir/Formula/${fmla}.rb" | head -n1)
+    if [ -z "$expected_version" ]; then
+        echo "WARN: could not read the version from tapped formula ${fmla}.rb's url, falling back to \$RESOLVED_VERSION ($RESOLVED_VERSION)"
+        expected_version="$RESOLVED_VERSION"
+    fi
+
     # Step 1: Homebrew style + audit, referenced by tap-qualified name (not a path).
     # `brew style --fix` only normalizes formatting; its output is informational.
     local style_output=""
@@ -323,21 +335,8 @@ validate_homebrew() {
 
     # Step 3: Verify camel version after installation. A successful `brew install` exit code
     # is not proof the executable actually works, so a missing/empty/mismatched result here
-    # is a real failure, not something to warn past.
-    #
-    # Expected version comes from the formula's own `version` line, not $RESOLVED_VERSION.
-    # JReleaser renders the formula version from the real POM version, which in test mode is
-    # the -SNAPSHOT that the offline file:// install above actually installs; that differs from
-    # $RESOLVED_VERSION (which strips -SNAPSHOT for local-archive lookups). Reading the expected
-    # value back out of the tapped formula keeps this assertion correct in both the test-mode
-    # case and a real release (where the formula version is $RESOLVED_VERSION anyway).
-    local expected_version
-    expected_version=$(sed -n 's/^[[:space:]]*version "\(.*\)"/\1/p' "$tap_dir/Formula/${fmla}.rb" | head -n1)
-    if [ -z "$expected_version" ]; then
-        echo "WARN: could not read 'version' from tapped formula ${fmla}.rb, falling back to \$RESOLVED_VERSION ($RESOLVED_VERSION)"
-        expected_version="$RESOLVED_VERSION"
-    fi
-
+    # is a real failure, not something to warn past. $expected_version was captured above,
+    # before Step 2 rewrote the formula's url to a local file:// path.
     local camv_output=""
     if ! command -v camel >/dev/null 2>&1; then
         echo "FAIL: camel executable not found on PATH after a successful homebrew install"

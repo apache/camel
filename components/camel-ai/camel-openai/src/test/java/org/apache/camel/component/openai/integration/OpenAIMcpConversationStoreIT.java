@@ -57,7 +57,7 @@ public class OpenAIMcpConversationStoreIT extends OpenAITestSupport {
     private final Map<String, List<?>> conversationStore = new ConcurrentHashMap<>();
 
     @RegisterExtension
-    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createService();
+    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createSingletonService();
 
     @Override
     protected RouteBuilder createRouteBuilder() {

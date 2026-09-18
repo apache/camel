@@ -418,7 +418,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
             this.templateParameters = new ArrayList<>();
         }
         RouteTemplateParameterDefinition def = new RouteTemplateParameterDefinition(name, null, description);
-        def.setRequired(false);
+        def.setRequired("false");
         this.templateParameters.add(def);
     }
 

@@ -74,6 +74,68 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
+         * Determines if onCompleted events should be pushed to the Camel route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnCompleted the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder forwardOnCompleted(boolean forwardOnCompleted) {
+            doSetProperty("forwardOnCompleted", forwardOnCompleted);
+            return this;
+        }
+        /**
+         * Determines if onCompleted events should be pushed to the Camel route.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnCompleted the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder forwardOnCompleted(String forwardOnCompleted) {
+            doSetProperty("forwardOnCompleted", forwardOnCompleted);
+            return this;
+        }
+        /**
+         * Determines if onError events should be pushed to the Camel route.
+         * Exceptions will be set as message body.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnError the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder forwardOnError(boolean forwardOnError) {
+            doSetProperty("forwardOnError", forwardOnError);
+            return this;
+        }
+        /**
+         * Determines if onError events should be pushed to the Camel route.
+         * Exceptions will be set as message body.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnError the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder forwardOnError(String forwardOnError) {
+            doSetProperty("forwardOnError", forwardOnError);
+            return this;
+        }
+        /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
          * The option is a: <code>int</code> type.
@@ -189,68 +251,6 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(String consumerStrategy) {
             doSetProperty("consumerStrategy", consumerStrategy);
-            return this;
-        }
-        /**
-         * Determines if onCompleted events should be pushed to the Camel route.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param forwardOnCompleted the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointConsumerBuilder forwardOnCompleted(boolean forwardOnCompleted) {
-            doSetProperty("forwardOnCompleted", forwardOnCompleted);
-            return this;
-        }
-        /**
-         * Determines if onCompleted events should be pushed to the Camel route.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param forwardOnCompleted the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointConsumerBuilder forwardOnCompleted(String forwardOnCompleted) {
-            doSetProperty("forwardOnCompleted", forwardOnCompleted);
-            return this;
-        }
-        /**
-         * Determines if onError events should be pushed to the Camel route.
-         * Exceptions will be set as message body.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param forwardOnError the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointConsumerBuilder forwardOnError(boolean forwardOnError) {
-            doSetProperty("forwardOnError", forwardOnError);
-            return this;
-        }
-        /**
-         * Determines if onError events should be pushed to the Camel route.
-         * Exceptions will be set as message body.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param forwardOnError the value to set
-         * @return the dsl builder
-         */
-        default GrpcEndpointConsumerBuilder forwardOnError(String forwardOnError) {
-            doSetProperty("forwardOnError", forwardOnError);
             return this;
         }
         /**
@@ -595,6 +595,40 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointConsumerBuilder maxRstPeriodSeconds(String maxRstPeriodSeconds) {
             doSetProperty("maxRstPeriodSeconds", maxRstPeriodSeconds);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * status description returned to the client won't contain the
+         * exception's message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * status description returned to the client won't contain the
+         * exception's message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
             return this;
         }
         /**
@@ -1124,6 +1158,68 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointProducerBuilder flowControlWindow(String flowControlWindow) {
             doSetProperty("flowControlWindow", flowControlWindow);
+            return this;
+        }
+        /**
+         * Determines if onCompleted events should be pushed to the Camel route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnCompleted the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder forwardOnCompleted(boolean forwardOnCompleted) {
+            doSetProperty("forwardOnCompleted", forwardOnCompleted);
+            return this;
+        }
+        /**
+         * Determines if onCompleted events should be pushed to the Camel route.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnCompleted the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder forwardOnCompleted(String forwardOnCompleted) {
+            doSetProperty("forwardOnCompleted", forwardOnCompleted);
+            return this;
+        }
+        /**
+         * Determines if onError events should be pushed to the Camel route.
+         * Exceptions will be set as message body.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnError the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder forwardOnError(boolean forwardOnError) {
+            doSetProperty("forwardOnError", forwardOnError);
+            return this;
+        }
+        /**
+         * Determines if onError events should be pushed to the Camel route.
+         * Exceptions will be set as message body.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnError the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointProducerBuilder forwardOnError(String forwardOnError) {
+            doSetProperty("forwardOnError", forwardOnError);
             return this;
         }
         /**
@@ -1693,6 +1789,68 @@ public interface GrpcEndpointBuilderFactory {
          */
         default GrpcEndpointBuilder flowControlWindow(String flowControlWindow) {
             doSetProperty("flowControlWindow", flowControlWindow);
+            return this;
+        }
+        /**
+         * Determines if onCompleted events should be pushed to the Camel route.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnCompleted the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointBuilder forwardOnCompleted(boolean forwardOnCompleted) {
+            doSetProperty("forwardOnCompleted", forwardOnCompleted);
+            return this;
+        }
+        /**
+         * Determines if onCompleted events should be pushed to the Camel route.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnCompleted the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointBuilder forwardOnCompleted(String forwardOnCompleted) {
+            doSetProperty("forwardOnCompleted", forwardOnCompleted);
+            return this;
+        }
+        /**
+         * Determines if onError events should be pushed to the Camel route.
+         * Exceptions will be set as message body.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnError the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointBuilder forwardOnError(boolean forwardOnError) {
+            doSetProperty("forwardOnError", forwardOnError);
+            return this;
+        }
+        /**
+         * Determines if onError events should be pushed to the Camel route.
+         * Exceptions will be set as message body.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forwardOnError the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointBuilder forwardOnError(String forwardOnError) {
+            doSetProperty("forwardOnError", forwardOnError);
             return this;
         }
         /**

@@ -16,12 +16,16 @@
  */
 package org.apache.camel.oauth;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
 import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
+import static org.apache.camel.oauth.OAuthSession.OAUTH_STATE;
 
 public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
 
@@ -39,8 +43,7 @@ public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
         var authCode = msg.getHeader("code", String.class);
         if (authCode == null) {
             log.error("Authorization code is missing in the request");
-            msg.setHeader("CamelHttpResponseCode", 400);
-            msg.setBody("Authorization code missing");
+            reject(exchange, 400, "Authorization code missing");
             return;
         }
 
@@ -48,6 +51,23 @@ public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
         //
         var oauth = findOAuthOrThrow(context);
         var session = oauth.getOrCreateSession(exchange);
+
+        // The state must match the one this session sent to the identity provider, and it is single use.
+        // Without that binding any authorization code, obtained in any browser, could be redeemed here and
+        // bound to whichever session presented it - which is login CSRF.
+        var expectedState = session.<String> removeValue(OAUTH_STATE).orElse(null);
+        var actualState = msg.getHeader("state", String.class);
+        if (expectedState == null) {
+            log.error("No authorization code flow is in progress for this session");
+            reject(exchange, 400, "No authorization code flow in progress");
+            return;
+        }
+        if (actualState == null || !MessageDigest.isEqual(
+                expectedState.getBytes(StandardCharsets.UTF_8), actualState.getBytes(StandardCharsets.UTF_8))) {
+            log.error("Authorization state does not match the flow started by this session");
+            reject(exchange, 400, "Authorization state mismatch");
+            return;
+        }
 
         // Exchange the authorization code for access/refresh/id tokens
         //

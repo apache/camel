@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class HashicorpVaultPropertiesSourceNoEnvTestIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static HashicorpVaultService service = HashicorpServiceFactory.createService();
+    public static HashicorpVaultService service = HashicorpServiceFactory.createSingletonService();
 
     @BeforeAll
     public static void init() {

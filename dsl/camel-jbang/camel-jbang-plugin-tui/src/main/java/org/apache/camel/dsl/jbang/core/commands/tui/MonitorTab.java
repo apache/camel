@@ -58,7 +58,32 @@ interface MonitorTab {
     default void renderFooter(List<Span> spans) {
     }
 
+    /**
+     * Contributes tab-specific F-key hints that should render grouped with the global F-key hints (F1/F2/F10) in the
+     * footer, rather than at the tail with the other tab hints. Appended right after the global F-keys.
+     */
+    default void renderFKeyHints(List<Span> spans) {
+    }
+
     default void onTabSelected() {
+    }
+
+    /**
+     * For tabs that fetch their data only when opened (classpath, dependencies, catalog, CVE audit, startup): starts
+     * the fetch for the selected integration if it has not happened yet and returns {@code true}, so a caller that
+     * reads the tab without opening it (the AI panel, an MCP client) can wait for the data. Tabs whose data is always
+     * current return {@code false}.
+     */
+    default boolean ensureDataLoaded() {
+        return false;
+    }
+
+    /**
+     * After an on-demand load finished without producing table data: the error, or a message saying the tab is empty.
+     * {@code null} while the load is still running or when the tab does not load on demand.
+     */
+    default String dataLoadError() {
+        return null;
     }
 
     default void onIntegrationChanged() {

@@ -47,6 +47,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     private final CuratorFramework client;
     private final CuratorLocalMember localMember;
     private volatile LeaderSelector leaderSelector;
+    private volatile boolean leader;
 
     public ZooKeeperClusterView(CamelClusterService cluster, ZooKeeperCuratorConfiguration configuration,
                                 CuratorFramework client, String namespace) {
@@ -110,6 +111,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         if (leaderSelector == null) {
             leaderSelector = new LeaderSelector(client, getFullPath(), new CamelLeaderElectionListener());
             leaderSelector.setId(getClusterService().getId());
+            leaderSelector.autoRequeue();
             leaderSelector.start();
         } else {
             leaderSelector.requeue();
@@ -118,16 +120,11 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStop() throws Exception {
-        if (leaderSelector != null) {
-            leaderSelector.interruptLeadership();
-            fireLeadershipChangedEvent(getLeader().orElse(null));
-        }
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        if (leaderSelector != null) {
-            leaderSelector.close();
+        LeaderSelector selector = leaderSelector;
+        leaderSelector = null;
+        if (selector != null) {
+            leader = false;
+            selector.close();
         }
     }
 
@@ -142,6 +139,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     private final class CamelLeaderElectionListener extends LeaderSelectorListenerAdapter {
         @Override
         public void takeLeadership(CuratorFramework curatorFramework) throws Exception {
+            leader = true;
             fireLeadershipChangedEvent(localMember);
 
             BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationBudget()
@@ -149,17 +147,21 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
                     .withInterval(Duration.ofSeconds(5))
                     .build())
                     .build();
-
-            task.run(getCamelContext(), () -> !isRunAllowed());
-
-            fireLeadershipChangedEvent(getLeader().orElse(null));
+            try {
+                task.run(getCamelContext(), () -> !isRunAllowed());
+            } finally {
+                leader = false;
+                if (!isStoppingOrStopped()) {
+                    fireLeadershipChangedEvent((CamelClusterMember) null);
+                }
+            }
         }
     }
 
     private final class CuratorLocalMember implements CamelClusterMember {
         @Override
         public boolean isLeader() {
-            return leaderSelector != null && leaderSelector.hasLeadership();
+            return leader;
         }
 
         @Override

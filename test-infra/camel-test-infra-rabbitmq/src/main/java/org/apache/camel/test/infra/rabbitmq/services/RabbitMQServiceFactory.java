@@ -18,8 +18,41 @@
 package org.apache.camel.test.infra.rabbitmq.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class RabbitMQServiceFactory {
+
+    private static class SingletonRabbitMQService extends SingletonService<RabbitMQService> implements RabbitMQService {
+        public SingletonRabbitMQService(RabbitMQService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public ConnectionProperties connectionProperties() {
+            return getService().connectionProperties();
+        }
+
+        @Override
+        public int getHttpPort() {
+            return getService().getHttpPort();
+        }
+
+        @Override
+        public String managementUsername() {
+            return getService().managementUsername();
+        }
+
+        @Override
+        public String managementPassword() {
+            return getService().managementPassword();
+        }
+
+        @Override
+        public String managementUri() {
+            return getService().managementUri();
+        }
+    }
+
     private RabbitMQServiceFactory() {
 
     }
@@ -33,6 +66,21 @@ public final class RabbitMQServiceFactory {
                 .addLocalMapping(RabbitMQLocalContainerService::new)
                 .addRemoteMapping(RabbitMQRemoteService::new)
                 .build();
+    }
+
+    public static RabbitMQService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final RabbitMQService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<RabbitMQService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonRabbitMQService(new RabbitMQLocalContainerService(), "rabbitmq"))
+                    .addRemoteMapping(RabbitMQRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class RabbitMQLocalContainerService extends RabbitMQLocalContainerInfraService implements RabbitMQService {

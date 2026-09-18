@@ -41,7 +41,7 @@ class AiToolSpecToLangChain4jTest {
 
     @Test
     void testBasicToolSpecConversion() {
-        AiToolSpec spec = new AiToolSpec("myTool", "A test tool", Map.of(), null, null, null);
+        AiToolSpec spec = new AiToolSpec("myTool", "A test tool", Map.of(), null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
@@ -56,7 +56,7 @@ class AiToolSpecToLangChain4jTest {
         rawParams.put("city", "string");
 
         Map<String, AiToolParameterHelper.ParameterDef> defs = AiToolParameterHelper.parseParameterMetadata(rawParams);
-        AiToolSpec spec = new AiToolSpec("weather", "Get weather", defs, null, null, null);
+        AiToolSpec spec = new AiToolSpec("weather", "Get weather", defs, null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
@@ -71,7 +71,7 @@ class AiToolSpecToLangChain4jTest {
         rawParams.put("count", "integer");
 
         Map<String, AiToolParameterHelper.ParameterDef> defs = AiToolParameterHelper.parseParameterMetadata(rawParams);
-        AiToolSpec spec = new AiToolSpec("counter", "Count items", defs, null, null, null);
+        AiToolSpec spec = new AiToolSpec("counter", "Count items", defs, null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
@@ -84,7 +84,7 @@ class AiToolSpecToLangChain4jTest {
         rawParams.put("price", "number");
 
         Map<String, AiToolParameterHelper.ParameterDef> defs = AiToolParameterHelper.parseParameterMetadata(rawParams);
-        AiToolSpec spec = new AiToolSpec("pricer", "Get price", defs, null, null, null);
+        AiToolSpec spec = new AiToolSpec("pricer", "Get price", defs, null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
@@ -97,7 +97,7 @@ class AiToolSpecToLangChain4jTest {
         rawParams.put("active", "boolean");
 
         Map<String, AiToolParameterHelper.ParameterDef> defs = AiToolParameterHelper.parseParameterMetadata(rawParams);
-        AiToolSpec spec = new AiToolSpec("checker", "Check status", defs, null, null, null);
+        AiToolSpec spec = new AiToolSpec("checker", "Check status", defs, null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
@@ -111,7 +111,7 @@ class AiToolSpecToLangChain4jTest {
         rawParams.put("color.enum", "red,green,blue");
 
         Map<String, AiToolParameterHelper.ParameterDef> defs = AiToolParameterHelper.parseParameterMetadata(rawParams);
-        AiToolSpec spec = new AiToolSpec("colorPicker", "Pick a color", defs, null, null, null);
+        AiToolSpec spec = new AiToolSpec("colorPicker", "Pick a color", defs, null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
@@ -129,7 +129,7 @@ class AiToolSpecToLangChain4jTest {
         rawParams.put("userId.required", "true");
 
         Map<String, AiToolParameterHelper.ParameterDef> defs = AiToolParameterHelper.parseParameterMetadata(rawParams);
-        AiToolSpec spec = new AiToolSpec("userLookup", "Look up user", defs, null, null, null);
+        AiToolSpec spec = new AiToolSpec("userLookup", "Look up user", defs, null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
@@ -147,7 +147,7 @@ class AiToolSpecToLangChain4jTest {
         rawParams.put("active", "boolean");
 
         Map<String, AiToolParameterHelper.ParameterDef> defs = AiToolParameterHelper.parseParameterMetadata(rawParams);
-        AiToolSpec spec = new AiToolSpec("multiTool", "Multi-param tool", defs, null, null, null);
+        AiToolSpec spec = new AiToolSpec("multiTool", "Multi-param tool", defs, null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
@@ -189,7 +189,7 @@ class AiToolSpecToLangChain4jTest {
                 }
                 """;
 
-        AiToolSpec spec = new AiToolSpec("createOrder", "Create order", Map.of(), schema, null, null);
+        AiToolSpec spec = new AiToolSpec("createOrder", "Create order", Map.of(), schema, Map.of(), null, null, null);
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
         assertThat(result.parameters()).isNotNull();
@@ -199,7 +199,7 @@ class AiToolSpecToLangChain4jTest {
 
     @Test
     void testEmptyParameters() {
-        AiToolSpec spec = new AiToolSpec("noParams", "Tool with no params", Map.of(), null, null, null);
+        AiToolSpec spec = new AiToolSpec("noParams", "Tool with no params", Map.of(), null, Map.of(), null, null, null);
 
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 

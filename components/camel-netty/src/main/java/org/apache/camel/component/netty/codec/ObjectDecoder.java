@@ -29,17 +29,19 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.serialization.ClassResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DeserializationFilterHelper;
 
 /**
- * Decodes Java-serialized objects from Netty frames with optional {@link ObjectInputFilter} support.
+ * Decodes Java-serialized objects from Netty frames, applying a JEP-290 {@link ObjectInputFilter} as a defense-in-depth
+ * measure against unsafe deserialization.
  * <p>
- * Compatible with Netty's {@code ObjectEncoder} compact wire format. When a {@code deserializationFilter} is provided,
- * only classes matching the filter pattern will be allowed during deserialization.
+ * Compatible with Netty's {@code ObjectEncoder} compact wire format. The filter is resolved through
+ * {@link DeserializationFilterHelper}: when an explicit {@code deserializationFilter} pattern is supplied it is
+ * applied, otherwise the JVM-wide {@code jdk.serialFilter} is honoured if set, and failing that the shared Camel
+ * default allow-list ({@link DeserializationFilterHelper#DEFAULT_DESERIALIZATION_FILTER}) is applied. A filter is
+ * therefore always installed.
  */
 public class ObjectDecoder extends LengthFieldBasedFrameDecoder {
-    private static final Logger LOG = LoggerFactory.getLogger(ObjectDecoder.class);
     private static final int DEFAULT_MAX_OBJECT_SIZE = 1048576;
 
     // Matches Netty's CompactObjectOutputStream type constants
@@ -47,7 +49,7 @@ public class ObjectDecoder extends LengthFieldBasedFrameDecoder {
     private static final int TYPE_THIN_DESCRIPTOR = 1;
 
     private final ClassResolver classResolver;
-    private final String deserializationFilter;
+    private final ObjectInputFilter deserializationFilter;
 
     public ObjectDecoder(ClassResolver classResolver) {
         this(classResolver, null);
@@ -56,12 +58,7 @@ public class ObjectDecoder extends LengthFieldBasedFrameDecoder {
     public ObjectDecoder(ClassResolver classResolver, String deserializationFilter) {
         super(DEFAULT_MAX_OBJECT_SIZE, 0, 4, 0, 4);
         this.classResolver = classResolver;
-        this.deserializationFilter = deserializationFilter;
-        if (deserializationFilter == null) {
-            LOG.warn("ObjectDecoder created without a deserialization filter."
-                     + " Unrestricted deserialization of network data is a security risk."
-                     + " Consider setting a deserializationFilter to restrict allowed classes.");
-        }
+        this.deserializationFilter = DeserializationFilterHelper.resolveDeserializationFilter(deserializationFilter);
     }
 
     @Override
@@ -72,9 +69,7 @@ public class ObjectDecoder extends LengthFieldBasedFrameDecoder {
         }
         ObjectInputStream ois = new CompactFilteringObjectInputStream(
                 new ByteBufInputStream(frame, true), classResolver);
-        if (deserializationFilter != null) {
-            ois.setObjectInputFilter(ObjectInputFilter.Config.createFilter(deserializationFilter));
-        }
+        ois.setObjectInputFilter(deserializationFilter);
         try {
             return ois.readObject();
         } finally {

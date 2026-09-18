@@ -90,42 +90,4 @@ public class MathFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
     public void testAverage() {
         assertEquals(2.0, evaluate("average(1, 2, 3)", Double.class));
     }
-
-    @Test
-    public void testCreateCodeAbs() {
-        assertEquals("Object o = null;\n        return abs(exchange, o);", createCode("abs()"));
-        assertEquals("Object o = 5;\n        return abs(exchange, o);", createCode("abs(5)"));
-    }
-
-    @Test
-    public void testCreateCodeFloor() {
-        assertEquals("Object o = null;\n        return floor(exchange, o);", createCode("floor()"));
-        assertEquals("Object o = 3.7;\n        return floor(exchange, o);", createCode("floor(3.7)"));
-    }
-
-    @Test
-    public void testCreateCodeCeil() {
-        assertEquals("Object o = null;\n        return ceil(exchange, o);", createCode("ceil()"));
-    }
-
-    @Test
-    public void testCreateCodeSum() {
-        assertEquals("sum(exchange, 1, 2, 3)", createCode("sum(1, 2, 3)"));
-    }
-
-    @Test
-    public void testCreateCodeMax() {
-        assertEquals("max(exchange, 1, 2)", createCode("max(1, 2)"));
-    }
-
-    @Test
-    public void testCreateCodeMin() {
-        assertEquals("min(exchange, 1, 2)", createCode("min(1, 2)"));
-    }
-
-    @Test
-    public void testCreateCodeAverage() {
-        assertEquals("average(exchange, 1, 2, 3)", createCode("average(1, 2, 3)"));
-    }
-
 }

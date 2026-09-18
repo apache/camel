@@ -45,6 +45,8 @@ SwiftMxDataFormat
 SyslogDataFormat
 TarFileDataFormat
 ThriftDataFormat
+ToonDataFormat
+UblDataFormat
 UniVocityCsvDataFormat
 UniVocityFixedDataFormat
 UniVocityHeader

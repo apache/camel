@@ -27,11 +27,12 @@ import com.openai.core.ClientOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
+import org.apache.camel.test.infra.ollama.services.OllamaServiceConfiguration;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Since Spring AI 2.0 the OpenAI models are built on the official openai-java SDK, so the Ollama endpoint is configured
  * through the SDK client options rather than through a Spring RestClient.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Disabled unless running in CI")
+@Disabled("Test is too slow and resource-intensive — requires pulling a 4B parameter model")
 @Timeout(180)
 public class SpringAiImageOllamaIT extends CamelTestSupport {
 
@@ -67,7 +68,18 @@ public class SpringAiImageOllamaIT extends CamelTestSupport {
     Path tempDir;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonServiceWithConfiguration(
+            new OllamaServiceConfiguration() {
+                @Override
+                public String modelName() {
+                    return IMAGE_MODEL_NAME;
+                }
+
+                @Override
+                public String apiKey() {
+                    return "unused";
+                }
+            });
 
     private ImageModel imageModel;
 

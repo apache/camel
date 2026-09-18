@@ -107,6 +107,37 @@ class ServiceBusEndpointTest extends CamelTestSupport {
     }
 
     @Test
+    void testCreateEndpointDefaultMaxConcurrentSessions() throws Exception {
+        final String uri = "azure-servicebus://testTopicOrQueue";
+        final String remaining = "testTopicOrQueue";
+        final Map<String, Object> params = new HashMap<>();
+        params.put("connectionString", "testString");
+
+        final ServiceBusEndpoint endpoint
+                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+                        .createEndpoint(uri, remaining, params);
+
+        assertEquals(1, endpoint.getConfiguration().getMaxConcurrentSessions());
+    }
+
+    @Test
+    void testCreateEndpointWithMaxConcurrentSessions() throws Exception {
+        final String uri = "azure-servicebus://testTopicOrQueue";
+        final String remaining = "testTopicOrQueue";
+        final Map<String, Object> params = new HashMap<>();
+        params.put("connectionString", "testString");
+        params.put("sessionEnabled", "true");
+        params.put("maxConcurrentSessions", "5");
+
+        final ServiceBusEndpoint endpoint
+                = (ServiceBusEndpoint) context.getComponent("azure-servicebus", ServiceBusComponent.class)
+                        .createEndpoint(uri, remaining, params);
+
+        assertTrue(endpoint.getConfiguration().isSessionEnabled());
+        assertEquals(5, endpoint.getConfiguration().getMaxConcurrentSessions());
+    }
+
+    @Test
     void testCreateEndpointWithFqns() throws Exception {
         final String uri = "azure-servicebus://testTopicOrQueue";
         final String remaining = "testTopicOrQueue";

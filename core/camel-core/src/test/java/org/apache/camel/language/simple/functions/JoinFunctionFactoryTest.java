@@ -56,9 +56,4 @@ public class JoinFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
 
         assertEquals("id=A&id=B&id=C", evaluate("join('&','id=','${header.id}')", String.class));
     }
-
-    @Test
-    public void testCreateCode() {
-        assertEquals("var val = body;\n        return join(exchange, val, \",\", null);", createCode("join()"));
-    }
 }

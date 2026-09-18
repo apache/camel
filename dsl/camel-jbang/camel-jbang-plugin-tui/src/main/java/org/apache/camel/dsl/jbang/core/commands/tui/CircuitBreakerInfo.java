@@ -25,6 +25,9 @@ class CircuitBreakerInfo {
     long successfulCalls;
     long failedCalls;
     long notPermittedCalls;
+    long fallbackCalls;
+    long timedOutCalls;
+    long bulkheadRejectedCalls;
     double failureRate;
     long total;
     long totalFailed;

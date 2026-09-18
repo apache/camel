@@ -37,16 +37,26 @@ public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConf
     private final String username;
     private final char[] password;
     private final String domain;
+    private final String scheme;
     private final String host;
+    private final Integer port;
     private final String bearerToken;
     private final HttpCredentialsHelper credentialsHelper;
 
     public DefaultAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host, String bearerToken,
                                                      HttpCredentialsHelper credentialsHelper) {
+        this(user, pwd, domain, null, host, null, bearerToken, credentialsHelper);
+    }
+
+    DefaultAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String scheme, String host,
+                                              Integer port, String bearerToken,
+                                              HttpCredentialsHelper credentialsHelper) {
         this.username = user;
         this.password = pwd == null ? new char[0] : pwd.toCharArray();
         this.domain = domain;
+        this.scheme = scheme;
         this.host = host;
+        this.port = port;
         this.bearerToken = bearerToken;
         this.credentialsHelper = credentialsHelper;
     }
@@ -80,7 +90,7 @@ public class DefaultAuthenticationHttpClientConfigurer implements HttpClientConf
             defaultcreds = new UsernamePasswordCredentials(username, password);
         }
         clientBuilder.setDefaultCredentialsProvider(credentialsHelper
-                .getCredentialsProvider(host, null, defaultcreds));
+                .getCredentialsProvider(scheme, host, port, defaultcreds));
     }
 
 }

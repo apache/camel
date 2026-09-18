@@ -206,6 +206,22 @@ class CircuitBreakerTabRenderTest {
 
     // ---- Helper methods ----
 
+    @Test
+    void renderShowsFallbackAndTimeoutColumns() {
+        CircuitBreakerInfo cb = addCircuitBreaker("route1", "cb1", "resilience4j", "open");
+        cb.notPermittedCalls = 25;
+        cb.fallbackCalls = 33;
+        cb.timedOutCalls = 2;
+
+        CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
+        String rendered = TuiTestHelper.renderToString(tab, 180, 30);
+
+        assertTrue(rendered.contains("FALLBACK"), "Should show FALLBACK header");
+        assertTrue(rendered.contains("TIMEOUT"), "Should show TIMEOUT header");
+        assertTrue(rendered.contains("33"), "Should render the fallback count");
+        assertTrue(rendered.contains("25"), "Should render the reject count");
+    }
+
     private CircuitBreakerInfo addCircuitBreaker(String routeId, String id, String component, String state) {
         CircuitBreakerInfo cb = new CircuitBreakerInfo();
         cb.routeId = routeId;

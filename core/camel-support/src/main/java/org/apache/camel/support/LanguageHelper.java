@@ -81,6 +81,31 @@ public final class LanguageHelper {
     }
 
     /**
+     * Tests if two values are equal as text, without the numeric coercion that {@code ==} applies to all-digit strings.
+     *
+     * @param  exchange   the exchange to test
+     * @param  leftValue  the value being tested
+     * @param  rightValue the value to test against
+     * @return            true if both convert to the same string, or false otherwise
+     */
+    public static boolean equalsString(Exchange exchange, Object leftValue, Object rightValue) {
+        if (leftValue == null && rightValue == null) {
+            // they are equal
+            return true;
+        } else if (leftValue == null || rightValue == null) {
+            // only one of them is null so they are not equal
+            return false;
+        }
+        String leftStr = exchange.getContext().getTypeConverter().convertTo(String.class, leftValue);
+        String rightStr = exchange.getContext().getTypeConverter().convertTo(String.class, rightValue);
+        if (leftStr != null && rightStr != null) {
+            return leftStr.equals(rightStr);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Tests if the exchange ends with a given value
      *
      * @param  exchange   the exchange to test

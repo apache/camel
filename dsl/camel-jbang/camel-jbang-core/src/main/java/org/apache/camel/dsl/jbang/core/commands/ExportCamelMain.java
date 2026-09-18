@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
@@ -83,6 +85,7 @@ class ExportCamelMain extends Export {
 
         printer().println("Exporting as Camel Main project to: " + exportDir);
 
+        exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
 
         // use a temporary work dir
@@ -115,6 +118,7 @@ class ExportCamelMain extends Export {
                 srcResourcesDir, srcCamelResourcesDir,
                 srcKameletsResourcesDir, srcPackageName);
         // copy from settings to profile
+        Map<String, String> devProfile = new LinkedHashMap<>();
         copySettingsAndProfile(settings, profile,
                 srcResourcesDir, prop -> {
                     if (groovyPrecompiled && !prop.containsKey("camel.main.groovyPreloadCompiled")) {
@@ -154,8 +158,20 @@ class ExportCamelMain extends Export {
                         prop.put("camel.management.enabled", "true");
                         prop.put("camel.management.port", port);
                     }
+                    // developer console (--console) is configured in-process by camel-jbang, so export the
+                    // equivalent settings (same as KameletMain: console with health, info and jolokia)
+                    if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
+                        Map<String, String> console = new LinkedHashMap<>();
+                        for (String key : List.of("camel.management.enabled", "camel.main.devConsoleEnabled",
+                                "camel.management.devConsoleEnabled", "camel.management.healthCheckEnabled",
+                                "camel.management.infoEnabled", "camel.management.jolokiaEnabled")) {
+                            console.put(key, "true");
+                        }
+                        addConsoleProperties(prop, devProfile, console);
+                    }
                     return prop;
                 });
+        writeDevProfileProperties(srcResourcesDir, devProfile);
         // create main class
         createMainClassSource(srcJavaDir, srcPackageName, mainClassname);
         // copy local lib JARs
@@ -311,6 +327,15 @@ class ExportCamelMain extends Export {
             if (prop.containsKey("camel.management.healthCheckEnabled")) {
                 answer.add("camel:health");
             }
+        }
+
+        if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
+            // developer console (--console) with health, info and jolokia
+            answer.add("mvn:org.apache.camel:camel-console");
+            answer.add("mvn:org.apache.camel:camel-management");
+            answer.add("mvn:org.apache.camel:camel-health");
+            answer.add("mvn:org.apache.camel:camel-platform-http-main");
+            answer.add("mvn:org.apache.camel:camel-platform-http-jolokia");
         }
 
         boolean main = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http-main"));

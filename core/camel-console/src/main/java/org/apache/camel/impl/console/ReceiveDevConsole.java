@@ -17,7 +17,7 @@
 package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -45,11 +45,30 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole(name = "receive", displayName = "Camel Receive", description = "Consume messages from endpoints")
+@DevConsole(name = "receive", displayName = "Camel Receive", description = "Consume messages from endpoints",
+            readOnly = false)
 @Configurer(extended = true)
 public class ReceiveDevConsole extends AbstractDevConsole {
+
+    public record EndpointEntry(
+            @Metadata(description = "The endpoint URI") String uri,
+            @Metadata(description = "Whether the endpoint is remote") boolean remote) {
+    }
+
+    public record Response(
+            @Metadata(description = "The dumped received messages, as opaque JSON objects (only present when dumping)") List<Map<String, Object>> messages,
+            @Metadata(description = "Whether receiving is enabled (only present when not dumping)") Boolean enabled,
+            @Metadata(description = "Total number of messages received so far (only present when not dumping)") Long total,
+            @Metadata(description = "Epoch time in milliseconds of the first message in the last dump (only present when not dumping)") Long firstTimestamp,
+            @Metadata(description = "Epoch time in milliseconds of the last message in the last dump (only present when not dumping)") Long lastTimestamp,
+            @Metadata(description = "The endpoint URI that receiving was started for (only present on success)") String url,
+            @Metadata(description = "The error message (only present on failure to start receiving)") String error,
+            @Metadata(description = "The error stack trace, one entry per line (only present on failure to start receiving)") List<String> stackTrace,
+            @Metadata(description = "The active consumer endpoints (only present when not dumping and there are any)") List<EndpointEntry> endpoints) {
+    }
 
     @Metadata(defaultValue = "100",
               description = "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
@@ -183,39 +202,41 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String dump = optionString(options, DUMP);
         if ("true".equals(dump)) {
-            JsonArray arr = new JsonArray();
-            arr.addAll(queue);
+            List<Map<String, Object>> messages = new ArrayList<>(queue);
             if (removeOnDump) {
                 queue.clear();
             }
-            root.put("messages", arr);
-            JsonObject jo = (JsonObject) arr.get(0);
-            firstTimestamp = jo.getLongOrDefault("timestamp", 0);
-            jo = (JsonObject) arr.get(arr.size() - 1);
-            lastTimestamp = jo.getLongOrDefault("timestamp", 0);
-            return root;
+            JsonObject first = (JsonObject) messages.get(0);
+            firstTimestamp = first.getLongOrDefault("timestamp", 0);
+            JsonObject last = (JsonObject) messages.get(messages.size() - 1);
+            lastTimestamp = last.getLongOrDefault("timestamp", 0);
+
+            Response response = new Response(messages, null, null, null, null, null, null, null, null);
+            return JsonRecordSupport.toJsonObject(response);
         }
 
-        String enabled = optionString(options, ENABLED);
-        if ("false".equals(enabled)) {
+        String enabledOpt = optionString(options, ENABLED);
+        if ("false".equals(enabledOpt)) {
             // turn off all consumers
             stopConsumers();
             this.enabled.set(false);
-            root.put("enabled", false);
-            return root;
+            Response response = new Response(null, false, null, null, null, null, null, null, null);
+            return JsonRecordSupport.toJsonObject(response);
         }
+
+        String url = null;
+        String error = null;
+        List<String> stackTrace = null;
 
         String pattern = optionString(options, ENDPOINT);
         if (pattern != null) {
             try {
                 Endpoint target = findMatchingEndpoint(getCamelContext(), pattern);
                 if (target != null) {
-                    root.put("url", target.getEndpointUri());
+                    url = target.getEndpointUri();
                     Consumer consumer = createConsumer(target);
                     if (!consumers.contains(consumer)) {
                         consumers.add(consumer);
@@ -224,30 +245,23 @@ public class ReceiveDevConsole extends AbstractDevConsole {
                 }
                 this.enabled.set(true);
             } catch (Exception e) {
-                root.put("error", Jsoner.escape(e.getMessage()));
-                JsonArray arr2 = new JsonArray();
+                error = Jsoner.escape(e.getMessage());
                 final String trace = ExceptionHelper.stackTraceToString(e);
-                root.put("stackTrace", arr2);
-                Collections.addAll(arr2, trace.split("\n"));
+                stackTrace = Arrays.asList(trace.split("\n"));
             }
         }
 
-        root.put("enabled", this.enabled.get());
-        root.put("total", uuid.get());
-        root.put("firstTimestamp", firstTimestamp);
-        root.put("lastTimestamp", lastTimestamp);
+        List<EndpointEntry> endpoints = null;
+        if (!consumers.isEmpty()) {
+            endpoints = new ArrayList<>();
+            for (Consumer c : consumers) {
+                endpoints.add(new EndpointEntry(c.getEndpoint().toString(), c.getEndpoint().isRemote()));
+            }
+        }
 
-        JsonArray arr = new JsonArray();
-        for (Consumer c : consumers) {
-            JsonObject jo = new JsonObject();
-            jo.put("uri", c.getEndpoint().toString());
-            jo.put("remote", c.getEndpoint().isRemote());
-            arr.add(jo);
-        }
-        if (!arr.isEmpty()) {
-            root.put("endpoints", arr);
-        }
-        return root;
+        Response response = new Response(
+                null, this.enabled.get(), uuid.get(), firstTimestamp, lastTimestamp, url, error, stackTrace, endpoints);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private Consumer createConsumer(Endpoint target) throws Exception {

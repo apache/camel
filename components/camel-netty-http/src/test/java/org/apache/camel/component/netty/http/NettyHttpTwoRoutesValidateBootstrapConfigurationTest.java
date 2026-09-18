@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.netty.http;
 
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -44,10 +46,12 @@ public class NettyHttpTwoRoutesValidateBootstrapConfigurationTest extends BaseNe
                         .transform().constant("Bye Camel");
             }
         });
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        FailedToStartRouteException e = assertThrows(FailedToStartRouteException.class,
                 () -> context.start(),
                 "Should have thrown exception");
-        assertTrue(e.getMessage().startsWith("Bootstrap configuration must be identical when adding additional consumer"));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(e.getCause().getMessage()
+                .startsWith("Bootstrap configuration must be identical when adding additional consumer"));
     }
 
 }

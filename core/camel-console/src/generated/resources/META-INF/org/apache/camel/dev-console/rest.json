@@ -6,10 +6,85 @@
     "title": "Rest",
     "description": "Rest DSL Registry information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.RestDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "rests": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The absolute URL to the REST service"
+            },
+            "method": {
+              "type": "string",
+              "description": "The HTTP method"
+            },
+            "contractFirst": {
+              "type": "boolean",
+              "description": "Whether the REST service is contract-first"
+            },
+            "specification": {
+              "type": "boolean",
+              "description": "Whether this is the API contract specification (i.e. api-doc)"
+            },
+            "state": {
+              "type": "string",
+              "description": "The REST service state"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID (only present when known)"
+            },
+            "operationId": {
+              "type": "string",
+              "description": "The OpenAPI operation ID (only present for contract-first routes)"
+            },
+            "specificationUri": {
+              "type": "string",
+              "description": "The OpenAPI specification URI (only present for contract-first routes)"
+            },
+            "consumes": {
+              "type": "string",
+              "description": "The accepted media types (only present when known)"
+            },
+            "produces": {
+              "type": "string",
+              "description": "The returned media types (only present when known)"
+            },
+            "inType": {
+              "type": "string",
+              "description": "The input binding class name (only present when known)"
+            },
+            "outType": {
+              "type": "string",
+              "description": "The output binding class name (only present when known)"
+            },
+            "description": {
+              "type": "string",
+              "description": "The REST service description (only present when configured)"
+            },
+            "hits": {
+              "type": "integer",
+              "description": "Usage of the REST service (only present when greater than zero)"
+            }
+          },
+          "required": [
+            "contractFirst",
+            "specification"
+          ]
+        },
+        "description": "The REST services (only present when a REST registry is available)"
+      }
+    }
   }
 }
 

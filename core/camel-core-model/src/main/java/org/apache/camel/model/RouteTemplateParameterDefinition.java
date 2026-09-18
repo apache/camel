@@ -38,7 +38,7 @@ public class RouteTemplateParameterDefinition {
     @XmlAttribute
     @Metadata(description = "Whether this template parameter is required. A required parameter must have a value provided when creating a route from the template.",
               javaType = "java.lang.Boolean")
-    Boolean required;
+    String required;
     @XmlAttribute
     @Metadata(description = "The default value of the template parameter. Used when no explicit value is provided when creating a route from the template.")
     String defaultValue;
@@ -55,9 +55,16 @@ public class RouteTemplateParameterDefinition {
         this.defaultValue = defaultValue;
     }
 
+    /**
+     * Whether this template parameter is required, assuming required unless explicitly set to false.
+     * <p>
+     * Note that this does not resolve property placeholders; use
+     * {@code CamelContextHelper.parseBoolean(camelContext, getRequired())} where a
+     * {@link org.apache.camel.CamelContext} is available.
+     */
     public boolean isRequired() {
         // assumed to be required if not set explicit to false
-        return required == null || required;
+        return required == null || !"false".equalsIgnoreCase(required);
     }
 
     public String getName() {
@@ -68,11 +75,11 @@ public class RouteTemplateParameterDefinition {
         this.name = name;
     }
 
-    public Boolean getRequired() {
+    public String getRequired() {
         return required;
     }
 
-    public void setRequired(Boolean required) {
+    public void setRequired(String required) {
         this.required = required;
     }
 

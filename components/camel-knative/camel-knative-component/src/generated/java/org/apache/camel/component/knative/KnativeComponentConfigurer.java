@@ -56,6 +56,8 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "kind": getOrCreateConfiguration(target).setKind(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": getOrCreateConfiguration(target).setMuteException(property(camelContext, boolean.class, value)); return true;
         case "name": getOrCreateConfiguration(target).setName(property(camelContext, java.lang.String.class, value)); return true;
         case "producerfactory":
         case "producerFactory": target.setProducerFactory(property(camelContext, org.apache.camel.component.knative.spi.KnativeProducerFactory.class, value)); return true;
@@ -101,6 +103,8 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "kind": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "name": return java.lang.String.class;
         case "producerfactory":
         case "producerFactory": return org.apache.camel.component.knative.spi.KnativeProducerFactory.class;
@@ -147,6 +151,8 @@ public class KnativeComponentConfigurer extends PropertyConfigurerSupport implem
         case "kind": return getOrCreateConfiguration(target).getKind();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "muteexception":
+        case "muteException": return getOrCreateConfiguration(target).isMuteException();
         case "name": return getOrCreateConfiguration(target).getName();
         case "producerfactory":
         case "producerFactory": return target.getProducerFactory();

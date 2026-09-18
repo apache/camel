@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kserve;
 
+import java.util.concurrent.TimeUnit;
+
 import inference.GRPCInferenceServiceGrpc;
 import io.grpc.ChannelCredentials;
 import io.grpc.Grpc;
@@ -73,8 +75,11 @@ public class KServeEndpoint extends DefaultEndpoint {
     public void doStop() throws Exception {
         super.doStop();
 
-        // Close the channel
-        channel.shutdown();
+        // Close the channel if it was created (doInit may have failed before assigning it)
+        if (channel != null) {
+            channel.shutdown();
+            channel.awaitTermination(5, TimeUnit.SECONDS);
+        }
     }
 
     @Override

@@ -26,9 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.language.simple.SimpleFunctionHelper.appendClass;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
-import static org.apache.camel.language.simple.SimpleFunctionHelper.ognlCodeMethods;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.parseVariable;
 
 /**
@@ -85,75 +83,6 @@ public final class VariableFunctionFactory implements SimpleLanguageFunctionFact
                 return OgnlExpressionBuilder.variablesOgnlExpression(key);
             } else {
                 return ExpressionBuilder.variableExpression(key);
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public String createCode(CamelContext camelContext, String function, int index) {
-        // variableAs
-        String remainder = ifStartsWithReturnRemainder("variableAs(", function);
-        if (remainder != null) {
-            String keyAndType = StringHelper.before(remainder, ")");
-            if (keyAndType == null) {
-                throw new SimpleParserException("Valid syntax: ${variableAs(key, type)} was: " + function, index);
-            }
-            String key = StringHelper.before(keyAndType, ",");
-            String type = StringHelper.after(keyAndType, ",");
-            remainder = StringHelper.after(remainder, ")");
-            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
-                throw new SimpleParserException("Valid syntax: ${variableAs(key, type)} was: " + function, index);
-            }
-            key = StringHelper.removeQuotes(key);
-            key = key.trim();
-            type = appendClass(type);
-            type = type.replace('$', '.');
-            type = type.trim();
-            return "variableAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
-        }
-
-        // variables exact matches (must check before variable prefix)
-        if ("variables".equals(function)) {
-            return "variables(exchange)";
-        } else if ("variables.size".equals(function) || "variables.size()".equals(function)
-                || "variables.length".equals(function) || "variables.length()".equals(function)) {
-            return "variablesSize(exchange)";
-        }
-
-        // variable (note: only matches "variable" prefix, not "variables" — preserving original asymmetry)
-        remainder = ifStartsWithReturnRemainder("variable", function);
-        if (remainder != null) {
-            if (remainder.startsWith(".") || remainder.startsWith("?")) {
-                remainder = remainder.substring(1);
-            }
-            if (remainder.startsWith("[") && remainder.endsWith("]")) {
-                remainder = remainder.substring(1, remainder.length() - 1);
-            }
-            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
-            key = key.trim();
-
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
-            if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${variable.name[key]} was: " + function, index);
-            }
-
-            String idx = null;
-            if (key.endsWith("]")) {
-                idx = StringHelper.between(key, "[", "]");
-                if (idx != null) {
-                    key = StringHelper.before(key, "[");
-                }
-            }
-            if (idx != null) {
-                idx = StringHelper.removeLeadingAndEndingQuotes(idx);
-                return "variableAsIndex(exchange, Object.class, \"" + key + "\", \"" + idx + "\")";
-            } else if (OgnlHelper.isValidOgnlExpression(remainder)) {
-                throw new SimpleParserException("Valid syntax: ${variableAs(key, type)} was: " + function, index);
-            } else {
-                return "variable(exchange, \"" + key + "\")";
             }
         }
 

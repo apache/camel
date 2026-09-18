@@ -25,6 +25,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Represents a {@link BeanRepository} which may also be capable of binding beans to its repository.
  */
+@Metadata(label = "api",
+          description = "The bean registry of the CamelContext (context.getRegistry()): the beans declared in the route "
+                        + "file (beans:), in Spring or Quarkus, and the ones bound in code. A bean is looked up by its "
+                        + "name, it is not a variable: in a Groovy or Java script the bean myBean is "
+                        + "exchange.getContext().getRegistry().lookupByName(\"myBean\"), in the DSL #bean:myBean or the "
+                        + "ref option; plain myBean does not exist there.")
 public interface Registry extends BeanRepository {
 
     /**
@@ -72,6 +78,10 @@ public interface Registry extends BeanRepository {
      * @param  bean                  the bean
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
+    @Metadata(label = "api",
+              description = "Registers a bean under a name so routes can refer to it (#bean:name, a ref option, "
+                            + "lookupByName).",
+              examples = { "context.getRegistry().bind(\"myStrategy\", new MyStrategy())" })
     void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException;
 
     /**

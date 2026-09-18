@@ -22,6 +22,7 @@ import org.apache.camel.util.json.JsonObject;
 
 public class InfraBaseDTO {
 
+    private String pid;
     private String alias;
     private String aliasImplementation;
     private String description;
@@ -33,11 +34,25 @@ public class InfraBaseDTO {
 
     public InfraBaseDTO(String alias, String aliasImplementation, String description, Object serviceData,
                         boolean uiSupported) {
+        this(null, alias, aliasImplementation, description, serviceData, uiSupported);
+    }
+
+    public InfraBaseDTO(String pid, String alias, String aliasImplementation, String description, Object serviceData,
+                        boolean uiSupported) {
+        this.pid = pid;
         this.alias = alias;
         this.aliasImplementation = aliasImplementation;
         this.description = description;
         this.serviceData = serviceData;
         this.uiSupported = uiSupported;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 
     public String getAlias() {
@@ -82,6 +97,10 @@ public class InfraBaseDTO {
 
     public Map<String, Object> toMap() {
         JsonObject jo = new JsonObject();
+        // only running services have a pid, so it is omitted for the catalog listing
+        if (pid != null) {
+            jo.put("pid", pid);
+        }
         jo.put("alias", alias);
         if (aliasImplementation != null) {
             jo.put("aliasImplementation", aliasImplementation);

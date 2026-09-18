@@ -642,6 +642,14 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testExceptionStacktraceNoException() {
+        // CAMEL-24651
+        String out = context.resolveLanguage("simple").createExpression("${exception.stacktrace}").evaluate(exchange,
+                String.class);
+        assertNull(out);
+    }
+
+    @Test
     public void testException() {
         exchange.setException(new IllegalArgumentException("Just testing"));
 
@@ -930,13 +938,13 @@ public class SimpleTest extends LanguageTestSupport {
                 () -> assertExpression("hey ${xxx} how are you?", ""),
                 "Should have thrown an exception");
 
-        assertTrue(e1.getMessage().startsWith("Unknown function: xxx at location 4"));
+        assertTrue(e1.getMessage().startsWith("Unknown function: xxx"));
 
         ExpressionIllegalSyntaxException e2 = assertThrows(ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("${xxx}", ""),
                 "Should have thrown an exception");
 
-        assertTrue(e2.getMessage().startsWith("Unknown function: xxx at location 0"));
+        assertTrue(e2.getMessage().startsWith("Unknown function: xxx"));
 
         ExpressionIllegalSyntaxException e3 = assertThrows(ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("${bodyAs(xxx}", ""),

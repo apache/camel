@@ -21,7 +21,6 @@ import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExchangeFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
@@ -97,59 +96,5 @@ public class ExchangeFunctionFactoryTest extends AbstractSimpleFunctionFactoryTe
     public void testExchangeInvalidOgnl() {
         assertThrows(SimpleParserException.class,
                 () -> createFactory().createFunction(context, "exchange[bad", 0));
-    }
-
-    // --- createCode ---
-
-    @Test
-    public void testCreateCodeCamelContext() {
-        assertEquals("context.getName()", createCode("camelContext.name"));
-    }
-
-    @Test
-    public void testCreateCodeExchangeProperty() {
-        assertEquals("exchangeProperty(exchange, \"color\")", createCode("exchangeProperty.color"));
-    }
-
-    @Test
-    public void testCreateCodeExchangePropertyAs() {
-        assertEquals("exchangePropertyAs(exchange, \"count\", Integer.class)",
-                createCode("exchangePropertyAs(count, Integer)"));
-    }
-
-    @Test
-    public void testCreateCodeExchangePropertyAsIndex() {
-        assertEquals("exchangePropertyAsIndex(exchange, String.class, \"list\", \"0\")",
-                createCode("exchangePropertyAsIndex(list, String, 0)"));
-    }
-
-    @Test
-    public void testCreateCodeException() {
-        assertEquals("exception(exchange).getMessage()", createCode("exception.message"));
-    }
-
-    @Test
-    public void testCreateCodeExceptionInvalidOgnl() {
-        assertThrows(SimpleParserException.class,
-                () -> createFactory().createCode(context, "exception[bad", 0));
-    }
-
-    @Test
-    public void testCreateCodeExceptionAs() {
-        assertEquals("exceptionAs(exchange, IllegalArgumentException.class)",
-                createCode("exceptionAs(IllegalArgumentException)"));
-    }
-
-    @Test
-    public void testCreateCodeExchange() {
-        assertEquals("exchange.getExchangeId()", createCode("exchange.exchangeId"));
-    }
-
-    // --- unrecognized ---
-
-    @Test
-    public void testUnrecognizedFunction() {
-        assertNull(createFactory().createFunction(context, "unknown", 0));
-        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }

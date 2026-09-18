@@ -25,11 +25,11 @@ public class PahoMqtt5ToDIT extends PahoMqtt5ITSupport {
 
     @Test
     public void testToD() throws Exception {
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
-        getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
+        getMockEndpoint("mock:PahoMqtt5ToDIT-bar").expectedBodiesReceived("Hello bar");
+        getMockEndpoint("mock:PahoMqtt5ToDIT-beer").expectedBodiesReceived("Hello beer");
 
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "PahoMqtt5ToDIT-bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "PahoMqtt5ToDIT-beer");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -45,8 +45,8 @@ public class PahoMqtt5ToDIT extends PahoMqtt5ITSupport {
                 // route message dynamic using toD
                 from("direct:start").toD("paho-mqtt5:${header.where}");
 
-                from("paho-mqtt5:bar").to("mock:bar");
-                from("paho-mqtt5:beer").to("mock:beer");
+                from("paho-mqtt5:PahoMqtt5ToDIT-bar").to("mock:PahoMqtt5ToDIT-bar");
+                from("paho-mqtt5:PahoMqtt5ToDIT-beer").to("mock:PahoMqtt5ToDIT-beer");
             }
         };
     }

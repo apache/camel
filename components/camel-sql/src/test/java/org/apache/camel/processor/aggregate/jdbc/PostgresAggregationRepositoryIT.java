@@ -49,7 +49,7 @@ public class PostgresAggregationRepositoryIT {
     private static final String REPO_NAME_TEXT = "camel_agg_text_it";
 
     @RegisterExtension
-    public static PostgresService service = PostgresServiceFactory.createService();
+    public static PostgresService service = PostgresServiceFactory.createSingletonService();
 
     private CamelContext context;
     private DataSource dataSource;

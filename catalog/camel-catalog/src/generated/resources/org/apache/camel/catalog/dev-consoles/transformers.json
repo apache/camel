@@ -6,10 +6,59 @@
     "title": "Data Type Transformers",
     "description": "Data-type transformer information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.TransformerConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "size": {
+        "type": "integer",
+        "description": "Total number of transformers"
+      },
+      "dynamicSize": {
+        "type": "integer",
+        "description": "Number of transformers in the dynamic registry"
+      },
+      "staticSize": {
+        "type": "integer",
+        "description": "Number of transformers in the static registry"
+      },
+      "maximumCacheSize": {
+        "type": "integer",
+        "description": "Maximum number of entries to store in the dynamic registry"
+      },
+      "transformers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The transformer name"
+            },
+            "from": {
+              "type": "string",
+              "description": "The from data type (only present when not any-type)"
+            },
+            "to": {
+              "type": "string",
+              "description": "The to data type (only present when not any-type)"
+            }
+          }
+        },
+        "description": "The transformers (only present when there are any)"
+      }
+    },
+    "required": [
+      "size",
+      "dynamicSize",
+      "staticSize",
+      "maximumCacheSize"
+    ]
   }
 }
 

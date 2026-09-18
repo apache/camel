@@ -62,7 +62,8 @@ public class DynamicRouterSendDynamicAwareIT {
                              "&subscriptionId=${header.subscriptionId}" +
                              "&destinationUri=${header.destinationUri}" +
                              "&priority=${header.priority}" +
-                             "&predicate=${header.predicate}");
+                             "&predicate=${header.predicate}" +
+                             "&allowPredicateFromMessage=true");
             }
         });
     }

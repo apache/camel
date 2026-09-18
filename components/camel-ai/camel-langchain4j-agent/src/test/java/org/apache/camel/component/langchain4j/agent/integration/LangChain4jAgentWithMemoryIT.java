@@ -133,7 +133,7 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
         assertNotNull(finalResponse, "Final AI response should not be null");
         assertTrue(finalResponse.contains(USER_NAME),
                 "Agent should remember the user's name: " + finalResponse);
-        assertTrue(finalResponse.contains(USER_FAVORITE_COLOR),
+        assertTrue(finalResponse.toLowerCase().contains(USER_FAVORITE_COLOR),
                 "Agent should remember the user's favorite color: " + finalResponse);
     }
 

@@ -132,6 +132,43 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         Assertions.assertEquals(0, exportCommand.doCall(), exportCommandPrinter.getLines().toString());
     }
 
+    // ==================== explicit route file as positional argument ====================
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    void shouldDependencyUpdateWithExplicitRouteFile(RuntimeType rt) throws Exception {
+        prepareFixtureProject(rt);
+
+        // add arangodb to the route
+        addArangodbToCamelFile();
+
+        // pass BOTH pom.xml AND route file as positional arguments
+        // (this is the calling convention used by IDE tooling)
+        StringPrinter updatePrinter = new StringPrinter();
+        DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(updatePrinter));
+        CommandLine.populateCommand(command,
+                "--camel-version=4.13.0",
+                "--dir=" + workingDir,
+                CamelCommandBaseTestSupport.quarkusExtRegistry(),
+                new File(workingDir, "pom.xml").getAbsolutePath(),
+                new File(workingDir, "src/main/resources/camel/my.camel.yaml").getAbsolutePath());
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit, updatePrinter.getLines().toString());
+
+        String pomContent = Files.readString(new File(workingDir, "pom.xml").toPath());
+        switch (rt) {
+            case quarkus:
+                assertThat(pomContent).contains("camel-quarkus-arangodb");
+                break;
+            case springBoot:
+                assertThat(pomContent).contains("camel-arangodb-starter");
+                break;
+            case main:
+                assertThat(pomContent).contains("camel-arangodb<");
+                break;
+        }
+    }
+
     // ==================== scan-routes with Maven (fixture-based tests) ====================
 
     @ParameterizedTest
@@ -352,11 +389,17 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     private void addArangodbToCamelFile() throws Exception {
         File camelFile = new File(workingDir, "src/main/resources/camel/my.camel.yaml");
         String content = Files.readString(camelFile.toPath());
-        content = content.replace("- log: ${body}", """
-                - to:
-                             uri: arangodb
-                             parameters:
-                               database: demo
+        // the generated route ends with a canonical log step; swap it for an arangodb producer
+        String log = """
+                        - log:
+                            message: "${body}"
+                """;
+        assertThat(content).contains(log);
+        content = content.replace(log, """
+                        - to:
+                            uri: arangodb
+                            parameters:
+                              database: demo
                 """);
         Files.writeString(camelFile.toPath(), content);
     }
@@ -369,7 +412,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         String pomResource = switch (rt) {
             case quarkus -> "dependency-update/quarkus-pom.xml";
             case springBoot -> "dependency-update/springboot-pom.xml";
-            case main -> "dependency-update/main-pom.xml";
+            case main, jbang -> "dependency-update/main-pom.xml";
         };
 
         // copy pom.xml

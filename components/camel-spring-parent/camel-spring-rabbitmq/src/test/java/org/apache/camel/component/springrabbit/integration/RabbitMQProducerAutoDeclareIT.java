@@ -42,7 +42,7 @@ public class RabbitMQProducerAutoDeclareIT extends RabbitMQITSupport {
         template.sendBody("direct:start", "Hello World");
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        String out = (String) template.receiveAndConvert("myqueue");
+        String out = (String) template.receiveAndConvert(uniqueName("myqueue"));
         Assertions.assertEquals("Hello World", out);
     }
 
@@ -53,7 +53,7 @@ public class RabbitMQProducerAutoDeclareIT extends RabbitMQITSupport {
         template.sendBodyAndHeader("direct:start", "Hello World", "cheese", "gouda");
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        Message out = template.receive("myqueue");
+        Message out = template.receive(uniqueName("myqueue"));
 
         byte[] body = out.getBody();
         Assertions.assertNotNull(body, "The body should not be null");
@@ -77,7 +77,7 @@ public class RabbitMQProducerAutoDeclareIT extends RabbitMQITSupport {
         template.sendBody("direct:start", body);
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        Message out = template.receive("myqueue");
+        Message out = template.receive(uniqueName("myqueue"));
         Assertions.assertEquals("foo", new String(out.getBody()));
         Assertions.assertEquals("baz", out.getMessageProperties().getHeader("bar"));
     }
@@ -94,7 +94,7 @@ public class RabbitMQProducerAutoDeclareIT extends RabbitMQITSupport {
                         SpringRabbitMQConstants.PRIORITY, 1));
 
         AmqpTemplate template = new RabbitTemplate(cf);
-        Message out = template.receive("myqueue");
+        Message out = template.receive(uniqueName("myqueue"));
 
         final MessageProperties messageProperties = out.getMessageProperties();
         Assertions.assertNotNull(messageProperties, "The message properties should not be null");
@@ -115,7 +115,9 @@ public class RabbitMQProducerAutoDeclareIT extends RabbitMQITSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo?autoDeclareProducer=true&routingKey=foo.bar.#&queues=myqueue&exchangeType=topic");
+                        .to("spring-rabbitmq:" + uniqueName("foo")
+                            + "?autoDeclareProducer=true&routingKey=foo.bar.#&queues=" + uniqueName("myqueue")
+                            + "&exchangeType=topic");
             }
         };
     }

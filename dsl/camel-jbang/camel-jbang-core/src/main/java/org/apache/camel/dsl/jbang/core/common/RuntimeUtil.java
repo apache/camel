@@ -43,6 +43,13 @@ public final class RuntimeUtil {
             String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath,
             List<String> loggingCategories)
             throws Exception {
+        configureLog(level, color, json, script, export, loggingConfigPath, loggingCategories, false);
+    }
+
+    public static void configureLog(
+            String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath,
+            List<String> loggingCategories, boolean mcpStdio)
+            throws Exception {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", Long.toString(pid));
@@ -52,6 +59,8 @@ public final class RuntimeUtil {
             if (loggingConfigPath != null) {
                 // ust custom logging configuration as-is
                 Configurator.initialize("CamelJBang", "file://" + Path.of(loggingConfigPath).toAbsolutePath());
+            } else if (mcpStdio) {
+                Configurator.initialize("CamelJBang", "log4j2-mcp-stdio.properties");
             } else if (loggingCategories != null && !loggingCategories.isEmpty()) {
                 // enrich logging file with custom logging categories
                 String name = "log4j2-no-color.properties";
@@ -74,9 +83,20 @@ public final class RuntimeUtil {
                     String prefix = "custom" + i++;
                     String catName = StringHelper.before(lc, "=", "").trim();
                     String catLevel = StringHelper.after(lc, "=", "").trim();
+                    if ("root".equalsIgnoreCase(catName)) {
+                        // log4j allows one root logger only, which the template already defines: a root category is
+                        // the root logging level
+                        if (!catLevel.isEmpty()) {
+                            level = catLevel;
+                        }
+                        continue;
+                    }
                     if (!catName.isEmpty() && !catLevel.isEmpty()) {
                         sj.add("logger." + prefix + ".name=" + catName);
                         sj.add("logger." + prefix + ".level=" + catLevel);
+                        // the category gets the same appenders as the root logger, so it must not also pass its
+                        // events up to the root, or every line is printed twice (CAMEL-24701)
+                        sj.add("logger." + prefix + ".additivity=false");
                         if (!export && !script) {
                             sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
                         }

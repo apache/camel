@@ -76,6 +76,7 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
     }
 
     @Override
+    @SuppressWarnings("deprecation") // copies the deprecated maxRetryTimeout option while it still exists
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OpensearchConfiguration config = new OpensearchConfiguration();
         config.setHostAddresses(this.getHostAddresses());
@@ -214,11 +215,15 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
 
     /**
      * The time in ms before retry
+     *
+     * @deprecated this option has no effect and is ignored by the current client
      */
+    @Deprecated
     public int getMaxRetryTimeout() {
         return maxRetryTimeout;
     }
 
+    @Deprecated
     public void setMaxRetryTimeout(int maxRetryTimeout) {
         this.maxRetryTimeout = maxRetryTimeout;
     }

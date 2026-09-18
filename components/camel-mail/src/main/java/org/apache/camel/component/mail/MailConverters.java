@@ -85,17 +85,17 @@ public final class MailConverters {
             for (int i = 0; i < size; i++) {
                 BodyPart part = multipart.getBodyPart(i);
                 Object content = part.getContent();
-                while (content instanceof MimeMultipart) {
-                    if (multipart.getCount() < 1) {
+                while (content instanceof MimeMultipart mimeMultipart) {
+                    if (mimeMultipart.getCount() < 1) {
                         break;
                     }
-                    part = ((MimeMultipart) content).getBodyPart(0);
+                    part = mimeMultipart.getBodyPart(0);
                     content = part.getContent();
                 }
                 // Perform a case-insensitive "startsWith" check that works for different locales
                 String prefix = "text";
                 if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
-                    return part.getContent().toString();
+                    return content.toString();
                 }
             }
         } catch (MessagingException e) {

@@ -80,6 +80,111 @@ public class EndpointHeaderBuilders {
         return ActiveMQ6EndpointBuilderFactory.ActiveMQ6HeaderNameBuilder.INSTANCE;
     }
     /**
+     * Alibaba EventBridge (camel-alibaba-eventbridge)
+     * Publish events to Alibaba Cloud EventBridge.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-eventbridge
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static AlibabaEventBridgeEndpointBuilderFactory.AlibabaEventBridgeHeaderNameBuilder alibabaEventbridge() {
+        return AlibabaEventBridgeEndpointBuilderFactory.AlibabaEventBridgeHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Function Compute (FC) (camel-alibaba-fc)
+     * Invoke serverless functions on Alibaba Cloud Function Compute (FC).
+     * 
+     * Category: cloud,serverless
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-fc
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static FCEndpointBuilderFactory.FCHeaderNameBuilder alibabaFc() {
+        return FCEndpointBuilderFactory.FCHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Key Management Service (KMS) (camel-alibaba-kms)
+     * Encrypt and decrypt data using Alibaba Cloud Key Management Service
+     * (KMS).
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-kms
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static KMSEndpointBuilderFactory.KMSHeaderNameBuilder alibabaKms() {
+        return KMSEndpointBuilderFactory.KMSHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-mns
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static MNSEndpointBuilderFactory.MNSHeaderNameBuilder alibabaMns() {
+        return MNSEndpointBuilderFactory.MNSHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
+     * Alibaba Cloud Object Storage Service (OSS) component
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-oss
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static OSSEndpointBuilderFactory.OSSHeaderNameBuilder alibabaOss() {
+        return OSSEndpointBuilderFactory.OSSHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Tablestore (OTS) (camel-alibaba-ots)
+     * Perform row operations on Alibaba Cloud Tablestore (OTS).
+     * 
+     * Category: cloud,database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-ots
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static AlibabaOtsEndpointBuilderFactory.AlibabaOtsHeaderNameBuilder alibabaOts() {
+        return AlibabaOtsEndpointBuilderFactory.AlibabaOtsHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
+     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * 
+     * Category: cloud,monitoring
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sls
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static AlibabaSlsEndpointBuilderFactory.AlibabaSlsHeaderNameBuilder alibabaSls() {
+        return AlibabaSlsEndpointBuilderFactory.AlibabaSlsHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
+     * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sms
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static SMSEndpointBuilderFactory.SMSHeaderNameBuilder alibabaSms() {
+        return SMSEndpointBuilderFactory.SMSHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
      * 
@@ -735,6 +840,20 @@ public class EndpointHeaderBuilders {
         return QueueEndpointBuilderFactory.QueueHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Box (camel-box)
+     * Upload, download and manage files, folders, groups, collaborations, etc.
+     * on box.com.
+     * 
+     * Category: cloud,file,api
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-box
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static BoxEndpointBuilderFactory.BoxHeaderNameBuilder box() {
+        return BoxEndpointBuilderFactory.BoxHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
      * 
@@ -1032,20 +1151,6 @@ public class EndpointHeaderBuilders {
      */
     public static DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverHeaderNameBuilder debeziumSqlserver() {
         return DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * DigitalOcean (camel-digitalocean)
-     * Manage Droplets and resources within the DigitalOcean cloud.
-     * 
-     * Category: cloud,management
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-digitalocean
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static DigitalOceanEndpointBuilderFactory.DigitalOceanHeaderNameBuilder digitalocean() {
-        return DigitalOceanEndpointBuilderFactory.DigitalOceanHeaderNameBuilder.INSTANCE;
     }
     /**
      * Deep Java Library (camel-djl)
@@ -1581,21 +1686,6 @@ public class EndpointHeaderBuilders {
         return HashicorpVaultEndpointBuilderFactory.HashicorpVaultHeaderNameBuilder.INSTANCE;
     }
     /**
-     * Hazelcast Atomic Number (camel-hazelcast)
-     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
-     * number).
-     * 
-     * Category: cache,clustering
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberHeaderNameBuilder hazelcastAtomicvalue() {
-        return HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
@@ -1711,6 +1801,19 @@ public class EndpointHeaderBuilders {
      */
     public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder hazelcastTopic() {
         return HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HiveMQEndpointBuilderFactory.HiveMQHeaderNameBuilder hivemq() {
+        return HiveMQEndpointBuilderFactory.HiveMQHeaderNameBuilder.INSTANCE;
     }
     /**
      * HTTP (camel-http)
@@ -1861,36 +1964,6 @@ public class EndpointHeaderBuilders {
         return WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder.INSTANCE;
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ClientEndpointBuilderFactory.ClientHeaderNameBuilder iec60870Client() {
-        return ClientEndpointBuilderFactory.ClientHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ServerEndpointBuilderFactory.ServerHeaderNameBuilder iec60870Server() {
-        return ServerEndpointBuilderFactory.ServerHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.
@@ -2035,35 +2108,6 @@ public class EndpointHeaderBuilders {
      */
     public static InfluxDb2EndpointBuilderFactory.InfluxDb2HeaderNameBuilder influxdb2() {
         return InfluxDb2EndpointBuilderFactory.InfluxDb2HeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * IRC (camel-irc)
-     * Send and receive messages to/from an IRC chat.
-     * 
-     * Category: chat
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-irc
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static IrcEndpointBuilderFactory.IrcHeaderNameBuilder irc() {
-        return IrcEndpointBuilderFactory.IrcHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQHeaderNameBuilder ironmq() {
-        return IronMQEndpointBuilderFactory.IronMQHeaderNameBuilder.INSTANCE;
     }
     /**
      * JCache (camel-jcache)
@@ -2221,20 +2265,6 @@ public class EndpointHeaderBuilders {
      */
     public static JsltEndpointBuilderFactory.JsltHeaderNameBuilder jslt() {
         return JsltEndpointBuilderFactory.JsltHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * JsonPatch (camel-json-patch)
-     * Transforms JSON using JSON patch (RFC 6902).
-     * 
-     * Category: transformation
-     * Since: 3.12
-     * Maven coordinates: org.apache.camel:camel-json-patch
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static JsonPatchEndpointBuilderFactory.JsonPatchHeaderNameBuilder jsonPatch() {
-        return JsonPatchEndpointBuilderFactory.JsonPatchHeaderNameBuilder.INSTANCE;
     }
     /**
      * JT400 (camel-jt400)
@@ -2602,18 +2632,18 @@ public class EndpointHeaderBuilders {
         return LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreHeaderNameBuilder.INSTANCE;
     }
     /**
-     * LangChain4j Tools (camel-langchain4j-tools)
-     * LangChain4j Tools and Function Calling Features
+     * LangChain4j Ingest (camel-langchain4j-ingest)
+     * Ingest documents into a LangChain4j EmbeddingStore: split, embed and
+     * store the message body.
      * 
      * Category: ai
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-langchain4j-ingest
      * 
      * @return the dsl builder for the headers' name.
      */
-    @Deprecated
-    public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsHeaderNameBuilder langchain4jTools() {
-        return LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsHeaderNameBuilder.INSTANCE;
+    public static LangChain4jIngestEndpointBuilderFactory.LangChain4jIngestHeaderNameBuilder langchain4jIngest() {
+        return LangChain4jIngestEndpointBuilderFactory.LangChain4jIngestHeaderNameBuilder.INSTANCE;
     }
     /**
      * Language (camel-language)
@@ -2774,6 +2804,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static MinioEndpointBuilderFactory.MinioHeaderNameBuilder minio() {
         return MinioEndpointBuilderFactory.MinioHeaderNameBuilder.INSTANCE;
     }
@@ -2962,6 +2993,20 @@ public class EndpointHeaderBuilders {
     @Deprecated
     public static Olingo4EndpointBuilderFactory.Olingo4HeaderNameBuilder olingo4() {
         return Olingo4EndpointBuilderFactory.Olingo4HeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * OPA (camel-opa)
+     * Evaluate Open Policy Agent (Rego) policies against an Exchange and record
+     * the allow/deny decision on it.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-opa
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static OpaEndpointBuilderFactory.OpaHeaderNameBuilder opa() {
+        return OpaEndpointBuilderFactory.OpaHeaderNameBuilder.INSTANCE;
     }
     /**
      * OpenSearch (camel-opensearch)
@@ -3295,6 +3340,19 @@ public class EndpointHeaderBuilders {
         return RestEndpointBuilderFactory.RestHeaderNameBuilder.INSTANCE;
     }
     /**
+     * REST Postman (camel-rest-postman)
+     * To call and expose REST services using a Postman Collection as contract.
+     * 
+     * Category: rest,api
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-rest-postman
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static RestPostmanEndpointBuilderFactory.RestPostmanHeaderNameBuilder restPostman() {
+        return RestPostmanEndpointBuilderFactory.RestPostmanHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
      * 
@@ -3495,6 +3553,20 @@ public class EndpointHeaderBuilders {
         return SolrEndpointBuilderFactory.SolrHeaderNameBuilder.INSTANCE;
     }
     /**
+     * SPIFFE (camel-spiffe)
+     * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
+     * from the SPIFFE Workload API.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-spiffe
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static SpiffeEndpointBuilderFactory.SpiffeHeaderNameBuilder spiffe() {
+        return SpiffeEndpointBuilderFactory.SpiffeHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
@@ -3663,6 +3735,20 @@ public class EndpointHeaderBuilders {
      */
     public static SshEndpointBuilderFactory.SshHeaderNameBuilder ssh() {
         return SshEndpointBuilderFactory.SshHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable KeyValueRepository
+     * backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static StateStoreEndpointBuilderFactory.StateStoreHeaderNameBuilder stateStore() {
+        return StateStoreEndpointBuilderFactory.StateStoreHeaderNameBuilder.INSTANCE;
     }
     /**
      * Stitch (camel-stitch)
@@ -4058,21 +4144,6 @@ public class EndpointHeaderBuilders {
      */
     public static XsltSaxonEndpointBuilderFactory.XsltSaxonHeaderNameBuilder xsltSaxon() {
         return XsltSaxonEndpointBuilderFactory.XsltSaxonHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * Zeebe (camel-zeebe)
-     * Zeebe component which integrates with Camunda Zeebe to interact with the
-     * API.
-     * 
-     * Category: workflow,saas
-     * Since: 3.21
-     * Maven coordinates: org.apache.camel:camel-zeebe
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ZeebeEndpointBuilderFactory.ZeebeHeaderNameBuilder zeebe() {
-        return ZeebeEndpointBuilderFactory.ZeebeHeaderNameBuilder.INSTANCE;
     }
     /**
      * ZooKeeper (camel-zookeeper)

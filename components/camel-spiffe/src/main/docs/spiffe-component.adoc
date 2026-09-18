@@ -1,0 +1,140 @@
+= SPIFFE Component
+:doctitle: SPIFFE
+:shortname: spiffe
+:artifactid: camel-spiffe
+:description: Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID) from the SPIFFE Workload API.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The SPIFFE component integrates with the https://spiffe.io/[SPIFFE] (Secure Production Identity Framework
+For Everyone) Workload API to provide cryptographic workload identity to Camel routes. It talks to a local
+SPIFFE Workload API endpoint — for example the one exposed by a https://spiffe.io/docs/latest/spire-about/[SPIRE]
+agent — to fetch and validate SVIDs (SPIFFE Verifiable Identity Documents):
+
+* *X.509-SVID*: an X.509 certificate whose SPIFFE ID is encoded as a URI SAN, used for mutual TLS.
+* *JWT-SVID*: a JWT whose subject is the SPIFFE ID, used as a bearer token for workload-to-workload authentication.
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spiffe</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI Format
+
+------------------------------------------------------------
+spiffe:label[?options]
+------------------------------------------------------------
+
+Where `label` is a logical name for the endpoint.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Workload API endpoint
+
+The address of the SPIFFE Workload API is taken from the `spiffeSocketPath` option, or, when that is not set, from
+the standard `SPIFFE_ENDPOINT_SOCKET` environment variable — for example `unix:///tmp/spire-agent/public/api.sock`.
+For advanced scenarios an already-configured `io.spiffe.workloadapi.WorkloadApiClient` can be supplied through the
+`workloadApiClient` option; in that case the component neither creates nor closes the client.
+
+== Operations
+
+The component supports the following producer operations:
+
+* `fetchX509Svid` — fetches the default X.509-SVID from the Workload API. The message body is set to the
+`io.spiffe.svid.x509svid.X509Svid` (certificate chain, private key and SPIFFE ID) and the `CamelSpiffeSpiffeId`
+header to its SPIFFE ID.
+* `fetchJwtSvid` — fetches a JWT-SVID for the configured `audience` (or the `CamelSpiffeAudience` header). The
+message body is set to the JWT token string, with the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` headers.
+* `validateJwtSvid` — validates the JWT-SVID passed in the `CamelSpiffeToken` header (or the body) against the
+`audience`. When several audiences are configured the token is accepted if it matches *any* of them — the
+Workload API validates one audience at a time, so each is tried in turn. The message body is set to the validated
+`io.spiffe.svid.jwtsvid.JwtSvid`.
+
+[NOTE]
+====
+The `fetchX509Svid` and `fetchJwtSvid` operations place sensitive key material on the message: the `X509Svid`
+carries the workload's private key, and the JWT-SVID is a bearer token. Route authors are trusted with Exchange
+contents, but you should avoid logging or tracing the message body for these operations — for example via the
+`log`/`trace` components or the message-history / breadcrumb EIPs — to prevent accidental disclosure of the key
+or token.
+====
+
+== Example
+
+Fetch a JWT-SVID for an outbound call:
+
+[source,java]
+------------------------------------------------------------
+from("direct:start")
+    .to("spiffe:identity?operation=fetchJwtSvid&audience=spiffe://example.org/backend")
+    .setHeader("Authorization", simple("Bearer ${body}"))
+    .to("http://backend.example.org/api");
+------------------------------------------------------------
+
+== Mutual TLS with SPIFFE (SSLContextParameters)
+
+For X.509-based zero-trust mTLS, the component provides
+`org.apache.camel.component.spiffe.SpiffeSSLContextParameters`, an `SSLContextParameters` whose `SSLContext` is
+backed by the SPIFFE Workload API. The X.509-SVID and trust bundles are fetched live and rotated automatically,
+so any Camel component that accepts an `sslContextParameters` reference (camel-http, camel-netty-http,
+camel-jetty, camel-vertx-http, ...) can obtain SPIFFE mTLS.
+
+Peer authentication must be constrained explicitly: set `acceptedSpiffeIds` to an allow-list of peer SPIFFE IDs,
+or `acceptAnySpiffeId=true` to accept any SVID that validates against the trust bundle. The two are mutually
+exclusive, and setting neither fails closed.
+
+Because it extends `SSLContextParameters`, the inherited configuration is still honoured: set
+`serverParameters.clientAuthentication` (for a server that must require client certificates), `cipherSuites` and
+`secureSocketProtocols` as usual, and the base handshake protocol comes from `secureSocketProtocol` (default
+`TLSv1.3`). The underlying `X509Source` is created lazily (bounded by `initTimeout`, default 30s), closed on
+`CamelContext` shutdown, and the cached context is invalidated at the same time so a restarted context rebuilds a
+fresh source.
+
+[source,java]
+------------------------------------------------------------
+SpiffeSSLContextParameters ssl = new SpiffeSSLContextParameters();
+// ssl.setSpiffeSocketPath("unix:///tmp/spire-agent/public/api.sock"); // or SPIFFE_ENDPOINT_SOCKET
+ssl.setAcceptedSpiffeIds("spiffe://example.org/backend");
+getCamelContext().getRegistry().bind("spiffeSsl", ssl);
+
+from("direct:start")
+    .to("https://backend.example.org/api?sslContextParameters=#spiffeSsl");
+------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]
+
+== Security notes
+
+* *The operation comes from the endpoint.* `CamelSpiffeOperation` is ignored unless the endpoint sets
+  `allowOperationHeader=true`. The operation decides whether this endpoint *validates* a token or *mints* one, so a
+  message able to set it could turn a validator into an endpoint that hands out this workload's own JWT-SVID.
+* *A validation always uses the configured audience.* `CamelSpiffeAudience` is honoured by `fetchJwtSvid`, where the
+  audience is a genuine per-message parameter ("mint me a token for X"), and ignored by `validateJwtSvid`, where the
+  audience is the check that binds the token to this workload. Letting a message choose it would allow a JWT-SVID
+  minted for a different service to validate successfully.
+* *Strip the component's headers on untrusted ingress.* As with any Camel component, a consumer that does not apply
+  a `HeaderFilterStrategy` blocking `Camel*` lets a sender populate the header map. Call
+  `removeHeaders("CamelSpiffe*")` before the `spiffe:` endpoint when the message comes from an untrusted producer.
+* *Key material reaches the message.* `fetchX509Svid` places an `X509Svid` - which carries the private key - on the
+  body, and `fetchJwtSvid` places the bearer token. Do not log or trace the body for those operations.
+* *Constrain the peer.* `SpiffeSSLContextParameters` requires either an `acceptedSpiffeIds` allow-list or
+  `acceptAnySpiffeId=true`; it fails closed when neither is given. Prefer the allow-list -
+  `acceptAnySpiffeId` accepts any SVID that chains to the trust bundle, which authenticates the trust domain but not
+  the peer.

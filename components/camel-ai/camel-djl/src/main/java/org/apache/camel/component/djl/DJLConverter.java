@@ -48,12 +48,16 @@ public class DJLConverter {
 
     @Converter
     public static Image toImage(File file) throws IOException {
-        return toImage(new FileInputStream(file));
+        try (InputStream inputStream = new FileInputStream(file)) {
+            return toImage(inputStream);
+        }
     }
 
     @Converter
     public static Image toImage(Path path) throws IOException {
-        return toImage(Files.newInputStream(path));
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            return toImage(inputStream);
+        }
     }
 
     @Converter
@@ -70,10 +74,10 @@ public class DJLConverter {
         Rectangle rect = detectedObject.getBoundingBox().getBounds();
         Image image = exchange.getMessage().getHeader(DJLConstants.INPUT, Image.class);
         return image.getSubImage(
-                (int) (rect.getX() * image.getWidth()),
-                (int) (rect.getY() * image.getHeight()),
-                (int) (rect.getWidth() * image.getWidth()),
-                (int) (rect.getHeight() * image.getHeight()));
+                (int) (rect.getX()),
+                (int) (rect.getY()),
+                (int) (rect.getWidth()),
+                (int) (rect.getHeight()));
     }
 
     @Converter
@@ -105,12 +109,16 @@ public class DJLConverter {
 
     @Converter
     public static Audio toAudio(File file) throws IOException {
-        return toAudio(new FileInputStream(file));
+        try (InputStream inputStream = new FileInputStream(file)) {
+            return toAudio(inputStream);
+        }
     }
 
     @Converter
     public static Audio toAudio(Path path) throws IOException {
-        return toAudio(Files.newInputStream(path));
+        try (InputStream inputStream = Files.newInputStream(path)) {
+            return toAudio(inputStream);
+        }
     }
 
     @Converter

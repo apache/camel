@@ -29,6 +29,23 @@ Camel's OGNL support is for invoking methods only. You cannot access fields. Cam
 When using *OGNL* then `camel-bean` JAR is required to be on the classpath.
 ====
 
+[NOTE]
+====
+OGNL invokes the *real Java method* using standard Java semantics. For example `${body.substring(2)}`
+calls `java.lang.String.substring(int)` directly.
+
+This is *not* the same as the built-in xref:simple-functions.adoc[Simple function] of the same name.
+A function such as `${substring(2)}` (with no object prefix) is a Camel function with its own semantics;
+for example it accepts negative numbers to clip from the end. By contrast `${body.substring(-2)}` calls the
+JDK method, which throws `StringIndexOutOfBoundsException` because `java.lang.String` does not accept a
+negative index.
+
+So when you want Camel's function semantics, use the built-in functions (optionally passing the source as an
+argument, such as `${substring(0,-2,${header.foo})}`), and reserve OGNL dot-notation for invoking genuine
+Java methods on the object. For fluent, function-based transformations you can also chain built-in functions
+with the xref:simple-advanced.adoc[chain operator] `~>`.
+====
+
 === Built-in Functions supporting OGNL
 
 The following functions support _OGNL syntax_:

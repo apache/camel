@@ -64,6 +64,8 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
+import org.apache.camel.model.dataformat.ToonDataFormat;
+import org.apache.camel.model.dataformat.UblDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
@@ -124,6 +126,8 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(name = "swiftMx", type = SwiftMxDataFormat.class),
             @XmlElement(name = "syslog", type = SyslogDataFormat.class),
             @XmlElement(name = "tarFile", type = TarFileDataFormat.class),
+            @XmlElement(name = "toon", type = ToonDataFormat.class),
+            @XmlElement(name = "ubl", type = UblDataFormat.class),
             @XmlElement(name = "thrift", type = ThriftDataFormat.class),
             @XmlElement(name = "univocityCsv", type = UniVocityCsvDataFormat.class),
             @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),

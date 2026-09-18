@@ -197,8 +197,9 @@ public class URISupportTest {
     public void testNormalizeEndpointWithEqualSignInParameter() throws Exception {
         String out = URISupport.normalizeUri("jms:queue:foo?selector=somekey='somevalue'&foo=bar");
         assertNotNull(out);
-        // Camel will safe encode the URI
-        assertEquals("jms://queue:foo?foo=bar&selector=somekey%3D%27somevalue%27", out);
+        // Camel will safe encode the URI - '=' stays escaped as it is structurally significant in
+        // the query syntax, but the single quotes (legal unescaped in a URI query) are left as-is
+        assertEquals("jms://queue:foo?foo=bar&selector=somekey%3D'somevalue'", out);
     }
 
     @Test
@@ -259,6 +260,97 @@ public class URISupportTest {
         assertEquals("smtp://localhost?from=me&to=foo", out2);
 
         assertEquals(out1, out2);
+    }
+
+    @Test
+    public void testNormalizeEndpointUriOrderIndependentWithColonValue() throws Exception {
+        // CAMEL-24524: a value containing a colon (eg host:port) must normalize the same way
+        // regardless of whether the original parameter order already happened to be alphabetical.
+        // ':' is legal unescaped in a URI query (RFC 3986 pchar) so it must not be percent-encoded.
+        String out1 = URISupport.normalizeUri("kafka:mytopic?brokers=localhost:19092&groupId=mygroup");
+        String out2 = URISupport.normalizeUri("kafka:mytopic?groupId=mygroup&brokers=localhost:19092");
+
+        assertThat(out1).isEqualTo(out2);
+        assertThat(out1).isEqualTo("kafka://mytopic?brokers=localhost:19092&groupId=mygroup");
+    }
+
+    @Test
+    public void testNormalizeEndpointUriOrderIndependentWithThreeParameters() throws Exception {
+        // all 6 permutations of 3 keys (one already alphabetical, some not) must normalize identically
+        String[] permutations = new String[] {
+                "kafka:mytopic?brokers=localhost:19092&groupId=mygroup&clientId=myclient",
+                "kafka:mytopic?brokers=localhost:19092&clientId=myclient&groupId=mygroup",
+                "kafka:mytopic?groupId=mygroup&brokers=localhost:19092&clientId=myclient",
+                "kafka:mytopic?groupId=mygroup&clientId=myclient&brokers=localhost:19092",
+                "kafka:mytopic?clientId=myclient&brokers=localhost:19092&groupId=mygroup",
+                "kafka:mytopic?clientId=myclient&groupId=mygroup&brokers=localhost:19092" };
+
+        String expected = "kafka://mytopic?brokers=localhost:19092&clientId=myclient&groupId=mygroup";
+        for (String uri : permutations) {
+            assertThat(URISupport.normalizeUri(uri)).as("normalizing: " + uri).isEqualTo(expected);
+        }
+    }
+
+    @Test
+    public void testNormalizeEndpointUriOrderIndependentSingleParameterWithColonValue() throws Exception {
+        // CAMEL-24524: the single-parameter shortcut must also normalize the value consistently
+        String out = URISupport.normalizeUri("kafka:mytopic?brokers=localhost:19092");
+        assertThat(out).isEqualTo("kafka://mytopic?brokers=localhost:19092");
+    }
+
+    @Test
+    public void testNormalizeEndpointUriOrderIndependentWithCommaValue() throws Exception {
+        // a value with a comma (safe for the fast parser, and legal unescaped in a URI query)
+        // must also normalize the same regardless of key order, without being percent-encoded
+        String out1 = URISupport.normalizeUri("smtp://localhost?subject=Hello,World&username=davsclaus");
+        String out2 = URISupport.normalizeUri("smtp://localhost?username=davsclaus&subject=Hello,World");
+
+        assertThat(out1).isEqualTo(out2);
+        assertThat(out1).isEqualTo("smtp://localhost?subject=Hello,World&username=davsclaus");
+    }
+
+    @Test
+    public void testNormalizeEndpointUriOrderIndependentWithSlashValue() throws Exception {
+        // CAMEL-24524 follow-up: a value with a slash (eg a MIME type such as
+        // produces=application/json, as built by camel-rest-openapi's RestOpenApiEndpoint) must not
+        // be percent-encoded - '/' is legal unescaped in a URI query (RFC 3986 pchar). This previously
+        // broke RestOpenApiEndpointV3Test#shouldNotCrossContaminateProducersForSameOperation once the
+        // fast-path normalizer started always re-encoding the query, even when the keys ("host",
+        // "produces") were already in alphabetical order.
+        String out1 = URISupport.normalizeUri("foo:bar?host=http://petstore.example.com&produces=application/json");
+        String out2 = URISupport.normalizeUri("foo:bar?produces=application/json&host=http://petstore.example.com");
+
+        assertThat(out1).isEqualTo(out2);
+        assertThat(out1).isEqualTo("foo://bar?host=http://petstore.example.com&produces=application/json");
+    }
+
+    @Test
+    public void testNormalizeEndpointUriOrderIndependentIsIdempotent() throws Exception {
+        // normalizing an already-normalized uri must return the exact same string
+        String out1 = URISupport.normalizeUri("kafka:mytopic?groupId=mygroup&brokers=localhost:19092");
+        String out2 = URISupport.normalizeUri(out1);
+
+        assertThat(out2).isEqualTo(out1);
+    }
+
+    @Test
+    public void testNormalizeEndpointUriOrderIndependentWithRawValue() throws Exception {
+        // RAW() values must not be further encoded, regardless of key order
+        String out1 = URISupport.normalizeUri("kafka:mytopic?password=RAW(p@ss:word)&username=scott");
+        String out2 = URISupport.normalizeUri("kafka:mytopic?username=scott&password=RAW(p@ss:word)");
+
+        assertThat(out1).isEqualTo(out2);
+        assertThat(out1).isEqualTo("kafka://mytopic?password=RAW(p@ss:word)&username=scott");
+    }
+
+    @Test
+    public void testNormalizeEndpointUriOrderIndependentWithDualParametersAndColonValue() throws Exception {
+        // duplicate keys (list values) combined with a colon value, which is legal unescaped
+        String out1 = URISupport.normalizeUri("smtp://localhost?to=foo:1&to=bar:2&from=me");
+        String out2 = URISupport.normalizeUri("smtp://localhost?from=me&to=foo:1&to=bar:2");
+
+        assertThat(out1).isEqualTo(out2);
+        assertThat(out1).isEqualTo("smtp://localhost?from=me&to=foo:1&to=bar:2");
     }
 
     @Test

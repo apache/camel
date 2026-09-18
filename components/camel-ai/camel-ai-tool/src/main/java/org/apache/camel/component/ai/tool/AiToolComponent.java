@@ -70,6 +70,12 @@ public class AiToolComponent extends DefaultComponent {
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toString())));
         }
 
+        Map<String, Object> outputToolParameters = PropertiesHelper.extractProperties(parameters, "outputParameter.");
+        if (!outputToolParameters.isEmpty()) {
+            config.setOutputParameters(outputToolParameters.entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toString())));
+        }
+
         AiToolEndpoint endpoint = new AiToolEndpoint(uri, this, toolName, config);
 
         setProperties(endpoint, parameters);

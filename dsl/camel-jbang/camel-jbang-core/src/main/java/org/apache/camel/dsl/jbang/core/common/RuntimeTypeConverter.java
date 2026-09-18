@@ -18,9 +18,13 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import picocli.CommandLine;
 
+/**
+ * Converts the {@code --runtime} option for commands that export or inspect a project. The {@code jbang} runtime only
+ * exists for {@code camel run} and is treated as {@code main} here (see {@link RunRuntimeTypeConverter}).
+ */
 public class RuntimeTypeConverter implements CommandLine.ITypeConverter<RuntimeType> {
 
     public RuntimeType convert(String value) throws Exception {
-        return RuntimeType.fromValue(value);
+        return RuntimeType.fromValue(value).exportRuntime();
     }
 }

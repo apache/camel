@@ -25,7 +25,7 @@ inputs:
   version:
     description: 'The version of the maven daemon to install'
     required: true
-    default: '1.0.5'
+    default: '1.0.6'
   distribution:
     description: 'The maven distribution to use'
     required: true

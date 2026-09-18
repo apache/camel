@@ -6,10 +6,57 @@
     "title": "Producers",
     "description": "Display information about Camel producers",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ProducerDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "producers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "uri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "state": {
+              "type": "string",
+              "description": "The producer state"
+            },
+            "clazz": {
+              "type": "string",
+              "description": "The producer service type"
+            },
+            "remote": {
+              "type": "boolean",
+              "description": "Whether the endpoint is remote"
+            },
+            "singleton": {
+              "type": "boolean",
+              "description": "Whether the producer is a singleton"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID (only present when known)"
+            },
+            "stepId": {
+              "type": "string",
+              "description": "The step ID (only present when known)"
+            }
+          },
+          "required": [
+            "remote",
+            "singleton"
+          ]
+        },
+        "description": "The producers"
+      }
+    }
   }
 }
 

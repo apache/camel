@@ -1057,7 +1057,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What operation to use
-         * There are 382 enums and the value can be one of:
+         * There are 383 enums and the value can be one of:
          * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
          * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD,
          * CREATE_ARTICLE, CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION,
@@ -1200,7 +1200,7 @@ public interface ZendeskEndpointBuilderFactory {
          * UPDATE_USER, UPDATE_USER_IDENTITY, UPDATE_USER_IDENTITY_1,
          * UPDATE_USER_SEGMENT, UPDATE_USERS, UPDATE_USERS_1,
          * UPDATE_USERS_ASYNC, VERIFY_USER_IDENTITY, VERIFY_USER_IDENTITY_1,
-         * VERIFY_USER_IDENTITY_2
+         * VERIFY_USER_IDENTITY_2, WARM_UP
          * 
          * @param path methodName
          * @return the dsl builder
@@ -1220,7 +1220,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What operation to use
-         * There are 382 enums and the value can be one of:
+         * There are 383 enums and the value can be one of:
          * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
          * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD,
          * CREATE_ARTICLE, CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION,
@@ -1363,7 +1363,7 @@ public interface ZendeskEndpointBuilderFactory {
          * UPDATE_USER, UPDATE_USER_IDENTITY, UPDATE_USER_IDENTITY_1,
          * UPDATE_USER_SEGMENT, UPDATE_USERS, UPDATE_USERS_1,
          * UPDATE_USERS_ASYNC, VERIFY_USER_IDENTITY, VERIFY_USER_IDENTITY_1,
-         * VERIFY_USER_IDENTITY_2
+         * VERIFY_USER_IDENTITY_2, WARM_UP
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

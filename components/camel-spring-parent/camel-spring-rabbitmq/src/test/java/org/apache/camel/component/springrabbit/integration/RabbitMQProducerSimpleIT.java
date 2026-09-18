@@ -39,7 +39,7 @@ class RabbitMQProducerSimpleIT extends RabbitMQITSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:simple");
+                        .to("spring-rabbitmq:" + uniqueName("simple"));
             }
         };
     }

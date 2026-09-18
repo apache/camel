@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class YamlCanonicalValidatorTest {
 
     private static YamlValidator canonicalValidator;
@@ -95,5 +97,139 @@ public class YamlCanonicalValidatorTest {
         var canonicalReport = canonicalValidator.validate(new File("src/test/resources/foo.yaml"));
         Assertions.assertFalse(canonicalReport.isEmpty(),
                 "foo.yaml uses implicit forms and should fail canonical validation");
+    }
+
+    @Test
+    public void testUnmarshalMarshalWithSingleDataFormatPassesCanonicalValidation() throws Exception {
+        // CAMEL-24482: a single data format (e.g. json) on unmarshal/marshal must not require
+        // every other data format to also be present.
+        var report = canonicalValidator.validate(new File("src/test/resources/canonical-valid-dataformat.yaml"));
+        assertThat(report).as("Single data format should pass canonical validation but got: %s", report).isEmpty();
+    }
+
+    @Test
+    public void testUnmarshalMarshalWithSingleDataFormatPassesClassicValidation() throws Exception {
+        var report = classicValidator.validate(new File("src/test/resources/canonical-valid-dataformat.yaml"));
+        assertThat(report).as("Single data format should pass classic validation but got: %s", report).isEmpty();
+    }
+
+    @Test
+    public void testUnmarshalWithoutDataFormatFailsCanonicalValidation() throws Exception {
+        // The canonical schema itself has no oneOf/anyOf constructs to express "exactly one of these N
+        // properties is required", so YamlValidator re-checks this cardinality itself, driven by the same
+        // catalog "oneOf" metadata the classic schema is generated from.
+        var report = canonicalValidator.validate(new File("src/test/resources/canonical-invalid-missing-dataformat.yaml"));
+        assertThat(report).as("unmarshal without a data format should fail canonical validation").isNotEmpty();
+    }
+
+    @Test
+    public void testUnmarshalWithoutDataFormatFailsClassicValidation() throws Exception {
+        // Unlike canonical mode, the classic schema keeps its oneOf group and still requires exactly
+        // one data format to be chosen.
+        var report = classicValidator.validate(new File("src/test/resources/canonical-invalid-missing-dataformat.yaml"));
+        assertThat(report).as("unmarshal without a data format should fail classic validation").isNotEmpty();
+    }
+
+    @Test
+    public void testResequenceWithoutBatchOrStreamConfigFailsCanonicalValidation() throws Exception {
+        // The "exactly one of" cardinality check is generic, not special-cased to marshal/unmarshal:
+        // resequence must pick exactly one of batchConfig/streamConfig too.
+        var route = """
+                - route:
+                    from:
+                      uri: "direct:start"
+                      steps:
+                        - resequence:
+                            expression:
+                              simple:
+                                expression: "${header.seqnum}"
+                """;
+        var report = canonicalValidator.validate(route);
+        assertThat(report).as("resequence without batchConfig/streamConfig should fail canonical validation").isNotEmpty();
+    }
+
+    @Test
+    public void testLoadBalanceWithTwoLoadBalancersFailsCanonicalValidation() throws Exception {
+        var route = """
+                - route:
+                    from:
+                      uri: "direct:start"
+                      steps:
+                        - loadBalance:
+                            roundRobinLoadBalancer: {}
+                            randomLoadBalancer: {}
+                """;
+        var report = canonicalValidator.validate(route);
+        assertThat(report).as("loadBalance with two load balancers should fail canonical validation").isNotEmpty();
+    }
+
+    // CAMEL-24723: the compact notation is reported as such, one message per occurrence, with the canonical form
+    @Test
+    public void testCompactNotationIsReportedWithTheCanonicalForm() throws Exception {
+        var route = """
+                - route:
+                    from:
+                      uri: "direct:start"
+                      steps:
+                        - setBody:
+                            simple: "Hello ${body}"
+                        - setHeader:
+                            name: foo
+                            expression:
+                              constant: "bar"
+                        - log: "${body}"
+                        - choice:
+                            when:
+                              - simple: "${header.foo} == 'bar'"
+                                steps:
+                                  - to: "mock:a"
+                        - split:
+                            tokenize: ","
+                            steps:
+                              - log:
+                                  message: "x"
+                - onException:
+                    exception:
+                      - java.lang.Exception
+                    handled:
+                      constant: "true"
+                    steps:
+                      - log:
+                          message: "err"
+                """;
+        var report = canonicalValidator.validate(route);
+        assertThat(report).extracting(e -> e.getInstanceLocation() + ": " + e.getMessage()).containsExactly(
+                "/0/route/from/steps/0/setBody: setBody: {simple: ...} is the deprecated compact notation: an expression"
+                                                                                                            + " is written under expression: (setBody: {expression: {simple: {expression: \"...\"}}});"
+                                                                                                            + " camel validate normalize rewrites a file in the canonical format",
+                "/0/route/from/steps/1/setHeader/expression/constant: constant: \"...\" is the deprecated compact"
+                                                                                                                                                                                   + " notation: write constant: {expression: \"...\"};"
+                                                                                                                                                                                   + " camel validate normalize rewrites a file in the canonical format",
+                "/0/route/from/steps/2/log: log: \"...\" is the deprecated compact notation: write log: {message: \"...\"};"
+                                                                                                                                                                                                                                                          + " camel validate normalize rewrites a file in the canonical format",
+                "/0/route/from/steps/3/choice/when/0/steps/0/to: to: \"...\" is the deprecated compact notation: write"
+                                                                                                                                                                                                                                                                                                                                 + " to: {uri: \"...\"}; camel validate normalize rewrites a file in the canonical format",
+                "/0/route/from/steps/3/choice/when/0: a when item with simple: ... is the deprecated compact notation:"
+                                                                                                                                                                                                                                                                                                                                                                                                                            + " an expression is written under expression: (- expression: {simple: {expression: \"...\"}});"
+                                                                                                                                                                                                                                                                                                                                                                                                                            + " camel validate normalize rewrites a file in the canonical format",
+                "/0/route/from/steps/4/split: split: {tokenize: ...} is the deprecated compact notation: an expression"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   + " is written under expression: (split: {expression: {tokenize: {token: \"...\"}}});"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   + " camel validate normalize rewrites a file in the canonical format",
+                "/1/onException/handled/constant: constant: \"...\" is the deprecated compact notation: write"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          + " constant: {expression: \"...\"}; camel validate normalize rewrites a file in the canonical format");
+    }
+
+    @Test
+    public void testCompactNotationIsNotReportedByTheClassicValidator() throws Exception {
+        var route = """
+                - route:
+                    from:
+                      uri: "direct:start"
+                      steps:
+                        - setBody:
+                            simple: "Hello ${body}"
+                        - log: "${body}"
+                """;
+        assertThat(classicValidator.validate(route)).isEmpty();
     }
 }

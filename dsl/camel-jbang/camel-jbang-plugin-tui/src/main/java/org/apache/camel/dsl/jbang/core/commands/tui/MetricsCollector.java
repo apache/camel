@@ -36,6 +36,8 @@ class MetricsCollector {
     static final long HEAP_SAMPLE_INTERVAL_MS = 5000;
     // Throughput values are stored scaled by this factor so sub-1.0 msg/s rates are preserved as longs
     static final long THROUGHPUT_SCALE = 100;
+    // EWMA decay for endpoint throughput smoothing (10-second window)
+    private static final double EWMA_ALPHA = 1.0 - Math.exp(-1.0 / 10.0);
 
     // Throughput history per PID (one point per second)
     private final Map<String, LinkedList<Long>> throughputHistory = new ConcurrentHashMap<>();
@@ -87,6 +89,9 @@ class MetricsCollector {
     private final Map<String, LinkedList<Long>> serviceInSizeHistory = new ConcurrentHashMap<>();
     private final Map<String, LinkedList<Long>> serviceOutSizeHistory = new ConcurrentHashMap<>();
     private final Map<String, Long> previousServiceSizeTime = new ConcurrentHashMap<>();
+
+    // EWMA state for endpoint throughput smoothing — keyed same as the history maps
+    private final Map<String, long[]> ewmaState = new ConcurrentHashMap<>();
 
     // Circuit breaker throughput history per PID/cbId
     private final Map<String, LinkedList<Long>> cbSuccessHistory = new ConcurrentHashMap<>();
@@ -386,6 +391,14 @@ class MetricsCollector {
             Long lastTime = prevTimeMap.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 prevTimeMap.put(pid, now);
+                // apply EWMA smoothing to reduce jitter at low rates
+                String ewmaKey = System.identityHashCode(inHistMap) + "|" + pid;
+                long[] prev = ewmaState.get(ewmaKey);
+                if (prev != null) {
+                    inRate = Math.round(EWMA_ALPHA * inRate + (1.0 - EWMA_ALPHA) * prev[0]);
+                    outRate = Math.round(EWMA_ALPHA * outRate + (1.0 - EWMA_ALPHA) * prev[1]);
+                }
+                ewmaState.put(ewmaKey, new long[] { Math.max(0, inRate), Math.max(0, outRate) });
                 addToHistory(inHistMap, pid, Math.max(0, inRate), MAX_ENDPOINT_CHART_POINTS);
                 addToHistory(outHistMap, pid, Math.max(0, outRate), MAX_ENDPOINT_CHART_POINTS);
             }

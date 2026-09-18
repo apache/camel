@@ -17,6 +17,7 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "smooksConfig": { "index": 1, "kind": "attribute", "displayName": "Smooks Config", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Path to the Smooks configuration file." }
+    "smooksConfig": { "index": 1, "kind": "attribute", "displayName": "Smooks Config", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Path to the Smooks configuration file." },
+    "allowExternalEntities": { "index": 2, "kind": "attribute", "displayName": "Allow External Entities", "group": "security", "label": "security", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and parameter entities) when parsing XML input. This is disabled by default so that external entities in the message body are not resolved; enable it only for trusted legacy configurations that rely on external entity resolution." }
   }
 }

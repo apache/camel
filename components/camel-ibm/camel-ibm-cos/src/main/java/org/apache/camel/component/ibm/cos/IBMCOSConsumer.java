@@ -160,15 +160,23 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
             }
 
             if (getEndpoint().getInProgressRepository() != null
-                    && getEndpoint().getInProgressRepository().contains(s3ObjectSummary.getKey())) {
+                    && !getEndpoint().getInProgressRepository().add(s3ObjectSummary.getKey())) {
                 LOG.trace("Object {} is already in progress", s3ObjectSummary.getKey());
                 continue;
             }
 
-            S3Object s3Object = getCosClient().getObject(
-                    new GetObjectRequest(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey()));
-            Exchange exchange = createExchange(s3Object, s3ObjectSummary.getKey());
-            exchanges.add(exchange);
+            try {
+                S3Object s3Object = getCosClient().getObject(
+                        new GetObjectRequest(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey()));
+                Exchange exchange = createExchange(s3Object, s3ObjectSummary.getKey());
+                exchanges.add(exchange);
+            } catch (Exception e) {
+                // Fetching the object or creating the exchange failed after we claimed the in-progress key;
+                // release it so the object is not left permanently unconsumable, and skip it for this poll.
+                LOG.warn("Error fetching object {} from bucket {}: {}. Skipping it for this poll.",
+                        s3ObjectSummary.getKey(), s3ObjectSummary.getBucketName(), e.getMessage());
+                removeInProgress(s3ObjectSummary.getKey());
+            }
         }
 
         return exchanges;
@@ -246,11 +254,20 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
             }
         } catch (Exception e) {
             LOG.warn("Error during post processing of object {} from bucket {}: {}", key, bucketName, e.getMessage());
+        } finally {
+            removeInProgress(key);
         }
     }
 
     protected void processRollback(String key) {
         LOG.trace("Processing failed for object with key {}", key);
+        removeInProgress(key);
+    }
+
+    private void removeInProgress(String key) {
+        if (getEndpoint().getInProgressRepository() != null) {
+            getEndpoint().getInProgressRepository().remove(key);
+        }
     }
 
     private void copyObject(String bucketName, String key) {

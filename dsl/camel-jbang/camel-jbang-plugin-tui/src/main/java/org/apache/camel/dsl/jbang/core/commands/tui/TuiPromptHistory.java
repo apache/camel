@@ -160,7 +160,7 @@ final class TuiPromptHistory {
             List<String> result = new ArrayList<>(lines.size());
             for (String line : lines) {
                 if (line != null && !line.isBlank()) {
-                    result.add(line.trim());
+                    result.add(decode(line.trim()));
                 }
             }
             if (result.size() > maxSize) {
@@ -173,13 +173,39 @@ final class TuiPromptHistory {
         }
     }
 
+    /** One file line per prompt: a multi-line prompt has its line breaks escaped. */
+    static String encode(String prompt) {
+        return prompt.replace("\\", "\\\\").replace("\n", "\\n");
+    }
+
+    static String decode(String line) {
+        if (line.indexOf('\\') < 0) {
+            return line;
+        }
+        StringBuilder sb = new StringBuilder(line.length());
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (c == '\\' && i + 1 < line.length()) {
+                char next = line.charAt(++i);
+                sb.append(next == 'n' ? '\n' : next);
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
     private void persist() {
         if (!isEnabled()) {
             return;
         }
         try {
             Files.createDirectories(file.getParent());
-            Files.write(file, entries, StandardCharsets.UTF_8);
+            List<String> encoded = new ArrayList<>(entries.size());
+            for (String entry : entries) {
+                encoded.add(encode(entry));
+            }
+            Files.write(file, encoded, StandardCharsets.UTF_8);
         } catch (IOException e) {
             LOG.log(Level.DEBUG, "Failed to write AI prompt history to {0}: {1}", file, e.getMessage());
         }

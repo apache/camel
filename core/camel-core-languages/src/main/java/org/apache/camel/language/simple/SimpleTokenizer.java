@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 public class SimpleTokenizer {
 
     // keep this number in sync with tokens list
-    private static final int NUMBER_OF_TOKENS = 54;
+    private static final int NUMBER_OF_TOKENS = 56;
 
     private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
@@ -84,30 +84,32 @@ public class SimpleTokenizer {
         KNOWN_TOKENS[41] = new SimpleTokenType(TokenType.binaryOperator, "endsWith");
         KNOWN_TOKENS[42] = new SimpleTokenType(TokenType.binaryOperator, "ends with");
         KNOWN_TOKENS[43] = new SimpleTokenType(TokenType.binaryOperator, "!endsWith");
+        KNOWN_TOKENS[44] = new SimpleTokenType(TokenType.binaryOperator, "!equals");
+        KNOWN_TOKENS[45] = new SimpleTokenType(TokenType.binaryOperator, "equals");
 
         // other operators
-        KNOWN_TOKENS[44] = new SimpleTokenType(TokenType.otherOperator, "?:");
+        KNOWN_TOKENS[46] = new SimpleTokenType(TokenType.otherOperator, "?:");
 
         // chain operators
-        KNOWN_TOKENS[45] = new SimpleTokenType(TokenType.chainOperator, "~>");
-        KNOWN_TOKENS[46] = new SimpleTokenType(TokenType.chainOperator, "?~>");
+        KNOWN_TOKENS[47] = new SimpleTokenType(TokenType.chainOperator, "~>");
+        KNOWN_TOKENS[48] = new SimpleTokenType(TokenType.chainOperator, "?~>");
 
         // unary operators
-        KNOWN_TOKENS[47] = new SimpleTokenType(TokenType.unaryOperator, "++");
-        KNOWN_TOKENS[48] = new SimpleTokenType(TokenType.unaryOperator, "--");
+        KNOWN_TOKENS[49] = new SimpleTokenType(TokenType.unaryOperator, "++");
+        KNOWN_TOKENS[50] = new SimpleTokenType(TokenType.unaryOperator, "--");
 
         // logical operators
-        KNOWN_TOKENS[49] = new SimpleTokenType(TokenType.logicalOperator, "&&");
-        KNOWN_TOKENS[50] = new SimpleTokenType(TokenType.logicalOperator, "||");
+        KNOWN_TOKENS[51] = new SimpleTokenType(TokenType.logicalOperator, "&&");
+        KNOWN_TOKENS[52] = new SimpleTokenType(TokenType.logicalOperator, "||");
 
         // ternary operators
-        KNOWN_TOKENS[51] = new SimpleTokenType(TokenType.ternaryOperator, "?");
-        KNOWN_TOKENS[52] = new SimpleTokenType(TokenType.ternaryOperator, ":");
+        KNOWN_TOKENS[53] = new SimpleTokenType(TokenType.ternaryOperator, "?");
+        KNOWN_TOKENS[54] = new SimpleTokenType(TokenType.ternaryOperator, ":");
 
         //binary operator
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
-        KNOWN_TOKENS[53] = new SimpleTokenType(TokenType.minusValue, "-");
+        KNOWN_TOKENS[55] = new SimpleTokenType(TokenType.minusValue, "-");
     }
 
     /**

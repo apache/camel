@@ -172,6 +172,37 @@ class LlmClientListModelsTest {
     }
 
     @Test
+    void picksFirstModelOfAnOpenAiCompatibleServerWhenNoneConfigured() throws IOException {
+        // LM Studio, llama.cpp server and friends reject OpenAI's default model name, so the first hosted model wins
+        String baseUrl = startServer("/v1/models", 200,
+                "{\"data\":[{\"id\":\"qwen3.6-35b-a3b\"},{\"id\":\"gemma-4-12b\"}]}", null, null);
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.openai).withUrl(baseUrl);
+
+        assertTrue(client.detectEndpoint());
+        assertEquals("qwen3.6-35b-a3b", client.model());
+    }
+
+    @Test
+    void replacesTheCliPlaceholderModelOnAnOpenAiCompatibleServer() throws IOException {
+        String baseUrl = startServer("/v1/models", 200, "{\"data\":[{\"id\":\"local-llm\"}]}", null, null);
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.openai).withUrl(baseUrl)
+                .withModel("llama3.2");
+
+        assertTrue(client.detectEndpoint());
+        assertEquals("local-llm", client.model(), "the llama3.2 placeholder the CLI passes must not reach the server");
+    }
+
+    @Test
+    void keepsAnExplicitModelOnAnOpenAiCompatibleServer() throws IOException {
+        String baseUrl = startServer("/v1/models", 200, "{\"data\":[{\"id\":\"local-llm\"}]}", null, null);
+        LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.openai).withUrl(baseUrl)
+                .withModel("my-tuned-model");
+
+        assertTrue(client.detectEndpoint());
+        assertEquals("my-tuned-model", client.model());
+    }
+
+    @Test
     void fallsBackToDefaultOllamaModelWhenModelsCannotBeListed() throws IOException {
         // Root responds so the endpoint is detected, but /api/tags is unavailable, so the installed models cannot be
         // listed; detection must still leave a usable (non-null) model.

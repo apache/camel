@@ -340,6 +340,38 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the maximum number of concurrent sessions to process at any
+         * given time. Only applies when sessionEnabled is true.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param maxConcurrentSessions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder maxConcurrentSessions(int maxConcurrentSessions) {
+            doSetProperty("maxConcurrentSessions", maxConcurrentSessions);
+            return this;
+        }
+        /**
+         * Sets the maximum number of concurrent sessions to process at any
+         * given time. Only applies when sessionEnabled is true.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param maxConcurrentSessions the value to set
+         * @return the dsl builder
+         */
+        default ServiceBusEndpointConsumerBuilder maxConcurrentSessions(String maxConcurrentSessions) {
+            doSetProperty("maxConcurrentSessions", maxConcurrentSessions);
+            return this;
+        }
+        /**
          * Sets the prefetch count of the receiver. For both PEEK_LOCK PEEK_LOCK
          * and RECEIVE_AND_DELETE RECEIVE_AND_DELETE receive modes the default
          * value is 1. Prefetch speeds up the message flow by aiming to have a

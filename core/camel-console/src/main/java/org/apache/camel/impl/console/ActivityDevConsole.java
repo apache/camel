@@ -16,18 +16,43 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.BacklogTracerActivityMessage;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "activity", displayName = "Camel Activity", description = "Recent completed exchange activity")
 public class ActivityDevConsole extends AbstractDevConsole {
+
+    public record EndpointSend(
+            @Metadata(description = "The endpoint URI") String endpointUri,
+            @Metadata(description = "Whether the endpoint is remote") boolean remoteEndpoint,
+            @Metadata(description = "Elapsed time in milliseconds") long elapsed) {
+    }
+
+    public record ActivityEntry(
+            @Metadata(description = "Unique ID of the activity entry") long uid,
+            @Metadata(description = "The exchange ID") String exchangeId,
+            @Metadata(description = "The route ID (only present when known)") String routeId,
+            @Metadata(description = "The from endpoint URI (only present when known)") String fromEndpointUri,
+            @Metadata(description = "Epoch time in milliseconds (only present when known)") Long timestamp,
+            @Metadata(description = "Elapsed time in milliseconds") long elapsed,
+            @Metadata(description = "Whether the exchange failed") boolean failed,
+            @Metadata(description = "The exception message (only present when the exchange failed)") String exception,
+            @Metadata(description = "The endpoints this exchange was sent to (only present when any)") List<EndpointSend> endpointSends) {
+    }
+
+    public record Response(
+            @Metadata(description = "Whether activity tracking is enabled") Boolean activityEnabled,
+            @Metadata(description = "The maximum number of activity entries retained") Integer activitySize,
+            @Metadata(description = "The recent activity entries") List<ActivityEntry> activity) {
+    }
 
     public ActivityDevConsole() {
         super("camel", "activity", "Camel Activity", "Recent completed exchange activity");
@@ -60,51 +85,32 @@ public class ActivityDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
-        if (tracer != null) {
-            root.put("activityEnabled", tracer.isActivityEnabled());
-            root.put("activitySize", tracer.getActivitySize());
 
-            JsonArray arr = new JsonArray();
-            root.put("activity", arr);
+        Response response;
+        if (tracer != null) {
+            List<ActivityEntry> activity = new ArrayList<>();
             for (BacklogTracerActivityMessage event : tracer.getActivity()) {
-                JsonObject jo = new JsonObject();
-                jo.put("uid", event.getUid());
-                jo.put("exchangeId", event.getExchangeId());
-                if (event.getRouteId() != null) {
-                    jo.put("routeId", event.getRouteId());
-                }
-                if (event.getFromEndpointUri() != null) {
-                    jo.put("fromEndpointUri", event.getFromEndpointUri());
-                }
-                if (event.getTimestamp() > 0) {
-                    jo.put("timestamp", event.getTimestamp());
-                }
-                jo.put("elapsed", event.getElapsed());
-                jo.put("failed", event.isFailed());
-                if (event.getExceptionMessage() != null) {
-                    jo.put("exception", event.getExceptionMessage());
-                }
-                List<BacklogTracerActivityMessage.EndpointSend> sends = event.getEndpointSends();
-                if (sends != null && !sends.isEmpty()) {
-                    JsonArray sa = new JsonArray();
-                    for (BacklogTracerActivityMessage.EndpointSend send : sends) {
-                        JsonObject so = new JsonObject();
-                        so.put("endpointUri", send.getEndpointUri());
-                        so.put("remoteEndpoint", send.isRemoteEndpoint());
-                        so.put("elapsed", send.getElapsed());
-                        sa.add(so);
+                List<EndpointSend> sends = null;
+                List<BacklogTracerActivityMessage.EndpointSend> eventSends = event.getEndpointSends();
+                if (eventSends != null && !eventSends.isEmpty()) {
+                    sends = new ArrayList<>();
+                    for (BacklogTracerActivityMessage.EndpointSend send : eventSends) {
+                        sends.add(new EndpointSend(send.getEndpointUri(), send.isRemoteEndpoint(), send.getElapsed()));
                     }
-                    jo.put("endpointSends", sa);
                 }
-                arr.add(jo);
+                Long timestamp = event.getTimestamp() > 0 ? event.getTimestamp() : null;
+                activity.add(new ActivityEntry(
+                        event.getUid(), event.getExchangeId(), event.getRouteId(), event.getFromEndpointUri(), timestamp,
+                        event.getElapsed(), event.isFailed(), event.getExceptionMessage(), sends));
             }
+            response = new Response(tracer.isActivityEnabled(), tracer.getActivitySize(), activity);
+        } else {
+            response = new Response(null, null, null);
         }
 
-        return root;
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }

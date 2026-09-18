@@ -906,6 +906,46 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom configured NettyServerBootstrapConfiguration for
+         * configuring this endpoint. When set via URI (e.g. {code
+         * bootstrapConfiguration=#myBean}), its properties are merged into the
+         * endpoint configuration by NettyComponent.createEndpoint(). Note: this
+         * parameter is URI-resolved by the component and is not applied when
+         * set programmatically via this setter.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.netty.NettyServerBootstrapConfiguration</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param bootstrapConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder bootstrapConfiguration(org.apache.camel.component.netty.NettyServerBootstrapConfiguration bootstrapConfiguration) {
+            doSetProperty("bootstrapConfiguration", bootstrapConfiguration);
+            return this;
+        }
+        /**
+         * To use a custom configured NettyServerBootstrapConfiguration for
+         * configuring this endpoint. When set via URI (e.g. {code
+         * bootstrapConfiguration=#myBean}), its properties are merged into the
+         * endpoint configuration by NettyComponent.createEndpoint(). Note: this
+         * parameter is URI-resolved by the component and is not applied when
+         * set programmatically via this setter.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.netty.NettyServerBootstrapConfiguration</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param bootstrapConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder bootstrapConfiguration(String bootstrapConfiguration) {
+            doSetProperty("bootstrapConfiguration", bootstrapConfiguration);
+            return this;
+        }
+        /**
          * When netty works on nio mode, it uses default bossCount parameter
          * from Netty, which is 1. User can use this option to override the
          * default bossCount from Netty.

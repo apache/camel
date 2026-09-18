@@ -98,7 +98,6 @@ class ProcessTabRenderTest {
                 .map(Span::content)
                 .reduce("", String::concat);
 
-        assertTrue(footer.contains("scroll"), "Footer should contain scroll hint");
         assertTrue(footer.contains("wrap"), "Footer should contain wrap hint");
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
     }

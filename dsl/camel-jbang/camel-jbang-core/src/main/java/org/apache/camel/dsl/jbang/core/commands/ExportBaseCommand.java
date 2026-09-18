@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.GenAiDependencyHelper;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
@@ -96,6 +97,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
+
+    private static final String EXTRA_REPOS_PROPERTY = "camel.extra.repos";
+    private static final String EXTRA_REPOS_DEFAULT_VALUE_PROPERTY = "camel.default.extra.repos.default.value";
 
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
@@ -221,6 +225,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--observe" }, defaultValue = "false",
                         description = "Enable observability services")
     protected boolean observe;
+
+    // set by camel run: the exported project is temporary and only used for that run, so the developer console is
+    // enabled in its application.properties regardless of the profile
+    boolean consoleForRun;
+
+    @CommandLine.Option(names = { "--console" }, defaultValue = "false",
+                        description = "Developer console on the local HTTP server (port 8080 by default): /q/dev with Camel Main,"
+                                      + " /actuator/camel with Spring Boot, and /q/camel/dev-console with Quarkus."
+                                      + " The exported project only has the console with the dev profile.")
+    protected boolean console;
 
     @CommandLine.Option(names = {
             "--dir",
@@ -416,9 +430,17 @@ public abstract class ExportBaseCommand extends CamelCommand {
             int i = 1;
             for (String repo : repos.split(",")) {
                 Map<String, Object> r = new HashMap<>();
-                r.put("id", "custom" + i++);
-                r.put("url", repo);
-                r.put("isSnapshot", repo.contains("snapshots"));
+                // support id=url format (used by camel.extra.repos)
+                int eq = repo.indexOf('=');
+                if (eq > 0 && eq < repo.length() - 1 && !repo.startsWith("http")) {
+                    r.put("id", repo.substring(0, eq));
+                    r.put("url", repo.substring(eq + 1));
+                } else {
+                    r.put("id", "custom" + i++);
+                    r.put("url", repo);
+                }
+                String url = (String) r.get("url");
+                r.put("isSnapshot", url.contains("snapshots"));
                 result.add(r);
             }
         }
@@ -573,6 +595,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.excludes = excludes;
         run.openapi = openapi;
         run.serverOptions.observe = observe;
+        run.serverOptions.console = console;
         run.mavenResolver = mavenResolver;
         run.packageScanJars = packageScanJars;
         run.runtime = runtime;
@@ -811,14 +834,36 @@ public abstract class ExportBaseCommand extends CamelCommand {
             answer.add("mvn:org.hibernate.orm:hibernate-core");
         }
 
-        // remove duplicate versions (keep first)
-        Map<String, String> versions = new HashMap<>();
+        // add GenAI observability when silent-run / profile deps already include GenAI artifacts
+        Properties exportProperties = new Properties();
+        if (profile != null && Files.exists(profile)) {
+            RuntimeUtil.loadProperties(exportProperties, profile);
+        }
+        GenAiDependencyHelper.addAiObservabilityIfNeeded(answer, exportProperties, observe);
+
+        // remove duplicate versions (keep first) but an explicit --dep version always wins over
+        // an auto-detected dependency for the same groupId:artifactId (e.g. a JDBC driver whose
+        // version is inferred from the camel-dependencies BOM)
+        Set<String> preferred = new HashSet<>();
+        for (String d : dependencies) {
+            String line = normalizeDependency(d);
+            MavenGav gav = MavenGav.parseGav(line);
+            if (gav.getVersion() != null && !gav.getVersion().isBlank()) {
+                preferred.add(line);
+            }
+        }
+        Map<String, String> kept = new HashMap<>();
         Set<String> toBeRemoved = new HashSet<>();
         for (String line : answer) {
             MavenGav gav = MavenGav.parseGav(line);
             String ga = gav.getGroupId() + ":" + gav.getArtifactId();
-            if (!versions.containsKey(ga)) {
-                versions.put(ga, gav.getVersion());
+            String existing = kept.get(ga);
+            if (existing == null) {
+                kept.put(ga, line);
+            } else if (preferred.contains(line) && !preferred.contains(existing)) {
+                // the user-supplied --dep version takes precedence over the auto-detected one
+                toBeRemoved.add(existing);
+                kept.put(ga, line);
             } else {
                 toBeRemoved.add(line);
             }
@@ -1239,8 +1284,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
         Set<String> answer = new LinkedHashSet<>();
 
         String propRepositories = prop.getProperty(REPOS);
+        if (propRepositories == null) {
+            // fallback to system property
+            propRepositories = System.getProperty(REPOS);
+        }
         if (propRepositories != null) {
-            answer.add(propRepositories);
+            Collections.addAll(answer, propRepositories.split("\\s*,\\s*"));
         }
 
         // include apache snapshot repo if we use SNAPSHOT version of Camel
@@ -1258,7 +1307,18 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (mavenResolver.repos() != null) {
-            Collections.addAll(answer, this.mavenResolver.repos().split(","));
+            Collections.addAll(answer, this.mavenResolver.repos().split("\\s*,\\s*"));
+        }
+
+        // include extra repos from system property
+        String extraRepos = System.getProperty(EXTRA_REPOS_PROPERTY,
+                System.getProperty(EXTRA_REPOS_DEFAULT_VALUE_PROPERTY));
+        if (extraRepos != null && !extraRepos.isBlank()) {
+            for (String r : extraRepos.split("\\s*,\\s*")) {
+                if (!r.isBlank()) {
+                    answer.add(r);
+                }
+            }
         }
 
         return answer.stream()
@@ -1286,6 +1346,86 @@ public abstract class ExportBaseCommand extends CamelCommand {
             // ignore
         }
         return -1;
+    }
+
+    /**
+     * Whether the given camel-jbang setting (such as {@code camel.jbang.console}) is enabled in the run settings.
+     */
+    protected static boolean settingsFlag(Path settings, String key) {
+        try {
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+            return lines.stream().anyMatch(l -> l.equals(key + "=true"));
+        } catch (Exception e) {
+            // ignore
+        }
+        return false;
+    }
+
+    /**
+     * Whether the developer console ({@code --console}) settings go into the exported {@code application.properties}:
+     * for {@code camel run} (the project is temporary), and for {@code --profile=dev} (the dev profile is flattened
+     * into application.properties). Otherwise they go into {@code application-dev.properties}, so an exported project
+     * only has the console when running with the dev profile.
+     */
+    protected boolean isConsoleInApplicationProperties() {
+        return consoleForRun || "dev".equals(profile);
+    }
+
+    /**
+     * Adds the given developer console settings to the exported project: either to the given
+     * {@code application.properties} (see {@link #isConsoleInApplicationProperties()}), or else collected in
+     * {@code devProfile} to be written to {@code application-dev.properties} by
+     * {@link #writeDevProfileProperties(Path, Map)}. Settings that are already configured are kept.
+     */
+    protected void addConsoleProperties(Properties prop, Map<String, String> devProfile, Map<String, String> settings) {
+        for (Map.Entry<String, String> entry : settings.entrySet()) {
+            String key = entry.getKey();
+            if (prop.containsKey(key) || prop.containsKey(StringHelper.camelCaseToDash(key))) {
+                continue;
+            }
+            if (isConsoleInApplicationProperties()) {
+                prop.put(key, entry.getValue());
+            } else {
+                devProfile.put(key, entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * Appends the given properties to {@code application-dev.properties} in the exported project (which is created if
+     * it does not exist), skipping keys that the file already has.
+     */
+    protected void writeDevProfileProperties(Path srcResourcesDir, Map<String, String> devProfile) throws Exception {
+        if (devProfile.isEmpty()) {
+            return;
+        }
+        Path file = srcResourcesDir.resolve("application-dev.properties");
+        Properties existing = new Properties();
+        if (Files.exists(file)) {
+            try (InputStream is = Files.newInputStream(file)) {
+                existing.load(is);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : devProfile.entrySet()) {
+            String key = entry.getKey();
+            if (existing.containsKey(key) || existing.containsKey(StringHelper.camelCaseToDash(key))) {
+                continue;
+            }
+            String line = applicationPropertyLine(key, entry.getValue());
+            if (line != null && !line.isBlank()) {
+                sb.append(line).append("\n");
+            }
+        }
+        if (sb.isEmpty()) {
+            return;
+        }
+        String content = Files.exists(file) ? Files.readString(file) : "";
+        if (!content.isEmpty() && !content.endsWith("\n")) {
+            content += "\n";
+        }
+        content += "# developer console (--console), only for the dev profile\n" + sb;
+        Files.writeString(file, content);
     }
 
     protected static int httpManagementPort(Path settings) {

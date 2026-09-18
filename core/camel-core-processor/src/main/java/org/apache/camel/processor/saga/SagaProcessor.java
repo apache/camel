@@ -55,8 +55,11 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
     protected CompletableFuture<CamelSagaCoordinator> getCurrentSagaCoordinator(Exchange exchange) {
         // try internal state first (survives removeHeaders("*"))
         String currentSaga = exchange.getExchangeExtension().getSagaLongRunningAction();
-        if (currentSaga == null) {
-            // fall back to header for interoperability (e.g., LRA protocol)
+        if (currentSaga == null && sagaService.isLongRunningActionHeaderSupported()) {
+            // fall back to header for interoperability (e.g., LRA protocol), but only for a service that takes part
+            // in such a protocol. Long-Running-Action is outside the Camel namespace that consumers filter, and the
+            // id is written back onto responses, so consulting it where no external coordinator exists would let a
+            // message pick which saga its exchange joins.
             currentSaga = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);
         }
         if (currentSaga != null) {

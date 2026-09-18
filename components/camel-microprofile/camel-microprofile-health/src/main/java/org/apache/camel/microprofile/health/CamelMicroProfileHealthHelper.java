@@ -60,8 +60,11 @@ final class CamelMicroProfileHealthHelper {
             result.getError().ifPresent(error -> {
                 builder.withData("error.message", error.getMessage());
 
-                final String s = ExceptionHelper.stackTraceToString(error);
-                builder.withData("error.stacktrace", s);
+                // the stack trace is the most verbose detail there is, so only expose it in the full level
+                if (exposureLevel.equals("full")) {
+                    final String s = ExceptionHelper.stackTraceToString(error);
+                    builder.withData("error.stacktrace", s);
+                }
             });
         }
     }

@@ -37,11 +37,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DuckDbProducerIT extends CamelTestSupport {
 
     @RegisterExtension
-    static DuckDbService service = DuckDbServiceFactory.createService();
+    static DuckDbService service = DuckDbServiceFactory.createSingletonService();
 
     @BeforeEach
     void setUpDatabase() throws Exception {
-        if (service instanceof DuckDbEmbeddedService embedded) {
+        DuckDbService duckDbService;
+        if (DuckDbProducerIT.service instanceof DuckDbServiceFactory.SingletonDuckDbService singleton) {
+            duckDbService = singleton.getService();
+        } else {
+            duckDbService = DuckDbProducerIT.service;
+        }
+        if (duckDbService instanceof DuckDbEmbeddedService embedded) {
             embedded.executeSql("CREATE TABLE IF NOT EXISTS camel_events (id INTEGER, name VARCHAR)");
             embedded.executeSql("DELETE FROM camel_events");
         }

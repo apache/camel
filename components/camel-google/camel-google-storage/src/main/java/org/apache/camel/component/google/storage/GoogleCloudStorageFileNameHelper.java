@@ -17,6 +17,9 @@
 package org.apache.camel.component.google.storage;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
 /**
@@ -47,10 +50,44 @@ final class GoogleCloudStorageFileNameHelper {
         final Path normalizedDir = new File(downloadDirectory).toPath().normalize();
         final Path normalizedTarget = new File(resolvedPath).toPath().normalize();
         if (!normalizedTarget.startsWith(normalizedDir)) {
-            throw new IllegalArgumentException(
-                    "Cannot download to file '" + objectName
-                                               + "' as it resolves outside the configured downloadFileName directory: "
-                                               + downloadDirectory);
+            throw outsideDirectory(objectName, downloadDirectory);
         }
+
+        try {
+            final Path resolvedDir = resolveExistingPathSegments(new File(downloadDirectory).toPath());
+            final Path resolvedTarget = resolveExistingPathSegments(new File(resolvedPath).toPath());
+            if (!resolvedTarget.startsWith(resolvedDir)) {
+                throw outsideDirectory(objectName, downloadDirectory);
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException(
+                    "Cannot verify download path for file '" + objectName
+                                               + "' within the configured downloadFileName directory: "
+                                               + downloadDirectory,
+                    e);
+        }
+    }
+
+    private static Path resolveExistingPathSegments(Path path) throws IOException {
+        // Preserve the raw path segments here. Normalizing before resolving links changes the filesystem meaning of
+        // paths such as link/../file when link points to another directory.
+        final Path absolutePath = path.toAbsolutePath();
+        Path existingPath = absolutePath;
+        while (existingPath != null && !Files.exists(existingPath, LinkOption.NOFOLLOW_LINKS)) {
+            existingPath = existingPath.getParent();
+        }
+        if (existingPath == null) {
+            throw new IOException("No existing ancestor found for " + path);
+        }
+
+        final Path resolvedExistingPath = existingPath.toRealPath();
+        return resolvedExistingPath.resolve(existingPath.relativize(absolutePath)).normalize();
+    }
+
+    private static IllegalArgumentException outsideDirectory(String objectName, String downloadDirectory) {
+        return new IllegalArgumentException(
+                "Cannot download to file '" + objectName
+                                            + "' as it resolves outside the configured downloadFileName directory: "
+                                            + downloadDirectory);
     }
 }

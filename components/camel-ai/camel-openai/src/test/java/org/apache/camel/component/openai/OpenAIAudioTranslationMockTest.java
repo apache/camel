@@ -61,6 +61,10 @@ public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
                         .to("openai:audio-translation?apiKey=dummy&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
 
+                from("direct:translate-store-response")
+                        .to("openai:audio-translation?audioModel=whisper-1&apiKey=dummy&storeFullResponse=true&baseUrl="
+                            + openAIMock.getBaseUrl() + "/v1");
+
                 from("file:" + tempDir.toString() + "?noop=true&initialDelay=0&delay=100")
                         .to("openai:audio-translation?audioModel=whisper-1&apiKey=dummy&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1")
@@ -152,5 +156,20 @@ public class OpenAIAudioTranslationMockTest extends CamelTestSupport {
         assertThat(result.getException())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Audio model must be specified");
+    }
+
+    @Test
+    void storeFullResponseStoresTranslationResponse() {
+        byte[] audioBytes = new byte[] { 0x00, 0x01, 0x02 };
+
+        Exchange result = template.request("direct:translate-store-response", e -> e.getIn().setBody(audioBytes));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getProperty(OpenAIConstants.AUDIO_TRANSLATION_RESPONSE))
+                .as("storeFullResponse=true must store the full translation response under CamelOpenAIAudioTranslationResponse")
+                .isNotNull();
+        assertThat(result.getProperty(OpenAIConstants.RESPONSE))
+                .as("the translation response must not be stored under the chat-completion CamelOpenAIResponse property")
+                .isNull();
     }
 }

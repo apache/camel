@@ -30,6 +30,7 @@ final class TuiIcons {
     static final String CAMEL = "🐪";
     static final String SPRING_BOOT = "🍃";
     static final String QUARKUS = "🚀";
+    static final String JBANG = "⚡";
     static final String DEV_PROFILE = "🔨";
     static final String PROD_PROFILE = "📦";
     static final String INFRA = "🔧";
@@ -43,6 +44,8 @@ final class TuiIcons {
     static final String HEALTH_WARN = "⚠";
     static final String STOPPED = "✖";
     static final String CROSS = "✗";
+    static final String GEAR = "⚙";
+    static final String CHECK = "✓";
 
     // ---- Files & folders ----
     static final String FOLDER = "📁";
@@ -51,12 +54,23 @@ final class TuiIcons {
     static final String DOCUMENT = "📄";
     static final String README = "📖";
 
+    // ---- File actions ----
+    static final String NEW_FILE = "📄";
+    static final String NEW_FOLDER = "📁";
+    // memo (📝) reads as "edit"; the letters glyph reads as changing the name
+    static final String RENAME = "🔤";
+    static final String DUPLICATE = "📑";
+    // NOTE: the wastebasket emoji (🗑) is width-ambiguous and TamboUI does not align it correctly yet, so use the
+    // cross-mark instead until that is fixed upstream.
+    static final String DELETE = "❌";
+
     // ---- Actions menu ----
     static final String GO_TO = "🔍";
     static final String MESSAGE = "📩";
     static final String KEYSTROKES = "🔤";
     static final String SLEEP = "💤";
     static final String STOP = "🛑";
+    static final String QUIT = "🚪";
     static final String RECORD = "🔴";
     static final String DOCTOR = "🩺";
     static final String RESET = "🔄";
@@ -143,6 +157,7 @@ final class TuiIcons {
     static final String TAB_MEMORY = MEMORY;
     static final String TAB_MEMORY_LEAK = "💧";
     static final String TAB_NETWORK = "🌐";
+    static final String TAB_OLLAMA = "🦙";
     static final String TAB_METRICS = "📈";
     static final String TAB_SQL_QUERY = KEY;
     static final String TAB_SQL_TRACE = "🔎";

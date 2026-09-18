@@ -158,7 +158,72 @@ Agents are configured using the `AgentConfiguration` class which provides a flue
 * Chat Memory Provider (for memory-enabled agents)
 * Retrieval Augmentor (for RAG functionality)
 * Input and Output Guardrails
+* Content moderation (`withModerationModel`)
 * Concurrent tool execution (`withExecuteToolsConcurrently`) for parallel Camel route tools and MCP tools within one LLM round trip
+* Tool-calling control: round-trip limits, hallucinated tool handling, and error compensation
+* AiServices builder customizer for advanced LangChain4j options
+
+==== Tool-calling options
+
+`AgentConfiguration` exposes the most common LangChain4j `AiServices` tool-calling settings as first-class fluent methods. These are applied automatically when Camel creates an agent from the configuration bean (inline agent mode or a registered `AgentWithMemory` / `AgentWithoutMemory` bean):
+
+[cols="1,2"]
+|===
+| Method | Purpose
+
+| `withMaxToolCallingRoundTrips(int)` | Limits how many tool-calling round trips the LLM may perform per request (`0` = unset)
+| `withHallucinatedToolNameStrategy(...)` | Handles requests for tool names that do not exist (for example a hallucinated `task_complete` tool)
+| `withToolExecutionErrorHandler(...)` | Converts tool execution exceptions into tool result messages for the LLM
+| `withToolArgumentsErrorHandler(...)` | Handles invalid or unparsable tool arguments
+| `withCompensateOnToolErrors(Boolean)` | Sends tool errors back to the LLM so it can recover instead of failing the exchange
+| `withExecuteToolsConcurrently()` / `withExecuteToolsConcurrently(Executor)` | Runs multiple tool calls from one LLM turn in parallel
+|===
+
+==== Content moderation
+
+When `AgentConfiguration.withModerationModel(ModerationModel)` is set, Camel pre-moderates the user message before invoking the chat model. Flagged input raises `ModerationException` before tools run or memory is updated. The producer sets the `CamelLangChain4jAgentModerationFlagged` header to `true` on failure so routes can return a controlled refusal. See xref:others:langchain4j-agent-guardrails.adoc#_content_moderation[Content Moderation] for route examples. The flagged text is available via `${exception.moderation}` when handling `ModerationException`.
+
+._Java-only: public support chatbot with moderation_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withModerationModel(openAiModerationModel);
+
+context.getRegistry().bind("supportAgentConfig", configuration);
+
+onException(ModerationException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(422))
+    .setBody(constant("Sorry, your message violates our usage policy."));
+
+from("platform-http:/support/chat")
+    .to("langchain4j-agent:support?agentConfiguration=#supportAgentConfig&tags=orders,billing");
+----
+
+._Java-only: recover from a hallucinated tool name_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withMaxToolCallingRoundTrips(5)
+    .withHallucinatedToolNameStrategy(request ->
+        ToolExecutionResultMessage.from(request, "Unknown tool: " + request.name()));
+----
+
+Some LangChain4j builder options (for example `beforeToolExecution`, `afterToolExecution`, or `toolSearchStrategy`) are not wrapped individually. Use the customizer escape hatch instead:
+
+._Java-only: configure any remaining AiServices builder option_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withAiServicesCustomizer(builder -> builder
+        .beforeToolExecution(ctx -> log.info("Calling tool {}", ctx.toolExecutionRequest().name()))
+        .afterToolExecution(exec -> log.info("Tool finished: {}", exec.result())));
+----
+
+The customizer runs in `AbstractAgent.configureBuilder()` after all standard Camel wiring (tool providers, MCP, guardrails, RAG, and the first-class tool-calling options above) and before `build()` is called.
 
 ==== Concurrent tool execution
 
@@ -177,6 +242,31 @@ AgentConfiguration configuration = new AgentConfiguration()
 ----
 
 Tool-route header side-effects are not merged back onto the main exchange when tools run concurrently; only the tool result text is returned to the LLM.
+
+The same tool-calling options can also be set directly on the endpoint URI when using inline agent creation mode (`agentConfiguration` without `agent` or `agentFactory`). URI values override the same options on the `AgentConfiguration` bean:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "langchain4j-agent:assistant"
+            parameters:
+              agentConfiguration: "#myConfig"
+              tags: "orders"
+              maxToolCallingRoundTrips: 5
+              compensateOnToolErrors: true
+              executeToolsConcurrently: true
+----
+
+[source,java]
+----
+from("direct:start")
+    .to("langchain4j-agent:assistant?agentConfiguration=#myConfig&tags=orders"
+        + "&maxToolCallingRoundTrips=5&compensateOnToolErrors=true&executeToolsConcurrently=true");
+----
 
 ==== Creating an Agent without Memory
 
@@ -1156,6 +1246,36 @@ You can also define the `ResponseFormat` at the `ChatModel` level. See the https
 * No prompt engineering is needed for output formatting
 * The same schema file can be shared across `camel-openai` and `camel-langchain4j-agent` components
 ====
+
+=== Structured error exchange properties
+
+When a LangChain4j agent call fails, Camel sets structured metadata on the exchange **before** the model exception propagates. This works even when GenAI observability is disabled.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category derived from the LangChain4j exception: `RATE_LIMIT`, `SERVER_ERROR`, `VALIDATION`, `AUTH`, or `UNKNOWN`
+| `CamelAiRetryAfterMillis` | Not populated for LangChain4j providers (OpenAI-only today)
+|===
+
+Category-based handling complements matching on LangChain4j exception types in xref:langchain4j-chat-component.adoc#_error_handling[LangChain4j Chat error handling]:
+
+[source, java]
+----
+onException(Exception.class)
+    .process(exchange -> {
+        String category = exchange.getProperty("CamelAiErrorCategory", String.class);
+        if ("RATE_LIMIT".equals(category)) {
+            exchange.getIn().setHeader("RateLimited", true);
+        }
+    })
+    .maximumRedeliveries(3)
+    .handled(true)
+    .to("direct:rate-limited");
+----
+
+See xref:ai-llm-integration-guide.adoc#_structured_error_exchange_properties[AI LLM integration guide] for a cross-component overview.
 
 == Sub-Pages
 

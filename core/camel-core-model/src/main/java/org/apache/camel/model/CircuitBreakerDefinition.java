@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
@@ -46,7 +47,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false",
               description = "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.")
-    private Boolean inheritErrorHandler;
+    private String inheritErrorHandler;
     @XmlElement
     @Metadata(label = "advanced",
               description = "Configures the circuit breaker to use Resilience4j with the given configuration.")
@@ -58,6 +59,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     @XmlElement
     @Metadata(description = "The fallback route path to execute when the circuit breaker triggers.")
     private OnFallbackDefinition onFallback;
+    @XmlTransient
+    private boolean fallbackViaFluentApi;
 
     public CircuitBreakerDefinition() {
     }
@@ -104,9 +107,17 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         super.setOutputs(outputs);
     }
 
+    /**
+     * Adds the output to the circuit breaker, or to the fallback while the fallback is being built with the fluent Java
+     * DSL, as in {@code circuitBreaker().to("a").onFallback().to("b").end()}.
+     * <p/>
+     * A fallback set with {@link #setOnFallback(OnFallbackDefinition)} (XML, YAML and the other DSL loaders) carries
+     * its own outputs, so the outputs added here belong to the circuit breaker no matter in which order the loader read
+     * the fallback and the steps.
+     */
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (onFallback != null) {
+        if (onFallback != null && fallbackViaFluentApi) {
             onFallback.addOutput(output);
         } else {
             super.addOutput(output);
@@ -138,12 +149,12 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     }
 
     @Override
-    public Boolean getInheritErrorHandler() {
+    public String getInheritErrorHandler() {
         return inheritErrorHandler;
     }
 
     @Override
-    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+    public void setInheritErrorHandler(String inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }
 
@@ -153,6 +164,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     public void setOnFallback(OnFallbackDefinition onFallback) {
         this.onFallback = onFallback;
+        this.fallbackViaFluentApi = false;
     }
 
     // Fluent API
@@ -213,6 +225,22 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
      * By default, Camel error handler is turned off.
      */
     public CircuitBreakerDefinition inheritErrorHandler(boolean inheritErrorHandler) {
+        return inheritErrorHandler(Boolean.toString(inheritErrorHandler));
+    }
+
+    /**
+     * To turn on or off Camel error handling during circuit breaker.
+     *
+     * If this is enabled then Camel error handler will first trigger if there is an error in the circuit breaker, which
+     * allows to let Camel handle redeliveries. If all attempts is failed, then after the circuit breaker is finished,
+     * then Camel error handler can handle the error as well such as the dead letter channel.
+     *
+     * By default, Camel error handler is turned off.
+     *
+     * @param inheritErrorHandler whether to inherit the error handler, can also be a property placeholder that is
+     *                            resolved when the route starts
+     */
+    public CircuitBreakerDefinition inheritErrorHandler(String inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
         return this;
     }
@@ -223,6 +251,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     public CircuitBreakerDefinition onFallback() {
         onFallback = new OnFallbackDefinition();
         onFallback.setParent(this);
+        fallbackViaFluentApi = true;
         return this;
     }
 
@@ -238,6 +267,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         onFallback = new OnFallbackDefinition();
         onFallback.setFallbackViaNetwork(Boolean.toString(true));
         onFallback.setParent(this);
+        fallbackViaFluentApi = true;
         return this;
     }
 

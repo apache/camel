@@ -18,8 +18,11 @@ package org.apache.camel.component.langchain4j.agent;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.langchain4j.data.message.ImageContent;
 import dev.langchain4j.data.message.TextContent;
@@ -32,9 +35,11 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LangChain4jAgentConverterTest extends CamelTestSupport {
 
@@ -56,6 +61,37 @@ public class LangChain4jAgentConverterTest extends CamelTestSupport {
 
         assertNotNull(body);
         assertInstanceOf(TextContent.class, body.getContent());
+    }
+
+    @Test
+    void shouldDecodeTextBytesAsUtf8() {
+        Exchange exchange = context.getEndpoint("direct:test").createExchange();
+        exchange.getMessage().setHeader(Headers.MEDIA_TYPE, "text/plain");
+
+        byte[] utf8 = "café ☕".getBytes(StandardCharsets.UTF_8);
+        AiAgentBody<?> body = context.getTypeConverter().convertTo(AiAgentBody.class, exchange, utf8);
+
+        assertInstanceOf(TextContent.class, body.getContent());
+        assertEquals("café ☕", ((TextContent) body.getContent()).text());
+    }
+
+    @Test
+    void shouldCloseInputStreamAfterConversion() {
+        Exchange exchange = context.getEndpoint("direct:test").createExchange();
+        exchange.getMessage().setHeader(Headers.MEDIA_TYPE, "text/plain");
+
+        AtomicBoolean closed = new AtomicBoolean(false);
+        ByteArrayInputStream stream = new ByteArrayInputStream("Hello".getBytes(StandardCharsets.UTF_8)) {
+            @Override
+            public void close() throws IOException {
+                closed.set(true);
+                super.close();
+            }
+        };
+
+        context.getTypeConverter().convertTo(AiAgentBody.class, exchange, stream);
+
+        assertTrue(closed.get(), "the input stream must be closed after conversion");
     }
 
     @Test

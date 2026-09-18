@@ -47,7 +47,9 @@ public enum BinaryOperatorType {
     STARTS_WITH,
     NOT_STARTS_WITH,
     ENDS_WITH,
-    NOT_ENDS_WITH;
+    NOT_ENDS_WITH,
+    EQUALS,
+    NOT_EQUALS;
 
     private static final Logger LOG = LoggerFactory.getLogger(BinaryOperatorType.class);
 
@@ -121,6 +123,10 @@ public enum BinaryOperatorType {
             return NOT_STARTS_WITH;
         } else if ("!endsWith".equals(text)) {
             return NOT_ENDS_WITH;
+        } else if ("equals".equals(text)) {
+            return EQUALS;
+        } else if ("!equals".equals(text)) {
+            return NOT_EQUALS;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -174,6 +180,10 @@ public enum BinaryOperatorType {
             return "endsWith";
         } else if (operator == NOT_ENDS_WITH) {
             return "!endsWith";
+        } else if (operator == EQUALS) {
+            return "equals";
+        } else if (operator == NOT_EQUALS) {
+            return "!equals";
         }
         return "";
     }
@@ -277,6 +287,8 @@ public enum BinaryOperatorType {
         } else if (operator == STARTS_WITH || operator == NOT_STARTS_WITH) {
             return null;
         } else if (operator == ENDS_WITH || operator == NOT_ENDS_WITH) {
+            return null;
+        } else if (operator == EQUALS || operator == NOT_EQUALS) {
             return null;
         }
         return null;

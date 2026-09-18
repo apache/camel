@@ -33,6 +33,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apexUrl": target.getConfiguration().setApexUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
+        case "approval": target.getConfiguration().setApproval(property(camelContext, org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.class, value)); return true;
         case "backoffincrement":
         case "backoffIncrement": target.getConfiguration().setBackoffIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "batchid":
@@ -179,6 +180,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apexUrl": return java.lang.String.class;
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
+        case "approval": return org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.class;
         case "backoffincrement":
         case "backoffIncrement": return long.class;
         case "batchid":
@@ -326,6 +328,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apexUrl": return target.getConfiguration().getApexUrl();
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
+        case "approval": return target.getConfiguration().getApproval();
         case "backoffincrement":
         case "backoffIncrement": return target.getConfiguration().getBackoffIncrement();
         case "batchid":

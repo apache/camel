@@ -41,6 +41,7 @@ import javax.net.ssl.X509TrustManager;
 
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.Timeout;
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
@@ -56,6 +57,10 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.ai.tool.AiToolParameterHelper;
+import org.apache.camel.component.ai.tool.AiToolRegistry;
+import org.apache.camel.component.ai.tool.AiToolRegistryListener;
+import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -84,8 +89,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true,
-              description = "The operation to perform: 'chat-completion', 'responses', 'embeddings', 'tool-execution', "
-                            + "'audio-transcription', 'audio-translation', or 'audio-speech'")
+              description = "The operation to perform: 'chat-completion', 'responses', 'responses-retrieve', "
+                            + "'responses-cancel', 'embeddings', 'tool-execution', 'audio-transcription', "
+                            + "'audio-translation', 'audio-speech', 'moderation', 'image-generation', or 'image-edit'")
     private OpenAIOperations operation;
 
     @UriParam
@@ -107,6 +113,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     private final Set<String> pendingMcpServers = ConcurrentHashMap.newKeySet();
 
     private volatile McpToolState mcpToolState = McpToolState.empty();
+    private volatile Map<String, AiToolSpec> routeTools = Map.of();
+    private AiToolRegistryListener routeToolRegistryListener;
     private volatile boolean mcpStopped;
     private Map<String, Map<String, String>> serverConfigs;
 
@@ -120,11 +128,16 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         return switch (operation) {
             case chatCompletion -> new OpenAIProducer(this);
             case responses -> new OpenAIResponsesProducer(this);
+            case responsesRetrieve -> new OpenAIResponsesStoredProducer(this, false);
+            case responsesCancel -> new OpenAIResponsesStoredProducer(this, true);
             case embeddings -> new OpenAIEmbeddingsProducer(this);
             case toolExecution -> new OpenAIToolExecutionProducer(this);
             case audioTranscription -> new OpenAIAudioTranscriptionProducer(this);
             case audioTranslation -> new OpenAIAudioTranslationProducer(this);
             case audioSpeech -> new OpenAIAudioSpeechProducer(this);
+            case moderation -> new OpenAIModerationProducer(this);
+            case imageGeneration -> new OpenAIImageGenerationProducer(this);
+            case imageEdit -> new OpenAIImageEditProducer(this);
         };
     }
 
@@ -138,7 +151,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         super.doStart();
         mcpStopped = false;
         client = createClient();
+        registerRouteToolRegistryListener();
         initializeMcpServers();
+        refreshRouteTools();
     }
 
     @Override
@@ -161,6 +176,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 LOG.warn("Error closing MCP client: {}", e.getMessage(), e);
             }
         }
+
+        unregisterRouteToolRegistryListener();
+        routeTools = Map.of();
 
         if (client != null) {
             client.close();
@@ -243,7 +261,116 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                     serverTools.stream().map(McpSchema.Tool::name).toList());
         }
 
-        mcpToolState = new McpToolState(tools, toolClientMap, toolToServerName, returnDirectTools);
+        mcpToolState = new McpToolState(tools, toolClientMap, toolToServerName, returnDirectTools, Map.of());
+    }
+
+    void refreshRouteTools() {
+        if (configuration == null || ObjectHelper.isEmpty(configuration.getTags())) {
+            globalMcpLock.lock();
+            try {
+                if (mcpStopped) {
+                    return;
+                }
+                routeTools = Map.of();
+                republishCombinedState();
+            } finally {
+                globalMcpLock.unlock();
+            }
+            return;
+        }
+
+        Map<String, AiToolSpec> discovered
+                = OpenAIRouteToolSupport.discoverRouteTools(getCamelContext(), configuration.getTags());
+        globalMcpLock.lock();
+        try {
+            if (mcpStopped) {
+                return;
+            }
+            routeTools = discovered;
+            republishCombinedState();
+        } finally {
+            globalMcpLock.unlock();
+        }
+    }
+
+    private void registerRouteToolRegistryListener() {
+        if (ObjectHelper.isEmpty(configuration.getTags()) || routeToolRegistryListener != null) {
+            return;
+        }
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(getCamelContext());
+        routeToolRegistryListener = new AiToolRegistryListener() {
+            @Override
+            public void toolRegistered(String tag, AiToolSpec spec) {
+                if (matchesConfiguredTags(tag)) {
+                    refreshRouteTools();
+                }
+            }
+
+            @Override
+            public void toolDeregistered(String tag, AiToolSpec spec) {
+                if (matchesConfiguredTags(tag)) {
+                    refreshRouteTools();
+                }
+            }
+        };
+        registry.addListener(routeToolRegistryListener);
+    }
+
+    private void unregisterRouteToolRegistryListener() {
+        if (routeToolRegistryListener == null) {
+            return;
+        }
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(getCamelContext());
+        registry.removeListener(routeToolRegistryListener);
+        routeToolRegistryListener = null;
+    }
+
+    private boolean matchesConfiguredTags(String tag) {
+        if (ObjectHelper.isEmpty(configuration.getTags())) {
+            return false;
+        }
+        for (String configured : AiToolParameterHelper.splitTags(configuration.getTags())) {
+            String trimmed = configured.trim();
+            if (trimmed.isEmpty() && tag == null) {
+                return true;
+            }
+            if (tag != null && tag.equals(trimmed)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void republishCombinedState() {
+        McpToolState current = mcpToolState;
+        Set<String> routeNames = routeTools.keySet();
+
+        // Keep only MCP-backed tools from the current snapshot; route entries are rebuilt below
+        List<ChatCompletionFunctionTool> mcpTools = current.tools().stream()
+                .filter(tool -> current.toolClientMap().containsKey(tool.function().name()))
+                .filter(tool -> !routeNames.contains(tool.function().name()))
+                .toList();
+
+        Set<String> mcpReturnDirect = current.returnDirectTools().stream()
+                .filter(name -> current.toolClientMap().containsKey(name))
+                .filter(name -> !routeNames.contains(name))
+                .collect(Collectors.toCollection(HashSet::new));
+
+        Set<String> allReturnDirect = new HashSet<>(mcpReturnDirect);
+        allReturnDirect.addAll(OpenAIRouteToolSupport.returnDirectToolNames(routeTools));
+
+        Set<String> knownTools = new HashSet<>(current.toolClientMap().keySet());
+        knownTools.addAll(routeNames);
+
+        List<ChatCompletionFunctionTool> allTools = new ArrayList<>(mcpTools);
+        allTools.addAll(OpenAIRouteToolSupport.toOpenAiTools(routeTools));
+
+        mcpToolState = new McpToolState(
+                allTools,
+                current.toolClientMap(),
+                current.toolToServerName(),
+                applyManualReturnDirectOverrides(allReturnDirect, knownTools),
+                routeTools);
     }
 
     private McpClientTransport createMcpTransport(String serverName, String transportType, Map<String, String> props)
@@ -433,34 +560,40 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             }
 
             Set<String> oldServerTools = toolsForServer(serverName);
-            List<ChatCompletionFunctionTool> newTools = new ArrayList<>(mcpToolState.tools());
+            List<ChatCompletionFunctionTool> mcpTools = mcpToolState.tools().stream()
+                    .filter(tool -> mcpToolState.toolClientMap().containsKey(tool.function().name()))
+                    .filter(tool -> !oldServerTools.contains(tool.function().name()))
+                    .collect(Collectors.toCollection(ArrayList::new));
             Map<String, McpSyncClient> newClientMap = new HashMap<>(mcpToolState.toolClientMap());
             Map<String, String> newToolToServer = new HashMap<>(mcpToolState.toolToServerName());
-            Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
+            Set<String> mcpReturnDirect = mcpToolState.returnDirectTools().stream()
+                    .filter(name -> mcpToolState.toolClientMap().containsKey(name))
+                    .filter(name -> !oldServerTools.contains(name))
+                    .collect(Collectors.toCollection(HashSet::new));
 
-            newTools.removeIf(t -> oldServerTools.contains(t.function().name()));
             newClientMap.keySet().removeIf(oldServerTools::contains);
             newToolToServer.keySet().removeIf(oldServerTools::contains);
-            newReturnDirect.removeIf(oldServerTools::contains);
 
             for (McpSchema.Tool tool : tools) {
                 if (newClientMap.containsKey(tool.name())) {
                     LOG.warn("Duplicate MCP tool name '{}' from server '{}', using first registered", tool.name(),
                             serverName);
                 } else {
-                    newTools.addAll(McpToolConverter.convert(List.of(tool)));
+                    mcpTools.addAll(McpToolConverter.convert(List.of(tool)));
                     newClientMap.put(tool.name(), client);
                     newToolToServer.put(tool.name(), serverName);
                     if (isReturnDirect(tool)) {
-                        newReturnDirect.add(tool.name());
+                        mcpReturnDirect.add(tool.name());
                     }
                 }
             }
 
-            // Publish immutable snapshots for lock-free readers
+            // Publish MCP-only snapshot, then merge route tools with the same shadowing rules
             mcpToolState = new McpToolState(
-                    newTools, newClientMap, newToolToServer,
-                    applyManualReturnDirectOverrides(newReturnDirect, newClientMap.keySet()));
+                    mcpTools, newClientMap, newToolToServer,
+                    applyManualReturnDirectOverrides(mcpReturnDirect, knownToolsFrom(newClientMap, Map.of())),
+                    mcpToolState.routeTools());
+            republishCombinedState();
             return true;
         } finally {
             globalMcpLock.unlock();
@@ -580,6 +713,12 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 .collect(Collectors.toSet());
     }
 
+    private static Set<String> knownToolsFrom(Map<String, McpSyncClient> toolClientMap, Map<String, AiToolSpec> routeTools) {
+        Set<String> knownTools = new HashSet<>(toolClientMap.keySet());
+        knownTools.addAll(routeTools.keySet());
+        return knownTools;
+    }
+
     private static boolean isReturnDirect(McpSchema.Tool tool) {
         return tool.annotations() != null && Boolean.TRUE.equals(tool.annotations().returnDirect());
     }
@@ -619,8 +758,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     }
 
     private void configureHttpClient(OpenAIOkHttpClient.Builder builder) {
-        if (configuration.getRequestTimeout() > 0) {
-            builder.timeout(Duration.ofMillis(configuration.getRequestTimeout()));
+        Timeout timeout = buildTimeout();
+        if (timeout != null) {
+            builder.timeout(timeout);
         }
         builder.maxRetries(configuration.getMaxRetries());
         Map<String, Object> additionalHeaders = configuration.getAdditionalHeader();
@@ -631,6 +771,35 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 }
             });
         }
+    }
+
+    /**
+     * Builds the SDK timeout from the configured phases, or null when none is set so the SDK defaults apply. Setting
+     * only requestTimeout produces the same result as the single-duration builder method it replaces.
+     */
+    private Timeout buildTimeout() {
+        long request = configuration.getRequestTimeout();
+        long connect = configuration.getConnectTimeout();
+        long read = configuration.getReadTimeout();
+        long write = configuration.getWriteTimeout();
+        if (request <= 0 && connect <= 0 && read <= 0 && write <= 0) {
+            return null;
+        }
+
+        Timeout.Builder timeout = Timeout.builder();
+        if (request > 0) {
+            timeout.request(Duration.ofMillis(request));
+        }
+        if (connect > 0) {
+            timeout.connect(Duration.ofMillis(connect));
+        }
+        if (read > 0) {
+            timeout.read(Duration.ofMillis(read));
+        }
+        if (write > 0) {
+            timeout.write(Duration.ofMillis(write));
+        }
+        return timeout.build();
     }
 
     private void configureSsl(OpenAIOkHttpClient.Builder builder) throws Exception {
@@ -778,7 +947,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             newReturnDirect.add(toolName);
             mcpToolState = new McpToolState(
                     mcpToolState.tools(), mcpToolState.toolClientMap(),
-                    mcpToolState.toolToServerName(), newReturnDirect);
+                    mcpToolState.toolToServerName(), newReturnDirect, mcpToolState.routeTools());
         } finally {
             globalMcpLock.unlock();
         }
@@ -794,7 +963,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             newReturnDirect.remove(toolName);
             mcpToolState = new McpToolState(
                     mcpToolState.tools(), mcpToolState.toolClientMap(),
-                    mcpToolState.toolToServerName(), newReturnDirect);
+                    mcpToolState.toolToServerName(), newReturnDirect, mcpToolState.routeTools());
         } finally {
             globalMcpLock.unlock();
         }

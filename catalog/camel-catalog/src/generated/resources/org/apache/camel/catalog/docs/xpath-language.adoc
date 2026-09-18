@@ -27,6 +27,86 @@ include::partial$language-options.adoc[]
 
 You can use namespaces with XPath expressions using the `Namespaces` helper class.
 
+=== Sharing namespaces via a registry bean
+
+When the same prefix to URI mappings are needed by several expressions, you can register a
+single `org.apache.camel.support.builder.Namespaces` bean and refer to it from each
+expression with the `namespacesRef` option, instead of repeating the mappings inline.
+
+This is intended for XML and YAML DSL, where a `Namespaces` instance cannot be passed
+programmatically. In Java DSL you keep passing the builder directly.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
+                     .add("w", "http://acme.com/wine");
+
+from("direct:start")
+    .filter(xpath("/c:number = 55", ns))
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<camel xmlns="http://camel.apache.org/schema/xml-io">
+
+  <bean name="myNamespaces" type="org.apache.camel.support.builder.Namespaces">
+    <properties>
+      <property key="namespaces[c]" value="http://acme.com/cheese"/>
+      <property key="namespaces[w]" value="http://acme.com/wine"/>
+    </properties>
+  </bean>
+
+  <route>
+    <from uri="direct:start"/>
+    <filter>
+      <xpath namespacesRef="myNamespaces">/c:number = 55</xpath>
+      <to uri="mock:result"/>
+    </filter>
+  </route>
+
+</camel>
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: myNamespaces
+      type: org.apache.camel.support.builder.Namespaces
+      properties:
+        namespaces[c]: "http://acme.com/cheese"
+        namespaces[w]: "http://acme.com/wine"
+- route:
+    from:
+      uri: "direct:start"
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/c:number = 55"
+                namespacesRef: "myNamespaces"
+            steps:
+              - to: "mock:result"
+----
+====
+
+Each prefix is configured as a `namespaces[prefix]` property on the bean, with the namespace
+URI as the value.
+
+If an expression declares namespaces inline as well, then the inline namespaces win and
+`namespacesRef` is ignored.
+
+The `namespacesRef` option is also available on the xref:xquery-language.adoc[XQuery] and
+xref:xtokenize-language.adoc[XML Tokenize] languages.
+
 == Variables
 
 Variables in XPath are defined in different namespaces.
@@ -73,7 +153,7 @@ You can combine headers, properties, body and variables in an XPath expression a
 
 [source,java]
 ----
-from("timer:java?period=1000,repeatCount=1")
+from("timer:java?period=1000&repeatCount=1")
     .setBody()
         .simple("<dummy>YES</dummy>")
     .setVariable("Foo", simple("<hello><id>123</id></hello>", Document.class))
@@ -137,7 +217,7 @@ XML::
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring"
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring"
                 xmlns:foo="http://example.com/person">
     <route>
       <from uri="activemq:MyQueue"/>
@@ -318,20 +398,21 @@ type, so the concat function works.
 == Using XPath on Headers
 
 Some users may have XML stored in a header. To apply an XPath to a
-header's value, you can do this by defining the 'headerName' attribute.
+header's value, you can do this by defining the `source` attribute with the `header:` prefix
+(`variable:` and `property:` work the same way for an exchange variable or property).
 
 [source,xml]
 ----
-<xpath headerName="invoiceDetails">/invoice/@orderType = 'premium'</xpath>
+<xpath source="header:invoiceDetails">/invoice/@orderType = 'premium'</xpath>
 ----
 
-And in Java DSL you specify the headerName as the second parameter as shown:
+And in Java DSL you specify the source with the fluent expression builder as shown:
 
 ._Java-only: XPath expression builder API_
 
 [source,java]
 ----
-xpath("/invoice/@orderType = 'premium'", "invoiceDetails")
+expression().xpath("/invoice/@orderType = 'premium'").source("header:invoiceDetails").end()
 ----
 
 == Example

@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -73,8 +74,9 @@ public class MainSupervisingRouteControllerTest {
         SupervisingRouteController src = (SupervisingRouteController) main.camelContext.getRouteController();
         Throwable e = src.getRestartException("cake");
         assertNotNull(e);
-        assertEquals("Cannot start", e.getMessage());
-        assertInstanceOf(IllegalArgumentException.class, e);
+        assertInstanceOf(FailedToStartRouteException.class, e);
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Cannot start", e.getCause().getMessage());
 
         // bar is no auto startup
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());
@@ -150,8 +152,9 @@ public class MainSupervisingRouteControllerTest {
         SupervisingRouteController src = (SupervisingRouteController) main.camelContext.getRouteController();
         Throwable e = src.getRestartException("cake");
         assertNotNull(e);
-        assertEquals("Cannot start", e.getMessage());
-        assertInstanceOf(IllegalArgumentException.class, e);
+        assertInstanceOf(FailedToStartRouteException.class, e);
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Cannot start", e.getCause().getMessage());
 
         // bar is no auto startup
         assertEquals("Stopped", main.camelContext.getRouteController().getRouteStatus("bar").toString());

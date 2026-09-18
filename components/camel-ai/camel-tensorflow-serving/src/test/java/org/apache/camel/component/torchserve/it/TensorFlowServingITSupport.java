@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 class TensorFlowServingITSupport extends CamelTestSupport {
 
     @RegisterExtension
-    static TensorFlowServingService service = TensorFlowServingServiceFactory.createService();
+    static TensorFlowServingService service = TensorFlowServingServiceFactory.createSingletonService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

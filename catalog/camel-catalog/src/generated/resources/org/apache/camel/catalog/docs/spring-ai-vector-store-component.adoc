@@ -101,12 +101,12 @@ YAML::
 - route:
     from:
       uri: direct:store
-    steps:
-      - to:
-          uri: spring-ai-vector-store:myStore
-          parameters:
-            operation: ADD
-            vectorStore: "#vectorStore"
+      steps:
+        - to:
+            uri: spring-ai-vector-store:myStore
+            parameters:
+              operation: ADD
+              vectorStore: "#vectorStore"
 ----
 ====
 
@@ -150,15 +150,15 @@ YAML::
 - route:
     from:
       uri: direct:embedAndStore
-    steps:
-      - to:
-          uri: spring-ai-embeddings:test
-          parameters:
-            embeddingModel: "#embeddingModel"
-      - to:
-          uri: spring-ai-vector-store:test
-          parameters:
-            vectorStore: "#vectorStore"
+      steps:
+        - to:
+            uri: spring-ai-embeddings:test
+            parameters:
+              embeddingModel: "#embeddingModel"
+        - to:
+            uri: spring-ai-vector-store:test
+            parameters:
+              vectorStore: "#vectorStore"
 ----
 ====
 
@@ -199,19 +199,19 @@ YAML::
 - route:
     from:
       uri: direct:search
-    steps:
-      - setBody:
-          constant: "What is AI?"
-      - to:
-          uri: spring-ai-vector-store:myStore
-          parameters:
-            operation: SIMILARITY_SEARCH
-            topK: 5
-            similarityThreshold: 0.7
-      - log:
-          message: "Found ${header.CamelSpringAiVectorStoreSimilarDocuments.size()} similar documents"
-      - log:
-          message: "Document IDs: ${header.CamelSpringAiVectorStoreDocumentIds}"
+      steps:
+        - setBody:
+            constant: "What is AI?"
+        - to:
+            uri: spring-ai-vector-store:myStore
+            parameters:
+              operation: SIMILARITY_SEARCH
+              topK: 5
+              similarityThreshold: 0.7
+        - log:
+            message: "Found ${header.CamelSpringAiVectorStoreSimilarDocuments.size()} similar documents"
+        - log:
+            message: "Document IDs: ${header.CamelSpringAiVectorStoreDocumentIds}"
 ----
 ====
 

@@ -169,6 +169,47 @@ public class RouteTemplateTest extends ContextTestSupport {
     }
 
     @Test
+    public void testRequiredTemplateParameterSupportsPropertyPlaceholder() {
+        // the required attribute is a String on the model so it can be a property placeholder, which is
+        // resolved when the route is created from the template. Before CAMEL-24694 the text was converted
+        // while loading, so Boolean.valueOf("{{barRequired}}") silently yielded false and turned a required
+        // parameter into an optional one.
+        context.getPropertiesComponent().addInitialProperty("barRequired", "true");
+
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        routeTemplate.getTemplateParameters().get(1).setRequired("{{barRequired}}");
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("foo", "one");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> context.addRouteFromTemplate(null, "myTemplate", parameters),
+                "Should throw exception");
+
+        assertEquals("Route template myTemplate the following mandatory parameters must be provided: bar", e.getMessage());
+    }
+
+    @Test
+    public void testOptionalTemplateParameterSupportsPropertyPlaceholder() throws Exception {
+        context.getPropertiesComponent().addInitialProperty("barRequired", "false");
+
+        RouteTemplateDefinition routeTemplate = context.getRouteTemplateDefinition("myTemplate");
+        routeTemplate.getTemplateParameters().get(1).setRequired("{{barRequired}}");
+
+        getMockEndpoint("mock:cheese").expectedBodiesReceived("Hello Cheese");
+
+        // bar is not required, so it may be supplied without being mandatory
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("foo", "one");
+        parameters.put("bar", "cheese");
+        context.addRouteFromTemplate("first", "myTemplate", parameters);
+
+        template.sendBody("direct:one", "Hello Cheese");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testCreateRouteFromRouteTemplateMissingParameter() throws Exception {
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 

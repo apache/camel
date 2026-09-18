@@ -123,7 +123,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             resourcesOutputDir = new File(project.getBasedir(), "src/generated/resources");
         }
 
-        Index index = PackagePluginUtils.readJandexIndexIgnoreMissing(project, getLog());
+        Index index = PackagePluginUtils.readJandexIndexIgnoreMissing(project);
         if (index == null) {
             return;
         }

@@ -45,7 +45,7 @@ public class Base extends CamelTestSupport {
     static {
         initCredentials();
 
-        service = AzureStorageBlobServiceFactory.createService();
+        service = AzureStorageBlobServiceFactory.createSingletonService();
     }
 
     /*

@@ -36,10 +36,10 @@ public class CamelConfigITCase extends JBangTestSupport {
         execute("config set gav=com.foo:acme:1.0-SNAPSHOT");
         execute("config set runtime=quarkus");
         execute("config set directory=" + mountPoint());
-        checkCommandOutputs("config list",
-                "gav = com.foo:acme:1.0-SNAPSHOT\n" +
-                                           "runtime = quarkus\n" +
-                                           "directory = " + mountPoint());
+        checkCommandOutputsAll("config list",
+                "gav = com.foo:acme:1.0-SNAPSHOT",
+                "runtime = quarkus",
+                "directory = " + mountPoint());
     }
 
     @Test
@@ -47,10 +47,10 @@ public class CamelConfigITCase extends JBangTestSupport {
         execute("config set gav=com.foo:acme:1.0-SNAPSHOT");
         execute("config set runtime=quarkus");
         execute("config set directory=" + mountPoint());
-        checkCommandOutputs("config list",
-                "gav = com.foo:acme:1.0-SNAPSHOT\n" +
-                                           "runtime = quarkus\n" +
-                                           "directory = " + mountPoint());
+        checkCommandOutputsAll("config list",
+                "gav = com.foo:acme:1.0-SNAPSHOT",
+                "runtime = quarkus",
+                "directory = " + mountPoint());
         execute("config unset runtime");
         checkCommandDoesNotOutput("config list", "runtime = quarkus");
     }

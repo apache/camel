@@ -21,6 +21,11 @@ import java.net.Socket;
 import java.net.URI;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.Locale;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLSocket;
 
 import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
 import org.apache.camel.component.as2.api.protocol.RequestAsynchronousMDN;
@@ -46,8 +51,12 @@ import org.apache.hc.core5.http.protocol.RequestContent;
 import org.apache.hc.core5.http.protocol.RequestDate;
 import org.apache.hc.core5.http.protocol.RequestTargetHost;
 import org.apache.hc.core5.http.protocol.RequestUserAgent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AS2AsynchronousMDNManager {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AS2AsynchronousMDNManager.class);
 
     //
     // AS2 HTTP Context Attribute Keys
@@ -98,7 +107,16 @@ public class AS2AsynchronousMDNManager {
     private String userName;
     private String password;
     private String accessToken;
+    private String allowedHosts;
+    private SSLContext sslContext;
 
+    /**
+     * @deprecated use
+     *             {@link #AS2AsynchronousMDNManager(String, String, String, Certificate[], PrivateKey, String, String, String, String)}
+     *             which also takes the allowed delivery hosts. This constructor delivers the MDN without attaching the
+     *             configured credentials, because no allow-list is supplied.
+     */
+    @Deprecated
     public AS2AsynchronousMDNManager(String as2Version,
                                      String userAgent,
                                      String senderFQDN,
@@ -107,6 +125,35 @@ public class AS2AsynchronousMDNManager {
                                      String userName,
                                      String password,
                                      String accessToken) {
+        this(as2Version, userAgent, senderFQDN, signingCertificateChain, signingPrivateKey, userName, password,
+             accessToken, null);
+    }
+
+    public AS2AsynchronousMDNManager(String as2Version,
+                                     String userAgent,
+                                     String senderFQDN,
+                                     Certificate[] signingCertificateChain,
+                                     PrivateKey signingPrivateKey,
+                                     String userName,
+                                     String password,
+                                     String accessToken,
+                                     String allowedHosts) {
+        this(as2Version, userAgent, senderFQDN, signingCertificateChain, signingPrivateKey, userName, password,
+             accessToken, allowedHosts, null);
+    }
+
+    public AS2AsynchronousMDNManager(String as2Version,
+                                     String userAgent,
+                                     String senderFQDN,
+                                     Certificate[] signingCertificateChain,
+                                     PrivateKey signingPrivateKey,
+                                     String userName,
+                                     String password,
+                                     String accessToken,
+                                     String allowedHosts,
+                                     SSLContext sslContext) {
+        this.allowedHosts = allowedHosts;
+        this.sslContext = sslContext;
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
         this.userName = userName;
@@ -130,7 +177,34 @@ public class AS2AsynchronousMDNManager {
         ObjectHelper.notNull(contentType, "contentType");
         ObjectHelper.notNull(recipientDeliveryAddress, "recipientDeliveryAddress");
 
+        // The delivery address is chosen by the sender of the AS2 message (the Receipt-Delivery-Option
+        // header), so it is untrusted input that selects an outbound destination.
         URI uri = URI.create(recipientDeliveryAddress);
+        String scheme = uri.getScheme() == null ? null : uri.getScheme().toLowerCase(Locale.US);
+        // The delivery scheme is sender-chosen (untrusted input). Plain http is always allowed; https is allowed
+        // only when the AS2 endpoint has SSLContextParameters configured, otherwise it is refused (fail-closed)
+        // rather than written in cleartext to the TLS port. Any other scheme is rejected.
+        boolean https = "https".equals(scheme);
+        if (!"http".equals(scheme) && !https) {
+            throw new HttpException(
+                    "Refusing to deliver the asynchronous MDN: the delivery address must use http or https");
+        }
+        if (https && sslContext == null) {
+            throw new HttpException(
+                    "Refusing to deliver the asynchronous MDN over https: no SSLContextParameters are configured"
+                                    + " on the AS2 endpoint");
+        }
+        String host = normalizeHost(uri.getHost());
+        if (host == null) {
+            throw new HttpException("Refusing to deliver the asynchronous MDN: the delivery address has no host");
+        }
+        int port = uri.getPort() != -1 ? uri.getPort() : (https ? 443 : 80);
+
+        boolean hostIsAllowed = isAllowedHost(host);
+        if (allowedHosts != null && !allowedHosts.isBlank() && !hostIsAllowed) {
+            throw new HttpException(
+                    "Refusing to deliver the asynchronous MDN: the delivery address host is not in asyncMdnAllowedHosts");
+        }
 
         int buffSize = 8 * 1024;
 
@@ -138,7 +212,7 @@ public class AS2AsynchronousMDNManager {
         HttpConnectionFactory<ManagedHttpClientConnection> connFactory
                 = ManagedHttpClientConnectionFactory.builder().http1Config(h1Config).build();
 
-        try (HttpClientConnection httpConnection = connFactory.createConnection(new Socket(uri.getHost(), uri.getPort()))) {
+        try (HttpClientConnection httpConnection = connFactory.createConnection(createSocket(https, host, port))) {
 
             // Add Context attributes
             HttpCoreContext httpContext = HttpCoreContext.create();
@@ -146,7 +220,15 @@ public class AS2AsynchronousMDNManager {
 
             ClassicHttpRequest request = new BasicClassicHttpRequest("POST", uri);
             request.setHeader(AS2Header.CONTENT_TYPE, contentType);
-            AS2HeaderUtils.addAuthorizationHeader(request, userName, password, accessToken);
+            // Credentials are only attached to a host the operator has vouched for. Without an allow-list the
+            // destination is entirely sender-chosen, so the MDN is still delivered but without them.
+            if (hostIsAllowed) {
+                AS2HeaderUtils.addAuthorizationHeader(request, userName, password, accessToken);
+            } else if (userName != null || accessToken != null) {
+                LOG.warn("Asynchronous MDN credentials not sent to sender-supplied host {}:"
+                         + " set asyncMdnAllowedHosts to authorise it",
+                        host);
+            }
             httpContext.setRequest(request);
             multipartMimeEntity.setMainBody(true);
             EntityUtils.setMessageEntity(request, multipartMimeEntity);
@@ -164,6 +246,48 @@ public class AS2AsynchronousMDNManager {
         } catch (Exception e) {
             throw new HttpException("failed to send MDN", e);
         }
+    }
+
+    private Socket createSocket(boolean https, String host, int port) throws IOException {
+        if (!https) {
+            return new Socket(host, port);
+        }
+        SSLSocket sslSocket = (SSLSocket) sslContext.getSocketFactory().createSocket(host, port);
+        try {
+            // verify the delivery host against the certificate the peer presents during the handshake
+            SSLParameters sslParameters = sslSocket.getSSLParameters();
+            sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
+            sslSocket.setSSLParameters(sslParameters);
+            // handshake now so a certificate or hostname mismatch fails before the MDN and any credentials are written
+            sslSocket.startHandshake();
+        } catch (IOException e) {
+            sslSocket.close();
+            throw e;
+        }
+        return sslSocket;
+    }
+
+    /**
+     * {@link URI#getHost()} returns an IPv6 literal in its bracketed form ({@code [::1]}), which would never match an
+     * allow-list entry written the way an operator writes it. Compare the address itself.
+     */
+    private static String normalizeHost(String host) {
+        if (host != null && host.length() > 1 && host.charAt(0) == '[' && host.charAt(host.length() - 1) == ']') {
+            return host.substring(1, host.length() - 1);
+        }
+        return host;
+    }
+
+    private boolean isAllowedHost(String host) {
+        if (allowedHosts == null || allowedHosts.isBlank()) {
+            return false;
+        }
+        for (String allowed : allowedHosts.split(",")) {
+            if (allowed.trim().equalsIgnoreCase(host)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private HttpResponse send(HttpClientConnection httpConnection, ClassicHttpRequest request, HttpCoreContext httpContext)

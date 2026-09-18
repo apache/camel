@@ -101,8 +101,9 @@ public interface Printer {
         public void printf(String format, Object... args) {
         }
 
+        @Override
         public void printErr(String message) {
-            delegate.printErr(message);
+            System.err.printf("ERROR: %s%n", message);
         }
     }
 }

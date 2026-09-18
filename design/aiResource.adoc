@@ -1,0 +1,164 @@
+---
+title: Route-based MCP resources
+authors:
+  - "@k-krawczyk"
+reviewers:
+  - "@orpiske"
+  - "@Croway"
+  - "@zbendhiba"
+  - "@jamesnetherton"
+approvers: []
+creation-date: 2026-08-29
+last-updated: 2026-08-29
+status: implementable
+see-also:
+  - "https://issues.apache.org/jira/browse/CAMEL-24394"
+  - "design/aiTool.adoc"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+The Camel MCP server exposes routes as MCP *tools* only. MCP also defines *resources*: read-only
+content a client fetches by uri, which is the natural shape for "read this file from FTP", "give me
+the current configuration", "fetch the latest report from S3". This document proposes a second
+framework-agnostic component, `ai-resource`, mirroring `ai-tool`, and the SPI and bridge work needed
+to publish those routes over MCP.
+
+== Motivation
+
+CAMEL-24394 (Otavio R. Piske) observes that tools are the common case but not the only one, and that
+read-only retrieval is better modelled as a resource. Two concrete differences matter to users:
+
+* A tool is something the *model* decides to call, with arguments and a schema. A resource is
+  something the *client* fetches by uri, with no arguments. Modelling a static document as a tool
+  forces it into the model's tool budget and its decision loop.
+* Resource content is typed: MCP distinguishes textual contents from binary blobs. A tool result is
+  text (or structured JSON). An S3 PDF is not.
+
+The dev-time MCP server in `dsl/camel-jbang/camel-jbang-mcp` already ships resources
+(`SecurityResources`, `MigrationResources`, and others), so the gap is specific to the runtime
+server in `components/camel-ai/camel-mcp-server`.
+
+== Goals
+
+* A consumer endpoint, `ai-resource:resourceName?resourceUri=...`, registering a route as a
+  read-only resource in a CamelContext-scoped registry, with no MCP dependency.
+* Publication of the selected resources over MCP `resources/list` and `resources/read` by the
+  existing bridge, reusing its tag selection, timeout and error sanitization.
+* No breakage for the two out-of-tree `McpServerEngine` implementations (camel-quarkus-mcp-server,
+  the Spring Boot starter): they must keep compiling and passing the conformance kit untouched.
+
+== Non-goals
+
+The following are deliberately left out of the first iteration, in line with the reporter's
+"keep it simple for v1, but plan for extension":
+
+* *Resource templates* (`resources/templates/list`, uri template variables bound to headers).
+* *Per-resource subscriptions* (`resources/subscribe`). The server advertises
+  `resources(subscribe=false, listChanged=true)`.
+* *Prompts* (`prompts/*`). The SPI is shaped so prompts can follow the same default-method pattern,
+  but nothing is implemented.
+* *Cascading to camel-spring-boot and camel-quarkus*. See "Cascade" below.
+
+== Proposal
+
+=== Module: `camel-ai-resource`
+
+A new component module, sibling to `camel-ai-tool`, depending only on `camel-support`:
+
+[source,text]
+----
+ai-resource:resourceName
+  ?resourceUri=camel:///config/app.json   (required, the client-facing address)
+  &tags=crm                               (selection, same semantics as ai-tool)
+  &description=...                        (shown in resources/list)
+  &mimeType=application/json              (default text/plain)
+  &title=...                              (optional display title)
+----
+
+The path parameter is the human-readable *name*; the `resourceUri` option is the *identity*. MCP
+addresses resources by uri, so uniqueness and collision rules are on the uri, not the name.
+
+`AiResourceRegistry` mirrors `AiToolRegistry`: a context plugin mapping tags to specs, with a
+listener interface for adapters that need to react to routes starting and stopping, and a default
+pool for untagged routes that adapters serving remote clients never expose.
+
+`AiResourceExecutor` mirrors `AiToolExecutor`, minus the argument machinery: a read invokes the
+route with an empty exchange and converts the resulting body. The conversion is driven by the
+declared MIME type, so the decision is explicit and visible in the route rather than inferred from
+the body at runtime:
+
+* text subtypes, `application/json`, and any subtype ending in `json`, `xml` or `yaml` are converted
+  to `String`,
+* everything else is converted to `byte[]` and later base64-encoded by the engine,
+* a null body is an error, not an empty resource.
+
+=== SPI
+
+`McpServerEngine` gains three methods, all with defaults:
+
+[source,java]
+----
+default void resourceAdded(McpServerResource resource) { }
+default void resourceRemoved(String resourceUri) { }
+default boolean supportsResources() { return false; }
+----
+
+Existing engines keep compiling and behave exactly as before. The bridge consults
+`supportsResources()` and logs a single WARN when `ai-resource` routes match the configured tags on
+an engine that cannot serve them, so the situation is visible rather than silent.
+
+`McpResourceReadResult` is the resource counterpart of `McpToolCallResult`: exactly one of `text`
+and `blob` is set on success, and a non-null `errorMessage` marks a failure. It is *not* an in-band
+error flag, because `resources/read` has none: the engine turns a failed read into a JSON-RPC error.
+Keeping that mapping in the engine, not the bridge, leaves the bridge free of protocol knowledge.
+
+=== Bridge
+
+`McpServerBridge` subscribes to both registries. Tag selection, the executor pool, the "untagged is
+never exposed" rule and the sanitized error mapping are shared verbatim; the only resource-specific
+logic is the uri-keyed publication map and the timeout property.
+
+Reusing the tag configuration is deliberate (and was the reporter's preference): tools and resources
+cross the same trust boundary, so one tag opts a route in to whichever surface its component
+implies. The timeout is separate (`camel.server.mcp-resource-timeout`) because a document fetch and
+a tool call are different workloads; both default to 20 seconds.
+
+=== Conformance kit
+
+Resource assertions live in a new `McpServerResourceConformanceTestSupport`, a sibling of
+`McpServerConformanceTestSupport`, rather than being added to it. An engine opts in by extending the
+new class once it serves resources. The alternative, gating assertions inside the existing kit
+behind a capability flag, was rejected: it would make the tool contract conditional and leave a kit
+that reports green for an engine which silently skips half of it.
+
+=== Cascade
+
+The reporter asked that this cascades well from core to camel-spring-boot and camel-quarkus, and
+that those repos be involved. The design above is deliberately shaped so that the cascade is *not* a
+prerequisite for merging in core: default no-op SPI methods and a separate conformance class mean
+neither downstream engine changes behaviour or fails a test until it chooses to implement
+`resourceAdded`. The follow-up work in each runtime is then a self-contained issue:
+
+* *camel-quarkus*: register resources through the Quarkiverse `ResourceManager`
+  (quarkus-mcp-server 1.13.x supports dynamic registration), and extend the conformance test to the
+  new kit class.
+* *camel-spring-boot*: the same through the Spring AI MCP server, plus the generated starter for
+  `camel-ai-resource`.
+
+== Development
+
+=== Step 1: `camel-ai-resource` module, SPI, bridge, Vert.x engine (2026-08-29)
+
+Everything described above, with the resource conformance kit run against the Vert.x engine.
+
+=== Step 2: runtime engines
+
+Follow-up issues in camel-quarkus and camel-spring-boot, as described in "Cascade".
+
+=== Step 3 (optional): templates and prompts
+
+Only if usage asks for them. Both fit the same shape: `resourceTemplateAdded` and `promptAdded` as
+further default methods, with their own opt-in conformance classes.

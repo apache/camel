@@ -942,7 +942,8 @@ public class XPathBuilder extends ServiceSupport
             // fetch all namespaces
             if (document instanceof InputSource) {
                 InputSource inputSource = (InputSource) document;
-                answer = (NodeList) xpathExpression.evaluate(inputSource, XPathConstants.NODESET);
+                answer = (NodeList) xpathExpression.evaluate(toHardenedDocument(exchange, inputSource),
+                        XPathConstants.NODESET);
             } else if (document instanceof DOMSource) {
                 DOMSource source = (DOMSource) document;
                 answer = (NodeList) xpathExpression.evaluate(source.getNode(), XPathConstants.NODESET);
@@ -950,7 +951,8 @@ public class XPathBuilder extends ServiceSupport
                 SAXSource source = (SAXSource) document;
                 // since its a SAXSource it may not return an NodeList (for
                 // example if using Saxon)
-                Object result = xpathExpression.evaluate(source.getInputSource(), XPathConstants.NODESET);
+                Object result = xpathExpression.evaluate(toHardenedDocument(exchange, source.getInputSource()),
+                        XPathConstants.NODESET);
                 if (result instanceof NodeList) {
                     answer = (NodeList) result;
                 } else {
@@ -1018,7 +1020,7 @@ public class XPathBuilder extends ServiceSupport
                 }
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource) document;
-                    answer = xpathExpression.evaluate(inputSource, resultQName);
+                    answer = xpathExpression.evaluate(toHardenedDocument(exchange, inputSource), resultQName);
                 } else if (document instanceof DOMSource) {
                     DOMSource source = (DOMSource) document;
                     answer = xpathExpression.evaluate(source.getNode(), resultQName);
@@ -1028,7 +1030,7 @@ public class XPathBuilder extends ServiceSupport
             } else {
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource) document;
-                    answer = xpathExpression.evaluate(inputSource);
+                    answer = xpathExpression.evaluate(toHardenedDocument(exchange, inputSource));
                 } else if (document instanceof DOMSource) {
                     DOMSource source = (DOMSource) document;
                     answer = xpathExpression.evaluate(source.getNode());
@@ -1227,6 +1229,29 @@ public class XPathBuilder extends ServiceSupport
 
         // input stream is not needed otherwise
         return false;
+    }
+
+    /**
+     * Parses an {@link InputSource} into a DOM document before it is evaluated.
+     * <p>
+     * {@link XPathExpression#evaluate(InputSource)} and its overloads build a {@link javax.xml.parsers.DocumentBuilder}
+     * of their own using the JDK defaults, which accept a {@code DOCTYPE} declaration and resolve external entities.
+     * Routing the source through the type converter instead reuses the hardened {@code DocumentBuilderFactory} that the
+     * default {@code documentType} of {@link Document} already goes through, so both document types are parsed with the
+     * same configuration. The XPath engine builds a full DOM from the source either way, so this does not add a parse
+     * that was not already happening.
+     */
+    protected Document toHardenedDocument(Exchange exchange, InputSource inputSource) {
+        Document document = null;
+        if (inputSource != null) {
+            document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, inputSource);
+        }
+        if (document == null) {
+            throw new RuntimeCamelException(
+                    "Cannot convert the InputSource to a org.w3c.dom.Document for evaluating the XPath expression: "
+                                            + getText());
+        }
+        return document;
     }
 
     /**

@@ -54,34 +54,4 @@ public final class DateFunctionFactory implements SimpleLanguageFunctionFactory 
 
         return null;
     }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public String createCode(CamelContext camelContext, String function, int index) {
-        if ("date:millis".equals(function)) {
-            return "System.currentTimeMillis()";
-        }
-
-        String remainder = ifStartsWithReturnRemainder("date-with-timezone:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 3);
-            if (parts.length < 3) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, index);
-            }
-            return "date(exchange, \"" + parts[0] + "\", \"" + parts[1] + "\", \"" + parts[2] + "\")";
-        }
-
-        remainder = ifStartsWithReturnRemainder("date:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":", 2);
-            if (parts.length == 1) {
-                return "date(exchange, \"" + parts[0] + "\")";
-            } else {
-                return "date(exchange, \"" + parts[0] + "\", null, \"" + parts[1] + "\")";
-            }
-        }
-
-        return null;
-    }
 }

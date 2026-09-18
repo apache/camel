@@ -62,42 +62,45 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
                         .setBody(constant("Sensitive Data"))
                         .to(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=RAW");
 
-                from(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=RAW").process(new AsyncProcessorSupport() {
-                    @Override
-                    public boolean process(Exchange exchange, AsyncCallback asyncCallback) {
-                        Message in = exchange.getIn();
-                        // check the content-length header is filtered
-                        Object value = in.getHeader("Content-Length");
-                        assertNull(value, "The Content-Length header should be removed");
-                        // Get the request message
-                        String request = in.getBody(String.class);
-                        String priority = in.getHeader("priority", "fast", String.class);
+                // muteException=false: these tests assert the continuation-timeout message reaches the caller,
+                // which CAMEL-24477 otherwise replaces with a generic fault
+                from(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=RAW&muteException=false")
+                        .process(new AsyncProcessorSupport() {
+                            @Override
+                            public boolean process(Exchange exchange, AsyncCallback asyncCallback) {
+                                Message in = exchange.getIn();
+                                // check the content-length header is filtered
+                                Object value = in.getHeader("Content-Length");
+                                assertNull(value, "The Content-Length header should be removed");
+                                // Get the request message
+                                String request = in.getBody(String.class);
+                                String priority = in.getHeader("priority", "fast", String.class);
 
-                        // need not to block this thread to simulate slow response so use a thread pool to wait
-                        if ("slow".equalsIgnoreCase(priority)) {
-                            pool.submit(() -> {
-                                try {
-                                    log.info("Sleeping for 10 seconds to simulate slow response");
-                                    Thread.sleep(10000);
-                                } catch (InterruptedException e) {
-                                    // ignore
-                                } finally {
-                                    asyncCallback.done(false);
+                                // need not to block this thread to simulate slow response so use a thread pool to wait
+                                if ("slow".equalsIgnoreCase(priority)) {
+                                    pool.submit(() -> {
+                                        try {
+                                            log.info("Sleeping for 10 seconds to simulate slow response");
+                                            Thread.sleep(10000);
+                                        } catch (InterruptedException e) {
+                                            // ignore
+                                        } finally {
+                                            asyncCallback.done(false);
+                                        }
+                                    });
+                                    return false;
+                                } else {
+                                    // Send the response message back
+                                    if (request.indexOf(ECHO_METHOD) > 0) {
+                                        exchange.getMessage().setBody(ECHO_RESPONSE);
+                                    } else { // echoBoolean call
+                                        exchange.getMessage().setBody(ECHO_BOOLEAN_RESPONSE);
+                                    }
                                 }
-                            });
-                            return false;
-                        } else {
-                            // Send the response message back
-                            if (request.indexOf(ECHO_METHOD) > 0) {
-                                exchange.getMessage().setBody(ECHO_RESPONSE);
-                            } else { // echoBoolean call
-                                exchange.getMessage().setBody(ECHO_BOOLEAN_RESPONSE);
+                                asyncCallback.done(true);
+                                return true;
                             }
-                        }
-                        asyncCallback.done(true);
-                        return true;
-                    }
-                });
+                        });
             }
         };
     }

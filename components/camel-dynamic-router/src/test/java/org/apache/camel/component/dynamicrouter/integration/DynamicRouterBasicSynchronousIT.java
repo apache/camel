@@ -176,7 +176,7 @@ public class DynamicRouterBasicSynchronousIT {
                 .expressionLanguage("spel")
                 .build();
 
-        template.sendBody("dynamic-router-control:subscribe", controlMessage);
+        template.sendBody("dynamic-router-control:subscribe?allowPredicateFromMessage=true", controlMessage);
 
         // Trigger events to subscribers
         template.sendBodyAndHeader("direct:start", "testMessage", "test", "testValue");
@@ -239,7 +239,7 @@ public class DynamicRouterBasicSynchronousIT {
                 .predicate("#{headers.test == 'testValue1'}")
                 .expressionLanguage("spel")
                 .build();
-        template.sendBody("dynamic-router-control:subscribe", controlMessage1);
+        template.sendBody("dynamic-router-control:subscribe?allowPredicateFromMessage=true", controlMessage1);
 
         DynamicRouterControlMessage controlMessage2 = DynamicRouterControlMessage.Builder.newBuilder()
                 .subscribeChannel("test")
@@ -249,7 +249,7 @@ public class DynamicRouterBasicSynchronousIT {
                 .predicate("#{headers.test == 'testValue2'}")
                 .expressionLanguage("spel")
                 .build();
-        template.sendBody("dynamic-router-control:subscribe", controlMessage2);
+        template.sendBody("dynamic-router-control:subscribe?allowPredicateFromMessage=true", controlMessage2);
 
         DynamicRouterControlMessage controlMessage3 = DynamicRouterControlMessage.Builder.newBuilder()
                 .subscribeChannel("test")
@@ -259,7 +259,7 @@ public class DynamicRouterBasicSynchronousIT {
                 .predicate("#{headers.test == 'testValue3'}")
                 .expressionLanguage("spel")
                 .build();
-        template.sendBody("dynamic-router-control:subscribe", controlMessage3);
+        template.sendBody("dynamic-router-control:subscribe?allowPredicateFromMessage=true", controlMessage3);
 
         String filtersJson = template.requestBodyAndHeader("direct:list", "", "subscribeChannel", "test", String.class);
         Assertions.assertEquals(

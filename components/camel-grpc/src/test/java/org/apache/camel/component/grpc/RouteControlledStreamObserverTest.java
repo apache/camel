@@ -26,6 +26,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -188,7 +189,8 @@ public class RouteControlledStreamObserverTest extends GrpcTestSupport {
                         .to("log:foo");
             }
         });
-        assertThrows(IllegalArgumentException.class, camelContext::start);
+        FailedToStartRouteException exception = assertThrows(FailedToStartRouteException.class, camelContext::start);
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
     }
 
     @Override

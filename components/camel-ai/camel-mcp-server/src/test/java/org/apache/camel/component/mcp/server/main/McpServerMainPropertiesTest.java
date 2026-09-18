@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mcp.server.main;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.util.Map;
 
@@ -24,6 +26,7 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine;
 import org.apache.camel.main.Main;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
@@ -88,14 +91,46 @@ class McpServerMainPropertiesTest {
     }
 
     @Test
-    void testMcpEnabledWithoutHttpServerFailsFast() {
+    void testMcpEnabledWithoutHttpServerFailsFastForHttpTransport() {
         Main main = new Main();
         main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-transport", "http");
         main.addInitialProperty("camel.server.mcp-tags", "crm");
 
         try {
             assertThatThrownBy(main::start)
                     .hasStackTraceContaining("Vert.x platform HTTP server");
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void testMcpStdioStartsWithoutHttpServer() throws Exception {
+        Main main = new Main();
+        main.configure().setStartupSummaryLevel(org.apache.camel.StartupSummaryLevel.Off);
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("ai-tool:say_hello?tags=crm&description=Say hello"
+                     + "&parameter.name=string&parameter.name.required=true")
+                        .setBody(simple("Hello ${header.name}"));
+            }
+        });
+        main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-transport", "stdio");
+        main.addInitialProperty("camel.server.mcp-tags", "crm");
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
+        main.bind("mcpServerEngine", engine);
+
+        try {
+            main.start();
+            org.apache.camel.component.mcp.server.McpServerBridge bridge
+                    = main.getCamelContext().hasService(org.apache.camel.component.mcp.server.McpServerBridge.class);
+            assertThat(bridge).isNotNull();
+            assertThat(bridge.getEngine()).isInstanceOf(
+                    org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine.class);
         } finally {
             main.stop();
         }

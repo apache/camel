@@ -28,6 +28,7 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.milvus.common.MilvusProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.milvus.MilvusContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -60,12 +61,14 @@ public class MilvusLocalContainerInfraService implements MilvusInfraService, Con
         class TestInfraMilvusContainer extends MilvusContainer {
             public TestInfraMilvusContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("milvusdb/milvus"));
-                withStartupTimeout(Duration.ofMinutes(3L));
+                waitingFor(Wait.forLogMessage(".*Milvus Proxy successfully initialized and ready to serve!.*", 1))
+                        .withStartupTimeout(Duration.ofMinutes(3L));
                 withEnv("DEPLOY_MODE", "STANDALONE");
 
                 ContainerEnvironmentUtil.configurePorts(this, fixedPort,
                         ContainerEnvironmentUtil.PortConfig.primary(19530),
                         ContainerEnvironmentUtil.PortConfig.secondary(9091));
+                ;
             }
         }
 

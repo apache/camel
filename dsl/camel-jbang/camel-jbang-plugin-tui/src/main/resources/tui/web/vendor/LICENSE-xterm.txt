@@ -1,6 +1,6 @@
 This directory bundles the following third-party components, vendored to
-avoid a runtime dependency on a CDN. Neither is modified from its upstream
-release.
+avoid a runtime dependency on a CDN. None are modified from their upstream
+releases.
 
 xterm.js 5.5.0 (xterm.js, xterm.css)
 https://github.com/xtermjs/xterm.js
@@ -14,7 +14,12 @@ https://github.com/xtermjs/xterm.js/tree/master/addons/addon-fit
 
 Copyright (c) 2019, The xterm.js authors (https://github.com/xtermjs/xterm.js)
 
-Both are released under the MIT License:
+xterm-addon-unicode11 0.9.0 (xterm-addon-unicode11.js)
+https://github.com/xtermjs/xterm.js/tree/master/addons/addon-unicode11
+
+Copyright (c) 2019, The xterm.js authors (https://github.com/xtermjs/xterm.js)
+
+All are released under the MIT License:
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

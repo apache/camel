@@ -110,10 +110,10 @@ public class ChatPredictor extends AbstractTaskPredictor {
     protected String getPythonScript() {
         String doSample = config.getTemperature() > 0 ? "True" : "False";
         float temperature = config.getTemperature() > 0 ? config.getTemperature() : 1.0f;
-        String tokenClause = config.getAuthToken() != null ? ", token='" + config.getAuthToken() + "'" : "";
-        return loadPythonScript("chat.py", config.getModelId(), config.getRevision(), config.getDevice(), tokenClause,
-                config.getMaxTokens(),
-                doSample, temperature);
+        // The token is applied centrally as the HF_TOKEN environment variable in
+        // AbstractTaskPredictor.withAuthToken, so no per-task token clause is needed here.
+        return loadPythonScript("chat.py", config.getModelId(), config.getRevision(), config.getDevice(),
+                config.getMaxTokens(), doSample, temperature);
     }
 
     @Override

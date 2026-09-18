@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GroupIT {
     @RegisterExtension
-    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
+    static ZooKeeperService service = ZooKeeperServiceFactory.createSingletonService();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupIT.class);
 

@@ -19,6 +19,7 @@ package org.apache.camel.component.infinispan;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -38,6 +39,12 @@ public abstract class InfinispanAggregationRepository
         implements RecoverableAggregationRepository, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanAggregationRepository.class);
+
+    /**
+     * Prefix of the keys under which completed exchanges are kept for recovery. Recovery entries are keyed by exchange
+     * id, aggregations in progress by correlation key, and the prefix keeps the two apart in the same cache.
+     */
+    private static final String RECOVERY_KEY_PREFIX = "camel-recovery:";
 
     private CamelContext camelContext;
 
@@ -96,32 +103,66 @@ public abstract class InfinispanAggregationRepository
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
-        getCache().remove(key);
+        DefaultExchangeHolder holder = getCache().remove(key);
+
+        if (useRecovery) {
+            // the aggregation is complete but the exchange has not been processed yet, so keep a copy that
+            // recovery can pick up if the processing never confirms it
+            if (holder == null) {
+                holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
+            }
+            LOG.trace("Putting an exchange with ID {} into the recovery store", exchange.getExchangeId());
+            getCache().put(recoveryKey(exchange.getExchangeId()), holder);
+        }
     }
 
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
         LOG.trace("Confirming an exchange with ID {}.", exchangeId);
-        getCache().remove(exchangeId);
+        if (useRecovery) {
+            getCache().remove(recoveryKey(exchangeId));
+        }
     }
 
     @Override
     public Set<String> getKeys() {
-        return Collections.unmodifiableSet(getCache().keySet());
+        return getCache().keySet().stream()
+                .filter(key -> !isRecoveryKey(key))
+                .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
     }
 
     @Override
     public Set<String> scan(CamelContext camelContext) {
+        if (!useRecovery) {
+            LOG.debug("Recovery is disabled on the repository of {} context, nothing to scan", camelContext.getName());
+            return Collections.emptySet();
+        }
+
         LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
-        Set<String> scanned = Collections.unmodifiableSet(getCache().keySet());
-        LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
+        Set<String> scanned = getCache().keySet().stream()
+                .filter(InfinispanAggregationRepository::isRecoveryKey)
+                .map(InfinispanAggregationRepository::exchangeIdOf)
+                .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
+        LOG.trace("Found {} exchanges to recover in {} context", scanned.size(), camelContext.getName());
         return scanned;
     }
 
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
         LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
-        return useRecovery ? unmarshallExchange(camelContext, getCache().get(exchangeId)) : null;
+        return useRecovery ? unmarshallExchange(camelContext, getCache().get(recoveryKey(exchangeId))) : null;
+    }
+
+    private static String recoveryKey(String exchangeId) {
+        return RECOVERY_KEY_PREFIX + exchangeId;
+    }
+
+    private static boolean isRecoveryKey(String key) {
+        return key.startsWith(RECOVERY_KEY_PREFIX);
+    }
+
+    private static String exchangeIdOf(String recoveryKey) {
+        return recoveryKey.substring(RECOVERY_KEY_PREFIX.length());
     }
 
     public void setCacheName(String cacheName) {

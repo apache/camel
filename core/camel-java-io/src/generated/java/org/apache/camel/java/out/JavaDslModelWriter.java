@@ -69,6 +69,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteBeanFactoryDefinition(sb, def);
         return sb.toString();
     }
+    public String writeCacheDefinition(CacheDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "cache", def);
+        doWriteCacheDefinition(sb, def);
+        return sb.toString();
+    }
     public String writeCatchDefinition(CatchDefinition def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1111,6 +1118,20 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteThriftDataFormat(sb, def);
         return sb.toString();
     }
+    public String writeToonDataFormat(ToonDataFormat def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "toon", def);
+        doWriteToonDataFormat(sb, def);
+        return sb.toString();
+    }
+    public String writeUblDataFormat(UblDataFormat def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "ubl", def);
+        doWriteUblDataFormat(sb, def);
+        return sb.toString();
+    }
     public String writeUniVocityCsvDataFormat(UniVocityCsvDataFormat def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1209,13 +1230,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteSpringTransactionErrorHandlerDefinition(sb, def);
         return sb.toString();
     }
-    public String writeCSimpleExpression(CSimpleExpression def) {
-        resetState();
-        StringBuilder sb = new StringBuilder();
-        beginStep(sb, "csimple", def);
-        doWriteCSimpleExpression(sb, def);
-        return sb.toString();
-    }
     public String writeConstantExpression(ConstantExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1286,13 +1300,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteJavaScriptExpression(sb, def);
         return sb.toString();
     }
-    public String writeJoorExpression(JoorExpression def) {
-        resetState();
-        StringBuilder sb = new StringBuilder();
-        beginStep(sb, "joor", def);
-        doWriteJoorExpression(sb, def);
-        return sb.toString();
-    }
     public String writeJqExpression(JqExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1335,11 +1342,25 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteOgnlExpression(sb, def);
         return sb.toString();
     }
+    public String writePython3Expression(Python3Expression def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "python3", def);
+        doWritePython3Expression(sb, def);
+        return sb.toString();
+    }
     public String writePythonExpression(PythonExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
         beginStep(sb, "python", def);
         doWritePythonExpression(sb, def);
+        return sb.toString();
+    }
+    public String writeQuickjsExpression(QuickjsExpression def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "quickjs", def);
+        doWriteQuickjsExpression(sb, def);
         return sb.toString();
     }
     public String writeRefExpression(RefExpression def) {
@@ -1800,6 +1821,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
             doWriteAttribute(sb, "script", def.getScript(), null);
         }
     }
+    protected void doWriteCacheDefinition(StringBuilder sb, CacheDefinition def) {
+        doWriteProcessorDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "keyValueRepository", def.getKeyValueRepository(), null);
+        doWriteAttribute(sb, "ttl", def.getTtl(), "-1");
+        doWriteAttribute(sb, "cacheNull", def.getCacheNull(), "false");
+        doWriteOutputExpressionNodeElements(sb, def);
+    }
     protected void doWriteCatchDefinition(StringBuilder sb, CatchDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteStringList(sb, null, "exception", def.getExceptions());
@@ -1815,7 +1843,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteCircuitBreakerDefinition(StringBuilder sb, CircuitBreakerDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "configuration", def.getConfiguration(), null);
-        doWriteAttribute(sb, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
+        doWriteAttribute(sb, "inheritErrorHandler", def.getInheritErrorHandler(), "false");
         doWriteChildElement(sb, "resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteChildElement(sb, "faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteChildElement(sb, "onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
@@ -2081,6 +2109,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
@@ -2434,7 +2464,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteRouteTemplateParameterDefinition(StringBuilder sb, RouteTemplateParameterDefinition def) {
         doWriteAttribute(sb, "description", def.getDescription(), null);
         doWriteAttribute(sb, "name", def.getName(), null);
-        doWriteAttribute(sb, "required", toString(def.getRequired()), null);
+        doWriteAttribute(sb, "required", def.getRequired(), null);
         doWriteAttribute(sb, "defaultValue", def.getDefaultValue(), null);
     }
     protected void doWriteRouteTemplatesDefinition(StringBuilder sb, RouteTemplatesDefinition def) {
@@ -2704,6 +2734,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
@@ -2824,9 +2856,9 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteAvroDataFormat(StringBuilder sb, AvroDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
-        doWriteAttribute(sb, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(sb, "collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute(sb, "jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute(sb, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(sb, "instanceClassName", def.getInstanceClassName(), null);
         doWriteAttribute(sb, "library", toString(def.getLibrary()), "avroJackson");
         doWriteAttribute(sb, "objectMapper", def.getObjectMapper(), null);
@@ -2844,6 +2876,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute(sb, "schemaResolver", def.getSchemaResolver(), null);
         doWriteAttribute(sb, "autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute(sb, "serializablePackages", def.getSerializablePackages(), null);
     }
     protected void doWriteBarcodeDataFormat(StringBuilder sb, BarcodeDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -2982,6 +3015,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) item, this::doWriteSwiftMxDataFormat);
                     case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) item, this::doWriteSyslogDataFormat);
                     case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) item, this::doWriteTarFileDataFormat);
+                    case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) item, this::doWriteToonDataFormat);
+                    case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) item, this::doWriteUblDataFormat);
                     case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) item, this::doWriteThriftDataFormat);
                     case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) item, this::doWriteUniVocityCsvDataFormat);
                     case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) item, this::doWriteUniVocityFixedDataFormat);
@@ -3195,6 +3230,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
         doWriteAttribute(sb, "hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute(sb, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute(sb, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
     }
     protected void doWritePQCDataFormat(StringBuilder sb, PQCDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -3241,6 +3277,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteSmooksDataFormat(StringBuilder sb, SmooksDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "smooksConfig", def.getSmooksConfig(), null);
+        doWriteAttribute(sb, "allowExternalEntities", def.getAllowExternalEntities(), "false");
     }
     protected void doWriteSoapDataFormat(StringBuilder sb, SoapDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -3278,6 +3315,18 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "instanceClass", def.getInstanceClass(), null);
         doWriteAttribute(sb, "contentTypeFormat", def.getContentTypeFormat(), "binary");
         doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
+    }
+    protected void doWriteToonDataFormat(StringBuilder sb, ToonDataFormat def) {
+        doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "indent", def.getIndent(), "2");
+        doWriteAttribute(sb, "delimiter", def.getDelimiter(), "COMMA");
+        doWriteAttribute(sb, "lengthMarker", def.getLengthMarker(), "false");
+        doWriteAttribute(sb, "strict", def.getStrict(), "true");
+        doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
+    }
+    protected void doWriteUblDataFormat(StringBuilder sb, UblDataFormat def) {
+        doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "prettyPrint", def.getPrettyPrint(), "false");
     }
     protected void doWriteUniVocityAbstractDataFormatAttributes(StringBuilder sb, UniVocityAbstractDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -3329,7 +3378,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteXMLSecurityDataFormat(StringBuilder sb, XMLSecurityDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "namespace", def.getNamespaceRef(), null);
-        doWriteAttribute(sb, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute(sb, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES_256_GCM");
         doWriteAttribute(sb, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(sb, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(sb, "secureTag", def.getSecureTag(), null);
@@ -3419,12 +3468,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteTransactionErrorHandlerDefinitionAttributes(sb, def);
         doWriteDefaultErrorHandlerDefinitionElements(sb, def);
     }
-    protected void doWriteCSimpleExpression(StringBuilder sb, CSimpleExpression def) {
-        doWriteTypedExpressionDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "trimResult", def.getTrimResult(), "false");
-        doWriteAttribute(sb, "pretty", def.getPretty(), "false");
-        doWriteValue(sb, def.getExpression());
-    }
     protected void doWriteConstantExpression(StringBuilder sb, ConstantExpression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
@@ -3473,12 +3516,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
-    protected void doWriteJoorExpression(StringBuilder sb, JoorExpression def) {
-        doWriteTypedExpressionDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "preCompile", def.getPreCompile(), "true");
-        doWriteAttribute(sb, "singleQuotes", def.getSingleQuotes(), "true");
-        doWriteValue(sb, def.getExpression());
-    }
     protected void doWriteJqExpression(StringBuilder sb, JqExpression def) {
         doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
@@ -3511,11 +3548,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
+    protected void doWriteNamespaceAwareExpressionAttributes(StringBuilder sb, NamespaceAwareExpression def) {
+        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "namespacesRef", def.getNamespacesRef(), null);
+    }
     protected void doWriteNamespaceAwareExpressionElements(StringBuilder sb, NamespaceAwareExpression def) {
         doWriteChildList(sb, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
     }
     protected void doWriteNamespaceAwareExpression(StringBuilder sb, NamespaceAwareExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
@@ -3523,7 +3564,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
+    protected void doWritePython3Expression(StringBuilder sb, Python3Expression def) {
+        doWriteTypedExpressionDefinitionAttributes(sb, def);
+        doWriteValue(sb, def.getExpression());
+    }
     protected void doWritePythonExpression(StringBuilder sb, PythonExpression def) {
+        doWriteTypedExpressionDefinitionAttributes(sb, def);
+        doWriteValue(sb, def.getExpression());
+    }
+    protected void doWriteQuickjsExpression(StringBuilder sb, QuickjsExpression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
@@ -3581,14 +3630,14 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteValue(sb, def.getExpression());
     }
     protected void doWriteXMLTokenizerExpression(StringBuilder sb, XMLTokenizerExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "mode", def.getMode(), "i");
         doWriteAttribute(sb, "group", def.getGroup(), null);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
     protected void doWriteXPathExpression(StringBuilder sb, XPathExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "documentType", def.getDocumentTypeName(), null);
         doWriteAttribute(sb, "resultQName", def.getResultQName(), "NODESET");
         doWriteAttribute(sb, "saxon", def.getSaxon(), null);
@@ -3601,7 +3650,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
     protected void doWriteXQueryExpression(StringBuilder sb, XQueryExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "configurationRef", def.getConfigurationRef(), null);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);
@@ -3615,7 +3664,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "roundRobin", def.getRoundRobin(), null);
         doWriteAttribute(sb, "sticky", def.getSticky(), null);
         doWriteAttribute(sb, "maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
-        doWriteAttribute(sb, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
+        doWriteAttribute(sb, "inheritErrorHandler", def.getInheritErrorHandler(), "true");
         doWriteStringList(sb, null, "exception", def.getExceptions());
     }
     protected void doWriteRandomLoadBalancerDefinition(StringBuilder sb, RandomLoadBalancerDefinition def) {
@@ -3692,7 +3741,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "name", def.getName(), null);
         doWriteAttribute(sb, "type", toString(def.getType()), "path");
         doWriteAttribute(sb, "defaultValue", def.getDefaultValue(), null);
-        doWriteAttribute(sb, "required", toString(def.getRequired()), "true");
+        doWriteAttribute(sb, "required", def.getRequired(), "true");
         doWriteAttribute(sb, "collectionFormat", toString(def.getCollectionFormat()), "csv");
         doWriteAttribute(sb, "arrayType", def.getArrayType(), "string");
         doWriteAttribute(sb, "dataType", def.getDataType(), "string");
@@ -3932,6 +3981,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
@@ -4072,6 +4123,22 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     sb.append(")");
                     doWriteBeanDefinition(sb, _d);
                     endStep(sb, "bean", v);
+                }
+                case "CacheDefinition" -> {
+                    CacheDefinition _d = (CacheDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".cache(");
+                    boolean _first = true;
+                    if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(expressionDsl(_d.getExpression()));
+                    }
+                    handledAttributes.add("expression");
+                    handledAttributes.add("expression");
+                    sb.append(")");
+                    doWriteCacheDefinition(sb, _d);
+                    endStep(sb, "cache", v);
                 }
                 case "CatchDefinition" -> {
                     CatchDefinition _d = (CatchDefinition) v;
@@ -5204,6 +5271,22 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     doWriteBeanDefinition(sb, _d);
                     endStep(sb, "bean", v);
                 }
+                case "CacheDefinition" -> {
+                    CacheDefinition _d = (CacheDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".cache(");
+                    boolean _first = true;
+                    if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(expressionDsl(_d.getExpression()));
+                    }
+                    handledAttributes.add("expression");
+                    handledAttributes.add("expression");
+                    sb.append(")");
+                    doWriteCacheDefinition(sb, _d);
+                    endStep(sb, "cache", v);
+                }
                 case "CatchDefinition" -> {
                     CatchDefinition _d = (CatchDefinition) v;
                     handledAttributes.clear();
@@ -6214,11 +6297,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteExpressionDefinitionRef(StringBuilder sb, ExpressionDefinition v) {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
-                case "CSimpleExpression" -> {
-                    beginStep(sb, "csimple", v);
-                    doWriteCSimpleExpression(sb, (CSimpleExpression) v);
-                    endStep(sb, "csimple", v);
-                }
                 case "ConstantExpression" -> {
                     beginStep(sb, "constant", v);
                     doWriteConstantExpression(sb, (ConstantExpression) v);
@@ -6269,11 +6347,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     doWriteJavaScriptExpression(sb, (JavaScriptExpression) v);
                     endStep(sb, "js", v);
                 }
-                case "JoorExpression" -> {
-                    beginStep(sb, "joor", v);
-                    doWriteJoorExpression(sb, (JoorExpression) v);
-                    endStep(sb, "joor", v);
-                }
                 case "JqExpression" -> {
                     beginStep(sb, "jq", v);
                     doWriteJqExpression(sb, (JqExpression) v);
@@ -6304,10 +6377,20 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     doWriteOgnlExpression(sb, (OgnlExpression) v);
                     endStep(sb, "ognl", v);
                 }
+                case "Python3Expression" -> {
+                    beginStep(sb, "python3", v);
+                    doWritePython3Expression(sb, (Python3Expression) v);
+                    endStep(sb, "python3", v);
+                }
                 case "PythonExpression" -> {
                     beginStep(sb, "python", v);
                     doWritePythonExpression(sb, (PythonExpression) v);
                     endStep(sb, "python", v);
+                }
+                case "QuickjsExpression" -> {
+                    beginStep(sb, "quickjs", v);
+                    doWriteQuickjsExpression(sb, (QuickjsExpression) v);
+                    endStep(sb, "quickjs", v);
                 }
                 case "RefExpression" -> {
                     beginStep(sb, "ref", v);

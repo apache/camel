@@ -6,10 +6,72 @@
     "title": "JVM Memory",
     "description": "Displays JVM memory information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.MemoryDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "heapMemoryInit": {
+        "type": "string",
+        "description": "Heap memory initial size"
+      },
+      "heapMemoryMax": {
+        "type": "string",
+        "description": "Heap memory max size"
+      },
+      "heapMemoryUsed": {
+        "type": "string",
+        "description": "Heap memory used"
+      },
+      "heapMemoryCommitted": {
+        "type": "string",
+        "description": "Heap memory committed"
+      },
+      "nonHeapMemoryInit": {
+        "type": "string",
+        "description": "Non-heap memory initial size"
+      },
+      "nonHeapMemoryMax": {
+        "type": "string",
+        "description": "Non-heap memory max size"
+      },
+      "nonHeapMemoryUsed": {
+        "type": "string",
+        "description": "Non-heap memory used"
+      },
+      "nonHeapMemoryCommitted": {
+        "type": "string",
+        "description": "Non-heap memory committed"
+      },
+      "oldGenUsed": {
+        "type": "string",
+        "description": "Old generation memory pool used (only present when such a pool exists)"
+      },
+      "oldGenCommitted": {
+        "type": "string",
+        "description": "Old generation memory pool committed (only present when such a pool exists)"
+      },
+      "oldGenMax": {
+        "type": "string",
+        "description": "Old generation memory pool max (only present when such a pool exists)"
+      },
+      "metaspaceUsed": {
+        "type": "string",
+        "description": "Metaspace memory pool used (only present when such a pool exists)"
+      },
+      "metaspaceCommitted": {
+        "type": "string",
+        "description": "Metaspace memory pool committed (only present when such a pool exists)"
+      },
+      "metaspaceMax": {
+        "type": "string",
+        "description": "Metaspace memory pool max (only present when such a pool exists)"
+      }
+    }
   }
 }
 

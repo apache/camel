@@ -21,18 +21,17 @@ import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Regression tests for prepareLogicalExpressions in SimplePredicateParser. Covers the bug where the right-hand token
  * was reported as the left-hand token in the "does not support right hand side token" error message.
  */
-public class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
+class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
 
     @Test
-    public void testAndWithFunctionRightHandSide() {
+    void testAndWithFunctionRightHandSide() {
         exchange.getIn().setBody("hello");
         exchange.getIn().setHeader("active", true);
 
@@ -41,11 +40,78 @@ public class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
         Predicate predicate = parser.parsePredicate();
         predicate.init(context);
 
-        assertTrue(predicate.matches(exchange));
+        assertThat(predicate.matches(exchange)).isTrue();
     }
 
     @Test
-    public void testAndWithLiteralRightHandSide() {
+    void testOrWithBooleanZenRightHandSide() {
+        // CAMEL-24376: boolean-zen shorthand must work as the right operand of ||
+        exchange.getIn().setHeader("token", null);
+        exchange.setProperty("forceNewSessionToken", true);
+
+        SimplePredicateParser parser = new SimplePredicateParser(
+                context, "${header.token} == null || ${exchangeProperty.forceNewSessionToken}", true, null);
+        Predicate predicate = parser.parsePredicate();
+        predicate.init(context);
+
+        assertThat(predicate.matches(exchange)).isTrue();
+    }
+
+    @Test
+    void testOrWithBooleanZenLeftHandSide() {
+        exchange.getIn().setHeader("active", true);
+        exchange.getIn().setBody("other");
+
+        SimplePredicateParser parser = new SimplePredicateParser(
+                context, "${header.active} || ${body} == 'hello'", true, null);
+        Predicate predicate = parser.parsePredicate();
+        predicate.init(context);
+
+        assertThat(predicate.matches(exchange)).isTrue();
+    }
+
+    @Test
+    void testAndWithBooleanZenOperands() {
+        exchange.getIn().setHeader("enabled", true);
+        exchange.setProperty("ready", true);
+
+        SimplePredicateParser parser = new SimplePredicateParser(
+                context, "${header.enabled} && ${exchangeProperty.ready}", true, null);
+        Predicate predicate = parser.parsePredicate();
+        predicate.init(context);
+
+        assertThat(predicate.matches(exchange)).isTrue();
+
+        exchange.setProperty("ready", false);
+        assertThat(predicate.matches(exchange)).isFalse();
+    }
+
+    @Test
+    void testOrWithBooleanZenFalseWhenBothOperandsFalse() {
+        exchange.getIn().setHeader("token", "abc");
+        exchange.setProperty("forceNewSessionToken", false);
+
+        SimplePredicateParser parser = new SimplePredicateParser(
+                context, "${header.token} == null || ${exchangeProperty.forceNewSessionToken}", true, null);
+        Predicate predicate = parser.parsePredicate();
+        predicate.init(context);
+
+        assertThat(predicate.matches(exchange)).isFalse();
+    }
+
+    @Test
+    void testStandaloneBooleanZenStillWorks() {
+        exchange.getIn().setHeader("foo", "yes");
+
+        SimplePredicateParser parser = new SimplePredicateParser(context, "${header.foo}", true, null);
+        Predicate predicate = parser.parsePredicate();
+        predicate.init(context);
+
+        assertThat(predicate.matches(exchange)).isTrue();
+    }
+
+    @Test
+    void testAndWithLiteralRightHandSide() {
         exchange.getIn().setBody("foo");
 
         SimplePredicateParser parser = new SimplePredicateParser(
@@ -53,11 +119,11 @@ public class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
         Predicate predicate = parser.parsePredicate();
         predicate.init(context);
 
-        assertTrue(predicate.matches(exchange));
+        assertThat(predicate.matches(exchange)).isTrue();
     }
 
     @Test
-    public void testOrWithFunctionRightHandSide() {
+    void testOrWithFunctionRightHandSide() {
         exchange.getIn().setBody("hello");
         exchange.getIn().setHeader("score", 5);
 
@@ -66,11 +132,11 @@ public class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
         Predicate predicate = parser.parsePredicate();
         predicate.init(context);
 
-        assertTrue(predicate.matches(exchange));
+        assertThat(predicate.matches(exchange)).isTrue();
     }
 
     @Test
-    public void testOrAllFalse() {
+    void testOrAllFalse() {
         exchange.getIn().setBody("hello");
         exchange.getIn().setHeader("score", 1);
 
@@ -79,11 +145,11 @@ public class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
         Predicate predicate = parser.parsePredicate();
         predicate.init(context);
 
-        assertFalse(predicate.matches(exchange));
+        assertThat(predicate.matches(exchange)).isFalse();
     }
 
     @Test
-    public void testAndWithNumericRightHandSide() {
+    void testAndWithNumericRightHandSide() {
         exchange.getIn().setBody(42);
 
         SimplePredicateParser parser = new SimplePredicateParser(
@@ -91,11 +157,11 @@ public class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
         Predicate predicate = parser.parsePredicate();
         predicate.init(context);
 
-        assertTrue(predicate.matches(exchange));
+        assertThat(predicate.matches(exchange)).isTrue();
     }
 
     @Test
-    public void testAndWithNullRightHandSide() {
+    void testAndWithNullRightHandSide() {
         exchange.getIn().setBody("present");
         exchange.getIn().setHeader("tag", "x");
 
@@ -104,11 +170,11 @@ public class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
         Predicate predicate = parser.parsePredicate();
         predicate.init(context);
 
-        assertTrue(predicate.matches(exchange));
+        assertThat(predicate.matches(exchange)).isTrue();
     }
 
     @Test
-    public void testChainedAndOrLogicalOperators() {
+    void testChainedAndOrLogicalOperators() {
         exchange.getIn().setBody("alpha");
         exchange.getIn().setHeader("flag", true);
 
@@ -117,20 +183,18 @@ public class SimplePredicateParserLogicalTest extends ExchangeTestSupport {
         Predicate predicate = parser.parsePredicate();
         predicate.init(context);
 
-        assertTrue(predicate.matches(exchange));
+        assertThat(predicate.matches(exchange)).isTrue();
     }
 
     @Test
-    public void testInvalidRightHandSideReportsRightToken() {
+    void testInvalidRightHandSideReportsRightToken() {
         // "&&" followed by a bare numeric (not a binary expression) is invalid syntax.
         // The error message must say "right hand side token 42" (the actual offending token),
         // not "right hand side token ==" (which would indicate the left-hand node was reported).
         SimplePredicateParser parser = new SimplePredicateParser(
                 context, "${body} == 'foo' && 42", true, null);
         SimpleIllegalSyntaxException ex = assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate);
-        assertTrue(ex.getMessage().contains("right hand side token 42"),
-                "Error message should say 'right hand side token 42', but was: " + ex.getMessage());
-        assertFalse(ex.getMessage().contains("right hand side token =="),
-                "Error message must not say 'right hand side token ==', but was: " + ex.getMessage());
+        assertThat(ex.getMessage()).contains("right hand side token 42");
+        assertThat(ex.getMessage()).doesNotContain("right hand side token ==");
     }
 }

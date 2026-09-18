@@ -1,0 +1,152 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.core.commands.tui;
+
+import java.util.List;
+
+import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.util.json.JsonObject;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * Guards the size of the static prefix the AI panel sends with every request (system prompt plus tool schemas). A local
+ * model pays for every token of it in prompt-processing time on every question, so a regression here is a latency
+ * regression for everyone running Ollama. The budgets leave headroom over the measured values; if a change genuinely
+ * needs more, raise the budget in the same commit and say why.
+ */
+class AiPanelPromptBudgetTest {
+
+    /** Measured ~3.0k tokens for 19 core tools. */
+    // raised from 3500 when file editing (tui_write_file and its guidance) joined the core set for local models,
+    // and from 3800 when tui_catalog_doc gained the endpoint argument (validates a URI, the endpoint counterpart of
+    // tui_eval_expression for simple)
+    // and from 3900 when the authoring tools became the camel_* set shared with camel-jbang-mcp (CAMEL-24695):
+    // their schemas carry the directory and name arguments a server without a selection needs, and
+    // camel_error_diagnose joined the core set
+    // raised to 5000 when camel_catalog_find joined the core set (CAMEL-24760): the budget guards against accidental
+    // growth of the prefix, a 32k context leaves ample room
+    static final int CORE_BUDGET_TOKENS = 5_000;
+    /** Measured ~6.9k tokens for 47 tools. */
+    // raised from 7500 with tui_write_file and tui_validate_source
+    // and from 7900 with the shared camel_* set (camel_catalog_find, camel_run and camel_error_diagnose added)
+    // and from 8500 when camel_catalog_doc gained the api kind (CAMEL-24708): its kind argument names the core
+    // classes and script languages the API reference covers, which is what makes a model ask for them
+    // raised with the core budget (CAMEL-24760)
+    static final int FULL_BUDGET_TOKENS = 9_200;
+
+    record Prefix(String mode, int tools, long promptChars, long toolChars) {
+
+        int promptTokens() {
+            return AiPanel.estimateTokens(promptChars);
+        }
+
+        int toolTokens() {
+            return AiPanel.estimateTokens(toolChars);
+        }
+
+        int totalTokens() {
+            return promptTokens() + toolTokens();
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%-4s tools=%2d  system prompt ~%d tok  tool schemas ~%d tok  total ~%d tok",
+                    mode, tools, promptTokens(), toolTokens(), totalTokens());
+        }
+    }
+
+    /**
+     * Serializes the tools the way {@code LlmClient.buildOpenAiStyleTools} sends them, so the count matches the wire.
+     */
+    static long wireChars(List<LlmClient.ToolDef> defs) {
+        long chars = 0;
+        for (LlmClient.ToolDef def : defs) {
+            JsonObject function = new JsonObject();
+            function.put("name", def.name());
+            function.put("description", def.description());
+            function.put("parameters", def.parameters());
+            JsonObject tool = new JsonObject();
+            tool.put("type", "function");
+            tool.put("function", function);
+            chars += tool.toJson().length();
+        }
+        return chars;
+    }
+
+    static Prefix measure(String mode) {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        panel.setToolModeForTesting(mode);
+        List<LlmClient.ToolDef> defs = panel.toolDefinitionsForTesting();
+        return new Prefix(mode, defs.size(), panel.systemPromptForTesting().length(), wireChars(defs));
+    }
+
+    @Test
+    void corePrefixStaysWithinBudget() {
+        Prefix core = measure(AiPanel.TOOL_MODE_CORE);
+        System.out.println("AI panel static prefix: " + core);
+
+        assertTrue(core.totalTokens() <= CORE_BUDGET_TOKENS,
+                "core prefix grew to ~" + core.totalTokens() + " tokens, budget " + CORE_BUDGET_TOKENS + ": " + core);
+    }
+
+    @Test
+    void fullPrefixStaysWithinBudget() {
+        Prefix full = measure(AiPanel.TOOL_MODE_FULL);
+        System.out.println("AI panel static prefix: " + full);
+
+        assertTrue(full.totalTokens() <= FULL_BUDGET_TOKENS,
+                "full prefix grew to ~" + full.totalTokens() + " tokens, budget " + FULL_BUDGET_TOKENS + ": " + full);
+    }
+
+    @Test
+    void systemPromptStaysShortAndFreeOfTheToolList() {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        panel.setToolModeForTesting(AiPanel.TOOL_MODE_FULL);
+        String prompt = panel.systemPromptForTesting();
+
+        // the tool definitions already describe every tool; repeating them in prose doubles the cost
+        // 450 before the file editing guidance (two bullets) was added
+        // 530 before the tools were split into camel_* and tui_* in the introduction
+        // 545 before the file-write and canonical YAML shape lines (CAMEL-24760)
+        assertTrue(AiPanel.estimateTokens(prompt.length()) <= 620,
+                "system prompt grew to ~" + AiPanel.estimateTokens(prompt.length()) + " tokens");
+        assertTrue(!prompt.contains("- tui_get_table:"), "system prompt must not list the tools again");
+    }
+
+    @Test
+    void thePromptOnlyMentionsTheToolsOfTheActiveSet() {
+        // tui_set_log_level left the core set (CAMEL-24760): its prompt line goes with it, a local model must not be
+        // told about a tool it cannot call
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        panel.setToolModeForTesting(AiPanel.TOOL_MODE_CORE);
+        String core = panel.systemPromptForTesting();
+        panel.setToolModeForTesting(AiPanel.TOOL_MODE_FULL);
+        String full = panel.systemPromptForTesting();
+
+        assertTrue(full.contains("tui_set_log_level is the app's root logger"), "the full set has the tool");
+        assertTrue(!core.contains("tui_set_log_level"), "the core set has not");
+        // what both sets get: the file write rule and the canonical YAML shape
+        for (String prompt : List.of(core, full)) {
+            assertTrue(prompt.contains("camel_write_file"), "write files with the tool");
+        }
+    }
+}

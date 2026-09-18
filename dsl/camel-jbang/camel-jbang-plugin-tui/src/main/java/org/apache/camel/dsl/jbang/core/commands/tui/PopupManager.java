@@ -26,7 +26,6 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
@@ -39,7 +38,6 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
@@ -91,6 +89,7 @@ class PopupManager {
     private String confirmTitle;
     private String confirmMessage;
     private Runnable confirmCallback;
+    private Runnable cancelCallback;
 
     // Last rendered popup rects for mouse hit-testing
     private Rect lastMorePopupRect;
@@ -224,6 +223,7 @@ class PopupManager {
         showKillConfirm = false;
         showConfirm = false;
         confirmCallback = null;
+        cancelCallback = null;
         filesBrowser.reset();
     }
 
@@ -236,10 +236,23 @@ class PopupManager {
     }
 
     void showConfirm(String title, String message, Runnable onConfirm) {
+        showConfirm(title, message, onConfirm, null);
+    }
+
+    /** As {@link #showConfirm(String, String, Runnable)}, with a callback when the dialog is dismissed instead. */
+    void showConfirm(String title, String message, Runnable onConfirm, Runnable onCancel) {
         this.confirmTitle = title;
         this.confirmMessage = message;
         this.confirmCallback = onConfirm;
+        this.cancelCallback = onCancel;
         this.showConfirm = true;
+    }
+
+    /** Closes the generic confirm dialog without running either callback (for example on a timeout). */
+    void dismissConfirm() {
+        showConfirm = false;
+        confirmCallback = null;
+        cancelCallback = null;
     }
 
     void selectMorePopupEntry(int moreIndex) {
@@ -410,11 +423,14 @@ class PopupManager {
         return true;
     }
 
+    // Confirm dialogs share one key contract: Enter accepts, Esc cancels, and every other key is
+    // swallowed so a stray keystroke can neither dismiss nor trigger a destructive action.
+
     private boolean handleKillConfirmKeys(KeyEvent ke) {
         if (ke.isConfirm()) {
             showKillConfirm = false;
             callbacks.stopSelectedProcess(true);
-        } else {
+        } else if (ke.isCancel()) {
             showKillConfirm = false;
         }
         return true;
@@ -425,12 +441,18 @@ class PopupManager {
             showConfirm = false;
             Runnable cb = confirmCallback;
             confirmCallback = null;
+            cancelCallback = null;
             if (cb != null) {
                 cb.run();
             }
-        } else {
+        } else if (ke.isCancel()) {
             showConfirm = false;
+            Runnable cb = cancelCallback;
             confirmCallback = null;
+            cancelCallback = null;
+            if (cb != null) {
+                cb.run();
+            }
         }
         return true;
     }
@@ -695,69 +717,14 @@ class PopupManager {
     }
 
     void renderKillConfirm(Frame frame, Rect area) {
-        String name = ctx.selectedName();
-        String msg = " Kill " + name + " (PID: " + ctx.selectedPid + ")? ";
-        int popupW = Math.max(34, msg.length() + 4);
-        int popupH = 6;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 3);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Theme.error())
-                .title(" Confirm Kill ")
-                .build();
-        frame.renderWidget(block, popup);
-        Rect inner = block.inner(popup);
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(
-                                Line.from(Span.raw("")),
-                                Line.from(Span.styled(msg, Theme.error().bold())),
-                                Line.from(Span.raw("")),
-                                Line.from(
-                                        Span.raw("  "),
-                                        Span.styled("Enter", Style.EMPTY.bold()),
-                                        Span.raw(" confirm  "),
-                                        Span.styled("Esc", Style.EMPTY.bold()),
-                                        Span.raw(" cancel"))))
-                        .build(),
-                inner);
+        String msg = "Kill " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")?";
+        DialogHelper.renderConfirm(frame, area, "Confirm Kill", msg, true);
     }
 
     void renderConfirm(Frame frame, Rect area) {
         String msg = confirmMessage != null ? confirmMessage : "";
-        String title = confirmTitle != null ? " " + confirmTitle + " " : " Confirm ";
-        int popupW = Math.max(34, Math.max(msg.length() + 4, title.length() + 4));
-        int popupH = 6;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 3);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Theme.warning())
-                .title(title)
-                .build();
-        frame.renderWidget(block, popup);
-        Rect inner = block.inner(popup);
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(
-                                Line.from(Span.raw("")),
-                                Line.from(Span.styled(msg, Theme.warning().bold())),
-                                Line.from(Span.raw("")),
-                                Line.from(
-                                        Span.raw("  "),
-                                        Span.styled("Enter", Style.EMPTY.bold()),
-                                        Span.raw(" confirm  "),
-                                        Span.styled("Esc", Style.EMPTY.bold()),
-                                        Span.raw(" cancel"))))
-                        .build(),
-                inner);
+        String title = confirmTitle != null ? confirmTitle : "Confirm";
+        DialogHelper.renderConfirm(frame, area, title, msg, false);
     }
 
     int[] morePopupShortcut(KeyEvent ke) {

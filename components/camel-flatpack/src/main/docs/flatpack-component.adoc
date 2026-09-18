@@ -158,7 +158,8 @@ YAML::
     from:
       uri: flatpack:foo
       steps:
-        - ...
+        - log:
+            message: "${body}"
 ----
 ====
 

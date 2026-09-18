@@ -64,6 +64,8 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mergeProtocolHeaders": target.setMergeProtocolHeaders(property(camelContext, boolean.class, value)); return true;
         case "mtomenabled":
         case "mtomEnabled": target.setMtomEnabled(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "portname":
         case "portName": target.setPortName(property(camelContext, java.lang.String.class, value)); return true;
@@ -137,6 +139,8 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mergeProtocolHeaders": return boolean.class;
         case "mtomenabled":
         case "mtomEnabled": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "password": return java.lang.String.class;
         case "portname":
         case "portName": return java.lang.String.class;
@@ -211,6 +215,8 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "mergeProtocolHeaders": return target.isMergeProtocolHeaders();
         case "mtomenabled":
         case "mtomEnabled": return target.isMtomEnabled();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "password": return target.getPassword();
         case "portname":
         case "portName": return target.getPortName();

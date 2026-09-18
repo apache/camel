@@ -145,6 +145,13 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
 
         if (source == null) {
             if (isFailOnNullBody()) {
+                if (body == null) {
+                    // a timer alone, or a to: file: that wrote instead of read: nothing to transform
+                    throw new ExpectedBodyTypeException(
+                            exchange, Source.class,
+                            "the xslt step got no message body to transform: read the XML before the step with"
+                                                    + " poll: file:..., pollEnrich or a from: consumer, or set it with setBody");
+                }
                 throw new ExpectedBodyTypeException(exchange, Source.class);
             } else {
                 try {

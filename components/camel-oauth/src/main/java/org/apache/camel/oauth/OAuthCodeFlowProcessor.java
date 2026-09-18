@@ -16,6 +16,9 @@
  */
 package org.apache.camel.oauth;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
@@ -23,8 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.oauth.OAuth.CAMEL_OAUTH_REDIRECT_URI;
 import static org.apache.camel.oauth.OAuthProperties.getRequiredProperty;
+import static org.apache.camel.oauth.OAuthSession.OAUTH_STATE;
 
 public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
+
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -65,11 +71,25 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
         log.info("Register post login url: {}", postLoginUrl);
         session.putValue("OAuthPostLoginUrl", postLoginUrl);
 
+        // RFC 6749 section 10.12: bind the callback to a flow this session actually started, so an
+        // authorization code obtained elsewhere cannot be replayed into this session's callback.
+        var state = newState();
+        session.putValue(OAUTH_STATE, state);
+
         var redirectUri = getRequiredProperty(exchange.getContext(), CAMEL_OAUTH_REDIRECT_URI);
-        var params = new OAuthCodeFlowParams().setRedirectUri(redirectUri);
+        var params = new OAuthCodeFlowParams().setRedirectUri(redirectUri).setState(state);
         var authRequestUrl = oauth.buildCodeFlowAuthRequestUrl(params);
 
         sendRedirect(msg, authRequestUrl);
+
+        // The caller is not authenticated: the redirect is the whole response, so the protected route must not run
+        exchange.setRouteStop(true);
+    }
+
+    private static String newState() {
+        var bytes = new byte[32];
+        RANDOM.nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
     private String getPostLoginUrl(Message msg) {

@@ -28,6 +28,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
+@Deprecated(since = "4.23")
 public class MinioConfiguration implements Cloneable {
 
     @UriPath(description = "Bucket name")

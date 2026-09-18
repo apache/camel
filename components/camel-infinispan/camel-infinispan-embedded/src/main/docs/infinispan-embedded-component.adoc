@@ -218,20 +218,23 @@ Write methods like put(key, value) and remove(key) do not return the previous va
 
 * Put a key/value into a named cache:
 +
+--
 ._Java-only: uses InfinispanConstants and InfinispanOperation Java constants_
 [source,java]
 ----
 from("direct:start")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT) // <1>
     .setHeader(InfinispanConstants.KEY).constant("123") // <2>
-    .to("infinispan:myCacheName&cacheContainer=#cacheContainer"); // <3>
+    .to("infinispan-embedded:myCacheName?cacheContainer=#cacheContainer"); // <3>
 ----
 <1> Set the operation to perform
 <2> Set the key used to identify the element in the cache
 <3> Use the configured cache manager `cacheContainer` from the registry to put an element to the cache named `myCacheName`
+--
 +
 It is possible to configure the lifetime and/or the idle time before the entry expires and gets evicted from the cache, as example:
 +
+--
 ._Java-only: uses InfinispanConstants Java constants and TimeUnit enum_
 [source,java]
 ----
@@ -240,10 +243,11 @@ from("direct:start")
     .setHeader(InfinispanConstants.KEY).constant("123")
     .setHeader(InfinispanConstants.LIFESPAN_TIME).constant(100L) // <1>
     .setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT).constant(TimeUnit.MILLISECONDS.toString()) // <2>
-    .to("infinispan:myCacheName");
+    .to("infinispan-embedded:myCacheName");
 ----
 <1> Set the lifespan of the entry
 <2> Set the time unit for the lifespan
+--
 
 * Queries
 +
@@ -258,7 +262,7 @@ from("direct:start")
             return qf.from(User.class).having("name").like("%abc%").build();
         }
     })
-    .to("infinispan:myCacheName?cacheContainer=#cacheManager") ;
+    .to("infinispan-embedded:myCacheName?cacheContainer=#cacheManager") ;
 ----
 +
 
@@ -270,7 +274,7 @@ Java::
 +
 [source,java]
 ----
-from("infinispan://?cacheContainer=#cacheManager&customListener=#myCustomListener")
+from("infinispan-embedded:myCacheName?cacheContainer=#cacheManager&customListener=#myCustomListener")
   .to("mock:result");
 ----
 
@@ -279,7 +283,7 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="infinispan://?cacheContainer=#cacheManager&amp;customListener=#myCustomListener"/>
+  <from uri="infinispan-embedded:myCacheName?cacheContainer=#cacheManager&amp;customListener=#myCustomListener"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -290,13 +294,13 @@ YAML::
 ----
 - route:
     from:
-      uri: "infinispan://"
+      uri: infinispan-embedded:myCacheName
       parameters:
         cacheContainer: "#cacheManager"
         customListener: "#myCustomListener"
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 +
@@ -340,8 +344,8 @@ XML::
 [source,xml]
 ----
 <bean id="infinispanRepo" class="org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedIdempotentRepository" destroy-method="stop">
-  <constructor-arg value="idempotent"/> <1>
-  <property name="configuration"> <2>
+  <constructor-arg value="idempotent"/> <!--1-->
+  <property name="configuration"> <!--2-->
     <bean class="org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration">
       <property name="configurationUrl" value="classpath:infinispan.xml"/>
     </bean>
@@ -351,7 +355,7 @@ XML::
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:start" />
-        <idempotentConsumer idempotentRepository="infinispanRepo"> <3>
+        <idempotentConsumer idempotentRepository="infinispanRepo"> <!--3-->
             <header>MessageID</header>
             <to uri="mock:result" />
         </idempotentConsumer>
@@ -403,8 +407,8 @@ XML::
 [source,xml]
 ----
 <bean id="infinispanRepo" class="org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedAggregationRepository" destroy-method="stop">
-  <constructor-arg value="aggregation"/> <1>
-  <property name="configuration"> <2>
+  <constructor-arg value="aggregation"/> <!--1-->
+  <property name="configuration"> <!--2-->
     <bean class="org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedConfiguration">
       <property name="configurationUrl" value="classpath:infinispan.xml"/>
     </bean>
@@ -416,7 +420,7 @@ XML::
         <from uri="direct:start" />
         <aggregate aggregationStrategy="myStrategy"
                    completionSize="3"
-                   aggregationRepository="infinispanRepo"> <3>
+                   aggregationRepository="infinispanRepo"> <!--3-->
             <correlationExpression>
                 <header>MessageID</header>
             </correlationExpression>

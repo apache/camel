@@ -50,12 +50,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.NetworkClient;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.clients.producer.internals.Sender;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.slf4j.Logger;
@@ -111,29 +109,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     }
 
     public boolean isReady() {
-        boolean ready = true;
-        try {
-            if (kafkaProducer instanceof org.apache.kafka.clients.producer.KafkaProducer) {
-                // need to use reflection to access the network client which has API to check if the client has ready
-                // connections
-                org.apache.kafka.clients.producer.KafkaProducer kp
-                        = (org.apache.kafka.clients.producer.KafkaProducer) kafkaProducer;
-                Sender sender
-                        = (Sender) ReflectionHelper
-                                .getField(kp.getClass().getDeclaredField("sender"), kp);
-                NetworkClient nc
-                        = (NetworkClient) ReflectionHelper.getField(sender.getClass().getDeclaredField("client"), sender);
-                LOG.trace(
-                        "Health-Check calling org.apache.kafka.clients.NetworkClient.hasReadyNode");
-                ready = nc.hasReadyNodes(System.currentTimeMillis());
-            }
-        } catch (Exception e) {
-            // ignore
-            LOG.debug("Cannot check hasReadyNodes on KafkaProducer client (NetworkClient) due to "
-                      + e.getMessage() + ". This exception is ignored.",
-                    e);
-        }
-        return ready;
+        return KafkaNetworkHealthHelper.producerHasReadyNodes(kafkaProducer);
     }
 
     @SuppressWarnings("rawtypes")
@@ -476,19 +452,25 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
                 = new KafkaProducerCallBack(exchange, callback, workerPool, configuration.isRecordMetadata());
 
         Message message = exchange.getMessage();
-        Object body = message.getBody();
-
-        if (transactionId != null) {
-            startKafkaTransaction(exchange);
-        }
 
         try {
+            Object body = message.getBody();
+
+            // Start the transaction inside the try so that a failure to begin it (or a failing lazy body
+            // conversion) still completes the async callback instead of escaping process() (CAMEL-24780).
+            if (transactionId != null) {
+                startKafkaTransaction(exchange);
+            }
+
             // is the message body a list or something that contains multiple values
             if (endpoint.getConfiguration().isUseIterator() && isIterable(body)) {
                 processIterableAsync(exchange, producerCallBack, message);
             } else {
                 final ProducerRecord<Object, Object> record = createRecord(exchange, message);
-                doSend(exchange, record, producerCallBack);
+                // Single message: the parent KafkaProducerCallBack already records the metadata and any
+                // exception on this exchange, so pass a null key to skip the redundant per-record metadata
+                // callback (avoids two short-lived allocations per message) (CAMEL-24779).
+                doSend(null, record, producerCallBack);
             }
 
             return producerCallBack.allSent();
@@ -542,8 +524,11 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
 
         if (!uow.isTransactedBy(transactionId)) {
             LOG.debug("Starting kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
-            uow.beginTransactedBy(transactionId);
+            // Begin the broker transaction first, then mark the unit of work and register the
+            // synchronization. This way a failure in beginTransaction() does not leave the unit of work
+            // flagged as transacted without a synchronization to commit or roll it back (CAMEL-24780).
             kafkaProducer.beginTransaction();
+            uow.beginTransactedBy(transactionId);
             uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
         } else {
             LOG.debug("Using existing kafka transaction {} with exchange {}.",

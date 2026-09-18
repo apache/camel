@@ -1,0 +1,52 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "alibaba-fc",
+    "title": "Alibaba Function Compute (FC)",
+    "description": "Invoke serverless functions on Alibaba Cloud Function Compute (FC).",
+    "deprecated": false,
+    "firstVersion": "4.23.0",
+    "label": "cloud,serverless",
+    "javaType": "org.apache.camel.component.alibaba.fc.FCComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-alibaba-fc",
+    "version": "4.23.0-SNAPSHOT",
+    "scheme": "alibaba-fc",
+    "extendsScheme": "",
+    "syntax": "alibaba-fc:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
+    "healthCheckConsumerEnabled": { "index": 2, "kind": "property", "displayName": "Health Check Consumer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all consumer based health checks from this component" },
+    "healthCheckProducerEnabled": { "index": 3, "kind": "property", "displayName": "Health Check Producer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all producer based health checks from this component. Notice: Camel has by default disabled all producer based health-checks. You can turn on producer checks globally by setting camel.health.producersEnabled=true." }
+  },
+  "headers": {
+    "CamelAlibabaFcServiceName": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "FC service name override", "constantName": "org.apache.camel.component.alibaba.fc.constants.FCHeaders#SERVICE_NAME" },
+    "CamelAlibabaFcFunctionName": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "FC function name override", "constantName": "org.apache.camel.component.alibaba.fc.constants.FCHeaders#FUNCTION_NAME" },
+    "CamelAlibabaFcQualifier": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Function qualifier override", "constantName": "org.apache.camel.component.alibaba.fc.constants.FCHeaders#QUALIFIER" },
+    "CamelAlibabaFcRequestId": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Alibaba Cloud request id", "constantName": "org.apache.camel.component.alibaba.fc.constants.FCHeaders#REQUEST_ID" },
+    "CamelAlibabaFcStatusCode": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "HTTP status code from FC invoke response", "constantName": "org.apache.camel.component.alibaba.fc.constants.FCHeaders#STATUS_CODE" }
+  },
+  "properties": {
+    "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "producer", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "invokeFunction", "getFunction" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation to perform" },
+    "endpoint": { "index": 1, "kind": "parameter", "displayName": "Endpoint", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "FC endpoint URL. Carries higher precedence than region based client initialization" },
+    "functionName": { "index": 2, "kind": "parameter", "displayName": "Function Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "FC function name" },
+    "qualifier": { "index": 3, "kind": "parameter", "displayName": "Qualifier", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Function version or alias qualifier" },
+    "region": { "index": 4, "kind": "parameter", "displayName": "Region", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Alibaba Cloud region" },
+    "serviceName": { "index": 5, "kind": "parameter", "displayName": "Service Name", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "FC service name" },
+    "lazyStartProducer": { "index": 6, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "fcClient": { "index": 7, "kind": "parameter", "displayName": "FC Client", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "com.aliyun.fc_open20210406.Client", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "description": "Autowire an existing FC client instance" },
+    "accessKey": { "index": 8, "kind": "parameter", "displayName": "Access Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "Access key for the cloud user" },
+    "secretKey": { "index": 9, "kind": "parameter", "displayName": "Secret Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "Secret key for the cloud user" },
+    "serviceKeys": { "index": 10, "kind": "parameter", "displayName": "Service Keys", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "org.apache.camel.component.alibaba.common.models.ServiceKeys", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "Configuration object for cloud service authentication" }
+  }
+}

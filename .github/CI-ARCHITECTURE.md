@@ -63,7 +63,7 @@ PR comment: /component-test kafka http
 
 ### `main-build.yml` — Main branch build
 
-- **Trigger**: `push` to main, camel-4.14.x, camel-4.18.x
+- **Trigger**: `push` to main, camel-4.18.x, camel-4.22.x
 - **Steps**: Same as PR build but without comment posting
 
 ### `sonar-build.yml` + `sonar-scan.yml` — SonarCloud PR analysis
@@ -80,7 +80,7 @@ PR comment: /component-test kafka http
 - `pr-cleanup-branches.yml` — Cleans up merged PR branches
 - `alternative-os-build-main.yml` — Tests on non-Linux OSes
 - `check-container-versions.yml` — Checks test container version updates
-- `generate-sbom-main.yml` — Generates SBOM for releases
+- `generate-sbom.yml` — Regenerates the CycloneDX SBOM (`camel-sbom/`) for `main` and each active LTS branch (matrix), opening a PR per branch
 - `security-scan.yml` — Security vulnerability scanning
 
 ## Actions
@@ -103,6 +103,9 @@ The script also:
 - Applies an exclusion list for generated/meta modules
 - Checks for excluded modules with associated integration tests (via `manual-it-mapping.txt`) and advises contributors to run them manually
 - Generates a unified PR comment with all test information
+- Parses Maven reactor output from `incremental-test.log` and reports **per-module elapsed time**, total reactor duration, and the top 20 slowest modules (see `reactor_timing.sh`)
+
+Unit tests for reactor timing parsing live in `reactor_timing_test.sh`.
 
 ### `install-mvnd`
 
@@ -162,16 +165,20 @@ Scalpel is only invoked when a **subdirectory** `pom.xml` is changed (e.g. `pare
 
 - **Source-set-aware propagation**: Distinguishes test-jar dependencies from regular dependencies. A module that depends only on another module's test-jar (e.g., `camel-core`'s test-jar with test utilities) is propagated through the `TEST` source set, not the `MAIN` source set. This prevents a change to test utilities from triggering tests in all ~500 modules that depend on `camel-core`.
 - **`skipTestsForDownstreamModules`**: Allows specifying modules whose tests should be skipped when they appear as downstream dependents (mirrors the `EXCLUSION_LIST` in `incremental-build.sh`). This gives Scalpel an accurate picture of what skip-tests mode would actually test.
+- **Explain mode** (`-Dscalpel.explain=true`): Each affected module carries an `evidence[]` array naming the exact file, property, managed dependency, or graph edge that caused it to be included. The PR comment surfaces this evidence inline — e.g. `` `camel-kafka` ← properties/version.kafka `` — making it immediately clear why each module is in the build set.
+- **`reactorModuleCount`** (report field, 0.4.1+): Total reactor size emitted directly by Scalpel. Used for N-of-M framing in the PR comment (e.g. "47 of 1,847 tested") without extra shell arithmetic.
+- **`testedModulesCount`** (report field, 0.4.x): Modules whose tests will actually run, computed by Scalpel. Used directly instead of counting list elements in the script.
 
 #### Shadow comparison
 
 Scalpel runs in **shadow mode**: it observes what skip-tests mode *would* have done and reports it in a collapsible section of the PR comment, without affecting actual test execution. This allows the team to validate Scalpel's decisions across many PRs before switching to Scalpel-driven test execution.
 
 The shadow comparison section shows:
-- How many modules Scalpel would test (direct + downstream)
+- How many modules Scalpel would test out of the total reactor (N-of-M framing)
 - How many downstream modules would have tests skipped (generated code, meta-modules)
+- POM change details: changed properties, managed dependencies, managed plugins
 - Set differences: modules only Scalpel found vs modules only the current approach found
-- The full list of modules in each category
+- The full list of modules in each category, with per-module evidence (explain mode)
 
 The comparison is apples-to-apples: the current approach's reactor is filtered through the `EXCLUSION_LIST` before comparing, so both sides exclude the same meta/generated modules (catalog, jbang, docs, etc.).
 

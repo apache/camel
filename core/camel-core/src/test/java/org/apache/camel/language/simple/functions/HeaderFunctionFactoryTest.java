@@ -56,34 +56,4 @@ public class HeaderFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         exchange.getIn().setHeader("num", "42");
         assertEquals(42, evaluate("headerAs(num, Integer)", Integer.class));
     }
-
-    @Test
-    public void testCreateCodeHeader() {
-        assertEquals("header(message, \"foo\")", createCode("header.foo"));
-    }
-
-    @Test
-    public void testCreateCodeInHeader() {
-        assertEquals("header(message, \"foo\")", createCode("in.header.foo"));
-    }
-
-    @Test
-    public void testCreateCodeHeaders() {
-        assertEquals("message.getHeaders()", createCode("headers"));
-        assertEquals("message.getHeaders()", createCode("in.headers"));
-    }
-
-    @Test
-    public void testCreateCodeHeadersSize() {
-        assertEquals("message.getHeaders().size()", createCode("headers.size"));
-        assertEquals("message.getHeaders().size()", createCode("headers.size()"));
-        assertEquals("message.getHeaders().size()", createCode("headers.length"));
-        assertEquals("message.getHeaders().size()", createCode("headers.length()"));
-    }
-
-    @Test
-    public void testCreateCodeHeaderAs() {
-        assertEquals("headerAs(message, \"num\", Integer.class)", createCode("headerAs(num, Integer)"));
-        assertEquals("headerAs(message, \"num\", java.lang.Integer.class)", createCode("headerAs(num, java.lang.Integer)"));
-    }
 }

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 class KServeITSupport extends CamelTestSupport {
 
     @RegisterExtension
-    static TritonService service = TritonServiceFactory.createService();
+    static TritonService service = TritonServiceFactory.createSingletonService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

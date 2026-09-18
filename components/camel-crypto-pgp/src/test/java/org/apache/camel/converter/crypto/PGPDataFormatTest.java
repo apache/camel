@@ -98,6 +98,9 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         decryptor.setSignatureKeyFileName(PUB_KEY_RING_SUBKEYS_FILE_NAME);
         decryptor.setPassword("Abcd1234");
         decryptor.setSignatureKeyUserid("keyflag");
+        // the encryptor above deliberately emits the legacy packet, which carries no modification detection code,
+        // so the decryptor has to accept messages that are not integrity protected
+        decryptor.setRequireIntegrityProtection(false);
     }
 
     protected String getKeyFileName() {

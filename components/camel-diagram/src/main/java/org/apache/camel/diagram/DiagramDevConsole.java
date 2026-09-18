@@ -28,10 +28,15 @@ import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "route-diagram", group = "camel", displayName = "Route Diagram", description = "Visual route diagrams")
 public class DiagramDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "The rendered ASCII/Unicode art diagram (only present for a text theme)") String text,
+            @Metadata(description = "The rendered diagram as a base64-encoded PNG image (only present for a non-text theme)") String image) {
+    }
 
     @Metadata(label = "query", description = "Filters the routes matching by route id, route uri, and source location",
               defaultValue = "*", javaType = "java.lang.String")
@@ -171,28 +176,27 @@ public class DiagramDevConsole extends AbstractDevConsole {
         boolean metric = optionBoolean(options, METRIC, true);
         boolean external = optionBoolean(options, EXTERNAL, true);
 
-        JsonObject root = new JsonObject();
+        String text = null;
+        String image = null;
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
             if ("topology".equalsIgnoreCase(mode)) {
                 return doCallTopologyJson(dumper, theme, nodeWidth, metric, fontSize, external);
             } else if (isTextTheme(theme)) {
-                String text = dumper.dumpRoutesAsAsciiArt(filter,
+                text = dumper.dumpRoutesAsAsciiArt(filter,
                         RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
                         nodeWidth, isUnicodeTheme(theme));
-                root.put("text", text);
             } else {
-                BufferedImage image = dumper.dumpRoutesAsImage(filter,
+                BufferedImage bufferedImage = dumper.dumpRoutesAsImage(filter,
                         RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
                         metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
-                String base64 = dumper.imageToBase64(image);
-                root.put("image", base64);
+                image = dumper.imageToBase64(bufferedImage);
             }
         } catch (Exception e) {
             // ignore
         }
 
-        return root;
+        return JsonRecordSupport.toJsonObject(new Response(text, image));
     }
 
     private String doCallTopologyText(
@@ -230,19 +234,18 @@ public class DiagramDevConsole extends AbstractDevConsole {
             RouteDiagramDumper dumper, String theme, int nodeWidth,
             boolean metric, int fontSize, boolean external)
             throws Exception {
-        JsonObject root = new JsonObject();
+        String text = null;
+        String image = null;
         if (isTextTheme(theme)) {
-            String text = dumper.dumpTopologyAsAsciiArt(nodeWidth, isUnicodeTheme(theme), external);
-            root.put("text", text);
+            text = dumper.dumpTopologyAsAsciiArt(nodeWidth, isUnicodeTheme(theme), external);
         } else {
-            BufferedImage image = dumper.dumpTopologyAsImage(
+            BufferedImage bufferedImage = dumper.dumpTopologyAsImage(
                     RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize, external);
-            if (image != null) {
-                String base64 = dumper.imageToBase64(image);
-                root.put("image", base64);
+            if (bufferedImage != null) {
+                image = dumper.imageToBase64(bufferedImage);
             }
         }
-        return root;
+        return JsonRecordSupport.toJsonObject(new Response(text, image));
     }
 
     private static final String WEB_COMPONENT_JS = loadWebComponentJs("camel-route-diagram.js");

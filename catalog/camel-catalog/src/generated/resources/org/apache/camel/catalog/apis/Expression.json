@@ -1,0 +1,15 @@
+{
+  "api": {
+    "kind": "api",
+    "name": "Expression",
+    "title": "Expression",
+    "description": "Computes a value from an exchange for setBody, setHeader, setVariable, split, transform and recipientList: evaluate(exchange, type). In the DSL an expression is usually a language (simple, jsonpath, groovy); write it in Java for logic, or return the value from a bean method.",
+    "deprecated": false,
+    "javaType": "org.apache.camel.Expression",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-api",
+    "version": "4.23.0-SNAPSHOT",
+    "methods": { "evaluate": { "index": 0, "signatures": [ "<T> T evaluate(Exchange exchange, Class<T> type)" ], "javaType": "java.lang.Object", "important": true, "description": "The value, converted to the type; pass Object.class to keep it as is.", "examples": [ "(exchange, type) -> exchange.getMessage().getBody(Order.class).getItems()" ] } }
+  }
+}
+

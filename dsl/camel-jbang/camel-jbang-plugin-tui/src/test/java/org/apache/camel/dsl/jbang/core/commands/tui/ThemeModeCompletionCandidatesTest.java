@@ -34,6 +34,6 @@ class ThemeModeCompletionCandidatesTest {
                 "dark", "light", "dracula", "nord", "nord-light", "solarized-dark", "solarized-light",
                 "gruvbox-dark", "gruvbox-light", "catppuccin-mocha", "catppuccin-frappe", "catppuccin-latte",
                 "tokyo-night", "rose-pine", "rose-pine-moon", "kanagawa", "everforest", "everforest-light",
-                "monochrome", "crt"), candidates);
+                "monochrome", "crt", "turbo-pascal"), candidates);
     }
 }

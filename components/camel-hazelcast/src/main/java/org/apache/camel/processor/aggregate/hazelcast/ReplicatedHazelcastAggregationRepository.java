@@ -31,6 +31,7 @@ import com.hazelcast.transaction.TransactionalMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.hazelcast.HazelcastSerializationFilterHelper;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -342,6 +343,7 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
             useLocalHzInstance = true;
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");
+            HazelcastSerializationFilterHelper.applyDefault(cfg);
             hazelcastInstance = Hazelcast.newHazelcastInstance(cfg);
         } else {
             ObjectHelper.notNull(hazelcastInstance, "hazelcastInstance");

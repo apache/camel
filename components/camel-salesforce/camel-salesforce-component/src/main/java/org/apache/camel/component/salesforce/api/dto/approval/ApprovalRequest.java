@@ -27,10 +27,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-
 /**
  * Represents approval request sent to submit, approve or reject record.
  *
@@ -38,7 +34,6 @@ import org.apache.camel.spi.UriParams;
  *      "https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_process_approvals.htm">
  *      https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_process_approvals.htm</a>
  */
-@UriParams
 public final class ApprovalRequest implements Serializable {
 
     public enum Action {
@@ -66,30 +61,18 @@ public final class ApprovalRequest implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    @UriParam
-    @Metadata(required = true)
     private Action actionType;
 
-    @UriParam
-    @Metadata(required = true)
     private String contextActorId;
 
-    @UriParam
-    @Metadata(required = true)
     private String contextId;
 
-    @UriParam
     private String comments;
 
-    @UriParam
-    @Metadata(required = true)
     private List<String> nextApproverIds;
 
-    @UriParam
-    @Metadata(required = true)
     private String processDefinitionNameOrId;
 
-    @UriParam
     private boolean skipEntryCriteria;
 
     public void addNextApproverId(final String nextApproverId) {

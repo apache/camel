@@ -62,9 +62,4 @@ public class SimpleJsoupFunction implements SimpleLanguageFunctionFactory {
 
         return null;
     }
-
-    @Override
-    public String createCode(CamelContext camelContext, String function, int index) {
-        throw new UnsupportedOperationException("csimple is deprecated");
-    }
 }

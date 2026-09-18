@@ -40,7 +40,7 @@
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="curator">
-    <route>
+    <route id="zookeeper-master-quartz">
       <from uri="zookeeper-master:master-000:quartz://masterTest?cron=0/2+0/1+*+1/1+*+?+*"/>
       <to uri="mock:results"/>
     </route>

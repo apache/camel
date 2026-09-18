@@ -16,13 +16,20 @@
  */
 package org.apache.camel.support;
 
+import java.util.LinkedHashSet;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesReload;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -63,6 +70,11 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
             lastError = null;
             EventHelper.notifyContextReloading(getCamelContext(), source);
             reloadProperties(source);
+            // the order matters: the components must hold the newly resolved secrets before they are asked
+            // to re-authenticate, and both must happen before the routes come back up, so that the new
+            // consumers and producers are created against an already re-authenticated resource
+            reloadComponentProperties(source);
+            notifySecretRotation(source);
             reloadRoutes(source);
             incSucceededCounter();
             EventHelper.notifyContextReloaded(getCamelContext(), source);
@@ -84,6 +96,71 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
             // reload by restarting
             ServiceHelper.stopAndShutdownService(ps);
             ServiceHelper.startService(ps);
+        }
+    }
+
+    /**
+     * Re-applies the configuration properties whose value is a property placeholder, so that components are
+     * re-configured with what those placeholders resolve to now.
+     * <p/>
+     * A component option such as <tt>camel.component.kafka.saslJaasConfig</tt> has its placeholder resolved once, when
+     * the component is configured, and the resolved value is what is stored on the component. Reloading the routes
+     * rebuilds the endpoints from that same already-resolved value, so without this step a rotated secret would never
+     * reach the component. Only <tt>camel.</tt> options whose value is a placeholder are handed to the listener, as
+     * they are the only ones whose resolved value can change while the raw configuration stays the same.
+     */
+    protected void reloadComponentProperties(Object source) throws Exception {
+        PropertiesReload pr = getCamelContext().hasService(PropertiesReload.class);
+        if (pr == null) {
+            // component re-configuration is only supported when running with Camel Main
+            return;
+        }
+
+        PropertiesComponent pc = getCamelContext().getPropertiesComponent();
+        Properties prop = pc.loadProperties();
+        // filter on camel. rather than on the individual option prefixes: PropertiesReload is a generic SPI and
+        // each implementation decides which options it acts on. MainPropertiesReload, for example, re-applies only
+        // camel.component., camel.dataformat. and camel.language., and silently ignores everything else
+        // stringPropertyNames is a live view of the keys, so snapshot before removing
+        Set<String> keys = new LinkedHashSet<>(prop.stringPropertyNames());
+        for (String key : keys) {
+            Object value = prop.get(key);
+            boolean placeholder = key.startsWith("camel.")
+                    && value instanceof String str && str.contains(PropertiesComponent.PREFIX_TOKEN);
+            if (!placeholder) {
+                prop.remove(key);
+            }
+        }
+        if (!prop.isEmpty()) {
+            LOG.debug("Re-applying {} property placeholder based options to components", prop.size());
+            pr.onReload(source != null ? source.toString() : "ContextReload", prop);
+        }
+    }
+
+    /**
+     * Notifies every {@link SecretRotationAware} component and registry bean that the secrets they captured may have
+     * been rotated, so they can re-authenticate before the routes are restarted.
+     * <p/>
+     * A listener that throws is logged and skipped, so that one component cannot prevent the others from being
+     * refreshed, nor fail the reload as a whole.
+     */
+    protected void notifySecretRotation(Object source) {
+        Set<SecretRotationAware> targets = new LinkedHashSet<>();
+        for (String name : getCamelContext().getComponentNames()) {
+            Component component = getCamelContext().hasComponent(name);
+            if (component instanceof SecretRotationAware sra) {
+                targets.add(sra);
+            }
+        }
+        targets.addAll(getCamelContext().getRegistry().findByType(SecretRotationAware.class));
+
+        for (SecretRotationAware target : targets) {
+            try {
+                target.onSecretRotation(source);
+            } catch (Exception e) {
+                LOG.warn("Error re-authenticating {} after secret rotation due to: {}. This exception is ignored.",
+                        target, e.getMessage(), e);
+            }
         }
     }
 

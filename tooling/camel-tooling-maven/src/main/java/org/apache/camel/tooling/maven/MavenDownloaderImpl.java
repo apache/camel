@@ -85,8 +85,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     public static final String MAVEN_CENTRAL_REPO = "https://repo1.maven.org/maven2";
     public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
 
-    private static final String EXTRA_DEFAULT_REPOS_DEFAULT_VALUE = "camel.default.extra.repos.default.value";
+    // extra default Maven repositories, as a comma-separated list of id=url pairs
     private static final String EXTRA_DEFAULT_REPOS_PROPERTY = "camel.extra.repos";
+    // fallback for the above, consulted only when camel.extra.repos is not set
+    private static final String EXTRA_DEFAULT_REPOS_DEFAULT_VALUE = "camel.default.extra.repos.default.value";
 
     private static final RepositoryPolicy POLICY_DEFAULT = new RepositoryPolicy(
             true, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_WARN);
@@ -503,18 +505,24 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     /**
-     * Loads extra default Maven repositories from classpath properties files and system property.
+     * Loads extra default Maven repositories from a system property, so they are used in addition to Maven Central and
+     * the repositories from {@code settings.xml} without having to pass {@code --repos} on every command.
      * <p>
-     * Two complementary mechanisms:
-     * <ul>
-     * <li>System property: {@value #EXTRA_DEFAULT_REPOS_PROPERTY or EXTRA_DEFAULT_REPOS_DEFAULT_VALUE} (comma-separated
-     * id=url pairs)</li>
-     * </ul>
-     * Both are additive and merged. Upstream ships no properties file (no-op). Product builds can add the file or use
-     * the system property.
+     * The value is a comma-separated list of repositories, where each entry is either a plain URL or an {@code id=url}
+     * pair, for example {@code repo1=https://repo1.example.com/maven2,repo2=https://repo2.example.com/releases}. See
+     * {@link #configureRepositories(List, Set)} for why the {@code id=url} form is preferable.
+     * <p>
+     * Two system properties are consulted, in order:
+     * <ol>
+     * <li>{@value #EXTRA_DEFAULT_REPOS_PROPERTY} &ndash; intended for end users</li>
+     * <li>{@value #EXTRA_DEFAULT_REPOS_DEFAULT_VALUE} &ndash; a fallback used only when the former is not set, so that
+     * a custom Camel distribution can bake in a baseline that end users are still able to override</li>
+     * </ol>
+     * They are not merged: the first one that is set wins. Apache Camel does not set either of them, so this is a no-op
+     * unless configured.
      */
     private void loadExtraDefaultRepositories(List<RemoteRepository> repositories) {
-        // Load from system property (comma-separated id=url pairs)
+        // user-provided value first, then any baseline a custom distribution provided
         String sysProp
                 = System.getProperty(EXTRA_DEFAULT_REPOS_PROPERTY, System.getProperty(EXTRA_DEFAULT_REPOS_DEFAULT_VALUE));
         if (sysProp != null && !sysProp.isBlank()) {

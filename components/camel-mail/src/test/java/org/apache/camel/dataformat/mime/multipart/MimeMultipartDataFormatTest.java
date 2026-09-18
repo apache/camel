@@ -40,6 +40,7 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -425,6 +426,27 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         assertNull(out.getMessage().getHeader("CamelFoo"));
         assertNull(out.getMessage().getHeader("camelBar"));
         assertNull(out.getMessage().getHeader("CAMELBaz"));
+    }
+
+    @Test
+    void unmarshalInlineHeadersFiltersMailSessionPropertyHeaders() {
+        // MailHeaderFilterStrategy adds the mail.smtp. / mail.smtps. prefixes to the inbound filter
+        // (CAMEL-23522) so an external mail message cannot inject JavaMail session properties. The
+        // headersInline unmarshal path has to filter the same namespace as the mail consumer does.
+        String mime = "mail.smtp.host: blocked\r\n"
+                      + "mail.smtps.auth: blocked\r\n"
+                      + "MAIL.SMTP.PORT: blocked\r\n"
+                      + "X-Normal: keep-me\r\n"
+                      + "Content-Type: text/plain\r\n"
+                      + "\r\n"
+                      + "Body text";
+        in.setBody(mime);
+        Exchange out = template.send("direct:unmarshalonlyinlineheaders", exchange);
+        assertThat(out.getMessage()).isNotNull();
+        assertThat(out.getMessage().getHeader("X-Normal")).isEqualTo("keep-me");
+        assertThat(out.getMessage().getHeader("mail.smtp.host")).isNull();
+        assertThat(out.getMessage().getHeader("mail.smtps.auth")).isNull();
+        assertThat(out.getMessage().getHeader("MAIL.SMTP.PORT")).isNull();
     }
 
     @Test

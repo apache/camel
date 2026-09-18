@@ -149,15 +149,15 @@ YAML::
 - route:
     from:
       uri: direct:createUser
-    steps:
-      - setHeader:
-          name: CamelAwsIAMUsername
-          constant: camel
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: createUser
+      steps:
+        - setHeader:
+            name: CamelAwsIAMUsername
+            constant: camel
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: createUser
 ----
 ====
 
@@ -194,15 +194,15 @@ YAML::
 - route:
     from:
       uri: direct:deleteUser
-    steps:
-      - setHeader:
-          name: CamelAwsIAMUsername
-          constant: camel
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: deleteUser
+      steps:
+        - setHeader:
+            name: CamelAwsIAMUsername
+            constant: camel
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: deleteUser
 ----
 ====
 
@@ -235,12 +235,12 @@ YAML::
 - route:
     from:
       uri: direct:listUsers
-    steps:
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: listUsers
+      steps:
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: listUsers
 ----
 ====
 
@@ -277,15 +277,15 @@ YAML::
 - route:
     from:
       uri: direct:createGroup
-    steps:
-      - setHeader:
-          name: CamelAwsIAMGroupName
-          constant: camel
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: createGroup
+      steps:
+        - setHeader:
+            name: CamelAwsIAMGroupName
+            constant: camel
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: createGroup
 ----
 ====
 
@@ -322,15 +322,15 @@ YAML::
 - route:
     from:
       uri: direct:deleteGroup
-    steps:
-      - setHeader:
-          name: CamelAwsIAMGroupName
-          constant: camel
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: deleteGroup
+      steps:
+        - setHeader:
+            name: CamelAwsIAMGroupName
+            constant: camel
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: deleteGroup
 ----
 ====
 
@@ -363,12 +363,12 @@ YAML::
 - route:
     from:
       uri: direct:listGroups
-    steps:
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: listGroups
+      steps:
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: listGroups
 ----
 ====
 
@@ -411,18 +411,18 @@ YAML::
 - route:
     from:
       uri: direct:createRole
-    steps:
-      - setHeader:
-          name: CamelAwsIAMRoleName
-          constant: myRole
-      - setHeader:
-          name: CamelAwsIAMAssumeRolePolicyDocument
-          constant: "{...}"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: createRole
+      steps:
+        - setHeader:
+            name: CamelAwsIAMRoleName
+            constant: myRole
+        - setHeader:
+            name: CamelAwsIAMAssumeRolePolicyDocument
+            constant: "{...}"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: createRole
 ----
 ====
 
@@ -459,15 +459,15 @@ YAML::
 - route:
     from:
       uri: direct:deleteRole
-    steps:
-      - setHeader:
-          name: CamelAwsIAMRoleName
-          constant: myRole
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: deleteRole
+      steps:
+        - setHeader:
+            name: CamelAwsIAMRoleName
+            constant: myRole
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: deleteRole
 ----
 ====
 
@@ -504,15 +504,15 @@ YAML::
 - route:
     from:
       uri: direct:getRole
-    steps:
-      - setHeader:
-          name: CamelAwsIAMRoleName
-          constant: myRole
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: getRole
+      steps:
+        - setHeader:
+            name: CamelAwsIAMRoleName
+            constant: myRole
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: getRole
 ----
 ====
 
@@ -545,12 +545,12 @@ YAML::
 - route:
     from:
       uri: direct:listRoles
-    steps:
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: listRoles
+      steps:
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: listRoles
 ----
 ====
 
@@ -593,18 +593,18 @@ YAML::
 - route:
     from:
       uri: direct:createPolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMPolicyName
-          constant: myPolicy
-      - setHeader:
-          name: CamelAwsIAMPolicyDocument
-          constant: "{...}"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: createPolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMPolicyName
+            constant: myPolicy
+        - setHeader:
+            name: CamelAwsIAMPolicyDocument
+            constant: "{...}"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: createPolicy
 ----
 ====
 
@@ -641,15 +641,15 @@ YAML::
 - route:
     from:
       uri: direct:deletePolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMPolicyArn
-          constant: "arn:aws:iam::123456789012:policy/myPolicy"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: deletePolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMPolicyArn
+            constant: "arn:aws:iam::123456789012:policy/myPolicy"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: deletePolicy
 ----
 ====
 
@@ -686,15 +686,15 @@ YAML::
 - route:
     from:
       uri: direct:getPolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMPolicyArn
-          constant: "arn:aws:iam::123456789012:policy/myPolicy"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: getPolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMPolicyArn
+            constant: "arn:aws:iam::123456789012:policy/myPolicy"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: getPolicy
 ----
 ====
 
@@ -727,12 +727,12 @@ YAML::
 - route:
     from:
       uri: direct:listPolicies
-    steps:
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: listPolicies
+      steps:
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: listPolicies
 ----
 ====
 
@@ -775,18 +775,18 @@ YAML::
 - route:
     from:
       uri: direct:attachUserPolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMUsername
-          constant: camel
-      - setHeader:
-          name: CamelAwsIAMPolicyArn
-          constant: "arn:aws:iam::123456789012:policy/myPolicy"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: attachUserPolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMUsername
+            constant: camel
+        - setHeader:
+            name: CamelAwsIAMPolicyArn
+            constant: "arn:aws:iam::123456789012:policy/myPolicy"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: attachUserPolicy
 ----
 ====
 
@@ -827,18 +827,18 @@ YAML::
 - route:
     from:
       uri: direct:detachUserPolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMUsername
-          constant: camel
-      - setHeader:
-          name: CamelAwsIAMPolicyArn
-          constant: "arn:aws:iam::123456789012:policy/myPolicy"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: detachUserPolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMUsername
+            constant: camel
+        - setHeader:
+            name: CamelAwsIAMPolicyArn
+            constant: "arn:aws:iam::123456789012:policy/myPolicy"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: detachUserPolicy
 ----
 ====
 
@@ -879,18 +879,18 @@ YAML::
 - route:
     from:
       uri: direct:attachGroupPolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMGroupName
-          constant: myGroup
-      - setHeader:
-          name: CamelAwsIAMPolicyArn
-          constant: "arn:aws:iam::123456789012:policy/myPolicy"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: attachGroupPolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMGroupName
+            constant: myGroup
+        - setHeader:
+            name: CamelAwsIAMPolicyArn
+            constant: "arn:aws:iam::123456789012:policy/myPolicy"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: attachGroupPolicy
 ----
 ====
 
@@ -931,18 +931,18 @@ YAML::
 - route:
     from:
       uri: direct:detachGroupPolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMGroupName
-          constant: myGroup
-      - setHeader:
-          name: CamelAwsIAMPolicyArn
-          constant: "arn:aws:iam::123456789012:policy/myPolicy"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: detachGroupPolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMGroupName
+            constant: myGroup
+        - setHeader:
+            name: CamelAwsIAMPolicyArn
+            constant: "arn:aws:iam::123456789012:policy/myPolicy"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: detachGroupPolicy
 ----
 ====
 
@@ -983,18 +983,18 @@ YAML::
 - route:
     from:
       uri: direct:attachRolePolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMRoleName
-          constant: myRole
-      - setHeader:
-          name: CamelAwsIAMPolicyArn
-          constant: "arn:aws:iam::123456789012:policy/myPolicy"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: attachRolePolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMRoleName
+            constant: myRole
+        - setHeader:
+            name: CamelAwsIAMPolicyArn
+            constant: "arn:aws:iam::123456789012:policy/myPolicy"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: attachRolePolicy
 ----
 ====
 
@@ -1035,18 +1035,18 @@ YAML::
 - route:
     from:
       uri: direct:detachRolePolicy
-    steps:
-      - setHeader:
-          name: CamelAwsIAMRoleName
-          constant: myRole
-      - setHeader:
-          name: CamelAwsIAMPolicyArn
-          constant: "arn:aws:iam::123456789012:policy/myPolicy"
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: detachRolePolicy
+      steps:
+        - setHeader:
+            name: CamelAwsIAMRoleName
+            constant: myRole
+        - setHeader:
+            name: CamelAwsIAMPolicyArn
+            constant: "arn:aws:iam::123456789012:policy/myPolicy"
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: detachRolePolicy
 ----
 ====
 
@@ -1085,15 +1085,15 @@ YAML::
 - route:
     from:
       uri: direct:createInstanceProfile
-    steps:
-      - setHeader:
-          name: CamelAwsIAMInstanceProfileName
-          constant: myInstanceProfile
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: createInstanceProfile
+      steps:
+        - setHeader:
+            name: CamelAwsIAMInstanceProfileName
+            constant: myInstanceProfile
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: createInstanceProfile
 ----
 ====
 
@@ -1130,15 +1130,15 @@ YAML::
 - route:
     from:
       uri: direct:deleteInstanceProfile
-    steps:
-      - setHeader:
-          name: CamelAwsIAMInstanceProfileName
-          constant: myInstanceProfile
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: deleteInstanceProfile
+      steps:
+        - setHeader:
+            name: CamelAwsIAMInstanceProfileName
+            constant: myInstanceProfile
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: deleteInstanceProfile
 ----
 ====
 
@@ -1175,15 +1175,15 @@ YAML::
 - route:
     from:
       uri: direct:getInstanceProfile
-    steps:
-      - setHeader:
-          name: CamelAwsIAMInstanceProfileName
-          constant: myInstanceProfile
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: getInstanceProfile
+      steps:
+        - setHeader:
+            name: CamelAwsIAMInstanceProfileName
+            constant: myInstanceProfile
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: getInstanceProfile
 ----
 ====
 
@@ -1216,12 +1216,12 @@ YAML::
 - route:
     from:
       uri: direct:listInstanceProfiles
-    steps:
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: listInstanceProfiles
+      steps:
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: listInstanceProfiles
 ----
 ====
 
@@ -1262,18 +1262,18 @@ YAML::
 - route:
     from:
       uri: direct:addRoleToInstanceProfile
-    steps:
-      - setHeader:
-          name: CamelAwsIAMInstanceProfileName
-          constant: myInstanceProfile
-      - setHeader:
-          name: CamelAwsIAMRoleName
-          constant: myRole
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: addRoleToInstanceProfile
+      steps:
+        - setHeader:
+            name: CamelAwsIAMInstanceProfileName
+            constant: myInstanceProfile
+        - setHeader:
+            name: CamelAwsIAMRoleName
+            constant: myRole
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: addRoleToInstanceProfile
 ----
 ====
 
@@ -1314,18 +1314,18 @@ YAML::
 - route:
     from:
       uri: direct:removeRoleFromInstanceProfile
-    steps:
-      - setHeader:
-          name: CamelAwsIAMInstanceProfileName
-          constant: myInstanceProfile
-      - setHeader:
-          name: CamelAwsIAMRoleName
-          constant: myRole
-      - to:
-          uri: aws2-iam://test
-          parameters:
-            iamClient: "#amazonIAMClient"
-            operation: removeRoleFromInstanceProfile
+      steps:
+        - setHeader:
+            name: CamelAwsIAMInstanceProfileName
+            constant: myInstanceProfile
+        - setHeader:
+            name: CamelAwsIAMRoleName
+            constant: myRole
+        - to:
+            uri: aws2-iam://test
+            parameters:
+              iamClient: "#amazonIAMClient"
+              operation: removeRoleFromInstanceProfile
 ----
 ====
 

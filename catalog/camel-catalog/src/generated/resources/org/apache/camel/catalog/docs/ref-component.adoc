@@ -61,7 +61,7 @@ Registry such as:
 ._XML-only: Spring XML endpoint registry definitions_
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <endpoint id="normalOrder" uri="activemq:order.slow"/>
     <endpoint id="bigspenderOrder" uri="activemq:order.high"/>
 </camelContext>
@@ -107,8 +107,8 @@ YAML::
 - route:
     from:
       uri: ref:endpoint1
-    steps:
-      - to:
-          uri: ref:endpoint2
+      steps:
+        - to:
+            uri: ref:endpoint2
 ----
 ====

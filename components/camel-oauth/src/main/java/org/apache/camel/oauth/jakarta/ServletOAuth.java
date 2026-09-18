@@ -106,6 +106,9 @@ public class ServletOAuth extends OAuth {
             uriBuilder.addParameter("response_type", params.getResponseType().toString().toLowerCase());
             uriBuilder.addParameter("client_id", params.getClientId());
             uriBuilder.addParameter("redirect_uri", params.getRedirectUri());
+            if (params.getState() != null) {
+                uriBuilder.addParameter("state", params.getState());
+            }
             var requestUrl = uriBuilder.build().toString();
             return requestUrl;
         } catch (URISyntaxException ex) {

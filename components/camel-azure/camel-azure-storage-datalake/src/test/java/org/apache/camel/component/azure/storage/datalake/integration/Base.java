@@ -42,7 +42,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class Base extends CamelTestSupport {
 
     @RegisterExtension
-    public AzureService service = AzureStorageDataLakeServiceFactory.createService();
+    public AzureService service = AzureStorageDataLakeServiceFactory.createSingletonService();
 
     protected DataLakeServiceClient serviceClient;
     protected DataLakeConfiguration configuration;

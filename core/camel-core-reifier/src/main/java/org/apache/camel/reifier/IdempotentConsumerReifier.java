@@ -23,9 +23,15 @@ import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.KeyValueRepository;
+import org.apache.camel.support.KeyValueIdempotentRepository;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsumerDefinition> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumerReifier.class);
 
     public IdempotentConsumerReifier(Route route, ProcessorDefinition<?> definition) {
         super(route, IdempotentConsumerDefinition.class.cast(definition));
@@ -54,15 +60,27 @@ public class IdempotentConsumerReifier extends ExpressionReifier<IdempotentConsu
     }
 
     /**
-     * Strategy method to resolve the {@link org.apache.camel.spi.IdempotentRepository} to use
+     * Strategy method to resolve the {@link org.apache.camel.spi.IdempotentRepository} to use.
+     * <p/>
+     * If no explicit {@link IdempotentRepository} is configured (neither as a bean reference nor inline), this method
+     * falls back to looking up a {@link KeyValueRepository} from the Camel registry and wrapping it in a
+     * {@link KeyValueIdempotentRepository} adapter.
      *
-     * @return the repository
+     * @return the repository, or {@code null} if none could be resolved
      */
     protected <T> IdempotentRepository resolveIdempotentRepository() {
         IdempotentRepository repo = definition.getIdempotentRepositoryBean();
         String ref = parseString(definition.getIdempotentRepository());
         if (repo == null && ref != null) {
             repo = mandatoryLookup(ref, IdempotentRepository.class);
+        }
+        if (repo == null) {
+            // Fallback: auto-discover a KeyValueRepository from the registry
+            KeyValueRepository kvRepo = camelContext.getRegistry().findSingleByType(KeyValueRepository.class);
+            if (kvRepo != null) {
+                LOG.info("Auto-discovered KeyValueRepository from registry, wrapping as IdempotentRepository");
+                repo = new KeyValueIdempotentRepository(kvRepo);
+            }
         }
         return repo;
     }

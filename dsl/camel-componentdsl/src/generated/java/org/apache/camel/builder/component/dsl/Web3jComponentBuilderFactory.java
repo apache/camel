@@ -147,6 +147,23 @@ public interface Web3jComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Operation to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: transaction
+         * Group: common
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Web3jComponentBuilder operation(java.lang.String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+    
         /**
          * A comma separated transaction privateFor nodes with public keys in a
          * Quorum network.
@@ -515,23 +532,6 @@ public interface Web3jComponentBuilderFactory {
             return this;
         }
     
-        
-        /**
-         * Operation to use.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: transaction
-         * Group: producer
-         * 
-         * @param operation the value to set
-         * @return the dsl builder
-         */
-        default Web3jComponentBuilder operation(java.lang.String operation) {
-            doSetProperty("operation", operation);
-            return this;
-        }
-    
         /**
          * The transaction index position withing a block.
          * 
@@ -701,6 +701,7 @@ public interface Web3jComponentBuilderFactory {
             case "fromBlock": getOrCreateConfiguration((Web3jComponent) component).setFromBlock((java.lang.String) value); return true;
             case "fullTransactionObjects": getOrCreateConfiguration((Web3jComponent) component).setFullTransactionObjects((boolean) value); return true;
             case "gasLimit": getOrCreateConfiguration((Web3jComponent) component).setGasLimit((java.math.BigInteger) value); return true;
+            case "operation": getOrCreateConfiguration((Web3jComponent) component).setOperation((java.lang.String) value); return true;
             case "privateFor": getOrCreateConfiguration((Web3jComponent) component).setPrivateFor((java.lang.String) value); return true;
             case "quorumAPI": getOrCreateConfiguration((Web3jComponent) component).setQuorumAPI((boolean) value); return true;
             case "toAddress": getOrCreateConfiguration((Web3jComponent) component).setToAddress((java.lang.String) value); return true;
@@ -723,7 +724,6 @@ public interface Web3jComponentBuilderFactory {
             case "lazyStartProducer": ((Web3jComponent) component).setLazyStartProducer((boolean) value); return true;
             case "mixDigest": getOrCreateConfiguration((Web3jComponent) component).setMixDigest((java.lang.String) value); return true;
             case "nonce": getOrCreateConfiguration((Web3jComponent) component).setNonce((java.lang.String) value); return true;
-            case "operation": getOrCreateConfiguration((Web3jComponent) component).setOperation((java.lang.String) value); return true;
             case "position": getOrCreateConfiguration((Web3jComponent) component).setPosition((java.math.BigInteger) value); return true;
             case "priority": getOrCreateConfiguration((Web3jComponent) component).setPriority((java.math.BigInteger) value); return true;
             case "sha3HashOfDataToSign": getOrCreateConfiguration((Web3jComponent) component).setSha3HashOfDataToSign((java.lang.String) value); return true;

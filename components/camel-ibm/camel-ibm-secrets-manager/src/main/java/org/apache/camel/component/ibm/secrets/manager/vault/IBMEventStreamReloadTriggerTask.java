@@ -119,15 +119,16 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
                 groupId = ibmVaultConfiguration.getEventStreamGroupId();
                 topic = ibmVaultConfiguration.getEventStreamTopic();
                 if (ObjectHelper.isEmpty(username)) {
-                    if (ObjectHelper.isNotEmpty(ibmVaultConfiguration.getEventStreamUsername())) {
-                        username = ibmVaultConfiguration.getEventStreamUsername();
-                    } else {
-                        username = "token";
-                    }
+                    username = ibmVaultConfiguration.getEventStreamUsername();
                 }
                 password = ibmVaultConfiguration.getEventStreamPassword();
             }
-        } else {
+        }
+        if (ObjectHelper.isEmpty(username)) {
+            username = "token";
+        }
+        if (ObjectHelper.isEmpty(bootstrapServers) || ObjectHelper.isEmpty(groupId) || ObjectHelper.isEmpty(topic)
+                || ObjectHelper.isEmpty(password)) {
             throw new RuntimeCamelException(
                     "Using the IBM Secrets Refresh Task requires setting IBM Event Stream bootstrap servers, topic, groupId, username and password as application properties or environment variables");
         }

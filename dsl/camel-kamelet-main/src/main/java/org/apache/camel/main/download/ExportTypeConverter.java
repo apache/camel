@@ -16,11 +16,14 @@
  */
 package org.apache.camel.main.download;
 
+import java.time.Duration;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * During export then we can be more flexible and allow missing property placeholders to resolve to a hardcoded value,
@@ -47,6 +50,8 @@ public class ExportTypeConverter extends TypeConverterSupport {
             return (T) ObjectConverter.toByte(s);
         } else if (type == String.class) {
             return (T) s;
+        } else if (type == Duration.class) {
+            return (T) TimeUtils.toDuration(s);
         }
         return null;
     }

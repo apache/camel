@@ -24,18 +24,18 @@ import com.azure.cosmos.implementation.apachecommons.lang.RandomStringUtils;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbContainerOperations;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbOperationsBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 public class CosmosDbConsumer extends DefaultConsumer {
 
-    private Synchronization onCompletion;
+    private final Synchronization onCompletion = new ConsumerOnCompletion();
     private CosmosAsyncClientWrapper clientWrapper;
     private ChangeFeedProcessor changeFeedProcessor;
 
@@ -47,7 +47,6 @@ public class CosmosDbConsumer extends DefaultConsumer {
     protected void doInit() throws Exception {
         super.doInit();
         this.clientWrapper = new CosmosAsyncClientWrapper(getEndpoint().getCosmosAsyncClient());
-        this.onCompletion = new ConsumerOnCompletion();
         this.changeFeedProcessor = getContainerOperations().captureEventsWithChangeFeed(
                 getLeaseContainerOperations().getContainer(), getHostName(),
                 this::onEventListener, getConfiguration().getChangeFeedProcessorOptions());
@@ -83,12 +82,28 @@ public class CosmosDbConsumer extends DefaultConsumer {
     }
 
     private void onEventListener(final List<Map<String, ?>> recordList) {
-        final Exchange exchange = createAzureCosmosDbExchange(recordList);
+        processBatch(createAzureCosmosDbExchange(recordList));
+    }
 
+    // Visible for testing.
+    void processBatch(final Exchange exchange) {
         // add exchange callback
         exchange.getExchangeExtension().addOnCompletion(onCompletion);
-        // use default consumer callback
-        getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
+
+        // Process the batch synchronously: the Azure ChangeFeedProcessor advances (checkpoints) the lease as
+        // soon as this handler returns, so processing must complete before we return. On failure we rethrow,
+        // so the lease is not advanced and the batch is redelivered on the next feed poll (at-least-once)
+        // instead of being silently lost.
+        try {
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        final Exception cause = exchange.getException();
+        if (cause != null) {
+            throw new RuntimeCamelException("Error processing Azure CosmosDB change feed batch", cause);
+        }
     }
 
     private Exchange createAzureCosmosDbExchange(final List<Map<String, ?>> recordList) {

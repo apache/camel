@@ -430,7 +430,8 @@ public interface LangChain4jEmbeddingStoreEndpointBuilderFactory {
             return "CamelLangchain4jEmbeddingStoreMinScore";
         }
         /**
-         * Search filter for metadata-based constraints.
+         * Filter for metadata-based constraints (used in SEARCH and REMOVE
+         * operations).
          * 
          * The option is a: {@code
          * dev.langchain4j.store.embedding.filter.Filter} type.
@@ -442,6 +443,32 @@ public interface LangChain4jEmbeddingStoreEndpointBuilderFactory {
          */
         public String langchain4jEmbeddingStoreFilter() {
             return "CamelLangchain4jEmbeddingStoreFilter";
+        }
+        /**
+         * Caller-supplied embedding ID for single ADD operations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * Langchain4jEmbeddingStoreEmbeddingId}.
+         */
+        public String langchain4jEmbeddingStoreEmbeddingId() {
+            return "CamelLangchain4jEmbeddingStoreEmbeddingId";
+        }
+        /**
+         * Caller-supplied embedding IDs for batch ADD operations.
+         * 
+         * The option is a: {@code java.util.List<java.lang.String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * Langchain4jEmbeddingStoreEmbeddingIds}.
+         */
+        public String langchain4jEmbeddingStoreEmbeddingIds() {
+            return "CamelLangchain4jEmbeddingStoreEmbeddingIds";
         }
     }
     static LangChain4jEmbeddingStoreEndpointBuilder endpointBuilder(String componentName, String path) {

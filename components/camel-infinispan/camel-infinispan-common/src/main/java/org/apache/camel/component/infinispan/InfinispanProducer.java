@@ -19,15 +19,23 @@ package org.apache.camel.component.infinispan;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Message;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class InfinispanProducer<M extends InfinispanManager, C extends InfinispanConfiguration>
         extends HeaderSelectorProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanProducer.class);
+
+    private final AtomicBoolean lifespanReported = new AtomicBoolean();
+    private final AtomicBoolean maxIdleTimeReported = new AtomicBoolean();
 
     private final String cacheName;
     private final C configuration;
@@ -413,13 +421,33 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     }
 
     protected boolean hasLifespan(Message message) {
-        return !InfinispanUtil.isHeaderEmpty(message, InfinispanConstants.LIFESPAN_TIME)
-                && !InfinispanUtil.isHeaderEmpty(message, InfinispanConstants.LIFESPAN_TIME_UNIT);
+        return hasExpiry(message, InfinispanConstants.LIFESPAN_TIME, InfinispanConstants.LIFESPAN_TIME_UNIT,
+                lifespanReported);
     }
 
     protected boolean hasMaxIdleTime(Message message) {
-        return !InfinispanUtil.isHeaderEmpty(message, InfinispanConstants.MAX_IDLE_TIME)
-                && !InfinispanUtil.isHeaderEmpty(message, InfinispanConstants.MAX_IDLE_TIME_UNIT);
+        return hasExpiry(message, InfinispanConstants.MAX_IDLE_TIME, InfinispanConstants.MAX_IDLE_TIME_UNIT,
+                maxIdleTimeReported);
+    }
+
+    /**
+     * An expiry needs both an amount and the time unit it is expressed in. When only one of the two is on the message
+     * the expiry cannot be applied, and the entry is stored without it, so report that instead of dropping it quietly.
+     * <p>
+     * A route that gets this wrong gets it wrong for every message it sends, so each pair is reported once per producer
+     * rather than on every exchange.
+     */
+    private boolean hasExpiry(Message message, String timeHeader, String timeUnitHeader, AtomicBoolean reported) {
+        boolean hasTime = !InfinispanUtil.isHeaderEmpty(message, timeHeader);
+        boolean hasTimeUnit = !InfinispanUtil.isHeaderEmpty(message, timeUnitHeader);
+
+        if (hasTime != hasTimeUnit && reported.compareAndSet(false, true)) {
+            LOG.warn("Both {} and {} are needed to set an expiry on cache {}, but only {} is set on the message,"
+                     + " so the entry is stored without one. Reported once per producer.",
+                    timeHeader, timeUnitHeader, getCacheName(), hasTime ? timeHeader : timeUnitHeader);
+        }
+
+        return hasTime && hasTimeUnit;
     }
 
     protected void setResult(Message message, Object result) {
@@ -430,5 +458,11 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
         } else {
             message.setBody(result);
         }
+    }
+
+    protected void warnNoQueryBuilder() {
+        LOG.warn("No query to run for the {} operation on cache {}, the message is passed through unchanged."
+                 + " Set a query builder on the endpoint with the queryBuilder option, or per message with the {} header.",
+                InfinispanOperation.QUERY, getCacheName(), InfinispanConstants.QUERY_BUILDER);
     }
 }

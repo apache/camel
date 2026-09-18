@@ -24,15 +24,20 @@ import java.util.TreeMap;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "log", description = "Logging framework")
 public class LogDevConsole extends AbstractDevConsole {
 
     // log4j support
     private static final String LOG4J_MBEAN = "org.apache.logging.log4j2";
+
+    public record Response(
+            @Metadata(description = "The logger names mapped to their log level (only present when available)") Map<String, String> levels) {
+    }
 
     public LogDevConsole() {
         super("camel", "log", "Log", "Logging framework");
@@ -53,15 +58,10 @@ public class LogDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         Map<String, String> levels = fetchLoggingLevels();
-        if (!levels.isEmpty()) {
-            JsonObject props = new JsonObject();
-            root.put("levels", props);
-            props.putAll(levels);
-        }
-        return root;
+        Response response = new Response(levels.isEmpty() ? null : levels);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private static Map<String, String> fetchLoggingLevels() {

@@ -59,9 +59,9 @@ public class RabbitMQConsumerPooledExchangeIT extends RabbitMQITSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("spring-rabbitmq:foo");
+                        .to("spring-rabbitmq:" + uniqueName("foo"));
 
-                from("spring-rabbitmq:foo")
+                from("spring-rabbitmq:" + uniqueName("foo"))
                         .to("log:result")
                         .to("mock:result");
             }

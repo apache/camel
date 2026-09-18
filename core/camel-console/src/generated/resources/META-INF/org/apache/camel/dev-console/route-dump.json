@@ -6,6 +6,7 @@
     "title": "Route Dump",
     "description": "Dump route in XML, YAML, or Java DSL format",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.RouteDumpDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -73,6 +74,56 @@
       "secret": false,
       "defaultValue": false,
       "description": "Whether to expand URIs into separated key\/value parameters"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "routes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "from": {
+              "type": "string",
+              "description": "The route's endpoint URI"
+            },
+            "source": {
+              "type": "string",
+              "description": "The source location (only present when known)"
+            },
+            "format": {
+              "type": "string",
+              "description": "The dump format, xml\/yaml\/java (only present when the dump succeeded)"
+            },
+            "code": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "line": {
+                    "type": "integer",
+                    "description": "The source line number, or -1 when not known"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "The source code line"
+                  }
+                },
+                "required": [
+                  "line"
+                ]
+              },
+              "description": "The dumped route source code (only present when the dump succeeded)"
+            }
+          }
+        },
+        "description": "The routes"
+      }
     }
   }
 }

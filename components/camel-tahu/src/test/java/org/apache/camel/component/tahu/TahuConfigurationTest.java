@@ -74,14 +74,15 @@ public class TahuConfigurationTest extends CamelTestSupport {
     @Test
     public void checkBasicEdgeNodeOptionsMultipleDevices() throws Exception {
         String uri
-                = TahuConstants.EDGE_NODE_SCHEME + "://Basic/EdgeNode?clientId=client1&primaryHostId=app1&deviceIds=D2,D3,D4";
+                = TahuConstants.EDGE_NODE_SCHEME
+                  + "://Basic/EdgeNodeMulti?clientId=client1&primaryHostId=app1&deviceIds=D2,D3,D4";
 
         try (TahuDefaultEndpoint endpoint = TestSupport.resolveMandatoryEndpoint(context, uri, TahuDefaultEndpoint.class)) {
 
             assertThat(endpoint, is(notNullValue()));
             assertThat(endpoint,
                     allOf(hasProperty("groupId", is("Basic")),
-                            hasProperty("edgeNode", is("EdgeNode")),
+                            hasProperty("edgeNode", is("EdgeNodeMulti")),
                             hasProperty("deviceIds", is("D2,D3,D4")),
                             hasProperty("deviceIdList", hasItems("D2", "D3", "D4")),
                             hasProperty("primaryHostId", is("app1")),

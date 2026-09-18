@@ -47,11 +47,11 @@
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
 
         <!-- Dependency versions -->
-        <camel-kamelets-version>4.20.0</camel-kamelets-version>
+        <camel-kamelets-version>4.22.0</camel-kamelets-version>
         <maven-version>3.9.16</maven-version>
-        <plexus-interpolation-version>1.29</plexus-interpolation-version>
-        <plexus-utils-version>4.0.3</plexus-utils-version>
-        <plexus-xml-version>3.0.1</plexus-xml-version>
+        <plexus-interpolation-version>1.30.0</plexus-interpolation-version>
+        <plexus-utils-version>4.1.0</plexus-utils-version>
+        <plexus-xml-version>3.1.0</plexus-xml-version>
         <plexus-sec-dispatcher-version>2.0</plexus-sec-dispatcher-version>
         <plexus-cipher-version>2.1.0</plexus-cipher-version>
         <eclipse-sisu-version>1.1.0</eclipse-sisu-version>
@@ -60,8 +60,8 @@
         <httpcore-version>4.4.16</httpcore-version>
         <commons-codec-version>1.22.1</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
-        <commonmark-version>0.29.0</commonmark-version>
-        <jreleaser-plugin-version>1.25.0</jreleaser-plugin-version>
+        <commonmark-version>0.30.0</commonmark-version>
+        <jreleaser-plugin-version>1.26.0</jreleaser-plugin-version>
     </properties>
 
     <dependencyManagement>

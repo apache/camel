@@ -17,7 +17,9 @@
 package org.apache.camel.impl.console;
 
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.management.MBeanServer;
@@ -28,13 +30,68 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedSchedulePollConsumerMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "consumer", displayName = "Consumers", description = "Display information about Camel consumers")
 public class ConsumerDevConsole extends AbstractDevConsole {
+
+    public record Statistics(
+            @Metadata(description = "Epoch time in milliseconds since the route has been idle") long idleSince,
+            @Metadata(description = "Total number of exchanges") long exchangesTotal,
+            @Metadata(description = "Number of failed exchanges") long exchangesFailed,
+            @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Mean processing time in milliseconds") long meanProcessingTime,
+            @Metadata(description = "Max processing time in milliseconds") long maxProcessingTime,
+            @Metadata(description = "Min processing time in milliseconds") long minProcessingTime,
+            @Metadata(description = "50th percentile processing time in milliseconds (only present when available)") Long p50ProcessingTime,
+            @Metadata(description = "95th percentile processing time in milliseconds (only present when available)") Long p95ProcessingTime,
+            @Metadata(description = "99th percentile processing time in milliseconds (only present when available)") Long p99ProcessingTime,
+            @Metadata(description = "Processing time in milliseconds of the last exchange (only present once an exchange has completed)") Long lastProcessingTime,
+            @Metadata(description = "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)") Long deltaProcessingTime,
+            @Metadata(description = "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)") Long lastCreatedExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)") Long lastCompletedExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)") Long lastFailureHandledExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange failed (only present once one has occurred)") Long lastFailedExchangeTimestamp) {
+    }
+
+    public record ConsumerEntry(
+            @Metadata(description = "The route ID") String id,
+            @Metadata(description = "The endpoint URI") String uri,
+            @Metadata(description = "The consumer state") String state,
+            @Metadata(description = "The consumer service type") String clazz,
+            @Metadata(description = "Whether the endpoint is remote") boolean remote,
+            @Metadata(description = "Whether the consumer is a hosted service") boolean hosted,
+            @Metadata(description = "Number of inflight exchanges") int inflight,
+            @Metadata(description = "Whether the consumer is scheduled (a scheduled poll consumer or a timer consumer)") boolean scheduled,
+            @Metadata(description = "Whether currently polling (only present for scheduled poll consumers)") Boolean polling,
+            @Metadata(description = "Whether the first poll has completed (only present for scheduled poll consumers)") Boolean firstPollDone,
+            @Metadata(description = "Whether the scheduler has started (only present for scheduled poll consumers)") Boolean schedulerStarted,
+            @Metadata(description = "The scheduler class name (only present for scheduled poll consumers)") String schedulerClass,
+            @Metadata(description = "The repeat count (only present for scheduled poll consumers)") Long repeatCount,
+            @Metadata(description = "Whether a fixed delay is used (only present for scheduled poll consumers)") Boolean fixedDelay,
+            @Metadata(description = "The initial delay (only present for scheduled poll consumers)") Long initialDelay,
+            @Metadata(description = "The delay (only present for scheduled poll consumers)") Long delay,
+            @Metadata(description = "The time unit of the delay (only present for scheduled poll consumers)") String timeUnit,
+            @Metadata(description = "Whether greedy scheduling is used (only present for scheduled poll consumers)") Boolean greedy,
+            @Metadata(description = "The running logging level (only present for scheduled poll consumers or timer consumers)") String runningLoggingLevel,
+            @Metadata(description = "Total number of polls (only present for scheduled poll consumers or timer consumers)") Long totalCounter,
+            @Metadata(description = "Number of failed polls (only present for scheduled poll consumers)") Long errorCounter,
+            @Metadata(description = "Number of successful polls (only present for scheduled poll consumers)") Long successCounter,
+            @Metadata(description = "The backoff counter (only present for scheduled poll consumers)") Long backoffCounter,
+            @Metadata(description = "The backoff multiplier (only present for scheduled poll consumers)") Long backoffMultiplier,
+            @Metadata(description = "The backoff error threshold (only present for scheduled poll consumers)") Long backoffErrorThreshold,
+            @Metadata(description = "The backoff idle threshold (only present for scheduled poll consumers)") Long backoffIdleThreshold,
+            @Metadata(description = "The timer name (only present for camel-timer consumers)") String timerName,
+            @Metadata(description = "Whether a fixed rate is used (only present for camel-timer consumers)") Boolean fixedRate,
+            @Metadata(description = "The period (only present for camel-timer consumers)") Long period,
+            @Metadata(description = "Runtime statistics for the route") Statistics statistics) {
+    }
+
+    public record Response(@Metadata(description = "The consumers") List<ConsumerEntry> consumers) {
+    }
 
     public ConsumerDevConsole() {
         super("camel", "consumer", "Consumers", "Display information about Camel consumers");
@@ -129,10 +186,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        final JsonObject root = new JsonObject();
-        final JsonArray list = new JsonArray();
-        root.put("consumers", list);
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        final List<ConsumerEntry> list = new ArrayList<>();
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
@@ -141,43 +196,57 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                 ManagedRouteMBean mr = mcc.getManagedRoute(id);
                 ManagedConsumerMBean mc = mcc.getManagedConsumer(id);
                 if (mr != null && mc != null) {
-                    JsonObject jo = new JsonObject();
-                    Integer inflight = mc.getInflightExchanges();
-                    if (inflight == null) {
-                        inflight = 0;
-                    }
+                    Integer inflightObj = mc.getInflightExchanges();
+                    int inflight = inflightObj != null ? inflightObj : 0;
 
-                    jo.put("id", id);
-                    jo.put("uri", mc.getEndpointUri());
-                    jo.put("state", mc.getState());
-                    jo.put("class", mc.getServiceType());
-                    jo.put("remote", mc.isRemoteEndpoint());
-                    jo.put("hosted", mc.isHostedService());
-                    jo.put("inflight", inflight);
-                    jo.put("scheduled", false);
+                    boolean scheduled = false;
+                    Boolean polling = null;
+                    Boolean firstPollDone = null;
+                    Boolean schedulerStarted = null;
+                    String schedulerClass = null;
+                    Long repeatCount = null;
+                    Boolean fixedDelay = null;
+                    Long initialDelay = null;
+                    Long delay = null;
+                    String timeUnit = null;
+                    Boolean greedy = null;
+                    String runningLoggingLevel = null;
+                    Long totalCounter = null;
+                    Long errorCounter = null;
+                    Long successCounter = null;
+                    Long backoffCounter = null;
+                    Long backoffMultiplier = null;
+                    Long backoffErrorThreshold = null;
+                    Long backoffIdleThreshold = null;
+                    String timerName = null;
+                    Boolean fixedRate = null;
+                    Long period = null;
+
+                    // NOTE: this checks mcc (the ManagedCamelContext), not mc (the consumer) - so this branch is
+                    // effectively dead code, but that pre-existing behavior is preserved as-is here
                     if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {
-                        jo.put("scheduled", true);
-                        jo.put("polling", mpc.isPolling());
-                        jo.put("firstPollDone", mpc.isFirstPollDone());
-                        jo.put("schedulerStarted", mpc.isSchedulerStarted());
-                        jo.put("schedulerClass", mpc.getSchedulerClassName());
-                        jo.put("repeatCount", mpc.getRepeatCount());
-                        jo.put("fixedDelay", mpc.isUseFixedDelay());
-                        jo.put("initialDelay", mpc.getInitialDelay());
-                        jo.put("delay", mpc.getDelay());
-                        jo.put("timeUnit", mpc.getTimeUnit());
-                        jo.put("greedy", mpc.isGreedy());
-                        jo.put("runningLoggingLevel", mpc.getRunningLoggingLevel());
-                        jo.put("totalCounter", mpc.getCounter());
-                        jo.put("errorCounter", mpc.getErrorCounter());
-                        jo.put("successCounter", mpc.getSuccessCounter());
-                        jo.put("backoffCounter", mpc.getBackoffCounter());
-                        jo.put("backoffMultiplier", mpc.getBackoffMultiplier());
-                        jo.put("backoffErrorThreshold", mpc.getBackoffErrorThreshold());
-                        jo.put("backoffIdleThreshold", mpc.getBackoffIdleThreshold());
+                        scheduled = true;
+                        polling = mpc.isPolling();
+                        firstPollDone = mpc.isFirstPollDone();
+                        schedulerStarted = mpc.isSchedulerStarted();
+                        schedulerClass = mpc.getSchedulerClassName();
+                        repeatCount = mpc.getRepeatCount();
+                        fixedDelay = mpc.isUseFixedDelay();
+                        initialDelay = mpc.getInitialDelay();
+                        delay = mpc.getDelay();
+                        timeUnit = mpc.getTimeUnit();
+                        greedy = mpc.isGreedy();
+                        runningLoggingLevel = mpc.getRunningLoggingLevel();
+                        totalCounter = mpc.getCounter();
+                        errorCounter = mpc.getErrorCounter();
+                        successCounter = mpc.getSuccessCounter();
+                        backoffCounter = (long) mpc.getBackoffCounter();
+                        backoffMultiplier = (long) mpc.getBackoffMultiplier();
+                        backoffErrorThreshold = (long) mpc.getBackoffErrorThreshold();
+                        backoffIdleThreshold = (long) mpc.getBackoffIdleThreshold();
                     }
                     if ("TimerConsumer".equals(mc.getServiceType())) {
-                        jo.put("scheduled", true);
+                        scheduled = true;
                         // need to use JMX to gather details for camel-timer consumer
                         try {
                             MBeanServer ms = ManagementFactory.getPlatformMBeanServer();
@@ -185,80 +254,68 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                                     .getObjectNameForConsumer(getCamelContext(),
                                             route.getConsumer());
                             if (ms.isRegistered(on)) {
-                                String timerName = (String) ms.getAttribute(on, "TimerName");
-                                Long counter = (Long) ms.getAttribute(on, "Counter");
-                                Boolean polling = (Boolean) ms.getAttribute(on, "Polling");
-                                Boolean fixedRate = (Boolean) ms.getAttribute(on, "FixedRate");
-                                Long delay = (Long) ms.getAttribute(on, "Delay");
-                                Long period = (Long) ms.getAttribute(on, "Period");
-                                Long repeatCount = (Long) ms.getAttribute(on, "RepeatCount");
-                                String runLoggingLevel = (String) ms.getAttribute(on, "RunLoggingLevel");
-
-                                jo.put("timerName", timerName);
-                                jo.put("polling", polling);
-                                jo.put("fixedRate", fixedRate);
-                                if (delay != null) {
-                                    jo.put("delay", delay);
-                                }
-                                if (period != null) {
-                                    jo.put("period", period);
-                                }
-                                if (repeatCount != null) {
-                                    jo.put("repeatCount", repeatCount);
-                                }
-                                jo.put("runningLoggingLevel", runLoggingLevel);
-                                jo.put("totalCounter", counter);
+                                timerName = (String) ms.getAttribute(on, "TimerName");
+                                totalCounter = (Long) ms.getAttribute(on, "Counter");
+                                polling = (Boolean) ms.getAttribute(on, "Polling");
+                                fixedRate = (Boolean) ms.getAttribute(on, "FixedRate");
+                                delay = (Long) ms.getAttribute(on, "Delay");
+                                period = (Long) ms.getAttribute(on, "Period");
+                                repeatCount = (Long) ms.getAttribute(on, "RepeatCount");
+                                runningLoggingLevel = (String) ms.getAttribute(on, "RunLoggingLevel");
                             }
                         } catch (Exception e) {
                             // ignore
                         }
                     }
-                    final JsonObject stats = toJsonObject(mr);
-                    jo.put("statistics", stats);
 
-                    list.add(jo);
+                    Statistics stats = toStatistics(mr);
+
+                    list.add(new ConsumerEntry(
+                            id, mc.getEndpointUri(), mc.getState(), mc.getServiceType(), mc.isRemoteEndpoint(),
+                            mc.isHostedService(), inflight, scheduled, polling, firstPollDone, schedulerStarted,
+                            schedulerClass, repeatCount, fixedDelay, initialDelay, delay, timeUnit, greedy,
+                            runningLoggingLevel, totalCounter, errorCounter, successCounter, backoffCounter,
+                            backoffMultiplier, backoffErrorThreshold, backoffIdleThreshold, timerName, fixedRate,
+                            period, stats));
                 }
             }
         }
 
-        return root;
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private static JsonObject toJsonObject(ManagedRouteMBean mr) {
-        JsonObject stats = new JsonObject();
-        stats.put("idleSince", mr.getIdleSince());
-        stats.put("exchangesTotal", mr.getExchangesTotal());
-        stats.put("exchangesFailed", mr.getExchangesFailed());
-        stats.put("exchangesInflight", mr.getExchangesInflight());
-        stats.put("meanProcessingTime", mr.getMeanProcessingTime());
-        stats.put("maxProcessingTime", mr.getMaxProcessingTime());
-        stats.put("minProcessingTime", mr.getMinProcessingTime());
+    private static Statistics toStatistics(ManagedRouteMBean mr) {
+        Long p50 = null;
+        Long p95 = null;
+        Long p99 = null;
         if (mr.getProcessingTimeP50() >= 0) {
-            stats.put("p50ProcessingTime", mr.getProcessingTimeP50());
-            stats.put("p95ProcessingTime", mr.getProcessingTimeP95());
-            stats.put("p99ProcessingTime", mr.getProcessingTimeP99());
+            p50 = mr.getProcessingTimeP50();
+            p95 = mr.getProcessingTimeP95();
+            p99 = mr.getProcessingTimeP99();
         }
+
+        Long lastProcessingTime = null;
+        Long deltaProcessingTime = null;
         if (mr.getExchangesTotal() > 0) {
-            stats.put("lastProcessingTime", mr.getLastProcessingTime());
-            stats.put("deltaProcessingTime", mr.getDeltaProcessingTime());
+            lastProcessingTime = mr.getLastProcessingTime();
+            deltaProcessingTime = mr.getDeltaProcessingTime();
         }
-        Date last = mr.getLastExchangeCreatedTimestamp();
-        if (last != null) {
-            stats.put("lastCreatedExchangeTimestamp", last.getTime());
-        }
-        last = mr.getLastExchangeCompletedTimestamp();
-        if (last != null) {
-            stats.put("lastCompletedExchangeTimestamp", last.getTime());
-        }
-        last = mr.getLastExchangeFailureHandledTimestamp();
-        if (last != null) {
-            stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
-        }
-        last = mr.getLastExchangeFailureTimestamp();
-        if (last != null) {
-            stats.put("lastFailedExchangeTimestamp", last.getTime());
-        }
-        return stats;
+
+        Long lastCreated = timestampOf(mr.getLastExchangeCreatedTimestamp());
+        Long lastCompleted = timestampOf(mr.getLastExchangeCompletedTimestamp());
+        Long lastFailureHandled = timestampOf(mr.getLastExchangeFailureHandledTimestamp());
+        Long lastFailed = timestampOf(mr.getLastExchangeFailureTimestamp());
+
+        return new Statistics(
+                mr.getIdleSince(), mr.getExchangesTotal(), mr.getExchangesFailed(), mr.getExchangesInflight(),
+                mr.getMeanProcessingTime(), mr.getMaxProcessingTime(), mr.getMinProcessingTime(),
+                p50, p95, p99, lastProcessingTime, deltaProcessingTime,
+                lastCreated, lastCompleted, lastFailureHandled, lastFailed);
+    }
+
+    private static Long timestampOf(Date date) {
+        return date != null ? date.getTime() : null;
     }
 
 }

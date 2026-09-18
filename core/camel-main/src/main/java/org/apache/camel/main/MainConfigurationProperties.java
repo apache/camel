@@ -75,6 +75,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private TracerConfigurationProperties tracerConfigurationProperties;
     private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
     private ErrorRegistryConfigurationProperties errorRegistryConfigurationProperties;
+    private AiObservabilityConfigurationProperties aiObservabilityConfigurationProperties;
 
     @Override
     public void close() {
@@ -157,6 +158,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (errorRegistryConfigurationProperties != null) {
             errorRegistryConfigurationProperties.close();
             errorRegistryConfigurationProperties = null;
+        }
+        if (aiObservabilityConfigurationProperties != null) {
+            aiObservabilityConfigurationProperties.close();
+            aiObservabilityConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -395,6 +400,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasErrorRegistryConfiguration() {
         return errorRegistryConfigurationProperties != null;
+    }
+
+    /**
+     * To configure GenAI observability.
+     */
+    public AiObservabilityConfigurationProperties aiObservability() {
+        if (aiObservabilityConfigurationProperties == null) {
+            aiObservabilityConfigurationProperties = new AiObservabilityConfigurationProperties(this);
+        }
+        return aiObservabilityConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any GenAI observability configuration specified.
+     */
+    public boolean hasAiObservabilityConfiguration() {
+        return aiObservabilityConfigurationProperties != null;
     }
 
     /**

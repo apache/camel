@@ -6,10 +6,106 @@
     "title": "Camel Events",
     "description": "The most recent Camel events",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.EventConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "events": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "The event type"
+            },
+            "timestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds (only present when known)"
+            },
+            "exchangeId": {
+              "type": "string",
+              "description": "The exchange ID (only present for exchange events)"
+            },
+            "message": {
+              "type": "string",
+              "description": "The event's string representation"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Structured event metadata as JSON"
+            }
+          }
+        },
+        "description": "The most recent Camel events (only present when there are any)"
+      },
+      "routeEvents": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "The event type"
+            },
+            "timestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds (only present when known)"
+            },
+            "exchangeId": {
+              "type": "string",
+              "description": "The exchange ID (only present for exchange events)"
+            },
+            "message": {
+              "type": "string",
+              "description": "The event's string representation"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Structured event metadata as JSON"
+            }
+          }
+        },
+        "description": "The most recent route events (only present when there are any)"
+      },
+      "exchangeEvents": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "The event type"
+            },
+            "timestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds (only present when known)"
+            },
+            "exchangeId": {
+              "type": "string",
+              "description": "The exchange ID (only present for exchange events)"
+            },
+            "message": {
+              "type": "string",
+              "description": "The event's string representation"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Structured event metadata as JSON"
+            }
+          }
+        },
+        "description": "The most recent exchange events (only present when there are any)"
+      }
+    }
   }
 }
 

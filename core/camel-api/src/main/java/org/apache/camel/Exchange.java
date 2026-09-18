@@ -54,6 +54,15 @@ import org.jspecify.annotations.Nullable;
  * @see Processor
  */
 @ConstantProvider("org.apache.camel.ExchangeConstantProvider")
+@Metadata(label = "api",
+          description = "The container that flows through a route: the current Message (the body and headers are on the "
+                        + "message, not on the exchange), the exchange properties, the variables, the exception when a "
+                        + "step failed, and the CamelContext. Camel 4 for code written against older Camel: getMessage() "
+                        + "is the current message and getIn() its alias; getOut() is deprecated, set a reply on "
+                        + "getMessage() instead; the exchange has no getHeader/setHeader, use "
+                        + "exchange.getMessage().getHeader(name) and .setHeader(name, value); header names are plain "
+                        + "strings such as \"CamelFileName\" (constants on Exchange or on the component's constants "
+                        + "class).")
 public interface Exchange extends VariableAware {
 
     String AUTHENTICATION = "CamelAuthentication";
@@ -142,6 +151,14 @@ public interface Exchange extends VariableAware {
               description = "Route ID where the Exchange failed during processing",
               javaType = "String")
     String FAILURE_ROUTE_ID = "CamelFailureRouteId";
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Node ID where the Exchange failed during processing",
+              javaType = "String")
+    String FAILURE_NODE_ID = "CamelFailureNodeId";
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Source code location where the Exchange failed during processing",
+              javaType = "String")
+    String FAILURE_LOCATION = "CamelFailureLocation";
     String FATAL_FALLBACK_ERROR_HANDLER = "CamelFatalFallbackErrorHandler";
     String FILE_CONTENT_TYPE = "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
@@ -156,6 +173,7 @@ public interface Exchange extends VariableAware {
     String FILE_LENGTH = "CamelFileLength";
     String FILE_LOCK_FILE_ACQUIRED = "CamelFileLockFileAcquired";
     String FILE_LOCK_FILE_NAME = "CamelFileLockFileName";
+    String FILE_LOCK_IDEMPOTENT_ACQUIRED = "CamelFileLockIdempotentAcquired";
     String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILE_LOCK_CHANNEL_FILE = "CamelFileLockChannelFile";
@@ -342,6 +360,9 @@ public interface Exchange extends VariableAware {
      *
      * @return the message exchange pattern of this exchange
      */
+    @Metadata(label = "api",
+              description = "InOnly or InOut: whether the caller waits for a reply (the body of getMessage() at the end of "
+                            + "the route).")
     ExchangePattern getPattern();
 
     /**
@@ -415,6 +436,13 @@ public interface Exchange extends VariableAware {
      * @return      the value of the given property or <tt>null</tt> if there is no property for the given name
      */
     @Nullable
+    @Metadata(label = "api",
+              description = "An exchange property: data Camel and the route keep for the whole routing next to the message "
+                            + "(not sent to endpoints), e.g. Exchange.EXCEPTION_CAUGHT in an onException block, "
+                            + "Exchange.AGGREGATED_SIZE after aggregate.",
+              examples = {
+                      "exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class)",
+                      "exchange.getProperty(\"orderId\", String.class)" })
     Object getProperty(String name);
 
     /**
@@ -444,6 +472,9 @@ public interface Exchange extends VariableAware {
      * @param name  of the property
      * @param value to associate with the name
      */
+    @Metadata(label = "api",
+              description = "Sets an exchange property for the rest of the routing; removeProperty(name) removes it.",
+              examples = { "exchange.setProperty(\"orderId\", id)" })
     void setProperty(String name, @Nullable Object value);
 
     /**
@@ -505,6 +536,10 @@ public interface Exchange extends VariableAware {
      * @since       4.4
      */
     @Nullable
+    @Metadata(label = "api",
+              description = "A variable of this exchange (setVariable or the setVariable EIP); global:name reads a global "
+                            + "variable, route:routeId:name a route's.",
+              examples = { "exchange.getVariable(\"total\", Integer.class)" })
     Object getVariable(String name);
 
     /**
@@ -542,6 +577,9 @@ public interface Exchange extends VariableAware {
      * @param value the value of the variable
      * @since       4.4
      */
+    @Metadata(label = "api",
+              description = "Sets a variable on this exchange; global:name sets a global variable shared by all exchanges.",
+              examples = { "exchange.setVariable(\"total\", sum)" })
     void setVariable(String name, @Nullable Object value);
 
     /**
@@ -578,6 +616,8 @@ public interface Exchange extends VariableAware {
      *
      * @return the message
      */
+    @Metadata(label = "api",
+              description = "Alias of getMessage(): Camel 4 has one message on the exchange, not an in and an out.")
     Message getIn();
 
     /**
@@ -586,6 +626,13 @@ public interface Exchange extends VariableAware {
      * @return the current message
      * @since  3.0
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "The current message: its body and headers are what a step reads and writes; the result of a "
+                            + "step goes here. getIn() is an alias.",
+              examples = {
+                      "exchange.getMessage().getBody(String.class)",
+                      "exchange.getMessage().setHeader(\"CamelFileName\", \"out.txt\")" })
     Message getMessage();
 
     /**
@@ -679,6 +726,10 @@ public interface Exchange extends VariableAware {
      * @return the exception (or null if no faults)
      */
     @Nullable
+    @Metadata(label = "api",
+              description = "The exception that failed the exchange, null when none. Inside onException the exception was "
+                            + "moved to the property Exchange.EXCEPTION_CAUGHT and getException() is null.",
+              examples = { "exchange.getException(IOException.class)" })
     Exception getException();
 
     /**
@@ -702,6 +753,9 @@ public interface Exchange extends VariableAware {
      *
      * @param t the caused exception
      */
+    @Metadata(label = "api",
+              description = "Fails the exchange with the exception so the error handler takes over; setException(null) "
+                            + "clears it. A Processor can also just throw.")
     void setException(@Nullable Throwable t);
 
     /**
@@ -710,6 +764,7 @@ public interface Exchange extends VariableAware {
      * @return true if this exchange failed due to an exception
      * @see    Exchange#getException()
      */
+    @Metadata(label = "api", description = "Whether an exception is set on the exchange.")
     boolean isFailed();
 
     /**
@@ -765,6 +820,9 @@ public interface Exchange extends VariableAware {
      *
      * @return the container which owns this exchange
      */
+    @Metadata(label = "api",
+              description = "The CamelContext: the registry, the type converter, the routes and the templates.",
+              examples = { "exchange.getContext().getRegistry().lookupByName(\"myBean\")" })
     CamelContext getContext();
 
     /**
@@ -795,6 +853,7 @@ public interface Exchange extends VariableAware {
      * would return the <tt>fromRouteId<tt> property of that exchange.
      */
     @Nullable
+    @Metadata(label = "api", description = "The id of the route that created the exchange.")
     String getFromRouteId();
 
     /**

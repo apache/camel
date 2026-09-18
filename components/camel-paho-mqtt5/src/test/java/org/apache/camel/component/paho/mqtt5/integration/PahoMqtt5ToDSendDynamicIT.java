@@ -26,17 +26,17 @@ public class PahoMqtt5ToDSendDynamicIT extends PahoMqtt5ITSupport {
 
     @Test
     public void testToD() {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "PahoMqtt5ToDSendDynamicIT-bar");
+        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "PahoMqtt5ToDSendDynamicIT-beer");
 
         // there should only be one paho endpoint
         long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("paho-mqtt5:")).count();
         assertEquals(1, count, "There should only be 1 paho endpoint");
 
         // and the messages should be in the queues
-        String out = consumer.receiveBody("paho-mqtt5:bar", 2000, String.class);
+        String out = consumer.receiveBody("paho-mqtt5:PahoMqtt5ToDSendDynamicIT-bar", 2000, String.class);
         assertEquals("Hello bar", out);
-        out = consumer.receiveBody("paho-mqtt5:beer", 2000, String.class);
+        out = consumer.receiveBody("paho-mqtt5:PahoMqtt5ToDSendDynamicIT-beer", 2000, String.class);
         assertEquals("Hello beer", out);
     }
 

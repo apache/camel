@@ -382,7 +382,6 @@ class OptionsViewerPopup {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(buildTitle())
-                .titleBottom(buildFooter())
                 .build();
         frame.renderWidget(block, area);
 
@@ -436,24 +435,8 @@ class OptionsViewerPopup {
         return Title.from(Line.from(spans));
     }
 
-    private Title buildFooter() {
-        List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(" Esc ", Theme.hintKey()));
-        spans.add(Span.raw(" back  "));
-        spans.add(Span.styled(" ↑↓ ", Theme.hintKey()));
-        spans.add(Span.raw(" scroll  "));
-        if (tabLabels != null && tabLabels.length > 1) {
-            spans.add(Span.styled(" ←→ ", Theme.hintKey()));
-            spans.add(Span.raw(" tab  "));
-        }
-        spans.add(Span.styled(" d ", Theme.hintKey()));
-        spans.add(Span.raw(" doc "));
-        return Title.from(Line.from(spans));
-    }
-
     void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, "↑↓", "scroll");
         if (tabLabels != null && tabLabels.length > 1) {
             hint(spans, "←→", "tab");
         }

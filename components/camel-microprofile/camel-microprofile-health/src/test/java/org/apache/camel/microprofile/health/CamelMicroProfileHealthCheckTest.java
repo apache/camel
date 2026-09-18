@@ -317,7 +317,8 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
 
         assertHealthCheckOutput("exception-check", Status.DOWN, checks.getJsonObject(0), jsonObject -> {
             assertEquals(errorMessage, jsonObject.getString("error.message"));
-            assertNotNull(jsonObject.getString("error.stacktrace"));
+            // the stack trace is only exposed in the full level
+            assertFalse(jsonObject.containsKey("error.stacktrace"));
         });
     }
 
@@ -359,7 +360,8 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
         assertHealthCheckOutput("failing-check", HealthCheckResponse.Status.DOWN, failedCheck, result -> {
             assertNotNull(result);
             assertEquals("Forced exception", result.getString("error.message"));
-            assertNotNull(result.getString("error.stacktrace"));
+            // the stack trace is only exposed in the full level
+            assertFalse(result.containsKey("error.stacktrace"));
         });
     }
 

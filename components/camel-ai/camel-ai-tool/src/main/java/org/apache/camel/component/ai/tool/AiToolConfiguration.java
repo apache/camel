@@ -62,6 +62,21 @@ public class AiToolConfiguration implements Cloneable {
     private String argSchema;
 
     @Metadata(label = "consumer")
+    @UriParam(description = "Tool output schema fields. "
+                            + "Format: outputParameter.NAME=TYPE, outputParameter.NAME.description=TEXT. "
+                            + "Supported types: string, integer, number, boolean. "
+                            + "Mutually exclusive with outputSchema.",
+              prefix = "outputParameter.", multiValue = true)
+    private Map<String, String> outputParameters;
+
+    @UriParam(description = "Raw JSON Schema describing the tool's structured output. Supports inline JSON and "
+                            + "resource references (classpath:, file:, resource:). Mutually exclusive with the "
+                            + "outputParameter multi-value options. When declared, the route body is parsed as JSON "
+                            + "and exposed as structured content to MCP clients.")
+    @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
+    private String outputSchema;
+
+    @Metadata(label = "consumer")
     @UriParam(description = "Optional display title for MCP tool listings. Advisory hint for MCP clients only.")
     private String title;
 
@@ -84,6 +99,12 @@ public class AiToolConfiguration implements Cloneable {
     @UriParam(description = "MCP hint that the tool interacts with external systems outside the application's control. "
                             + "Advisory for MCP clients; not enforced by Camel.")
     private Boolean openWorldHint;
+
+    @Metadata(label = "consumer", defaultValue = "false")
+    @UriParam(description = "When true, AI producers that support agentic tool loops (such as camel-openai) return "
+                            + "this tool's result directly to the caller without sending it back to the model. "
+                            + "Also published as an MCP tool annotation when the tool is exposed via camel-mcp-server.")
+    private Boolean returnDirect;
 
     public AiToolConfiguration() {
     }
@@ -118,6 +139,22 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setArgSchema(String argSchema) {
         this.argSchema = argSchema;
+    }
+
+    public Map<String, String> getOutputParameters() {
+        return outputParameters;
+    }
+
+    public void setOutputParameters(Map<String, String> outputParameters) {
+        this.outputParameters = outputParameters;
+    }
+
+    public String getOutputSchema() {
+        return outputSchema;
+    }
+
+    public void setOutputSchema(String outputSchema) {
+        this.outputSchema = outputSchema;
     }
 
     public String getTitle() {
@@ -160,11 +197,22 @@ public class AiToolConfiguration implements Cloneable {
         this.openWorldHint = openWorldHint;
     }
 
+    public Boolean getReturnDirect() {
+        return returnDirect;
+    }
+
+    public void setReturnDirect(Boolean returnDirect) {
+        this.returnDirect = returnDirect;
+    }
+
     public AiToolConfiguration copy() {
         try {
             AiToolConfiguration copy = (AiToolConfiguration) super.clone();
             if (this.parameters != null) {
                 copy.parameters = new HashMap<>(this.parameters);
+            }
+            if (this.outputParameters != null) {
+                copy.outputParameters = new HashMap<>(this.outputParameters);
             }
             return copy;
         } catch (CloneNotSupportedException e) {

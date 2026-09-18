@@ -75,7 +75,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Set up JDK 21
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -150,13 +150,15 @@ jobs:
   # ── Windows (install.ps1 unit tests) ──────────────────────────────
   windows-validator:
     runs-on: windows-latest
+    # Caps a genuine hang well below GitHub's 6h default; a passing run has taken up to ~25 minutes.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up JDK 21
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -184,6 +186,20 @@ jobs:
 
       - name: Run Windows installer unit tests
         shell: bash
+        # The PowerShell suite has taken 10-20 minutes on windows-latest, straddling camel-launcher's 1200s
+        # surefire fork timeout, so slow-but-passing runs were killed. Give this job's fork more room.
         run: |
           cd dsl/camel-jbang/camel-launcher
-          mvn -B -ntp test -pl . -Dtest=WebsiteInstallTest
+          mvn -B -ntp test -pl . -Dtest=WebsiteInstallTest -Dcamel.surefire.forkTimeout=2700
+
+      # Per-test timings for the PowerShell suite, which runs close to camel-launcher's surefire fork timeout.
+      # A fork killed on that timeout writes no XML report; the per-process timings the fixture prints to the
+      # build log cover that case.
+      - name: Archive surefire reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-validator-surefire-reports
+          path: dsl/camel-jbang/camel-launcher/target/surefire-reports
+          retention-days: 7
+          if-no-files-found: ignore

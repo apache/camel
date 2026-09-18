@@ -16,19 +16,36 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.StartupStep;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "startup-recorder", description = "Starting recording information")
 public class StartupRecorderDevConsole extends AbstractDevConsole {
+
+    public record StepEntry(
+            @Metadata(description = "The id of the step") int id,
+            @Metadata(description = "The id of the parent step") int parentId,
+            @Metadata(description = "The step level (sub step of previous steps)") int level,
+            @Metadata(description = "Name of the step (only present when known)") String name,
+            @Metadata(description = "The source class type of the step") String type,
+            @Metadata(description = "Description of the step") String description,
+            @Metadata(description = "The begin time (epoch milliseconds)") long beginTime,
+            @Metadata(description = "The duration the step took, in milliseconds") long duration) {
+    }
+
+    public record Response(
+            @Metadata(description = "The startup steps (only present when there are any)") List<StepEntry> steps) {
+    }
 
     public StartupRecorderDevConsole() {
         super("camel", "startup-recorder", "Startup Recorder", "Starting recording information");
@@ -51,32 +68,18 @@ public class StartupRecorderDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
+        List<StepEntry> steps = new ArrayList<>();
 
         ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
         StartupStepRecorder recorder = ecc.getStartupStepRecorder();
         if (recorder != null) {
-            recorder.steps().forEach(s -> {
-                JsonObject jo = new JsonObject();
-                jo.put("id", s.getId());
-                jo.put("parentId", s.getParentId());
-                jo.put("level", s.getLevel());
-                if (s.getName() != null) {
-                    jo.put("name", s.getName());
-                }
-                jo.put("type", s.getType());
-                jo.put("description", s.getDescription());
-                jo.put("beginTime", s.getBeginTime());
-                jo.put("duration", s.getDuration());
-                arr.add(jo);
-            });
+            recorder.steps().forEach(s -> steps.add(new StepEntry(
+                    s.getId(), s.getParentId(), s.getLevel(), s.getName(), s.getType(), s.getDescription(),
+                    s.getBeginTime(), s.getDuration())));
         }
 
-        if (!arr.isEmpty()) {
-            root.put("steps", arr);
-        }
-        return root;
+        Response response = new Response(steps.isEmpty() ? null : steps);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     protected String logStep(StartupStep step) {

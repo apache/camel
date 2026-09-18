@@ -51,7 +51,7 @@ public class OpenAIMcpManualToolLoopIT extends OpenAITestSupport {
     private static final String MCP_PROTOCOL_VERSIONS = "2024-11-05,2025-03-26,2025-06-18";
 
     @RegisterExtension
-    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createService();
+    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createSingletonService();
 
     @Override
     protected RouteBuilder createRouteBuilder() {

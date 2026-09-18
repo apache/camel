@@ -6,6 +6,7 @@
     "title": "Camel Receive",
     "description": "Consume messages from endpoints",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.ReceiveDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -61,6 +62,70 @@
       "autowired": false,
       "secret": false,
       "description": "Endpoint for where to receive messages (can also refer to a route id, endpoint pattern)"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "messages": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "description": "The dumped received messages, as opaque JSON objects (only present when dumping)"
+      },
+      "enabled": {
+        "type": "boolean",
+        "description": "Whether receiving is enabled (only present when not dumping)"
+      },
+      "total": {
+        "type": "integer",
+        "description": "Total number of messages received so far (only present when not dumping)"
+      },
+      "firstTimestamp": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds of the first message in the last dump (only present when not dumping)"
+      },
+      "lastTimestamp": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds of the last message in the last dump (only present when not dumping)"
+      },
+      "url": {
+        "type": "string",
+        "description": "The endpoint URI that receiving was started for (only present on success)"
+      },
+      "error": {
+        "type": "string",
+        "description": "The error message (only present on failure to start receiving)"
+      },
+      "stackTrace": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The error stack trace, one entry per line (only present on failure to start receiving)"
+      },
+      "endpoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "uri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "remote": {
+              "type": "boolean",
+              "description": "Whether the endpoint is remote"
+            }
+          },
+          "required": [
+            "remote"
+          ]
+        },
+        "description": "The active consumer endpoints (only present when not dumping and there are any)"
+      }
     }
   }
 }

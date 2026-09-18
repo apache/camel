@@ -52,29 +52,4 @@ public final class SystemFunctionFactory implements SimpleLanguageFunctionFactor
 
         return null;
     }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public String createCode(CamelContext camelContext, String function, int index) {
-        String remainder = ifStartsWithReturnRemainder("sys.", function);
-        if (remainder != null) {
-            return "sys(\"" + remainder + "\")";
-        }
-
-        remainder = ifStartsWithReturnRemainder("sysenv.", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("sysenv:", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("env.", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("env:", function);
-        }
-        if (remainder != null) {
-            return "sysenv(\"" + remainder + "\")";
-        }
-
-        return null;
-    }
 }

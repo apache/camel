@@ -30,7 +30,7 @@ import org.apache.camel.component.docling.DoclingComponent;
 import org.apache.camel.component.docling.DoclingConfiguration;
 import org.apache.camel.component.docling.DoclingHeaders;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Integration test for batch processing operations using test-infra for container management.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Too much resources on GitHub Actions")
 class BatchProcessingIT extends DoclingITestSupport {
 
     @Test

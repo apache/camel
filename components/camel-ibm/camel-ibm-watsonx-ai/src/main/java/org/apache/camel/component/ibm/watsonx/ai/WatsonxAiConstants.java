@@ -40,7 +40,8 @@ public interface WatsonxAiConstants {
     String GENERATED_TEXT = HEADER_PREFIX + "GeneratedText";
 
     // Model/Deployment
-    @Metadata(description = "The model ID to use", javaType = "String")
+    @Metadata(label = "producer", description = "The model ID used for the request, reported on the response",
+              javaType = "String")
     String MODEL_ID = HEADER_PREFIX + "ModelId";
 
     @Metadata(description = "The deployment ID to use", javaType = "String")

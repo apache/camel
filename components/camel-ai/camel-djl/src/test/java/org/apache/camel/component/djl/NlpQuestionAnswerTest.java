@@ -33,7 +33,7 @@ public class NlpQuestionAnswerTest extends CamelTestSupport {
     void testDJL() throws Exception {
         var mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.await();
+        DJLTestSupport.assertMockSatisfied(mock);
     }
 
     @Override

@@ -160,9 +160,11 @@ class DynamicRouterRecipientListHelperTest {
         when(mockConfig.isStopOnException()).thenReturn(true);
         when(mockConfig.isIgnoreInvalidEndpoints()).thenReturn(true);
         when(mockConfig.getCacheSize()).thenReturn(10);
+        when(mockConfig.getAllowedSchemes()).thenReturn("direct,mock");
         // Invoke the method under test
         DynamicRouterRecipientListHelper.setPropertiesForRecipientList(recipientList, camelContext, mockConfig);
         // Verify results
+        verify(recipientList, times(1)).setAllowedSchemes("direct,mock");
         verify(recipientList, times(1)).setParallelProcessing(true);
         verify(recipientList, times(1)).setParallelAggregate(true);
         verify(recipientList, times(1)).setSynchronous(true);

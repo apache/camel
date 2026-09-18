@@ -18,12 +18,17 @@ package org.apache.camel.jbang.console;
 
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "jbang", group = "camel-jbang", displayName = "Camel CLI", description = "Information about Camel CLI")
 public class JBangDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "The JBang version (only present when known)") String version) {
+    }
 
     public JBangDevConsole() {
         super("camel-jbang", "jbang", "Camel CLI", "Information about Camel CLI");
@@ -43,11 +48,7 @@ public class JBangDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-        String v = VersionHelper.getJBangVersion();
-        if (v != null) {
-            root.put("version", v);
-        }
-        return root;
+        Response response = new Response(VersionHelper.getJBangVersion());
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

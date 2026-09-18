@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai.service;
 
+import java.time.Duration;
 import java.util.function.Consumer;
 
 import com.ibm.watsonx.ai.chat.ChatService;
@@ -51,6 +52,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         applyIfNotNull(config.getModelId(), builder::modelId);
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -66,6 +68,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         applyIfNotNull(config.getModelId(), builder::modelId);
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -81,6 +84,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         applyIfNotNull(config.getModelId(), builder::modelId);
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -96,6 +100,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         applyIfNotNull(config.getModelId(), builder::modelId);
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -111,6 +116,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         applyIfNotNull(config.getModelId(), builder::modelId);
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -126,6 +132,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         // DetectionService doesn't have modelId
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -150,6 +157,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         // TextExtractionService doesn't have modelId
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -171,6 +179,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         // TextClassificationService doesn't have modelId
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -186,6 +195,7 @@ public final class WatsonxAiServiceFactory {
         applyIfNotNull(config.getSpaceId(), builder::spaceId);
         applyIfNotNull(config.getModelId(), builder::modelId);
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -198,6 +208,7 @@ public final class WatsonxAiServiceFactory {
 
         // FoundationModelService doesn't have projectId, spaceId, modelId
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -211,6 +222,7 @@ public final class WatsonxAiServiceFactory {
 
         // DeploymentService doesn't have projectId, spaceId, modelId
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 
@@ -231,6 +243,7 @@ public final class WatsonxAiServiceFactory {
 
         // ToolService doesn't have projectId, spaceId, modelId
         applyIfNotNull(config.getVerifySsl(), builder::verifySsl);
+        applyIfNotNull(config.getTimeout(), t -> builder.timeout(Duration.ofMillis(t)));
         applyIfTrue(config.getLogRequests(), () -> builder.logRequests(true));
         applyIfTrue(config.getLogResponses(), () -> builder.logResponses(true));
 

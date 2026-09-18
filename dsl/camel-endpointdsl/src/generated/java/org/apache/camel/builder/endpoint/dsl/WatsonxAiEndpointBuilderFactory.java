@@ -970,7 +970,7 @@ public interface WatsonxAiEndpointBuilderFactory {
             return "CamelIBMWatsonxAiGeneratedText";
         }
         /**
-         * The model ID to use.
+         * The model ID used for the request, reported on the response.
          * 
          * The option is a: {@code String} type.
          * 

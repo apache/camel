@@ -695,7 +695,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
                         "dsl/*/*/src/main/docs/*.adoc"),
                 nonComponentSuffixExcludes,
                 "docs/components/modules/others/pages",
-                List.of("index.adoc", "reactive-threadpoolfactory-vertx.adoc"), null, null);
+                List.of("index.adoc"), null, null);
         others.json = new KindSpec(
                 // gulp used `components/{*,*/*,*/*/*}/src/generated/resources/*.json` — only top-level .json
                 // files (i.e. those NOT under META-INF/...) qualify as "other" component metadata.

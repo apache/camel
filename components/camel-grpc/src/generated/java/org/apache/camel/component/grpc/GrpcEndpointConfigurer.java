@@ -84,6 +84,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxrstperiodseconds":
         case "maxRstPeriodSeconds": target.getConfiguration().setMaxRstPeriodSeconds(property(camelContext, int.class, value)); return true;
         case "method": target.getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "negotiationtype":
         case "negotiationType": target.getConfiguration().setNegotiationType(property(camelContext, io.grpc.netty.NegotiationType.class, value)); return true;
         case "permitkeepalivetime":
@@ -173,6 +175,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxrstperiodseconds":
         case "maxRstPeriodSeconds": return int.class;
         case "method": return java.lang.String.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "negotiationtype":
         case "negotiationType": return io.grpc.netty.NegotiationType.class;
         case "permitkeepalivetime":
@@ -263,6 +267,8 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxrstperiodseconds":
         case "maxRstPeriodSeconds": return target.getConfiguration().getMaxRstPeriodSeconds();
         case "method": return target.getConfiguration().getMethod();
+        case "muteexception":
+        case "muteException": return target.getConfiguration().isMuteException();
         case "negotiationtype":
         case "negotiationType": return target.getConfiguration().getNegotiationType();
         case "permitkeepalivetime":

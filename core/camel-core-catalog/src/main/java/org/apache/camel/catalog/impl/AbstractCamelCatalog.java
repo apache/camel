@@ -47,6 +47,7 @@ import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.SuggestionStrategy;
 import org.apache.camel.tooling.model.ApiMethodModel;
 import org.apache.camel.tooling.model.ApiModel;
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -77,7 +78,7 @@ public abstract class AbstractCamelCatalog {
     private static final Pattern SYNTAX_DASH_PATTERN = Pattern.compile("([\\w.-]+)");
     private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
 
-    private SuggestionStrategy suggestionStrategy;
+    private SuggestionStrategy suggestionStrategy = new EditDistanceSuggestionStrategy();
     private JSonSchemaResolver jsonSchemaResolver;
 
     public String componentJSonSchema(String name) {
@@ -136,6 +137,15 @@ public abstract class AbstractCamelCatalog {
 
     public String pojoBeanJSonSchema(String name) {
         return getJSonSchemaResolver().getPojoBeanJSonSchema(name);
+    }
+
+    public ApiReferenceModel apiReferenceModel(String name) {
+        String json = apiReferenceJSonSchema(name);
+        return json != null ? JsonMapper.generateApiReferenceModel(json) : null;
+    }
+
+    public String apiReferenceJSonSchema(String name) {
+        return getJSonSchemaResolver().getApiReferenceJSonSchema(name);
     }
 
     public String devConsoleJSonSchema(String name) {
@@ -294,8 +304,8 @@ public abstract class AbstractCamelCatalog {
                 boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
                 boolean lookup = value.startsWith("#") && value.length() > 1;
                 // we cannot evaluate multi values as strict as the others, as we don't know their expected types
-                boolean multiValue = prefix != null && originalName.startsWith(prefix)
-                        && row.isMultiValue();
+                boolean multiValue = (prefix != null && originalName.startsWith(prefix) && row.isMultiValue())
+                        || isMapEntry(row, originalName);
 
                 // default value
                 Object defaultValue = row.getDefaultValue();
@@ -1380,16 +1390,85 @@ public abstract class AbstractCamelCatalog {
                 || key.startsWith("camel.rest.");
     }
 
+    /**
+     * Replaces property placeholders with a dummy value so the text can be parsed by the language parsers.
+     *
+     * The placeholders cannot be resolved during validation as we do not run the actual Camel application with the
+     * property placeholders setup, and the languages are parsed after the placeholders have been resolved at runtime.
+     *
+     * A placeholder that is already inside a quoted literal is replaced by <tt>{{XXX}}</tt> to <tt>~^XXX^~</tt>, and
+     * otherwise by <tt>{{XXX}}</tt> to <tt>'~XXX~'</tt>. The quotes are needed because the languages do not accept a
+     * bare unquoted literal as operand, such as in <tt>${body} >= {{threshold}}</tt>. Both dummies have the same length
+     * as the placeholder they replace, so the position reported in a parser error still points at the same location in
+     * the original text.
+     *
+     * @param  text the text
+     * @return      the text with the property placeholders replaced by a dummy value
+     * @see         #restorePropertyPlaceholders(String)
+     */
+    private static String dummyPropertyPlaceholders(String text) {
+        if (text == null || !text.contains("{{")) {
+            return text;
+        }
+
+        StringBuilder sb = new StringBuilder(text.length());
+        // the quote character we are currently inside, or 0 when not inside a quoted literal
+        char quote = 0;
+        int i = 0;
+        while (i < text.length()) {
+            char ch = text.charAt(i);
+            if (ch == '\\' && i < text.length() - 1) {
+                // escaped character, so copy as-is
+                sb.append(ch).append(text.charAt(i + 1));
+                i += 2;
+                continue;
+            }
+            if (quote == 0 && (ch == '\'' || ch == '"')) {
+                quote = ch;
+            } else if (quote == ch) {
+                quote = 0;
+            } else if (ch == '{' && i < text.length() - 1 && text.charAt(i + 1) == '{') {
+                int end = text.indexOf("}}", i + 2);
+                if (end != -1) {
+                    String key = text.substring(i + 2, end);
+                    if (quote != 0 || key.indexOf('\'') != -1) {
+                        // already inside a quoted literal, or the key has a single quote that would break the literal
+                        sb.append("~^").append(key).append("^~");
+                    } else {
+                        sb.append("'~").append(key).append("~'");
+                    }
+                    i = end + 2;
+                    continue;
+                }
+            }
+            sb.append(ch);
+            i++;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Reverses {@link #dummyPropertyPlaceholders(String)} so an error message refers to the property placeholders the
+     * user actually wrote.
+     *
+     * @param  text the text
+     * @return      the text with the dummy values replaced by the property placeholders
+     */
+    private static String restorePropertyPlaceholders(String text) {
+        if (text == null) {
+            return null;
+        }
+        // reverse ~^XXX^~ first as it may be surrounded by the quotes the other dummy also uses
+        String answer = text.replaceAll("~\\^(.+?)\\^~", "{{$1}}");
+        return answer.replaceAll("'~(.+?)~'", "{{$1}}");
+    }
+
     private LanguageValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
         if (classLoader == null) {
             classLoader = getClass().getClassLoader();
         }
 
-        // if there are {{ }}} property placeholders then we need to resolve them to something else
-        // as the simple parse cannot resolve them before parsing as we dont run the actual Camel application
-        // with property placeholders setup so we need to dummy this by replace the {{ }} to something else
-        // therefore we use a more unlikely character: {{XXX}} to ~^XXX^~
-        String resolved = simple.replaceAll("\\{\\{(.+)\\}\\}", "~^$1^~");
+        String resolved = dummyPropertyPlaceholders(simple);
 
         LanguageValidationResult answer = new LanguageValidationResult(simple);
 
@@ -1424,11 +1503,17 @@ public abstract class AbstractCamelCatalog {
                 cause = e;
             }
 
+            if (cause != null && cause.getMessage() != null
+                    && cause.getMessage().contains("No bean could be found in the registry")) {
+                // ${bean:name...} looks the bean up when the expression is created; there is no registry here, so
+                // the lookup cannot say anything about the syntax, which is what this validates (CAMEL-24698)
+                cause = null;
+            }
+
             if (cause != null) {
 
-                // reverse ~^XXX^~ back to {{XXX}}
-                String errMsg = cause.getMessage();
-                errMsg = errMsg.replaceAll("\\~\\^(.+)\\^\\~", "{{$1}}");
+                // reverse the dummy placeholders back to {{XXX}}
+                String errMsg = restorePropertyPlaceholders(cause.getMessage());
 
                 answer.setError(errMsg);
 
@@ -1485,11 +1570,7 @@ public abstract class AbstractCamelCatalog {
             classLoader = getClass().getClassLoader();
         }
 
-        // if there are {{ }}} property placeholders then we need to resolve them to something else
-        // as the simple parse cannot resolve them before parsing as we dont run the actual Camel application
-        // with property placeholders setup so we need to dummy this by replace the {{ }} to something else
-        // therefore we use a more unlikely character: {{XXX}} to ~^XXX^~
-        String resolved = groovy.replaceAll("\\{\\{(.+)\\}\\}", "~^$1^~");
+        String resolved = dummyPropertyPlaceholders(groovy);
 
         LanguageValidationResult answer = new LanguageValidationResult(groovy);
 
@@ -1526,9 +1607,8 @@ public abstract class AbstractCamelCatalog {
 
             if (cause != null) {
 
-                // reverse ~^XXX^~ back to {{XXX}}
-                String errMsg = cause.getMessage();
-                errMsg = errMsg.replaceAll("\\~\\^(.+)\\^\\~", "{{$1}}");
+                // reverse the dummy placeholders back to {{XXX}}
+                String errMsg = restorePropertyPlaceholders(cause.getMessage());
 
                 answer.setError(errMsg);
 
@@ -1764,7 +1844,22 @@ public abstract class AbstractCamelCatalog {
                 return row.getName();
             }
         }
+        int dot = name.indexOf('.');
+        if (dot > 0) {
+            BaseOptionModel row = rows.get(name.substring(0, dot));
+            if (row != null && isMapEntry(row, name)) {
+                return row.getName();
+            }
+        }
         return null;
+    }
+
+    /**
+     * Whether the name sets an entry of a Map option (userMetadata.messageId=x fills the userMetadata map) or a
+     * property of an object option (approval.comments=x sets comments on the approval bean), as property binding does.
+     */
+    private static boolean isMapEntry(BaseOptionModel row, String name) {
+        return "object".equals(row.getType()) && name.startsWith(row.getName() + ".");
     }
 
     /**

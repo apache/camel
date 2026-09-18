@@ -133,4 +133,30 @@ class EditDiffTest {
 
         assertThat(diff).isEmpty();
     }
+
+    @Test
+    void everyChangeIsItsOwnHunkWithContextLimitedToTheGap() {
+        List<String> original = List.of("a", "b", "c", "d", "e", "f", "g");
+        // three changes: replace b, add after c (one unchanged line in between), remove f
+        List<String> current = List.of("a", "B", "c", "c2", "d", "e", "g");
+
+        List<EditDiff.Hunk> hunks = EditDiff.hunks(original, current, 3);
+
+        assertThat(hunks).hasSize(3);
+        assertThat(hunks.get(0).before()).containsExactly("a");
+        assertThat(hunks.get(0).removed()).isEqualTo(1);
+        assertThat(hunks.get(0).added()).isEqualTo(1);
+        assertThat(hunks.get(0).after()).containsExactly("c");
+        assertThat(hunks.get(1).before()).containsExactly("c");
+        assertThat(hunks.get(1).after()).containsExactly("d", "e");
+        assertThat(hunks.get(2).before()).containsExactly("d", "e");
+        assertThat(hunks.get(2).removed()).isEqualTo(1);
+        assertThat(hunks.get(2).after()).containsExactly("g");
+
+        // each hunk is locatable in the original as well as once the earlier hunks were applied
+        assertThat(hunks.get(1).locate(original, 0)).isEqualTo(2);
+        List<String> afterFirst = List.of("a", "B", "c", "d", "e", "f", "g");
+        assertThat(hunks.get(1).locate(afterFirst, 2)).isEqualTo(2);
+        assertThat(hunks.get(2).locate(List.of("a", "B", "c", "c2", "d", "e", "f", "g"), 4)).isEqualTo(4);
+    }
 }

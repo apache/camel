@@ -109,7 +109,7 @@ programmatic objects (PageRange, BlobBlock, etc.) that cannot be expressed in XM
 | Stage a list of blocks for later commit.
 | Java-only (requires `List<BlobBlock>` body)
 
-| `commitBlockBlobList`
+| `commitBlobBlockList`
 | Commit a list of previously staged blocks.
 | Java-only (requires `List<Block>` body)
 
@@ -266,7 +266,7 @@ The `blockSize` and `maxConcurrency` options control memory usage and upload spe
 * `maxConcurrency`: Number of parallel uploads (default: auto-detected based on CPU cores). Higher = faster but more memory.
 * Memory usage is approximately `blockSize × maxConcurrency`.
 
-=== stageBlockBlobList and commitBlockBlobList
+=== stageBlockBlobList and commitBlobBlockList
 
 These two operations work together for multi-block uploads. Both require Java-specific objects in the body.
 
@@ -298,7 +298,7 @@ from("direct:start")
         blockIds.add(new Block().setName("id-3"));
         exchange.getIn().setBody(blockIds);
     })
-    .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=commitBlockBlobList&serviceClient=#client")
+    .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=commitBlobBlockList&serviceClient=#client")
     .to("mock:result");
 ----
 

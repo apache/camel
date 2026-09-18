@@ -60,7 +60,7 @@ public abstract class JBangTestSupport {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @RegisterExtension
-    protected static CliService containerService = CliServiceFactory.createService();
+    protected static CliService containerService = CliServiceFactory.createSingletonService();
 
     private static final String DATA_FOLDER = System.getProperty(CliProperties.DATA_FOLDER);
 
@@ -87,10 +87,33 @@ public abstract class JBangTestSupport {
     @AfterEach
     protected void afterEach(TestInfo testInfo) {
         logger.debug("ending {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
-        assertNoErrors();
-        logger.debug("clean up data folder");
-        if (containerDataFolder != null) {
-            FileUtil.removeDir(new File(containerDataFolder));
+        try {
+            assertNoErrors();
+        } finally {
+            try {
+                execute("stop");
+            } catch (Exception | AssertionError e) {
+                logger.debug("failed to stop running integrations: {}", e.getMessage());
+            }
+            try {
+                Awaitility.await()
+                        .atMost(30, TimeUnit.SECONDS)
+                        .pollInterval(500, TimeUnit.MILLISECONDS)
+                        .until(() -> execute("ps").trim().isEmpty());
+            } catch (Exception | AssertionError e) {
+                logger.warn("integrations did not stop within timeout: {}", e.getMessage());
+            }
+            // Remove non-hidden files/dirs from /home/jbang to prevent cross-test contamination.
+            // The JBang installation baseline is entirely hidden (.jbang/, .bashrc, .camel-jbang/).
+            try {
+                execInContainer("find /home/jbang -maxdepth 1 -mindepth 1 -not -name '.*' -exec rm -rf {} +");
+            } catch (Exception e) {
+                logger.debug("failed to clean up test files from /home/jbang: {}", e.getMessage());
+            }
+            logger.debug("clean up data folder");
+            if (containerDataFolder != null) {
+                FileUtil.removeDir(new File(containerDataFolder));
+            }
         }
     }
 
@@ -192,6 +215,15 @@ public abstract class JBangTestSupport {
                 .contains(contains);
     }
 
+    /**
+     * Asserts that a single invocation of the command outputs all of the given fragments, in any order.
+     */
+    protected void checkCommandOutputsAll(String command, String... contains) {
+        Assertions.assertThat(execute(command))
+                .as("command  " + getMainCommand() + " " + command + " should output " + String.join(", ", contains))
+                .contains(contains);
+    }
+
     protected void checkCommandFailsWithError(String command, String error) {
         Assertions.assertThat(execute(command, true, true))
                 .as("command " + getMainCommand() + " " + command + " should fail with error " + error)
@@ -201,6 +233,12 @@ public abstract class JBangTestSupport {
     protected void checkCommandFailsWithOutput(String command, String contains) {
         Assertions.assertThat(execute(command, false, true))
                 .as("command " + getMainCommand() + " " + command + " should fail with error " + contains)
+                .contains(contains);
+    }
+
+    protected void checkCommandFailsWithOutput(String command, String... contains) {
+        Assertions.assertThat(execute(command, false, true))
+                .as("command " + getMainCommand() + " " + command + " should fail with error " + String.join(", ", contains))
                 .contains(contains);
     }
 

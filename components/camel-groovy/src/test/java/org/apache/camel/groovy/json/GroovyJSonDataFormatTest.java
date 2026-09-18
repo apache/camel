@@ -104,7 +104,7 @@ public class GroovyJSonDataFormatTest extends CamelTestSupport {
 
     private static final String BOOKS_NOT_PRETTY
             = """
-                    "{\\"library\\":{\\"book\\":[{\\"title\\":\\"No Title\\",\\"author\\":\\"F. Scott Fitzgerald\\",\\"year\\":\\"1925\\",\\"genre\\":\\"Classic\\",\\"id\\":\\"bk101\\"},{\\"title\\":\\"1984\\",\\"author\\":\\"George Orwell\\",\\"year\\":\\"1949\\",\\"genre\\":\\"Dystopian\\",\\"id\\":\\"bk102\\"}]}}"
+                    {"library":{"book":[{"title":"No Title","author":"F. Scott Fitzgerald","year":"1925","genre":"Classic","id":"bk101"},{"title":"1984","author":"George Orwell","year":"1949","genre":"Dystopian","id":"bk102"}]}}
                     """;
 
     private static final String COUNTRIES

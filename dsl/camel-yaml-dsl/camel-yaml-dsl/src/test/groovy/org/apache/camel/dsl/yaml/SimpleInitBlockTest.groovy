@@ -57,4 +57,69 @@ class SimpleInitBlockTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "initBlockCompactCustomFunction"() {
+        setup:
+        loadRoutes '''
+                - route:
+                    from:
+                      uri: direct:map
+                      steps:
+                        - setBody:
+                            simple: |-
+                              $init{
+                                $foo ~:= ${uppercase()};
+                              }init$
+                              ${foo('hello')}
+                        - to:
+                            uri: mock:result
+                        '''
+        withMock('mock:result') {
+            expectedMessageCount(1)
+            message(0).body().isEqualTo("HELLO")
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:map').withBody('test').send()
+        }
+
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
+    def "initBlockCustomFunctionInDevProfile"() {
+        setup:
+        context.getCamelContextExtension().setProfile("dev")
+        loadRoutes '''
+                - route:
+                    from:
+                      uri: direct:map
+                      steps:
+                        - setBody:
+                            simple: |-
+                              $init{
+                                $foo ~:= ${uppercase()};
+                              }init$
+                              ${foo('hello')}
+                        - to:
+                            uri: mock:result
+                        '''
+        withMock('mock:result') {
+            expectedMessageCount(1)
+            message(0).body().isEqualTo("HELLO")
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:map').withBody('test').send()
+        }
+
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
 }

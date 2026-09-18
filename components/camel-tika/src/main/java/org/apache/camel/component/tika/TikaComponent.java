@@ -22,20 +22,20 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.tika.config.TikaConfig;
+import org.apache.tika.config.loader.TikaLoader;
 
 @Component("tika")
 public class TikaComponent extends DefaultComponent {
 
-    private static final String TIKA_CONFIG = "tikaConfig";
+    private static final String TIKA_LOADER = "tikaLoader";
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         TikaConfiguration tikaConfiguration = new TikaConfiguration();
 
-        TikaConfig config = resolveAndRemoveReferenceParameter(parameters, TIKA_CONFIG, TikaConfig.class);
-        if (config != null) {
-            tikaConfiguration.setTikaConfig(config);
+        TikaLoader loader = resolveAndRemoveReferenceParameter(parameters, TIKA_LOADER, TikaLoader.class);
+        if (loader != null) {
+            tikaConfiguration.setTikaLoader(loader);
         }
         tikaConfiguration.setOperation(new URI(uri).getHost());
         TikaEndpoint endpoint = createEndpoint(uri, tikaConfiguration);

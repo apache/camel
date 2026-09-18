@@ -61,10 +61,6 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
         LanguageModel model = catalog.languageModel(name);
         if (model != null) {
             downloadLoader(model.getGroupId(), model.getArtifactId(), model.getVersion());
-            if ("csimple".equals(name)) {
-                // need to include joor compiler also
-                downloadLoader(model.getGroupId(), "camel-csimple-joor", model.getVersion());
-            }
         }
 
         Language answer;

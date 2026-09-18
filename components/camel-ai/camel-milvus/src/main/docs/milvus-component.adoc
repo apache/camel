@@ -177,6 +177,7 @@ As an example, you could think about these routes:
 [tabs]
 ====
 Java::
++
 [source,java]
 ----
     protected RoutesBuilder createRouteBuilder() {

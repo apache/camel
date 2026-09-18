@@ -16,12 +16,12 @@
  */
 package org.apache.camel.reifier.language;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XMLTokenizerExpression;
-import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.builder.Namespaces;
 
 public class XMLTokenizerExpressionReifier extends SingleInputTypedExpressionReifier<XMLTokenizerExpression> {
 
@@ -29,20 +29,14 @@ public class XMLTokenizerExpressionReifier extends SingleInputTypedExpressionRei
         super(camelContext, definition);
     }
 
-    @Override
-    protected void configurePredicate(Predicate predicate) {
-        configureNamespaceAware(predicate);
-    }
-
-    @Override
-    protected void configureExpression(Expression expression) {
-        configureNamespaceAware(expression);
-    }
-
-    protected void configureNamespaceAware(Object builder) {
-        if (definition.getNamespaces() != null && builder instanceof NamespaceAware namespaceAware) {
-            namespaceAware.setNamespaces(parseMap(definition.getNamespaces()));
+    private Map<String, String> resolveNamespaces() {
+        if (definition.getNamespaces() != null && !definition.getNamespaces().isEmpty()) {
+            return parseMap(definition.getNamespaces());
         }
+        if (definition.getNamespacesRef() != null) {
+            return parseMap(mandatoryLookup(definition.getNamespacesRef(), Namespaces.class).getNamespaces());
+        }
+        return null;
     }
 
     protected Object[] createProperties() {
@@ -51,7 +45,7 @@ public class XMLTokenizerExpressionReifier extends SingleInputTypedExpressionRei
         properties[1] = parseString(definition.getSource());
         properties[2] = parseString(definition.getMode());
         properties[3] = parseInt(definition.getGroup());
-        properties[4] = definition.getNamespaces();
+        properties[4] = resolveNamespaces();
         return properties;
     }
 

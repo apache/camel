@@ -27,13 +27,17 @@ public interface CircuitBreakerConstants {
     @Metadata(label = "circuitBreaker",
               description = "Whether the exchange was processed by the onFallback by the circuit breaker", javaType = "boolean")
     String RESPONSE_FROM_FALLBACK = "CamelCircuitBreakerResponseFromFallback";
-    @Metadata(label = "circuitBreaker", description = "Whether the exchange was short circuited by the breaker",
+    @Metadata(label = "circuitBreaker",
+              description = "Whether the call did not complete normally and the circuit breaker short circuited the exchange, to the onFallback if there is one."
+                            + " This is true for a failed call, a timeout and a rejected call alike; use CamelCircuitBreakerResponseRejected to know whether the call was attempted.",
               javaType = "boolean")
     String RESPONSE_SHORT_CIRCUITED = "CamelCircuitBreakerResponseShortCircuited";
     @Metadata(label = "circuitBreaker", description = "Whether the exchange timed out during processing by the circuit breaker",
               javaType = "boolean")
     String RESPONSE_TIMED_OUT = "CamelCircuitBreakerResponseTimedOut";
-    @Metadata(label = "circuitBreaker", description = "Whether the circuit breaker rejected processing the exchange",
+    @Metadata(label = "circuitBreaker",
+              description = "Whether the circuit breaker rejected the call without attempting it, because the breaker is open or the bulkhead is full."
+                            + " Also set inside the onFallback, where it tells a dead service apart from a single failed call.",
               javaType = "boolean")
     String RESPONSE_REJECTED = "CamelCircuitBreakerResponseRejected";
     @Metadata(label = "circuitBreaker", description = "Whether the circuit breaker ignored an exception during processing",

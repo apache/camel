@@ -28,6 +28,7 @@ import org.apache.camel.spi.annotations.SendDynamic;
 import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.URISupport;
 
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ALLOW_PREDICATE_FROM_MESSAGE_PROPERTY;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.COMPONENT_SCHEME_CONTROL;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_ACTION_PROPERTY;
 
@@ -95,6 +96,14 @@ public class DynamicRouterControlChannelSendDynamicAware extends SendDynamicAwar
         String uri = entry.getUri();
         if (DynamicRouterControlConstants.SHOULD_OPTIMIZE.test(uri)) {
             optimizedUri = URISupport.stripQuery(uri);
+            // The subscription parameters are carried as headers, but "allowPredicateFromMessage" decides whether a
+            // control message may supply the predicate at all, so it has to stay on the endpoint, where only the
+            // route author can set it. Stripping it here would make the endpoint fall back to the default of false.
+            Object allowPredicateFromMessage = entry.getProperties().get(ALLOW_PREDICATE_FROM_MESSAGE_PROPERTY);
+            if (allowPredicateFromMessage != null) {
+                optimizedUri = optimizedUri + "?" + ALLOW_PREDICATE_FROM_MESSAGE_PROPERTY + "="
+                               + allowPredicateFromMessage;
+            }
         }
         return optimizedUri;
     }

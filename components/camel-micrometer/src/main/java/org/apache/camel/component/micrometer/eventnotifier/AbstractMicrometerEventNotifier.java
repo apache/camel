@@ -41,6 +41,7 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
     private boolean skipCamelInfo = false;
     private boolean logMetricsOnShutdown = false;
     private String logMetricsOnShutdownFilters[];
+    private String logMetricsOnShutdownFormat = "json";
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
     protected AbstractMicrometerEventNotifier(Class<T> eventType) {
@@ -89,6 +90,14 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
         this.logMetricsOnShutdown = logMetricsOnShutdown;
     }
 
+    public String getLogMetricsOnShutdownFormat() {
+        return logMetricsOnShutdownFormat;
+    }
+
+    public void setLogMetricsOnShutdownFormat(String logMetricsOnShutdownFormat) {
+        this.logMetricsOnShutdownFormat = logMetricsOnShutdownFormat;
+    }
+
     public String[] getLogMetricsOnShutdownFilters() {
         return logMetricsOnShutdownFilters;
     }
@@ -127,6 +136,7 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
                 registryService.setSkipCamelInfo(isSkipCamelInfo());
                 registryService.setLogMetricsOnShutdown(isLogMetricsOnShutdown());
                 registryService.setLogMetricsOnShutdownFilters(getLogMetricsOnShutdownFilters());
+                registryService.setLogMetricsOnShutdownFormat(getLogMetricsOnShutdownFormat());
                 registryService.setDurationUnit(getDurationUnit());
                 registryService.setMatchingTags(Tags.of(KIND, KIND_EXCHANGE));
                 camelContext.addService(registryService);

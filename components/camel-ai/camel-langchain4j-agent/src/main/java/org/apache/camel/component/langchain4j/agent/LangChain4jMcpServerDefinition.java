@@ -23,7 +23,6 @@ import java.util.Map;
 import dev.langchain4j.mcp.client.DefaultMcpClient;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.mcp.client.transport.McpTransport;
-import dev.langchain4j.mcp.client.transport.http.HttpMcpTransport;
 import dev.langchain4j.mcp.client.transport.http.StreamableHttpMcpTransport;
 import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport;
 import org.apache.camel.CamelContext;
@@ -240,19 +239,6 @@ public class LangChain4jMcpServerDefinition {
                 builder.customHeaders(authHeaders);
             }
             return builder.build();
-        } else if ("sse".equalsIgnoreCase(transportType)) {
-            if (url == null || url.trim().isEmpty()) {
-                throw new IllegalArgumentException("URL is required for SSE MCP transport");
-            }
-            HttpMcpTransport.Builder builder = new HttpMcpTransport.Builder()
-                    .sseUrl(url)
-                    .logRequests(logRequests)
-                    .logResponses(logResponses)
-                    .timeout(timeout);
-            if (authHeaders != null) {
-                builder.customHeaders(authHeaders);
-            }
-            return builder.build();
         } else if ("stdio".equalsIgnoreCase(transportType)) {
             if (command == null || command.isEmpty()) {
                 throw new IllegalArgumentException("Command is required for stdio MCP transport");
@@ -267,7 +253,7 @@ public class LangChain4jMcpServerDefinition {
         } else {
             throw new IllegalArgumentException(
                     "Unsupported MCP transport type: " + transportType
-                                               + ". Supported values: stdio, http, streamableHttp, sse");
+                                               + ". Supported values: stdio, http, streamableHttp");
         }
     }
 }

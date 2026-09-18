@@ -87,8 +87,7 @@ class BeansTabRenderTest {
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
         assertTrue(footer.contains("scope"), "Footer should contain scope hint");
         assertTrue(footer.contains("filter"), "Footer should contain filter hint");
-        assertTrue(footer.contains("navigate"), "Footer should contain navigate hint");
-        assertTrue(footer.contains("scroll"), "Footer should contain scroll hint");
+        assertTrue(footer.contains("scroll"), "Footer should contain PgUp/Dn scroll hint");
     }
 
 }

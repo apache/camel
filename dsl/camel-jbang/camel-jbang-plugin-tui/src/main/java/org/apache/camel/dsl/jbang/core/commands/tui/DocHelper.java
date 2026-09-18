@@ -24,23 +24,64 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 
 final class DocHelper {
 
+    private static final Map<String, String> HELP_CACHE = new ConcurrentHashMap<>();
+
     private DocHelper() {
     }
 
-    static String loadResourceContent(String resourcePath) {
-        try (InputStream is = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
-            if (is != null) {
-                return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    /**
+     * Loads the markdown help text for a tab from {@code tui/help/<name>.md} on the classpath. Results are cached;
+     * returns null when no help resource exists for the name.
+     */
+    static String loadHelpText(String name) {
+        String cached = HELP_CACHE.get(name);
+        if (cached == null) {
+            cached = loadResourceContent("tui/help/" + name + ".md");
+            if (cached != null) {
+                HELP_CACHE.put(name, cached);
             }
-        } catch (IOException e) {
-            // ignore
         }
-        return null;
+        return cached;
+    }
+
+    /**
+     * Reads a resource of this plugin. Under the {@code camel} launcher the plugin jar lives in its own classloader
+     * with camel-jbang-core in the parent, so the lookup must start from a class of this jar; the context classloader
+     * and the core's loader are fallbacks for other setups (tests, a flat classpath).
+     */
+    static String loadResourceContent(String resourcePath) {
+        InputStream is = null;
+        ClassLoader own = DocHelper.class.getClassLoader();
+        if (own != null) {
+            is = own.getResourceAsStream(resourcePath);
+        }
+        if (is == null) {
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            if (tccl != null) {
+                is = tccl.getResourceAsStream(resourcePath);
+            }
+        }
+        if (is == null) {
+            ClassLoader core = ExampleHelper.class.getClassLoader();
+            if (core != null) {
+                is = core.getResourceAsStream(resourcePath);
+            }
+        }
+        if (is == null) {
+            return null;
+        }
+        try (InputStream in = is) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     static String downloadContent(String url) {

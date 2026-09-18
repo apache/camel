@@ -116,6 +116,6 @@ public class DynamicRouterDefaultAggregationIT {
                 .predicate("${body} != null")
                 .expressionLanguage("simple")
                 .build();
-        template.sendBody("dynamic-router-control:subscribe", controlMessage);
+        template.sendBody("dynamic-router-control:subscribe?allowPredicateFromMessage=true", controlMessage);
     }
 }

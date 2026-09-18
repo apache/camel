@@ -41,7 +41,7 @@ public class OnWhenDefinition extends OptionalIdentifiedDefinition<OnWhenDefinit
         implements HasExpressionType, CopyableDefinition<OnWhenDefinition> {
 
     @XmlElementRef
-    @Metadata(description = "The predicate expression to evaluate.")
+    @Metadata(required = true, description = "The predicate expression to evaluate.")
     private ExpressionDefinition expression;
 
     public OnWhenDefinition() {

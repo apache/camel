@@ -48,7 +48,7 @@ import org.apache.camel.support.ResolverHelper;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 
 /**
- * Dispatches Simple/CSimple function lookup to built-in function factories and to {@link SimpleLanguageFunctionFactory}
+ * Dispatches Simple function lookup to built-in function factories and to {@link SimpleLanguageFunctionFactory}
  * implementations shipped by external Camel components (currently camel-a2a, camel-attachments, camel-base64,
  * camel-jsoup).
  * <p>
@@ -94,14 +94,6 @@ public final class SimpleFunctionDispatcher {
             new Entry("camel-base64", SimpleFunctionDispatcher::isBase64Function),
             new Entry("camel-jsoup", SimpleFunctionDispatcher::isHtmlFunction));
 
-    /**
-     * Code-generation entries exclude camel-jsoup deliberately: it has no csimple support and its {@code createCode}
-     * throws.
-     */
-    private static final List<Entry> CODE_ENTRIES = List.of(
-            new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),
-            new Entry("camel-base64", SimpleFunctionDispatcher::isBase64Function));
-
     private SimpleFunctionDispatcher() {
     }
 
@@ -124,32 +116,6 @@ public final class SimpleFunctionDispatcher {
             Expression answer = factory.createFunction(camelContext, function, index);
             if (answer != null) {
                 return answer;
-            }
-        }
-        return null;
-    }
-
-    public static String tryCreateCodeBuiltIn(CamelContext camelContext, String function, int index) {
-        for (SimpleLanguageFunctionFactory factory : BUILT_INS) {
-            @SuppressWarnings("deprecation")
-            String code = factory.createCode(camelContext, function, index);
-            if (code != null) {
-                return code;
-            }
-        }
-        return null;
-    }
-
-    public static String tryCreateCodeExternal(CamelContext camelContext, String function, int index) {
-        for (Entry entry : CODE_ENTRIES) {
-            if (!entry.claims.test(function)) {
-                continue;
-            }
-            SimpleLanguageFunctionFactory factory = resolve(camelContext, entry.jarName);
-            @SuppressWarnings("deprecation")
-            String code = factory.createCode(camelContext, function, index);
-            if (code != null) {
-                return code;
             }
         }
         return null;

@@ -17,8 +17,30 @@
 package org.apache.camel.test.infra.ibmmq.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public class IbmMQServiceFactory {
+
+    private static class SingletonIbmMQService extends SingletonService<IbmMQService> implements IbmMQService {
+        public SingletonIbmMQService(IbmMQService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String channel() {
+            return getService().channel();
+        }
+
+        @Override
+        public String queueManager() {
+            return getService().queueManager();
+        }
+
+        @Override
+        public int listenerPort() {
+            return getService().listenerPort();
+        }
+    }
 
     private IbmMQServiceFactory() {
 
@@ -32,6 +54,20 @@ public class IbmMQServiceFactory {
         return builder()
                 .addLocalMapping(IbmMQLocalContainerService::new)
                 .build();
+    }
+
+    public static IbmMQService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final IbmMQService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<IbmMQService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonIbmMQService(new IbmMQLocalContainerService(), "ibm-mq"));
+            INSTANCE = instance.build();
+        }
     }
 
     public static class IbmMQLocalContainerService extends IbmMQLocalContainerInfraService

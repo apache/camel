@@ -32,7 +32,7 @@
     <description>Camel JPA support</description>
 
     <properties>
-        <camel.surefire.fork.additional-vmargs>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}.jar -Xmx3G</camel.surefire.fork.additional-vmargs>
+        <camel.surefire.fork.additional-vmargs>-Xmx3G</camel.surefire.fork.additional-vmargs>
         <camel.surefire.forkTimeout>240</camel.surefire.forkTimeout>
     </properties>
 
@@ -94,7 +94,15 @@
             <artifactId>h2</artifactId>
             <version>${h2-version}</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <!-- always on the test classpath (not only in the hibernate profile) so that
+                 KeyValueEntryHibernateMappingTest verifies Hibernate entity mapping in every build -->
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -134,6 +142,14 @@
                     <name>!hibernate</name>
                 </property>
             </activation>
+            <properties>
+                <!-- the OpenJPA enhancer agent must only be attached when the OpenJPA provider is in use.
+                     The agent jar itself is copied to target/ by the "full" profile regardless of -Dhibernate,
+                     but PCEnhancerAgent.premain needs the OpenJPA runtime classes (and their xbean-asm
+                     transitives), which only this profile puts on the classpath - so with -Dhibernate the
+                     agent would die in premain and the forked test JVM would fail to start -->
+                <camel.surefire.fork.additional-vmargs>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}.jar -Xmx3G</camel.surefire.fork.additional-vmargs>
+            </properties>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -173,7 +189,7 @@
                         <configuration>
                             <persistenceXmlFile>${project.basedir}/src/test/resources/META-INF/persistence.xml
                             </persistenceXmlFile>
-                            <includes>org/apache/camel/examples/*.class</includes>
+                            <includes>org/apache/camel/examples/*.class,org/apache/camel/processor/keyvalue/jpa/*.class</includes>
                             <addDefaultConstructor>true</addDefaultConstructor>
                             <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
                         </configuration>
@@ -231,8 +247,11 @@
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
-                                <phase>generate-test-resources</phase>
+                                <!-- must run after the default testResources goal so the Hibernate
+                                     variant reliably replaces the default OpenJPA persistence.xml -->
+                                <phase>process-test-resources</phase>
                                 <configuration>
+                                    <overwrite>true</overwrite>
                                     <resources>
                                         <resource>
                                             <directory>
@@ -247,14 +266,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hibernate.orm</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                    <version>${hibernate-version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>full</id>

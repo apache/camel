@@ -174,7 +174,7 @@ public class SBOMGenerator extends Export {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
             if (this.runtime == null && prop.containsKey(CamelJBangConstants.RUNTIME)) {
-                this.runtime = RuntimeType.fromValue(prop.getProperty(CamelJBangConstants.RUNTIME));
+                this.runtime = RuntimeType.fromValue(prop.getProperty(CamelJBangConstants.RUNTIME)).exportRuntime();
             }
             if (this.gav == null) {
                 this.gav = prop.getProperty(GAV);

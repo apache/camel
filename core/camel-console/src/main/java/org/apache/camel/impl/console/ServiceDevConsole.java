@@ -16,17 +16,34 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.EndpointServiceRegistry;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "service", displayName = "Services", description = "Services used for network communication with clients")
 public class ServiceDevConsole extends AbstractDevConsole {
+
+    public record ServiceEntry(
+            @Metadata(description = "The Camel component") String component,
+            @Metadata(description = "The direction (in or out)") String direction,
+            @Metadata(description = "Whether the service is hosted in this Camel application") boolean hosted,
+            @Metadata(description = "The protocol the service is using (only present when known)") String protocol,
+            @Metadata(description = "The remote address of the service (only present when known)") String serviceUrl,
+            @Metadata(description = "The endpoint URI") String endpointUri,
+            @Metadata(description = "The route ID (only present when known)") String routeId,
+            @Metadata(description = "Usage of the endpoint service") long hits,
+            @Metadata(description = "Additional metadata relevant to the service (only present when available)") Map<String, String> metadata) {
+    }
+
+    public record Response(@Metadata(description = "The services") List<ServiceEntry> services) {
+    }
 
     public ServiceDevConsole() {
         super("camel", "service", "Services", "Services used for network communication with clients");
@@ -59,32 +76,17 @@ public class ServiceDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
-        JsonArray list = new JsonArray();
-        root.put("services", list);
+        List<ServiceEntry> list = new ArrayList<>();
 
         EndpointServiceRegistry esr = getCamelContext().getCamelContextExtension().getEndpointServiceRegistry();
         for (EndpointServiceRegistry.EndpointService es : esr.listAllEndpointServices()) {
-            JsonObject jo = new JsonObject();
-            jo.put("component", es.getComponent());
-            jo.put("direction", es.getDirection());
-            jo.put("hosted", es.isHostedService());
-            jo.put("protocol", es.getServiceProtocol());
-            jo.put("serviceUrl", es.getServiceUrl());
-            jo.put("endpointUri", es.getEndpointUri());
-            if (es.getRouteId() != null) {
-                jo.put("routeId", es.getRouteId());
-            }
-            jo.put("hits", es.getHits());
-            var map = es.getServiceMetadata();
-            if (map != null) {
-                jo.put("metadata", map);
-            }
-            list.add(jo);
+            list.add(new ServiceEntry(
+                    es.getComponent(), es.getDirection(), es.isHostedService(), es.getServiceProtocol(),
+                    es.getServiceUrl(), es.getEndpointUri(), es.getRouteId(), es.getHits(), es.getServiceMetadata()));
         }
 
-        return root;
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }

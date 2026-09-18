@@ -18,50 +18,15 @@ package org.apache.camel.dataformat.base64;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
-import static org.apache.camel.language.simple.ast.SimpleFunctionExpression.codeSplitSafe;
 import static org.apache.camel.language.simple.ast.SimpleFunctionExpression.ifStartsWithReturnRemainder;
 
 @JdkService(SimpleLanguageFunctionFactory.FACTORY + "/camel-base64")
 public class SimpleBase64Function implements SimpleLanguageFunctionFactory {
-
-    private static final String ENCODE_CODE
-            = """
-                            byte[] data;
-                            if (value != null) {
-                                data = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, value);
-                            } else {
-                                data = exchange.getMessage().getBody(byte[].class);
-                            }
-                            if (data != null) {
-                                org.apache.commons.codec.binary.Base64 base64
-                                        = org.apache.commons.codec.binary.Base64.builder().setLineLength(org.apache.commons.codec.binary.Base64.MIME_CHUNK_SIZE).get();
-                                return base64.encodeAsString(data);
-                            }
-                            return null
-                    """;
-
-    private static final String DECODE_CODE
-            = """
-                            byte[] data;
-                            if (value != null) {
-                                data = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, value);
-                            } else {
-                                data = exchange.getMessage().getBody(byte[].class);
-                            }
-                            if (data != null) {
-                                org.apache.commons.codec.binary.Base64 base64
-                                        = org.apache.commons.codec.binary.Base64.builder().setLineLength(org.apache.commons.codec.binary.Base64.MIME_CHUNK_SIZE).get();
-                                return base64.decode(data);
-                            }
-                            return null
-                    """;
 
     @Override
     public Expression createFunction(CamelContext camelContext, String function, int index) {
@@ -87,58 +52,4 @@ public class SimpleBase64Function implements SimpleLanguageFunctionFactory {
 
         return null;
     }
-
-    @Override
-    public String createCode(CamelContext camelContext, String function, int index) {
-        String remainder = ifStartsWithReturnRemainder("base64Encode(", function);
-        if (remainder != null) {
-            String exp = null;
-            String values = StringHelper.beforeLast(remainder, ")");
-            if (ObjectHelper.isNotEmpty(values)) {
-                String[] tokens = codeSplitSafe(values, ',', true, true);
-                if (tokens.length != 1) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${base64Encode(exp)} was: " + function, index);
-                }
-                // single quotes should be double quotes
-                String s = tokens[0];
-                if (StringHelper.isSingleQuoted(s)) {
-                    s = StringHelper.removeLeadingAndEndingQuotes(s);
-                    s = StringQuoteHelper.doubleQuote(s);
-                }
-                exp = s;
-            }
-            if (ObjectHelper.isEmpty(exp)) {
-                exp = "null";
-            }
-            return "Object value = " + exp + ";\n" + ENCODE_CODE;
-        }
-
-        remainder = ifStartsWithReturnRemainder("base64Decode(", function);
-        if (remainder != null) {
-            String exp = null;
-            String values = StringHelper.beforeLast(remainder, ")");
-            if (ObjectHelper.isNotEmpty(values)) {
-                String[] tokens = codeSplitSafe(values, ',', true, true);
-                if (tokens.length != 1) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${base64Decode(exp)} was: " + function, index);
-                }
-                // single quotes should be double quotes
-                String s = tokens[0];
-                if (StringHelper.isSingleQuoted(s)) {
-                    s = StringHelper.removeLeadingAndEndingQuotes(s);
-                    s = StringQuoteHelper.doubleQuote(s);
-                }
-                exp = s;
-            }
-            if (ObjectHelper.isEmpty(exp)) {
-                exp = "null";
-            }
-            return "Object value = " + exp + ";\n" + DECODE_CODE;
-        }
-
-        return null;
-    }
-
 }

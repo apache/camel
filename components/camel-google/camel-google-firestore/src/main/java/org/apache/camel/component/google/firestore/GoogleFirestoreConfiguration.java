@@ -62,6 +62,14 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
               description = "When true, the consumer will listen for real-time updates on the collection")
     private boolean realtimeUpdates;
 
+    @UriParam(label = "consumer,advanced", defaultValue = "0",
+              description = "Maximum number of realtime document changes buffered between two polls. The changes reported by"
+                            + " the snapshot listener are buffered until the next poll picks them up, so a collection"
+                            + " changing faster than the route consumes it makes that buffer grow. When the buffer is full"
+                            + " the oldest buffered change is discarded and a warning is logged. Use 0 for an unbounded"
+                            + " buffer. Only used when realtimeUpdates is enabled.")
+    private int maxPendingChanges;
+
     public String getCollectionName() {
         return collectionName;
     }
@@ -151,6 +159,20 @@ public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConf
      */
     public void setRealtimeUpdates(boolean realtimeUpdates) {
         this.realtimeUpdates = realtimeUpdates;
+    }
+
+    public int getMaxPendingChanges() {
+        return maxPendingChanges;
+    }
+
+    /**
+     * Maximum number of realtime document changes buffered between two polls. The changes reported by the snapshot
+     * listener are buffered until the next poll picks them up, so a collection changing faster than the route consumes
+     * it makes that buffer grow. When the buffer is full the oldest buffered change is discarded and a warning is
+     * logged. Use 0 for an unbounded buffer. Only used when realtimeUpdates is enabled.
+     */
+    public void setMaxPendingChanges(int maxPendingChanges) {
+        this.maxPendingChanges = maxPendingChanges;
     }
 
     public GoogleFirestoreConfiguration copy() {

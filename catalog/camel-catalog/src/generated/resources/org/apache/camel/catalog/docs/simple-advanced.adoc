@@ -10,8 +10,6 @@ to define a set of local variables that are pre-computed, and can be used in the
 to reuse variables, and also avoid making the simple expression complicated when having inlined functions, and in general
 make the simple expression easier to maintain and understand.
 
-IMPORTANT: Init Blocks is not supported with xref:csimple-language.adoc[CSimple] language.
-
 NOTE: The init block declaration `$init{ ... }init$` may be changed in the future.
 
 The _init block_ is declared as follows:
@@ -608,7 +606,7 @@ And to replace all single quotes with double quotes:
 [source,xml]
 ----
 <setBody>
-  <simple>${replace(&apos; , &quot;)}</simple>
+  <simple>${replace(&amp;apos; , &amp;quot;)}</simple>
 </setBody>
 ----
 
@@ -617,7 +615,7 @@ Or to remove all double quotes:
 [source,xml]
 ----
 <setBody>
-  <simple>${replace(&quot; , &empty;)}</simple>
+  <simple>${replace(&amp;quot; , &amp;empty;)}</simple>
 </setBody>
 ----
 

@@ -783,7 +783,8 @@ YAML::
               xtokenize:
                 expression: //ns1:order
                 namespace:
-                  ns1: urn:shop
+                  - key: ns1
+                    value: urn:shop
             steps:
               - to:
                   uri: activemq:queue:order
@@ -1544,14 +1545,14 @@ Spring XML::
 +
 [source,xml]
 ----
+<bean id="myProcessor" class="com.foo.MyProcessor"/>
+
 <camelContext errorHandlerRef="dlc" xmlns="http://camel.apache.org/schema/spring">
 
   <!-- define error handler as DLC, with use original message enabled -->
   <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="mock:dead" useOriginalMessage="true">
     <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0"/>
   </errorHandler>
-
-  <bean id="myProcessor" class="com.foo.MyProcessor"/>
 
   <route>
     <from uri="direct:start"/>

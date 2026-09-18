@@ -73,10 +73,14 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private boolean mcpEnabled;
+    @Metadata(defaultValue = "http", enums = "http,stdio")
+    private String mcpTransport = "http";
     @Metadata
     private String mcpTags;
     @Metadata(defaultValue = "20000")
     private long mcpToolTimeout = 20000;
+    @Metadata(defaultValue = "20000")
+    private long mcpResourceTimeout = 20000;
     @Metadata(defaultValue = "/mcp")
     private String mcpPath = "/mcp";
     @Metadata(defaultValue = "30000")
@@ -85,6 +89,16 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private long mcpSessionIdleTtl = 300000;
     @Metadata
     private String mcpServerName;
+    @Metadata
+    private String mcpServerTitle;
+    @Metadata
+    private String mcpServerDescription;
+    @Metadata
+    private String mcpServerWebsiteUrl;
+    @Metadata
+    private String mcpInstructions;
+    @Metadata
+    private String mcpServerIcons;
 
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -346,11 +360,24 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools over streamable HTTP. Requires camel-mcp-server on the classpath.
-     * By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server
+     * on the classpath. Use {@link #setMcpTransport(String)} to choose streamable HTTP (default) or stdio for IDE
+     * subprocess integration. By default, the MCP server is not enabled.
      */
     public void setMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
+    }
+
+    public String getMcpTransport() {
+        return mcpTransport;
+    }
+
+    /**
+     * MCP transport for ai-tool routes: {@code http} (streamable HTTP on the embedded server, default) or {@code stdio}
+     * (JSON-RPC on process stdin/stdout for local agent subprocesses).
+     */
+    public void setMcpTransport(String mcpTransport) {
+        this.mcpTransport = mcpTransport;
     }
 
     public String getMcpTags() {
@@ -358,8 +385,10 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of ai-tool tags to expose as MCP tools. Only tools registered under one of these tags are
-     * exposed; the untagged default pool is never exposed. When not set, no tools are exposed.
+     * Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource
+     * routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix
+     * ({@code foo*}), and {@code *} to match all tags. Only routes registered under a matching tag are exposed; the
+     * untagged default pools are never exposed. When not set, nothing is exposed.
      */
     public void setMcpTags(String mcpTags) {
         this.mcpTags = mcpTags;
@@ -375,6 +404,18 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setMcpToolTimeout(long mcpToolTimeout) {
         this.mcpToolTimeout = mcpToolTimeout;
+    }
+
+    public long getMcpResourceTimeout() {
+        return mcpResourceTimeout;
+    }
+
+    /**
+     * Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP
+     * client; the underlying route keeps running until it completes on its own.
+     */
+    public void setMcpResourceTimeout(long mcpResourceTimeout) {
+        this.mcpResourceTimeout = mcpResourceTimeout;
     }
 
     public String getMcpPath() {
@@ -397,6 +438,62 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setMcpServerName(String mcpServerName) {
         this.mcpServerName = mcpServerName;
+    }
+
+    public String getMcpServerTitle() {
+        return mcpServerTitle;
+    }
+
+    /**
+     * MCP server display title advertised to clients in {@code serverInfo.title}.
+     */
+    public void setMcpServerTitle(String mcpServerTitle) {
+        this.mcpServerTitle = mcpServerTitle;
+    }
+
+    public String getMcpServerDescription() {
+        return mcpServerDescription;
+    }
+
+    /**
+     * MCP server description advertised to clients in {@code serverInfo.description}.
+     */
+    public void setMcpServerDescription(String mcpServerDescription) {
+        this.mcpServerDescription = mcpServerDescription;
+    }
+
+    public String getMcpServerWebsiteUrl() {
+        return mcpServerWebsiteUrl;
+    }
+
+    /**
+     * MCP server website URL advertised to clients in {@code serverInfo.websiteUrl}.
+     */
+    public void setMcpServerWebsiteUrl(String mcpServerWebsiteUrl) {
+        this.mcpServerWebsiteUrl = mcpServerWebsiteUrl;
+    }
+
+    public String getMcpInstructions() {
+        return mcpInstructions;
+    }
+
+    /**
+     * Top-level MCP instructions returned to clients on initialize.
+     */
+    public void setMcpInstructions(String mcpInstructions) {
+        this.mcpInstructions = mcpInstructions;
+    }
+
+    public String getMcpServerIcons() {
+        return mcpServerIcons;
+    }
+
+    /**
+     * JSON array of MCP server icons advertised to clients in {@code serverInfo.icons}. Each entry must include a
+     * {@code src} URL and may include {@code mimeType}, {@code sizes} and {@code theme}.
+     */
+    public void setMcpServerIcons(String mcpServerIcons) {
+        this.mcpServerIcons = mcpServerIcons;
     }
 
     public long getMcpSessionKeepAliveInterval() {
@@ -604,8 +701,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools over streamable HTTP. Requires camel-mcp-server on the classpath.
-     * By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server
+     * on the classpath. Use {@link #setMcpTransport(String)} to choose streamable HTTP (default) or stdio for IDE
+     * subprocess integration. By default, the MCP server is not enabled.
      */
     public HttpServerConfigurationProperties withMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
@@ -613,8 +711,18 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of ai-tool tags to expose as MCP tools. Only tools registered under one of these tags are
-     * exposed; the untagged default pool is never exposed. When not set, no tools are exposed.
+     * MCP transport for ai-tool routes: {@code http} (default) or {@code stdio}.
+     */
+    public HttpServerConfigurationProperties withMcpTransport(String mcpTransport) {
+        this.mcpTransport = mcpTransport;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource
+     * routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix
+     * ({@code foo*}), and {@code *} to match all tags. Only routes registered under a matching tag are exposed; the
+     * untagged default pools are never exposed. When not set, nothing is exposed.
      */
     public HttpServerConfigurationProperties withMcpTags(String mcpTags) {
         this.mcpTags = mcpTags;
@@ -631,6 +739,15 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
+     * Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP
+     * client; the underlying route keeps running until it completes on its own.
+     */
+    public HttpServerConfigurationProperties withMcpResourceTimeout(long mcpResourceTimeout) {
+        this.mcpResourceTimeout = mcpResourceTimeout;
+        return this;
+    }
+
+    /**
      * HTTP path where the MCP endpoint is served.
      */
     public HttpServerConfigurationProperties withMcpPath(String mcpPath) {
@@ -643,6 +760,46 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpServerName(String mcpServerName) {
         this.mcpServerName = mcpServerName;
+        return this;
+    }
+
+    /**
+     * MCP server display title advertised to clients in {@code serverInfo.title}.
+     */
+    public HttpServerConfigurationProperties withMcpServerTitle(String mcpServerTitle) {
+        this.mcpServerTitle = mcpServerTitle;
+        return this;
+    }
+
+    /**
+     * MCP server description advertised to clients in {@code serverInfo.description}.
+     */
+    public HttpServerConfigurationProperties withMcpServerDescription(String mcpServerDescription) {
+        this.mcpServerDescription = mcpServerDescription;
+        return this;
+    }
+
+    /**
+     * MCP server website URL advertised to clients in {@code serverInfo.websiteUrl}.
+     */
+    public HttpServerConfigurationProperties withMcpServerWebsiteUrl(String mcpServerWebsiteUrl) {
+        this.mcpServerWebsiteUrl = mcpServerWebsiteUrl;
+        return this;
+    }
+
+    /**
+     * Top-level MCP instructions returned to clients on initialize.
+     */
+    public HttpServerConfigurationProperties withMcpInstructions(String mcpInstructions) {
+        this.mcpInstructions = mcpInstructions;
+        return this;
+    }
+
+    /**
+     * JSON array of MCP server icons advertised to clients in {@code serverInfo.icons}.
+     */
+    public HttpServerConfigurationProperties withMcpServerIcons(String mcpServerIcons) {
+        this.mcpServerIcons = mcpServerIcons;
         return this;
     }
 

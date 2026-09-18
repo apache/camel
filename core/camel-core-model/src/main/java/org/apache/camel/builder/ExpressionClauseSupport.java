@@ -24,7 +24,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.PredicateFactory;
 import org.apache.camel.model.ExpressionNodeHelper;
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -35,14 +34,15 @@ import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.model.language.JactlExpression;
 import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
-import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
+import org.apache.camel.model.language.QuickjsExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -413,31 +413,6 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
-     * Evaluates an JOOR expression
-     *
-     * @param  text the expression to be evaluated
-     * @return      the builder to continue processing the DSL
-     */
-    @Deprecated(since = "4.3.0")
-    public T joor(String text) {
-        return expression(new JoorExpression(text));
-    }
-
-    /**
-     * Evaluates an JOOR expression
-     *
-     * @param  text       the expression to be evaluated
-     * @param  resultType the return type expected by the expression
-     * @return            the builder to continue processing the DSL
-     */
-    @Deprecated(since = "4.3.0")
-    public T joor(String text, Class<?> resultType) {
-        JoorExpression exp = new JoorExpression(text);
-        exp.setResultType(resultType);
-        return expression(exp);
-    }
-
-    /**
      * Evaluates an Java expression
      *
      * @param  text the expression to be evaluated
@@ -715,6 +690,52 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     }
 
     /**
+     * Evaluates a Python 3 expression.
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T python3(String text) {
+        return expression(new Python3Expression(text));
+    }
+
+    /**
+     * Evaluates a Python 3 expression
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T python3(String text, Class<?> resultType) {
+        Python3Expression exp = new Python3Expression(text);
+        exp.setResultType(resultType);
+        return expression(exp);
+    }
+
+    /**
+     * Evaluates a QuickJS expression.
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T quickjs(String text) {
+        return expression(new QuickjsExpression(text));
+    }
+
+    /**
+     * Evaluates a QuickJS expression
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T quickjs(String text, Class<?> resultType) {
+        QuickjsExpression exp = new QuickjsExpression(text);
+        exp.setResultType(resultType);
+        return expression(exp);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/mvel.html">MVEL expression</a>
      *
      * @param  text the expression to be evaluated
@@ -743,33 +764,6 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T spel(String text) {
         return expression(new SpELExpression(text));
-    }
-
-    /**
-     * Evaluates a compiled simple expression
-     *
-     * @param      text the expression to be evaluated
-     * @return          the builder to continue processing the DSL
-     * @deprecated      use {@link #simple(String)} instead
-     */
-    @Deprecated(since = "4.19")
-    public T csimple(String text) {
-        return expression(new CSimpleExpression(text));
-    }
-
-    /**
-     * Evaluates a compiled simple expression
-     *
-     * @param      text       the expression to be evaluated
-     * @param      resultType the return type expected by the expression
-     * @return                the builder to continue processing the DSL
-     * @deprecated            use {@link #simple(String, Class)} instead
-     */
-    @Deprecated(since = "4.19")
-    public T csimple(String text, Class<?> resultType) {
-        CSimpleExpression exp = new CSimpleExpression(text);
-        exp.setResultType(resultType);
-        return expression(exp);
     }
 
     /**

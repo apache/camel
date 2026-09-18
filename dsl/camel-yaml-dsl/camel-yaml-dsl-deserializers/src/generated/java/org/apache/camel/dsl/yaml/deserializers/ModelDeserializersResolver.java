@@ -51,8 +51,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.BindyDataFormat": return new ModelDeserializers.BindyDataFormatDeserializer();
             case "cbor": return new ModelDeserializers.CBORDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.CBORDataFormat": return new ModelDeserializers.CBORDataFormatDeserializer();
-            case "csimple": return new ModelDeserializers.CSimpleExpressionDeserializer();
-            case "org.apache.camel.model.language.CSimpleExpression": return new ModelDeserializers.CSimpleExpressionDeserializer();
+            case "cache": return new ModelDeserializers.CacheDefinitionDeserializer();
+            case "org.apache.camel.model.CacheDefinition": return new ModelDeserializers.CacheDefinitionDeserializer();
             case "doCatch": return new ModelDeserializers.CatchDefinitionDeserializer();
             case "org.apache.camel.model.CatchDefinition": return new ModelDeserializers.CatchDefinitionDeserializer();
             case "choice": return new ModelDeserializers.ChoiceDefinitionDeserializer();
@@ -177,8 +177,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.JavaScriptExpression": return new ModelDeserializers.JavaScriptExpressionDeserializer();
             case "jaxb": return new ModelDeserializers.JaxbDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JaxbDataFormat": return new ModelDeserializers.JaxbDataFormatDeserializer();
-            case "joor": return new ModelDeserializers.JoorExpressionDeserializer();
-            case "org.apache.camel.model.language.JoorExpression": return new ModelDeserializers.JoorExpressionDeserializer();
             case "jq": return new ModelDeserializers.JqExpressionDeserializer();
             case "org.apache.camel.model.language.JqExpression": return new ModelDeserializers.JqExpressionDeserializer();
             case "jsonApi": return new ModelDeserializers.JsonApiDataFormatDeserializer();
@@ -287,8 +285,12 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.ProtobufDataFormat": return new ModelDeserializers.ProtobufDataFormatDeserializer();
             case "put": return new ModelDeserializers.PutDefinitionDeserializer();
             case "org.apache.camel.model.rest.PutDefinition": return new ModelDeserializers.PutDefinitionDeserializer();
+            case "python3": return new ModelDeserializers.Python3ExpressionDeserializer();
+            case "org.apache.camel.model.language.Python3Expression": return new ModelDeserializers.Python3ExpressionDeserializer();
             case "python": return new ModelDeserializers.PythonExpressionDeserializer();
             case "org.apache.camel.model.language.PythonExpression": return new ModelDeserializers.PythonExpressionDeserializer();
+            case "quickjs": return new ModelDeserializers.QuickjsExpressionDeserializer();
+            case "org.apache.camel.model.language.QuickjsExpression": return new ModelDeserializers.QuickjsExpressionDeserializer();
             case "randomLoadBalancer": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
             case "recipientList": return new ModelDeserializers.RecipientListDefinitionDeserializer();
@@ -426,6 +428,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "tokenize": return new ModelDeserializers.TokenizerExpressionDeserializer();
             case "org.apache.camel.model.language.TokenizerExpression": return new ModelDeserializers.TokenizerExpressionDeserializer();
             case "org.apache.camel.model.TokenizerImplementationDefinition": return new ModelDeserializers.TokenizerImplementationDefinitionDeserializer();
+            case "toon": return new ModelDeserializers.ToonDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.ToonDataFormat": return new ModelDeserializers.ToonDataFormatDeserializer();
             case "topicLoadBalancer": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
             case "transacted": return new ModelDeserializers.TransactedDefinitionDeserializer();
@@ -438,6 +442,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.transformer.TransformersDefinition": return new ModelDeserializers.TransformersDefinitionDeserializer();
             case "doTry": return new ModelDeserializers.TryDefinitionDeserializer();
             case "org.apache.camel.model.TryDefinition": return new ModelDeserializers.TryDefinitionDeserializer();
+            case "ubl": return new ModelDeserializers.UblDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.UblDataFormat": return new ModelDeserializers.UblDataFormatDeserializer();
             case "univocityCsv": return new ModelDeserializers.UniVocityCsvDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.UniVocityCsvDataFormat": return new ModelDeserializers.UniVocityCsvDataFormatDeserializer();
             case "univocityFixed": return new ModelDeserializers.UniVocityFixedDataFormatDeserializer();

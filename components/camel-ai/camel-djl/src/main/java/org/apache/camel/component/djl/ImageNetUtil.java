@@ -37,7 +37,12 @@ public class ImageNetUtil {
 
     public void extractClassName(Exchange exchange) {
         Classifications body = exchange.getMessage().getBody(Classifications.class);
-        String className = body.best().getClassName().split(",")[0].split(" ", 2)[1];
+        // ImageNet class names look like "n01440764 tench, Tinca tinca": keep the label after the id and
+        // before the first comma. Fall back to the whole token when there is no space, so a class name
+        // without the expected "<id> <label>" shape does not throw ArrayIndexOutOfBoundsException.
+        String firstLabel = body.best().getClassName().split(",")[0];
+        String[] parts = firstLabel.split(" ", 2);
+        String className = parts.length > 1 ? parts[1] : parts[0];
         exchange.getMessage().setBody(className);
     }
 

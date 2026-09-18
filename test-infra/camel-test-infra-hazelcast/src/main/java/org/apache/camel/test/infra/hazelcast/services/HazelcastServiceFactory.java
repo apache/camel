@@ -16,9 +16,22 @@
  */
 package org.apache.camel.test.infra.hazelcast.services;
 
+import com.hazelcast.config.Config;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class HazelcastServiceFactory {
+
+    private static class SingletonHazelcastService extends SingletonService<HazelcastService> implements HazelcastService {
+        public SingletonHazelcastService(HazelcastService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public Config createConfiguration(String name, int port, String instanceName, String componentName) {
+            return getService().createConfiguration(name, port, instanceName, componentName);
+        }
+    }
 
     private HazelcastServiceFactory() {
 
@@ -32,6 +45,20 @@ public final class HazelcastServiceFactory {
         return builder()
                 .addLocalMapping(HazelcastEmbeddedService::new)
                 .build();
+    }
+
+    public static HazelcastService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final HazelcastService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<HazelcastService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonHazelcastService(new HazelcastEmbeddedService(), "hazelcast"));
+            INSTANCE = instance.build();
+        }
     }
 
     public static class HazelcastEmbeddedService extends HazelcastEmbeddedInfraService implements HazelcastService {

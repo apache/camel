@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.Map;
+
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -42,7 +44,8 @@ public class ModelHelper {
                     .apiKey(openaiService.apiKey())
                     .baseUrl(openaiService.baseUrl())
                     .modelName(openaiService.modelName())
-                    .temperature(1.0)
+                    .temperature(0.0)
+                    .customParameters(Map.of("reasoning_effort", "none"))
                     .timeout(ofSeconds(120))
                     .maxTokens(500)
                     .maxCompletionTokens(500)
@@ -55,7 +58,7 @@ public class ModelHelper {
         return OllamaChatModel.builder()
                 .baseUrl(ollamaService.baseUrl())
                 .modelName(ollamaService.modelName())
-                .temperature(0.3)
+                .temperature(0.0)
                 .timeout(ofSeconds(120))
                 .build();
     }
@@ -70,7 +73,8 @@ public class ModelHelper {
                     .baseUrl(openaiService.baseUrl())
                     .modelName(openaiService.modelName())
                     .responseFormat(responseFormat)
-                    .temperature(1.0)
+                    .temperature(0.0)
+                    .customParameters(Map.of("reasoning_effort", "none"))
                     .timeout(ofSeconds(120))
                     .logRequests(true)
                     .logResponses(true)
@@ -81,7 +85,7 @@ public class ModelHelper {
                 .baseUrl(ollamaService.baseUrl())
                 .modelName(ollamaService.modelName())
                 .responseFormat(responseFormat)
-                .temperature(0.3)
+                .temperature(0.0)
                 .timeout(ofSeconds(120))
                 .build();
     }

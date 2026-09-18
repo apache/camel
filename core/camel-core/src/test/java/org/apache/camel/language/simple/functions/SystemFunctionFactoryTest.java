@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SystemFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
@@ -36,11 +35,6 @@ public class SystemFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
     @SetSystemProperty(key = "who", value = "I was here")
     public void testSimpleSystemPropertyExpressions() {
         assertEquals("I was here", evaluate("sys.who", String.class));
-    }
-
-    @Test
-    public void testCreateCodeSys() {
-        assertEquals("sys(\"java.version\")", createCode("sys.java.version"));
     }
 
     // --- sysenv. / sysenv: / env. / env: ---
@@ -76,30 +70,5 @@ public class SystemFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
             assertEquals(path, evaluate("env.path", String.class));
             assertEquals(path, evaluate("env:path", String.class));
         }
-    }
-
-    @Test
-    public void testCreateCodeSysenvDot() {
-        assertEquals("sysenv(\"MY_VAR\")", createCode("sysenv.MY_VAR"));
-    }
-
-    @Test
-    public void testCreateCodeSysenvColon() {
-        assertEquals("sysenv(\"MY_VAR\")", createCode("sysenv:MY_VAR"));
-    }
-
-    @Test
-    public void testCreateCodeEnvDot() {
-        assertEquals("sysenv(\"MY_VAR\")", createCode("env.MY_VAR"));
-    }
-
-    @Test
-    public void testCreateCodeEnvColon() {
-        assertEquals("sysenv(\"MY_VAR\")", createCode("env:MY_VAR"));
-    }
-
-    @Test
-    public void testCreateCodeUnknown() {
-        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }

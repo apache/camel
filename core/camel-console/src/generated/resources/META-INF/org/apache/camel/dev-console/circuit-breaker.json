@@ -6,10 +6,45 @@
     "title": "Circuit Breaker",
     "description": "Display circuit breaker information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.CircuitBreakerDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "circuitBreakers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "state": {
+              "type": "string",
+              "description": "The circuit breaker state"
+            },
+            "successfulCalls": {
+              "type": "integer",
+              "description": "Number of successful calls"
+            },
+            "failedCalls": {
+              "type": "integer",
+              "description": "Number of failed calls"
+            }
+          },
+          "required": [
+            "successfulCalls",
+            "failedCalls"
+          ]
+        },
+        "description": "The circuit breakers"
+      }
+    }
   }
 }
 

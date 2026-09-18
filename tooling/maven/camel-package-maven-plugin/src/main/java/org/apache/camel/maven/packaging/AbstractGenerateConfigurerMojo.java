@@ -136,7 +136,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         Set<String> bootstrapSet = new LinkedHashSet<>();
         Set<String> bootstrapAndExtendedSet = new LinkedHashSet<>();
 
-        Index index = PackagePluginUtils.readJandexIndexIgnoreMissing(project, getLog());
+        Index index = PackagePluginUtils.readJandexIndexIgnoreMissing(project);
         if (discoverClasses) {
             if (index != null) {
                 // discover all classes annotated with @Configurer

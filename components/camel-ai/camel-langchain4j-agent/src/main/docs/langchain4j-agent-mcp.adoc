@@ -204,9 +204,9 @@ Supported properties:
 |===
 | Property | Default | Description
 
-| `transportType` | `stdio` | Transport type: `stdio`, `http` or `streamableHttp` (Streamable HTTP), or `sse` (legacy SSE)
+| `transportType` | `stdio` | Transport type: `stdio`, `http` or `streamableHttp` (Streamable HTTP)
 | `command` | | Comma-separated command for stdio transport (e.g., `docker,run,-i,--rm,mcp/time`)
-| `url` | | Server URL for `http` or `sse` transport
+| `url` | | Server URL for `http` or `streamableHttp` transport
 | `environment.<key>` | | Environment variables for stdio transport
 | `timeout` | `60` | Timeout in seconds
 | `logRequests` | `false` | Log requests sent to the MCP server

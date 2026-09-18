@@ -32,7 +32,7 @@ public class VertxHttpRestHeaderFilterStrategy extends VertxHttpHeaderFilterStra
 
     @Override
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
-        boolean answer = super.applyFilterToExternalHeaders(headerName, headerValue, exchange);
+        boolean answer = super.applyFilterToCamelHeaders(headerName, headerValue, exchange);
 
         return filterCheck(templateUri, queryParameters, headerName, answer);
     }

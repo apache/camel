@@ -193,6 +193,12 @@ public class WatsonLanguageProducer extends DefaultProducer {
             builder.categories(new CategoriesOptions.Builder().build());
         }
 
+        if (!(analyzeSentiment || analyzeEmotion || analyzeEntities || analyzeKeywords || analyzeConcepts
+                || analyzeCategories)) {
+            throw new IllegalArgumentException(
+                    "At least one analysis feature (sentiment, emotion, entities, keywords, concepts, categories) must be enabled");
+        }
+
         return builder.build();
     }
 

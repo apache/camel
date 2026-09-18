@@ -17,8 +17,32 @@
 package org.apache.camel.test.infra.microprofile.lra.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class MicroprofileLRAServiceFactory {
+
+    private static class SingletonMicroprofileLRAService extends SingletonService<MicroprofileLRAService>
+            implements MicroprofileLRAService {
+        public SingletonMicroprofileLRAService(MicroprofileLRAService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String callbackHost() {
+            return getService().callbackHost();
+        }
+    }
+
     private MicroprofileLRAServiceFactory() {
 
     }
@@ -32,6 +56,23 @@ public final class MicroprofileLRAServiceFactory {
                 .addLocalMapping(MicroprofileLRALocalContainerService::new)
                 .addRemoteMapping(MicroprofileLRARemoteService::new)
                 .build();
+    }
+
+    public static MicroprofileLRAService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final MicroprofileLRAService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<MicroprofileLRAService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonMicroprofileLRAService(
+                            new MicroprofileLRALocalContainerService(),
+                            "microprofile-lra"))
+                    .addRemoteMapping(MicroprofileLRARemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class MicroprofileLRALocalContainerService extends MicroprofileLRALocalContainerInfraService

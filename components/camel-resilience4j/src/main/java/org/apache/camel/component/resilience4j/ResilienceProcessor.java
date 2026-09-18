@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -109,6 +110,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
     private ProcessorExchangeFactory processorExchangeFactory;
     private PooledExchangeTaskFactory taskFactory;
     private PooledExchangeTaskFactory fallbackTaskFactory;
+    // counters for what the circuit breaker metrics do not tell apart
+    private final AtomicLong fallbackCalls = new AtomicLong();
+    private final AtomicLong timedOutCalls = new AtomicLong();
+    private final AtomicLong bulkheadRejectedCalls = new AtomicLong();
 
     public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
                                TimeLimiterConfig timeLimiterConfig, Processor processor,
@@ -400,6 +405,21 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
     }
 
+    @ManagedAttribute(description = "Returns the number of calls answered by the onFallback (failed, timed out and rejected calls alike).")
+    public long getNumberOfFallbackCalls() {
+        return fallbackCalls.get();
+    }
+
+    @ManagedAttribute(description = "Returns the number of calls that timed out (the circuit breaker counts them as failed calls).")
+    public long getNumberOfTimedOutCalls() {
+        return timedOutCalls.get();
+    }
+
+    @ManagedAttribute(description = "Returns the number of calls rejected because the bulkhead was full (not included in the not permitted calls).")
+    public long getNumberOfBulkheadRejectedCalls() {
+        return bulkheadRejectedCalls.get();
+    }
+
     @ManagedAttribute(description = "Returns the current state of the circuit breaker")
     public String getCircuitBreakerState() {
         if (circuitBreaker != null) {
@@ -409,11 +429,14 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
     }
 
-    @ManagedOperation(description = "Transitions the circuit breaker to CLOSED state.")
+    @ManagedOperation(description = "Transitions the circuit breaker to CLOSED state and resets the fallback, timed out and bulkhead rejected call counters.")
     public void transitionToCloseState() {
         if (circuitBreaker != null) {
             circuitBreaker.transitionToClosedState();
         }
+        fallbackCalls.set(0);
+        timedOutCalls.set(0);
+        bulkheadRejectedCalls.set(0);
     }
 
     @ManagedOperation(description = "Transitions the circuit breaker to OPEN state.")
@@ -919,6 +942,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
                 if (throwable instanceof TimeoutException) {
                     // the circuit breaker triggered a timeout (and there is no
                     // fallback) so lets mark the exchange as failed
+                    timedOutCalls.incrementAndGet();
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, false);
@@ -937,6 +961,7 @@ public class ResilienceProcessor extends BaseProcessorSupport
                     return exchange;
                 } else if (throwable instanceof BulkheadFullException) {
                     // the circuit breaker bulkhead is full
+                    bulkheadRejectedCalls.incrementAndGet();
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, false);
                     exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
@@ -958,7 +983,16 @@ public class ResilienceProcessor extends BaseProcessorSupport
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, true);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+            // rejected means the call was never attempted (breaker open or bulkhead full),
+            // so the fallback can tell that apart from a call that was made and failed
+            boolean rejected = throwable instanceof CallNotPermittedException || throwable instanceof BulkheadFullException;
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, rejected);
+            fallbackCalls.incrementAndGet();
+            if (throwable instanceof BulkheadFullException) {
+                bulkheadRejectedCalls.incrementAndGet();
+            }
             if (throwable instanceof TimeoutException) {
+                timedOutCalls.incrementAndGet();
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
             }
 

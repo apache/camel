@@ -26,6 +26,7 @@ import com.google.cloud.bigquery.InsertAllRequest;
 import com.google.cloud.bigquery.InsertAllResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -129,13 +130,16 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         for (Exchange ex : exchanges) {
             Object entryObject = ex.getIn().getBody();
             if (entryObject instanceof List) {
+                // the insert id header identifies one row, so it is not applied to the rows of a list: BigQuery
+                // would treat them as duplicates of each other and keep only one. Use useAsInsertId for those
                 for (Map<String, Object> entry : (List<Map<String, Object>>) entryObject) {
                     apiRequestRows.add(createRowRequest(null, entry));
                 }
             } else if (entryObject instanceof Map) {
                 apiRequestRows.add(createRowRequest(ex, (Map<String, Object>) entryObject));
             } else {
-                ex.setException(new IllegalArgumentException("Cannot handle body type " + entryObject.getClass()));
+                ex.setException(new IllegalArgumentException(
+                        "Cannot handle body type " + (entryObject == null ? "null" : entryObject.getClass().getName())));
             }
         }
 
@@ -160,7 +164,7 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         InsertAllResponse apiResponse = bigquery.insertAll(insertAllRequest);
 
         if (apiResponse.getInsertErrors() != null && !apiResponse.getInsertErrors().isEmpty()) {
-            throw new Exception("InsertAll into " + tableId + " failed: " + apiResponse.getInsertErrors());
+            throw new RuntimeCamelException("InsertAll into " + tableId + " failed: " + apiResponse.getInsertErrors());
         }
 
         if (LOG.isTraceEnabled()) {

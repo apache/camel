@@ -18,10 +18,14 @@ package org.apache.camel.language.simple.functions;
 
 import java.util.List;
 
+import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
 
@@ -42,16 +46,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
     public void testReplaceWithExpression() {
         exchange.getIn().setHeader("msg", "foo bar");
         assertEquals("foo-bar", evaluate("replace( ,-,${header.msg})", String.class));
-    }
-
-    @Test
-    public void testCreateCodeReplace() {
-        assertEquals("replace(exchange, \"a\", \"b\")", createCode("replace(a,b)"));
-    }
-
-    @Test
-    public void testCreateCodeReplaceEmpty() {
-        assertEquals("replace(exchange, \"a\", \"\")", createCode("replace(a,&empty;)"));
     }
 
     // --- substring ---
@@ -79,12 +73,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("World", evaluate("substring(6,0,'Hello World')", String.class));
     }
 
-    @Test
-    public void testCreateCodeSubstring() {
-        assertEquals("substring(exchange, 2, 0)", createCode("substring(2)"));
-        assertEquals("substring(exchange, 1, 5)", createCode("substring(1, 5)"));
-    }
-
     // --- substringBefore / substringAfter / substringBetween ---
 
     @Test
@@ -105,20 +93,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("Hello World", evaluate("substringBetween([,])", String.class));
     }
 
-    @Test
-    public void testCreateCodeSubstringBefore() {
-        assertEquals(
-                "Object value = body;\n        Object before = \" \";\n        return substringBefore(exchange, value, before);",
-                createCode("substringBefore(' ')"));
-    }
-
-    @Test
-    public void testCreateCodeSubstringAfterWithExp() {
-        assertEquals(
-                "Object value = body;\n        Object after = \" \";\n        return substringAfter(exchange, value, after);",
-                createCode("substringAfter(' ')"));
-    }
-
     // --- contains ---
 
     @Test
@@ -134,25 +108,12 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals(true, evaluate("contains(${header.greeting}, World)", Boolean.class));
     }
 
-    @Test
-    public void testCreateCodeContains() {
-        assertEquals(
-                "Object value = body;\n        return containsIgnoreCase(exchange, value, \"World\");",
-                createCode("contains(World)"));
-    }
-
     // --- trim ---
 
     @Test
     public void testTrim() {
         exchange.getIn().setBody("  hello  ");
         assertEquals("hello", evaluate("trim()", String.class));
-    }
-
-    @Test
-    public void testCreateCodeTrim() {
-        assertEquals("Object o = null;\n        return trim(exchange, o);", createCode("trim()"));
-        assertEquals("Object o = body;\n        return trim(exchange, o);", createCode("trim(body)"));
     }
 
     // --- val ---
@@ -163,22 +124,12 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("hello", evaluate("val(${body})", String.class));
     }
 
-    @Test
-    public void testCreateCodeVal() {
-        assertEquals("Object o = \"hello\";\n        return o;", createCode("val('hello')"));
-    }
-
     // --- capitalize ---
 
     @Test
     public void testCapitalize() {
         exchange.getIn().setBody("hello world");
         assertEquals("Hello World", evaluate("capitalize()", String.class));
-    }
-
-    @Test
-    public void testCreateCodeCapitalize() {
-        assertEquals("Object o = null;\n        return capitalize(exchange, o);", createCode("capitalize()"));
     }
 
     // --- pad ---
@@ -189,26 +140,12 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("hi   ", evaluate("pad(${body}, 5)", String.class));
     }
 
-    @Test
-    public void testCreateCodePad() {
-        assertEquals(
-                "Object value = body;\n        Object width = 10;\n        String separator = null;\n        return pad(exchange, value, width, separator);",
-                createCode("pad(body, 10)"));
-    }
-
     // --- concat ---
 
     @Test
     public void testConcat() {
         exchange.getIn().setBody("Hello");
         assertEquals("Hello World", evaluate("concat(${body}, World, ' ')", String.class));
-    }
-
-    @Test
-    public void testCreateCodeConcat() {
-        assertEquals(
-                "Object right = \"World\";\n        Object left = body;\n        Object separator = null;\n        return concat(exchange, left, right, separator);",
-                createCode("concat('World')"));
     }
 
     // --- quote / safeQuote / unquote ---
@@ -231,21 +168,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("hello", evaluate("unquote()", String.class));
     }
 
-    @Test
-    public void testCreateCodeQuote() {
-        assertEquals("Object o = null;\n        return quote(exchange, o);", createCode("quote()"));
-    }
-
-    @Test
-    public void testCreateCodeSafeQuote() {
-        assertEquals("Object o = body;\n        return safeQuote(exchange, o);", createCode("safeQuote()"));
-    }
-
-    @Test
-    public void testCreateCodeUnquote() {
-        assertEquals("Object o = null;\n        return unquote(exchange, o);", createCode("unquote()"));
-    }
-
     // --- uppercase / lowercase ---
 
     @Test
@@ -258,16 +180,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
     public void testLowercase() {
         exchange.getIn().setBody("HELLO");
         assertEquals("hello", evaluate("lowercase()", String.class));
-    }
-
-    @Test
-    public void testCreateCodeUppercase() {
-        assertEquals("Object o = null;\n        return uppercase(exchange, o);", createCode("uppercase()"));
-    }
-
-    @Test
-    public void testCreateCodeLowercase() {
-        assertEquals("Object o = null;\n        return lowercase(exchange, o);", createCode("lowercase()"));
     }
 
     // --- length / size ---
@@ -284,16 +196,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals(3, evaluate("size()", Integer.class));
     }
 
-    @Test
-    public void testCreateCodeLength() {
-        assertEquals("Object o = body;\n        return length(exchange, o);", createCode("length()"));
-    }
-
-    @Test
-    public void testCreateCodeSize() {
-        assertEquals("Object o = body;\n        return size(exchange, o);", createCode("size()"));
-    }
-
     // --- normalizeWhitespace ---
 
     @Test
@@ -302,9 +204,80 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("hello world", evaluate("normalizeWhitespace()", String.class));
     }
 
+    // --- escape ---
+
     @Test
-    public void testCreateCodeNormalizeWhitespace() {
-        assertEquals("Object o = null;\n        return normalizeWhitespace(exchange, o);",
-                createCode("normalizeWhitespace()"));
+    public void testEscapeHtmlBody() {
+        exchange.getIn().setBody("Monday & Tuesday <b>\"quoted\"</b>");
+        assertEquals("Monday &amp; Tuesday &lt;b&gt;&quot;quoted&quot;&lt;/b&gt;", evaluate("escape(html)", String.class));
+    }
+
+    @Test
+    public void testEscapeXmlHeader() {
+        exchange.getIn().setHeader("title", "Tom & Jerry's <Show>");
+        assertEquals("Tom &amp; Jerry&apos;s &lt;Show&gt;", evaluate("escape(xml, ${header.title})", String.class));
+    }
+
+    @Test
+    public void testEscapeJson() {
+        exchange.getIn().setBody("say \"hi\"\nbye");
+        assertEquals("say \\\"hi\\\"\\nbye", evaluate("escape(json)", String.class));
+    }
+
+    @Test
+    public void testEscapeJs() {
+        exchange.getIn().setBody("it's </script>");
+        assertEquals("it\\'s <\\/script>", evaluate("escape(js)", String.class));
+        assertEquals("it\\'s <\\/script>", evaluate("escape(javascript)", String.class));
+    }
+
+    @Test
+    public void testEscapeSql() {
+        exchange.getIn().setHeader("name", "O'Reilly");
+        assertEquals("O''Reilly", evaluate("escape(sql,${header.name})", String.class));
+    }
+
+    @Test
+    public void testEscapeUrl() {
+        assertEquals("Camel%20in%20Action%3F", evaluate("escape(url, 'Camel in Action?')", String.class));
+        exchange.getIn().setBody("a&b=c");
+        assertEquals("a%26b%3Dc", evaluate("escape(url)", String.class));
+    }
+
+    @Test
+    public void testEscapeKindCaseInsensitive() {
+        exchange.getIn().setBody("a & b");
+        assertEquals("a &amp; b", evaluate("escape(HTML)", String.class));
+    }
+
+    @Test
+    public void testEscapeNestedFunctionWithComma() {
+        exchange.getIn().setBody("<a>");
+        assertEquals("&lt;a&gt;-&lt;a&gt;", evaluate("escape(html, ${concat(${body},${body},-)})", String.class));
+    }
+
+    @Test
+    public void testEscapeNonStringBody() {
+        exchange.getIn().setBody(42);
+        assertEquals("42", evaluate("escape(html)", String.class));
+    }
+
+    @Test
+    public void testEscapeNullBody() {
+        exchange.getIn().setBody(null);
+        assertNull(evaluate("escape(html)", String.class));
+    }
+
+    @Test
+    public void testEscapeUnknownKind() {
+        SimpleParserException e = assertThrows(SimpleParserException.class,
+                () -> createFactory().createFunction(context, "escape(csv)", 0));
+        assertTrue(e.getMessage().contains("Unknown escape kind: csv"));
+    }
+
+    @Test
+    public void testEscapeMissingKind() {
+        assertThrows(SimpleParserException.class,
+                () -> createFactory().createFunction(context, "escape()", 0));
     }
 }

@@ -831,11 +831,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
             }
 
-            // store where the exception happened
-            Route rc = ExchangeHelper.getRoute(exchange);
-            if (rc != null) {
-                exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
-            }
+            // store the route, node and location where the exception happened, before any failure processor
+            // (onException, dead letter channel, ...) runs and adds its own entries to the message history
+            ExchangeHelper.captureFailureOrigin(exchange);
         }
 
         /**
@@ -1381,11 +1379,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             redeliveryCounter = incrementRedeliveryCounter(exchange);
 
-            // store where the exception happened
-            Route rc = ExchangeHelper.getRoute(exchange);
-            if (rc != null) {
-                exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
-            }
+            // store the route, node and location where the exception happened, before any failure processor
+            // (onException, dead letter channel, ...) runs and adds its own entries to the message history
+            ExchangeHelper.captureFailureOrigin(exchange);
         }
 
         /**

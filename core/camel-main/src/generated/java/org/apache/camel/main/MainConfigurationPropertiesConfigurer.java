@@ -54,6 +54,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("DumpRoutesOutput", java.lang.String.class);
         map.put("DumpRoutesResolvePlaceholders", boolean.class);
         map.put("DumpRoutesUriAsParameters", boolean.class);
+        map.put("Duration", java.lang.String.class);
         map.put("DurationHitExitCode", int.class);
         map.put("DurationMaxAction", java.lang.String.class);
         map.put("DurationMaxIdleSeconds", int.class);
@@ -221,6 +222,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "dumpRoutesResolvePlaceholders": target.setDumpRoutesResolvePlaceholders(property(camelContext, boolean.class, value)); return true;
         case "dumproutesuriasparameters":
         case "dumpRoutesUriAsParameters": target.setDumpRoutesUriAsParameters(property(camelContext, boolean.class, value)); return true;
+        case "duration": target.setDuration(property(camelContext, java.lang.String.class, value)); return true;
         case "durationhitexitcode":
         case "durationHitExitCode": target.setDurationHitExitCode(property(camelContext, int.class, value)); return true;
         case "durationmaxaction":
@@ -487,6 +489,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "dumpRoutesResolvePlaceholders": return boolean.class;
         case "dumproutesuriasparameters":
         case "dumpRoutesUriAsParameters": return boolean.class;
+        case "duration": return java.lang.String.class;
         case "durationhitexitcode":
         case "durationHitExitCode": return int.class;
         case "durationmaxaction":
@@ -749,6 +752,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "dumpRoutesResolvePlaceholders": return target.isDumpRoutesResolvePlaceholders();
         case "dumproutesuriasparameters":
         case "dumpRoutesUriAsParameters": return target.isDumpRoutesUriAsParameters();
+        case "duration": return target.getDuration();
         case "durationhitexitcode":
         case "durationHitExitCode": return target.getDurationHitExitCode();
         case "durationmaxaction":

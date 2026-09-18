@@ -27,6 +27,7 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 @Component("minio")
+@Deprecated(since = "4.23")
 public class MinioComponent extends HealthCheckComponent {
     @Metadata
     private MinioConfiguration configuration = new MinioConfiguration();

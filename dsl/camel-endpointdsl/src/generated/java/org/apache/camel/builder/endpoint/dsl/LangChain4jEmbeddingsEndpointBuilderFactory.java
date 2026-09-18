@@ -256,6 +256,32 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
             return "CamelLangChain4jEmbeddingsTotalTokenCount";
         }
         /**
+         * The request model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsRequestModel}.
+         */
+        public String langChain4jEmbeddingsRequestModel() {
+            return "CamelLangChain4jEmbeddingsRequestModel";
+        }
+        /**
+         * The response model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsResponseModel}.
+         */
+        public String langChain4jEmbeddingsResponseModel() {
+            return "CamelLangChain4jEmbeddingsResponseModel";
+        }
+        /**
          * Embedding representation of a text.
          * 
          * The option is a: {@code dev.langchain4j.data.embedding.Embedding}
@@ -268,6 +294,20 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
          */
         public String langChain4jEmbeddingsEmbedding() {
             return "CamelLangChain4jEmbeddingsEmbedding";
+        }
+        /**
+         * List of embeddings from a batch embedAll operation.
+         * 
+         * The option is a: {@code
+         * java.util.List<dev.langchain4j.data.embedding.Embedding>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsEmbeddings}.
+         */
+        public String langChain4jEmbeddingsEmbeddings() {
+            return "CamelLangChain4jEmbeddingsEmbeddings";
         }
         /**
          * A dense vector embedding of a text.
@@ -294,6 +334,20 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
          */
         public String langChain4jEmbeddingsTextSegment() {
             return "CamelLangChain4jEmbeddingsTextSegment";
+        }
+        /**
+         * List of text segments from a batch embedAll operation.
+         * 
+         * The option is a: {@code
+         * java.util.List<dev.langchain4j.data.segment.TextSegment>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsTextSegments}.
+         */
+        public String langChain4jEmbeddingsTextSegments() {
+            return "CamelLangChain4jEmbeddingsTextSegments";
         }
     }
     static LangChain4jEmbeddingsEndpointBuilder endpointBuilder(String componentName, String path) {

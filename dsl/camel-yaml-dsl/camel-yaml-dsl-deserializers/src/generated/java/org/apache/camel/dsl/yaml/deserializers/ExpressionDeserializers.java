@@ -8,6 +8,7 @@ import java.lang.SuppressWarnings;
 import javax.annotation.processing.Generated;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
@@ -15,6 +16,7 @@ import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 /**
  * The model automatically scan all classes, also those one deprecated. They will be dropped when removed from core model.
@@ -37,7 +39,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
         Node val = setDeserializationContext(nt.getValueNode(), dc);
         ExpressionDefinition answer = constructExpressionType(key, val);
         if (answer == null) {
-            throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, "Unknown expression with id: " + key);
+            throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, "Unknown expression with id: " + key + ("bean".equals(key) ? " (the bean language is written as method: {ref: myBean, method: process})" : org.apache.camel.util.ArtifactUtils.languageHint(key)));
         }
         return answer;
     }
@@ -46,9 +48,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
         switch(id) {
             case "constant": {
                 return asType(node, org.apache.camel.model.language.ConstantExpression.class);
-            }
-            case "csimple": {
-                return asType(node, org.apache.camel.model.language.CSimpleExpression.class);
             }
             case "datasonnet": {
                 return asType(node, org.apache.camel.model.language.DatasonnetExpression.class);
@@ -70,9 +69,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             }
             case "java": {
                 return asType(node, org.apache.camel.model.language.JavaExpression.class);
-            }
-            case "joor": {
-                return asType(node, org.apache.camel.model.language.JoorExpression.class);
             }
             case "jq": {
                 return asType(node, org.apache.camel.model.language.JqExpression.class);
@@ -97,6 +93,12 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             }
             case "python": {
                 return asType(node, org.apache.camel.model.language.PythonExpression.class);
+            }
+            case "python3": {
+                return asType(node, org.apache.camel.model.language.Python3Expression.class);
+            }
+            case "quickjs": {
+                return asType(node, org.apache.camel.model.language.QuickjsExpression.class);
             }
             case "ref": {
                 return asType(node, org.apache.camel.model.language.RefExpression.class);
@@ -143,7 +145,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "constant", type = "object:org.apache.camel.model.language.ConstantExpression", oneOf = "expression"),
-                    @YamlProperty(name = "csimple", type = "object:org.apache.camel.model.language.CSimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "datasonnet", type = "object:org.apache.camel.model.language.DatasonnetExpression", oneOf = "expression"),
                     @YamlProperty(name = "exchangeProperty", type = "object:org.apache.camel.model.language.ExchangePropertyExpression", oneOf = "expression"),
                     @YamlProperty(name = "groovy", type = "object:org.apache.camel.model.language.GroovyExpression", oneOf = "expression"),
@@ -151,7 +152,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "hl7terser", type = "object:org.apache.camel.model.language.Hl7TerserExpression", oneOf = "expression"),
                     @YamlProperty(name = "jactl", type = "object:org.apache.camel.model.language.JactlExpression", oneOf = "expression"),
                     @YamlProperty(name = "java", type = "object:org.apache.camel.model.language.JavaExpression", oneOf = "expression"),
-                    @YamlProperty(name = "joor", type = "object:org.apache.camel.model.language.JoorExpression", oneOf = "expression"),
                     @YamlProperty(name = "jq", type = "object:org.apache.camel.model.language.JqExpression", oneOf = "expression"),
                     @YamlProperty(name = "js", type = "object:org.apache.camel.model.language.JavaScriptExpression", oneOf = "expression"),
                     @YamlProperty(name = "jsonpath", type = "object:org.apache.camel.model.language.JsonPathExpression", oneOf = "expression"),
@@ -160,6 +160,8 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mvel", type = "object:org.apache.camel.model.language.MvelExpression", oneOf = "expression"),
                     @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression", oneOf = "expression"),
                     @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression", oneOf = "expression"),
+                    @YamlProperty(name = "python3", type = "object:org.apache.camel.model.language.Python3Expression", oneOf = "expression"),
+                    @YamlProperty(name = "quickjs", type = "object:org.apache.camel.model.language.QuickjsExpression", oneOf = "expression"),
                     @YamlProperty(name = "ref", type = "object:org.apache.camel.model.language.RefExpression", oneOf = "expression"),
                     @YamlProperty(name = "simple", type = "object:org.apache.camel.model.language.SimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression", oneOf = "expression"),
@@ -183,7 +185,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "constant", type = "object:org.apache.camel.model.language.ConstantExpression", oneOf = "expression"),
-                    @YamlProperty(name = "csimple", type = "object:org.apache.camel.model.language.CSimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "datasonnet", type = "object:org.apache.camel.model.language.DatasonnetExpression", oneOf = "expression"),
                     @YamlProperty(name = "exchangeProperty", type = "object:org.apache.camel.model.language.ExchangePropertyExpression", oneOf = "expression"),
                     @YamlProperty(name = "groovy", type = "object:org.apache.camel.model.language.GroovyExpression", oneOf = "expression"),
@@ -191,7 +192,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "hl7terser", type = "object:org.apache.camel.model.language.Hl7TerserExpression", oneOf = "expression"),
                     @YamlProperty(name = "jactl", type = "object:org.apache.camel.model.language.JactlExpression", oneOf = "expression"),
                     @YamlProperty(name = "java", type = "object:org.apache.camel.model.language.JavaExpression", oneOf = "expression"),
-                    @YamlProperty(name = "joor", type = "object:org.apache.camel.model.language.JoorExpression", oneOf = "expression"),
                     @YamlProperty(name = "jq", type = "object:org.apache.camel.model.language.JqExpression", oneOf = "expression"),
                     @YamlProperty(name = "js", type = "object:org.apache.camel.model.language.JavaScriptExpression", oneOf = "expression"),
                     @YamlProperty(name = "jsonpath", type = "object:org.apache.camel.model.language.JsonPathExpression", oneOf = "expression"),
@@ -200,6 +200,8 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mvel", type = "object:org.apache.camel.model.language.MvelExpression", oneOf = "expression"),
                     @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression", oneOf = "expression"),
                     @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression", oneOf = "expression"),
+                    @YamlProperty(name = "python3", type = "object:org.apache.camel.model.language.Python3Expression", oneOf = "expression"),
+                    @YamlProperty(name = "quickjs", type = "object:org.apache.camel.model.language.QuickjsExpression", oneOf = "expression"),
                     @YamlProperty(name = "ref", type = "object:org.apache.camel.model.language.RefExpression", oneOf = "expression"),
                     @YamlProperty(name = "simple", type = "object:org.apache.camel.model.language.SimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression", oneOf = "expression"),
@@ -214,6 +216,10 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
     public static class ExpressionSubElementDefinitionDeserializers implements ConstructNode {
         @Override
         public Object construct(Node node) {
+            if (!(node instanceof MappingNode)) {
+                String text = node instanceof ScalarNode ? asText(node) : node.getNodeType().name().toLowerCase();
+                throw new InvalidExpressionException(node, "an expression is expected here, not a plain value (" + text + "): write constant: {expression: \"" + text + "\"} for a fixed value, or simple: {expression: \"...\"} for a dynamic one");
+            }
             ExpressionDefinition val = constructExpressionType(node);
             return new org.apache.camel.model.ExpressionSubElementDefinition(val);
         }

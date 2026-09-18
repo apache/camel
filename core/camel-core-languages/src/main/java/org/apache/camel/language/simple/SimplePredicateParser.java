@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -58,9 +59,6 @@ import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.StringHelper;
-
-import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
-import static org.apache.camel.support.ObjectHelper.isNumber;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
@@ -127,23 +125,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
         }
     }
 
-    public String parseCode() {
-        try {
-            parseTokens();
-            return doParseCode();
-        } catch (SimpleParserException e) {
-            // catch parser exception and turn that into a syntax exceptions
-            throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
-        } catch (Exception e) {
-            // include exception in rethrown exception
-            throw new SimpleIllegalSyntaxException(expression, -1, e.getMessage(), e);
-        }
-    }
-
     /**
      * First step parsing into a list of nodes.
-     *
-     * This is used as SPI for camel-csimple to do AST transformation and parse into java source code.
      */
     public List<SimpleNode> parseTokens() {
         clear();
@@ -165,7 +148,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     && !token.getType().isEol()) {
                 // okay the symbol was not one of the above, so its not supported
                 // use the previous index as that is where the problem is
-                throw new SimpleParserException("Unexpected token " + token, previousIndex);
+                throw new SimpleParserException(SimpleSyntaxHints.unexpectedToken(expression, previousIndex), previousIndex);
             }
             // take the next token
             nextToken();
@@ -214,21 +197,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
     }
 
     /**
-     * Second step parsing into code
-     */
-    protected String doParseCode() {
-        StringBuilder sb = new StringBuilder(256);
-        for (SimpleNode node : nodes) {
-            String exp = node.createCode(camelContext, expression);
-            SimpleExpressionParser.parseLiteralNode(sb, node, exp);
-        }
-        String code = sb.toString();
-        code = code.replace(BaseSimpleParser.CODE_START, "");
-        code = code.replace(BaseSimpleParser.CODE_END, "");
-        return code;
-    }
-
-    /**
      * Parses the tokens and crates the AST nodes.
      * <p/>
      * After the initial parsing of the input (input -> tokens) then we parse again (tokens -> ast).
@@ -246,7 +214,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         SimpleNode lastFunction = null;
         AtomicBoolean startSingle = new AtomicBoolean();
         AtomicBoolean startDouble = new AtomicBoolean();
-        AtomicBoolean startFunction = new AtomicBoolean();
+        AtomicInteger startFunction = new AtomicInteger();
 
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {
@@ -300,10 +268,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
             int index = evalIndex(lastDouble);
             throw new SimpleParserException("double quote has no ending quote", index);
         }
-        if (startFunction.get()) {
+        if (startFunction.get() > 0) {
             // we have a start function, but no ending function
             int index = evalIndex(lastFunction);
-            throw new SimpleParserException("function has no ending token", index);
+            throw new SimpleParserException("function has no ending token: missing } to close ${...}", index);
         }
     }
 
@@ -326,7 +294,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         if (!quoted) {
             // if the text is not in a quoted block (literal text), then lets see if
             // its numeric then we can optimize this
-            numeric = isNumber(text) || isFloatingNumber(text);
+            numeric = NumericExpression.isNumericValue(text);
         }
         if (numeric) {
             nodes.add(new NumericExpression(imageToken.getToken(), text));
@@ -346,18 +314,20 @@ public class SimplePredicateParser extends BaseSimpleParser {
      */
     private SimpleNode createNode(
             SimpleToken token, AtomicBoolean startSingle, AtomicBoolean startDouble,
-            AtomicBoolean startFunction) {
+            AtomicInteger startFunction) {
         if (token.getType().isFunctionStart()) {
-            startFunction.set(true);
+            startFunction.incrementAndGet();
             return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
-        } else if (token.getType().isFunctionEnd()) {
-            startFunction.set(false);
+        } else if (startFunction.get() > 0 && token.getType().isFunctionEnd()) {
+            // there must be a start function already, to let this be an end function
+            // (a } elsewhere, such as inside a quoted literal, is plain text)
+            startFunction.decrementAndGet();
             return new SimpleFunctionEnd(token);
         }
 
         // if we are inside a function, then we do not support any other kind of tokens
         // as we want all the tokens to be literal instead
-        if (startFunction.get()) {
+        if (startFunction.get() > 0) {
             return null;
         }
 
@@ -772,7 +742,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Binary operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Binary", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }
@@ -799,7 +770,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Ternary operator does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Ternary", "?:", expression, token.getIndex()), token.getIndex());
             }
             return true;
         }
@@ -829,7 +800,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Other operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Other", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }
@@ -859,7 +831,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Chain operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Chain", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }
@@ -889,7 +862,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Logical operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Logical", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }

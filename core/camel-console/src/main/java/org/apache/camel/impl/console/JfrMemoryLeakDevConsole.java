@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +43,8 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * chains back to GC roots, enabling memory leak diagnosis.
  */
 @DevConsole(name = "jfr-memory-leak", displayName = "JFR Memory Leak",
-            description = "JFR-based old object sampling for memory leak diagnosis")
+            description = "JFR-based old object sampling for memory leak diagnosis", readOnly = false)
 @Configurer(extended = true)
 public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
 
@@ -82,13 +83,120 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
     private static final int MAX_STACK_FRAMES = 10;
     private static final int MAX_CHAIN_DEPTH = 20;
 
+    public record StackFrameEntry(
+            @Metadata(description = "The fully qualified method name") String method,
+            @Metadata(description = "The line number") int line) {
+    }
+
+    public record ReferenceLink(
+            @Metadata(description = "The type name (only present when known)") String type,
+            @Metadata(description = "The field name (only present when known)") String field,
+            @Metadata(description = "A description of the link (only present when known)") String description) {
+    }
+
+    public record SampleEntry(
+            @Metadata(description = "The allocated class name (only present when known)") String allocationClass,
+            @Metadata(description = "The allocation size in bytes (only present when known)") Long allocationSize,
+            @Metadata(description = "The last known heap usage in bytes (only present when known)") Long lastKnownHeapUsage,
+            @Metadata(description = "The number of array elements (only present for arrays)") Integer arrayElements,
+            @Metadata(description = "The object age in milliseconds (only present when known)") Long objectAge,
+            @Metadata(description = "Epoch time in milliseconds when the object was allocated") long allocationTime,
+            @Metadata(description = "The allocation stack trace (only present when requested)") List<StackFrameEntry> stackTrace,
+            @Metadata(description = "The reference chain back to the GC root (only present when there is one)") List<ReferenceLink> referenceChain,
+            @Metadata(description = "The number of samples aggregated into this entry") int count,
+            @Metadata(description = "The total sampled size in bytes across the aggregated samples") long sampledSize) {
+    }
+
+    public record ComparisonEntry(
+            @Metadata(description = "The allocated class name") String allocationClass,
+            @Metadata(description = "The baseline sampled size in bytes") long baselineSampledSize,
+            @Metadata(description = "The baseline sample count") int baselineCount,
+            @Metadata(description = "The current sampled size in bytes") long currentSampledSize,
+            @Metadata(description = "The current sample count") int currentCount,
+            @Metadata(description = "The growth ratio between baseline and current sampled size") double growthRatio,
+            @Metadata(description = "The trend: new, gone, growing, suspicious, shrinking, or stable") String trend,
+            @Metadata(description = "Whether the comparison has low statistical confidence") boolean lowConfidence,
+            @Metadata(description = "The reference chain back to the GC root (only present when there is one)") List<ReferenceLink> referenceChain,
+            @Metadata(description = "The allocation stack trace (only present when requested)") List<StackFrameEntry> stackTrace) {
+    }
+
+    public record RecordingInfo(
+            @Metadata(description = "The recording duration in milliseconds") long recordingDurationMs,
+            @Metadata(description = "The number of aggregated samples") int sampleCount,
+            @Metadata(description = "The number of garbage collections observed") int gcCount) {
+    }
+
+    public record Response(
+            @Metadata(description = "The console status: recording, completed, compared, idle, or error") String status,
+            @Metadata(description = "An error message (only present when status is error)") String error,
+            @Metadata(description = "An informational note (only present for an idle query)") String note,
+            @Metadata(description = "Epoch time in milliseconds the recording started (only present while recording)") Long startTime,
+            @Metadata(description = "The requested recording duration in seconds (only present when set)") Integer durationSeconds,
+            @Metadata(description = "Elapsed time in milliseconds since the recording started (only present while recording)") Long elapsedMs,
+            @Metadata(description = "Remaining time in milliseconds until auto-stop (only present when a duration was requested)") Long remainingMs,
+            @Metadata(description = "Whether cached results are available (only present for a status query)") Boolean hasCachedResults,
+            @Metadata(description = "Whether a previous recording is available for comparison (only present for a status query)") Boolean hasComparisonData,
+            @Metadata(description = "The number of aggregated samples (only present when results are available)") Integer sampleCount,
+            @Metadata(description = "The recording duration in milliseconds (only present when results are available)") Long recordingDurationMs,
+            @Metadata(description = "Epoch time in milliseconds the recording ended (only present when results are available)") Long recordingEndTime,
+            @Metadata(description = "The number of raw samples before aggregation (only present when results are available)") Integer rawSampleCount,
+            @Metadata(description = "The number of garbage collections observed (only present when results are available)") Integer gcCount,
+            @Metadata(description = "The aggregated samples (only present when results are available)") List<SampleEntry> samples,
+            @Metadata(description = "The baseline recording info (only present for a comparison)") RecordingInfo baseline,
+            @Metadata(description = "The current recording info (only present for a comparison)") RecordingInfo current,
+            @Metadata(description = "The ratio of the current to the baseline recording duration (only present for a comparison)") Double durationRatio,
+            @Metadata(description = "The per-class comparisons, sorted by growth ratio descending (only present for a comparison)") List<ComparisonEntry> comparisons) {
+    }
+
+    private record RawSample(
+            String allocationClass, Long allocationSize, Long lastKnownHeapUsage, Integer arrayElements,
+            Long objectAge, long allocationTime, List<StackFrameEntry> stackTrace, List<ReferenceLink> referenceChain) {
+    }
+
+    private record ParsedSamples(List<SampleEntry> samples, int sampleCount, int rawSampleCount, int gcCount) {
+    }
+
+    private record RecordingSnapshot(
+            List<SampleEntry> samples, int sampleCount, int rawSampleCount, int gcCount, long recordingDurationMs,
+            long recordingEndTime) {
+    }
+
+    private static final class SampleAccumulator {
+        private final RawSample first;
+        private int count = 1;
+        private long sampledSize;
+        private Long maxObjectAge;
+
+        SampleAccumulator(RawSample first) {
+            this.first = first;
+            this.sampledSize = first.allocationSize() != null ? first.allocationSize() : 0;
+            this.maxObjectAge = first.objectAge();
+        }
+
+        void merge(RawSample sample) {
+            count++;
+            sampledSize += sample.allocationSize() != null ? sample.allocationSize() : 0;
+            Long age = sample.objectAge();
+            if (age != null && (maxObjectAge == null || age > maxObjectAge)) {
+                maxObjectAge = age;
+            }
+        }
+
+        SampleEntry toEntry() {
+            return new SampleEntry(
+                    first.allocationClass(), first.allocationSize(), first.lastKnownHeapUsage(),
+                    first.arrayElements(), maxObjectAge, first.allocationTime(), first.stackTrace(),
+                    first.referenceChain(), count, sampledSize);
+        }
+    }
+
     // Private monitor for GC wait delays so that wait() does not release the
     // 'this' monitor of synchronized methods (which guards recording state).
     private final Object gcWaitMonitor = new Object();
 
     private volatile Recording activeRecording;
-    private volatile JsonObject cachedResults;
-    private volatile JsonObject previousResults;
+    private volatile RecordingSnapshot cachedResults;
+    private volatile RecordingSnapshot previousResults;
     private volatile long recordingStartTime;
     private volatile int requestedDurationSeconds;
     private ScheduledExecutorService scheduler;
@@ -101,30 +209,30 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        JsonObject json = doCallJson(options);
-        return json.toJson();
+        return ((JsonObject) doCallJson(options)).toJson();
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String command = optionString(options, COMMAND);
         if (command == null) {
             command = "status";
         }
 
-        return switch (command) {
+        Response response = switch (command) {
             case "start" -> doStart(options);
             case "stop" -> doStop(options);
             case "status" -> doStatus();
             case "query" -> doQuery(options);
             case "compare" -> doCompare(options);
-            default -> errorJson("Unknown command: " + command);
+            default -> errorResponse("Unknown command: " + command);
         };
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private synchronized JsonObject doStart(Map<String, Object> options) {
+    private synchronized Response doStart(Map<String, Object> options) {
         if (activeRecording != null) {
-            return errorJson("A JFR recording is already active. Stop it first.");
+            return errorResponse("A JFR recording is already active. Stop it first.");
         }
 
         Recording rec = new Recording();
@@ -168,13 +276,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
                 }, duration, TimeUnit.SECONDS);
             }
 
-            JsonObject result = new JsonObject();
-            result.put("status", "recording");
-            result.put("startTime", recordingStartTime);
-            if (duration > 0) {
-                result.put("durationSeconds", duration);
-            }
-            return result;
+            return recordingStartedResponse(recordingStartTime, duration > 0 ? duration : null);
         } catch (Exception e) {
             // Clean up state in case the exception occurred after activeRecording was set
             // (e.g. during auto-stop scheduling), so the console does not get stuck
@@ -185,34 +287,37 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             requestedDurationSeconds = 0;
             rec.close();
             LOG.warn("Failed to start JFR recording: {}", e.getMessage(), e);
-            return errorJson("Failed to start JFR recording: " + e.getMessage());
+            return errorResponse("Failed to start JFR recording: " + e.getMessage());
         }
     }
 
-    private JsonObject doStop(Map<String, Object> options) {
+    private Response doStop(Map<String, Object> options) {
         if (activeRecording == null) {
             if (cachedResults != null) {
-                return applyFilters(cachedResults, options);
+                return snapshotResponse("completed", applyFilters(cachedResults, options));
             }
-            return errorJson("No active JFR recording to stop.");
+            return errorResponse("No active JFR recording to stop.");
         }
 
         cancelAutoStop();
         int limit = optionInt(options, LIMIT, DEFAULT_LIMIT);
 
         try {
-            JsonObject result = doStopRecordingAndParse(limit);
-            return applyFilters(result, options);
+            RecordingSnapshot snapshot = doStopRecordingAndParse(limit);
+            return snapshotResponse("completed", applyFilters(snapshot, options));
+        } catch (IOException e) {
+            LOG.warn("Error parsing JFR recording: {}", e.getMessage(), e);
+            return errorResponse("Error parsing JFR recording: " + e.getMessage());
         } catch (Exception e) {
             LOG.warn("Error stopping JFR recording: {}", e.getMessage(), e);
-            return errorJson("Error stopping JFR recording: " + e.getMessage());
+            return errorResponse("Error stopping JFR recording: " + e.getMessage());
         }
     }
 
-    private synchronized JsonObject doStopRecordingAndParse(int limit) {
+    private synchronized RecordingSnapshot doStopRecordingAndParse(int limit) throws IOException {
         Recording rec = activeRecording;
         if (rec == null) {
-            return cachedResults != null ? cachedResults : errorJson("No active recording.");
+            return cachedResults != null ? cachedResults : new RecordingSnapshot(List.of(), 0, 0, 0, 0, 0);
         }
 
         Path tempDir = null;
@@ -238,17 +343,14 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
 
             long endTime = System.currentTimeMillis();
             long durationMs = endTime - recordingStartTime;
-            JsonObject result = parseRecordingFile(tempFile, limit);
-            result.put("status", "completed");
-            result.put("recordingDurationMs", durationMs);
-            result.put("recordingEndTime", endTime);
+            ParsedSamples parsed = parseRecordingFile(tempFile, limit);
+            RecordingSnapshot snapshot = new RecordingSnapshot(
+                    parsed.samples(), parsed.sampleCount(), parsed.rawSampleCount(), parsed.gcCount(), durationMs,
+                    endTime);
 
             previousResults = cachedResults;
-            cachedResults = result;
-            return result;
-        } catch (IOException e) {
-            LOG.warn("Error parsing JFR recording: {}", e.getMessage(), e);
-            return errorJson("Error parsing JFR recording: " + e.getMessage());
+            cachedResults = snapshot;
+            return snapshot;
         } finally {
             rec.close();
             activeRecording = null;
@@ -271,105 +373,80 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         }
     }
 
-    private JsonObject doStatus() {
-        JsonObject result = new JsonObject();
+    private Response doStatus() {
         if (activeRecording != null) {
-            result.put("status", "recording");
-            result.put("startTime", recordingStartTime);
             long elapsed = System.currentTimeMillis() - recordingStartTime;
-            result.put("elapsedMs", elapsed);
+            Integer durationSeconds = null;
+            Long remainingMs = null;
             if (requestedDurationSeconds > 0) {
-                result.put("durationSeconds", requestedDurationSeconds);
-                long remaining = (requestedDurationSeconds * 1000L) - elapsed;
-                result.put("remainingMs", Math.max(0, remaining));
+                durationSeconds = requestedDurationSeconds;
+                remainingMs = Math.max(0, (requestedDurationSeconds * 1000L) - elapsed);
             }
+            return recordingStatusResponse(recordingStartTime, elapsed, durationSeconds, remainingMs);
         } else if (cachedResults != null) {
-            result.put("status", "completed");
-            result.put("hasCachedResults", true);
-            result.put("hasComparisonData", previousResults != null);
-            result.put("sampleCount", cachedResults.getIntegerOrDefault("sampleCount", 0));
+            return completedStatusResponse(true, previousResults != null, cachedResults.sampleCount());
         } else {
-            result.put("status", "idle");
+            return idleStatusResponse();
         }
-        return result;
     }
 
-    private JsonObject doQuery(Map<String, Object> options) {
+    private Response doQuery(Map<String, Object> options) {
         if (cachedResults != null) {
-            return applyFilters(cachedResults, options);
+            return snapshotResponse("completed", applyFilters(cachedResults, options));
         }
         if (activeRecording != null) {
             return doStatus();
         }
-        JsonObject result = new JsonObject();
-        result.put("status", "idle");
-        result.put("sampleCount", 0);
-        result.put("samples", new JsonArray());
-        result.put("note", "No results available. Start a recording first.");
-        return result;
+        return idleQueryResponse("No results available. Start a recording first.");
     }
 
-    private JsonObject doCompare(Map<String, Object> options) {
+    private Response doCompare(Map<String, Object> options) {
         if (previousResults == null || cachedResults == null) {
-            return errorJson("Need two recordings to compare. Run two recordings first.");
+            return errorResponse("Need two recordings to compare. Run two recordings first.");
         }
 
         long minSize = optionLong(options, MIN_SIZE, 0);
 
-        long baselineDurationMs = previousResults.getLongOrDefault("recordingDurationMs", 1);
-        long currentDurationMs = cachedResults.getLongOrDefault("recordingDurationMs", 1);
+        long baselineDurationMs = previousResults.recordingDurationMs();
+        long currentDurationMs = cachedResults.recordingDurationMs();
         double durationRatio = baselineDurationMs > 0 ? (double) currentDurationMs / baselineDurationMs : 1.0;
 
         // index baseline samples by group key
-        Map<String, JsonObject> baselineMap = new LinkedHashMap<>();
-        JsonArray baselineSamples = (JsonArray) previousResults.get("samples");
-        if (baselineSamples != null) {
-            for (int i = 0; i < baselineSamples.size(); i++) {
-                JsonObject s = (JsonObject) baselineSamples.get(i);
-                baselineMap.put(sampleGroupKey(s), s);
-            }
+        Map<String, SampleEntry> baselineMap = new LinkedHashMap<>();
+        for (SampleEntry s : previousResults.samples()) {
+            baselineMap.put(sampleGroupKey(s.allocationClass(), s.stackTrace()), s);
         }
 
         // index current samples by group key
-        Map<String, JsonObject> currentMap = new LinkedHashMap<>();
-        JsonArray currentSamples = (JsonArray) cachedResults.get("samples");
-        if (currentSamples != null) {
-            for (int i = 0; i < currentSamples.size(); i++) {
-                JsonObject s = (JsonObject) currentSamples.get(i);
-                currentMap.put(sampleGroupKey(s), s);
-            }
+        Map<String, SampleEntry> currentMap = new LinkedHashMap<>();
+        for (SampleEntry s : cachedResults.samples()) {
+            currentMap.put(sampleGroupKey(s.allocationClass(), s.stackTrace()), s);
         }
 
         // collect all keys preserving order (current first, then baseline-only)
-        Map<String, JsonObject> allKeys = new LinkedHashMap<>(currentMap);
+        Map<String, SampleEntry> allKeys = new LinkedHashMap<>(currentMap);
         for (String key : baselineMap.keySet()) {
             allKeys.putIfAbsent(key, baselineMap.get(key));
         }
 
-        JsonArray comparisons = new JsonArray();
+        List<ComparisonEntry> comparisons = new ArrayList<>();
         for (String key : allKeys.keySet()) {
-            JsonObject baseline = baselineMap.get(key);
-            JsonObject current = currentMap.get(key);
+            SampleEntry baseline = baselineMap.get(key);
+            SampleEntry current = currentMap.get(key);
 
-            JsonObject comp = new JsonObject();
-            String className = current != null
-                    ? current.getStringOrDefault("allocationClass", "unknown")
-                    : baseline.getStringOrDefault("allocationClass", "unknown");
-            comp.put("allocationClass", className);
+            String className = current != null ? current.allocationClass() : baseline.allocationClass();
+            if (className == null) {
+                className = "unknown";
+            }
 
-            long baseSize = baseline != null ? baseline.getLongOrDefault("sampledSize", 0) : 0;
-            int baseCount = baseline != null ? baseline.getIntegerOrDefault("count", 0) : 0;
-            long curSize = current != null ? current.getLongOrDefault("sampledSize", 0) : 0;
-            int curCount = current != null ? current.getIntegerOrDefault("count", 0) : 0;
+            long baseSize = baseline != null ? baseline.sampledSize() : 0;
+            int baseCount = baseline != null ? baseline.count() : 0;
+            long curSize = current != null ? current.sampledSize() : 0;
+            int curCount = current != null ? current.count() : 0;
 
             if (minSize > 0 && baseSize < minSize && curSize < minSize) {
                 continue;
             }
-
-            comp.put("baselineSampledSize", baseSize);
-            comp.put("baselineCount", baseCount);
-            comp.put("currentSampledSize", curSize);
-            comp.put("currentCount", curCount);
 
             String trend;
             double growthRatio = 0;
@@ -394,8 +471,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
                     trend = "stable";
                 }
             }
-            comp.put("growthRatio", Math.round(growthRatio * 100.0) / 100.0);
-            comp.put("trend", trend);
+            growthRatio = Math.round(growthRatio * 100.0) / 100.0;
 
             // flag low confidence when sample counts are too low or diverge
             // significantly from the expected duration ratio
@@ -411,51 +487,27 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
                     }
                 }
             }
-            comp.put("lowConfidence", lowConfidence);
 
             // carry forward reference chain and stack trace from current (or baseline if gone)
-            JsonObject source = current != null ? current : baseline;
-            if (source.containsKey("referenceChain")) {
-                comp.put("referenceChain", source.get("referenceChain"));
-            }
-            if (source.containsKey("stackTrace")) {
-                comp.put("stackTrace", source.get("stackTrace"));
-            }
+            SampleEntry source = current != null ? current : baseline;
 
-            comparisons.add(comp);
+            comparisons.add(new ComparisonEntry(
+                    className, baseSize, baseCount, curSize, curCount, growthRatio, trend, lowConfidence,
+                    source.referenceChain(), source.stackTrace()));
         }
 
         // sort by growth ratio descending (leaks first)
-        List<Object> sorted = new ArrayList<>(comparisons);
-        sorted.sort((a, b) -> {
-            double ra = ((JsonObject) a).getDoubleOrDefault("growthRatio", 0);
-            double rb = ((JsonObject) b).getDoubleOrDefault("growthRatio", 0);
-            return Double.compare(rb, ra);
-        });
-        JsonArray sortedArr = new JsonArray();
-        sortedArr.addAll(sorted);
+        comparisons.sort(Comparator.comparingDouble(ComparisonEntry::growthRatio).reversed());
 
-        JsonObject result = new JsonObject();
-        result.put("status", "compared");
+        RecordingInfo baselineInfo = new RecordingInfo(
+                baselineDurationMs, previousResults.sampleCount(), previousResults.gcCount());
+        RecordingInfo currentInfo = new RecordingInfo(
+                currentDurationMs, cachedResults.sampleCount(), cachedResults.gcCount());
 
-        JsonObject baselineInfo = new JsonObject();
-        baselineInfo.put("recordingDurationMs", baselineDurationMs);
-        baselineInfo.put("sampleCount", previousResults.getIntegerOrDefault("sampleCount", 0));
-        baselineInfo.put("gcCount", previousResults.getIntegerOrDefault("gcCount", 0));
-        result.put("baseline", baselineInfo);
-
-        JsonObject currentInfo = new JsonObject();
-        currentInfo.put("recordingDurationMs", currentDurationMs);
-        currentInfo.put("sampleCount", cachedResults.getIntegerOrDefault("sampleCount", 0));
-        currentInfo.put("gcCount", cachedResults.getIntegerOrDefault("gcCount", 0));
-        result.put("current", currentInfo);
-
-        result.put("durationRatio", Math.round(durationRatio * 100.0) / 100.0);
-        result.put("comparisons", sortedArr);
-        return result;
+        return compareResponse(baselineInfo, currentInfo, Math.round(durationRatio * 100.0) / 100.0, comparisons);
     }
 
-    private JsonObject applyFilters(JsonObject original, Map<String, Object> options) {
+    private RecordingSnapshot applyFilters(RecordingSnapshot original, Map<String, Object> options) {
         long minSize = optionLong(options, MIN_SIZE, 0);
         boolean includeStacktrace = optionBoolean(options, STACKTRACE, false);
 
@@ -463,36 +515,29 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             return original;
         }
 
-        // work on a copy so the cached results remain unmodified
-        JsonObject result = new JsonObject(original);
-        Object samplesObj = original.get("samples");
-        if (samplesObj instanceof JsonArray origSamples) {
-            JsonArray filtered = new JsonArray();
-            for (int i = 0; i < origSamples.size(); i++) {
-                Object obj = origSamples.get(i);
-                if (obj instanceof JsonObject sample) {
-                    if (minSize > 0 && sample.getLongOrDefault("sampledSize", 0) < minSize) {
-                        continue;
-                    }
-                    if (!includeStacktrace) {
-                        // shallow copy to avoid mutating cached data
-                        JsonObject copy = new JsonObject(sample);
-                        copy.remove("stackTrace");
-                        filtered.add(copy);
-                    } else {
-                        filtered.add(sample);
-                    }
-                }
+        // build a filtered copy so the cached results remain unmodified
+        List<SampleEntry> filtered = new ArrayList<>();
+        for (SampleEntry sample : original.samples()) {
+            if (minSize > 0 && sample.sampledSize() < minSize) {
+                continue;
             }
-            result.put("samples", filtered);
-            result.put("sampleCount", filtered.size());
+            filtered.add(includeStacktrace ? sample : withoutStackTrace(sample));
         }
-        return result;
+        return new RecordingSnapshot(
+                filtered, filtered.size(), original.rawSampleCount(), original.gcCount(),
+                original.recordingDurationMs(), original.recordingEndTime());
     }
 
-    private JsonObject parseRecordingFile(Path file, int limit) throws IOException {
+    private static SampleEntry withoutStackTrace(SampleEntry sample) {
+        return new SampleEntry(
+                sample.allocationClass(), sample.allocationSize(), sample.lastKnownHeapUsage(),
+                sample.arrayElements(), sample.objectAge(), sample.allocationTime(), null, sample.referenceChain(),
+                sample.count(), sample.sampledSize());
+    }
+
+    private ParsedSamples parseRecordingFile(Path file, int limit) throws IOException {
         // parse all raw samples and count GC events
-        List<JsonObject> rawSamples = new ArrayList<>();
+        List<RawSample> rawSamples = new ArrayList<>();
         int gcCount = 0;
         try (RecordingFile rf = new RecordingFile(file)) {
             while (rf.hasMoreEvents()) {
@@ -505,7 +550,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
                 if (!"jdk.OldObjectSample".equals(eventName)) {
                     continue;
                 }
-                JsonObject sample = parseOldObjectSampleEvent(event);
+                RawSample sample = parseOldObjectSampleEvent(event);
                 if (sample != null) {
                     rawSamples.add(sample);
                 }
@@ -513,56 +558,38 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         }
 
         // aggregate by class + stack trace fingerprint
-        Map<String, JsonObject> groups = new LinkedHashMap<>();
-        for (JsonObject sample : rawSamples) {
-            String key = sampleGroupKey(sample);
-            JsonObject existing = groups.get(key);
+        Map<String, SampleAccumulator> groups = new LinkedHashMap<>();
+        for (RawSample sample : rawSamples) {
+            String key = sampleGroupKey(sample.allocationClass(), sample.stackTrace());
+            SampleAccumulator existing = groups.get(key);
             if (existing == null) {
-                sample.put("count", 1);
-                long size = sample.getLongOrDefault("allocationSize", 0);
-                sample.put("sampledSize", size);
-                groups.put(key, sample);
+                groups.put(key, new SampleAccumulator(sample));
             } else {
-                existing.put("count", existing.getIntegerOrDefault("count", 1) + 1);
-                long prevTotal = existing.getLongOrDefault("sampledSize", 0);
-                long curSize = sample.getLongOrDefault("allocationSize", 0);
-                existing.put("sampledSize", prevTotal + curSize);
-                long prevAge = existing.getLongOrDefault("objectAge", 0);
-                long curAge = sample.getLongOrDefault("objectAge", 0);
-                if (curAge > prevAge) {
-                    existing.put("objectAge", curAge);
-                }
+                existing.merge(sample);
             }
         }
 
-        JsonArray samples = new JsonArray();
+        List<SampleEntry> samples = new ArrayList<>();
         int count = 0;
-        for (JsonObject group : groups.values()) {
+        for (SampleAccumulator group : groups.values()) {
             if (limit > 0 && count >= limit) {
                 break;
             }
-            samples.add(group);
+            samples.add(group.toEntry());
             count++;
         }
 
-        JsonObject root = new JsonObject();
-        root.put("samples", samples);
-        root.put("sampleCount", count);
-        root.put("rawSampleCount", rawSamples.size());
-        root.put("gcCount", gcCount);
-        return root;
+        return new ParsedSamples(samples, count, rawSamples.size(), gcCount);
     }
 
-    private static String sampleGroupKey(JsonObject sample) {
+    private static String sampleGroupKey(String allocationClass, List<StackFrameEntry> stackTrace) {
         StringBuilder sb = new StringBuilder();
-        sb.append(sample.getStringOrDefault("allocationClass", ""));
+        sb.append(allocationClass != null ? allocationClass : "");
         // find the first user-code frame (skip JDK internals and Camel framework frames)
         // this gives stable keys across JFR runs since user code frames don't shift
-        JsonArray st = (JsonArray) sample.get("stackTrace");
-        if (st != null) {
-            for (int i = 0; i < st.size(); i++) {
-                JsonObject frame = (JsonObject) st.get(i);
-                String method = frame.getStringOrDefault("method", "");
+        if (stackTrace != null) {
+            for (StackFrameEntry frame : stackTrace) {
+                String method = frame.method() != null ? frame.method() : "";
                 if (isUserFrame(method)) {
                     int lambdaIdx = method.indexOf("$$Lambda");
                     if (lambdaIdx > 0) {
@@ -587,9 +614,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
                 && !method.startsWith("org.apache.camel.");
     }
 
-    private JsonObject parseOldObjectSampleEvent(RecordedEvent event) {
-        JsonObject sample = new JsonObject();
-
+    private RawSample parseOldObjectSampleEvent(RecordedEvent event) {
         // extract the OldObject reference (contains the sampled object's class and reference chain)
         RecordedObject objectRef = null;
         if (event.hasField("object")) {
@@ -601,21 +626,22 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         }
 
         // allocation class — primary source is object.type, fallback to objectClass on event
+        String allocationClass = null;
         if (objectRef != null && objectRef.hasField("type")) {
             try {
                 RecordedClass type = objectRef.getClass("type");
                 if (type != null) {
-                    sample.put("allocationClass", StringHelper.readableClassName(type.getName()));
+                    allocationClass = StringHelper.readableClassName(type.getName());
                 }
             } catch (Exception e) {
                 // ignore
             }
         }
-        if (!sample.containsKey("allocationClass") && event.hasField("objectClass")) {
+        if (allocationClass == null && event.hasField("objectClass")) {
             try {
                 RecordedClass objectClass = event.getClass("objectClass");
                 if (objectClass != null) {
-                    sample.put("allocationClass", StringHelper.readableClassName(objectClass.getName()));
+                    allocationClass = StringHelper.readableClassName(objectClass.getName());
                 }
             } catch (Exception e) {
                 // ignore
@@ -623,115 +649,120 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         }
 
         // allocation size — try multiple field names across JDK versions
+        Long allocationSize = null;
         if (event.hasField("allocationSize")) {
-            sample.put("allocationSize", event.getLong("allocationSize"));
+            allocationSize = event.getLong("allocationSize");
         } else if (event.hasField("objectSize")) {
-            sample.put("allocationSize", event.getLong("objectSize"));
+            allocationSize = event.getLong("objectSize");
         }
 
         // last known heap usage
+        Long lastKnownHeapUsage = null;
         if (event.hasField("lastKnownHeapUsage")) {
-            sample.put("lastKnownHeapUsage", event.getLong("lastKnownHeapUsage"));
+            lastKnownHeapUsage = event.getLong("lastKnownHeapUsage");
         }
 
         // array elements
+        Integer arrayElements = null;
         if (event.hasField("arrayElements")) {
-            int arrayElements = event.getInt("arrayElements");
-            if (arrayElements > 0) {
-                sample.put("arrayElements", arrayElements);
+            int n = event.getInt("arrayElements");
+            if (n > 0) {
+                arrayElements = n;
             }
         }
 
         // object age
+        Long objectAge = null;
         if (event.hasField("objectAge")) {
             try {
-                sample.put("objectAge", event.getDuration("objectAge").toMillis());
+                objectAge = event.getDuration("objectAge").toMillis();
             } catch (Exception e) {
                 // some JDK versions may not support this field as Duration
             }
         }
 
         // allocation time
-        sample.put("allocationTime", event.getStartTime().toEpochMilli());
+        long allocationTime = event.getStartTime().toEpochMilli();
 
         // stack trace (where the object was allocated)
-        RecordedStackTrace stackTrace = event.getStackTrace();
-        if (stackTrace != null) {
-            JsonArray frames = new JsonArray();
-            for (RecordedFrame frame : stackTrace.getFrames()) {
-                JsonObject f = new JsonObject();
-                f.put("method", frame.getMethod().getType().getName() + "." + frame.getMethod().getName());
-                f.put("line", frame.getLineNumber());
-                frames.add(f);
+        List<StackFrameEntry> stackTrace = null;
+        RecordedStackTrace recordedStackTrace = event.getStackTrace();
+        if (recordedStackTrace != null) {
+            List<StackFrameEntry> frames = new ArrayList<>();
+            for (RecordedFrame frame : recordedStackTrace.getFrames()) {
+                frames.add(new StackFrameEntry(
+                        frame.getMethod().getType().getName() + "." + frame.getMethod().getName(),
+                        frame.getLineNumber()));
                 if (frames.size() >= MAX_STACK_FRAMES) {
                     break;
                 }
             }
-            sample.put("stackTrace", frames);
+            stackTrace = frames;
         }
 
         // reference chain (path from object to GC root)
+        List<ReferenceLink> referenceChain = null;
         if (objectRef != null) {
-            JsonArray chain = extractReferenceChain(objectRef);
+            List<ReferenceLink> chain = extractReferenceChain(objectRef);
             appendGcRoot(event, chain);
             if (!chain.isEmpty()) {
-                sample.put("referenceChain", chain);
+                referenceChain = chain;
             }
         }
 
-        return sample;
+        return new RawSample(
+                allocationClass, allocationSize, lastKnownHeapUsage, arrayElements, objectAge, allocationTime,
+                stackTrace, referenceChain);
     }
 
-    private JsonArray extractReferenceChain(RecordedObject objectRef) {
-        JsonArray chain = new JsonArray();
+    private List<ReferenceLink> extractReferenceChain(RecordedObject objectRef) {
+        List<ReferenceLink> chain = new ArrayList<>();
         try {
             RecordedObject obj = objectRef;
             int depth = 0;
             while (obj != null && depth < MAX_CHAIN_DEPTH) {
-                JsonObject link = new JsonObject();
-
+                String type = null;
                 if (obj.hasField("type")) {
                     try {
-                        RecordedClass type = obj.getClass("type");
-                        if (type != null) {
-                            link.put("type", StringHelper.readableClassName(type.getName()));
+                        RecordedClass recordedClass = obj.getClass("type");
+                        if (recordedClass != null) {
+                            type = StringHelper.readableClassName(recordedClass.getName());
                         }
                     } catch (Exception e) {
                         // ignore
                     }
                 }
 
+                String field = null;
                 if (obj.hasField("field")) {
                     try {
-                        RecordedObject field = obj.getValue("field");
-                        if (field != null && field.hasField("name")) {
-                            link.put("field", field.getString("name"));
+                        RecordedObject fieldObj = obj.getValue("field");
+                        if (fieldObj != null && fieldObj.hasField("name")) {
+                            field = fieldObj.getString("name");
                         }
                     } catch (Exception e) {
                         try {
-                            String fieldName = obj.getString("field");
-                            if (fieldName != null) {
-                                link.put("field", fieldName);
-                            }
+                            field = obj.getString("field");
                         } catch (Exception ex) {
                             // ignore
                         }
                     }
                 }
 
+                String description = null;
                 if (obj.hasField("description")) {
                     try {
                         String desc = obj.getString("description");
                         if (desc != null && !desc.isEmpty()) {
-                            link.put("description", desc);
+                            description = desc;
                         }
                     } catch (Exception e) {
                         // ignore
                     }
                 }
 
-                if (!link.isEmpty()) {
-                    chain.add(link);
+                if (type != null || field != null || description != null) {
+                    chain.add(new ReferenceLink(type, field, description));
                 }
 
                 // walk to next referrer
@@ -752,7 +783,7 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         return chain;
     }
 
-    private void appendGcRoot(RecordedEvent event, JsonArray chain) {
+    private void appendGcRoot(RecordedEvent event, List<ReferenceLink> chain) {
         if (!event.hasField("root")) {
             return;
         }
@@ -761,32 +792,32 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
             if (root == null) {
                 return;
             }
-            JsonObject link = new JsonObject();
+            String type = null;
             if (root.hasField("type")) {
-                RecordedClass type = root.getClass("type");
-                if (type != null) {
-                    link.put("type", StringHelper.readableClassName(type.getName()));
+                RecordedClass recordedClass = root.getClass("type");
+                if (recordedClass != null) {
+                    type = StringHelper.readableClassName(recordedClass.getName());
                 }
             }
+            String description = null;
             if (root.hasField("description")) {
                 String desc = root.getString("description");
                 if (desc != null && !desc.isEmpty()) {
-                    link.put("description", desc);
+                    description = desc;
                 }
             }
             if (root.hasField("system")) {
                 try {
                     String system = root.getString("system");
                     if (system != null && !system.isEmpty()) {
-                        link.put("description",
-                                link.getStringOrDefault("description", "") + " [GC Root: " + system + "]");
+                        description = (description != null ? description : "") + " [GC Root: " + system + "]";
                     }
                 } catch (Exception e) {
                     // ignore
                 }
             }
-            if (!link.isEmpty()) {
-                chain.add(link);
+            if (type != null || description != null) {
+                chain.add(new ReferenceLink(type, null, description));
             }
         } catch (Exception e) {
             LOG.debug("Error extracting GC root: {}", e.getMessage());
@@ -833,10 +864,55 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
         }
     }
 
-    private static JsonObject errorJson(String message) {
-        JsonObject result = new JsonObject();
-        result.put("status", "error");
-        result.put("error", message);
-        return result;
+    private static Response errorResponse(String message) {
+        return new Response(
+                "error", message, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null);
+    }
+
+    private static Response idleStatusResponse() {
+        return new Response(
+                "idle", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null);
+    }
+
+    private static Response idleQueryResponse(String note) {
+        return new Response(
+                "idle", null, note, null, null, null, null, null, null, 0, null, null, null, null, List.of(), null,
+                null, null, null);
+    }
+
+    private static Response recordingStartedResponse(long startTime, Integer durationSeconds) {
+        return new Response(
+                "recording", null, null, startTime, durationSeconds, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null);
+    }
+
+    private static Response recordingStatusResponse(
+            long startTime, long elapsedMs, Integer durationSeconds, Long remainingMs) {
+        return new Response(
+                "recording", null, null, startTime, durationSeconds, elapsedMs, remainingMs, null, null, null, null,
+                null, null, null, null, null, null, null, null);
+    }
+
+    private static Response completedStatusResponse(
+            boolean hasCachedResults, boolean hasComparisonData, int sampleCount) {
+        return new Response(
+                "completed", null, null, null, null, null, null, hasCachedResults, hasComparisonData, sampleCount,
+                null, null, null, null, null, null, null, null, null);
+    }
+
+    private static Response snapshotResponse(String status, RecordingSnapshot snapshot) {
+        return new Response(
+                status, null, null, null, null, null, null, null, null, snapshot.sampleCount(),
+                snapshot.recordingDurationMs(), snapshot.recordingEndTime(), snapshot.rawSampleCount(),
+                snapshot.gcCount(), snapshot.samples(), null, null, null, null);
+    }
+
+    private static Response compareResponse(
+            RecordingInfo baseline, RecordingInfo current, double durationRatio, List<ComparisonEntry> comparisons) {
+        return new Response(
+                "compared", null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                baseline, current, durationRatio, comparisons);
     }
 }

@@ -29,7 +29,7 @@
     <artifactId>camel-mcp-server</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: AI :: MCP Server</name>
-    <description>Expose ai-tool routes as MCP tools over streamable HTTP</description>
+    <description>Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP</description>
 
     <properties>
         <firstVersion>4.22.0</firstVersion>

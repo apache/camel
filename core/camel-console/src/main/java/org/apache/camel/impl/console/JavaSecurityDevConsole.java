@@ -18,18 +18,36 @@ package org.apache.camel.impl.console;
 
 import java.security.Provider;
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "java-security", description = "Displays Java Security (JSSE) information")
 @Configurer(extended = true)
 public class JavaSecurityDevConsole extends AbstractDevConsole {
+
+    public record ServiceEntry(
+            @Metadata(description = "The service type") String type,
+            @Metadata(description = "The algorithm") String algorithm,
+            @Metadata(description = "The implementation class name") String className) {
+    }
+
+    public record ProviderEntry(
+            @Metadata(description = "The provider name") String name,
+            @Metadata(description = "The provider version") String version,
+            @Metadata(description = "The provider info (only present when known)") String info,
+            @Metadata(description = "The services offered by this provider (only present when any)") List<ServiceEntry> services) {
+    }
+
+    public record Response(
+            @Metadata(description = "The security providers (only present when any are registered)") List<ProviderEntry> securityProviders) {
+    }
 
     public JavaSecurityDevConsole() {
         super("jvm", "java-security", "Java Security", "Displays Java Security (JSSE) information");
@@ -63,39 +81,29 @@ public class JavaSecurityDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<ProviderEntry> providerEntries = null;
 
         Provider[] providers = Security.getProviders();
         if (providers != null && providers.length > 0) {
-            JsonArray arr = new JsonArray();
-            root.put("securityProviders", arr);
+            providerEntries = new ArrayList<>();
             for (Provider p : providers) {
-                JsonObject jo = new JsonObject();
-                arr.add(jo);
-                jo.put("name", p.getName());
-                jo.put("version", p.getVersionStr());
-                if (p.getInfo() != null) {
-                    jo.put("info", p.getInfo());
-                }
                 List<Provider.Service> services = p.getServices().stream()
                         .sorted(JavaSecurityDevConsole::compare)
                         .toList();
+                List<ServiceEntry> serviceEntries = null;
                 if (!services.isEmpty()) {
-                    JsonArray arr2 = new JsonArray();
-                    jo.put("services", arr2);
+                    serviceEntries = new ArrayList<>();
                     for (Provider.Service s : services) {
-                        JsonObject js = new JsonObject();
-                        js.put("type", s.getType());
-                        js.put("algorithm", s.getAlgorithm());
-                        js.put("className", s.getClassName());
-                        arr2.add(js);
+                        serviceEntries.add(new ServiceEntry(s.getType(), s.getAlgorithm(), s.getClassName()));
                     }
                 }
+                providerEntries.add(new ProviderEntry(p.getName(), p.getVersionStr(), p.getInfo(), serviceEntries));
             }
         }
 
-        return root;
+        Response response = new Response(providerEntries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private static int compare(Provider.Service o1, Provider.Service o2) {

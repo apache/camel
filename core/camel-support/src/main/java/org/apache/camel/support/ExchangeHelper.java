@@ -878,8 +878,11 @@ public final class ExchangeHelper {
             exchange.setIn(newMessage);
         }
 
-        // need to de-reference old from the exchange so it can be GC
-        if (old instanceof MessageSupport messageSupport) {
+        // need to de-reference old from the exchange so it can be GC, but only if the exchange no longer
+        // references it: with outOnly and no OUT message yet, old is the (untouched) IN message and detaching it
+        // would leave IN without an exchange reference. Use hasOut() before getOut() as getOut() lazily creates OUT.
+        if (old != exchange.getIn() && !(exchange.hasOut() && old == exchange.getOut())
+                && old instanceof MessageSupport messageSupport) {
             messageSupport.setExchange(null);
         }
     }
@@ -1087,6 +1090,35 @@ public final class ExchangeHelper {
     public static Route getRoute(Exchange exchange) {
         UnitOfWork uow = exchange.getUnitOfWork();
         return uow != null ? uow.getRoute() : null;
+    }
+
+    /**
+     * Captures where the Exchange failed - the route id, node id, and source location - as the
+     * {@link Exchange#FAILURE_ROUTE_ID}, {@link Exchange#FAILURE_NODE_ID} and {@link Exchange#FAILURE_LOCATION}
+     * properties, based on the current route and the last entry in the message history.
+     * <p/>
+     * This must be called as soon as the exception is caught (handled or not), before any exception handler
+     * (onException, doCatch, dead letter channel, ...) has a chance to run any of its own processing steps - otherwise
+     * those steps would also be recorded in the message history, and the last entry would no longer point to the node
+     * that actually failed.
+     *
+     * @param exchange the exchange that failed
+     */
+    @SuppressWarnings("unchecked")
+    public static void captureFailureOrigin(Exchange exchange) {
+        Route rc = getRoute(exchange);
+        if (rc != null) {
+            exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
+        }
+        List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history != null && !history.isEmpty()) {
+            MessageHistory last = history.get(history.size() - 1);
+            if (last.getNode() != null) {
+                exchange.setProperty(ExchangePropertyKey.FAILURE_NODE_ID, last.getNode().getId());
+                exchange.setProperty(ExchangePropertyKey.FAILURE_LOCATION,
+                        LoggerHelper.getLineNumberLoggerName(last.getNode()));
+            }
+        }
     }
 
     /**

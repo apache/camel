@@ -80,7 +80,7 @@ public class GitEndpoint extends ScheduledPollEndpoint {
     private int depth;
 
     @UriParam(label = "producer",
-              enums = "add,cherryPick,clean,clone,commit,commitAll,createBranch,createTag,deleteBranch,deleteTag,gc,init,log,pull,push,remoteAdd,remoteList,remove,showBranches,showTags,status")
+              enums = "add,checkout,cherryPick,clean,clone,commit,commitAll,createBranch,createTag,deleteBranch,deleteTag,gc,init,log,merge,pull,push,pushTag,remoteAdd,remoteList,remove,showBranches,showTags,status")
     private String operation;
 
     @UriParam(description = "A String with path to a .gitconfig file", label = "advanced")

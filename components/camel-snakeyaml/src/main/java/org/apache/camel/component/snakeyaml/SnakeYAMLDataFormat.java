@@ -43,7 +43,8 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 /**
- * Marshal and unmarshal Java objects to and from YAML using <a href="http://www.snakeyaml.org">SnakeYAML</a>
+ * Marshal and unmarshal Java objects to and from YAML using
+ * <a href="https://bitbucket.org/snakeyaml/snakeyaml">SnakeYAML</a>
  */
 @Dataformat("snakeYaml")
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {

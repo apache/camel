@@ -2006,7 +2006,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.Identity.class,
         "verifyUserIdentity",
         arg("userId", long.class),
-        arg("identityId", long.class));
+        arg("identityId", long.class)),
+
+    WARM_UP(
+        void.class,
+        "warmUp");
 
     private final ApiMethod apiMethod;
 

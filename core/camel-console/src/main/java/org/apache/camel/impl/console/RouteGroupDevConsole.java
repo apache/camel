@@ -38,15 +38,51 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DevConsole(name = "route-group", description = "Route Group information")
+@DevConsole(name = "route-group", description = "Route Group information", readOnly = false)
 public class RouteGroupDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteGroupDevConsole.class);
+
+    public record Statistics(
+            @Metadata(description = "Route coverage (only present when computable)") String coverage,
+            @Metadata(description = "1 minute load average (only present when available)") String load01,
+            @Metadata(description = "5 minute load average (only present when available)") String load05,
+            @Metadata(description = "15 minute load average (only present when available)") String load15,
+            @Metadata(description = "Messages per second throughput (only present when available)") String exchangesThroughput,
+            @Metadata(description = "Epoch time in milliseconds since the route group has been idle") long idleSince,
+            @Metadata(description = "Total number of exchanges") long exchangesTotal,
+            @Metadata(description = "Number of failed exchanges") long exchangesFailed,
+            @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Mean processing time in milliseconds") long meanProcessingTime,
+            @Metadata(description = "Max processing time in milliseconds") long maxProcessingTime,
+            @Metadata(description = "Min processing time in milliseconds") long minProcessingTime,
+            @Metadata(description = "50th percentile processing time in milliseconds (only present when available)") Long p50ProcessingTime,
+            @Metadata(description = "95th percentile processing time in milliseconds (only present when available)") Long p95ProcessingTime,
+            @Metadata(description = "99th percentile processing time in milliseconds (only present when available)") Long p99ProcessingTime,
+            @Metadata(description = "Processing time in milliseconds of the last exchange (only present once an exchange has completed)") Long lastProcessingTime,
+            @Metadata(description = "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)") Long deltaProcessingTime,
+            @Metadata(description = "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)") Long lastCreatedExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)") Long lastCompletedExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)") Long lastFailureHandledExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange failed (only present once one has occurred)") Long lastFailedExchangeTimestamp) {
+    }
+
+    public record RouteGroupEntry(
+            @Metadata(description = "The route group ID") String group,
+            @Metadata(description = "Number of routes in this group") int size,
+            @Metadata(description = "The route group state") String state,
+            @Metadata(description = "Route uptime, human readable text") String uptime,
+            @Metadata(description = "The route IDs within this group") List<String> routeIds,
+            @Metadata(description = "Runtime statistics") Statistics statistics) {
+    }
+
+    public record Response(
+            @Metadata(description = "The route groups (only present when no action was requested)") List<RouteGroupEntry> routeGroups) {
+    }
 
     @Metadata(label = "query", description = "Filters the route groups matching by group id", javaType = "java.lang.String")
     public static final String FILTER = "filter";
@@ -138,79 +174,70 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String action = optionString(options, ACTION);
         String filter = optionString(options, FILTER);
         if (action != null) {
             doAction(getCamelContext(), action, filter);
-            return new JsonObject();
+            return JsonRecordSupport.toJsonObject(new Response(null));
         }
 
-        final JsonObject root = new JsonObject();
-        final JsonArray list = new JsonArray();
+        final List<RouteGroupEntry> list = new ArrayList<>();
         Function<ManagedRouteGroupMBean, Object> task = mrg -> {
-            JsonObject jo = new JsonObject();
-            list.add(jo);
-            jo.put("group", mrg.getRouteGroup());
-            jo.put("size", mrg.getGroupSize());
-            jo.put("state", mrg.getState());
-            jo.put("uptime", mrg.getUptime());
-            jo.put("routeIds", new JsonArray(Arrays.stream(mrg.getGroupIds()).toList()));
-            JsonObject stats = new JsonObject();
-            String coverage = calculateRouteCoverage(mrg, false);
-            if (coverage != null) {
-                stats.put("coverage", coverage);
-            }
-            String load1 = getLoad1(mrg);
-            String load5 = getLoad5(mrg);
-            String load15 = getLoad15(mrg);
-            if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
-                stats.put("load01", load1);
-                stats.put("load05", load5);
-                stats.put("load15", load15);
-            }
-            String thp = getThroughput(mrg);
-            if (!thp.isEmpty()) {
-                stats.put("exchangesThroughput", thp);
-            }
-            stats.put("idleSince", mrg.getIdleSince());
-            stats.put("exchangesTotal", mrg.getExchangesTotal());
-            stats.put("exchangesFailed", mrg.getExchangesFailed());
-            stats.put("exchangesInflight", mrg.getExchangesInflight());
-            stats.put("meanProcessingTime", mrg.getMeanProcessingTime());
-            stats.put("maxProcessingTime", mrg.getMaxProcessingTime());
-            stats.put("minProcessingTime", mrg.getMinProcessingTime());
-            if (mrg.getProcessingTimeP50() >= 0) {
-                stats.put("p50ProcessingTime", mrg.getProcessingTimeP50());
-                stats.put("p95ProcessingTime", mrg.getProcessingTimeP95());
-                stats.put("p99ProcessingTime", mrg.getProcessingTimeP99());
-            }
-            if (mrg.getExchangesTotal() > 0) {
-                stats.put("lastProcessingTime", mrg.getLastProcessingTime());
-                stats.put("deltaProcessingTime", mrg.getDeltaProcessingTime());
-            }
-            Date last = mrg.getLastExchangeCreatedTimestamp();
-            if (last != null) {
-                stats.put("lastCreatedExchangeTimestamp", last.getTime());
-            }
-            last = mrg.getLastExchangeCompletedTimestamp();
-            if (last != null) {
-                stats.put("lastCompletedExchangeTimestamp", last.getTime());
-            }
-            last = mrg.getLastExchangeFailureHandledTimestamp();
-            if (last != null) {
-                stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
-            }
-            last = mrg.getLastExchangeFailureTimestamp();
-            if (last != null) {
-                stats.put("lastFailedExchangeTimestamp", last.getTime());
-            }
-            jo.put("statistics", stats);
+            Statistics stats = buildStatistics(mrg);
+            list.add(new RouteGroupEntry(
+                    mrg.getRouteGroup(), mrg.getGroupSize(), mrg.getState(), mrg.getUptime(),
+                    Arrays.asList(mrg.getGroupIds()), stats));
             return null;
         };
         doCall(options, task);
-        root.put("routeGroups", list);
-        return root;
+
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
+    }
+
+    private Statistics buildStatistics(ManagedRouteGroupMBean mrg) {
+        String coverage = calculateRouteCoverage(mrg, false);
+
+        String load1 = getLoad1(mrg);
+        String load5 = getLoad5(mrg);
+        String load15 = getLoad15(mrg);
+        boolean hasLoad = !load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty();
+
+        String thp = getThroughput(mrg);
+
+        Long p50 = null;
+        Long p95 = null;
+        Long p99 = null;
+        if (mrg.getProcessingTimeP50() >= 0) {
+            p50 = mrg.getProcessingTimeP50();
+            p95 = mrg.getProcessingTimeP95();
+            p99 = mrg.getProcessingTimeP99();
+        }
+
+        Long lastProcessingTime = null;
+        Long deltaProcessingTime = null;
+        if (mrg.getExchangesTotal() > 0) {
+            lastProcessingTime = mrg.getLastProcessingTime();
+            deltaProcessingTime = mrg.getDeltaProcessingTime();
+        }
+
+        Long lastCreated = timestampOf(mrg.getLastExchangeCreatedTimestamp());
+        Long lastCompleted = timestampOf(mrg.getLastExchangeCompletedTimestamp());
+        Long lastFailureHandled = timestampOf(mrg.getLastExchangeFailureHandledTimestamp());
+        Long lastFailed = timestampOf(mrg.getLastExchangeFailureTimestamp());
+
+        return new Statistics(
+                coverage, hasLoad ? load1 : null, hasLoad ? load5 : null, hasLoad ? load15 : null,
+                thp.isEmpty() ? null : thp,
+                mrg.getIdleSince(), mrg.getExchangesTotal(), mrg.getExchangesFailed(), mrg.getExchangesInflight(),
+                mrg.getMeanProcessingTime(), mrg.getMaxProcessingTime(), mrg.getMinProcessingTime(),
+                p50, p95, p99, lastProcessingTime, deltaProcessingTime,
+                lastCreated, lastCompleted, lastFailureHandled, lastFailed);
+    }
+
+    private static Long timestampOf(Date date) {
+        return date != null ? date.getTime() : null;
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteGroupMBean, Object> task) {

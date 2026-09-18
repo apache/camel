@@ -28,6 +28,7 @@ import jakarta.mail.Flags;
 import jakarta.mail.Folder;
 import jakarta.mail.FolderNotFoundException;
 import jakarta.mail.Message;
+import jakarta.mail.MessageRemovedException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Store;
@@ -526,6 +527,11 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 }
             }
 
+        } catch (MessageRemovedException e) {
+            MessagingException wrapped = new MessagingException(
+                    "Message already removed/expunged on server (message state could not be updated)", e);
+            getExceptionHandler().handleException(
+                    "Error occurred during committing mail message: " + mail, exchange, wrapped);
         } catch (MessagingException e) {
             getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
         }

@@ -1749,6 +1749,42 @@ public interface SqlEndpointBuilderFactory {
             doSetProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
         }
+        /**
+         * Whether to allow overriding the endpoint-configured SQL query with
+         * the CamelSqlQuery header. Disabled by default; enable it only when
+         * the header source is trusted, since it lets a message choose the
+         * executed SQL.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowQueryFromHeader the value to set
+         * @return the dsl builder
+         */
+        default SqlEndpointProducerBuilder allowQueryFromHeader(boolean allowQueryFromHeader) {
+            doSetProperty("allowQueryFromHeader", allowQueryFromHeader);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the endpoint-configured SQL query with
+         * the CamelSqlQuery header. Disabled by default; enable it only when
+         * the header source is trusted, since it lets a message choose the
+         * executed SQL.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowQueryFromHeader the value to set
+         * @return the dsl builder
+         */
+        default SqlEndpointProducerBuilder allowQueryFromHeader(String allowQueryFromHeader) {
+            doSetProperty("allowQueryFromHeader", allowQueryFromHeader);
+            return this;
+        }
     }
 
     /**
@@ -2628,9 +2664,11 @@ public interface SqlEndpointBuilderFactory {
         public static final SqlHeaderNameBuilder INSTANCE = new SqlHeaderNameBuilder();
 
         /**
-         * Query to execute. This query takes precedence over the query
-         * specified in the endpoint URI. Note that query parameters in the
-         * header are represented by a instead of a pass:# symbol.
+         * Query to execute. This header is ignored unless the endpoint enables
+         * allowQueryFromHeader=true (disabled by default); when enabled it
+         * takes precedence over the query specified in the endpoint URI. Note
+         * that query parameters in the header are represented by a instead of a
+         * pass:# symbol.
          * 
          * The option is a: {@code String} type.
          * 

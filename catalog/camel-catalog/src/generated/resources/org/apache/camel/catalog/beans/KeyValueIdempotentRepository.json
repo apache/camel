@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "KeyValueIdempotentRepository",
+    "javaType": "org.apache.camel.support.KeyValueIdempotentRepository",
+    "interfaceType": "org.apache.camel.spi.IdempotentRepository",
+    "title": "Key Value Idempotent Repository",
+    "description": "An IdempotentRepository backed by a KeyValueRepository (defaults to in-memory).",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-support",
+    "version": "4.23.0-SNAPSHOT"
+  }
+}
+

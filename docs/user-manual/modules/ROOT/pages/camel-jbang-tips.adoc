@@ -210,14 +210,24 @@ See the https://maven.apache.org/guides/mini/guide-encryption.html[Maven encrypt
 
 == Running a Maven based project
 
-Camel CLI can do a _best effort_ run of an existing Maven-based project for migration purposes:
+Camel CLI can run an existing Maven-based project:
 
 [source,bash]
 ----
 camel run pom.xml
 ----
 
-Camel CLI scans `src/main/java` and `src/main/resources` for files to include.
+The runtime is detected from the `pom.xml` (Spring Boot, Quarkus, or Camel Main), and the project is
+built and run with Maven (`spring-boot:run`, `quarkus:dev` with `--dev` or `quarkus:run`, and `camel:run`).
+The project itself is not modified: the `camel-cli-connector` dependency is injected into a temporary
+`camel-jbang-run-pom.xml`, so the application shows up in `camel ps`, and the application logs to a file
+in `~/.camel` so `camel log`, the TUI and the MCP server can read the logs the same as for any other
+`camel run`: `<pid>.log` for Spring Boot, and `<name>.log` for Quarkus and Camel Main, whose logging is
+configured before the process id is known (`<name>` is `camel.main.name` from the project's
+`application.properties`, or else the Maven artifactId, and is passed to the application as its name).
+The temporary files are removed when the application stops.
 
-NOTE: This is not a fully compatible way to run Maven projects. It cannot start Spring Boot or Quarkus
-applications — use the proper plugins for those. This command is mainly useful for migrating from old projects.
+The options `--profile`, `--port`, `--prop`, `--max-seconds`, `--max-messages`, `--max-idle-seconds`,
+`--jvm-args` and `--jfr` are passed to the application (Camel Main runs inside the Maven JVM, so
+`--jvm-args` and `--jfr` are set via `MAVEN_OPTS`). A Camel Main project is expected to use log4j2
+for logging (the same as `camel export --runtime=main` generates).

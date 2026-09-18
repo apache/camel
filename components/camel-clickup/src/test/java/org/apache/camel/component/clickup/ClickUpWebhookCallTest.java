@@ -17,7 +17,10 @@
 package org.apache.camel.component.clickup;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -28,45 +31,35 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ClickUpWebhookCallTest extends ClickUpTestSupport {
+import static java.util.List.of;
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ClickUpWebhookCallTest.class);
+class ClickUpWebhookCallTest extends ClickUpTestSupport {
 
-    private final static Long WORKSPACE_ID = 12345L;
-    private final static String AUTHORIZATION_TOKEN = "mock-authorization-token";
-    private final static String WEBHOOK_SECRET = "mock-webhook-secret";
-    private final static Set<String> EVENTS = new HashSet<>(List.of("taskTimeTrackedUpdated"));
-
-    public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME = "messages/events/time-tracking-created.json";
-    public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_SIGNATURE
+    private static final Set<String> EVENTS = new HashSet<>(of("taskTimeTrackedUpdated"));
+    private static final String TIME_TRACKING_CREATED_RESOURCE = "messages/events/time-tracking-created.json";
+    private static final String TIME_TRACKING_CREATED_SIGNATURE
             = "ac99f10017e28db6839941c184964890ec3262b1d6b1756d33ff53d972d5a361";
 
     @Test
-    public void testWebhookCall() throws Exception {
+    void testWebhookCall() throws Exception {
         WebhookConfiguration config
                 = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl();
 
-        LOGGER.info("Webhook external url: {}", url);
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedMessageCount(1);
+        mock.expectedMessagesMatches(exchange -> exchange.getIn().getBody() instanceof TaskTimeTrackedUpdatedEvent);
 
-        try (InputStream content
-                = getClass().getClassLoader().getResourceAsStream(MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME)) {
-            LOGGER.info("message content: {}", content);
-
-            MockEndpoint mock = getMockEndpoint("mock:endpoint");
-            mock.expectedMessageCount(1);
-            mock.expectedMessagesMatches(exchange -> exchange.getIn().getBody() instanceof TaskTimeTrackedUpdatedEvent);
-
+        try (InputStream content = getClass().getClassLoader().getResourceAsStream(TIME_TRACKING_CREATED_RESOURCE)) {
             Map<String, Object> headers = new HashMap<>();
             headers.put(Exchange.HTTP_METHOD, "POST");
             headers.put(Exchange.CONTENT_TYPE, "application/json");
-            headers.put("x-signature", MESSAGES_EVENTS_TIME_TRACKING_CREATED_SIGNATURE);
+            headers.put("x-signature", TIME_TRACKING_CREATED_SIGNATURE);
             template().sendBodyAndHeaders("netty-http:" + url, content, headers);
-            mock.assertIsSatisfied();
         }
+
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -78,8 +71,8 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
                         .host("localhost")
                         .port(port.getPort());
 
-                from("webhook:clickup:" + WORKSPACE_ID + "?authorizationToken=" + AUTHORIZATION_TOKEN + "&webhookSecret="
-                     + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS) + "&webhookAutoRegister=false")
+                fromF("webhook:clickup:%s?authorizationToken=%s&webhookSecret=%s&events=%s&webhookAutoRegister=false",
+                        WORKSPACE_ID, AUTHORIZATION_TOKEN, WEBHOOK_SECRET, String.join(",", EVENTS))
                         .id("webhook")
                         .to("mock:endpoint");
             }
