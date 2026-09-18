@@ -114,3 +114,26 @@ adds a `Retry-After` header:
 
 The OpenAI SDK retries 408, 409, 429 and 5xx responses on its own, so configure the client under test with no retries
 to observe the error at once.
+## Batch API
+
+The mock serves the Files and Batch APIs, so a route can upload an input file, poll a batch and read its result
+files. Every request line of the input file is matched to an expectation by its `custom_id`:
+
+```java
+static OpenAIMock openAIMock = new OpenAIMock().builder()
+    .whenBatchRequest("ticket-1").replyWithBatchContent("billing").end()
+    .whenBatchRequest("ticket-2").replyWithBatchError(429, "rate_limit_exceeded", "Rate limit reached").end()
+    .build();
+```
+
+A batch walks through `validating`, `in_progress`, `finalizing` and `completed`, one step per retrieve, so a
+polling route sees the same sequence as against the real API. Use `withBatchStatuses` for a different progression,
+such as ending in `expired` or `cancelled`. Once a final status is reached, lines with a reply are written to the
+output file of the batch and lines with an error to its error file, and a line whose `custom_id` has no
+expectation fails as well.
+
+`replyWithBatchResponse` sets the raw response body of a line, for endpoints other than chat completions, while
+`replyWithBatchContent` wraps the text in a chat completion.
+
+`getBatchStore().getUploadedFile()` returns the JSONL the route uploaded, so a test can assert on the requests it
+built.

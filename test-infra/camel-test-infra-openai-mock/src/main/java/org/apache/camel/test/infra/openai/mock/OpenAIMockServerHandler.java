@@ -36,6 +36,7 @@ public class OpenAIMockServerHandler implements HttpHandler {
     private final ModerationRequestHandler moderationRequestHandler;
     private final ImageRequestHandler imageGenerationRequestHandler;
     private final ImageRequestHandler imageEditRequestHandler;
+    private final BatchRequestHandler batchRequestHandler;
 
     public OpenAIMockServerHandler(OpenAIMockExpectations expectations, ObjectMapper objectMapper) {
         this.chatRequestHandler = new RequestHandler(expectations.chat(), objectMapper);
@@ -50,11 +51,18 @@ public class OpenAIMockServerHandler implements HttpHandler {
         this.imageGenerationRequestHandler
                 = new ImageRequestHandler(expectations.imageGenerations(), objectMapper, false);
         this.imageEditRequestHandler = new ImageRequestHandler(expectations.imageEdits(), objectMapper, true);
+        this.batchRequestHandler = new BatchRequestHandler(
+                expectations.batches(), expectations.batchStatuses(), expectations.batchStore(), objectMapper);
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
+        // the Files and Batch APIs answer on GET and DELETE as well, and write their own response
+        if (BatchRequestHandler.handles(path)) {
+            batchRequestHandler.handleRequest(exchange);
+            return;
+        }
         // a stored Responses API response is retrieved with GET and cancelled with POST .../cancel
         boolean storedResponse = path.contains("/responses/");
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod())
