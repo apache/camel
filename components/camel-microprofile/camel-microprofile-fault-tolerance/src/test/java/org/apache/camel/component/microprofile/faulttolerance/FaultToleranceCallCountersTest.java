@@ -24,9 +24,11 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.eclipse.microprofile.faulttolerance.exceptions.BulkheadException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -83,6 +85,11 @@ public class FaultToleranceCallCountersTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
+        // the rejected call reached the fallback with the bulkhead exception (and came back first,
+        // before the slow call finished), so it was rejected, not queued
+        long rejected = getMockEndpoint("mock:bulkhead").getExchanges().stream()
+                .filter(e -> e.getProperty(Exchange.EXCEPTION_CAUGHT) instanceof BulkheadException).count();
+        assertEquals(1, rejected, "exactly one of the two calls should have been rejected by the bulkhead");
         FaultToleranceProcessor cb = context.getProcessor("cbBulkhead", FaultToleranceProcessor.class);
         assertEquals(1, cb.getNumberOfBulkheadRejectedCalls(),
                 "the rejected call is counted from inside the fallback path");
@@ -110,6 +117,8 @@ public class FaultToleranceCallCountersTest extends CamelTestSupport {
         Exchange result = template.request("direct:bulkheadNoFallback", e -> e.getMessage().setBody("Hello World"));
 
         assertTrue(result.isFailed(), "the rejected call should fail the exchange");
+        // SmallRye needs a waiting queue of at least 1; the second call is still rejected, not queued
+        assertInstanceOf(BulkheadException.class, result.getException());
         FaultToleranceProcessor cb = context.getProcessor("cbBulkheadNoFallback", FaultToleranceProcessor.class);
         assertEquals(1, cb.getNumberOfBulkheadRejectedCalls());
         assertEquals(0, cb.getNumberOfFallbackCalls());
