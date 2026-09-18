@@ -30,10 +30,10 @@
 
 set -euo pipefail
 # Ignore SIGPIPE to prevent spurious failures on long GitHub Actions jobs.
-# When the runner truncates stdout, commands like `sort` receive SIGPIPE and exit
-# with code 2.  Under `set -e` + `pipefail` this terminates the entire script even
-# though the Maven build already completed successfully.  Ignoring SIGPIPE avoids
-# the false-negative: the script exits with Maven's real return code instead.
+# When the runner closes the script's stdout (log line limit reached), external
+# commands writing to it (e.g. `tail -500 "$log"` in the failure report block)
+# are killed by SIGPIPE (exit 141).  Ignoring SIGPIPE lets children inherit
+# SIG_IGN, exit via EPIPE instead, and preserves Maven's real return code.
 trap '' PIPE
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
