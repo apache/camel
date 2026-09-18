@@ -600,9 +600,10 @@ public class HttpComponent extends HttpCommonComponent
      *           their endpoints, and recreates them from the updated component fields, so subsequent requests will use
      *           the new credentials. Re-authenticating inside this method would be wrong: the callback fires
      *           <em>before</em> {@code reloadRoutes()}, so any connection re-established here would be closed again
-     *           immediately by the route shutdown. The shared {@link org.apache.hc.client5.http.io.HttpClientConnectionManager}
-     *           is preserved across the restart because {@code HttpEndpoint.createHttpClient()} marks it as shared when
-     *           it belongs to the component, letting the pool drain naturally rather than being closed abruptly.
+     *           immediately by the route shutdown. The shared
+     *           {@link org.apache.hc.client5.http.io.HttpClientConnectionManager} is preserved across the restart
+     *           because {@code HttpEndpoint.createHttpClient()} marks it as shared when it belongs to the component,
+     *           letting the pool drain naturally rather than being closed abruptly.
      */
     @Override
     public void onSecretRotation(Object source) throws Exception {
