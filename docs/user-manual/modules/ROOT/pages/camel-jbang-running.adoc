@@ -130,8 +130,10 @@ It does not support `camel-servlet` or `camel-jetty`.
 
 == Adding custom JARs
 
-Camel CLI automatically detects and downloads dependencies for Camel components.
-For 3rd-party JARs, use `--dep` with Maven GAV syntax:
+Camel CLI automatically detects and downloads dependencies for Camel components, and for the
+well-known third-party libraries a route may name in a bean, such as a JDBC datasource or a JMS
+connection factory (see <<advanced-class-to-dependency,how a class becomes a dependency>>).
+For other 3rd-party JARs, use `--dep` with Maven GAV syntax:
 
 [source,bash]
 ----
@@ -233,6 +235,50 @@ To disable automatic downloading:
 ----
 camel run foo.java --download=false
 ----
+
+[[advanced-class-to-dependency]]
+=== Advanced: how a class becomes a dependency
+
+When a route, a bean declaration, a `#class:` value in `application.properties`, or an `import`
+in a Java file next to the route names a class that is not on the classpath, Camel CLI looks the
+class up in three mapping files shipped in `camel-kamelet-main` and downloads the dependency it
+maps to. The files are read into one table, in this order (a later file wins for an identical key):
+
+1. `camel-main-known-dependencies.properties`, hand-written: Spring and Quarkus annotations,
+   `camel.*` switches, the LangChain4j model providers.
+2. `camel-component-known-dependencies.properties`, generated from the catalog: every Camel
+   component class maps to its `camel-` artifact.
+3. `camel-thirdparty-known-dependencies.properties`, generated at build time from the curated
+   list `known-third-party-libraries.properties` in `camel-kamelet-main`: JDBC drivers and
+   connection pools, messaging clients, cloud SDKs, JSON, XML and CSV libraries, and other
+   libraries a route commonly names, each mapped by package.
+
+The lookup walks up from the class name:
+
+1. The exact class, for example `org.postgresql.ds.PGSimpleDataSource`.
+2. Each enclosing package in turn, `org.postgresql.ds`, then `org.postgresql`, until a key
+   matches or no package is left. The deepest key wins, so `org.apache.activemq.artemis` is found
+   before `org.apache.activemq`.
+3. The value is a Maven coordinate. A `camel:xxx` short form becomes `org.apache.camel:camel-xxx`
+   at the running Camel version; a `${...}` placeholder in the hand-written file is resolved
+   from the `camel-dependencies` POM of that version; the generated third-party file carries the
+   versions already resolved.
+4. The dependency and its transitive dependencies are downloaded and added to the classpath,
+   and the class is loaded again.
+
+A dependency you declare yourself, with `--dep`, `camel.jbang.dependencies`, or in the project's
+POM, is on the classpath before any lookup, so it always takes precedence. Use that when a
+mapped library is not the one you want, for example the ActiveMQ 5 client where the mapping
+picks the ActiveMQ 6 client.
+
+`camel validate` and the write tools of the Camel MCP server consult the same three files, so a
+bean whose class Camel CLI would download is not reported as missing.
+
+To add a library to the mapping, add one line to `known-third-party-libraries.properties`
+in `camel-kamelet-main`: the library's own package, its `groupId:artifactId`, and a version
+property of `camel-parent`. The build resolves the version and fails on a property that does
+not exist; with `-Dcamel.known-dependencies.verify=true` it also resolves every JAR and checks
+that the package is in it.
 
 == Runtimes
 

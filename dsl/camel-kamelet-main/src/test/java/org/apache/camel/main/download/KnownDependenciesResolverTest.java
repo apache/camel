@@ -21,6 +21,7 @@ import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KnownDependenciesResolverTest {
@@ -86,5 +87,8 @@ public class KnownDependenciesResolverTest {
         assertNotNull(gav, className);
         assertEquals(groupId, gav.getGroupId(), className);
         assertEquals(artifactId, gav.getArtifactId(), className);
+        String version = gav.getVersion();
+        assertNotNull(version, className + " version is null");
+        assertFalse(version.startsWith("${"), className + " version is an unresolved placeholder: " + version);
     }
 }

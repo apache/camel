@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -235,10 +236,15 @@ public class PrepareKameletMainMojo extends AbstractMojo {
         }
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header.txt")) {
             this.licenseHeader = loadText(is);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error loading license-header.txt file", e);
         }
-        getLog().info("Generated camel-thirdparty-known-dependencies.properties with " + resolved.size() + " libraries");
-        writeSourceIfChanged(String.join("\n", lines) + "\n", "resources", "camel-thirdparty-known-dependencies.properties",
-                genDir);
+        // into target/classes, not src/generated: the file is the input with the versions resolved, so keeping both
+        // in the repository would duplicate 146 lines; it is regenerated on every build and shipped in the jar
+        Path out = Path.of(project.getBuild().getOutputDirectory(), "camel-thirdparty-known-dependencies.properties");
+        Files.createDirectories(out.getParent());
+        updateResource(buildContext, out, licenseHeader + "\n" + String.join("\n", lines) + "\n");
+        getLog().info("Generated " + out.getFileName() + " with " + resolved.size() + " libraries");
     }
 
     private String managedVersion(Map<String, String> cache, String bomKey, String groupId, String artifactId)
