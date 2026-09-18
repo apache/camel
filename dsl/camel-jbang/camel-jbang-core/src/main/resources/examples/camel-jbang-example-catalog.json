@@ -41,7 +41,8 @@
         "infraServices": [
             "docling",
             "ollama"
-        ]
+        ],
+        "order": 4
     },
     {
         "name": "ai/langchain4j-chat",
@@ -87,7 +88,8 @@
         "infraServices": [
             "ollama"
         ],
-        "ciSkip": true
+        "ciSkip": true,
+        "order": 1
     },
     {
         "name": "ai/mcp-server",
@@ -132,7 +134,8 @@
             "orders/order-1002.json",
             "orders/order-1003.json",
             "stock.json"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "ai/openai-pii-redaction",
@@ -160,7 +163,8 @@
             "application.properties",
             "pii-redaction.camel.yaml",
             "pii.schema.json"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "cloud/aws-sqs",
@@ -205,7 +209,8 @@
         ],
         "infraServices": [
             "aws"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "connect-service/artemis",
@@ -250,7 +255,8 @@
         ],
         "infraServices": [
             "artemis"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "connect-service/camel-1-tribute",
@@ -287,7 +293,8 @@
         ],
         "infraServices": [
             "artemis"
-        ]
+        ],
+        "order": 6
     },
     {
         "name": "connect-service/ftp",
@@ -330,7 +337,8 @@
         "infraServices": [
             "artemis",
             "ftp"
-        ]
+        ],
+        "order": 5
     },
     {
         "name": "connect-service/kafka-orders",
@@ -378,7 +386,8 @@
         ],
         "infraServices": [
             "kafka"
-        ]
+        ],
+        "order": 4
     },
     {
         "name": "connect-service/mqtt",
@@ -418,7 +427,8 @@
         ],
         "infraServices": [
             "mosquitto"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "connect-service/sql",
@@ -462,7 +472,8 @@
         ],
         "infraServices": [
             "postgres"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "connect/file-processing",
@@ -505,7 +516,8 @@
             "samples/invoice-2003.json",
             "samples/invoice-2004.json",
             "samples/note-2005.txt"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "connect/http-client",
@@ -554,7 +566,8 @@
             "orders/order-1002.json",
             "orders/order-1003.json",
             "stock.json"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "connect/stock-api",
@@ -596,7 +609,8 @@
             "application.properties",
             "stock-api.camel.yaml",
             "stock.json"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "contracts/keycloak-security-rest",
@@ -636,7 +650,8 @@
         ],
         "infraServices": [
             "keycloak"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "contracts/openapi-client",
@@ -682,7 +697,8 @@
             "orders/order-1002.json",
             "orders/order-1003.json",
             "stock-api.json"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "contracts/openapi-server",
@@ -729,7 +745,8 @@
             "openapi-server.camel.yaml",
             "stock-api.json",
             "stock.json"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "fail-well/circuit-breaker",
@@ -764,7 +781,8 @@
             "README.md",
             "application.properties",
             "circuit-breaker.camel.yaml"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "fail-well/error-handling",
@@ -811,7 +829,8 @@
             "orders/order-1002.json",
             "orders/order-1003.json",
             "parked/order-1003.json"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "quick-start/rest-api",
@@ -842,7 +861,8 @@
             "README.md",
             "application.properties",
             "rest-api.camel.yaml"
-        ]
+        ],
+        "order": 4
     },
     {
         "name": "quick-start/routes",
@@ -872,7 +892,8 @@
             "application.properties",
             "beans.yaml",
             "routes.camel.yaml"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "quick-start/splitter",
@@ -903,7 +924,8 @@
         "files": [
             "README.md",
             "splitter.camel.yaml"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "quick-start/timer-log",
@@ -931,7 +953,8 @@
             "README.md",
             "application.properties",
             "timer-log.camel.yaml"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "route/aggregator",
@@ -974,7 +997,8 @@
             "orders/order-1001.json",
             "orders/order-1002.json",
             "orders/order-1003.json"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "route/content-based-router",
@@ -1013,7 +1037,8 @@
             "orders/order-1001.json",
             "orders/order-1002.json",
             "orders/order-1003.json"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "route/filter-and-multicast",
@@ -1054,7 +1079,8 @@
             "orders/order-1001.json",
             "orders/order-1002.json",
             "orders/order-1003.json"
-        ]
+        ],
+        "order": 4
     },
     {
         "name": "route/order-lines",
@@ -1094,7 +1120,8 @@
             "orders/order-1001.json",
             "orders/order-1002.json",
             "orders/order-1003.json"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "run/nightly-report",
@@ -1125,7 +1152,8 @@
             "README.md",
             "application.properties",
             "nightly-report.camel.yaml"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "run/order-generator",
@@ -1161,7 +1189,8 @@
             "application.properties",
             "beans.yaml",
             "order-generator.camel.yaml"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "run/properties-and-profiles",
@@ -1194,7 +1223,8 @@
             "application-prod.properties",
             "application.properties",
             "properties-and-profiles.camel.yaml"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "showcase/memory-leak",
@@ -1222,7 +1252,8 @@
         "files": [
             "MemoryLeak.java",
             "README.md"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "showcase/message-size",
@@ -1253,7 +1284,8 @@
         "files": [
             "README.md",
             "orders.camel.yaml"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "showcase/smart-log-analyzer",
@@ -1311,7 +1343,8 @@
             "ui-console/index.html",
             "ui-console/jms-file-storage.camel.yaml",
             "ui-console/rest-api.camel.yaml"
-        ]
+        ],
+        "order": 4
     },
     {
         "name": "showcase/tui-hello-world",
@@ -1341,7 +1374,8 @@
         "files": [
             "README.md",
             "tui-hello-world.yaml"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "transform/csv-to-json",
@@ -1381,7 +1415,8 @@
             "application.properties",
             "csv-to-json.camel.yaml",
             "inbox/invoices.csv"
-        ]
+        ],
+        "order": 3
     },
     {
         "name": "transform/data-mapping",
@@ -1422,7 +1457,8 @@
             "data-mapping.camel.yaml",
             "order.json",
             "shipment-mapping.groovy"
-        ]
+        ],
+        "order": 4
     },
     {
         "name": "transform/groovy",
@@ -1462,7 +1498,8 @@
             "groovy.camel.yaml",
             "order-bad-email.json",
             "order.json"
-        ]
+        ],
+        "order": 5
     },
     {
         "name": "transform/json-transform",
@@ -1501,7 +1538,8 @@
             "application.properties",
             "json-transform.camel.yaml",
             "order.json"
-        ]
+        ],
+        "order": 1
     },
     {
         "name": "transform/xml-to-json",
@@ -1537,7 +1575,8 @@
             "application.properties",
             "inbox/supplier-order.xml",
             "xml-to-json.camel.yaml"
-        ]
+        ],
+        "order": 2
     },
     {
         "name": "transform/xslt",
@@ -1569,6 +1608,7 @@
             "inbox/supplier-order.xml",
             "packing-slip.xsl",
             "xslt.camel.yaml"
-        ]
+        ],
+        "order": 6
     }
 ]
