@@ -65,6 +65,7 @@
 ** xref:openai-operations.adoc[OpenAI - Embeddings, Moderation, Audio and Image Operations]
 ** xref:openai-mcp.adoc[OpenAI - MCP Tool Calling]
 ** xref:openai-responses.adoc[OpenAI - Responses API Operation]
+** xref:openai-batch.adoc[OpenAI - Batch API Operations]
 ** xref:openapi-java.adoc[Openapi Java]
 ** xref:openapi-validator.adoc[Openapi Validator]
 ** xref:opentelemetry.adoc[OpenTelemetry]
