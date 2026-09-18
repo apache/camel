@@ -1713,32 +1713,45 @@ class TuiToolRegistry {
         if (filter != null && !filter.isEmpty()) {
             filtered = ExampleHelper.filterExamples(filtered, filter);
         }
-        if (level != null && !level.isEmpty()) {
-            String lowerLevel = level.toLowerCase();
-            filtered = filtered.stream()
-                    .filter(e -> lowerLevel.equals(e.getStringOrDefault("level", "")))
-                    .toList();
-        }
 
+        JsonArray groups = new JsonArray();
         JsonArray examples = new JsonArray();
-        for (JsonObject entry : filtered) {
-            JsonObject ex = new JsonObject();
-            ex.put("name", entry.getStringOrDefault("name", ""));
-            ex.put("title", entry.getStringOrDefault("title", ""));
-            ex.put("description", entry.getStringOrDefault("description", ""));
-            ex.put("level", entry.getStringOrDefault("level", ""));
-            ex.put("category", ExampleHelper.getCategory(entry));
-            ex.put("tags", toJsonArray(
-                    entry.get("tags") instanceof java.util.Collection<?> c
-                            ? c.stream().map(Object::toString).toList()
-                            : List.of()));
-            ex.put("bundled", ExampleHelper.isBundled(entry));
-            ex.put("requiresDocker", ExampleHelper.requiresDocker(entry));
-            ex.put("infraServices", toJsonArray(ExampleHelper.getInfraServices(entry)));
-            examples.add(ex);
+        for (Map.Entry<String, List<JsonObject>> group : ExampleHelper.groupByLevel(filtered).entrySet()) {
+            if (level != null && !level.isEmpty() && !group.getKey().equalsIgnoreCase(level)) {
+                continue;
+            }
+            JsonObject g = new JsonObject();
+            g.put("level", group.getKey());
+            g.put("title", ExampleHelper.getGroupTitle(group.getKey()));
+            g.put("intro", ExampleHelper.getGroupIntro(group.getKey()));
+            g.put("count", group.getValue().size());
+            groups.add(g);
+            for (JsonObject entry : group.getValue()) {
+                JsonObject ex = new JsonObject();
+                ex.put("name", entry.getStringOrDefault("name", ""));
+                ex.put("title", entry.getStringOrDefault("title", ""));
+                ex.put("description", entry.getStringOrDefault("description", ""));
+                ex.put("level", entry.getStringOrDefault("level", ""));
+                if (ExampleHelper.getOrder(entry) != Integer.MAX_VALUE) {
+                    ex.put("order", ExampleHelper.getOrder(entry));
+                }
+                ex.put("category", ExampleHelper.getCategory(entry));
+                ex.put("tags", toJsonArray(
+                        entry.get("tags") instanceof java.util.Collection<?> c
+                                ? c.stream().map(Object::toString).toList()
+                                : List.of()));
+                JsonObject teaches = new JsonObject();
+                ExampleHelper.getTeaches(entry).forEach((k, v) -> teaches.put(k, toJsonArray(v)));
+                ex.put("teaches", teaches);
+                ex.put("bundled", ExampleHelper.isBundled(entry));
+                ex.put("requiresDocker", ExampleHelper.requiresDocker(entry));
+                ex.put("infraServices", toJsonArray(ExampleHelper.getInfraServices(entry)));
+                examples.add(ex);
+            }
         }
 
         JsonObject result = new JsonObject();
+        result.put("groups", groups);
         result.put("examples", examples);
         result.put("totalCount", examples.size());
         return Jsoner.serialize(result);

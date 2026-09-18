@@ -88,4 +88,20 @@ class TuiToolRegistryLaunchTest {
 
         assertTrue(registry.execute("tui_run_example", UNKNOWN_EXAMPLE).contains("Launching examples is not available"));
     }
+
+    @Test
+    void listExamplesGroupsTheLadder() throws Exception {
+        TuiToolRegistry registry = new TuiToolRegistry(bareFacade());
+
+        String all = registry.execute("tui_list_examples", Map.of());
+        assertTrue(all.contains("\"groups\""), all.substring(0, Math.min(200, all.length())));
+        assertTrue(all.indexOf("\"level\":\"quick-start\"") < all.indexOf("\"level\":\"run\""),
+                "quick-start comes before run");
+        assertTrue(all.contains("timer-log"));
+        assertTrue(all.contains("\"teaches\":{\"components\":[\"timer\",\"log\"]"), "teaches from the metadata");
+
+        String run = registry.execute("tui_list_examples", Map.of("level", "run"));
+        assertTrue(run.contains("\"level\":\"run\""));
+        assertTrue(!run.contains("\"level\":\"quick-start\""), "only the run group");
+    }
 }
