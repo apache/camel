@@ -48,19 +48,22 @@ CLOSED ──(failures exceed threshold)──> OPEN
 - **FAIL** — Total number of failed calls (exceptions thrown by the protected code)
 - **RATE%** — Current failure rate percentage in the sliding window. When this exceeds the configured threshold, the circuit trips to OPEN
 - **REJECT** — Calls rejected because the circuit is OPEN. These calls never reach the downstream service — they fail fast with a fallback
+- **FALLBACK** — Calls answered by the `onFallback`, whatever the cause: a failed call, a timeout or a rejected call. This is how many callers got a degraded answer
+- **TIMEOUT** — Calls that hit the configured timeout. The breaker counts them as failures, so this tells a slow service apart from a broken one
 - **SINCE-LAST** — Time since the last circuit breaker activity, shown as up to two values separated by `/`: success/failed (e.g., `3s/1m14s`). Values are omitted when there is no activity of that type
 
 ## Example Screen
 
 ```
- ROUTE    ID            COMPONENT     STATE   WINDOW  INFLIGHT  SUCCESS  FAIL  RATE%  REJECT
- route1   circuitBrk1   resilience4j  CLOSED  10      0         450      5     1.0%   0
- route2   circuitBrk2   resilience4j  OPEN    10      0         100      8     80.0%  25
+ ROUTE    ID            COMPONENT     STATE   WINDOW  INFLIGHT  SUCCESS  FAIL  RATE%  REJECT  FALLBACK  TIMEOUT
+ route1   circuitBrk1   resilience4j  CLOSED  10      0         450      5     1.0%   0       5         2
+ route2   circuitBrk2   resilience4j  OPEN    10      0         100      8     80.0%  25      33        0
 ```
 
-In this example, `route1` is healthy with a 1% failure rate. `route2`
+In this example, `route1` is healthy with a 1% failure rate; its five
+failures, two of them timeouts, were all answered by the fallback. `route2`
 has tripped open with an 80% failure rate — 25 calls have been rejected
-since it opened. The circuit will stay open until the wait timeout
+since it opened, and the fallback answered those and the 8 failures. The circuit will stay open until the wait timeout
 expires, then try a few test calls in HALF_OPEN state.
 
 ## Detail View
@@ -72,7 +75,8 @@ The bottom panel shows when a circuit breaker is selected:
 - **Sparkline chart**: Mirrored view showing successful calls (green,
   upward) vs failed calls (red, downward) over time
 - **Metrics**: Detailed counts for total, fail, inflight, reject,
-  and timing statistics (mean/min/max processing time)
+  fallback, timeout, bulkhead (calls rejected because the bulkhead
+  was full) and timing statistics (mean/min/max processing time)
 
 ## Configuration Tips
 

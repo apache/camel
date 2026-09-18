@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FaultToleranceConsoleTest extends CamelTestSupport {
 
@@ -52,6 +53,7 @@ public class FaultToleranceConsoleTest extends CamelTestSupport {
 
         String text = (String) con.call(DevConsole.MediaType.TEXT);
         assertNotNull(text);
+        assertTrue(text.contains("fallback: 0 timed-out: 0 bulkhead-rejected: 0"), text);
     }
 
     @Test
@@ -70,6 +72,9 @@ public class FaultToleranceConsoleTest extends CamelTestSupport {
         assertEquals("myBreaker", entry.getString("id"));
         assertEquals("myRoute", entry.getString("routeId"));
         assertNotNull(entry.getString("state"));
+        assertEquals(0L, entry.getLong("fallbackCalls"));
+        assertEquals(0L, entry.getLong("timedOutCalls"));
+        assertEquals(0L, entry.getLong("bulkheadRejectedCalls"));
 
         JsonObject config = entry.getJsonObject("configuration");
         assertNotNull(config);
