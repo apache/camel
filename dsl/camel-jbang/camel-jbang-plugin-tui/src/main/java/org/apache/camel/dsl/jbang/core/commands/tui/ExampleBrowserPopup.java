@@ -208,7 +208,8 @@ class ExampleBrowserPopup {
         if (catalog == null || catalog.isEmpty()) {
             return;
         }
-        int popupW = Math.min(100, area.width() - 4);
+        // wide: the descriptions are sentences, and a wide terminal should show them on one or two lines
+        int popupW = Math.max(80, Math.min(area.width() - 10, 170));
         int visibleItems = Math.max(10, catalog.size() + 10);
         int popupH = Math.min(visibleItems, Math.min(22, area.height() - 4));
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
@@ -475,9 +476,11 @@ class ExampleBrowserPopup {
             String label = String.format(" %s  %s %s (%d)", key, TuiIcons.FOLDER, ExampleHelper.getGroupTitle(level),
                     group.getValue().size());
             String intro = ExampleHelper.getGroupIntro(level);
-            int introCol = Math.max(0, width - 34);
-            String padded = String.format("%-32s", TuiHelper.truncate(label, 32));
-            Line line = Line.from(Span.raw(padded), Span.styled(TuiHelper.truncate(intro, introCol), Style.EMPTY.dim()));
+            // the longest title, "Connect without a service (3)", fits the label column; the intro takes the rest
+            int labelCol = 38;
+            int introCol = Math.max(0, width - labelCol - 2);
+            String padded = String.format("%-" + labelCol + "s", TuiHelper.truncate(label, labelCol));
+            Line line = Line.from(Span.raw(padded + " "), Span.styled(TuiHelper.truncate(intro, introCol), Style.EMPTY.dim()));
             items.add(ListItem.from(Text.from(line)));
             heights.add(1);
             data.add(level);
