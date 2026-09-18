@@ -1142,7 +1142,7 @@ When the check finds such an expression the panel sends the answer back to the m
 wrong and the rule, and shows the corrected answer with `1 correction` in the byline. When the model
 does not fix it the answer is shown as it is with a *Simple check* line under it naming the expression
 and the error, and the AI log has the exchange. Placeholders that are not simple (a Maven
-`${camel-version}`, a shell variable) are left alone.
+`$\{camel-version}`, a shell variable) are left alone.
 
 Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
 the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),
