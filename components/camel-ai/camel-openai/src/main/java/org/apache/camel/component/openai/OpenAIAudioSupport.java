@@ -20,12 +20,15 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.openai.core.MultipartField;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -77,12 +80,16 @@ final class OpenAIAudioSupport {
         if (ObjectHelper.isEmpty(filename)) {
             filename = in.getHeader(Exchange.FILE_NAME, String.class);
         }
-        if (ObjectHelper.isNotEmpty(filename) && filename.indexOf('.') > 0) {
-            return filename;
+        if (ObjectHelper.isNotEmpty(filename)) {
+            filename = FileUtil.stripPath(filename);
+            if (ObjectHelper.isNotEmpty(FileUtil.onlyExt(filename))) {
+                return filename;
+            }
         }
         String mime = MimeTypeHelper.resolveForBinary(in);
-        if (ObjectHelper.isNotEmpty(mime)) {
-            return "audio." + MimeTypeHelper.audioExtension(mime);
+        String extension = MimeTypeHelper.audioExtension(mime);
+        if (ObjectHelper.isNotEmpty(extension)) {
+            return "audio." + extension;
         }
         return "audio.mp3";
     }
@@ -99,11 +106,11 @@ final class OpenAIAudioSupport {
         return builder.build();
     }
 
-    static java.util.List<String> parseCommaSeparatedValues(String value) {
+    static List<String> parseCommaSeparatedValues(String value) {
         if (ObjectHelper.isEmpty(value)) {
-            return java.util.List.of();
+            return List.of();
         }
-        java.util.List<String> values = new java.util.ArrayList<>();
+        List<String> values = new ArrayList<>();
         for (String item : value.split(",")) {
             String trimmed = item.trim();
             if (!trimmed.isEmpty()) {

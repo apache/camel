@@ -336,9 +336,9 @@ public class OpenAIConfiguration implements Cloneable {
                             + "Only applicable with verbose_json response format.")
     private String audioTimestampGranularities;
 
-    @UriParam(enums = "auto,vad", defaultValue = "auto")
+    @UriParam(enums = "auto,vad")
     @Metadata(description = "Chunking strategy for diarized transcription models such as gpt-4o-transcribe-diarize")
-    private String audioChunkingStrategy = "auto";
+    private String audioChunkingStrategy;
 
     @UriParam
     @Metadata(description = "Comma-separated known speaker names for diarized transcription")

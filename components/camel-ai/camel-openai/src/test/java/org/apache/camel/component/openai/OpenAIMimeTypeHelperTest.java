@@ -33,7 +33,7 @@ class OpenAIMimeTypeHelperTest {
     void shouldDetectAudioMimeTypes() {
         assertThat(MimeTypeHelper.isAudio("audio/wav")).isTrue();
         assertThat(MimeTypeHelper.isAudio("audio/mpeg")).isTrue();
-        assertThat(MimeTypeHelper.isAudio("video/mp4")).isTrue();
+        assertThat(MimeTypeHelper.isAudio("video/mp4")).isFalse();
         assertThat(MimeTypeHelper.isAudio("application/pdf")).isFalse();
     }
 
@@ -52,6 +52,6 @@ class OpenAIMimeTypeHelperTest {
     void shouldInferAudioFileExtension() {
         assertThat(MimeTypeHelper.audioExtension("audio/wav")).isEqualTo("wav");
         assertThat(MimeTypeHelper.audioExtension("audio/mpeg")).isEqualTo("mp3");
-        assertThat(MimeTypeHelper.audioExtension("audio/ogg")).isEqualTo("mp3");
+        assertThat(MimeTypeHelper.audioExtension("audio/ogg")).isNull();
     }
 }

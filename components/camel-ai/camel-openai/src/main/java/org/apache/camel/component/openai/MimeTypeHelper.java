@@ -104,7 +104,7 @@ final class MimeTypeHelper {
         if (mime == null) {
             return false;
         }
-        return mime.startsWith("audio/") || "video/mp4".equals(mime);
+        return mime.startsWith("audio/");
     }
 
     /**
@@ -118,7 +118,7 @@ final class MimeTypeHelper {
         if (normalized.contains("wav") || "audio/x-wav".equals(normalized)) {
             return ChatCompletionContentPartInputAudio.InputAudio.Format.WAV;
         }
-        if (normalized.contains("mpeg") || normalized.contains("mp3") || "audio/mp4".equals(normalized)) {
+        if (normalized.contains("mpeg") || normalized.contains("mp3")) {
             return ChatCompletionContentPartInputAudio.InputAudio.Format.MP3;
         }
         return null;
@@ -132,7 +132,7 @@ final class MimeTypeHelper {
         if (format == ChatCompletionContentPartInputAudio.InputAudio.Format.MP3) {
             return "mp3";
         }
-        return "mp3";
+        return null;
     }
 
     private static String headerMimeType(Message in, String header) {

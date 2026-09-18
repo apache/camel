@@ -479,7 +479,7 @@ from("direct:pdf-summary")
     .log("Response: ${body}");
 ----
 
-For audio input, supported MIME types include `audio/wav`, `audio/mpeg` and `audio/mp4`.
+For audio input, supported MIME types are `audio/wav` and `audio/mpeg` (MP3).
 
 === Diarized Audio Transcription
 

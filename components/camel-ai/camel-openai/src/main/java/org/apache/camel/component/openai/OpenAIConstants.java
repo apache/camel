@@ -224,8 +224,10 @@ public final class OpenAIConstants {
     public static final String AUDIO_INCLUDE = "CamelOpenAIAudioInclude";
 
     // Audio Transcription/Translation Output Headers
-    @Metadata(description = "Duration of the audio in seconds (verbose_json only)", javaType = "Double")
+    @Metadata(description = "Duration of the audio in seconds (verbose_json or diarized_json)", javaType = "Double")
     public static final String AUDIO_DURATION = "CamelOpenAIAudioDuration";
+    @Metadata(description = "Speaker-labelled segments from diarized_json transcription", javaType = "java.util.List")
+    public static final String AUDIO_DIARIZED_SEGMENTS = "CamelOpenAIAudioDiarizedSegments";
     @Metadata(description = "Language detected in the audio (verbose_json only)", javaType = "String")
     public static final String AUDIO_DETECTED_LANGUAGE = "CamelOpenAIAudioDetectedLanguage";
 

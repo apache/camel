@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
@@ -61,5 +63,6 @@ class OpenAIAudioTranscriptionDiarizedMockTest extends CamelTestSupport {
         assertThat(result.getMessage().getBody(String.class)).isEqualTo(DIARIZED_TEXT);
         assertThat(result.getMessage().getHeader(OpenAIConstants.AUDIO_DURATION, Double.class)).isEqualTo(12.4);
         assertThat(result.getMessage().getHeader(OpenAIConstants.AUDIO_DETECTED_LANGUAGE)).isNull();
+        assertThat(result.getMessage().getHeader(OpenAIConstants.AUDIO_DIARIZED_SEGMENTS, List.class)).hasSize(1);
     }
 }

@@ -43,7 +43,6 @@ import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import com.openai.models.chat.completions.ChatCompletionStreamOptions;
 import com.openai.models.chat.completions.ChatCompletionSystemMessageParam;
 import com.openai.models.chat.completions.ChatCompletionToolMessageParam;
-import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
 import com.openai.models.completions.CompletionUsage;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
@@ -302,13 +301,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             userPrompt = config.getUserMessage();
         }
         return OpenAIChatCompletionMultimodalSupport.buildUserMessage(in, userPrompt);
-    }
-
-    private ChatCompletionMessageParam createTextMessage(String prompt) {
-        return ChatCompletionMessageParam.ofUser(
-                ChatCompletionUserMessageParam.builder()
-                        .content(ChatCompletionUserMessageParam.Content.ofText(prompt))
-                        .build());
     }
 
     private ChatCompletionMessageParam createSystemMessage(String text) {

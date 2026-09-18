@@ -18,6 +18,7 @@ package org.apache.camel.component.openai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.openai.core.ObjectMappers;
 import com.openai.models.audio.AudioResponseFormat;
@@ -140,16 +141,24 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
     }
 
     private static void applyChunkingStrategy(TranscriptionCreateParams.Builder paramsBuilder, String chunkingStrategy) {
-        if (ObjectHelper.isEmpty(chunkingStrategy) || "auto".equalsIgnoreCase(chunkingStrategy)) {
+        if (ObjectHelper.isEmpty(chunkingStrategy)) {
+            return;
+        }
+        if ("auto".equalsIgnoreCase(chunkingStrategy)) {
             paramsBuilder.chunkingStrategyAuto();
             return;
         }
         if ("vad".equalsIgnoreCase(chunkingStrategy)) {
-            paramsBuilder.chunkingStrategy(TranscriptionCreateParams.ChunkingStrategy.VadConfig.builder().build());
+            paramsBuilder.chunkingStrategy(TranscriptionCreateParams.ChunkingStrategy.VadConfig.builder()
+                    .type(TranscriptionCreateParams.ChunkingStrategy.VadConfig.Type.SERVER_VAD)
+                    .build());
+            return;
         }
+        throw new IllegalArgumentException(
+                "Unsupported audio chunking strategy: " + chunkingStrategy + ". Supported values are auto and vad.");
     }
 
-    private static void applyCommaSeparatedList(String value, java.util.function.Consumer<String> consumer) {
+    private static void applyCommaSeparatedList(String value, Consumer<String> consumer) {
         for (String item : OpenAIAudioSupport.parseCommaSeparatedValues(value)) {
             consumer.accept(item);
         }
@@ -163,6 +172,7 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
 
     private static void populateOutput(Exchange exchange, OpenAIConfiguration config, TranscriptionCreateResponse response) {
         Message out = exchange.getMessage();
+        TranscriptionCreateResponse storedResponse = response;
 
         if (response.isVerbose()) {
             TranscriptionVerbose verbose = response.asVerbose();
@@ -170,16 +180,13 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
             out.setHeader(OpenAIConstants.AUDIO_DURATION, verbose.duration());
             out.setHeader(OpenAIConstants.AUDIO_DETECTED_LANGUAGE, verbose.language());
         } else if (response.isDiarized()) {
-            TranscriptionDiarized diarized = response.asDiarized();
-            out.setBody(diarized.text());
-            out.setHeader(OpenAIConstants.AUDIO_DURATION, diarized.duration());
+            applyDiarizedOutput(out, response.asDiarized());
         } else if (response.isTranscription()) {
             String text = response.asTranscription().text();
             TranscriptionCreateResponse reparsed = tryParseStructuredTranscription(text);
             if (reparsed != null && reparsed.isDiarized()) {
-                TranscriptionDiarized diarized = reparsed.asDiarized();
-                out.setBody(diarized.text());
-                out.setHeader(OpenAIConstants.AUDIO_DURATION, diarized.duration());
+                storedResponse = reparsed;
+                applyDiarizedOutput(out, reparsed.asDiarized());
             } else {
                 out.setBody(text);
             }
@@ -188,8 +195,14 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
         }
 
         if (config.isStoreFullResponse()) {
-            exchange.setProperty(OpenAIConstants.AUDIO_TRANSCRIPTION_RESPONSE, response);
+            exchange.setProperty(OpenAIConstants.AUDIO_TRANSCRIPTION_RESPONSE, storedResponse);
         }
+    }
+
+    private static void applyDiarizedOutput(Message out, TranscriptionDiarized diarized) {
+        out.setBody(diarized.text());
+        out.setHeader(OpenAIConstants.AUDIO_DURATION, diarized.duration());
+        out.setHeader(OpenAIConstants.AUDIO_DIARIZED_SEGMENTS, diarized.segments());
     }
 
     /**
