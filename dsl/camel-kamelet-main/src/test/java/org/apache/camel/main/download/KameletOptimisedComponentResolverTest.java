@@ -43,7 +43,7 @@ public class KameletOptimisedComponentResolverTest {
     }
 
     @Test
-    void shouldNotLoadTemplateFromLocationWhenKameletRegisteredAsBean() throws Exception {
+    void shouldNotLoadTemplateFromLocationWhenTemplateInModel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
