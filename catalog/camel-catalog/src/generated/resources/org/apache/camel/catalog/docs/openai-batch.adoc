@@ -96,8 +96,13 @@ from("scheduler:batches?delay=600000")
         .to("sql:update openai_batch set status = :#CamelOpenAIBatchStatus where id = :#CamelOpenAIBatchId")
         .filter(header("CamelOpenAIBatchStatus").in("completed", "expired", "cancelled"))
             .to("direct:collect")
+            .to("sql:update openai_batch set status = 'processed' where id = :#CamelOpenAIBatchId")
+        .end()
     .end();
 ----
+
+The row is marked `processed` only after `direct:collect` has read the results, so a failure while reading leaves
+it at `completed` and the next run retries it.
 
 == Reading the results
 
@@ -105,24 +110,40 @@ from("scheduler:batches?delay=600000")
 split line by line. Set `batchResultsFile=error` for the failed requests instead. Each line carries the `custom_id`
 of its request.
 
-The polling routes above hand a finished batch to `direct:collect`, which reads the file. Stream caching is on by
-default and would read the whole file into memory before the splitter sees it, so the route turns it off and lets
-the splitter stream the lines instead:
+The polling routes above hand a finished batch to `direct:collect`, which reads the file. With the defaults, stream
+caching reads the file into memory when the next step runs, and the splitter works on that copy. For a batch of a
+few thousand requests this is fine, and the route needs nothing special:
 
 [source,java]
 ----
 from("direct:collect")
-    .noStreamCaching()                       // otherwise stream caching reads the whole file into memory
     .to("openai:batch-results")
-    .split(body().tokenize("\n")).streaming()
+    .split(body().tokenize("\n"))
         .setHeader("ticketId", jsonpath("$.custom_id"))
         .setBody(jsonpath("$.response.body.choices[0].message.content"))
         .to("sql:update ticket set category = :#${body} where id = :#${header.ticketId}")
     .end();
 ----
 
-An embedding backfill works the same way, straight into a vector store. The batch is created by the first route,
-and a polling route like the ones above hands it to `direct:store` once it is finished:
+A result file can reach hundreds of megabytes, and holding it in memory is then the problem. Turning stream
+caching off on the route keeps the body as the response stream, and a splitter in streaming mode reads it one line
+at a time as each line is processed. The body can then be read only once, which is what the splitter does:
+
+[source,java]
+----
+from("direct:collect")
+    .noStreamCaching()                       // keep the response as a stream instead of caching it in memory
+    .to("openai:batch-results")
+    .split(body().tokenize("\n")).streaming()   // read one line at a time
+        .setHeader("ticketId", jsonpath("$.custom_id"))
+        .setBody(jsonpath("$.response.body.choices[0].message.content"))
+        .to("sql:update ticket set category = :#${body} where id = :#${header.ticketId}")
+    .end();
+----
+
+An embedding backfill works the same way, straight into a vector store. Embedding vectors make for large result
+files, so this one uses the streaming form. The batch is created by the first route, and a polling route like the
+ones above hands it to `direct:store` once it is finished:
 
 [source,java]
 ----
