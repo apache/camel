@@ -33,7 +33,7 @@ public interface OpensearchConstants {
     @Metadata(description = "The index creation waits for the write consistency number of shards to be available",
               javaType = "Integer")
     String PARAM_WAIT_FOR_ACTIVE_SHARDS = "CamelOpensearchWaitForActiveShards";
-    @Metadata(description = "The starting index of the response.", javaType = "Integer")
+    @Metadata(description = "Time in ms during which OpenSearch will keep the search context alive", javaType = "Integer")
     String PARAM_SCROLL_KEEP_ALIVE_MS = "CamelOpensearchScrollKeepAliveMs";
     @Metadata(description = "Set to true to enable scroll usage. When enabled, the body is returned as a `OpensearchScrollRequestIterator`."
                             +

@@ -121,6 +121,7 @@ public interface OpensearchComponentBuilderFactory {
          * @param maxRetryTimeout the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default OpensearchComponentBuilder maxRetryTimeout(int maxRetryTimeout) {
             doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;

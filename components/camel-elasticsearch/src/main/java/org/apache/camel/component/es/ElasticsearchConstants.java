@@ -33,7 +33,7 @@ public interface ElasticsearchConstants {
     @Metadata(description = "The index creation waits for the write consistency number of shards to be available",
               javaType = "Integer")
     String PARAM_WAIT_FOR_ACTIVE_SHARDS = "CamelElasticsearchWaitForActiveShards";
-    @Metadata(description = "The starting index of the response.", javaType = "Integer")
+    @Metadata(description = "Time in ms during which Elasticsearch will keep the search context alive", javaType = "Integer")
     String PARAM_SCROLL_KEEP_ALIVE_MS = "CamelElasticsearchScrollKeepAliveMs";
     @Metadata(description = "Set to true to enable scroll usage", javaType = "Boolean")
     String PARAM_SCROLL = "CamelElasticsearchUseScroll";

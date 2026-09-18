@@ -77,6 +77,7 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
     }
 
     @Override
+    @SuppressWarnings("deprecation") // copies the deprecated maxRetryTimeout option while it still exists
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ElasticsearchConfiguration config = new ElasticsearchConfiguration();
         config.setHostAddresses(this.getHostAddresses());
@@ -231,11 +232,15 @@ public class ElasticsearchComponent extends DefaultComponent implements SSLConte
 
     /**
      * The time in ms before retry
+     *
+     * @deprecated this option has no effect and is ignored by the current client
      */
+    @Deprecated
     public int getMaxRetryTimeout() {
         return maxRetryTimeout;
     }
 
+    @Deprecated
     public void setMaxRetryTimeout(int maxRetryTimeout) {
         this.maxRetryTimeout = maxRetryTimeout;
     }

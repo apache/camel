@@ -199,7 +199,8 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The time in ms before retry.
+         * Deprecated: this option has no effect. It was used by the old
+         * low-level REST client and is ignored by the current client.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -209,12 +210,14 @@ public interface ElasticsearchEndpointBuilderFactory {
          * @param maxRetryTimeout the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default ElasticsearchEndpointBuilder maxRetryTimeout(int maxRetryTimeout) {
             doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
         }
         /**
-         * The time in ms before retry.
+         * Deprecated: this option has no effect. It was used by the old
+         * low-level REST client and is ignored by the current client.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -224,6 +227,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * @param maxRetryTimeout the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default ElasticsearchEndpointBuilder maxRetryTimeout(String maxRetryTimeout) {
             doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
@@ -821,7 +825,8 @@ public interface ElasticsearchEndpointBuilderFactory {
             return "CamelElasticsearchWaitForActiveShards";
         }
         /**
-         * The starting index of the response.
+         * Time in ms during which Elasticsearch will keep the search context
+         * alive.
          * 
          * The option is a: {@code Integer} type.
          * 
