@@ -347,9 +347,10 @@ final class BeanRefChecks {
      */
     /**
      * The classes camel run resolves to a Maven dependency and downloads on demand (camel-kamelet-main's
-     * camel-main-known-dependencies.properties and camel-component-known-dependencies.properties), so a
-     * #class:org.postgresql.ds.PGSimpleDataSource bean is fine without a dependency declared even though the class is
-     * not on the CLI classpath. Matched the way the runtime matches: the class name, then each enclosing package.
+     * camel-main-known-dependencies.properties, camel-component-known-dependencies.properties and the generated
+     * camel-thirdparty-known-dependencies.properties of CAMEL-24809), so a #class:org.postgresql.ds.PGSimpleDataSource
+     * bean is fine without a dependency declared even though the class is not on the CLI classpath. Matched the way the
+     * runtime matches: the class name, then each enclosing package.
      */
     private static volatile Map<String, String> knownDependencies;
 
@@ -358,7 +359,8 @@ final class BeanRefChecks {
         if (known == null) {
             known = new HashMap<>();
             for (String name : new String[] {
-                    "camel-main-known-dependencies.properties", "camel-component-known-dependencies.properties" }) {
+                    "camel-main-known-dependencies.properties", "camel-component-known-dependencies.properties",
+                    "camel-thirdparty-known-dependencies.properties" }) {
                 try {
                     Enumeration<URL> resources = BeanRefChecks.class.getClassLoader().getResources(name);
                     while (resources.hasMoreElements()) {
