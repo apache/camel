@@ -42,7 +42,6 @@ public class OpenAIMockBuilder {
     private final List<ImageExpectation> imageGenerationExpectations;
     private final List<ImageExpectation> imageEditExpectations;
     private final List<BatchExpectation> batchExpectations;
-    private final List<String> batchStatuses;
     private MockExpectation currentExpectation;
     private EmbeddingExpectation currentEmbeddingExpectation;
     private AudioTranscriptionExpectation currentAudioTranscriptionExpectation;
@@ -61,8 +60,7 @@ public class OpenAIMockBuilder {
                              List<ModerationExpectation> moderationExpectations,
                              List<ImageExpectation> imageGenerationExpectations,
                              List<ImageExpectation> imageEditExpectations,
-                             List<BatchExpectation> batchExpectations,
-                             List<String> batchStatuses) {
+                             List<BatchExpectation> batchExpectations) {
         this.mock = mock;
         this.expectations = expectations;
         this.embeddingExpectations = embeddingExpectations;
@@ -73,7 +71,6 @@ public class OpenAIMockBuilder {
         this.imageGenerationExpectations = imageGenerationExpectations;
         this.imageEditExpectations = imageEditExpectations;
         this.batchExpectations = batchExpectations;
-        this.batchStatuses = batchStatuses;
     }
 
     /**
@@ -115,16 +112,6 @@ public class OpenAIMockBuilder {
     public OpenAIMockBuilder replyWithBatchError(int statusCode, String type, String message) {
         validateCurrentBatchExpectation("replyWithBatchError()");
         currentBatchExpectation.setError(statusCode, type, message);
-        return this;
-    }
-
-    /**
-     * Sets the statuses a batch walks through, one step per retrieve, ending at the last one. Defaults to
-     * {@code validating, in_progress, finalizing, completed}.
-     */
-    public OpenAIMockBuilder withBatchStatuses(String... statuses) {
-        batchStatuses.clear();
-        batchStatuses.addAll(List.of(statuses));
         return this;
     }
 

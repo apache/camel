@@ -35,15 +35,19 @@ import org.slf4j.LoggerFactory;
  * Serves the Files and Batch APIs: uploading an input file, creating a batch from it, reporting its status and serving
  * the result files.
  * <p>
- * A batch walks the configured status progression, one step per retrieve, so a route that polls sees the same sequence
- * of states as it would against the real API. A cancel moves a running batch to {@code cancelling}, and the next
- * retrieve to {@code cancelled}. Once a final status is reached the output and error files are built from the input
- * file, matching each request line to a {@link BatchExpectation} by its {@code custom_id}.
+ * A batch walks through validating, in_progress, finalizing and completed, one step per retrieve, so a route that polls
+ * sees the same sequence of states as it would against the real API. A cancel moves a running batch to
+ * {@code cancelling}, and the next retrieve to {@code cancelled}. Once a final status is reached the output and error
+ * files are built from the input file, matching each request line to a {@link BatchExpectation} by its
+ * {@code custom_id}.
  */
 public class BatchRequestHandler {
     private static final Logger LOG = LoggerFactory.getLogger(BatchRequestHandler.class);
 
-    static final List<String> DEFAULT_STATUSES = List.of("validating", "in_progress", "finalizing", "completed");
+    /**
+     * The statuses a batch walks through, one step per retrieve.
+     */
+    private static final List<String> STATUSES = List.of("validating", "in_progress", "finalizing", "completed");
 
     private static final String DEFAULT_RESPONSE_BODY
             = "{\"id\":\"chatcmpl-mock\",\"object\":\"chat.completion\",\"model\":\"openai-mock\","
@@ -51,14 +55,11 @@ public class BatchRequestHandler {
               + "\"finish_reason\":\"stop\"}]}";
 
     private final List<BatchExpectation> expectations;
-    private final List<String> statuses;
     private final BatchStore store;
     private final ObjectMapper objectMapper;
 
-    public BatchRequestHandler(List<BatchExpectation> expectations, List<String> statuses, BatchStore store,
-                               ObjectMapper objectMapper) {
+    public BatchRequestHandler(List<BatchExpectation> expectations, BatchStore store, ObjectMapper objectMapper) {
         this.expectations = expectations;
-        this.statuses = statuses;
         this.store = store;
         this.objectMapper = objectMapper;
     }
@@ -80,8 +81,6 @@ public class BatchRequestHandler {
                 uploadFile(exchange);
             } else if (path.endsWith("/content") && "GET".equalsIgnoreCase(method)) {
                 fileContent(exchange, idBefore(path, "/content"));
-            } else if (path.contains("/files/") && "GET".equalsIgnoreCase(method)) {
-                fileObject(exchange, lastSegment(path));
             } else if (path.contains("/files/") && "DELETE".equalsIgnoreCase(method)) {
                 deleteFile(exchange, lastSegment(path));
             } else if (path.endsWith("/batches") && "POST".equalsIgnoreCase(method)) {
@@ -154,15 +153,6 @@ public class BatchRequestHandler {
         }
     }
 
-    private void fileObject(HttpExchange exchange, String fileId) throws IOException {
-        BatchStore.StoredFile file = store.file(fileId);
-        if (file == null) {
-            sendError(exchange, 404, "invalid_request_error", "No such file: " + fileId);
-            return;
-        }
-        sendJson(exchange, 200, fileNode(file.id(), file.filename(), file.purpose(), file.content().length).toString());
-    }
-
     private void deleteFile(HttpExchange exchange, String fileId) throws IOException {
         if (store.file(fileId) == null) {
             sendError(exchange, 404, "invalid_request_error", "No such file: " + fileId);
@@ -204,7 +194,7 @@ public class BatchRequestHandler {
             // a cancelled batch is final, so the retrieve after the cancel reports it as such, as the API does
             batch.cancelling = false;
             batch.cancelled = true;
-        } else if (!batch.cancelled && batch.statusIndex < statusList().size() - 1) {
+        } else if (!batch.cancelled && batch.statusIndex < STATUSES.size() - 1) {
             batch.statusIndex++;
         }
         maybeBuildResults(batch);
@@ -226,10 +216,6 @@ public class BatchRequestHandler {
         sendJson(exchange, 200, batchNode(batch).toString());
     }
 
-    private List<String> statusList() {
-        return statuses.isEmpty() ? DEFAULT_STATUSES : statuses;
-    }
-
     private String status(BatchStore.StoredBatch batch) {
         if (batch.cancelled) {
             return "cancelled";
@@ -237,7 +223,7 @@ public class BatchRequestHandler {
         if (batch.cancelling) {
             return "cancelling";
         }
-        return statusList().get(Math.min(batch.statusIndex, statusList().size() - 1));
+        return STATUSES.get(Math.min(batch.statusIndex, STATUSES.size() - 1));
     }
 
     private boolean isFinal(String status) {

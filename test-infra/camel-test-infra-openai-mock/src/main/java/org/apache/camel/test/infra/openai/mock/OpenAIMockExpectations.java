@@ -32,7 +32,6 @@ public record OpenAIMockExpectations(
         List<ImageExpectation> imageGenerations,
         List<ImageExpectation> imageEdits,
         List<BatchExpectation> batches,
-        List<String> batchStatuses,
         BatchStore batchStore) {
 
     /**
@@ -41,6 +40,6 @@ public record OpenAIMockExpectations(
     public static OpenAIMockExpectations ofChat(List<MockExpectation> chat) {
         return new OpenAIMockExpectations(
                 chat, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of(),
-                List.of(), List.of(), new BatchStore());
+                List.of(), new BatchStore());
     }
 }

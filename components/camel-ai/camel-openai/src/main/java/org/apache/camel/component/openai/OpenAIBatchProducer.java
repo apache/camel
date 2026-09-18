@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.openai;
 
-import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -68,6 +64,7 @@ public class OpenAIBatchProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIBatchProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final String INPUT_FILE_SUFFIX = ".jsonl";
+    private static final String INPUT_FILE_NAME = "camel-openai-batch" + INPUT_FILE_SUFFIX;
 
     private Class<?> outputClassResolved;
 
@@ -101,51 +98,56 @@ public class OpenAIBatchProducer extends DefaultProducer {
 
         String endpoint = OpenAIBatchSupport.resolveEndpoint(in, config);
 
-        Path input = null;
-        boolean temporary = false;
-        try {
-            Object body = in.getBody();
-            if (body instanceof WrappedFile<?> wrappedFile && wrappedFile.getFile() instanceof File file) {
-                body = file;
+        Object body = in.getBody();
+        String inputFileId;
+        if (body instanceof Map<?, ?> map) {
+            // an in-memory upload is the one the SDK can resend on a transient failure
+            byte[] lines = requestLines(map, endpoint, in, config);
+            inputFileId = upload(exchange, new ByteArrayInputStream(lines), INPUT_FILE_NAME);
+        } else {
+            InputStream stream = in.getBody(InputStream.class);
+            if (stream == null) {
+                throw new IllegalArgumentException(
+                        "Unsupported body type for the batch operation: "
+                                                   + (body != null ? body.getClass().getName() : "null")
+                                                   + ". Supported: File, Path, InputStream, byte[], String, or a Map "
+                                                   + "keyed by custom_id");
             }
-            if (body instanceof File file) {
-                input = file.toPath();
-            } else if (body instanceof Path path) {
-                input = path;
-            } else {
-                input = writeTemporaryInput(body, endpoint, in, config);
-                temporary = true;
-            }
-
-            String inputFileId = upload(exchange, input);
-            in.setHeader(OpenAIConstants.BATCH_INPUT_FILE_ID, inputFileId);
-
-            Batch batch = create(exchange, inputFileId, endpoint, in, config);
-            if (config.isStoreFullResponse()) {
-                exchange.setProperty(OpenAIConstants.BATCH_RESPONSE, batch);
-            }
-            OpenAIBatchSupport.setBatchHeaders(exchange.getMessage(), batch);
-        } finally {
-            if (temporary && input != null) {
-                Files.deleteIfExists(input);
-            }
+            inputFileId = upload(exchange, stream, inputFileName(body));
         }
+        in.setHeader(OpenAIConstants.BATCH_INPUT_FILE_ID, inputFileId);
+
+        Batch batch = create(exchange, inputFileId, endpoint, in, config);
+        if (config.isStoreFullResponse()) {
+            exchange.setProperty(OpenAIConstants.BATCH_RESPONSE, batch);
+        }
+        OpenAIBatchSupport.setBatchHeaders(exchange.getMessage(), batch);
     }
 
     /**
-     * Uploads the input file under a {@code .jsonl} name, the only extension the Files API accepts for a batch input,
-     * whatever the file is called on disk.
+     * The name the input file is uploaded under: the name of a file body, or a fixed one for the other bodies, always
+     * ending in {@code .jsonl}, the only extension the Files API accepts for a batch input.
      */
-    private String upload(Exchange exchange, Path input) throws IOException {
-        String filename = input.getFileName().toString();
-        if (!filename.endsWith(INPUT_FILE_SUFFIX)) {
-            filename = filename + INPUT_FILE_SUFFIX;
+    private static String inputFileName(Object body) {
+        String name = INPUT_FILE_NAME;
+        if (body instanceof WrappedFile<?> wrappedFile && wrappedFile.getFile() instanceof File file) {
+            name = file.getName();
+        } else if (body instanceof File file) {
+            name = file.getName();
+        } else if (body instanceof Path path) {
+            name = path.getFileName().toString();
         }
-        try (InputStream stream = Files.newInputStream(input)) {
-            return getEndpoint().getClient().files().create(FileCreateParams.builder()
-                    .file(MultipartField.<InputStream> builder().value(stream).filename(filename).build())
+        return name.endsWith(INPUT_FILE_SUFFIX) ? name : name + INPUT_FILE_SUFFIX;
+    }
+
+    private String upload(Exchange exchange, InputStream stream, String filename) throws IOException {
+        try (InputStream source = stream) {
+            String id = getEndpoint().getClient().files().create(FileCreateParams.builder()
+                    .file(MultipartField.<InputStream> builder().value(source).filename(filename).build())
                     .purpose(FilePurpose.BATCH)
                     .build()).id();
+            LOG.debug("Uploaded batch input file {} as {}", filename, id);
+            return id;
         } catch (RuntimeException e) {
             GenAiErrorSupport.apply(exchange, e);
             throw e;
@@ -188,56 +190,12 @@ public class OpenAIBatchProducer extends DefaultProducer {
     }
 
     /**
-     * Writes the body to a temporary file, so every body type is uploaded the same way. The body is validated and the
-     * request lines are built before the file is created, and the file is removed if writing it fails, so a rejected
-     * exchange leaves nothing behind.
-     */
-    private Path writeTemporaryInput(Object body, String endpoint, Message in, OpenAIConfiguration config)
-            throws Exception {
-        List<String> lines = null;
-        InputStream stream = null;
-        if (body instanceof Map) {
-            lines = requestLines((Map<?, ?>) body, endpoint, in, config);
-        } else {
-            stream = body instanceof InputStream is ? is : in.getBody(InputStream.class);
-            if (stream == null) {
-                throw new IllegalArgumentException(
-                        "Unsupported body type for the batch operation: "
-                                                   + (body != null ? body.getClass().getName() : "null")
-                                                   + ". Supported: File, Path, InputStream, byte[], String, or a Map "
-                                                   + "keyed by custom_id");
-            }
-        }
-
-        Path file = Files.createTempFile("camel-openai-batch-", INPUT_FILE_SUFFIX);
-        try {
-            if (lines != null) {
-                try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-                    for (String line : lines) {
-                        writer.write(line);
-                        writer.newLine();
-                    }
-                }
-                LOG.debug("Wrote batch input file {} from a map body", file);
-            } else {
-                try (InputStream source = stream) {
-                    Files.copy(source, file, StandardCopyOption.REPLACE_EXISTING);
-                }
-            }
-        } catch (Exception e) {
-            Files.deleteIfExists(file);
-            throw e;
-        }
-        return file;
-    }
-
-    /**
      * Turns a map keyed by {@code custom_id} into the request lines of the input file, writing the envelope every line
      * needs around the request body.
      */
-    private List<String> requestLines(Map<?, ?> body, String endpoint, Message in, OpenAIConfiguration config)
+    private byte[] requestLines(Map<?, ?> body, String endpoint, Message in, OpenAIConfiguration config)
             throws Exception {
-        List<String> lines = new ArrayList<>(body.size());
+        StringBuilder lines = new StringBuilder();
         for (Map.Entry<?, ?> entry : body.entrySet()) {
             if (entry.getKey() == null || entry.getValue() == null) {
                 throw new IllegalArgumentException("The batch input map must not contain null keys or values");
@@ -262,9 +220,9 @@ public class OpenAIBatchProducer extends DefaultProducer {
             line.put("method", "POST");
             line.put("url", endpoint);
             line.put("body", requestBody);
-            lines.add(OBJECT_MAPPER.writeValueAsString(line));
+            lines.append(OBJECT_MAPPER.writeValueAsString(line)).append('\n');
         }
-        return lines;
+        return lines.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     /**

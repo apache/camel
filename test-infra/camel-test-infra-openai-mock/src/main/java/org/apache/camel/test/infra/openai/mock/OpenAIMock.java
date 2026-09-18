@@ -48,7 +48,6 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
     private final List<ImageExpectation> imageGenerationExpectations;
     private final List<ImageExpectation> imageEditExpectations;
     private final List<BatchExpectation> batchExpectations;
-    private final List<String> batchStatuses;
     private final BatchStore batchStore = new BatchStore();
     private final OpenAIMockBuilder builder;
     private final ObjectMapper objectMapper;
@@ -65,14 +64,13 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
         this.imageGenerationExpectations = new ArrayList<>();
         this.imageEditExpectations = new ArrayList<>();
         this.batchExpectations = new ArrayList<>();
-        this.batchStatuses = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
         this.builder = new OpenAIMockBuilder(
                 this, this.expectations, this.embeddingExpectations,
                 this.audioTranscriptionExpectations, this.audioTranslationExpectations,
                 this.speechExpectations, this.moderationExpectations,
                 this.imageGenerationExpectations, this.imageEditExpectations,
-                this.batchExpectations, this.batchStatuses);
+                this.batchExpectations);
     }
 
     /**
@@ -122,7 +120,7 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
                                 expectations, embeddingExpectations, audioTranscriptionExpectations,
                                 audioTranslationExpectations, speechExpectations, moderationExpectations,
                                 imageGenerationExpectations, imageEditExpectations,
-                                batchExpectations, batchStatuses, batchStore),
+                                batchExpectations, batchStore),
                         objectMapper))
                 .getFilters().add(new RequestRecordingFilter(receivedRequests));
 

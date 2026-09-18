@@ -22,9 +22,6 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -254,22 +251,11 @@ public class OpenAIBatchMockTest extends CamelTestSupport {
     }
 
     @Test
-    void shouldNotLeaveATemporaryFileBehindWhenTheBodyIsRejected() throws IOException {
-        Set<Path> before = temporaryInputFiles();
-
+    void shouldRejectAnUnsupportedBody() {
         assertThatThrownBy(() -> template.requestBody("direct:create", List.of("not a map")))
                 .rootCause()
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Unsupported body type");
-
-        assertThat(temporaryInputFiles()).isEqualTo(before);
-    }
-
-    private static Set<Path> temporaryInputFiles() throws IOException {
-        try (Stream<Path> files = Files.list(Path.of(System.getProperty("java.io.tmpdir")))) {
-            return files.filter(path -> path.getFileName().toString().startsWith("camel-openai-batch-"))
-                    .collect(Collectors.toSet());
-        }
     }
 
     @Test

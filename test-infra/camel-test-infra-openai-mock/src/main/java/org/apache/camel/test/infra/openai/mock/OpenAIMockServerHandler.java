@@ -51,8 +51,8 @@ public class OpenAIMockServerHandler implements HttpHandler {
         this.imageGenerationRequestHandler
                 = new ImageRequestHandler(expectations.imageGenerations(), objectMapper, false);
         this.imageEditRequestHandler = new ImageRequestHandler(expectations.imageEdits(), objectMapper, true);
-        this.batchRequestHandler = new BatchRequestHandler(
-                expectations.batches(), expectations.batchStatuses(), expectations.batchStore(), objectMapper);
+        this.batchRequestHandler
+                = new BatchRequestHandler(expectations.batches(), expectations.batchStore(), objectMapper);
     }
 
     @Override
