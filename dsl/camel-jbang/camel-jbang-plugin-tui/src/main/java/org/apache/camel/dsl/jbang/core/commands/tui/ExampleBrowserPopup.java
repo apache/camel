@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -56,8 +55,8 @@ class ExampleBrowserPopup {
     private List<JsonObject> catalog;
     private JsonObject selectedExample;
 
+    // the group (level) the browser is in, or null at the top level where the groups are listed
     private String currentFolder;
-    private String currentLevel;
     private int savedSelection;
     private List<Object> itemData;
 
@@ -102,7 +101,7 @@ class ExampleBrowserPopup {
         }
         currentFolder = null;
         visible = true;
-        listState.select(1);
+        listState.select(0);
     }
 
     void close() {
@@ -139,8 +138,21 @@ class ExampleBrowserPopup {
             return true;
         }
         if (ke.isChar('d')) {
-            loadDocFromExample();
+            loadDocForSelected();
             return true;
+        }
+        if (currentFolder == null) {
+            // 1 to 9 open the first nine groups, 0 the tenth
+            for (char c = '0'; c <= '9'; c++) {
+                if (ke.isChar(c)) {
+                    int n = c == '0' ? 10 : c - '0';
+                    List<String> levels = new ArrayList<>(ExampleHelper.groupByLevel(catalog).keySet());
+                    if (n >= 1 && n <= levels.size()) {
+                        enterFolder(levels.get(n - 1));
+                    }
+                    return true;
+                }
+            }
         }
         if (ke.isConfirm()) {
             activateSelected(true);
@@ -208,7 +220,7 @@ class ExampleBrowserPopup {
 
         List<ListItem> items = buildListItems(popupW - 4);
         String title = currentFolder != null
-                ? " " + ExampleHelper.formatCategory(currentFolder) + " "
+                ? " " + ExampleHelper.getGroupTitle(currentFolder) + " (" + folderExampleCount(currentFolder) + ") "
                 : " Run an Example (" + catalog.size() + ") ";
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
@@ -224,11 +236,18 @@ class ExampleBrowserPopup {
     }
 
     void renderFooter(List<Span> spans) {
-        TuiHelper.hint(spans, "r", "run");
-        TuiHelper.hint(spans, "Enter", currentFolder != null ? "run..." : "open");
-        TuiHelper.hint(spans, "d", "docs");
-        // inside a category Esc returns to the top level, at the top level it closes the browser
-        TuiHelper.hintLast(spans, "Esc", currentFolder != null ? "back" : "close");
+        if (currentFolder != null) {
+            TuiHelper.hint(spans, "r", "run");
+            TuiHelper.hint(spans, "Enter", "run...");
+            TuiHelper.hint(spans, "d", "docs");
+            // inside a group Esc returns to the groups, at the top level it closes the browser
+            TuiHelper.hintLast(spans, "Esc", "back");
+        } else {
+            TuiHelper.hint(spans, "Enter", "open");
+            TuiHelper.hint(spans, "1-9", "jump");
+            TuiHelper.hint(spans, "d", "docs");
+            TuiHelper.hintLast(spans, "Esc", "close");
+        }
     }
 
     SelectionContext getSelectionContext() {
@@ -242,9 +261,7 @@ class ExampleBrowserPopup {
             } else if (BACK_MARKER.equals(data)) {
                 items.add("..");
             } else if (data instanceof String folder) {
-                int slash = folder.indexOf('/');
-                String cat = slash > 0 ? folder.substring(slash + 1) : folder;
-                items.add(TuiIcons.FOLDER + " " + ExampleHelper.formatCategory(cat));
+                items.add(TuiIcons.FOLDER + " " + ExampleHelper.getGroupTitle(folder));
             } else if (data instanceof JsonObject ex) {
                 items.add(ExampleHelper.getShortName(ex));
             }
@@ -311,10 +328,9 @@ class ExampleBrowserPopup {
     private void enterFolder(String folder) {
         Integer sel = listState.selected();
         savedSelection = sel != null ? sel : 0;
-        int slash = folder.indexOf('/');
-        currentLevel = folder.substring(0, slash);
-        currentFolder = folder.substring(slash + 1);
-        listState.select(0);
+        currentFolder = folder;
+        // the first row inside a group is its introduction, the first example comes after it
+        listState.select(1);
     }
 
     private void navigateBack() {
@@ -348,12 +364,16 @@ class ExampleBrowserPopup {
         }
     }
 
-    private void loadDocFromExample() {
+    private void loadDocForSelected() {
         Integer sel = listState.selected();
         if (sel == null || sel >= itemData.size()) {
             return;
         }
         Object data = itemData.get(sel);
+        if (data instanceof String group) {
+            loadDocForGroup(group);
+            return;
+        }
         if (!(data instanceof JsonObject example)) {
             return;
         }
@@ -381,6 +401,18 @@ class ExampleBrowserPopup {
             docViewerPopup.openMarkdown(name, markdown, () -> visible = true);
         } else {
             notify("No documentation available for: " + name, true);
+        }
+    }
+
+    private void loadDocForGroup(String group) {
+        // the group's README in the examples repository: its introduction and its examples in reading order
+        String url = "https://raw.githubusercontent.com/apache/camel-jbang-examples/main/" + group + "/README.md";
+        String content = DocHelper.downloadContent(url);
+        if (content != null && !content.isEmpty()) {
+            visible = false;
+            docViewerPopup.openMarkdown(ExampleHelper.getGroupTitle(group), content, () -> visible = true);
+        } else {
+            notify("No documentation available for: " + ExampleHelper.getGroupTitle(group), true);
         }
     }
 
@@ -433,68 +465,30 @@ class ExampleBrowserPopup {
         List<ListItem> items = new ArrayList<>();
         List<Integer> heights = new ArrayList<>();
         List<Object> data = new ArrayList<>();
-
-        // the ladder order and titles come from ExampleHelper, so the TUI, the CLI listing and the README agree
-        Map<String, List<JsonObject>> levelGroups = ExampleHelper.groupByLevel(catalog);
-
-        boolean firstLevel = true;
-        for (Map.Entry<String, List<JsonObject>> group : levelGroups.entrySet()) {
-            List<JsonObject> entries = group.getValue();
-            if (entries.isEmpty()) {
-                continue;
-            }
-            String levelName = group.getKey();
-
-            String label = " " + ExampleHelper.getGroupTitle(levelName) + " ";
-            int pad = Math.max(0, (width - label.length()) / 2);
-            String header = "─".repeat(pad) + label + "─".repeat(pad);
-            items.add(ListItem.from(header).style(Style.EMPTY.dim()));
+        // the ladder: one row per group in reading order, the number is the hotkey
+        Map<String, List<JsonObject>> groups = ExampleHelper.groupByLevel(catalog);
+        int n = 0;
+        for (Map.Entry<String, List<JsonObject>> group : groups.entrySet()) {
+            n++;
+            String level = group.getKey();
+            String key = n <= 9 ? String.valueOf(n) : n == 10 ? "0" : " ";
+            String label = String.format(" %s  %s %s (%d)", key, TuiIcons.FOLDER, ExampleHelper.getGroupTitle(level),
+                    group.getValue().size());
+            String intro = ExampleHelper.getGroupIntro(level);
+            int introCol = Math.max(0, width - 34);
+            String padded = String.format("%-32s", TuiHelper.truncate(label, 32));
+            Line line = Line.from(Span.raw(padded), Span.styled(TuiHelper.truncate(intro, introCol), Style.EMPTY.dim()));
+            items.add(ListItem.from(Text.from(line)));
             heights.add(1);
-            data.add(null);
-
-            entries.sort((a, b) -> {
-                String catA = ExampleHelper.getCategory(a);
-                String catB = ExampleHelper.getCategory(b);
-                String sortA = catA.equals(levelName) ? "" : catA;
-                String sortB = catB.equals(levelName) ? "" : catB;
-                int cc = sortA.compareTo(sortB);
-                return cc != 0 ? cc : a.getString("name").compareTo(b.getString("name"));
-            });
-
-            Map<String, List<JsonObject>> categoryGroups = new LinkedHashMap<>();
-            for (JsonObject ex : entries) {
-                String cat = ExampleHelper.getCategory(ex);
-                categoryGroups.computeIfAbsent(cat, k -> new ArrayList<>()).add(ex);
-            }
-
-            for (Map.Entry<String, List<JsonObject>> catGroup : categoryGroups.entrySet()) {
-                String category = catGroup.getKey();
-                List<JsonObject> catEntries = catGroup.getValue();
-
-                if (category.equals(levelName)) {
-                    for (JsonObject ex : catEntries) {
-                        addExampleItem(items, heights, data, ex, width);
-                    }
-                } else {
-                    String folderLabel = " " + TuiIcons.FOLDER + " " + ExampleHelper.formatCategory(category)
-                                         + " (" + catEntries.size() + ")";
-                    items.add(ListItem.from(folderLabel));
-                    heights.add(1);
-                    data.add(levelName + "/" + category);
-                }
-            }
+            data.add(level);
         }
-
         items.add(ListItem.from(""));
         heights.add(1);
         data.add(null);
-        items.add(ListItem.from(" " + TuiIcons.BUNDLED + " = bundled  " + TuiIcons.ONLINE + " = online  "
-                                + TuiIcons.DOCKER + " = Docker  " + TuiIcons.INFRA + " = infra services  " + TuiIcons.CITRUS
-                                + " = Citrus tests")
+        items.add(ListItem.from(" Enter opens a group, a number jumps to it, d shows what the group is about")
                 .style(Style.EMPTY.dim()));
         heights.add(1);
         data.add(null);
-
         this.itemHeights = heights.stream().mapToInt(Integer::intValue).toArray();
         this.itemData = data;
         return items;
@@ -504,18 +498,25 @@ class ExampleBrowserPopup {
         List<ListItem> items = new ArrayList<>();
         List<Integer> heights = new ArrayList<>();
         List<Object> data = new ArrayList<>();
-
-        items.add(ListItem.from(" ..").style(Style.EMPTY.dim()));
+        String intro = ExampleHelper.getGroupIntro(currentFolder);
+        items.add(ListItem.from(" " + (intro.isEmpty() ? ".." : intro)).style(Style.EMPTY.dim()));
         heights.add(1);
         data.add(BACK_MARKER);
-
-        for (JsonObject ex : catalog) {
-            String level = ex.getStringOrDefault("level", "intermediate");
-            if (currentFolder.equals(ExampleHelper.getCategory(ex)) && currentLevel.equals(level)) {
+        List<JsonObject> entries = ExampleHelper.groupByLevel(catalog).get(currentFolder);
+        if (entries != null) {
+            for (JsonObject ex : entries) {
                 addExampleItem(items, heights, data, ex, width);
             }
         }
-
+        items.add(ListItem.from(""));
+        heights.add(1);
+        data.add(null);
+        items.add(ListItem.from(" " + TuiIcons.BUNDLED + " = bundled  " + TuiIcons.ONLINE + " = online  "
+                                + TuiIcons.DOCKER + " = Docker  " + TuiIcons.INFRA + " = infra services  " + TuiIcons.CITRUS
+                                + " = Citrus tests   Esc = back to the groups")
+                .style(Style.EMPTY.dim()));
+        heights.add(1);
+        data.add(null);
         this.itemHeights = heights.stream().mapToInt(Integer::intValue).toArray();
         this.itemData = data;
         return items;
@@ -557,46 +558,12 @@ class ExampleBrowserPopup {
     }
 
     private int folderExampleCount(String folder) {
-        int count = 0;
-        for (JsonObject ex : catalog) {
-            String level = ex.getStringOrDefault("level", "intermediate");
-            if (folder.equals(ExampleHelper.getCategory(ex)) && currentLevel.equals(level)) {
-                count++;
-            }
-        }
-        return count;
+        List<JsonObject> entries = ExampleHelper.groupByLevel(catalog).get(folder);
+        return entries != null ? entries.size() : 0;
     }
 
     private static List<JsonObject> loadAndSortExamples() {
-        List<JsonObject> list = ExampleHelper.loadCatalog();
-        list.sort((a, b) -> {
-            String levelA = a.getStringOrDefault("level", "beginner");
-            String levelB = b.getStringOrDefault("level", "beginner");
-            int la = levelOrder(levelA);
-            int lb = levelOrder(levelB);
-            if (la != lb) {
-                return Integer.compare(la, lb);
-            }
-            String catA = ExampleHelper.getCategory(a);
-            String catB = ExampleHelper.getCategory(b);
-            String sortCatA = catA.equals(levelA) ? "" : catA;
-            String sortCatB = catB.equals(levelB) ? "" : catB;
-            int cc = sortCatA.compareTo(sortCatB);
-            if (cc != 0) {
-                return cc;
-            }
-            return a.getStringOrDefault("name", "").compareTo(b.getStringOrDefault("name", ""));
-        });
-        return list;
-    }
-
-    private static int levelOrder(String level) {
-        return switch (level) {
-            case "beginner" -> 0;
-            case "intermediate" -> 1;
-            case "advanced" -> 2;
-            default -> 3;
-        };
+        return ExampleHelper.loadCatalog();
     }
 
     private void notify(String msg, boolean error) {

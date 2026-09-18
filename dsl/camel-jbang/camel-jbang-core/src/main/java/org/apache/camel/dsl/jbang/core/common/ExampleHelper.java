@@ -236,9 +236,22 @@ public final class ExampleHelper {
         }
         groups.values().removeIf(List::isEmpty);
         for (List<JsonObject> entries : groups.values()) {
-            entries.sort(Comparator.comparing(e -> e.getStringOrDefault("name", "")));
+            entries.sort(Comparator.comparingInt(ExampleHelper::getOrder)
+                    .thenComparing(e -> e.getStringOrDefault("name", "")));
         }
         return groups;
+    }
+
+    /**
+     * The reading order of the example within its group from the metadata, or a large number when it has none, so
+     * examples with an order come first and the rest sort by name.
+     */
+    public static int getOrder(JsonObject entry) {
+        Object order = entry.get("order");
+        if (order instanceof Number n) {
+            return n.intValue();
+        }
+        return Integer.MAX_VALUE;
     }
 
     /**
