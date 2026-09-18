@@ -958,6 +958,10 @@ public class ResilienceProcessor extends BaseProcessorSupport
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, true);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+            // rejected means the call was never attempted (breaker open or bulkhead full),
+            // so the fallback can tell that apart from a call that was made and failed
+            boolean rejected = throwable instanceof CallNotPermittedException || throwable instanceof BulkheadFullException;
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, rejected);
             if (throwable instanceof TimeoutException) {
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
             }

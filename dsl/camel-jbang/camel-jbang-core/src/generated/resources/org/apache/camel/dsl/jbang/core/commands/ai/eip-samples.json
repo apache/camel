@@ -104,6 +104,10 @@
   "circuitBreaker": [
     {
       "source": "circuitBreaker-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: timer:stock?period=1000\n      steps:\n        - circuitBreaker:\n            steps:\n              - to:\n                  uri: direct:supplier\n            onFallback:\n              steps:\n                - choice:\n                    when:\n                      - expression:\n                          simple:\n                            expression: \"${exchangeProperty.CamelCircuitBreakerResponseRejected} == true\"\n                        steps:\n                          - setBody:\n                              expression:\n                                constant:\n                                  expression: \"supplier is down, using the last known stock\"\n                    otherwise:\n                      steps:\n                        - setBody:\n                            expression:\n                              constant:\n                                expression: \"stock check failed, will try again\"\n"
+    },
+    {
+      "source": "circuitBreaker-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - circuitBreaker:\n            steps:\n              - to:\n                  uri: http:\/\/fooservice.com\/slow\n            onFallback:\n              steps:\n                - transform:\n                    expression:\n                      constant:\n                        expression: Fallback message\n        - to:\n            uri: mock:result\n"
     }
   ],

@@ -13,6 +13,15 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Circuit Breaker EIP
+
+The exchange property `CamelCircuitBreakerResponseRejected` is now also set inside the `onFallback`,
+in both `camel-resilience4j` and `camel-microprofile-fault-tolerance`: `true` when the call was not attempted
+because the breaker was open or the bulkhead was full, `false` when the call was made and failed or timed out.
+Prior to Camel 4.23 the property was only set when there was no fallback and was absent inside the fallback,
+so a fallback that tested it for `null` must now test for `true` or `false` instead.
+`CamelCircuitBreakerResponseShortCircuited` is unchanged and remains `true` whenever the fallback runs, whatever the cause.
+
 === Context reload now re-applies placeholder based component options
 
 When a context reload is triggered, for example by one of the vault components detecting that a secret was rotated,
