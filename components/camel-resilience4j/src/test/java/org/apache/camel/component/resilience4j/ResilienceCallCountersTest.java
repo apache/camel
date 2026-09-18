@@ -64,6 +64,26 @@ public class ResilienceCallCountersTest extends CamelTestSupport {
         assertEquals(0, cb.getNumberOfNotPermittedCalls());
     }
 
+    @Test
+    public void testBulkheadRejectedWithFallbackCounter() throws Exception {
+        getMockEndpoint("mock:bulkhead").expectedMessageCount(2);
+
+        // the first call holds the only bulkhead permit while it is slow,
+        // so the second call is rejected by the bulkhead and answered by the fallback
+        template.asyncSendBody("direct:bulkhead", "Hello World");
+        Thread.sleep(500);
+        template.sendBody("direct:bulkhead", "Hello World");
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        ResilienceProcessor cb = context.getProcessor("cbBulkhead", ResilienceProcessor.class);
+        assertEquals(1, cb.getNumberOfBulkheadRejectedCalls(),
+                "the rejected call is counted from inside the fallback path");
+        assertEquals(1, cb.getNumberOfFallbackCalls());
+        assertEquals(0, cb.getNumberOfNotPermittedCalls());
+        assertEquals(0, cb.getNumberOfTimedOutCalls());
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -91,6 +111,16 @@ public class ResilienceCallCountersTest extends CamelTestSupport {
 
                 from("direct:slowService")
                         .delay(2000).transform().constant("Slow response");
+
+                from("direct:bulkhead")
+                        .circuitBreaker().id("cbBulkhead")
+                        .resilience4jConfiguration()
+                        .bulkheadEnabled(true).bulkheadMaxConcurrentCalls(1).bulkheadMaxWaitDuration(0).end()
+                        .to("direct:slowService")
+                        .onFallback()
+                        .transform().constant("Fallback response")
+                        .end()
+                        .to("mock:bulkhead");
             }
         };
     }
