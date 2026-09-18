@@ -189,14 +189,18 @@ class OpensearchProducer extends DefaultAsyncProducer {
                 configIndexName = true;
             }
 
+            boolean configSize = false;
             Integer size = message.getHeader(OpensearchConstants.PARAM_SIZE, Integer.class);
             if (size == null) {
                 message.setHeader(OpensearchConstants.PARAM_SIZE, configuration.getSize());
+                configSize = true;
             }
 
+            boolean configFrom = false;
             Integer from = message.getHeader(OpensearchConstants.PARAM_FROM, Integer.class);
             if (from == null) {
                 message.setHeader(OpensearchConstants.PARAM_FROM, configuration.getFrom());
+                configFrom = true;
             }
 
             boolean configWaitForActiveShards = false;
@@ -211,7 +215,8 @@ class OpensearchProducer extends DefaultAsyncProducer {
                 documentClass = configuration.getDocumentClass();
             }
 
-            ActionContext ctx = new ActionContext(exchange, callback, transport, configIndexName, configWaitForActiveShards);
+            ActionContext ctx = new ActionContext(
+                    exchange, callback, transport, configIndexName, configWaitForActiveShards, configSize, configFrom);
 
             switch (operation) {
                 case Index -> processIndexAsync(ctx);
@@ -441,6 +446,12 @@ class OpensearchProducer extends DefaultAsyncProducer {
             if (ctx.configWaitForActiveShards()) {
                 message.removeHeader(OpensearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
             }
+            if (ctx.configSize()) {
+                message.removeHeader(OpensearchConstants.PARAM_SIZE);
+            }
+            if (ctx.configFrom()) {
+                message.removeHeader(OpensearchConstants.PARAM_FROM);
+            }
             if (configuration.isDisconnect() && openSearchClient == null) {
                 IOHelper.close(ctx.transport());
                 if (configuration.isEnableSniffer()) {
@@ -601,7 +612,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
      * An inner class providing all the information that an asynchronous action could need.
      */
     private record ActionContext(Exchange exchange, AsyncCallback callback, OpenSearchTransport transport,
-            boolean configIndexName, boolean configWaitForActiveShards) {
+            boolean configIndexName, boolean configWaitForActiveShards, boolean configSize, boolean configFrom) {
 
         OpenSearchAsyncClient getClient() {
             return new OpenSearchAsyncClient(transport);

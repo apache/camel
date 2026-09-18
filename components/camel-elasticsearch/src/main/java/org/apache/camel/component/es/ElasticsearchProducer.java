@@ -166,14 +166,18 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                 configIndexName = true;
             }
 
+            boolean configSize = false;
             Integer size = message.getHeader(ElasticsearchConstants.PARAM_SIZE, Integer.class);
             if (size == null) {
                 message.setHeader(ElasticsearchConstants.PARAM_SIZE, configuration.getSize());
+                configSize = true;
             }
 
+            boolean configFrom = false;
             Integer from = message.getHeader(ElasticsearchConstants.PARAM_FROM, Integer.class);
             if (from == null) {
                 message.setHeader(ElasticsearchConstants.PARAM_FROM, configuration.getFrom());
+                configFrom = true;
             }
 
             Boolean enableDocumentOnlyMode = message.getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.class);
@@ -193,7 +197,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
                 documentClass = configuration.getDocumentClass();
             }
 
-            ActionContext ctx = new ActionContext(exchange, callback, transport, configIndexName, configWaitForActiveShards);
+            ActionContext ctx = new ActionContext(
+                    exchange, callback, transport, configIndexName, configWaitForActiveShards, configSize, configFrom);
 
             switch (operation) {
                 case Index: {
@@ -455,6 +460,12 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             if (ctx.isConfigWaitForActiveShards()) {
                 message.removeHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
             }
+            if (ctx.isConfigSize()) {
+                message.removeHeader(ElasticsearchConstants.PARAM_SIZE);
+            }
+            if (ctx.isConfigFrom()) {
+                message.removeHeader(ElasticsearchConstants.PARAM_FROM);
+            }
             if (configuration.isDisconnect()) {
                 IOHelper.close(ctx.getTransport());
                 if (configuration.isEnableSniffer()) {
@@ -586,14 +597,18 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         private final ElasticsearchTransport transport;
         private final boolean configIndexName;
         private final boolean configWaitForActiveShards;
+        private final boolean configSize;
+        private final boolean configFrom;
 
         ActionContext(Exchange exchange, AsyncCallback callback, ElasticsearchTransport transport, boolean configIndexName,
-                      boolean configWaitForActiveShards) {
+                      boolean configWaitForActiveShards, boolean configSize, boolean configFrom) {
             this.exchange = exchange;
             this.callback = callback;
             this.transport = transport;
             this.configIndexName = configIndexName;
             this.configWaitForActiveShards = configWaitForActiveShards;
+            this.configSize = configSize;
+            this.configFrom = configFrom;
         }
 
         ElasticsearchTransport getTransport() {
@@ -610,6 +625,14 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
         boolean isConfigWaitForActiveShards() {
             return configWaitForActiveShards;
+        }
+
+        boolean isConfigSize() {
+            return configSize;
+        }
+
+        boolean isConfigFrom() {
+            return configFrom;
         }
 
         Exchange getExchange() {
