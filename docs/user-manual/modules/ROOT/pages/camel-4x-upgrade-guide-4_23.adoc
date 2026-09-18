@@ -2240,3 +2240,17 @@ The `maxRetryTimeout` endpoint and component option is deprecated in both `camel
 it had no effect. The option is kept for backward compatibility of existing endpoint URIs but is marked
 deprecated and will be removed in a future release. Routes that set `maxRetryTimeout` can simply drop it;
 behaviour is unchanged.
+
+=== camel-http - HttpComponent now implements SecretRotationAware
+
+`HttpComponent` now implements `SecretRotationAware` (added in 4.23). When a vault secret is rotated,
+Camel calls `onSecretRotation()` on every registered `SecretRotationAware` component and then restarts
+all routes so that fresh endpoints are created from the updated component configuration.
+
+As the first built-in HTTP component to implement this interface, `camel-http` now supports zero-downtime
+credential rotation without a full context restart: configure the component with vault-backed property
+placeholders (e.g. `{{aws:mySecret/username}}` / `{{aws:mySecret/password}}`), enable
+`DefaultContextReloadStrategy`, and the credentials will be picked up automatically when the secret
+rotates in the vault.
+
+No code changes are required in existing routes; this is a backwards-compatible addition.

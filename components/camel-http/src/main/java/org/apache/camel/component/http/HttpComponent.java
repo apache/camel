@@ -588,16 +588,24 @@ public class HttpComponent extends HttpCommonComponent
         return endpoint;
     }
 
+    /**
+     * Notifies this component that a secret has been rotated.
+     * <p>
+     * The component options ({@code authUsername}, {@code authPassword}, {@code proxyAuthUsername},
+     * {@code proxyAuthPassword}, etc.) have already been re-applied with the newly resolved secret values before this
+     * callback fires. No further action is taken here.
+     *
+     * @implNote This method is intentionally a no-op beyond logging. The route restart that follows this callback —
+     *           triggered by {@code DefaultContextReloadStrategy.reloadRoutes()} — stops the active routes, shuts down
+     *           their endpoints, and recreates them from the updated component fields, so subsequent requests will use
+     *           the new credentials. Re-authenticating inside this method would be wrong: the callback fires
+     *           <em>before</em> {@code reloadRoutes()}, so any connection re-established here would be closed again
+     *           immediately by the route shutdown. The shared {@link org.apache.hc.client5.http.io.HttpClientConnectionManager}
+     *           is preserved across the restart because {@code HttpEndpoint.createHttpClient()} marks it as shared when
+     *           it belongs to the component, letting the pool drain naturally rather than being closed abruptly.
+     */
     @Override
     public void onSecretRotation(Object source) throws Exception {
-        // The component options (authUsername, authPassword, proxyAuthUsername, proxyAuthPassword, etc.)
-        // have already been re-applied with the newly resolved secret values before this callback fires.
-        // Log the rotation event. The route restart that follows this callback (triggered by
-        // DefaultContextReloadStrategy.reloadRoutes()) will stop the active routes, shut down their
-        // endpoints, and recreate them from the updated component fields — so subsequent requests will
-        // use the new credentials. The shared PoolingHttpClientConnectionManager is preserved across
-        // the restart because HttpEndpoint.createHttpClient() marks it as shared when it belongs to
-        // the component, letting the pool drain naturally rather than being closed abruptly.
         LOG.info("Secret rotation triggered (source={}): HTTP component credentials have been updated; "
                  + "endpoints will be rebuilt with the new credentials on the next route start",
                 source);

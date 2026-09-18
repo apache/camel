@@ -149,6 +149,17 @@ class HttpComponentSecretRotationAwareTest extends BaseHttpTest {
         // then onSecretRotation() is called, then reloadAllRoutes() clears the endpoint registry
         // and restarts all route definitions with fresh endpoints.
         expectedCreds.set(new String[] { "alice", "secret2" });
+
+        // Negative assertion: the server now requires secret2, so the existing route (still using secret1)
+        // must be rejected. This guards against a false-positive in Phase 3 — if this assertion fails, the
+        // server never actually enforced the credential change and Phase 3 would pass vacuously.
+        Exchange exRejected = template.request("direct:secured", e -> {
+        });
+        assertNotNull(exRejected);
+        assertEquals(HttpStatus.SC_UNAUTHORIZED,
+                exRejected.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE),
+                "Old credentials must be rejected after server-side secret rotation");
+
         config.setAuthPassword("secret2");
         component.onSecretRotation("vault-rotation-test");
 
