@@ -96,8 +96,11 @@ Don't have a route yet? The CLI ships with a catalog of ready-to-run examples:
 camel run --example
 ----
 
-This lists all available examples grouped by difficulty (beginner, intermediate, advanced),
-with icons showing whether they are bundled (work offline), require Docker, or include Citrus tests.
+This lists the examples as a ladder: quick start first, then run, transform and map, route, fail well, connect
+without a service, connect to one service, contracts and security, AI and cloud, with showcase last. Each group
+has a one-line introduction, each example says what you will see when it runs and what it teaches, and icons
+show whether it is bundled (works offline), requires Docker, has Citrus tests, or needs a local model.
+An example can be named by its short name or by its group, `route/aggregator`.
 
 Run one directly:
 

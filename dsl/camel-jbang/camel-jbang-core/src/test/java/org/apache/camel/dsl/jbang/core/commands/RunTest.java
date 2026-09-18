@@ -112,7 +112,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     @Test
     public void shouldSuggestSimilarExample() throws Exception {
         Run command = new Run(new CamelJBangMain().withPrinter(printer));
-        command.example = "eip/circuit-brake";
+        command.example = "fail-well/circuit-brake";
         int exit = command.doCall();
 
         Assertions.assertEquals(1, exit);

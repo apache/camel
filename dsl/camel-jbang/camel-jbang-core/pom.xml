@@ -341,6 +341,23 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.groovy</groupId>
+                                <artifactId>groovy-ant</artifactId>
+                                <version>${groovy-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.groovy</groupId>
+                                <artifactId>groovy-json</artifactId>
+                                <version>${groovy-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.groovy</groupId>
+                                <artifactId>groovy</artifactId>
+                                <version>${groovy-version}</version>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
                                 <id>download-example-catalog</id>
@@ -352,73 +369,27 @@
                                     <target>
                                         <property name="examples.base" value="https://raw.githubusercontent.com/apache/camel-jbang-examples/main"/>
                                         <property name="examples.dest" value="${project.basedir}/src/main/resources/examples"/>
-                                        <!-- Catalog -->
+                                        <!-- the catalog first; the bundled examples and their files are read from it -->
                                         <get src="${examples.base}/camel-jbang-example-catalog.json"
                                              dest="${examples.dest}/camel-jbang-example-catalog.json"
                                              usetimestamp="true"/>
-                                        <!-- Bundled examples -->
-                                        <macrodef name="sync-example">
-                                            <attribute name="name"/>
-                                            <attribute name="file"/>
-                                            <sequential>
-                                                <mkdir dir="${examples.dest}/@{name}"/>
-                                                <get src="${examples.base}/@{name}/@{file}"
-                                                     dest="${examples.dest}/@{name}/@{file}"
-                                                     usetimestamp="true"/>
-                                            </sequential>
-                                        </macrodef>
-                                        <!-- beginner/camel-1-tribute -->
-                                        <sync-example name="beginner/camel-1-tribute" file="README.md"/>
-                                        <sync-example name="beginner/camel-1-tribute" file="application.properties"/>
-                                        <sync-example name="beginner/camel-1-tribute" file="jms-to-file.camel.yaml"/>
-                                        <!-- beginner/cron-log -->
-                                        <sync-example name="beginner/cron-log" file="README.md"/>
-                                        <sync-example name="beginner/cron-log" file="application.properties"/>
-                                        <sync-example name="beginner/cron-log" file="cron-log.camel.yaml"/>
-                                        <!-- beginner/rest-api -->
-                                        <sync-example name="beginner/rest-api" file="README.md"/>
-                                        <sync-example name="beginner/rest-api" file="application.properties"/>
-                                        <sync-example name="beginner/rest-api" file="rest-api.camel.yaml"/>
-                                        <!-- beginner/routes -->
-                                        <sync-example name="beginner/routes" file="Greeter.java"/>
-                                        <sync-example name="beginner/routes" file="README.md"/>
-                                        <sync-example name="beginner/routes" file="application.properties"/>
-                                        <sync-example name="beginner/routes" file="beans.yaml"/>
-                                        <sync-example name="beginner/routes" file="routes.camel.yaml"/>
-                                        <!-- beginner/timer-log -->
-                                        <sync-example name="beginner/timer-log" file="README.md"/>
-                                        <sync-example name="beginner/timer-log" file="application.properties"/>
-                                        <sync-example name="beginner/timer-log" file="timer-log.camel.yaml"/>
-                                        <!-- beginner/tui-hello-world -->
-                                        <sync-example name="beginner/tui-hello-world" file="README.md"/>
-                                        <sync-example name="beginner/tui-hello-world" file="tui-hello-world.yaml"/>
-                                        <!-- database/sql -->
-                                        <sync-example name="database/sql" file="README.md"/>
-                                        <sync-example name="database/sql" file="application.properties"/>
-                                        <sync-example name="database/sql" file="sql.camel.yaml"/>
-                                        <!-- eip/circuit-breaker -->
-                                        <sync-example name="eip/circuit-breaker" file="README.md"/>
-                                        <sync-example name="eip/circuit-breaker" file="route.camel.yaml"/>
-                                        <!-- language/groovy -->
-                                        <sync-example name="language/groovy" file="README.md"/>
-                                        <sync-example name="language/groovy" file="application.properties"/>
-                                        <sync-example name="language/groovy" file="groovy.camel.yaml"/>
-                                        <!-- observability/memory-leak -->
-                                        <sync-example name="observability/memory-leak" file="MemoryLeak.java"/>
-                                        <sync-example name="observability/memory-leak" file="README.md"/>
-                                        <!-- observability/message-size -->
-                                        <sync-example name="observability/message-size" file="README.md"/>
-                                        <sync-example name="observability/message-size" file="orders.camel.yaml"/>
-                                        <!-- observability/route-topology -->
-                                        <sync-example name="observability/route-topology" file="README.md"/>
-                                        <sync-example name="observability/route-topology" file="application.properties"/>
-                                        <sync-example name="observability/route-topology" file="route-topology.camel.yaml"/>
-                                        <!-- transformation/xslt -->
-                                        <sync-example name="transformation/xslt" file="README.md"/>
-                                        <sync-example name="transformation/xslt" file="consumer.camel.yaml"/>
-                                        <mkdir dir="${examples.dest}/transformation/xslt/input"/>
-                                        <sync-example name="transformation/xslt" file="input/account.xml"/>
-                                        <sync-example name="transformation/xslt" file="stylesheet.xsl"/>
+                                        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath"/>
+                                        <groovy><![CDATA[
+                                            import groovy.json.JsonSlurper
+                                            def base = properties['examples.base']
+                                            def dest = new File(properties['examples.dest'])
+                                            def catalog = new JsonSlurper().parse(new File(dest, 'camel-jbang-example-catalog.json'))
+                                            // start from a clean tree so examples that left the catalog, or moved, do not linger
+                                            dest.listFiles().findAll { it.directory }.each { it.deleteDir() }
+                                            catalog.findAll { it.bundled }.each { ex ->
+                                                ex.files.each { f ->
+                                                    def target = new File(dest, ex.name + '/' + f)
+                                                    target.parentFile.mkdirs()
+                                                    new URL("${base}/${ex.name}/${f}").withInputStream { i -> target.withOutputStream { o -> o << i } }
+                                                    println "synced ${ex.name}/${f}"
+                                                }
+                                            }
+                                        ]]></groovy>
                                     </target>
                                 </configuration>
                             </execution>

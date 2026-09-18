@@ -434,14 +434,8 @@ class ExampleBrowserPopup {
         List<Integer> heights = new ArrayList<>();
         List<Object> data = new ArrayList<>();
 
-        Map<String, List<JsonObject>> levelGroups = new LinkedHashMap<>();
-        for (String level : new String[] { "beginner", "intermediate", "advanced" }) {
-            levelGroups.put(level, new ArrayList<>());
-        }
-        for (JsonObject ex : catalog) {
-            String level = ex.getStringOrDefault("level", "intermediate");
-            levelGroups.computeIfAbsent(level, k -> new ArrayList<>()).add(ex);
-        }
+        // the ladder order and titles come from ExampleHelper, so the TUI, the CLI listing and the README agree
+        Map<String, List<JsonObject>> levelGroups = ExampleHelper.groupByLevel(catalog);
 
         boolean firstLevel = true;
         for (Map.Entry<String, List<JsonObject>> group : levelGroups.entrySet()) {
@@ -451,7 +445,7 @@ class ExampleBrowserPopup {
             }
             String levelName = group.getKey();
 
-            String label = " " + TuiHelper.capitalize(levelName) + " ";
+            String label = " " + ExampleHelper.getGroupTitle(levelName) + " ";
             int pad = Math.max(0, (width - label.length()) / 2);
             String header = "─".repeat(pad) + label + "─".repeat(pad);
             items.add(ListItem.from(header).style(Style.EMPTY.dim()));

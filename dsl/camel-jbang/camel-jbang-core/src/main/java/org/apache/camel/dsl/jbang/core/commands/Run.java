@@ -408,42 +408,19 @@ public class Run extends CamelCommand {
             printer().println("Available examples:");
         }
 
-        Map<String, List<JsonObject>> groups = new LinkedHashMap<>();
-        for (String level : new String[] { "beginner", "intermediate", "advanced" }) {
-            groups.put(level, new ArrayList<>());
-        }
-        for (JsonObject entry : filtered) {
-            String level = entry.getString("level");
-            if (level == null) {
-                level = "intermediate";
-            }
-            groups.computeIfAbsent(level, k -> new ArrayList<>()).add(entry);
-        }
-
+        Map<String, List<JsonObject>> groups = ExampleHelper.groupByLevel(filtered);
         for (Map.Entry<String, List<JsonObject>> group : groups.entrySet()) {
-            List<JsonObject> entries = group.getValue();
-            if (entries.isEmpty()) {
-                continue;
-            }
-            String levelName = group.getKey();
-            entries.sort(Comparator.comparing((JsonObject e) -> {
-                String cat = ExampleHelper.getCategory(e);
-                return cat.equals(levelName) ? "" : cat;
-            }).thenComparing(e -> e.getString("name")));
+            String level = group.getKey();
             printer().println();
-            String levelLabel = levelName.substring(0, 1).toUpperCase(Locale.ROOT) + levelName.substring(1) + ":";
-            printer().println(levelLabel);
-            printer().println("=".repeat(levelLabel.length()));
-            String currentCategory = null;
-            for (JsonObject entry : entries) {
-                String category = ExampleHelper.getCategory(entry);
-                if (!category.equals(currentCategory)) {
-                    currentCategory = category;
-                    if (!category.equals(levelName)) {
-                        printer().println();
-                        printer().println("  " + ExampleHelper.formatCategory(category) + ":");
-                    }
-                }
+            String title = ExampleHelper.getGroupTitle(level) + ":";
+            printer().println(title);
+            printer().println("=".repeat(title.length()));
+            String intro = ExampleHelper.getGroupIntro(level);
+            if (!intro.isEmpty()) {
+                printer().println("  " + intro);
+                printer().println();
+            }
+            for (JsonObject entry : group.getValue()) {
                 String eName = ExampleHelper.getShortName(entry);
                 String desc = entry.getString("description");
                 StringBuilder icons = new StringBuilder();
@@ -462,12 +439,21 @@ public class Run extends CamelCommand {
                 } else {
                     icons.append("  ");
                 }
-                printer().printf("  %s %-30s %s%n", icons, eName, desc);
+                if (ExampleHelper.isCiSkip(entry)) {
+                    icons.append("🤖");
+                } else {
+                    icons.append("  ");
+                }
+                printer().printf("  %s %-28s %s%n", icons, eName, desc);
+                String teaches = ExampleHelper.getTeachesSummary(entry);
+                if (!teaches.isEmpty()) {
+                    printer().printf("  %s %-28s %s%n", "        ", "", teaches);
+                }
             }
         }
         printer().println();
         printer().println(
-                "  📦 = bundled (works offline)  🌐 = online (fetched from GitHub)  🐳 = requires Docker  🍋 = Citrus tests");
+                "  📦 = bundled (works offline)  🌐 = online (fetched from GitHub)  🐳 = requires Docker  🍋 = Citrus tests  🤖 = needs a local model");
         printer().println();
         printer().println("Usage: camel run --example=<name>");
         printer().println("       camel run --example=<name> --dev");
@@ -476,6 +462,17 @@ public class Run extends CamelCommand {
 
     private int runExample() throws Exception {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
+        if (!example.contains("/")) {
+            List<JsonObject> same = ExampleHelper.findExamplesByShortName(catalog, example);
+            if (same.size() > 1) {
+                List<String> names = new ArrayList<>();
+                for (JsonObject e : same) {
+                    names.add(e.getString("name"));
+                }
+                printer().printErr("Ambiguous example: " + example + ". Use one of: " + String.join(", ", names));
+                return 1;
+            }
+        }
         JsonObject entry = ExampleHelper.findExample(catalog, example);
 
         if (entry == null) {
