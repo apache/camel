@@ -40,7 +40,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Example
 
-To set up a route that generates a single event at the start of the route:
+To set up a route that generates a single event once when Camel starts:
 
 [tabs]
 ====
