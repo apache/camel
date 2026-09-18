@@ -381,6 +381,80 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * The endpoint every request in a batch calls. Required by the batch
+         * operation, which validates it against the endpoints the Batch API
+         * supports.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param batchEndpoint the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder batchEndpoint(String batchEndpoint) {
+            doSetProperty("batchEndpoint", batchEndpoint);
+            return this;
+        }
+        /**
+         * Metadata to attach to a batch, used to find it again later (e.g.
+         * batchMetadata.job=nightly-enrichment). This is a multi-value option
+         * with prefix: batchMetadata.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the batchMetadata(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: producer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder batchMetadata(String key, Object value) {
+            doSetMultiValueProperty("batchMetadata", "batchMetadata." + key, value);
+            return this;
+        }
+        /**
+         * Metadata to attach to a batch, used to find it again later (e.g.
+         * batchMetadata.job=nightly-enrichment). This is a multi-value option
+         * with prefix: batchMetadata.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the batchMetadata(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: producer
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder batchMetadata(Map values) {
+            doSetMultiValueProperties("batchMetadata", "batchMetadata.", values);
+            return this;
+        }
+        /**
+         * Which result file the batch-results operation downloads: the output
+         * file holding the results of the successful requests, or the error
+         * file holding the failed ones.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: output
+         * Group: producer
+         * 
+         * @param batchResultsFile the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder batchResultsFile(String batchResultsFile) {
+            doSetProperty("batchResultsFile", batchResultsFile);
+            return this;
+        }
+        /**
          * Comma-separated hosted tools for the Responses API: web_search,
          * file_search, code_interpreter.
          * 
@@ -2185,11 +2259,13 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'embeddings',
-         * 'tool-execution', 'audio-transcription', 'audio-translation',
-         * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
-         * There are 12 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, embeddings,
+         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
+         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
+         * 'audio-transcription', 'audio-translation', 'audio-speech',
+         * 'moderation', 'image-generation', or 'image-edit'
+         * There are 16 enums and the value can be one of: chat-completion,
+         * responses, responses-retrieve, responses-cancel, batch,
+         * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
          * moderation, image-generation, image-edit
          * 
@@ -2212,11 +2288,13 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'embeddings',
-         * 'tool-execution', 'audio-transcription', 'audio-translation',
-         * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
-         * There are 12 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, embeddings,
+         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
+         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
+         * 'audio-transcription', 'audio-translation', 'audio-speech',
+         * 'moderation', 'image-generation', or 'image-edit'
+         * There are 16 enums and the value can be one of: chat-completion,
+         * responses, responses-retrieve, responses-cancel, batch,
+         * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
          * moderation, image-generation, image-edit
          * 
@@ -2713,6 +2791,169 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIAudioTranslationResponse() {
             return "CamelOpenAIAudioTranslationResponse";
+        }
+        /**
+         * The id of the batch to act on. Set by the batch operation, and read
+         * by batch-retrieve, batch-cancel and batch-results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchId}.
+         */
+        public String openAIBatchId() {
+            return "CamelOpenAIBatchId";
+        }
+        /**
+         * The endpoint every request in the batch calls, such as
+         * /v1/chat/completions. Overrides the batchEndpoint option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchEndpoint}.
+         */
+        public String openAIBatchEndpoint() {
+            return "CamelOpenAIBatchEndpoint";
+        }
+        /**
+         * Metadata to attach to the batch. Overrides the batchMetadata option.
+         * 
+         * The option is a: {@code java.util.Map<String, String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchMetadata}.
+         */
+        public String openAIBatchMetadata() {
+            return "CamelOpenAIBatchMetadata";
+        }
+        /**
+         * Which result file the batch-results operation downloads: 'output' or
+         * 'error'. Overrides the batchResultsFile option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchResultsFile}.
+         */
+        public String openAIBatchResultsFile() {
+            return "CamelOpenAIBatchResultsFile";
+        }
+        /**
+         * The status of the batch: validating, failed, in_progress, finalizing,
+         * completed, expired, cancelling or cancelled.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchStatus}.
+         */
+        public String openAIBatchStatus() {
+            return "CamelOpenAIBatchStatus";
+        }
+        /**
+         * The id of the uploaded input file of the batch.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchInputFileId}.
+         */
+        public String openAIBatchInputFileId() {
+            return "CamelOpenAIBatchInputFileId";
+        }
+        /**
+         * The id of the file holding the results of the successful requests.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchOutputFileId}.
+         */
+        public String openAIBatchOutputFileId() {
+            return "CamelOpenAIBatchOutputFileId";
+        }
+        /**
+         * The id of the file holding the results of the failed requests.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchErrorFileId}.
+         */
+        public String openAIBatchErrorFileId() {
+            return "CamelOpenAIBatchErrorFileId";
+        }
+        /**
+         * Total number of requests in the batch.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchRequestCountTotal}.
+         */
+        public String openAIBatchRequestCountTotal() {
+            return "CamelOpenAIBatchRequestCountTotal";
+        }
+        /**
+         * Number of requests in the batch that completed successfully.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * OpenAIBatchRequestCountCompleted}.
+         */
+        public String openAIBatchRequestCountCompleted() {
+            return "CamelOpenAIBatchRequestCountCompleted";
+        }
+        /**
+         * Number of requests in the batch that failed.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchRequestCountFailed}.
+         */
+        public String openAIBatchRequestCountFailed() {
+            return "CamelOpenAIBatchRequestCountFailed";
+        }
+        /**
+         * The errors that made the batch fail validation, each a map of the
+         * code, message, param and line fields of the API.
+         * 
+         * The option is a: {@code java.util.List<java.util.Map<String,
+         * Object>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchErrors}.
+         */
+        public String openAIBatchErrors() {
+            return "CamelOpenAIBatchErrors";
+        }
+        /**
+         * The complete OpenAI batch object.
+         * 
+         * The option is a: {@code com.openai.models.batches.Batch} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchResponse}.
+         */
+        public String openAIBatchResponse() {
+            return "CamelOpenAIBatchResponse";
         }
         /**
          * The model to use for embeddings.

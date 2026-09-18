@@ -134,6 +134,48 @@ public final class OpenAIConstants {
               javaType = "com.openai.models.audio.translations.TranslationCreateResponse")
     public static final String AUDIO_TRANSLATION_RESPONSE = "CamelOpenAIAudioTranslationResponse";
 
+    // Batch Input Headers
+    @Metadata(description = "The id of the batch to act on. Set by the batch operation, and read by "
+                            + "batch-retrieve, batch-cancel and batch-results",
+              javaType = "String")
+    public static final String BATCH_ID = "CamelOpenAIBatchId";
+    @Metadata(description = "The endpoint every request in the batch calls, such as /v1/chat/completions. Overrides "
+                            + "the batchEndpoint option",
+              javaType = "String")
+    public static final String BATCH_ENDPOINT = "CamelOpenAIBatchEndpoint";
+    @Metadata(description = "Metadata to attach to the batch. Overrides the batchMetadata option",
+              javaType = "java.util.Map<String, String>")
+    public static final String BATCH_METADATA = "CamelOpenAIBatchMetadata";
+    @Metadata(description = "Which result file the batch-results operation downloads: 'output' or 'error'. "
+                            + "Overrides the batchResultsFile option",
+              javaType = "String")
+    public static final String BATCH_RESULTS_FILE = "CamelOpenAIBatchResultsFile";
+
+    // Batch Output Headers
+    @Metadata(description = "The status of the batch: validating, failed, in_progress, finalizing, completed, "
+                            + "expired, cancelling or cancelled",
+              javaType = "String")
+    public static final String BATCH_STATUS = "CamelOpenAIBatchStatus";
+    @Metadata(description = "The id of the uploaded input file of the batch", javaType = "String")
+    public static final String BATCH_INPUT_FILE_ID = "CamelOpenAIBatchInputFileId";
+    @Metadata(description = "The id of the file holding the results of the successful requests", javaType = "String")
+    public static final String BATCH_OUTPUT_FILE_ID = "CamelOpenAIBatchOutputFileId";
+    @Metadata(description = "The id of the file holding the results of the failed requests", javaType = "String")
+    public static final String BATCH_ERROR_FILE_ID = "CamelOpenAIBatchErrorFileId";
+    @Metadata(description = "Total number of requests in the batch", javaType = "Long")
+    public static final String BATCH_REQUEST_COUNT_TOTAL = "CamelOpenAIBatchRequestCountTotal";
+    @Metadata(description = "Number of requests in the batch that completed successfully", javaType = "Long")
+    public static final String BATCH_REQUEST_COUNT_COMPLETED = "CamelOpenAIBatchRequestCountCompleted";
+    @Metadata(description = "Number of requests in the batch that failed", javaType = "Long")
+    public static final String BATCH_REQUEST_COUNT_FAILED = "CamelOpenAIBatchRequestCountFailed";
+    @Metadata(description = "The errors that made the batch fail validation, each a map of the code, message, param "
+                            + "and line fields of the API",
+              javaType = "java.util.List<java.util.Map<String, Object>>")
+    public static final String BATCH_ERRORS = "CamelOpenAIBatchErrors";
+
+    @Metadata(description = "The complete OpenAI batch object", javaType = "com.openai.models.batches.Batch")
+    public static final String BATCH_RESPONSE = "CamelOpenAIBatchResponse";
+
     // Embeddings Input Headers
     @Metadata(description = "The model to use for embeddings", javaType = "String")
     public static final String EMBEDDING_MODEL = "CamelOpenAIEmbeddingModel";

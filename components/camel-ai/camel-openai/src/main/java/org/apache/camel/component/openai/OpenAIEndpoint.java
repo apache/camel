@@ -90,7 +90,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true,
               description = "The operation to perform: 'chat-completion', 'responses', 'responses-retrieve', "
-                            + "'responses-cancel', 'embeddings', 'tool-execution', 'audio-transcription', "
+                            + "'responses-cancel', 'batch', 'batch-retrieve', 'batch-cancel', 'batch-results', "
+                            + "'embeddings', 'tool-execution', 'audio-transcription', "
                             + "'audio-translation', 'audio-speech', 'moderation', 'image-generation', or 'image-edit'")
     private OpenAIOperations operation;
 
@@ -130,6 +131,10 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             case responses -> new OpenAIResponsesProducer(this);
             case responsesRetrieve -> new OpenAIResponsesStoredProducer(this, false);
             case responsesCancel -> new OpenAIResponsesStoredProducer(this, true);
+            case batch -> new OpenAIBatchProducer(this);
+            case batchRetrieve -> new OpenAIBatchStoredProducer(this, false);
+            case batchCancel -> new OpenAIBatchStoredProducer(this, true);
+            case batchResults -> new OpenAIBatchResultsProducer(this);
             case embeddings -> new OpenAIEmbeddingsProducer(this);
             case toolExecution -> new OpenAIToolExecutionProducer(this);
             case audioTranscription -> new OpenAIAudioTranscriptionProducer(this);

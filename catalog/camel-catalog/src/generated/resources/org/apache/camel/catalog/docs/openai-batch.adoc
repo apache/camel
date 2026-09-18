@@ -1,0 +1,144 @@
+= OpenAI - Batch API Operations
+:tabs-sync-option:
+
+xref:ROOT:openai-component.adoc[Back to OpenAI Component]
+
+The Batch API runs requests offline at half the price of the synchronous API, against a separate rate limit, and
+returns the answers within 24 hours as a file. It suits work nobody waits for: overnight enrichment, embedding
+backfills, moderation backlogs and prompt regression runs.
+
+Four operations cover the flow:
+
+* `batch` - uploads the requests as a JSONL file and creates the batch
+* `batch-retrieve` - reports the status and request counts of a batch
+* `batch-cancel` - cancels a batch that is still running
+* `batch-results` - downloads the output file, or the error file
+
+== Building the input
+
+The body of the `batch` operation is either the JSONL itself (`File`, `Path`, `WrappedFile`, `InputStream`,
+`byte[]` or String), or a `Map` keyed by `custom_id`, the id that ties each answer back to its request.
+
+For a map, the component writes the envelope of every line (`method` and the `url` of `batchEndpoint`). What the
+value holds decides the request body:
+
+* a String is turned into a request built from the endpoint options, for `/v1/chat/completions`, `/v1/responses`,
+  `/v1/embeddings` and `/v1/moderations`
+* a `Map` or `JsonNode` is used as the request body as it is, which is what the other endpoints need, and what
+  lets each line use different parameters
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// prompts: the request of every line comes from the options
+from("direct:classify")
+    .setBody(constant(Map.of("ticket-1", "I was charged twice", "ticket-2", "The app crashes")))
+    .to("openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini"
+        + "&systemMessage=Classify the ticket&batchMetadata.job=triage")
+    .log("Batch ${header.CamelOpenAIBatchId} is ${header.CamelOpenAIBatchStatus}");
+
+// full request bodies: a different model per line
+from("direct:mixed")
+    .setBody(constant(Map.of("a", Map.of("model", "gpt-4o-mini", "messages",
+            List.of(Map.of("role", "user", "content", "Summarise"))))))
+    .to("openai:batch?batchEndpoint=/v1/chat/completions");
+
+// a JSONL file produced elsewhere is uploaded unchanged
+from("file:batches/inbox?include=.*\\.jsonl")
+    .to("openai:batch?batchEndpoint=/v1/chat/completions");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:classify
+    steps:
+      - to: "openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini&systemMessage=Classify the ticket"
+      - log: "Batch ${header.CamelOpenAIBatchId} is ${header.CamelOpenAIBatchStatus}"
+----
+====
+
+== Waiting for the batch
+
+`batch-retrieve` reads `CamelOpenAIBatchId` and reports the batch on the headers, leaving the body untouched. A
+short job can poll in place:
+
+[source,java]
+----
+from("direct:wait")
+    .loopDoWhile(simple("${header.CamelOpenAIBatchStatus} !in 'completed,failed,expired,cancelled'"))
+        .delay(60000)
+        .to("openai:batch-retrieve")
+    .end()
+    .to("direct:collect");
+----
+
+A job that must survive a restart should store `CamelOpenAIBatchId` instead, and poll it from a scheduler route:
+
+[source,java]
+----
+from("scheduler:batches?delay=600000")
+    .to("sql:select id from openai_batch where status not in ('processed', 'failed')")
+    .split(body())
+        .setHeader("CamelOpenAIBatchId", simple("${body[id]}"))
+        .to("openai:batch-retrieve")
+        .to("sql:update openai_batch set status = :#CamelOpenAIBatchStatus where id = :#CamelOpenAIBatchId")
+        .filter(header("CamelOpenAIBatchStatus").in("completed", "expired", "cancelled"))
+            .to("direct:collect")
+    .end();
+----
+
+== Reading the results
+
+`batch-results` reads `CamelOpenAIBatchId`, downloads the output file and sets it as an `InputStream`, so it can be
+split line by line. Set `batchResultsFile=error` for the failed requests instead. Each line carries the `custom_id`
+of its request.
+
+[source,java]
+----
+from("direct:collect")
+    .noStreamCaching()                       // otherwise the whole file is read into memory
+    .to("openai:batch-results")
+    .split(body().tokenize("\n")).streaming()
+        .setHeader("ticketId", jsonpath("$.custom_id"))
+        .setBody(jsonpath("$.response.body.choices[0].message.content"))
+        .to("sql:update ticket set category = :#${body} where id = :#${header.ticketId}")
+    .end();
+----
+
+An embedding backfill works the same way, straight into a vector store:
+
+[source,java]
+----
+from("direct:embeddings")
+    .setBody(constant(Map.of("doc-1", "Camel routes messages", "doc-2", "Batches run offline")))
+    .to("openai:batch?batchEndpoint=/v1/embeddings&embeddingModel=text-embedding-3-small");
+
+from("direct:store")
+    .noStreamCaching()
+    .to("openai:batch-results")
+    .split(body().tokenize("\n")).streaming()
+        .setHeader("CamelPgVectorAction", constant("UPSERT"))
+        .setHeader("CamelPgVectorRecordId", jsonpath("$.custom_id"))
+        .setBody(jsonpath("$.response.body.data[0].embedding"))
+        .to("pgvector:documents")
+    .end();
+----
+
+== Notes
+
+* The results stream is closed when the exchange completes, so it must be consumed inside the route.
+* `batch-results` works once the batch is `completed`, `expired` or `cancelled`. It fails while the batch is still
+  running, and for a `failed` batch it reports the validation errors, which are also in the
+  `CamelOpenAIBatchErrors` header.
+* A batch without failures has no error file, and the body is then `null`, which splits into nothing.
+* The API accepts up to 50,000 requests or 200 MB per batch, and only a 24 hour completion window. Input files are
+  kept for 30 days by default.
+* Because a batch request runs once, `streaming`, `conversationMemory`, `mcpServer` and `tags` are rejected rather
+  than silently ignored.
+* Result lines are model output: unmarshal them to a `Map`, never to a type the content chooses.
