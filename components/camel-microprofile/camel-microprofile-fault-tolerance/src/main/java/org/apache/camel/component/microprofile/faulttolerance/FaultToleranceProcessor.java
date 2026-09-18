@@ -55,6 +55,7 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.eclipse.microprofile.faulttolerance.exceptions.BulkheadException;
 import org.eclipse.microprofile.faulttolerance.exceptions.CircuitBreakerOpenException;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.slf4j.Logger;
@@ -565,6 +566,11 @@ public class FaultToleranceProcessor extends BaseProcessorSupport
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SUCCESSFUL_EXECUTION, false);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_FROM_FALLBACK, true);
             exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_SHORT_CIRCUITED, true);
+            // rejected means the call was never attempted (breaker open or bulkhead full),
+            // so the fallback can tell that apart from a call that was made and failed
+            boolean rejected = exchange.getException() instanceof CircuitBreakerOpenException
+                    || exchange.getException() instanceof BulkheadException;
+            exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_REJECTED, rejected);
             if (exchange.getException() instanceof TimeoutException) {
                 exchange.setProperty(ExchangePropertyKey.CIRCUIT_BREAKER_RESPONSE_TIMED_OUT, true);
             }
