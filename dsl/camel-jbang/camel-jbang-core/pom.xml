@@ -371,8 +371,7 @@
                                         <property name="examples.dest" value="${project.basedir}/src/main/resources/examples"/>
                                         <!-- the catalog first; the bundled examples and their files are read from it -->
                                         <get src="${examples.base}/camel-jbang-example-catalog.json"
-                                             dest="${examples.dest}/camel-jbang-example-catalog.json"
-                                             usetimestamp="true"/>
+                                             dest="${examples.dest}/camel-jbang-example-catalog.json"/>
                                         <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath"/>
                                         <groovy><![CDATA[
                                             import groovy.json.JsonSlurper
