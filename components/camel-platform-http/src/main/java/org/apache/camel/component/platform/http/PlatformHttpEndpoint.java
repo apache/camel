@@ -171,6 +171,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
                             + "When set, the request is authenticated before the route is processed. "
                             + "This requires an OAuthTokenValidationFactory; camel-oauth provides the default implementation.")
     private String oauthProfile;
+    @UriParam(label = "consumer,advanced", defaultValue = "platform", enums = "platform,camel",
+              description = "Who answers requests that match no registered operation when using rest-dsl contract-first"
+                            + " (such as the rest-openapi component): the HTTP layer (platform) or Camel via the route"
+                            + " (camel). When set to camel, a catch-all is registered so unmatched requests are routed to"
+                            + " Camel. Currently supported by camel-platform-http-vertx (Camel Main, Quarkus) and the"
+                            + " Spring Boot platform-http-starter.")
+    private String unmatchedRequestHandling = "platform";
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {
         super(uri, component);
@@ -426,5 +433,13 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setOauthProfile(String oauthProfile) {
         this.oauthProfile = oauthProfile;
+    }
+
+    public String getUnmatchedRequestHandling() {
+        return unmatchedRequestHandling;
+    }
+
+    public void setUnmatchedRequestHandling(String unmatchedRequestHandling) {
+        this.unmatchedRequestHandling = unmatchedRequestHandling;
     }
 }

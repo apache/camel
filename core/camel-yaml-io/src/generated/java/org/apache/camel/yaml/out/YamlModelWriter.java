@@ -3248,6 +3248,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "apiContextPath", def.getApiContextPath(), null);
         doWriteAttribute(jo, "routeId", def.getRouteId(), null);
         doWriteAttribute(jo, "missingOperation", def.getMissingOperation(), "fail");
+        doWriteAttribute(jo, "unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute(jo, "mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
         return jo;
     }

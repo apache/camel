@@ -280,6 +280,49 @@ YAML::
 
 This allows you to implement the APIs one by one over time.
 
+=== Handling unmatched requests
+
+By default, requests that do not match any operation in the OpenAPI specification are answered by the HTTP
+layer of the runtime with HTTP `404` (unknown path) or `405` with an `Allow` header.
+
+Set `unmatchedRequestHandling` to `camel` to instead route such requests to Camel, where they are answered by
+an unmatched request handler (see the xref:components::rest-openapi-component.adoc[rest-openapi] component
+documentation for how to plug in a `RestOpenApiUnmatchedRequestHandler` that controls the response body):
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+    rest().openApi()
+        .specification("petstore-v3.json")
+        .missingOperation("ignore")
+        .unmatchedRequestHandling("camel");
+----
+
+XML::
++
+[source,xml]
+----
+<rest>
+  <openApi specification="petstore-v3.json" missingOperation="ignore" unmatchedRequestHandling="camel"/>
+</rest>
+----
+
+YAML::
++
+[source,yaml]
+----
+- rest:
+    openApi:
+      specification: petstore-v3.json
+      missingOperation: ignore
+      unmatchedRequestHandling: camel
+----
+====
+
 === Mocking API operations
 
 This is similar to ignoring missing API operations, as you can tell Camel to mock instead, as shown:

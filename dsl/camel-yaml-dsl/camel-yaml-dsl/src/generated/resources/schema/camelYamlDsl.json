@@ -14184,6 +14184,13 @@
             "type" : "string",
             "title" : "Specification",
             "description" : "Path to the OpenAPI specification file."
+          },
+          "unmatchedRequestHandling" : {
+            "type" : "string",
+            "title" : "Unmatched Request Handling",
+            "description" : "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).",
+            "default" : "platform",
+            "enum" : [ "platform", "camel" ]
           }
         },
         "required" : [ "specification" ]

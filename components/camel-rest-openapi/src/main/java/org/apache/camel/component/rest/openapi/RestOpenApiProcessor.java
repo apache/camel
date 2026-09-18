@@ -24,6 +24,7 @@ import java.util.Optional;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import org.apache.camel.*;
+import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.RestConfiguration;
@@ -37,8 +38,12 @@ import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestOpenApiProcessor extends AsyncProcessorSupport implements CamelContextAware, AfterPropertiesConfigured {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiProcessor.class);
 
     // just use the most common verbs
     private static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH");
@@ -55,6 +60,8 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
     private Consumer consumer;
     private OpenApiUtils openApiUtils;
     private RestRegistry restRegistry;
+    private boolean unmatchedRequestCatchAllRegistered;
+    private String unmatchedRequestCatchAllPath;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -227,6 +234,33 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         }
 
         ServiceHelper.startService(restOpenapiProcessorStrategy);
+
+        // when Camel should answer requests that do not match any operation in the OpenAPI specification,
+        // then register a catch-all for this API on the platform-http component, so the runtime (such as
+        // Spring Boot or camel-platform-http-vertx) routes these requests to Camel where they are
+        // answered by the unmatched request handler.
+        if ("camel".equalsIgnoreCase(endpoint.getUnmatchedRequestHandling())) {
+            if (platformHttpConsumer == null) {
+                LOG.warn("unmatchedRequestHandling=camel is enabled, however the OpenAPI specification is not bound to"
+                         + " platform-http, so requests matching no operation of the OpenAPI specification cannot be"
+                         + " routed to Camel");
+            } else {
+                PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+                if (phc != null) {
+                    String path = basePath;
+                    if (path == null || path.isEmpty() || path.equals("/")) {
+                        path = "";
+                    }
+                    phc.addHttpEndpoint(path, null, null, null, platformHttpConsumer.getPlatformHttpConsumer());
+                    unmatchedRequestCatchAllPath = path;
+                    unmatchedRequestCatchAllRegistered = true;
+                } else {
+                    LOG.warn("unmatchedRequestHandling=camel is enabled, however there is no platform-http component,"
+                             + " so requests matching no operation of the OpenAPI specification cannot be routed to"
+                             + " Camel");
+                }
+            }
+        }
     }
 
     private static RestOpenApiUnmatchedRequestHandler lookupUnmatchedRequestHandler(CamelContext camelContext) {
@@ -281,5 +315,18 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
             }
         }
         paths.clear();
+
+        if (unmatchedRequestCatchAllRegistered) {
+            try {
+                PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+                if (phc != null) {
+                    phc.removeHttpEndpoint(unmatchedRequestCatchAllPath,
+                            platformHttpConsumer.getPlatformHttpConsumer());
+                }
+            } finally {
+                unmatchedRequestCatchAllRegistered = false;
+                unmatchedRequestCatchAllPath = null;
+            }
+        }
     }
 }

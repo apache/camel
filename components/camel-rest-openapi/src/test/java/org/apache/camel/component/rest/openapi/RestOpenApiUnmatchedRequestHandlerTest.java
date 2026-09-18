@@ -44,7 +44,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
@@ -78,6 +84,10 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
     }
 
     private RestOpenApiProcessor createProcessor() throws Exception {
+        return createProcessor(null);
+    }
+
+    private RestOpenApiProcessor createProcessor(String unmatchedRequestHandling) throws Exception {
         OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "unmatched-request-handler.yaml");
         String basePath = RestOpenApiHelper.determineBasePath(camelContext, null, null, openApi);
 
@@ -87,6 +97,9 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
         RestOpenApiComponent component = new RestOpenApiComponent();
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
                 "rest-openapi:unmatched-request-handler.yaml", "unmatched-request-handler.yaml", component, null);
+        if (unmatchedRequestHandling != null) {
+            endpoint.setUnmatchedRequestHandling(unmatchedRequestHandling);
+        }
 
         RestOpenApiProcessor processor = new RestOpenApiProcessor(endpoint, openApi, basePath, null, strategy);
         processor.setCamelContext(camelContext);
@@ -207,6 +220,36 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
 
         assertEquals(404, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
         assertEquals("{\"error\":\"from factory finder\"}", exchange.getMessage().getBody(String.class));
+    }
+
+    @Test
+    void testCatchAllRegisteredOnPlatformHttpWhenCamelHandling() throws Exception {
+        RestOpenApiProcessor processor = createProcessor("camel");
+        PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+
+        // a catch-all for the api base path (without verbs) must be registered so unmatched requests are routed to Camel
+        verify(phc).addHttpEndpoint(eq(""), isNull(), isNull(), isNull(), isNull());
+        ServiceHelper.stopService(processor);
+        openApiProcessor = null;
+
+        // and removed again when the processor stops
+        verify(phc).removeHttpEndpoint(eq(""), isNull());
+    }
+
+    @Test
+    void testNoCatchAllRegisteredOnPlatformHttpWhenPlatformHandling() throws Exception {
+        createProcessor("platform");
+        PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+        // only per-operation registrations (with verbs) are expected
+        verify(phc, never()).addHttpEndpoint(anyString(), isNull(), any(), any(), any());
+    }
+
+    @Test
+    void testNoCatchAllRegisteredOnPlatformHttpByDefault() throws Exception {
+        createProcessor();
+        PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
+        // only per-operation registrations (with verbs) are expected
+        verify(phc, never()).addHttpEndpoint(anyString(), isNull(), any(), any(), any());
     }
 
     @AfterEach

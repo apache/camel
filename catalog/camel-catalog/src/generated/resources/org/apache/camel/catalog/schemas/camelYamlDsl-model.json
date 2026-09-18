@@ -17651,6 +17651,17 @@
         "index" : 7,
         "group" : "common"
       }, {
+        "name" : "unmatchedRequestHandling",
+        "type" : "enum",
+        "enum" : [ "platform", "camel" ],
+        "description" : "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the unmatched request handler (camel).",
+        "title" : "Unmatched Request Handling",
+        "default" : "platform",
+        "displayName" : "Unmatched Request Handling",
+        "kind" : "attribute",
+        "index" : 8,
+        "group" : "common"
+      }, {
         "name" : "mockIncludePattern",
         "type" : "string",
         "description" : "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
@@ -17658,7 +17669,7 @@
         "default" : "classpath:camel-mock/**",
         "displayName" : "Mock Include Pattern",
         "kind" : "attribute",
-        "index" : 8,
+        "index" : 9,
         "group" : "advanced",
         "label" : "advanced"
       } ]

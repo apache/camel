@@ -177,6 +177,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private String mockIncludePattern;
     @UriParam(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
     private String apiContextPath;
+    @UriParam(label = "consumer,advanced", defaultValue = "platform", enums = "platform,camel",
+              description = "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer"
+                            + " (platform) or Camel via the unmatched request handler (camel).")
+    private String unmatchedRequestHandling = "platform";
     @UriParam(label = "consumer,security", displayName = "OAuth Profile",
               description = "OAuth profile name passed to the HTTP consumer delegate for validating incoming"
                             + " Authorization: Bearer tokens. The selected consumer component must support the"
@@ -344,6 +348,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             // pass oauthProfile to the delegate consumer, which is responsible for enforcing it
             if (isNotEmpty(oauthProfile)) {
                 copy.put("oauthProfile", oauthProfile);
+            }
+            // forwards unmatchedRequestHandling to the platform-http delegate, which uses the option (Vert.x
+            // runtime) to register a catch-all route when Camel should answer unmatched requests
+            if ("camel".equalsIgnoreCase(unmatchedRequestHandling)) {
+                copy.put("unmatchedRequestHandling", unmatchedRequestHandling);
             }
             // avoid duplicate context-path
             if (basePath.equals(config.getContextPath())) {
@@ -530,6 +539,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
+    }
+
+    public String getUnmatchedRequestHandling() {
+        return unmatchedRequestHandling;
+    }
+
+    public void setUnmatchedRequestHandling(String unmatchedRequestHandling) {
+        this.unmatchedRequestHandling = unmatchedRequestHandling;
     }
 
     public String getOauthProfile() {

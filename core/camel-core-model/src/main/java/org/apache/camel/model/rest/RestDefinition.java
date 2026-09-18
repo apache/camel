@@ -1025,6 +1025,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         if (openApi.getMissingOperation() != null) {
             options.put("missingOperation", parseText(camelContext, openApi.getMissingOperation()));
         }
+        if (openApi.getUnmatchedRequestHandling() != null) {
+            options.put("unmatchedRequestHandling", parseText(camelContext, openApi.getUnmatchedRequestHandling()));
+        }
         if (openApi.getMockIncludePattern() != null) {
             options.put("mockIncludePattern", parseText(camelContext, openApi.getMockIncludePattern()));
         }

@@ -103,7 +103,24 @@ public interface RestOpenapiComponentBuilderFactory {
             return this;
         }
     
-        
+        /**
+         * Who answers requests that match no operation in the OpenAPI
+         * specification: the HTTP layer (platform) or Camel via the unmatched
+         * request handler (camel). Can be overridden in endpoint configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: platform
+         * Group: consumer (advanced)
+         * 
+         * @param unmatchedRequestHandling the value to set
+         * @return the dsl builder
+         */
+        default RestOpenapiComponentBuilder unmatchedRequestHandling(java.lang.String unmatchedRequestHandling) {
+            doSetProperty("unmatchedRequestHandling", unmatchedRequestHandling);
+            return this;
+        }
+
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
@@ -453,6 +470,7 @@ public interface RestOpenapiComponentBuilderFactory {
             case "basePath": ((RestOpenApiComponent) component).setBasePath((java.lang.String) value); return true;
             case "specificationUri": ((RestOpenApiComponent) component).setSpecificationUri((java.lang.String) value); return true;
             case "apiContextPath": ((RestOpenApiComponent) component).setApiContextPath((java.lang.String) value); return true;
+            case "unmatchedRequestHandling": ((RestOpenApiComponent) component).setUnmatchedRequestHandling((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((RestOpenApiComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientRequestValidation": ((RestOpenApiComponent) component).setClientRequestValidation((boolean) value); return true;
             case "clientResponseValidation": ((RestOpenApiComponent) component).setClientResponseValidation((boolean) value); return true;

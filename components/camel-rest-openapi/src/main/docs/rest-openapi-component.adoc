@@ -204,16 +204,67 @@ has a `getValidationErrors` method that returns the error messages from the vali
 
 == Unmatched requests
 
-By default, an incoming request that does not match any operation in the OpenAPI specification is answered
-with HTTP 404, and a request that matches a path but not the HTTP method is answered with HTTP 405 and an
-`Allow` header listing the allowed methods. In both cases the response body is empty.
+By default, an incoming request that does not match any operation in the OpenAPI specification is answered by the
+HTTP layer of the runtime, with HTTP 404, and a request that matches a path but not the HTTP method is answered
+with HTTP 405 and an `Allow` header listing the allowed methods.
 
-To return a custom response, for example a JSON error body, register a bean in the
-xref:manual::registry.adoc[Registry] that implements the `RestOpenApiUnmatchedRequestHandler` interface.
+To let Camel answer these requests instead, set the `unmatchedRequestHandling` option to `camel` on the
+rest-openapi consumer endpoint or via the rest DSL `openApi` section. The rest-openapi component then registers a
+catch-all for the API base path on the HTTP layer so requests that match no operation are routed to Camel, where
+they are answered by the unmatched request handler.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("rest-openapi:petstore-v3.json?missingOperation=ignore&unmatchedRequestHandling=camel")
+    .to("direct:businessLogic");
+
+// ... or using the rest DSL
+
+rest().openApi()
+    .specification("petstore-v3.json")
+    .missingOperation("ignore")
+    .unmatchedRequestHandling("camel");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: rest-openapi:petstore-v3.json
+      parameters:
+        missingOperation: ignore
+        unmatchedRequestHandling: camel
+      steps:
+        - to:
+            uri: direct:businessLogic
+
+# ... or using the rest DSL
+
+- rest:
+    openApi:
+      specification: petstore-v3.json
+      missingOperation: ignore
+      unmatchedRequestHandling: camel
+----
+====
+
+The option is supported by the built-in `platform-http` consumer component: Camel Main when using
+xref:platform-http-vertx.adoc[camel-platform-http-vertx], and Spring Boot when using the platform-http starter
+(`camel-platform-http-starter`). Other consumer components ignore the option.
+
+On Camel Main and Quarkus, the catch-all route is evaluated last on the HTTP server, so it never shadows the
+operations of other APIs served by the same server, even when their base paths are nested under this API.
+
+When the request has been routed to Camel, the response body (and headers) can be customized by registering a
+bean in the xref:manual::registry.adoc[Registry] that implements the `RestOpenApiUnmatchedRequestHandler` interface.
 The handler is called with the exchange, the status code (`404` or `405`) and the list of allowed HTTP
-methods (empty for `404`), and can then set the response body, status code and headers as needed. When no
-handler is registered, the default (empty body) response is used.
-
+methods (empty for `404`), and can then set the response body, status code and headers as needed.
 The handler can also be registered using a factory finder on the classpath. This is done by adding a
 resource file `META-INF/services/org/apache/camel/rest-openapi-unmatched-request-handler-factory`
 with the content `class=com.example.MyHandler`.
