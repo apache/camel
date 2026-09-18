@@ -55,6 +55,7 @@ public class FaultToleranceOpenWithFallbackExchangePropertyTest extends CamelTes
 
         Exchange third = mock.getExchanges().get(2);
         assertEquals(true, third.getProperty(CircuitBreakerConstants.RESPONSE_REJECTED));
+        assertEquals("OPEN", third.getProperty(CircuitBreakerConstants.RESPONSE_STATE));
         assertInstanceOf(CircuitBreakerOpenException.class, third.getProperty(Exchange.EXCEPTION_CAUGHT));
     }
 
