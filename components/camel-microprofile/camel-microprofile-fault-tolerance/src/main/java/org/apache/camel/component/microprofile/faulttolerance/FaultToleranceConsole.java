@@ -51,6 +51,9 @@ public class FaultToleranceConsole extends AbstractDevConsole {
             @Metadata(description = "Number of successful calls") long successfulCalls,
             @Metadata(description = "Number of failed calls") long failedCalls,
             @Metadata(description = "Number of not-permitted calls") long notPermittedCalls,
+            @Metadata(description = "Number of calls answered by the onFallback") long fallbackCalls,
+            @Metadata(description = "Number of calls that timed out") long timedOutCalls,
+            @Metadata(description = "Number of calls rejected because the bulkhead was full") long bulkheadRejectedCalls,
             @Metadata(description = "The circuit breaker configuration") Configuration configuration) {
     }
 
@@ -85,8 +88,12 @@ public class FaultToleranceConsole extends AbstractDevConsole {
             long sc = cb.getNumberOfSuccessfulCalls();
             long fc = cb.getNumberOfFailedCalls();
             long npc = cb.getNumberOfNotPermittedCalls();
-            sb.append(String.format("    %s/%s: %s (success: %d failure: %d not-permitted: %d)%n",
-                    rid, id, state, sc, fc, npc));
+            long fb = cb.getNumberOfFallbackCalls();
+            long to = cb.getNumberOfTimedOutCalls();
+            long br = cb.getNumberOfBulkheadRejectedCalls();
+            sb.append(String.format(
+                    "    %s/%s: %s (success: %d failure: %d not-permitted: %d fallback: %d timed-out: %d bulkhead-rejected: %d)%n",
+                    rid, id, state, sc, fc, npc, fb, to, br));
         }
 
         return sb.toString();
@@ -123,7 +130,8 @@ public class FaultToleranceConsole extends AbstractDevConsole {
 
             list.add(new CircuitBreakerEntry(
                     cb.getId(), cb.getRouteId(), cb.getCircuitBreakerState(), cb.getNumberOfSuccessfulCalls(),
-                    cb.getNumberOfFailedCalls(), cb.getNumberOfNotPermittedCalls(), config));
+                    cb.getNumberOfFailedCalls(), cb.getNumberOfNotPermittedCalls(), cb.getNumberOfFallbackCalls(),
+                    cb.getNumberOfTimedOutCalls(), cb.getNumberOfBulkheadRejectedCalls(), config));
         }
 
         Response response = new Response(list);

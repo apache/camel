@@ -28,6 +28,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 
@@ -78,6 +79,9 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
             String output = printer.getOutput();
             assertTrue(output.contains("myCB"), "Should show circuit breaker ID");
             assertTrue(output.contains("CLOSED"), "Should show CLOSED state");
+            assertTrue(output.contains("FALLBACK"), "Should show FALLBACK column");
+            assertTrue(output.contains("TIMEOUT"), "Should show TIMEOUT column");
+            assertFalse(output.contains("BULKHEAD"), "Should not show BULKHEAD column without a bulkhead");
         }
     }
 
@@ -130,6 +134,33 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
         }
     }
 
+    @Test
+    void testShowsFaultToleranceCountersAndBulkheadColumn() throws Exception {
+        JsonObject root = new JsonObject();
+        root.put("context", contextObj());
+        root.put("fault-tolerance", cbContainer(faultToleranceEntry("OPEN")));
+        writeStatusFile(TEST_PID, root);
+
+        ListCircuitBreaker command = new ListCircuitBreaker(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            String output = printer.getOutput();
+            assertTrue(output.contains("myFtCB"), "Should show circuit breaker ID");
+            assertTrue(output.contains("BULKHEAD"), "Should show BULKHEAD column when a bulkhead is configured");
+            String row = output.lines().filter(l -> l.contains("myFtCB")).findFirst().orElseThrow();
+            assertTrue(row.matches(".*\\b4\\s+1\\s+3\\s+4\\s+0\\s+5\\s*$"), row);
+        }
+    }
+
     private static JsonObject contextObj() {
         JsonObject ctx = new JsonObject();
         ctx.put("name", "myApp");
@@ -153,7 +184,27 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
         cb.put("successfulCalls", 0);
         cb.put("failedCalls", 0);
         cb.put("notPermittedCalls", 0L);
+        cb.put("fallbackCalls", 7L);
+        cb.put("timedOutCalls", 2L);
+        cb.put("bulkheadRejectedCalls", 0L);
         cb.put("failureRate", 0.0);
+        return cb;
+    }
+
+    private static JsonObject faultToleranceEntry(String state) {
+        JsonObject cb = new JsonObject();
+        cb.put("id", "myFtCB");
+        cb.put("routeId", "myRoute");
+        cb.put("state", state);
+        cb.put("successfulCalls", 4L);
+        cb.put("failedCalls", 1L);
+        cb.put("notPermittedCalls", 3L);
+        cb.put("fallbackCalls", 4L);
+        cb.put("timedOutCalls", 0L);
+        cb.put("bulkheadRejectedCalls", 5L);
+        JsonObject cfg = new JsonObject();
+        cfg.put("bulkheadEnabled", true);
+        cb.put("configuration", cfg);
         return cb;
     }
 }

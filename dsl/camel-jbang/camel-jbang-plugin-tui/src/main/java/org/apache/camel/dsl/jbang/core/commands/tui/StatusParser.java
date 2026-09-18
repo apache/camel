@@ -1288,6 +1288,9 @@ final class StatusParser {
             cb.successfulCalls = TuiHelper.objToLong(bj.get("successfulCalls"));
             cb.failedCalls = TuiHelper.objToLong(bj.get("failedCalls"));
             cb.notPermittedCalls = TuiHelper.objToLong(bj.get("notPermittedCalls"));
+            cb.fallbackCalls = TuiHelper.objToLong(bj.get("fallbackCalls"));
+            cb.timedOutCalls = TuiHelper.objToLong(bj.get("timedOutCalls"));
+            cb.bulkheadRejectedCalls = TuiHelper.objToLong(bj.get("bulkheadRejectedCalls"));
             Object fr = bj.get("failureRate");
             cb.failureRate = fr instanceof Number n ? n.doubleValue() : -1;
             info.circuitBreakers.add(cb);

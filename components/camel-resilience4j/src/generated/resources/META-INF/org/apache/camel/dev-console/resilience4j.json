@@ -48,6 +48,18 @@
               "type": "integer",
               "description": "The number of not permitted calls"
             },
+            "fallbackCalls": {
+              "type": "integer",
+              "description": "The number of calls answered by the onFallback"
+            },
+            "timedOutCalls": {
+              "type": "integer",
+              "description": "The number of calls that timed out"
+            },
+            "bulkheadRejectedCalls": {
+              "type": "integer",
+              "description": "The number of calls rejected because the bulkhead was full"
+            },
             "failureRate": {
               "type": "number",
               "description": "The failure rate in percentage"
@@ -127,6 +139,9 @@
             "successfulCalls",
             "failedCalls",
             "notPermittedCalls",
+            "fallbackCalls",
+            "timedOutCalls",
+            "bulkheadRejectedCalls",
             "failureRate"
           ]
         },

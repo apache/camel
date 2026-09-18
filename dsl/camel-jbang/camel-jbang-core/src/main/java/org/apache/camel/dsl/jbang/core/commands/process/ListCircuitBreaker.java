@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.ColumnData;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -94,6 +95,10 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
                                     row.successfulCalls = jo.getInteger("successfulCalls");
                                     row.failedCalls = jo.getInteger("failedCalls");
                                     row.notPermittedCalls = jo.getLong("notPermittedCalls");
+                                    row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
+                                    row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
+                                    row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
+                                    row.bulkheadEnabled = isBulkheadEnabled(jo);
                                     row.failureRate = jo.getDouble("failureRate");
                                     rows.add(row);
                                 }
@@ -110,6 +115,14 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
                                     row.id = jo.getString("id");
                                     row.routeId = jo.getString("routeId");
                                     row.state = jo.getString("state");
+                                    row.successfulCalls = jo.getLongOrDefault("successfulCalls", 0).intValue();
+                                    row.failedCalls = jo.getLongOrDefault("failedCalls", 0).intValue();
+                                    row.notPermittedCalls = jo.getLongOrDefault("notPermittedCalls", 0);
+                                    row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
+                                    row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
+                                    row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
+                                    row.bulkheadEnabled = isBulkheadEnabled(jo);
+                                    row.failureRate = -1;
                                     rows.add(row);
                                 }
                             }
@@ -151,27 +164,47 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
                     jo.put("successfulCalls", r.successfulCalls);
                     jo.put("failedCalls", r.failedCalls);
                     jo.put("notPermittedCalls", r.notPermittedCalls);
+                    jo.put("fallbackCalls", r.fallbackCalls);
+                    jo.put("timedOutCalls", r.timedOutCalls);
+                    jo.put("bulkheadRejectedCalls", r.bulkheadRejectedCalls);
                     jo.put("failureRate", r.failureRate);
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
-                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(r -> r.name),
-                        new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
-                        new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(r -> r.routeId),
-                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.id),
-                        new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(r -> r.state),
-                        new Column().header("PENDING").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                                .with(this::getPending),
-                        new Column().header("SUCCESS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                                .with(this::getSuccess),
-                        new Column().header("FAIL").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT)
-                                .with(this::getFailure),
-                        new Column().header("REJECT").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                                .with(this::getReject))));
+                List<ColumnData<Row>> columns = new ArrayList<>(
+                        Arrays.asList(
+                                new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                        .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                        .with(r -> r.name),
+                                new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
+                                new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(r -> r.routeId),
+                                new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.id),
+                                new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(r -> r.state),
+                                new Column().header("PENDING").headerAlign(HorizontalAlign.RIGHT)
+                                        .dataAlign(HorizontalAlign.RIGHT)
+                                        .with(this::getPending),
+                                new Column().header("SUCCESS").headerAlign(HorizontalAlign.RIGHT)
+                                        .dataAlign(HorizontalAlign.RIGHT)
+                                        .with(this::getSuccess),
+                                new Column().header("FAIL").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT)
+                                        .with(this::getFailure),
+                                new Column().header("REJECT").headerAlign(HorizontalAlign.RIGHT)
+                                        .dataAlign(HorizontalAlign.RIGHT)
+                                        .with(this::getReject),
+                                new Column().header("FALLBACK").headerAlign(HorizontalAlign.RIGHT)
+                                        .dataAlign(HorizontalAlign.RIGHT)
+                                        .with(r -> countOrBlank(r, r.fallbackCalls)),
+                                new Column().header("TIMEOUT").headerAlign(HorizontalAlign.RIGHT)
+                                        .dataAlign(HorizontalAlign.RIGHT)
+                                        .with(r -> countOrBlank(r, r.timedOutCalls))));
+                // the bulkhead column only makes sense when a bulkhead is configured
+                if (rows.stream().anyMatch(r -> r.bulkheadEnabled)) {
+                    columns.add(new Column().header("BULKHEAD").headerAlign(HorizontalAlign.RIGHT)
+                            .dataAlign(HorizontalAlign.RIGHT)
+                            .with(r -> countOrBlank(r, r.bulkheadRejectedCalls)));
+                }
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, columns));
             }
         }
 
@@ -215,17 +248,29 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
     }
 
     private String getSuccess(Row r) {
-        if ("resilience4j".equals(r.component) || "core".equals(r.component)) {
+        if ("resilience4j".equals(r.component) || "fault-tolerance".equals(r.component) || "core".equals(r.component)) {
             return Integer.toString(r.successfulCalls);
         }
         return "";
     }
 
     private String getReject(Row r) {
-        if ("resilience4j".equals(r.component)) {
+        if ("resilience4j".equals(r.component) || "fault-tolerance".equals(r.component)) {
             return Long.toString(r.notPermittedCalls);
         }
         return "";
+    }
+
+    private String countOrBlank(Row r, long count) {
+        if ("resilience4j".equals(r.component) || "fault-tolerance".equals(r.component)) {
+            return Long.toString(count);
+        }
+        return "";
+    }
+
+    private static boolean isBulkheadEnabled(JsonObject jo) {
+        JsonObject cfg = (JsonObject) jo.get("configuration");
+        return cfg != null && Boolean.TRUE.equals(cfg.get("bulkheadEnabled"));
     }
 
     private static class Row implements Cloneable {
@@ -241,6 +286,10 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
         int successfulCalls;
         int failedCalls;
         long notPermittedCalls;
+        long fallbackCalls;
+        long timedOutCalls;
+        long bulkheadRejectedCalls;
+        boolean bulkheadEnabled;
         double failureRate;
 
         Row copy() {
