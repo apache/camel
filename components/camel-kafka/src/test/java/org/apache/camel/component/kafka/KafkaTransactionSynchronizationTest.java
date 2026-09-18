@@ -23,11 +23,13 @@ import org.apache.camel.spi.UnitOfWork;
 import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -71,5 +73,22 @@ class KafkaTransactionSynchronizationTest {
 
         verify(producer).commitTransaction();
         verify(producer, never()).sendOffsetsToTransaction(any(), any());
+    }
+
+    @Test
+    void abortsTransactionWhenSendOffsetsFails() {
+        Producer<?, ?> producer = mock(Producer.class);
+        Map<TopicPartition, OffsetAndMetadata> offsets
+                = Map.of(new TopicPartition("orders", 0), new OffsetAndMetadata(43));
+        ConsumerGroupMetadata groupMetadata = new ConsumerGroupMetadata("orders-group");
+        doThrow(new KafkaException("boom")).when(producer).sendOffsetsToTransaction(offsets, groupMetadata);
+
+        KafkaTransactionSynchronization sync
+                = new KafkaTransactionSynchronization("tx-1", producer, offsets, groupMetadata);
+        sync.onDone(successfulExchange());
+
+        // A failed sendOffsetsToTransaction must abort the (now open) transaction, not commit it.
+        verify(producer).abortTransaction();
+        verify(producer, never()).commitTransaction();
     }
 }

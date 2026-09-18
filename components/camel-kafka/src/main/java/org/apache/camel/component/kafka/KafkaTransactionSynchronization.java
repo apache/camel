@@ -66,7 +66,16 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                 // consumed record and the produced records are committed atomically.
                 if (offsetsToCommit != null && groupMetadata != null) {
                     LOG.debug("Sending {} consumer offset(s) to kafka transaction {}", offsetsToCommit.size(), transactionId);
-                    kafkaProducer.sendOffsetsToTransaction(offsetsToCommit, groupMetadata);
+                    try {
+                        kafkaProducer.sendOffsetsToTransaction(offsetsToCommit, groupMetadata);
+                    } catch (KafkaException e) {
+                        // A failed sendOffsetsToTransaction leaves the transaction open, so abort it explicitly
+                        // rather than falling through to the commit (and to the catch below which does not abort).
+                        LOG.warn("Aborting kafka transaction {} due to sendOffsetsToTransaction failure", transactionId, e);
+                        kafkaProducer.abortTransaction();
+                        exchange.setException(e);
+                        return;
+                    }
                 }
                 LOG.debug("Commit kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
                 kafkaProducer.commitTransaction();

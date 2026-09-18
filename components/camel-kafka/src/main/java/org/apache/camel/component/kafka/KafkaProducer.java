@@ -149,6 +149,10 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
             transactionId = getEndpoint().getId() + "-" + getRouteId();
             props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
         }
+        if (configuration.isExactlyOnce() && transactionId == null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce=true requires a transactional producer: set transacted=true or a transactionalId");
+        }
         if (kafkaProducer == null) {
             createProducer(props);
         }

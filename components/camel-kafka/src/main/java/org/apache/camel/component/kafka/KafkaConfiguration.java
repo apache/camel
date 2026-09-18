@@ -2299,6 +2299,11 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.transactionalId = transactionalId;
     }
 
+    /**
+     * Whether exactly-once (read-process-write) semantics are enabled on this producer.
+     *
+     * @see #setExactlyOnce(boolean)
+     */
     public boolean isExactlyOnce() {
         return exactlyOnce;
     }
