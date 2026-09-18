@@ -120,6 +120,16 @@ class ExampleBrowserPopup {
             }
             return true;
         }
+        if (ke.isLeft() || ke.isKey(KeyCode.BACKSPACE)) {
+            if (currentFolder != null) {
+                navigateBack();
+            }
+            return true;
+        }
+        if (ke.isRight() && currentFolder == null) {
+            activateSelected(false);
+            return true;
+        }
         if (ke.isUp()) {
             navigate(-1);
             return true;
@@ -244,10 +254,10 @@ class ExampleBrowserPopup {
             TuiHelper.hint(spans, "r", "run");
             TuiHelper.hint(spans, "Enter", "run...");
             TuiHelper.hint(spans, "d", "docs");
-            // inside a group Esc returns to the groups, at the top level it closes the browser
-            TuiHelper.hintLast(spans, "Esc", "back");
+            // inside a group Esc, Left and Backspace return to the groups; at the top level Esc closes the browser
+            TuiHelper.hintLast(spans, "Esc/←", "back");
         } else {
-            TuiHelper.hint(spans, "Enter", "open");
+            TuiHelper.hint(spans, "Enter/→", "open");
             TuiHelper.hint(spans, "1-9", "jump");
             TuiHelper.hint(spans, "d", "docs");
             TuiHelper.hintLast(spans, "Esc", "close");
@@ -504,10 +514,12 @@ class ExampleBrowserPopup {
         List<ListItem> items = new ArrayList<>();
         List<Integer> heights = new ArrayList<>();
         List<Object> data = new ArrayList<>();
+        // the introduction is a header, not an entry: Esc, Left or Backspace go back to the groups
         String intro = ExampleHelper.getGroupIntro(currentFolder);
-        items.add(ListItem.from(" " + (intro.isEmpty() ? ".." : intro)).style(Style.EMPTY.dim()));
+        items.add(ListItem.from(" " + (intro.isEmpty() ? ExampleHelper.getGroupTitle(currentFolder) : intro))
+                .style(Style.EMPTY.dim()));
         heights.add(1);
-        data.add(BACK_MARKER);
+        data.add(null);
         List<JsonObject> entries = grouped.get(currentFolder);
         if (entries != null) {
             for (JsonObject ex : entries) {
@@ -519,7 +531,7 @@ class ExampleBrowserPopup {
         data.add(null);
         items.add(ListItem.from(" " + TuiIcons.BUNDLED + " = bundled  " + TuiIcons.ONLINE + " = online  "
                                 + TuiIcons.DOCKER + " = Docker  " + TuiIcons.INFRA + " = infra services  " + TuiIcons.CITRUS
-                                + " = Citrus tests   Esc = back to the groups")
+                                + " = Citrus tests   Esc or ← = back to the groups")
                 .style(Style.EMPTY.dim()));
         heights.add(1);
         data.add(null);
