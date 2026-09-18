@@ -351,6 +351,44 @@ public class SourceValidatorBeanRefsTest {
     }
 
     @Test
+    void aClassCamelRunDownloadsIsNotReportedAsMissing(@TempDir Path dir) throws IOException {
+        // the Postgres datasource and the Artemis connection factory are not on the CLI classpath, but camel run
+        // resolves them to their Maven dependency (camel-main-known-dependencies.properties) and downloads it, so a
+        // bean of that type runs; the validator must not contradict the runtime
+        List<String> msgs = SourceValidator.validate("r.camel.yaml", """
+                - beans:
+                    - name: postgresDS
+                      type: "#class:org.postgresql.ds.PGSimpleDataSource"
+                      properties:
+                        url: "jdbc:postgresql://localhost:5432/postgres"
+                    - name: artemisCF
+                      type: "#class:org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory"
+                - route:
+                    from:
+                      uri: "timer:tick?period=1000"
+                      steps:
+                        - to:
+                            uri: "sql:select 1?dataSource=#postgresDS"
+                """, CATALOG, null, dir);
+        assertThat(msgs).isEmpty();
+        assertThat(BeanRefChecks.knownDependency("org.postgresql.ds.PGSimpleDataSource"))
+                .startsWith("org.postgresql:postgresql");
+        assertThat(BeanRefChecks.knownDependency("com.example.NoSuchThing")).isNull();
+    }
+
+    @Test
+    void aClassFromAnUnknownLibrarySaysHowToDeclareTheDependency(@TempDir Path dir) throws IOException {
+        // a package no mapping will ever name: com.zaxxer.hikari is mapped as a package by CAMEL-24809
+        List<String> msgs = SourceValidator.validate("r.camel.yaml", """
+                - beans:
+                    - name: pool
+                      type: "#class:com.example.pool.HikariDataSourceX"
+                """, CATALOG, null, dir);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("was not found").contains("camel.jbang.dependencies=<groupId>:<artifactId>:<version>");
+    }
+
+    @Test
     void aSiblingClassImportedFromTheWrongPackageIsNamed(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("MemoryLeakSimulator.java"), """
                 public class MemoryLeakSimulator {
