@@ -53,6 +53,8 @@ class ExampleBrowserPopup {
     private Rect popupRect;
     private int[] itemHeights;
     private List<JsonObject> catalog;
+    // the catalog grouped by level in ladder order; a pure function of the catalog, computed when it is loaded
+    private Map<String, List<JsonObject>> grouped;
     private JsonObject selectedExample;
 
     // the group (level) the browser is in, or null at the top level where the groups are listed
@@ -94,6 +96,7 @@ class ExampleBrowserPopup {
     void open() {
         if (catalog == null) {
             catalog = loadAndSortExamples();
+            grouped = ExampleHelper.groupByLevel(catalog);
         }
         if (catalog.isEmpty()) {
             notify("No examples found", true);
@@ -146,7 +149,7 @@ class ExampleBrowserPopup {
             for (char c = '0'; c <= '9'; c++) {
                 if (ke.isChar(c)) {
                     int n = c == '0' ? 10 : c - '0';
-                    List<String> levels = new ArrayList<>(ExampleHelper.groupByLevel(catalog).keySet());
+                    List<String> levels = new ArrayList<>(grouped.keySet());
                     if (n >= 1 && n <= levels.size()) {
                         enterFolder(levels.get(n - 1));
                     }
@@ -467,7 +470,7 @@ class ExampleBrowserPopup {
         List<Integer> heights = new ArrayList<>();
         List<Object> data = new ArrayList<>();
         // the ladder: one row per group in reading order, the number is the hotkey
-        Map<String, List<JsonObject>> groups = ExampleHelper.groupByLevel(catalog);
+        Map<String, List<JsonObject>> groups = grouped;
         int n = 0;
         for (Map.Entry<String, List<JsonObject>> group : groups.entrySet()) {
             n++;
@@ -505,7 +508,7 @@ class ExampleBrowserPopup {
         items.add(ListItem.from(" " + (intro.isEmpty() ? ".." : intro)).style(Style.EMPTY.dim()));
         heights.add(1);
         data.add(BACK_MARKER);
-        List<JsonObject> entries = ExampleHelper.groupByLevel(catalog).get(currentFolder);
+        List<JsonObject> entries = grouped.get(currentFolder);
         if (entries != null) {
             for (JsonObject ex : entries) {
                 addExampleItem(items, heights, data, ex, width);
@@ -561,7 +564,7 @@ class ExampleBrowserPopup {
     }
 
     private int folderExampleCount(String folder) {
-        List<JsonObject> entries = ExampleHelper.groupByLevel(catalog).get(folder);
+        List<JsonObject> entries = grouped.get(folder);
         return entries != null ? entries.size() : 0;
     }
 

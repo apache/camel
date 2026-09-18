@@ -178,6 +178,37 @@ class ExampleHelperTest {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         assertEquals(1, ExampleHelper.findExamplesByShortName(catalog, "aggregator").size());
         assertTrue(ExampleHelper.findExamplesByShortName(catalog, "no-such-example").isEmpty());
+        // two groups with the same short name is the case the ambiguity error in Run is for
+        JsonObject a = new JsonObject();
+        a.put("name", "group-a/foo");
+        JsonObject b = new JsonObject();
+        b.put("name", "group-b/foo");
+        assertEquals(2, ExampleHelper.findExamplesByShortName(List.of(a, b), "foo").size());
+    }
+
+    @Test
+    void shouldWrapText() {
+        assertTrue(ExampleHelper.wrap("", 40).isEmpty());
+        assertTrue(ExampleHelper.wrap(null, 40).isEmpty());
+        // the width is never taken below 20, so a narrow terminal still gets readable lines
+        assertEquals(List.of("one two three four five six"), ExampleHelper.wrap("one two three four five six", 27));
+        assertEquals(List.of("one two three four", "five six"), ExampleHelper.wrap("one two three four five six", 20));
+        assertEquals(List.of("one two three four", "five six"), ExampleHelper.wrap("one two three four five six", 5));
+        String longWord = "x".repeat(50);
+        assertEquals(List.of("a", longWord, "b"), ExampleHelper.wrap("a " + longWord + " b", 20));
+        for (String line : ExampleHelper.wrap("the quick brown fox jumps over the lazy dog", 20)) {
+            assertTrue(line.length() <= 20, line);
+        }
+    }
+
+    @Test
+    void shouldSkipNonStringTeaches() {
+        JsonObject teaches = new JsonObject();
+        teaches.put("components", new org.apache.camel.util.json.JsonArray(List.of("timer", 42, "log")));
+        teaches.put("eips", "not-a-list");
+        JsonObject entry = new JsonObject();
+        entry.put("teaches", teaches);
+        assertEquals("components: timer, log", ExampleHelper.getTeachesSummary(entry));
     }
 
     @Test

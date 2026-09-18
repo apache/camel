@@ -455,7 +455,10 @@ public class Run extends CamelCommand {
         for (String line : ExampleHelper.wrap(ExampleHelper.getGroupIntro(level), width - 2)) {
             printer().println("  " + line);
         }
-        int indent = 2 + 8 + 1 + 28 + 1;
+        // "  " + four icons of two columns each + " " + the name column + " ", as the printf below lays it out
+        int iconCols = 8;
+        int nameCols = 28;
+        int indent = 2 + iconCols + 1 + nameCols + 1;
         String pad = " ".repeat(indent);
         for (JsonObject entry : entries) {
             printer().println();

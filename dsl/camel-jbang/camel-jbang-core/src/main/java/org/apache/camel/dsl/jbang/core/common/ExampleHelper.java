@@ -257,7 +257,6 @@ public final class ExampleHelper {
     /**
      * What the example teaches, as one line: the components and the EIPs from its metadata, or an empty string.
      */
-    @SuppressWarnings("unchecked")
     public static String getTeachesSummary(JsonObject entry) {
         JsonObject teaches = entry.getMap("teaches");
         if (teaches == null || teaches.isEmpty()) {
@@ -265,12 +264,21 @@ public final class ExampleHelper {
         }
         StringBuilder sb = new StringBuilder();
         for (String key : new String[] { "components", "eips", "languages", "dataformats" }) {
-            Collection<String> values = (Collection<String>) teaches.get(key);
-            if (values != null && !values.isEmpty()) {
+            // the catalog holds string arrays here; anything else in a hand-edited metadata file is skipped
+            if (!(teaches.get(key) instanceof Collection<?> values) || values.isEmpty()) {
+                continue;
+            }
+            List<String> names = new ArrayList<>();
+            for (Object value : values) {
+                if (value instanceof String s) {
+                    names.add(s);
+                }
+            }
+            if (!names.isEmpty()) {
                 if (sb.length() > 0) {
                     sb.append(" · ");
                 }
-                sb.append(key).append(": ").append(String.join(", ", values));
+                sb.append(key).append(": ").append(String.join(", ", names));
             }
         }
         return sb.toString();
@@ -289,7 +297,15 @@ public final class ExampleHelper {
      * Whether the name is one of the groups (levels) of the ladder.
      */
     public static boolean isGroup(String name) {
-        return name != null && getGroupOrder().contains(name);
+        if (name == null) {
+            return false;
+        }
+        for (String[] g : GROUPS) {
+            if (g[0].equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
