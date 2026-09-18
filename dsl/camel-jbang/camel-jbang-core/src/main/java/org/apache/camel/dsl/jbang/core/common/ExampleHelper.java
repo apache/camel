@@ -268,7 +268,7 @@ public final class ExampleHelper {
             Collection<String> values = (Collection<String>) teaches.get(key);
             if (values != null && !values.isEmpty()) {
                 if (sb.length() > 0) {
-                    sb.append("  ");
+                    sb.append(" · ");
                 }
                 sb.append(key).append(": ").append(String.join(", ", values));
             }
@@ -283,6 +283,42 @@ public final class ExampleHelper {
     public static boolean isCiSkip(JsonObject entry) {
         Boolean skip = entry.getBoolean("ciSkip");
         return skip != null && skip;
+    }
+
+    /**
+     * Whether the name is one of the groups (levels) of the ladder.
+     */
+    public static boolean isGroup(String name) {
+        return name != null && getGroupOrder().contains(name);
+    }
+
+    /**
+     * Wraps the text at word boundaries so no line is longer than the width; a single word longer than the width stays
+     * on its own line.
+     */
+    public static List<String> wrap(String text, int width) {
+        List<String> lines = new ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            return lines;
+        }
+        if (width < 20) {
+            width = 20;
+        }
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split("\\s+")) {
+            if (line.length() > 0 && line.length() + 1 + word.length() > width) {
+                lines.add(line.toString());
+                line.setLength(0);
+            }
+            if (line.length() > 0) {
+                line.append(' ');
+            }
+            line.append(word);
+        }
+        if (line.length() > 0) {
+            lines.add(line.toString());
+        }
+        return lines;
     }
 
     public static String getCategory(JsonObject entry) {

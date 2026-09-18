@@ -94,7 +94,7 @@ class RunTest extends CamelCommandBaseTestSupport {
 
         Assertions.assertEquals(0, exit);
         String output = printer.getOutput();
-        Assertions.assertTrue(output.contains("Available examples:"));
+        Assertions.assertTrue(output.contains("Examples: "));
         Assertions.assertTrue(output.contains("circuit-breaker"));
         Assertions.assertTrue(output.contains("groovy"));
         Assertions.assertTrue(output.contains("routes"));
@@ -107,6 +107,20 @@ class RunTest extends CamelCommandBaseTestSupport {
         int exit = command.doCall();
 
         Assertions.assertEquals(1, exit);
+    }
+
+    @Test
+    public void shouldListOneGroupInFull() throws Exception {
+        Run command = new Run(new CamelJBangMain().withPrinter(printer));
+        command.example = "route";
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.contains("Route:"));
+        Assertions.assertTrue(output.contains("aggregator"));
+        Assertions.assertTrue(output.contains("eips: "));
+        Assertions.assertFalse(output.contains("timer-log"), "only the group asked for is listed");
     }
 
     @Test

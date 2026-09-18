@@ -69,6 +69,7 @@ import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
 import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
@@ -355,7 +356,7 @@ public class Run extends CamelCommand {
     boolean skipPlugins;
 
     @Option(names = { "--example" },
-            description = "Run an example by name, or list available examples when no name is given.",
+            description = "Run an example by name (timer-log or route/aggregator), list the groups when no name is given, or list one group by its name (route).",
             arity = "0..1", fallbackValue = "")
     String example;
 
@@ -378,6 +379,10 @@ public class Run extends CamelCommand {
         if (example != null && example.isEmpty()) {
             return listExamples(null);
         }
+        if (example != null && ExampleHelper.isGroup(example)) {
+            // a group name lists the group, an example name runs the example
+            return listExamples(example);
+        }
         if (example != null) {
             return runExample();
         }
@@ -389,66 +394,88 @@ public class Run extends CamelCommand {
         return run();
     }
 
-    private int listExamples(String filter) {
+    private int listExamples(String group) {
         List<JsonObject> catalog = ExampleHelper.loadCatalog();
         if (catalog.isEmpty()) {
             printer().printErr("No example catalog found.");
             return 1;
         }
-
-        List<JsonObject> filtered = ExampleHelper.filterExamples(catalog, filter);
-        if (filtered.isEmpty()) {
-            printer().printErr("No examples matching: " + filter);
+        Map<String, List<JsonObject>> groups = ExampleHelper.groupByLevel(catalog);
+        if (group == null) {
+            return listGroups(catalog, groups);
+        }
+        List<JsonObject> entries = groups.get(group);
+        if (entries == null || entries.isEmpty()) {
+            printer().printErr("No examples in group: " + group);
             return 1;
         }
+        return listGroup(group, entries);
+    }
 
-        if (filter != null && !filter.isEmpty()) {
-            printer().println("Examples matching '" + filter + "':");
-        } else {
-            printer().println("Available examples:");
-        }
-
-        Map<String, List<JsonObject>> groups = ExampleHelper.groupByLevel(filtered);
-        for (Map.Entry<String, List<JsonObject>> group : groups.entrySet()) {
-            String level = group.getKey();
-            printer().println();
-            String title = ExampleHelper.getGroupTitle(level) + ":";
-            printer().println(title);
-            printer().println("=".repeat(title.length()));
-            String intro = ExampleHelper.getGroupIntro(level);
-            if (!intro.isEmpty()) {
-                printer().println("  " + intro);
-                printer().println();
+    /**
+     * The overview: every group of the ladder with its introduction and the names of its examples.
+     */
+    private int listGroups(List<JsonObject> catalog, Map<String, List<JsonObject>> groups) {
+        int width = listingWidth();
+        printer().println("Examples: " + catalog.size() + " in " + groups.size()
+                          + " groups, a ladder to read in order or jump into");
+        printer().println();
+        int n = 0;
+        for (Map.Entry<String, List<JsonObject>> g : groups.entrySet()) {
+            n++;
+            String level = g.getKey();
+            String title = ExampleHelper.getGroupTitle(level) + " (" + g.getValue().size() + ")";
+            printer().printf("%2d  %-31s %s%n", n, title, "camel run --example=" + level);
+            for (String line : ExampleHelper.wrap(ExampleHelper.getGroupIntro(level), width - 4)) {
+                printer().println("    " + line);
             }
-            for (JsonObject entry : group.getValue()) {
-                String eName = ExampleHelper.getShortName(entry);
-                String desc = entry.getString("description");
-                StringBuilder icons = new StringBuilder();
-                if (ExampleHelper.isBundled(entry)) {
-                    icons.append("📦");
-                } else {
-                    icons.append("🌐");
-                }
-                if (ExampleHelper.requiresDocker(entry)) {
-                    icons.append("🐳");
-                } else {
-                    icons.append("  ");
-                }
-                if (ExampleHelper.hasCitrusTests(entry)) {
-                    icons.append("🍋");
-                } else {
-                    icons.append("  ");
-                }
-                if (ExampleHelper.isCiSkip(entry)) {
-                    icons.append("🤖");
-                } else {
-                    icons.append("  ");
-                }
-                printer().printf("  %s %-28s %s%n", icons, eName, desc);
-                String teaches = ExampleHelper.getTeachesSummary(entry);
-                if (!teaches.isEmpty()) {
-                    printer().printf("  %s %-28s %s%n", "        ", "", teaches);
-                }
+            List<String> names = new ArrayList<>();
+            for (JsonObject e : g.getValue()) {
+                names.add(ExampleHelper.getShortName(e));
+            }
+            for (String line : ExampleHelper.wrap(String.join(", ", names), width - 4)) {
+                printer().println("    " + line);
+            }
+            printer().println();
+        }
+        printer().println("Usage: camel run --example=<group>        what the examples of a group show and teach");
+        printer().println("       camel run --example=<name>         run an example, by its name or group/name");
+        printer().println("       camel run --example=<name> --dev   run it with live reload");
+        return 0;
+    }
+
+    /**
+     * One group in full: each example with what you will see when it runs, what it needs and what it teaches.
+     */
+    private int listGroup(String level, List<JsonObject> entries) {
+        int width = listingWidth();
+        String title = ExampleHelper.getGroupTitle(level) + ":";
+        printer().println(title);
+        printer().println("=".repeat(title.length()));
+        for (String line : ExampleHelper.wrap(ExampleHelper.getGroupIntro(level), width - 2)) {
+            printer().println("  " + line);
+        }
+        int indent = 2 + 8 + 1 + 28 + 1;
+        String pad = " ".repeat(indent);
+        for (JsonObject entry : entries) {
+            printer().println();
+            StringBuilder icons = new StringBuilder();
+            icons.append(ExampleHelper.isBundled(entry) ? "📦" : "🌐");
+            icons.append(ExampleHelper.requiresDocker(entry) ? "🐳" : "  ");
+            icons.append(ExampleHelper.hasCitrusTests(entry) ? "🍋" : "  ");
+            icons.append(ExampleHelper.isCiSkip(entry) ? "🤖" : "  ");
+            List<String> desc = ExampleHelper.wrap(entry.getStringOrDefault("description", ""), width - indent);
+            printer().printf("  %s %-28s %s%n", icons, ExampleHelper.getShortName(entry), desc.isEmpty() ? "" : desc.get(0));
+            for (int i = 1; i < desc.size(); i++) {
+                printer().println(pad + desc.get(i));
+            }
+            List<String> infra = ExampleHelper.getInfraServices(entry);
+            if (!infra.isEmpty()) {
+                printer().println(pad + "needs: camel infra run " + String.join(" ", infra));
+            }
+            String teaches = ExampleHelper.getTeachesSummary(entry);
+            for (String line : ExampleHelper.wrap(teaches, width - indent)) {
+                printer().println(pad + line);
             }
         }
         printer().println();
@@ -457,7 +484,16 @@ public class Run extends CamelCommand {
         printer().println();
         printer().println("Usage: camel run --example=<name>");
         printer().println("       camel run --example=<name> --dev");
+        printer().println("       camel run --example              the groups");
         return 0;
+    }
+
+    private static int listingWidth() {
+        int width = TerminalWidthHelper.getTerminalWidth();
+        if (width <= 0) {
+            width = 120;
+        }
+        return Math.min(width, 160);
     }
 
     private int runExample() throws Exception {
