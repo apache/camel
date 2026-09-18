@@ -255,14 +255,15 @@ public final class ExampleHelper {
     }
 
     /**
-     * What the example teaches, as one line: the components and the EIPs from its metadata, or an empty string.
+     * What the example teaches from its metadata: the components, EIPs, languages and data formats, each as a list of
+     * names in that order; keys without names are left out, so an example without metadata gives an empty map.
      */
-    public static String getTeachesSummary(JsonObject entry) {
+    public static Map<String, List<String>> getTeaches(JsonObject entry) {
+        Map<String, List<String>> answer = new LinkedHashMap<>();
         JsonObject teaches = entry.getMap("teaches");
         if (teaches == null || teaches.isEmpty()) {
-            return "";
+            return answer;
         }
-        StringBuilder sb = new StringBuilder();
         for (String key : new String[] { "components", "eips", "languages", "dataformats" }) {
             // the catalog holds string arrays here; anything else in a hand-edited metadata file is skipped
             if (!(teaches.get(key) instanceof Collection<?> values) || values.isEmpty()) {
@@ -275,11 +276,22 @@ public final class ExampleHelper {
                 }
             }
             if (!names.isEmpty()) {
-                if (sb.length() > 0) {
-                    sb.append(" · ");
-                }
-                sb.append(key).append(": ").append(String.join(", ", names));
+                answer.put(key, names);
             }
+        }
+        return answer;
+    }
+
+    /**
+     * What the example teaches, as one line: the components and the EIPs from its metadata, or an empty string.
+     */
+    public static String getTeachesSummary(JsonObject entry) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, List<String>> e : getTeaches(entry).entrySet()) {
+            if (sb.length() > 0) {
+                sb.append(" · ");
+            }
+            sb.append(e.getKey()).append(": ").append(String.join(", ", e.getValue()));
         }
         return sb.toString();
     }
