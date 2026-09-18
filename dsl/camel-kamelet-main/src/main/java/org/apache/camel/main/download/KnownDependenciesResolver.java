@@ -42,6 +42,8 @@ public final class KnownDependenciesResolver {
     public void loadKnownDependencies() {
         doLoadKnownDependencies("camel-main-known-dependencies.properties");
         doLoadKnownDependencies("camel-component-known-dependencies.properties");
+        // third-party libraries mapped by package, generated from src/main/known-third-party-libraries.properties
+        doLoadKnownDependencies("camel-thirdparty-known-dependencies.properties");
     }
 
     public void loadKnownFactoryFinderDependencies() {
