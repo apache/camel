@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
@@ -54,7 +55,8 @@ class ExampleToolsTest {
         assertThat(run.groups().get(0).level()).isEqualTo("run");
         assertThat(run.groups().get(0).count()).isEqualTo(run.total());
         assertThat(run.examples()).allMatch(e -> "run".equals(e.level()));
-        assertThat(run.examples()).isSortedAccordingTo((a, b) -> Integer.compare(a.order(), b.order()));
+        assertThat(run.examples()).isSortedAccordingTo(
+                Comparator.comparingInt(e -> e.order() != null ? e.order() : Integer.MAX_VALUE));
         assertThat(run.examples()).anyMatch(e -> !e.teaches().isEmpty());
     }
 

@@ -500,19 +500,12 @@ final class TuiToolDefinitions {
     private static void addExampleTools(List<ToolDef> tools) {
         tools.add(toToolDef(toolDef(
                 "tui_list_examples",
-                "Returns the Camel examples as structured JSON, grouped as the ladder of the examples "
-                                     + "(quick-start, run, transform, route, fail-well, connect, connect-service, "
-                                     + "contracts, ai, cloud, showcase) in reading order: the groups with level, "
-                                     + "title, intro and count, and the examples with name, title, description, "
-                                     + "level, order, tags, teaches (components, EIPs, languages, data formats), "
-                                     + "bundled, requiresDocker and infraServices. "
-                                     + "Call it without arguments for the whole ladder, with level for one group. "
-                                     + "Use the 'name' field with tui_run_example to launch one.",
-                Map.of("filter", propDef("string",
-                        "Case-insensitive substring filter on name, title, description, level, or tags"),
-                        "level", propDef("string",
-                                "Only the examples of one group: quick-start, run, transform, route, fail-well, "
-                                                   + "connect, connect-service, contracts, ai, cloud or showcase")))));
+                "Lists the Camel examples by group in reading order: groups (level, title, intro, count) and "
+                                     + "examples (name, title, description, level, order, tags, teaches, bundled, "
+                                     + "requiresDocker, infraServices). Use name with tui_run_example.",
+                Map.of("filter", propDef("string", "Substring filter on name, title, description or tags"),
+                        "level", propDef("string", "One group, e.g. quick-start, run, ai"),
+                        "limit", propDef("integer", "Max examples (default 50)")))));
         tools.add(toToolDef(toolDef(
                 "tui_run_example",
                 "Launches a named bundled example as a background process. "
@@ -520,7 +513,7 @@ final class TuiToolDefinitions {
                                    + "Automatically starts required infra services (Docker containers) if needed. "
                                    + "Use tui_list_examples to discover available example names.",
                 Map.of("name", propDef("string",
-                        "Example name from the catalog (e.g. 'quick-start/timer-log', 'ai/langchain4j-chat')"),
+                        "Example name from the catalog (e.g. 'quick-start/timer-log')"),
                         "profile", propDef("string",
                                 "Camel profile to use (e.g. 'dev'). Optional.")),
                 List.of("name"))));

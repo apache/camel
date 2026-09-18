@@ -103,5 +103,10 @@ class TuiToolRegistryLaunchTest {
         String run = registry.execute("tui_list_examples", Map.of("level", "run"));
         assertTrue(run.contains("\"level\":\"run\""));
         assertTrue(!run.contains("\"level\":\"quick-start\""), "only the run group");
+
+        String one = registry.execute("tui_list_examples", Map.of("level", "run", "limit", 1));
+        assertTrue(one.contains("\"count\":1"), one);
+        assertTrue(one.contains("\"total\":" + run.substring(run.indexOf("\"total\":") + 8, run.indexOf("\"total\":") + 9)),
+                "total counts the whole group");
     }
 }

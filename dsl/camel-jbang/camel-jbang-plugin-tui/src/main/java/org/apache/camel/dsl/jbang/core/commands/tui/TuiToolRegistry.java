@@ -1708,6 +1708,7 @@ class TuiToolRegistry {
 
         String filter = args.get("filter") instanceof String v ? v : null;
         String level = args.get("level") instanceof String v ? v : null;
+        int limit = args.get("limit") instanceof Number n && n.intValue() > 0 ? n.intValue() : 50;
 
         List<JsonObject> filtered = catalog;
         if (filter != null && !filter.isEmpty()) {
@@ -1716,10 +1717,12 @@ class TuiToolRegistry {
 
         JsonArray groups = new JsonArray();
         JsonArray examples = new JsonArray();
+        int total = 0;
         for (Map.Entry<String, List<JsonObject>> group : ExampleHelper.groupByLevel(filtered).entrySet()) {
             if (level != null && !level.isEmpty() && !group.getKey().equalsIgnoreCase(level)) {
                 continue;
             }
+            total += group.getValue().size();
             JsonObject g = new JsonObject();
             g.put("level", group.getKey());
             g.put("title", ExampleHelper.getGroupTitle(group.getKey()));
@@ -1727,6 +1730,9 @@ class TuiToolRegistry {
             g.put("count", group.getValue().size());
             groups.add(g);
             for (JsonObject entry : group.getValue()) {
+                if (examples.size() >= limit) {
+                    break;
+                }
                 JsonObject ex = new JsonObject();
                 ex.put("name", entry.getStringOrDefault("name", ""));
                 ex.put("title", entry.getStringOrDefault("title", ""));
@@ -1753,7 +1759,8 @@ class TuiToolRegistry {
         JsonObject result = new JsonObject();
         result.put("groups", groups);
         result.put("examples", examples);
-        result.put("totalCount", examples.size());
+        result.put("count", examples.size());
+        result.put("total", total);
         return Jsoner.serialize(result);
     }
 
