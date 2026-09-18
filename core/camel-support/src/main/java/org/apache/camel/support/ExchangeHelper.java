@@ -878,8 +878,11 @@ public final class ExchangeHelper {
             exchange.setIn(newMessage);
         }
 
-        // need to de-reference old from the exchange so it can be GC
-        if (old instanceof MessageSupport messageSupport) {
+        // need to de-reference old from the exchange so it can be GC, but only if the exchange no longer
+        // references it: with outOnly and no OUT message yet, old is the (untouched) IN message and detaching it
+        // would leave IN without an exchange reference. Use hasOut() before getOut() as getOut() lazily creates OUT.
+        if (old != exchange.getIn() && !(exchange.hasOut() && old == exchange.getOut())
+                && old instanceof MessageSupport messageSupport) {
             messageSupport.setExchange(null);
         }
     }
