@@ -399,6 +399,55 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void anInventedHeaderForTheSourceEndpointGetsTheExpressionThatAnswersIt() {
+        // a timer-triggered route has no message source to name, so a beginner or a model invents CamelFromEndpoint for
+        // "which endpoint did this come from"; nothing is close, so the message must say what does answer it and what
+        // the timer sets
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "timer:tick?period=1000"
+                    steps:
+                      - log: "Endpoint: ${header.CamelFromEndpoint} size: ${body.length()}"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("header CamelFromEndpoint is not set by timer").doesNotContain("did you mean")
+                .contains("${exchange.fromEndpoint}").contains("${routeId}").contains("${header.CamelToEndpoint}")
+                .contains("The timer headers are CamelTimerFiredTime")
+                .contains(
+                        "timer sets the exchange properties CamelTimerCounter, CamelTimerName, CamelTimerPeriod, CamelTimerTime")
+                .contains("${exchangeProperty.CamelTimerCounter}")
+                .contains("stays null unless a setHeader step sets it earlier in the route");
+    }
+
+    @Test
+    void anInventedHeaderWithTwoComponentsListsTheTriggersHeaders() {
+        // the first component in the file is the trigger; its headers are listed even when nothing is close
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "file:in?noop=true"
+                    steps:
+                      - log: "${header.CamelEndpointUri} ${header.CamelFileName}"
+                      - to:
+                          uri: "timer:ignored"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("header CamelEndpointUri is not set by file, timer")
+                .contains("${exchange.fromEndpoint}").contains("The file headers are").contains("CamelFileName");
+    }
+
+    @Test
+    void anInventedSizeHeaderNamesTheBodyFunctions() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "timer:tick?period=1000"
+                    steps:
+                      - log: "${header.CamelPayloadSize}"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("${body.length()}").contains("${headers.size()}");
+    }
+
+    @Test
     void aPropertyOrBeanNameIsNotAHeader() {
         // CAMEL-24710: name: counts as a header only under setHeader/removeHeader; a dotted name is looked up as is,
         // by the prefix the component documents (CamelSolrField.), and as the head of an OGNL path
