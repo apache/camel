@@ -16,14 +16,19 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -340,6 +345,46 @@ final class BeanRefChecks {
      * A class named with its package that is neither next to the route nor on the CLI classpath: the wrong package
      * (org.apache.camel.support.StringAggregationStrategy) or a missing dependency. Null when the class is fine.
      */
+    /**
+     * The classes camel run resolves to a Maven dependency and downloads on demand (camel-kamelet-main's
+     * camel-main-known-dependencies.properties and camel-component-known-dependencies.properties), so a
+     * #class:org.postgresql.ds.PGSimpleDataSource bean is fine without a dependency declared even though the class is
+     * not on the CLI classpath. Matched the way the runtime matches: the class name, then each enclosing package.
+     */
+    private static volatile Map<String, String> knownDependencies;
+
+    static String knownDependency(String fqcn) {
+        Map<String, String> known = knownDependencies;
+        if (known == null) {
+            known = new HashMap<>();
+            for (String name : new String[] {
+                    "camel-main-known-dependencies.properties", "camel-component-known-dependencies.properties" }) {
+                try {
+                    Enumeration<URL> resources = BeanRefChecks.class.getClassLoader().getResources(name);
+                    while (resources.hasMoreElements()) {
+                        try (InputStream is = resources.nextElement().openStream()) {
+                            Properties prop = new Properties();
+                            prop.load(is);
+                            for (String key : prop.stringPropertyNames()) {
+                                known.put(key, prop.getProperty(key));
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // the mapping is an optimisation of the message, not a requirement
+                }
+            }
+            knownDependencies = known;
+        }
+        String prefix = fqcn;
+        String gav = known.get(prefix);
+        while (gav == null && prefix.lastIndexOf('.') != -1) {
+            prefix = prefix.substring(0, prefix.lastIndexOf('.'));
+            gav = known.get(prefix);
+        }
+        return gav;
+    }
+
     static String classNotFound(String fqcn, BeanDeclarations external) {
         if (external == null || external == BeanDeclarations.NONE
                 || fqcn == null || fqcn.contains("{{") || fqcn.contains("${")) {
@@ -366,6 +411,10 @@ final class BeanRefChecks {
         } catch (Throwable e) {
             // not on the classpath
         }
+        if (knownDependency(fqcn) != null) {
+            // camel run downloads the dependency for this class; the runtime and the validator must agree
+            return null;
+        }
         String hint = "";
         if (simple.endsWith("AggregationStrategy") && !fqcn.startsWith("org.apache.camel.processor.aggregate.")) {
             String candidate = "org.apache.camel.processor.aggregate." + simple;
@@ -377,8 +426,9 @@ final class BeanRefChecks {
             }
         }
         if (hint.isEmpty()) {
-            hint = " (check the package name; a class of your own goes in a .java file next to the route, a class from"
-                   + " another library needs its dependency)";
+            hint = " (check the package name; a class of your own goes in a .java file next to the route; a class from"
+                   + " another library needs its dependency declared, camel.jbang.dependencies=<groupId>:<artifactId>:<version>"
+                   + " in application.properties or --dep on camel run)";
         }
         return "class " + fqcn + " was not found" + hint;
     }
