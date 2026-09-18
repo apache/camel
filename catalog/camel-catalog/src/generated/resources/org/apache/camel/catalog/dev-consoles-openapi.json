@@ -1976,6 +1976,18 @@
 														"type": "integer",
 														"description": "Number of not-permitted calls"
 													},
+													"fallbackCalls": {
+														"type": "integer",
+														"description": "Number of calls answered by the onFallback"
+													},
+													"timedOutCalls": {
+														"type": "integer",
+														"description": "Number of calls that timed out"
+													},
+													"bulkheadRejectedCalls": {
+														"type": "integer",
+														"description": "Number of calls rejected because the bulkhead was full"
+													},
 													"configuration": {
 														"type": "object",
 														"properties": {
@@ -2030,7 +2042,10 @@
 												"required": [
 													"successfulCalls",
 													"failedCalls",
-													"notPermittedCalls"
+													"notPermittedCalls",
+													"fallbackCalls",
+													"timedOutCalls",
+													"bulkheadRejectedCalls"
 												]
 											},
 											"description": "The circuit breakers"
@@ -5434,6 +5449,18 @@
 														"type": "integer",
 														"description": "The number of not permitted calls"
 													},
+													"fallbackCalls": {
+														"type": "integer",
+														"description": "The number of calls answered by the onFallback"
+													},
+													"timedOutCalls": {
+														"type": "integer",
+														"description": "The number of calls that timed out"
+													},
+													"bulkheadRejectedCalls": {
+														"type": "integer",
+														"description": "The number of calls rejected because the bulkhead was full"
+													},
 													"failureRate": {
 														"type": "number",
 														"description": "The failure rate in percentage"
@@ -5513,6 +5540,9 @@
 													"successfulCalls",
 													"failedCalls",
 													"notPermittedCalls",
+													"fallbackCalls",
+													"timedOutCalls",
+													"bulkheadRejectedCalls",
 													"failureRate"
 												]
 											},
