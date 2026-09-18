@@ -52,4 +52,14 @@ The `camel-openai` component now registers the primary URI scheme `llm` alongsid
   `camel.component.openai.*` create independent component instances when both are set.
 
 Java packages, exchange headers (`CamelOpenAI*`), and the Maven artifact id are unchanged.
+
+When using the Java Endpoint DSL, the primary scheme name changes generated helper methods:
+`EndpointHeaderBuilders.openai()` is replaced by `llm()`, and the two-argument
+`StaticEndpointBuilders.openai(String componentName, String path)` overload is removed.
+Use `llm(path)` or `openai(path)` (both delegate to the same component). The Component DSL
+still exposes both `Components.llm()` and `Components.openai()`.
+
+If you migrate routes from `openai:` to `llm:` URIs, copy any `camel.component.openai.*`
+properties to `camel.component.llm.*` — the two schemes use independent component instances.
+
 See xref:components:openai-component.adoc[LLM Component] for details.
