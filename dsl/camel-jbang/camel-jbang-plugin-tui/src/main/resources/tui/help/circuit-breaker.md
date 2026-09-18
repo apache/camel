@@ -55,16 +55,36 @@ CLOSED ──(failures exceed threshold)──> OPEN
 ## Example Screen
 
 ```
- ROUTE    ID            COMPONENT     STATE   WINDOW  INFLIGHT  SUCCESS  FAIL  RATE%  REJECT  FALLBACK  TIMEOUT
- route1   circuitBrk1   resilience4j  CLOSED  10      0         450      5     1.0%   0       5         2
- route2   circuitBrk2   resilience4j  OPEN    10      0         100      8     80.0%  25      33        0
+ ROUTE        ID                COMPONENT     STATE   WINDOW  INFLIGHT  SUCCESS  FAIL  RATE%  REJECT  FALLBACK  TIMEOUT  SINCE-LAST
+ checkout     payment-breaker   resilience4j  CLOSED      10         1      450     5     1%                 5        2  1s/3m12s
+ stock-check  supplier-breaker  resilience4j  OPEN         4         0        3     2    50%       9       11           11s/9s
 ```
 
-In this example, `route1` is healthy with a 1% failure rate; its five
-failures, two of them timeouts, were all answered by the fallback. `route2`
-has tripped open with an 80% failure rate — 25 calls have been rejected
-since it opened, and the fallback answered those and the 8 failures. The circuit will stay open until the wait timeout
-expires, then try a few test calls in HALF_OPEN state.
+Zero counts are shown blank, so a healthy breaker is a quiet line.
+
+`payment-breaker` is healthy with a 1% failure rate. Its five failures
+were all answered by the fallback, and two of them were timeouts: the
+payment provider is occasionally slow, not broken.
+
+`supplier-breaker` has tripped open: two real failures in a window of
+four is a 50% failure rate. Since it opened, 9 calls were rejected
+without calling the supplier, and the fallback answered all 11 callers.
+REJECT and FALLBACK together show what the breaker saved: the callers
+got an answer, and the supplier got a rest. The circuit stays open
+until the wait timeout expires, then lets a probe call through in
+HALF_OPEN state.
+
+## Reading the counters
+
+- FAIL counts calls the protected code failed, timeouts included.
+  TIMEOUT tells how many of those were timeouts.
+- REJECT counts calls the OPEN breaker refused. They are not in FAIL.
+- FALLBACK counts every call the `onFallback` answered, so it is
+  normally FAIL plus REJECT plus the bulkhead rejections, as long as
+  the breaker has a fallback. Without a fallback it stays at zero and
+  the exceptions reach the route instead.
+- Calls rejected by a full bulkhead are not in REJECT; they appear as
+  `bulkhead` in the detail view.
 
 ## Detail View
 
