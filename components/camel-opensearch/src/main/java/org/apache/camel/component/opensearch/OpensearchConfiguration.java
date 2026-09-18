@@ -52,7 +52,10 @@ public class OpensearchConfiguration {
     private String hostAddresses;
     @UriParam(defaultValue = "" + OpensearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = OpensearchConstants.DEFAULT_SOCKET_TIMEOUT;
-    @UriParam(defaultValue = "" + OpensearchConstants.MAX_RETRY_TIMEOUT)
+    @Deprecated
+    @UriParam(defaultValue = "" + OpensearchConstants.MAX_RETRY_TIMEOUT,
+              description = "Deprecated: this option has no effect. It was used by the old low-level REST client and is"
+                            + " ignored by the current client.")
     private int maxRetryTimeout = OpensearchConstants.MAX_RETRY_TIMEOUT;
     @UriParam(defaultValue = "" + OpensearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = OpensearchConstants.DEFAULT_CONNECTION_TIMEOUT;
@@ -234,11 +237,15 @@ public class OpensearchConfiguration {
 
     /**
      * The time in ms before retry
+     *
+     * @deprecated this option has no effect and is ignored by the current client
      */
+    @Deprecated
     public int getMaxRetryTimeout() {
         return maxRetryTimeout;
     }
 
+    @Deprecated
     public void setMaxRetryTimeout(int maxRetryTimeout) {
         this.maxRetryTimeout = maxRetryTimeout;
     }
