@@ -29,6 +29,12 @@
 # All sets of affected modules are merged and deduplicated before testing.
 
 set -euo pipefail
+# Ignore SIGPIPE to prevent spurious failures on long GitHub Actions jobs.
+# When the runner closes the script's stdout (log line limit reached), external
+# commands writing to it (e.g. `tail -500 "$log"` in the failure report block)
+# are killed by SIGPIPE (exit 141).  Ignoring SIGPIPE lets children inherit
+# SIG_IGN, exit via EPIPE instead, and preserves Maven's real return code.
+trap '' PIPE
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=reactor_timing.sh
