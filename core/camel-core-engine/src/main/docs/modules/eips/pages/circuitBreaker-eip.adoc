@@ -48,7 +48,7 @@ what happened to the call itself:
 
 `CamelCircuitBreakerState` is the state of the breaker after the call was recorded, so the call that opens the
 breaker reports `OPEN` although it was attempted; use the rejected property to know whether a call was made.
-The exception is available as `${exception}` in the fallback.
+The caught exception is available in the fallback, for example as `${exception.message}` in the Simple language.
 
 For example, a fallback that answers differently when the service is down rather than failing once:
 
