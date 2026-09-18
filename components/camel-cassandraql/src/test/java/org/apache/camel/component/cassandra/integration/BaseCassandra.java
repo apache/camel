@@ -96,7 +96,7 @@ public abstract class BaseCassandra implements ConfigurableRoute, CamelTestSuppo
                     .withLocalDatacenter(DATACENTER_NAME)
                     .withKeyspace(KEYSPACE_NAME)
                     .withConfigLoader(DriverConfigLoader.programmaticBuilder()
-                            .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5)).build())
+                            .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(10)).build())
                     .addContactPoint(endpoint).build();
         }
         return session;
