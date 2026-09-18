@@ -377,6 +377,14 @@ public class SourceValidatorBeanRefsTest {
     }
 
     @Test
+    void withoutTheMappingFilesOnTheClasspathNothingIsKnownAndNothingFails() {
+        // a class loader with no resources at all: the check falls back to "unknown" instead of failing
+        ClassLoader empty = new java.net.URLClassLoader(new java.net.URL[0], null);
+        assertThat(BeanRefChecks.knownDependency("org.postgresql.ds.PGSimpleDataSource", empty)).isNull();
+        assertThat(BeanRefChecks.knownDependency("org.postgresql.ds.PGSimpleDataSource")).isNotNull();
+    }
+
+    @Test
     void aClassFromAnUnknownLibrarySaysHowToDeclareTheDependency(@TempDir Path dir) throws IOException {
         // a package no mapping will ever name: com.zaxxer.hikari is mapped as a package by CAMEL-24809
         List<String> msgs = SourceValidator.validate("r.camel.yaml", """
