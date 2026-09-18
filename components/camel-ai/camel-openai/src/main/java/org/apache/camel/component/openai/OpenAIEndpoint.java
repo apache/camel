@@ -68,13 +68,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OpenAI endpoint for chat completion, Responses API, embeddings, audio transcription, audio translation, and
- * text-to-speech.
+ * LLM endpoint for chat completion, Responses API, embeddings, audio transcription, audio translation, and
+ * text-to-speech using OpenAI-compatible APIs. The {@code openai} scheme is a supported alias.
  */
 @UriEndpoint(firstVersion = "4.17.0",
-             scheme = "openai",
-             title = "OpenAI",
-             syntax = "openai:operation",
+             scheme = "llm,openai",
+             title = "LLM,OpenAI",
+             syntax = "llm:operation",
              category = { Category.AI },
              producerOnly = true,
              headersClass = OpenAIConstants.class)

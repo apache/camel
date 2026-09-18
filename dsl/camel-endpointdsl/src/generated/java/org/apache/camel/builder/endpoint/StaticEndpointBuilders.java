@@ -11145,6 +11145,60 @@ public class StaticEndpointBuilders {
         return LdifEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * LLM (camel-openai)
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * Syntax: <code>llm:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform: 'chat-completion', 'responses', 'embeddings',
+     * 'tool-execution', 'audio-transcription', 'audio-translation', or
+     * 'audio-speech'
+     * There are 7 enums and the value can be one of: chat-completion,
+     * responses, embeddings, tool-execution, audio-transcription,
+     * audio-translation, audio-speech
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder llm(String path) {
+        return llm("llm", path);
+    }
+    /**
+     * LLM (camel-openai)
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * Syntax: <code>llm:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform: 'chat-completion', 'responses', 'embeddings',
+     * 'tool-execution', 'audio-transcription', 'audio-translation', or
+     * 'audio-speech'
+     * There are 7 enums and the value can be one of: chat-completion,
+     * responses, embeddings, tool-execution, audio-transcription,
+     * audio-translation, audio-speech
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder llm(String componentName, String path) {
+        return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Log Data (camel-log)
      * Prints data from the routed message (such as body and headers) to the
      * logger.
@@ -12588,8 +12642,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech.
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
      * 
      * Category: ai
      * Since: 4.17
@@ -12609,34 +12664,7 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String path) {
-        return openai("openai", path);
-    }
-    /**
-     * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech.
-     * 
-     * Category: ai
-     * Since: 4.17
-     * Maven coordinates: org.apache.camel:camel-openai
-     * 
-     * Syntax: <code>openai:operation</code>
-     * 
-     * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses', 'embeddings',
-     * 'tool-execution', 'audio-transcription', 'audio-translation', or
-     * 'audio-speech'
-     * There are 7 enums and the value can be one of: chat-completion,
-     * responses, embeddings, tool-execution, audio-transcription,
-     * audio-translation, audio-speech
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path operation
-     * @return the dsl builder
-     */
-    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String componentName, String path) {
-        return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return llm("openai", path);
     }
     /**
      * OpenSearch (camel-opensearch)
