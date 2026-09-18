@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.microprofile.faulttolerance;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -23,11 +26,14 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The fallback, timed out and bulkhead rejected counters, which the circuit breaker listeners do not tell apart.
  */
 public class FaultToleranceCallCountersTest extends CamelTestSupport {
+
+    private final CountDownLatch permitAcquired = new CountDownLatch(1);
 
     @Test
     public void testFallbackAndRejectedCounters() throws Exception {
@@ -71,7 +77,7 @@ public class FaultToleranceCallCountersTest extends CamelTestSupport {
         // the first call holds the only bulkhead permit while it is slow,
         // so the second call is rejected by the bulkhead and answered by the fallback
         template.asyncSendBody("direct:bulkhead", "Hello World");
-        Thread.sleep(500);
+        assertTrue(permitAcquired.await(5, TimeUnit.SECONDS), "first call should be inside the bulkhead");
         template.sendBody("direct:bulkhead", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -115,6 +121,7 @@ public class FaultToleranceCallCountersTest extends CamelTestSupport {
                         .circuitBreaker().id("cbBulkhead")
                         .faultToleranceConfiguration()
                         .bulkheadEnabled(true).bulkheadMaxConcurrentCalls(1).bulkheadWaitingTaskQueue(1).end()
+                        .process(e -> permitAcquired.countDown())
                         .to("direct:slowService")
                         .onFallback()
                         .transform().constant("Fallback response")

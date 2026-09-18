@@ -28,6 +28,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 
@@ -80,7 +81,7 @@ class ListCircuitBreakerTest extends ProcessCommandTestSupport {
             assertTrue(output.contains("CLOSED"), "Should show CLOSED state");
             assertTrue(output.contains("FALLBACK"), "Should show FALLBACK column");
             assertTrue(output.contains("TIMEOUT"), "Should show TIMEOUT column");
-            assertTrue(!output.contains("BULKHEAD"), "Should not show BULKHEAD column without a bulkhead");
+            assertFalse(output.contains("BULKHEAD"), "Should not show BULKHEAD column without a bulkhead");
         }
     }
 
