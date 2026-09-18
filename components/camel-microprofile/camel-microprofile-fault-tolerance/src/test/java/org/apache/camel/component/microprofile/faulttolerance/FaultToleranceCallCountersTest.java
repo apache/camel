@@ -19,6 +19,7 @@ package org.apache.camel.component.microprofile.faulttolerance;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -90,6 +91,30 @@ public class FaultToleranceCallCountersTest extends CamelTestSupport {
         assertEquals(0, cb.getNumberOfTimedOutCalls());
     }
 
+    @Test
+    public void testTimedOutWithoutFallbackCounter() throws Exception {
+        // no onFallback: the timeout fails the exchange, and the counter is kept on that path too
+        Exchange result = template.request("direct:slowNoFallback", e -> e.getMessage().setBody("Hello World"));
+
+        assertTrue(result.isFailed(), "the timed out call should fail the exchange");
+        FaultToleranceProcessor cb = context.getProcessor("cbSlowNoFallback", FaultToleranceProcessor.class);
+        assertEquals(1, cb.getNumberOfTimedOutCalls());
+        assertEquals(0, cb.getNumberOfFallbackCalls());
+    }
+
+    @Test
+    public void testBulkheadRejectedWithoutFallbackCounter() throws Exception {
+        // no onFallback: the second call is rejected by the bulkhead and fails the exchange
+        template.asyncSendBody("direct:bulkheadNoFallback", "Hello World");
+        assertTrue(permitAcquired.await(5, TimeUnit.SECONDS), "first call should be inside the bulkhead");
+        Exchange result = template.request("direct:bulkheadNoFallback", e -> e.getMessage().setBody("Hello World"));
+
+        assertTrue(result.isFailed(), "the rejected call should fail the exchange");
+        FaultToleranceProcessor cb = context.getProcessor("cbBulkheadNoFallback", FaultToleranceProcessor.class);
+        assertEquals(1, cb.getNumberOfBulkheadRejectedCalls());
+        assertEquals(0, cb.getNumberOfFallbackCalls());
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -127,6 +152,19 @@ public class FaultToleranceCallCountersTest extends CamelTestSupport {
                         .transform().constant("Fallback response")
                         .end()
                         .to("mock:bulkhead");
+
+                from("direct:slowNoFallback")
+                        .circuitBreaker().id("cbSlowNoFallback")
+                        .faultToleranceConfiguration().timeoutEnabled(true).timeoutDuration(200).end()
+                        .to("direct:slowService")
+                        .end();
+
+                from("direct:bulkheadNoFallback")
+                        .circuitBreaker().id("cbBulkheadNoFallback")
+                        .faultToleranceConfiguration().bulkheadEnabled(true).bulkheadMaxConcurrentCalls(1).bulkheadWaitingTaskQueue(1).end()
+                        .process(e -> permitAcquired.countDown())
+                        .to("direct:slowService")
+                        .end();
             }
         };
     }
