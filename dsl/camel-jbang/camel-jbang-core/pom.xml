@@ -380,12 +380,20 @@
                                             def dest = new File(properties['examples.dest'])
                                             def catalog = new JsonSlurper().parse(new File(dest, 'camel-jbang-example-catalog.json'))
                                             // start from a clean tree so examples that left the catalog, or moved, do not linger
-                                            dest.listFiles().findAll { it.directory }.each { it.deleteDir() }
+                                            def files = dest.listFiles()
+                                            if (files == null) {
+                                                throw new RuntimeException("Cannot list ${dest}: does it exist and is it a directory?")
+                                            }
+                                            files.findAll { it.directory }.each { it.deleteDir() }
                                             catalog.findAll { it.bundled }.each { ex ->
                                                 ex.files.each { f ->
                                                     def target = new File(dest, ex.name + '/' + f)
                                                     target.parentFile.mkdirs()
-                                                    new URL("${base}/${ex.name}/${f}").withInputStream { i -> target.withOutputStream { o -> o << i } }
+                                                    try {
+                                                        new URL("${base}/${ex.name}/${f}").withInputStream { i -> target.withOutputStream { o -> o << i } }
+                                                    } catch (Exception e) {
+                                                        throw new RuntimeException("Failed to fetch ${ex.name}/${f} from ${base}: ${e.message}", e)
+                                                    }
                                                     println "synced ${ex.name}/${f}"
                                                 }
                                             }
