@@ -66,7 +66,7 @@ public class KnownDependenciesResolverTest {
         assertGav(resolver, "org.postgresql.ds.PGConnectionPoolDataSource", "org.postgresql", "postgresql");
         assertGav(resolver, "org.h2.jdbcx.JdbcDataSource", "com.h2database", "h2");
         assertGav(resolver, "com.zaxxer.hikari.HikariConfig", "com.zaxxer", "HikariCP");
-        assertGav(resolver, "org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory", "org.apache.activemq",
+        assertGav(resolver, "org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory", "org.apache.artemis",
                 "artemis-jakarta-client-all");
         assertGav(resolver, "org.apache.activemq.ActiveMQConnectionFactory", "org.apache.activemq", "activemq-client");
         assertGav(resolver, "org.apache.qpid.jms.JmsConnectionFactory", "org.apache.qpid", "qpid-jms-client");
