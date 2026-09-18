@@ -24,18 +24,8 @@ import jakarta.jms.ExceptionListener;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
 
-import org.apache.camel.AsyncEndpoint;
-import org.apache.camel.Category;
-import org.apache.camel.Component;
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.MultipleConsumersSupport;
-import org.apache.camel.PollingConsumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.component.sjms.consumer.EndpointMessageListener;
-import org.apache.camel.component.sjms.consumer.SimpleMessageListenerContainer;
+import org.apache.camel.*;
+import org.apache.camel.component.sjms.consumer.*;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
@@ -67,6 +57,8 @@ import org.apache.camel.util.StringHelper;
              category = { Category.MESSAGING }, headersClass = SjmsConstants.class)
 public class SjmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
+
+    public static final long DEFAULT_CONSUMER_BATCHING_INTERVAL_MILLIS = 1000L;
 
     private boolean topic;
     private JmsBinding binding;
@@ -285,6 +277,33 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used")
     private boolean synchronous;
+    @UriParam(label = "consumer,batch", defaultValue = "false",
+              description = "Enable batch consuming. The route receives one Exchange per batch, whose body"
+                            + " is a List<Exchange> of the individual JMS messages, instead of one Exchange per message.")
+    private boolean batching;
+    @UriParam(label = "consumer,batch", defaultValue = "100",
+              description = "Maximum number of messages per batch. A value <= 0 means only batchTimeout"
+                            + " controls when a batch is emitted.")
+    private int batchingSize = 100;
+    @UriParam(label = "consumer,batch",
+              description = "Time in millis, measured from the first message received into a new batch, after which "
+                            + "the batch is dispatched even if batchSize has not been reached — comparable to the Aggregator "
+                            + "EIP's completionInterval. Mutually exclusive with batchTimeout: only one of the two may be "
+                            + "non-zero. If both are left at 0 (the default), an internal interval of 1000ms is used, matching "
+                            + "this component's original batching behavior.")
+    private long batchingInterval;
+    @UriParam(label = "consumer,batch",
+              description = "Idle time in millis, comparable to the Aggregator EIP's completionTimeout: if the batch "
+                            + "already contains one or more messages and no further message arrives within this time, the "
+                            + "partial batch is dispatched. Unlike batchInterval, the clock resets on every message received, "
+                            + "not just the first. Mutually exclusive with batchInterval.")
+    private long batchingTimeout;
+    @UriParam(label = "consumer,batch", javaType = "org.apache.camel.AggregationStrategy",
+              description = "A custom AggregationStrategy used to combine the messages of a batch into the single "
+                            + "Exchange routed by the consumer. Only used when batching=true. By default the "
+                            + "messages are grouped into a List<Exchange> in the message body. The strategy is "
+                            + "shared by all concurrent consumers, so it must be thread-safe.")
+    private AggregationStrategy batchingAggregationStrategy;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
 
@@ -350,12 +369,40 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        if (isBatching()) {
+            return createBatchConsumer(processor);
+        } else {
+            return createSimpleConsumer(processor);
+        }
+    }
+
+    protected Consumer createSimpleConsumer(Processor processor) throws Exception {
         MessageListenerContainer container = createMessageListenerContainer(this);
         SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
 
         EndpointMessageListener listener = new EndpointMessageListener(consumer, this, processor);
         configureMessageListener(listener);
         container.setMessageListener(listener);
+
+        configureConsumer(consumer);
+        return consumer;
+    }
+
+    protected AggregationStrategy createBatchAggregationStrategy() {
+        AggregationStrategy strategy = getBatchingAggregationStrategy();
+        return strategy != null ? strategy : new BatchDefaultExchangeListAggregationStrategy();
+    }
+
+    protected Consumer createBatchConsumer(Processor processor) throws Exception {
+        validateBatchingOptions();
+
+        AggregationStrategy aggregationStrategy = createBatchAggregationStrategy();
+
+        BatchMessageListenerContainer container = createBatchMessageListenerContainer(this, aggregationStrategy);
+        SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
+
+        BatchEndpointMessageListener listener = new BatchEndpointMessageListener(this, processor, aggregationStrategy);
+        container.setBatchListener(listener);
 
         configureConsumer(consumer);
         return consumer;
@@ -447,6 +494,24 @@ public class SjmsEndpoint extends DefaultEndpoint
         SimpleMessageListenerContainer answer = new SimpleMessageListenerContainer(endpoint);
         answer.setConcurrentConsumers(concurrentConsumers);
         return answer;
+    }
+
+    public BatchMessageListenerContainer createBatchMessageListenerContainer(
+            SjmsEndpoint endpoint, AggregationStrategy aggregationStrategy) {
+        BatchMessageListenerContainer answer = new BatchMessageListenerContainer(endpoint, aggregationStrategy);
+        answer.setConcurrentConsumers(concurrentConsumers);
+        return answer;
+    }
+
+    private void validateBatchingOptions() {
+        if (batchingInterval > 0 && batchingTimeout > 0) {
+            throw new IllegalArgumentException(
+                    "batchingInterval and batchingTimeout cannot both be greater than 0");
+        }
+
+        if (getExchangePattern().isOutCapable()) {
+            throw new IllegalArgumentException("SjmsConsumer does not support exchangePattern=InOut in batching mode");
+        }
     }
 
     /**
@@ -892,5 +957,45 @@ public class SjmsEndpoint extends DefaultEndpoint
             throw new IllegalArgumentException("BlobMessage is not supported by this implementation");
         }
         this.jmsMessageType = jmsMessageType;
+    }
+
+    public void setBatching(boolean batching) {
+        this.batching = batching;
+    }
+
+    public boolean isBatching() {
+        return this.batching;
+    }
+
+    public void setBatchingSize(int batchingSize) {
+        this.batchingSize = batchingSize;
+    }
+
+    public int getBatchingSize() {
+        return batchingSize;
+    }
+
+    public void setBatchingInterval(long batchingInterval) {
+        this.batchingInterval = batchingInterval;
+    }
+
+    public long getBatchingInterval() {
+        return this.batchingInterval;
+    }
+
+    public void setBatchingTimeout(long batchingTimeout) {
+        this.batchingTimeout = batchingTimeout;
+    }
+
+    public long getBatchingTimeout() {
+        return this.batchingTimeout;
+    }
+
+    public AggregationStrategy getBatchingAggregationStrategy() {
+        return batchingAggregationStrategy;
+    }
+
+    public void setBatchingAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.batchingAggregationStrategy = aggregationStrategy;
     }
 }

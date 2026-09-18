@@ -35,6 +35,15 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "asyncStopListener": target.setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
+        case "batching": target.setBatching(property(camelContext, boolean.class, value)); return true;
+        case "batchingaggregationstrategy":
+        case "batchingAggregationStrategy": target.setBatchingAggregationStrategy(property(camelContext, org.apache.camel.AggregationStrategy.class, value)); return true;
+        case "batchinginterval":
+        case "batchingInterval": target.setBatchingInterval(property(camelContext, long.class, value)); return true;
+        case "batchingsize":
+        case "batchingSize": target.setBatchingSize(property(camelContext, int.class, value)); return true;
+        case "batchingtimeout":
+        case "batchingTimeout": target.setBatchingTimeout(property(camelContext, long.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientid":
@@ -133,6 +142,15 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "asyncStopListener": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
+        case "batching": return boolean.class;
+        case "batchingaggregationstrategy":
+        case "batchingAggregationStrategy": return org.apache.camel.AggregationStrategy.class;
+        case "batchinginterval":
+        case "batchingInterval": return long.class;
+        case "batchingsize":
+        case "batchingSize": return int.class;
+        case "batchingtimeout":
+        case "batchingTimeout": return long.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientid":
@@ -232,6 +250,15 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "asyncStopListener": return target.isAsyncStopListener();
         case "autostartup":
         case "autoStartup": return target.isAutoStartup();
+        case "batching": return target.isBatching();
+        case "batchingaggregationstrategy":
+        case "batchingAggregationStrategy": return target.getBatchingAggregationStrategy();
+        case "batchinginterval":
+        case "batchingInterval": return target.getBatchingInterval();
+        case "batchingsize":
+        case "batchingSize": return target.getBatchingSize();
+        case "batchingtimeout":
+        case "batchingTimeout": return target.getBatchingTimeout();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientid":
