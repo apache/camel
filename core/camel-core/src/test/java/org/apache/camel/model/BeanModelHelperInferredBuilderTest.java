@@ -185,6 +185,13 @@ public class BeanModelHelperInferredBuilderTest extends ContextTestSupport {
     }
 
     @Test
+    public void testInheritedFluentSettersOfASelfTypedBaseBuilder() {
+        // as the LangChain4j Gemini builder: the setters are declared on a generic base builder and return B
+        assertEquals(java.util.List.of("apiKey", "modelName", "region"),
+                PropertyBindingSupport.builderPropertyNames(Regional.RegionalBuilder.class));
+    }
+
+    @Test
     public void testResolveBeanViaClassUsesBuilder() throws Exception {
         // #class: without properties (as camel.beans.x = #class:... with no further keys) builds with the defaults
         Object out = PropertyBindingSupport.resolveBean(context, "#class:" + ChatModel.class.getName());
@@ -361,6 +368,38 @@ public class BeanModelHelperInferredBuilderTest extends ContextTestSupport {
 
             public Ambiguous large() {
                 return new Ambiguous("large " + name);
+            }
+        }
+    }
+
+    /** A builder whose setters are inherited from a self-typed base builder (B extends BaseBuilder<B>) */
+    public static final class Regional {
+        private Regional() {
+        }
+
+        public static RegionalBuilder builder() {
+            return new RegionalBuilder();
+        }
+
+        public abstract static class BaseBuilder<B extends BaseBuilder<B>> {
+            @SuppressWarnings("unchecked")
+            public B apiKey(String apiKey) {
+                return (B) this;
+            }
+
+            @SuppressWarnings("unchecked")
+            public B modelName(String modelName) {
+                return (B) this;
+            }
+        }
+
+        public static final class RegionalBuilder extends BaseBuilder<RegionalBuilder> {
+            public RegionalBuilder region(String region) {
+                return this;
+            }
+
+            public Regional build() {
+                return new Regional();
             }
         }
     }
