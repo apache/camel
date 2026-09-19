@@ -100,6 +100,7 @@ public class OpenAISchemeAliasTest extends CamelTestSupport {
 
         assertEquals(OpenAIOperations.chatCompletion, llmEndpoint.getOperation());
         assertEquals(OpenAIOperations.chatCompletion, openaiEndpoint.getOperation());
+        // getDefaultName() returns the first scheme in @Component("llm,openai"), not the URI scheme used
         assertEquals("llm", llmEndpoint.getComponent().getDefaultName());
         assertEquals("llm", openaiEndpoint.getComponent().getDefaultName());
     }

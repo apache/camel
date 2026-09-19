@@ -620,6 +620,9 @@ When using the Java Endpoint DSL, the primary scheme name changes generated help
 If you migrate routes from `openai:` to `llm:` URIs, copy any `camel.component.openai.*`
 properties to `camel.component.llm.*` — the two schemes use independent component instances.
 
+`Component.getDefaultName()` returns the first scheme declared in `@Component("llm,openai")`
+(`"llm"`) for both `llm` and `openai` component instances.
+
 See xref:components:openai-component.adoc[LLM Component] for details.
 
 === camel-archetypes

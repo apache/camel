@@ -134,8 +134,8 @@ public interface OpenAIEndpointBuilderFactory {
          * Map additional fields from the response message to Camel headers. The
          * key is the field name in the API response, the value is the Camel
          * header name (e.g.
-         * additionalResponseHeader.reasoning_content=MyReasoningHeader). This
-         * is a multi-value option with prefix: additionalResponseHeader.
+         * additionalResponseHeader.reasoning_content=CamelMyReasoningHeader).
+         * This is a multi-value option with prefix: additionalResponseHeader.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -157,8 +157,8 @@ public interface OpenAIEndpointBuilderFactory {
          * Map additional fields from the response message to Camel headers. The
          * key is the field name in the API response, the value is the Camel
          * header name (e.g.
-         * additionalResponseHeader.reasoning_content=MyReasoningHeader). This
-         * is a multi-value option with prefix: additionalResponseHeader.
+         * additionalResponseHeader.reasoning_content=CamelMyReasoningHeader).
+         * This is a multi-value option with prefix: additionalResponseHeader.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -328,44 +328,6 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Run the model response in the background (Responses API only). The
-         * exchange completes as soon as the response is queued, with an empty
-         * body and the CamelOpenAIResponseStatus header, and the response is
-         * stored so that it can be retrieved later. Cannot be combined with
-         * automatic tool execution.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param background the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder background(boolean background) {
-            doSetProperty("background", background);
-            return this;
-        }
-        /**
-         * Run the model response in the background (Responses API only). The
-         * exchange completes as soon as the response is queued, with an empty
-         * body and the CamelOpenAIResponseStatus header, and the response is
-         * stored so that it can be retrieved later. Cannot be combined with
-         * automatic tool execution.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param background the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder background(String background) {
-            doSetProperty("background", background);
-            return this;
-        }
-        /**
          * Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can
          * be used for local or third-party providers.
          * 
@@ -397,42 +359,6 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milliseconds for establishing the TCP connection to the
-         * API. A connect timeout means the endpoint was unreachable, so the
-         * request never ran and is safe to retry. When 0 or negative, the SDK
-         * default (1 minute) is used.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: producer
-         * 
-         * @param connectTimeout the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder connectTimeout(long connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
-         * Timeout in milliseconds for establishing the TCP connection to the
-         * API. A connect timeout means the endpoint was unreachable, so the
-         * request never ran and is safe to retry. When 0 or negative, the SDK
-         * default (1 minute) is used.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: producer
-         * 
-         * @param connectTimeout the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder connectTimeout(String connectTimeout) {
-            doSetProperty("connectTimeout", connectTimeout);
-            return this;
-        }
-        /**
          * Exchange property name for storing conversation history.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -448,28 +374,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Id of a conversation created with the OpenAI Conversations API to run
-         * the request in. The conversation keeps its items across exchanges.
-         * Cannot be combined with previousResponseId (Responses API only).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param conversationId the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder conversationId(String conversationId) {
-            doSetProperty("conversationId", conversationId);
-            return this;
-        }
-        /**
-         * Enable conversation memory per Exchange. The chat-completion
-         * operation keeps the message history in the
-         * conversationHistoryProperty exchange property. The responses
-         * operation keeps the conversation on the server, stores the last
-         * response id in that property and sends it as previous_response_id,
-         * which requires a server that stores responses.
+         * Enable conversation memory per Exchange.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -484,12 +389,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable conversation memory per Exchange. The chat-completion
-         * operation keeps the message history in the
-         * conversationHistoryProperty exchange property. The responses
-         * operation keeps the conversation on the server, stores the last
-         * response id in that property and sends it as previous_response_id,
-         * which requires a server that stores responses.
+         * Enable conversation memory per Exchange.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -638,10 +538,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * JSON array of hosted MCP tool definitions passed to the Responses API
-         * as OpenAI mcp tools. Every field of the API is sent, such as
-         * server_label, server_url, require_approval, allowed_tools, headers
-         * and authorization. Marked secret because it can carry credentials.
+         * JSON array of hosted MCP tool definitions (OpenAI Tool.Mcp) passed
+         * through to the Responses API.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -652,231 +550,6 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder hostedMcpTools(String hostedMcpTools) {
             doSetProperty("hostedMcpTools", hostedMcpTools);
-            return this;
-        }
-        /**
-         * The background of the generated image. Only supported by the GPT
-         * image models, and a transparent background requires the png or webp
-         * output format.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageBackground the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageBackground(String imageBackground) {
-            doSetProperty("imageBackground", imageBackground);
-            return this;
-        }
-        /**
-         * The number of images to generate, between 1 and 10. dall-e-3 only
-         * supports 1.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageCount the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageCount(Integer imageCount) {
-            doSetProperty("imageCount", imageCount);
-            return this;
-        }
-        /**
-         * The number of images to generate, between 1 and 10. dall-e-3 only
-         * supports 1.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param imageCount the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageCount(String imageCount) {
-            doSetProperty("imageCount", imageCount);
-            return this;
-        }
-        /**
-         * How closely the edit must match the style and features of the input
-         * image. Only supported by the image-edit operation on gpt-image-1 and
-         * gpt-image-1.5.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageInputFidelity the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageInputFidelity(String imageInputFidelity) {
-            doSetProperty("imageInputFidelity", imageInputFidelity);
-            return this;
-        }
-        /**
-         * The model to use for image generation or editing (e.g., gpt-image-1,
-         * gpt-image-1-mini, gpt-image-1.5, gpt-image-2). Required for the
-         * image-generation and image-edit operations, because the model
-         * determines which of the other image options are accepted. The DALL-E
-         * models are no longer offered by OpenAI, but remain valid values for
-         * OpenAI-compatible providers.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageModel the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageModel(String imageModel) {
-            doSetProperty("imageModel", imageModel);
-            return this;
-        }
-        /**
-         * The content moderation level applied to image generation. Only
-         * supported by the GPT image models.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageModeration the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageModeration(String imageModeration) {
-            doSetProperty("imageModeration", imageModeration);
-            return this;
-        }
-        /**
-         * The compression level from 0 to 100 for the webp and jpeg output
-         * formats. Only supported by the GPT image models.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageOutputCompression the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageOutputCompression(Integer imageOutputCompression) {
-            doSetProperty("imageOutputCompression", imageOutputCompression);
-            return this;
-        }
-        /**
-         * The compression level from 0 to 100 for the webp and jpeg output
-         * formats. Only supported by the GPT image models.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param imageOutputCompression the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageOutputCompression(String imageOutputCompression) {
-            doSetProperty("imageOutputCompression", imageOutputCompression);
-            return this;
-        }
-        /**
-         * The output format of the generated image. Only supported by the GPT
-         * image models, which default to png.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageOutputFormat the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageOutputFormat(String imageOutputFormat) {
-            doSetProperty("imageOutputFormat", imageOutputFormat);
-            return this;
-        }
-        /**
-         * The prompt describing the image to generate, or the edit to apply.
-         * For image-generation the message body is used when this is not set;
-         * for image-edit the body carries the input image, so the prompt must
-         * come from this option or from the CamelOpenAIImagePrompt header.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imagePrompt the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imagePrompt(String imagePrompt) {
-            doSetProperty("imagePrompt", imagePrompt);
-            return this;
-        }
-        /**
-         * The quality of the generated image. GPT image models accept auto,
-         * high, medium and low; hd and standard are DALL-E values kept for
-         * OpenAI-compatible providers.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageQuality the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageQuality(String imageQuality) {
-            doSetProperty("imageQuality", imageQuality);
-            return this;
-        }
-        /**
-         * The response format of the generated image. The OpenAI images
-         * endpoint rejects this option: the GPT image models always return
-         * base64, and the DALL-E models that used to accept it are no longer
-         * offered. It is only sent when explicitly set, and is kept for
-         * OpenAI-compatible providers that still implement the older images
-         * API.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageResponseFormat the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageResponseFormat(String imageResponseFormat) {
-            doSetProperty("imageResponseFormat", imageResponseFormat);
-            return this;
-        }
-        /**
-         * The size of the generated image (e.g., 1024x1024, 1536x1024,
-         * 1024x1536, auto). The accepted values depend on the model.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageSize the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageSize(String imageSize) {
-            doSetProperty("imageSize", imageSize);
-            return this;
-        }
-        /**
-         * The style of the generated image. A dall-e-3 option, so only useful
-         * with OpenAI-compatible providers.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param imageStyle the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder imageStyle(String imageStyle) {
-            doSetProperty("imageStyle", imageStyle);
             return this;
         }
         /**
@@ -1298,21 +971,6 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * The model to use for moderation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: omni-moderation-latest
-         * Group: producer
-         * 
-         * @param moderationModel the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder moderationModel(String moderationModel) {
-            doSetProperty("moderationModel", moderationModel);
-            return this;
-        }
-        /**
          * Fully qualified class name for structured output using response
          * format.
          * 
@@ -1427,44 +1085,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milliseconds for reading the response. A read timeout
-         * means the model was slow mid-generation, so the request may have been
-         * processed. When 0 or negative, requestTimeout applies.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: producer
-         * 
-         * @param readTimeout the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder readTimeout(long readTimeout) {
-            doSetProperty("readTimeout", readTimeout);
-            return this;
-        }
-        /**
-         * Timeout in milliseconds for reading the response. A read timeout
-         * means the model was slow mid-generation, so the request may have been
-         * processed. When 0 or negative, requestTimeout applies.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: producer
-         * 
-         * @param readTimeout the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder readTimeout(String readTimeout) {
-            doSetProperty("readTimeout", readTimeout);
-            return this;
-        }
-        /**
-         * Overall HTTP request timeout in milliseconds for the OpenAI SDK
-         * client. When 0 or negative, the SDK default (10 minutes) is used.
-         * Acts as the fallback for readTimeout and writeTimeout when those are
-         * not set.
+         * HTTP request timeout in milliseconds for the OpenAI SDK client. When
+         * 0 or negative, the SDK default (10 minutes) is used.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1479,10 +1101,8 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Overall HTTP request timeout in milliseconds for the OpenAI SDK
-         * client. When 0 or negative, the SDK default (10 minutes) is used.
-         * Acts as the fallback for readTimeout and writeTimeout when those are
-         * not set.
+         * HTTP request timeout in milliseconds for the OpenAI SDK client. When
+         * 0 or negative, the SDK default (10 minutes) is used.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1591,12 +1211,7 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Store the full SDK response in non-streaming mode: chat-completion
          * uses exchange property 'CamelOpenAIResponse'; responses uses
-         * 'CamelOpenAIResponsesResponse'; moderation uses
-         * 'CamelOpenAIModerationResponse'; image-generation and image-edit use
-         * 'CamelOpenAIImageResponse'; embeddings uses
-         * 'CamelOpenAIEmbeddingsResponse'; audio transcription uses
-         * 'CamelOpenAIAudioTranscriptionResponse'; audio translation uses
-         * 'CamelOpenAIAudioTranslationResponse'.
+         * 'CamelOpenAIResponsesResponse'.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1613,12 +1228,7 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Store the full SDK response in non-streaming mode: chat-completion
          * uses exchange property 'CamelOpenAIResponse'; responses uses
-         * 'CamelOpenAIResponsesResponse'; moderation uses
-         * 'CamelOpenAIModerationResponse'; image-generation and image-edit use
-         * 'CamelOpenAIImageResponse'; embeddings uses
-         * 'CamelOpenAIEmbeddingsResponse'; audio transcription uses
-         * 'CamelOpenAIAudioTranscriptionResponse'; audio translation uses
-         * 'CamelOpenAIAudioTranslationResponse'.
+         * 'CamelOpenAIResponsesResponse'.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1709,22 +1319,6 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder systemMessage(String systemMessage) {
             doSetProperty("systemMessage", systemMessage);
-            return this;
-        }
-        /**
-         * Comma-separated tags for discovering route-based tools registered via
-         * the ai-tool component. When set, matching tools from the shared
-         * AiToolRegistry are exposed to the model alongside MCP tools.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder tags(String tags) {
-            doSetProperty("tags", tags);
             return this;
         }
         /**
@@ -1843,40 +1437,6 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder userMessage(String userMessage) {
             doSetProperty("userMessage", userMessage);
-            return this;
-        }
-        /**
-         * Timeout in milliseconds for writing the request body, which matters
-         * for large payloads such as audio and image uploads. When 0 or
-         * negative, requestTimeout applies.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: producer
-         * 
-         * @param writeTimeout the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder writeTimeout(long writeTimeout) {
-            doSetProperty("writeTimeout", writeTimeout);
-            return this;
-        }
-        /**
-         * Timeout in milliseconds for writing the request body, which matters
-         * for large payloads such as audio and image uploads. When 0 or
-         * negative, requestTimeout applies.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 0
-         * Group: producer
-         * 
-         * @param writeTimeout the value to set
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder writeTimeout(String writeTimeout) {
-            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**
@@ -2184,6 +1744,23 @@ public interface OpenAIEndpointBuilderFactory {
          * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-openai
          * 
+         * @deprecated use {@link #llm()} instead.
+         * @return the dsl builder for the headers' name.
+         */
+        @Deprecated
+        default OpenAIHeaderNameBuilder openai() {
+            return llm();
+        }
+        /**
+         * LLM (camel-openai)
+         * LLM endpoint for chat completion, Responses API, embeddings, audio
+         * transcription, audio translation, and text-to-speech using
+         * OpenAI-compatible APIs. The openai scheme is a supported alias.
+         * 
+         * Category: ai
+         * Since: 4.17
+         * Maven coordinates: org.apache.camel:camel-openai
+         * 
          * Syntax: <code>llm:operation</code>
          * 
          * Path parameter: operation (required)
@@ -2255,36 +1832,6 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder openai(String path) {
             return OpenAIEndpointBuilderFactory.endpointBuilder("openai", path);
-        }
-        /**
-         * OpenAI (camel-openai)
-         * LLM endpoint for chat completion, Responses API, embeddings, audio
-         * transcription, audio translation, and text-to-speech using
-         * OpenAI-compatible APIs. The openai scheme is a supported alias.
-         * 
-         * Category: ai
-         * Since: 4.17
-         * Maven coordinates: org.apache.camel:camel-openai
-         * 
-         * Syntax: <code>openai:operation</code>
-         * 
-         * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'embeddings',
-         * 'tool-execution', 'audio-transcription', 'audio-translation',
-         * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
-         * There are 12 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, embeddings,
-         * tool-execution, audio-transcription, audio-translation, audio-speech,
-         * moderation, image-generation, image-edit
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path operation
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder openai(String componentName, String path) {
-            return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
     }
@@ -2401,19 +1948,6 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIPreviousResponseId";
         }
         /**
-         * The id of a conversation created with the Conversations API to run
-         * the Responses API request in.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIConversationId}.
-         */
-        public String openAIConversationId() {
-            return "CamelOpenAIConversationId";
-        }
-        /**
          * Whether to stream the response back incrementally.
          * 
          * The option is a: {@code Boolean} type.
@@ -2514,9 +2048,7 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIResponseModel";
         }
         /**
-         * The unique identifier for the completion response. The
-         * responses-retrieve and responses-cancel operations read the id of the
-         * response to act on from this header.
+         * The unique identifier for the completion response.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2576,34 +2108,6 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAITotalTokens() {
             return "CamelOpenAITotalTokens";
-        }
-        /**
-         * The annotations attached to the output text of a Responses API
-         * answer, such as the url_citation and file_citation citations of
-         * web_search and file_search. Each entry is a map of the API fields.
-         * 
-         * The option is a: {@code java.util.List<java.util.Map<String,
-         * Object>>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIResponseAnnotations}.
-         */
-        public String openAIResponseAnnotations() {
-            return "CamelOpenAIResponseAnnotations";
-        }
-        /**
-         * The status of a Responses API response: completed, failed,
-         * in_progress, cancelled, queued or incomplete.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIResponseStatus}.
-         */
-        public String openAIResponseStatus() {
-            return "CamelOpenAIResponseStatus";
         }
         /**
          * Number of tool call iterations performed in the agentic loop.
@@ -2705,74 +2209,6 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIResponsesResponse";
         }
         /**
-         * The complete OpenAI moderation response object.
-         * 
-         * The option is a: {@code
-         * com.openai.models.moderations.ModerationCreateResponse} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIModerationResponse}.
-         */
-        public String openAIModerationResponse() {
-            return "CamelOpenAIModerationResponse";
-        }
-        /**
-         * The complete OpenAI image generation or edit response object.
-         * 
-         * The option is a: {@code com.openai.models.images.ImagesResponse}
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageResponse}.
-         */
-        public String openAIImageResponse() {
-            return "CamelOpenAIImageResponse";
-        }
-        /**
-         * The complete OpenAI embeddings response object.
-         * 
-         * The option is a: {@code
-         * com.openai.models.embeddings.CreateEmbeddingResponse} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIEmbeddingsResponse}.
-         */
-        public String openAIEmbeddingsResponse() {
-            return "CamelOpenAIEmbeddingsResponse";
-        }
-        /**
-         * The complete OpenAI audio transcription response object.
-         * 
-         * The option is a: {@code
-         * com.openai.models.audio.transcriptions.TranscriptionCreateResponse}
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code
-         * OpenAIAudioTranscriptionResponse}.
-         */
-        public String openAIAudioTranscriptionResponse() {
-            return "CamelOpenAIAudioTranscriptionResponse";
-        }
-        /**
-         * The complete OpenAI audio translation response object.
-         * 
-         * The option is a: {@code
-         * com.openai.models.audio.translations.TranslationCreateResponse} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code
-         * OpenAIAudioTranslationResponse}.
-         */
-        public String openAIAudioTranslationResponse() {
-            return "CamelOpenAIAudioTranslationResponse";
-        }
-        /**
          * The model to use for embeddings.
          * 
          * The option is a: {@code String} type.
@@ -2867,104 +2303,6 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIOriginalText() {
             return "CamelOpenAIOriginalText";
-        }
-        /**
-         * The model to use for moderation (e.g., omni-moderation-latest).
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIModerationModel}.
-         */
-        public String openAIModerationModel() {
-            return "CamelOpenAIModerationModel";
-        }
-        /**
-         * Text to moderate together with an image body, such as the caption the
-         * image was posted with. The text and the image are scored as one input
-         * and share a single verdict. Ignored when the body is not an image.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIModerationText}.
-         */
-        public String openAIModerationText() {
-            return "CamelOpenAIModerationText";
-        }
-        /**
-         * Whether the moderation API flagged the input as violating the usage
-         * policies. For a batch of inputs this is true when at least one input
-         * was flagged.
-         * 
-         * The option is a: {@code Boolean} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIModerationFlagged}.
-         */
-        public String openAIModerationFlagged() {
-            return "CamelOpenAIModerationFlagged";
-        }
-        /**
-         * One verdict per moderated input, in the order of the inputs. Each
-         * entry holds the keys 'input', 'flagged', 'categories',
-         * 'categoryScores' and, when the provider reports it,
-         * 'categoryAppliedInputTypes', so a batch can be split and routed per
-         * item.
-         * 
-         * The option is a: {@code java.util.List<java.util.Map<String,
-         * Object>>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIModerationResults}.
-         */
-        public String openAIModerationResults() {
-            return "CamelOpenAIModerationResults";
-        }
-        /**
-         * The moderation categories and whether each one was violated, for a
-         * single input. Not set for a list body, where
-         * 'CamelOpenAIModerationResults' carries the verdicts.
-         * 
-         * The option is a: {@code java.util.Map<String, Boolean>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIModerationCategories}.
-         */
-        public String openAIModerationCategories() {
-            return "CamelOpenAIModerationCategories";
-        }
-        /**
-         * The moderation confidence score per category, for a single input. Not
-         * set for a list body, where 'CamelOpenAIModerationResults' carries the
-         * verdicts.
-         * 
-         * The option is a: {@code java.util.Map<String, Double>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code
-         * OpenAIModerationCategoryScores}.
-         */
-        public String openAIModerationCategoryScores() {
-            return "CamelOpenAIModerationCategoryScores";
-        }
-        /**
-         * The moderation model used in the response.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIModerationResponseModel}.
-         */
-        public String openAIModerationResponseModel() {
-            return "CamelOpenAIModerationResponseModel";
         }
         /**
          * The model to use for audio transcription.
@@ -3130,254 +2468,6 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAISpeechInstructions() {
             return "CamelOpenAISpeechInstructions";
-        }
-        /**
-         * The model to use for image generation or editing (e.g., gpt-image-1,
-         * dall-e-3, dall-e-2).
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageModel}.
-         */
-        public String openAIImageModel() {
-            return "CamelOpenAIImageModel";
-        }
-        /**
-         * The prompt describing the image to generate, or the edit to apply.
-         * Takes precedence over the imagePrompt endpoint option and, for
-         * image-generation, over the message body.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImagePrompt}.
-         */
-        public String openAIImagePrompt() {
-            return "CamelOpenAIImagePrompt";
-        }
-        /**
-         * The size of the generated image (e.g., 1024x1024, 1536x1024, auto).
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageSize}.
-         */
-        public String openAIImageSize() {
-            return "CamelOpenAIImageSize";
-        }
-        /**
-         * The quality of the generated image (auto, high, medium, low for GPT
-         * image models; hd, standard for dall-e-3; standard for dall-e-2).
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageQuality}.
-         */
-        public String openAIImageQuality() {
-            return "CamelOpenAIImageQuality";
-        }
-        /**
-         * The response format of the generated image (url or b64_json). Only
-         * supported by dall-e-2 and dall-e-3; GPT image models always return
-         * base64.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageResponseFormat}.
-         */
-        public String openAIImageResponseFormat() {
-            return "CamelOpenAIImageResponseFormat";
-        }
-        /**
-         * The number of images to generate.
-         * 
-         * The option is a: {@code Integer} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageCount}.
-         */
-        public String openAIImageCount() {
-            return "CamelOpenAIImageCount";
-        }
-        /**
-         * The background of the generated image (transparent, opaque, auto).
-         * Only supported by GPT image models.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageBackground}.
-         */
-        public String openAIImageBackground() {
-            return "CamelOpenAIImageBackground";
-        }
-        /**
-         * The output format of the generated image (png, jpeg, webp). Only
-         * supported by GPT image models.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageOutputFormat}.
-         */
-        public String openAIImageOutputFormat() {
-            return "CamelOpenAIImageOutputFormat";
-        }
-        /**
-         * The compression level (0-100) for the webp or jpeg output formats.
-         * Only supported by GPT image models.
-         * 
-         * The option is a: {@code Integer} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageOutputCompression}.
-         */
-        public String openAIImageOutputCompression() {
-            return "CamelOpenAIImageOutputCompression";
-        }
-        /**
-         * The style of the generated image (vivid or natural). Only supported
-         * by dall-e-3.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageStyle}.
-         */
-        public String openAIImageStyle() {
-            return "CamelOpenAIImageStyle";
-        }
-        /**
-         * The content moderation level for image generation (low or auto). Only
-         * supported by GPT image models.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageModeration}.
-         */
-        public String openAIImageModeration() {
-            return "CamelOpenAIImageModeration";
-        }
-        /**
-         * How closely the edit must match the style and features of the input
-         * image (high or low). Only supported by the image-edit operation on
-         * gpt-image-1 and gpt-image-1.5.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageInputFidelity}.
-         */
-        public String openAIImageInputFidelity() {
-            return "CamelOpenAIImageInputFidelity";
-        }
-        /**
-         * An optional PNG mask for the image-edit operation, where the fully
-         * transparent areas indicate where the image should be edited.
-         * 
-         * The option is a: {@code byte[], java.io.File, java.nio.file.Path or
-         * java.io.InputStream} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageMask}.
-         */
-        public String openAIImageMask() {
-            return "CamelOpenAIImageMask";
-        }
-        /**
-         * The number of images returned in the response.
-         * 
-         * The option is a: {@code Integer} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageResultCount}.
-         */
-        public String openAIImageResultCount() {
-            return "CamelOpenAIImageResultCount";
-        }
-        /**
-         * The prompt as revised by the model, when a single image is returned
-         * (dall-e-3).
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageRevisedPrompt}.
-         */
-        public String openAIImageRevisedPrompt() {
-            return "CamelOpenAIImageRevisedPrompt";
-        }
-        /**
-         * The prompts as revised by the model, one entry per returned image
-         * (dall-e-3).
-         * 
-         * The option is a: {@code java.util.List<String>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageRevisedPrompts}.
-         */
-        public String openAIImageRevisedPrompts() {
-            return "CamelOpenAIImageRevisedPrompts";
-        }
-        /**
-         * The number of input tokens billed for the image request. Only
-         * reported by GPT image models.
-         * 
-         * The option is a: {@code Long} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageInputTokens}.
-         */
-        public String openAIImageInputTokens() {
-            return "CamelOpenAIImageInputTokens";
-        }
-        /**
-         * The number of output tokens billed for the image request. Only
-         * reported by GPT image models.
-         * 
-         * The option is a: {@code Long} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageOutputTokens}.
-         */
-        public String openAIImageOutputTokens() {
-            return "CamelOpenAIImageOutputTokens";
-        }
-        /**
-         * The total number of tokens billed for the image request. Only
-         * reported by GPT image models.
-         * 
-         * The option is a: {@code Long} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIImageTotalTokens}.
-         */
-        public String openAIImageTotalTokens() {
-            return "CamelOpenAIImageTotalTokens";
         }
     }
     static OpenAIEndpointBuilder endpointBuilder(String componentName, String path) {

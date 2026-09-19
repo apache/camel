@@ -260,6 +260,20 @@ public interface ${builderName}Factory {
         default ${componentName}HeaderNameBuilder ${mojo.camelCaseLower($model.scheme)}() {
             return ${componentName}HeaderNameBuilder.INSTANCE;
         }
+        #if( $aliases.size() > 1 )
+            #foreach( $componentModel in $aliases )
+                #if( $foreach.index > 0 )
+        #set( $javadoc = $mojo.getMainDescription($model, false) + $newline + $newline
+                            + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}()} instead." + $newline
+                            + "@return the dsl builder for the headers' name." + $newline )
+        ${mojo.javadoc("        ", $javadoc)}
+        @Deprecated
+        default ${componentName}HeaderNameBuilder ${mojo.camelCaseLower($componentModel.scheme)}() {
+            return ${mojo.camelCaseLower($model.scheme)}();
+        }
+                #end
+            #end
+        #end
     #end
     #if( $aliases.size() == 1 )
         #set( $javadoc = $mojo.getMainDescription($model, true) + $newline + $newline
