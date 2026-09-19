@@ -126,11 +126,6 @@ final class FlowHelper {
         }
         long curIn = inArr[renderPoints - 1];
         long curOut = outArr[renderPoints - 1];
-        // scale down from internal precision (rate * THROUGHPUT_SCALE) to actual msg/s for y-axis
-        for (int i = 0; i < renderPoints; i++) {
-            inArr[i] = Math.round((double) inArr[i] / MetricsCollector.THROUGHPUT_SCALE);
-            outArr[i] = Math.round((double) outArr[i] / MetricsCollector.THROUGHPUT_SCALE);
-        }
 
         List<Span> titleSpans = new ArrayList<>();
         if (chartLabel != null) {
@@ -156,6 +151,9 @@ final class FlowHelper {
                 .topStyle(Theme.success())
                 .bottomStyle(Style.EMPTY.fg(Theme.accent()))
                 .showYAxis(true)
+                // the data stays scaled by THROUGHPUT_SCALE so sub-1 msg/s rates keep their bar height; the axis
+                // label converts back to msg/s like the title does
+                .yAxisFormatter(MetricsCollector::formatThroughput)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -198,6 +196,7 @@ final class FlowHelper {
                 .topStyle(Theme.label())
                 .bottomStyle(Theme.notice())
                 .showYAxis(true)
+                .yAxisFormatter(FlowHelper::compactSize)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
@@ -219,6 +218,27 @@ final class FlowHelper {
         } else {
             return String.format(Locale.US, "%.1f MB", size / (1024.0 * 1024.0));
         }
+    }
+
+    /**
+     * Formats a byte count into at most four characters for the sparkline y-axis, where {@link #sizeToString(long)}
+     * would not fit: {@code 512}, {@code 1.5K}, {@code 12K}, {@code 1.2M}.
+     */
+    static String compactSize(long size) {
+        if (size < 1000) {
+            return String.valueOf(Math.max(0, size));
+        }
+        double kb = size / 1024.0;
+        if (kb < 10) {
+            return String.format(Locale.US, "%.1fK", kb);
+        } else if (kb < 999.5) {
+            return Math.round(kb) + "K";
+        }
+        double mb = kb / 1024.0;
+        if (mb < 10) {
+            return String.format(Locale.US, "%.1fM", mb);
+        }
+        return Math.round(mb) + "M";
     }
 
     private static long unbox(Long value) {

@@ -89,6 +89,33 @@ class ToolRegistryTest {
     }
 
     @Test
+    void listExamplesGroupsTheLadderWithoutArguments() {
+        ToolContext ctx = new ToolContext();
+        String json = ToolRegistry.execute("list_examples", ctx, Map.of()).toString();
+        assertTrue(json.contains("\"groups\""), "Should return the groups");
+        assertTrue(json.contains("\"level\":\"quick-start\""), "Should start with the quick-start group");
+        assertTrue(json.contains("timer-log"), "Should list the examples");
+        assertTrue(json.contains("\"teaches\""), "Should tell what the examples teach");
+        // more than the old cap of 20 examples
+        assertTrue(json.indexOf("\"total\":") > 0);
+        String total = json.replaceAll(".*\"total\":(\\d+).*", "$1");
+        assertTrue(Integer.parseInt(total) > 20, "Should count all examples, got " + total);
+    }
+
+    @Test
+    void listExamplesFiltersOneGroupAndLimits() {
+        ToolContext ctx = new ToolContext();
+        String json = ToolRegistry.execute("list_examples", ctx, Map.of("level", "run", "limit", "1")).toString();
+        assertTrue(json.contains("\"count\":1"), "Should honour the limit: " + json);
+        assertTrue(json.contains("\"level\":\"run\""));
+        assertFalse(json.contains("\"level\":\"quick-start\""), "Should only return the run group");
+        assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("list_examples", ctx, Map.of("limit", "many")));
+        String zero = ToolRegistry.execute("list_examples", ctx, Map.of("level", "run", "limit", "0")).toString();
+        assertFalse(zero.contains("\"count\":0"), "limit 0 falls back to the default: " + zero.substring(0, 60));
+    }
+
+    @Test
     void runtimeToolThrowsWithoutProcess() {
         ToolContext ctx = new ToolContext();
         assertThrows(ToolExecutionException.class,

@@ -332,7 +332,7 @@ class OverviewTab extends AbstractTab {
         lastTableArea = chunks.get(0);
         TableState renderState = infraFocused ? new TableState() : tableState;
         frame.renderStatefulWidget(table, chunks.get(0), renderState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, integrationCount);
+        renderTableScrollbar(frame, lastTableArea, table, tableState, tableScrollState, integrationCount);
 
         if (infraCount > 0) {
             renderInfraTable(frame, chunks.get(1), infraInfos);
@@ -1034,7 +1034,7 @@ class OverviewTab extends AbstractTab {
         lastInfraTableArea = area;
         TableState renderState = infraFocused ? infraTableState : new TableState();
         frame.renderStatefulWidget(infraTable, area, renderState);
-        renderTableScrollbar(frame, area, infraTableState, infraScrollState, infraInfos.size());
+        renderTableScrollbar(frame, area, infraTable, infraTableState, infraScrollState, infraInfos.size());
     }
 
     private static String extractInfraPort(InfraInfo info) {

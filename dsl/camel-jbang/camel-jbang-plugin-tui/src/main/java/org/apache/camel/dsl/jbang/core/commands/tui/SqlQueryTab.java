@@ -522,7 +522,7 @@ class SqlQueryTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, resultRows.size());
+        renderTableScrollbar(frame, lastTableArea, table, tableState, tableScrollState, resultRows.size());
     }
 
     @Override

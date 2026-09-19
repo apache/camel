@@ -23,8 +23,21 @@ public class LangChain4jEmbeddingsConfigurationConfigurer extends org.apache.cam
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration target = (org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "baseurl":
+        case "baseUrl": target.setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "customprovider":
+        case "customProvider": target.setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "embeddingmodel":
         case "embeddingModel": target.setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
+        case "modelname":
+        case "modelName": target.setModelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "modelproperties":
+        case "modelProperties": target.setModelProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "provider": target.setProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "temperature": target.setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -32,8 +45,21 @@ public class LangChain4jEmbeddingsConfigurationConfigurer extends org.apache.cam
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
+        case "baseurl":
+        case "baseUrl": return java.lang.String.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "embeddingmodel":
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
+        case "modelname":
+        case "modelName": return java.lang.String.class;
+        case "modelproperties":
+        case "modelProperties": return java.util.Map.class;
+        case "provider": return java.lang.String.class;
+        case "temperature": return java.lang.Double.class;
+        case "timeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -42,8 +68,30 @@ public class LangChain4jEmbeddingsConfigurationConfigurer extends org.apache.cam
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration target = (org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return target.getApiKey();
+        case "baseurl":
+        case "baseUrl": return target.getBaseUrl();
+        case "customprovider":
+        case "customProvider": return target.getCustomProvider();
         case "embeddingmodel":
         case "embeddingModel": return target.getEmbeddingModel();
+        case "modelname":
+        case "modelName": return target.getModelName();
+        case "modelproperties":
+        case "modelProperties": return target.getModelProperties();
+        case "provider": return target.getProvider();
+        case "temperature": return target.getTemperature();
+        case "timeout": return target.getTimeout();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "modelproperties":
+        case "modelProperties": return java.lang.Object.class;
         default: return null;
         }
     }

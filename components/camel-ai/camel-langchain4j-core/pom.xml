@@ -58,6 +58,13 @@
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- a real provider for the model factory test -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-ollama</artifactId>
+            <version>${langchain4j-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

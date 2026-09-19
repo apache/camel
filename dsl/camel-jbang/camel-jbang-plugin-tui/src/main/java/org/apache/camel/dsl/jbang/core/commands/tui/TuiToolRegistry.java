@@ -1708,39 +1708,59 @@ class TuiToolRegistry {
 
         String filter = args.get("filter") instanceof String v ? v : null;
         String level = args.get("level") instanceof String v ? v : null;
+        int limit = args.get("limit") instanceof Number n && n.intValue() > 0 ? n.intValue() : 50;
 
         List<JsonObject> filtered = catalog;
         if (filter != null && !filter.isEmpty()) {
             filtered = ExampleHelper.filterExamples(filtered, filter);
         }
-        if (level != null && !level.isEmpty()) {
-            String lowerLevel = level.toLowerCase();
-            filtered = filtered.stream()
-                    .filter(e -> lowerLevel.equals(e.getStringOrDefault("level", "")))
-                    .toList();
-        }
 
+        JsonArray groups = new JsonArray();
         JsonArray examples = new JsonArray();
-        for (JsonObject entry : filtered) {
-            JsonObject ex = new JsonObject();
-            ex.put("name", entry.getStringOrDefault("name", ""));
-            ex.put("title", entry.getStringOrDefault("title", ""));
-            ex.put("description", entry.getStringOrDefault("description", ""));
-            ex.put("level", entry.getStringOrDefault("level", ""));
-            ex.put("category", ExampleHelper.getCategory(entry));
-            ex.put("tags", toJsonArray(
-                    entry.get("tags") instanceof java.util.Collection<?> c
-                            ? c.stream().map(Object::toString).toList()
-                            : List.of()));
-            ex.put("bundled", ExampleHelper.isBundled(entry));
-            ex.put("requiresDocker", ExampleHelper.requiresDocker(entry));
-            ex.put("infraServices", toJsonArray(ExampleHelper.getInfraServices(entry)));
-            examples.add(ex);
+        int total = 0;
+        for (Map.Entry<String, List<JsonObject>> group : ExampleHelper.groupByLevel(filtered).entrySet()) {
+            if (level != null && !level.isEmpty() && !group.getKey().equalsIgnoreCase(level)) {
+                continue;
+            }
+            total += group.getValue().size();
+            JsonObject g = new JsonObject();
+            g.put("level", group.getKey());
+            g.put("title", ExampleHelper.getGroupTitle(group.getKey()));
+            g.put("intro", ExampleHelper.getGroupIntro(group.getKey()));
+            g.put("count", group.getValue().size());
+            groups.add(g);
+            for (JsonObject entry : group.getValue()) {
+                if (examples.size() >= limit) {
+                    continue;
+                }
+                JsonObject ex = new JsonObject();
+                ex.put("name", entry.getStringOrDefault("name", ""));
+                ex.put("title", entry.getStringOrDefault("title", ""));
+                ex.put("description", entry.getStringOrDefault("description", ""));
+                ex.put("level", entry.getStringOrDefault("level", ""));
+                if (ExampleHelper.getOrder(entry) != Integer.MAX_VALUE) {
+                    ex.put("order", ExampleHelper.getOrder(entry));
+                }
+                ex.put("category", ExampleHelper.getCategory(entry));
+                ex.put("tags", toJsonArray(
+                        entry.get("tags") instanceof java.util.Collection<?> c
+                                ? c.stream().map(Object::toString).toList()
+                                : List.of()));
+                JsonObject teaches = new JsonObject();
+                ExampleHelper.getTeaches(entry).forEach((k, v) -> teaches.put(k, toJsonArray(v)));
+                ex.put("teaches", teaches);
+                ex.put("bundled", ExampleHelper.isBundled(entry));
+                ex.put("requiresDocker", ExampleHelper.requiresDocker(entry));
+                ex.put("infraServices", toJsonArray(ExampleHelper.getInfraServices(entry)));
+                examples.add(ex);
+            }
         }
 
         JsonObject result = new JsonObject();
+        result.put("groups", groups);
         result.put("examples", examples);
-        result.put("totalCount", examples.size());
+        result.put("count", examples.size());
+        result.put("total", total);
         return Jsoner.serialize(result);
     }
 

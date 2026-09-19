@@ -14,10 +14,12 @@ https://github.com/xtermjs/xterm.js/tree/master/addons/addon-fit
 
 Copyright (c) 2019, The xterm.js authors (https://github.com/xtermjs/xterm.js)
 
-xterm-addon-unicode11 0.9.0 (xterm-addon-unicode11.js)
-https://github.com/xtermjs/xterm.js/tree/master/addons/addon-unicode11
+xterm-addon-unicode-graphemes 0.4.0 (xterm-addon-unicode-graphemes.js)
+https://github.com/xtermjs/xterm.js/tree/master/addons/addon-unicode-graphemes
 
-Copyright (c) 2019, The xterm.js authors (https://github.com/xtermjs/xterm.js)
+Copyright (c) 2023, The xterm.js authors (https://github.com/xtermjs/xterm.js)
+The bundled Unicode property tables are generated from
+https://github.com/PerBothner/unicode-properties (MIT).
 
 All are released under the MIT License:
 

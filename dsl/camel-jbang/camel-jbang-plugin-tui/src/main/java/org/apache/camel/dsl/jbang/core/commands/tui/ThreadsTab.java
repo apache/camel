@@ -226,7 +226,7 @@ class ThreadsTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, visible.size());
+        renderScrollbar(frame, table, visible.size());
     }
 
     private void renderTrace(Frame frame, Rect area, List<ThreadData> visible) {

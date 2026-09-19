@@ -214,7 +214,7 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     }
 
     private File[] listFiles(File directory) {
-        if (!getEndpoint().isIncludeHiddenDirs() && directory.isHidden()) {
+        if (!getEndpoint().isIncludeHiddenDirs() && isHiddenDirectory(directory)) {
             return null;
         }
         final File[] dirFiles = directory.listFiles();
@@ -377,6 +377,19 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
     @Override
     public FileEndpoint getEndpoint() {
         return (FileEndpoint) super.getEndpoint();
+    }
+
+    /**
+     * Whether the directory is hidden: java.io.File.isHidden only looks at whether the name starts with a dot, so the
+     * current directory (file:. or file:./) and the parent directory (..) would count as hidden and the consumer would
+     * never deliver a file from them (CAMEL-24835).
+     */
+    private static boolean isHiddenDirectory(File directory) {
+        String name = directory.getName();
+        if (name.isEmpty() || ".".equals(name) || "..".equals(name)) {
+            return false;
+        }
+        return directory.isHidden();
     }
 
     @Override

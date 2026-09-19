@@ -17,9 +17,12 @@
 package org.apache.camel.component.langchain4j.chat;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import dev.langchain4j.model.chat.ChatModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.langchain4j.core.LangChain4jModelFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -31,6 +34,8 @@ public class LangChain4jChatComponent extends DefaultComponent {
 
     @Metadata
     LangChain4jChatConfiguration configuration;
+
+    private final Map<LangChain4jModelFactory.ModelSpec, ChatModel> models = new ConcurrentHashMap<>();
 
     public LangChain4jChatComponent() {
         this(null);
@@ -59,7 +64,15 @@ public class LangChain4jChatComponent extends DefaultComponent {
         LangChain4jChatConfiguration langchain4jChatConfiguration = this.configuration.copy();
 
         Endpoint endpoint = new LangChain4jChatEndpoint(uri, this, remaining, langchain4jChatConfiguration);
+        langchain4jChatConfiguration.setModelProperties(
+                LangChain4jModelFactory.extractModelProperties(parameters, langchain4jChatConfiguration.getModelProperties()));
         setProperties(endpoint, parameters);
+        if (langchain4jChatConfiguration.getChatModel() == null && langchain4jChatConfiguration.modelSpec() != null) {
+            // the model is declared by its provider and options (CAMEL-24820); endpoints with the same options share it
+            LangChain4jModelFactory.ModelSpec spec = langchain4jChatConfiguration.modelSpec();
+            langchain4jChatConfiguration.setChatModel(
+                    models.computeIfAbsent(spec, s -> LangChain4jModelFactory.createChatModel(getCamelContext(), s)));
+        }
         return endpoint;
     }
 }

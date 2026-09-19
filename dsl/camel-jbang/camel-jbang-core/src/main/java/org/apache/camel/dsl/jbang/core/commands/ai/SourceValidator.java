@@ -229,6 +229,7 @@ public final class SourceValidator {
         msgs.addAll(validateYamlEndpoints(content, catalog));
         msgs.addAll(validateYamlSimple(content, catalog));
         msgs.addAll(validateKnownHeaders(content, catalog));
+        msgs.addAll(validateBeanTypes(content));
         return msgs;
     }
 
@@ -412,6 +413,15 @@ public final class SourceValidator {
      */
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         return HeaderChecks.validateKnownHeaders(content, catalog);
+    }
+
+    /**
+     * How each bean under {@code beans:} is created, for the classes the validator can load: the properties of a class
+     * created through its builder are checked against what the builder accepts, and a class with no public no-arg
+     * constructor and no builder is reported with the ways it can be created (CAMEL-24820).
+     */
+    public static List<String> validateBeanTypes(String content) {
+        return BeanTypeChecks.validateBeanTypes(content);
     }
 
     /** The bean names declared under {@code beans:} in the YAML content. */

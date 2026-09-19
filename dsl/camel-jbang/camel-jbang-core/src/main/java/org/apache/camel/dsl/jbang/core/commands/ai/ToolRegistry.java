@@ -942,39 +942,74 @@ public final class ToolRegistry {
 
     private static void registerExampleTools() {
         register(tool("list_examples",
-                "List available Camel CLI examples. Returns name, title, description, difficulty level, and tags.")
+                "List the Camel CLI examples, grouped as the ladder of the examples (quick-start, run, transform, "
+                                       + "route, fail-well, connect, connect-service, contracts, ai, cloud, showcase). "
+                                       + "Returns the groups (level, title, intro) and the examples in reading order with "
+                                       + "name, title, description, level, order, tags, what they teach, the infra "
+                                       + "services they need, whether they are bundled and their files. "
+                                       + "Call it without arguments for the whole ladder, with level for one group.")
                 .param("filter", "string",
                         "Filter by name, description, or tag (case-insensitive)", false)
                 .param("level", "string",
-                        "Filter by difficulty: beginner, intermediate, or advanced", false)
+                        "Only the examples of one group: quick-start, run, transform, route, fail-well, connect, "
+                                          + "connect-service, contracts, ai, cloud or showcase",
+                        false)
+                .param("limit", "integer", "Maximum number of examples to return (default: 50)", false)
                 .executor((ctx, args) -> {
                     String filter = args.get("filter");
                     String level = args.get("level");
+                    int limit = 50;
+                    String limitArg = args.get("limit");
+                    if (limitArg != null && !limitArg.isBlank()) {
+                        try {
+                            limit = Integer.parseInt(limitArg.trim());
+                            if (limit <= 0) {
+                                limit = 50;
+                            }
+                        } catch (NumberFormatException e) {
+                            throw new ToolExecutionException("limit must be a number: " + limitArg);
+                        }
+                    }
                     List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
                     List<JsonObject> filtered = ExampleHelper.filterExamples(catalog2, filter);
+                    List<JsonObject> groups = new ArrayList<>();
                     List<JsonObject> results = new ArrayList<>();
-                    for (JsonObject entry : filtered) {
-                        if (level != null && !level.isBlank()) {
-                            String entryLevel = entry.getString("level");
-                            if (entryLevel == null || !entryLevel.equalsIgnoreCase(level)) {
+                    int total = 0;
+                    for (Map.Entry<String, List<JsonObject>> group : ExampleHelper.groupByLevel(filtered).entrySet()) {
+                        if (level != null && !level.isBlank() && !group.getKey().equalsIgnoreCase(level)) {
+                            continue;
+                        }
+                        total += group.getValue().size();
+                        JsonObject g = new JsonObject();
+                        g.put("level", group.getKey());
+                        g.put("title", ExampleHelper.getGroupTitle(group.getKey()));
+                        g.put("intro", ExampleHelper.getGroupIntro(group.getKey()));
+                        g.put("count", group.getValue().size());
+                        groups.add(g);
+                        for (JsonObject entry : group.getValue()) {
+                            if (results.size() >= limit) {
                                 continue;
                             }
-                        }
-                        JsonObject jo = new JsonObject();
-                        jo.put("name", entry.getString("name"));
-                        jo.put("title", entry.getString("title"));
-                        jo.put("description", entry.getString("description"));
-                        jo.put("level", entry.getString("level"));
-                        jo.put("tags", entry.get("tags"));
-                        jo.put("bundled", ExampleHelper.isBundled(entry));
-                        jo.put("files", ExampleHelper.getFiles(entry));
-                        results.add(jo);
-                        if (results.size() >= 20) {
-                            break;
+                            JsonObject jo = new JsonObject();
+                            jo.put("name", entry.getString("name"));
+                            jo.put("title", entry.getString("title"));
+                            jo.put("description", entry.getString("description"));
+                            jo.put("level", entry.getString("level"));
+                            if (ExampleHelper.getOrder(entry) != Integer.MAX_VALUE) {
+                                jo.put("order", ExampleHelper.getOrder(entry));
+                            }
+                            jo.put("tags", entry.get("tags"));
+                            jo.put("teaches", ExampleHelper.getTeaches(entry));
+                            jo.put("infraServices", ExampleHelper.getInfraServices(entry));
+                            jo.put("bundled", ExampleHelper.isBundled(entry));
+                            jo.put("files", ExampleHelper.getFiles(entry));
+                            results.add(jo);
                         }
                     }
                     JsonObject response = new JsonObject();
                     response.put("count", results.size());
+                    response.put("total", total);
+                    response.put("groups", groups);
                     response.put("examples", results);
                     return response.toJson();
                 }));

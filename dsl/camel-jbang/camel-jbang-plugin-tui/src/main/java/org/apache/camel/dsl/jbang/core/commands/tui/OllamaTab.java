@@ -608,7 +608,7 @@ class OllamaTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, area, tableState, scrollState, rows.size());
+        renderTableScrollbar(frame, area, table, tableState, scrollState, rows.size());
     }
 
     private static final int FIXED_COLUMNS_WIDTH = 10 + 18 + 6 + 6 + 6 + 5 + 8 + 8 + 7 + 7 + 12 + 6;

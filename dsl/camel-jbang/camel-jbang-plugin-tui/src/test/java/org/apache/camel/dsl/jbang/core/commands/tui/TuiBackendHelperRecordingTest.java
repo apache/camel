@@ -25,6 +25,7 @@ import dev.tamboui.internal.record.AnsiTerminalCapture;
 import dev.tamboui.layout.Position;
 import dev.tamboui.layout.Size;
 import dev.tamboui.terminal.Backend;
+import dev.tamboui.tui.TuiRunner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -35,12 +36,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Verifies that {@code camel tui --record} actually engages TamboUI's recording backend.
  * <p>
- * TamboUI only wraps a backend for recording inside {@code BackendFactory.create()}, and {@code TuiRunner} calls that
- * factory <em>only</em> when no explicit backend is configured. Since camel-tui must supply an explicit
- * {@link dev.tamboui.backend.jline3.JLineBackend} (auto-discovery would otherwise pick the Aesh backend that is on the
- * classpath for {@code --web}), the recording wrapper is never applied unless camel-tui applies it itself. When that
- * wrapping is missing, {@code --record} replays no tape and writes no {@code .cast} file, yet still exits cleanly, so
- * only a test like this one catches the regression.
+ * camel-tui must supply an explicit {@link dev.tamboui.backend.jline3.JLineBackend} (auto-discovery would otherwise
+ * pick the Aesh backend that is on the classpath for {@code --web}). Before TamboUI 0.5.0 only backends created by
+ * TamboUI's own factory were wrapped for recording, so camel-tui wrapped its explicit backend itself; since 0.5.0
+ * {@code TuiRunner.create} does that for explicit backends too. When the wrapping goes missing, {@code --record}
+ * replays no tape and writes no {@code .cast} file, yet still exits cleanly, so only a test like this one catches the
+ * regression.
  */
 // RecordingConfig.load() also reads fps and duration, so every key camel-tui sets has to be managed here: a value
 // leaking out of this class would silently reconfigure recording in an unrelated test. junit-pioneer clears each key
@@ -65,12 +66,12 @@ class TuiBackendHelperRecordingTest {
     }
 
     @Test
-    void withoutRecordOptionTheBackendIsHandedToTuiRunnerUntouched() {
+    void withoutRecordOptionTheBackendIsHandedToTuiRunnerUntouched() throws Exception {
         Backend original = new NoopBackend();
 
-        Backend result = TuiBackendHelper.applyRecording(original);
-
-        assertThat(result).isSameAs(original);
+        try (TuiRunner runner = TuiBackendHelper.createTuiRunner(original)) {
+            assertThat(runner.backend()).isSameAs(original);
+        }
     }
 
     @Test
@@ -82,13 +83,14 @@ class TuiBackendHelperRecordingTest {
         System.setProperty("tamboui.record.width", "120");
         System.setProperty("tamboui.record.height", "30");
 
-        Backend result = TuiBackendHelper.applyRecording(new NoopBackend());
-
-        // A recording backend reports the configured cast dimensions rather than the real terminal
-        // size; asserting on those proves the configuration was applied, not merely that some
-        // wrapper was returned.
-        assertThat(result).isNotInstanceOf(NoopBackend.class);
-        assertThat(result.size()).isEqualTo(new Size(120, 30));
+        try (TuiRunner runner = TuiBackendHelper.createTuiRunner(new NoopBackend())) {
+            // A recording backend reports the configured cast dimensions rather than the real terminal
+            // size; asserting on those proves the configuration was applied, not merely that some
+            // wrapper was returned.
+            Backend result = runner.backend();
+            assertThat(result).isNotInstanceOf(NoopBackend.class);
+            assertThat(result.size()).isEqualTo(new Size(120, 30));
+        }
     }
 
     /**
@@ -159,6 +161,11 @@ class TuiBackendHelperRecordingTest {
         @Override
         public int peek(int timeoutMs) throws IOException {
             return -2;
+        }
+
+        @Override
+        public void writeRaw(byte[] data) throws IOException {
+            // TuiRunner.create enables bracketed paste through this method
         }
 
         @Override

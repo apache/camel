@@ -517,7 +517,7 @@ class MetricsTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, lastRowCount);
+        renderScrollbar(frame, table, lastRowCount);
     }
 
     // ---- Raw metrics view ----

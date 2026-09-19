@@ -28,8 +28,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": target.setAgentConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class, value)); return true;
         case "agentfactory":
         case "agentFactory": target.setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
+        case "apikey":
+        case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "baseurl":
+        case "baseUrl": target.setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "compensateontoolerrors":
         case "compensateOnToolErrors": target.setCompensateOnToolErrors(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "customprovider":
+        case "customProvider": target.setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": target.setExecuteToolsConcurrently(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "jsonschema":
@@ -40,9 +46,16 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "mcpClients": target.setMcpClients(property(camelContext, java.util.List.class, value)); return true;
         case "mcpserver":
         case "mcpServer": target.setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
+        case "modelname":
+        case "modelName": target.setModelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "modelproperties":
+        case "modelProperties": target.setModelProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "outputclass":
         case "outputClass": target.setOutputClass(property(camelContext, java.lang.Class.class, value)); return true;
+        case "provider": target.setProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "temperature": target.setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -55,8 +68,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": return org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class;
         case "agentfactory":
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
+        case "baseurl":
+        case "baseUrl": return java.lang.String.class;
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return java.lang.Boolean.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": return java.lang.Boolean.class;
         case "jsonschema":
@@ -67,9 +86,16 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "mcpClients": return java.util.List.class;
         case "mcpserver":
         case "mcpServer": return java.util.Map.class;
+        case "modelname":
+        case "modelName": return java.lang.String.class;
+        case "modelproperties":
+        case "modelProperties": return java.util.Map.class;
         case "outputclass":
         case "outputClass": return java.lang.Class.class;
+        case "provider": return java.lang.String.class;
         case "tags": return java.lang.String.class;
+        case "temperature": return java.lang.Double.class;
+        case "timeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -83,8 +109,14 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agentConfiguration": return target.getAgentConfiguration();
         case "agentfactory":
         case "agentFactory": return target.getAgentFactory();
+        case "apikey":
+        case "apiKey": return target.getApiKey();
+        case "baseurl":
+        case "baseUrl": return target.getBaseUrl();
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return target.getCompensateOnToolErrors();
+        case "customprovider":
+        case "customProvider": return target.getCustomProvider();
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": return target.getExecuteToolsConcurrently();
         case "jsonschema":
@@ -95,9 +127,16 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "mcpClients": return target.getMcpClients();
         case "mcpserver":
         case "mcpServer": return target.getMcpServer();
+        case "modelname":
+        case "modelName": return target.getModelName();
+        case "modelproperties":
+        case "modelProperties": return target.getModelProperties();
         case "outputclass":
         case "outputClass": return target.getOutputClass();
+        case "provider": return target.getProvider();
         case "tags": return target.getTags();
+        case "temperature": return target.getTemperature();
+        case "timeout": return target.getTimeout();
         default: return null;
         }
     }
@@ -109,6 +148,8 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "mcpClients": return dev.langchain4j.mcp.client.McpClient.class;
         case "mcpserver":
         case "mcpServer": return java.lang.Object.class;
+        case "modelproperties":
+        case "modelProperties": return java.lang.Object.class;
         default: return null;
         }
     }
