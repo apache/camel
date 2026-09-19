@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.agent;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
+import org.apache.camel.component.langchain4j.core.LangChain4jModelFactory;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -47,6 +49,21 @@ public class LangChain4jAgentConfiguration implements Cloneable {
                             + " If an agentFactory is also configured, the factory takes precedence.")
     @Metadata(autowired = true)
     private AgentConfiguration agentConfiguration;
+
+    @UriParam(label = "model")
+    private String provider;
+    @UriParam(label = "model")
+    private String modelName;
+    @UriParam(label = "model")
+    private String baseUrl;
+    @UriParam(label = "model,security", secret = true)
+    private String apiKey;
+    @UriParam(label = "model")
+    private Double temperature;
+    @UriParam(label = "model")
+    private Duration timeout;
+    @UriParam(label = "model,advanced", prefix = "model.", multiValue = true)
+    private Map<String, Object> modelProperties;
 
     @UriParam(description = "Tags for discovering and calling Camel route tools")
     private String tags;
@@ -118,6 +135,102 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    /**
+     * The LangChain4j provider of the chat model that drives the agent, to create the model from the options here
+     * (modelName, baseUrl, apiKey, temperature, timeout, and provider-specific model.* properties) instead of a
+     * AgentConfiguration bean: ollama, openai, anthropic, azure-openai, mistral, gemini, vertex-ai, github,
+     * hugging-face, or the fully qualified class name of a model class with a builder(). The LangChain4j module of the
+     * provider (dev.langchain4j:langchain4j-ollama, ...) must be on the classpath; Camel JBang downloads it. Ignored
+     * when a AgentConfiguration is configured.
+     */
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    /**
+     * The name of the model at the provider (qwen2.5, gpt-4o-mini, ...), when the model is created from the provider.
+     */
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    /**
+     * The URL of the provider's API (http://localhost:11434 for a local Ollama), when the model is created from the
+     * provider. The provider's default when not set.
+     */
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    /**
+     * The API key or access token of the provider, when the model is created from the provider.
+     */
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public Double getTemperature() {
+        return temperature;
+    }
+
+    /**
+     * The sampling temperature of the model, when the model is created from the provider.
+     */
+    public void setTemperature(Double temperature) {
+        this.temperature = temperature;
+    }
+
+    public Duration getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * The request timeout of the model (30s, 2m), when the model is created from the provider.
+     */
+    public void setTimeout(Duration timeout) {
+        this.timeout = timeout;
+    }
+
+    public Map<String, Object> getModelProperties() {
+        return modelProperties;
+    }
+
+    /**
+     * Provider-specific properties of the model, set on the model's builder as they are (model.numPredict=512 for
+     * Ollama, model.maxTokens=1024 for OpenAI), when the model is created from the provider.
+     */
+    public void setModelProperties(Map<String, Object> modelProperties) {
+        this.modelProperties = modelProperties;
+    }
+
+    /**
+     * The model to create from the provider, or null when no provider is set.
+     */
+    public LangChain4jModelFactory.ModelSpec modelSpec() {
+        if (provider == null) {
+            return null;
+        }
+        return new LangChain4jModelFactory.ModelSpec(
+                provider, modelName, baseUrl, apiKey, temperature, timeout,
+                modelProperties != null ? Map.copyOf(modelProperties) : null);
     }
 
     public LangChain4jAgentConfiguration copy() {

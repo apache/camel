@@ -28,6 +28,10 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "agentConfiguration": target.getConfiguration().setAgentConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class, value)); return true;
         case "agentfactory":
         case "agentFactory": target.getConfiguration().setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
+        case "apikey":
+        case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "baseurl":
+        case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "compensateontoolerrors":
         case "compensateOnToolErrors": target.getConfiguration().setCompensateOnToolErrors(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "executetoolsconcurrently":
@@ -42,9 +46,16 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "mcpClients": target.getConfiguration().setMcpClients(property(camelContext, java.util.List.class, value)); return true;
         case "mcpserver":
         case "mcpServer": target.getConfiguration().setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
+        case "modelname":
+        case "modelName": target.getConfiguration().setModelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "modelproperties":
+        case "modelProperties": target.getConfiguration().setModelProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.Class.class, value)); return true;
+        case "provider": target.getConfiguration().setProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -62,6 +73,10 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "agentConfiguration": return org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class;
         case "agentfactory":
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
+        case "baseurl":
+        case "baseUrl": return java.lang.String.class;
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return java.lang.Boolean.class;
         case "executetoolsconcurrently":
@@ -76,9 +91,16 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "mcpClients": return java.util.List.class;
         case "mcpserver":
         case "mcpServer": return java.util.Map.class;
+        case "modelname":
+        case "modelName": return java.lang.String.class;
+        case "modelproperties":
+        case "modelProperties": return java.util.Map.class;
         case "outputclass":
         case "outputClass": return java.lang.Class.class;
+        case "provider": return java.lang.String.class;
         case "tags": return java.lang.String.class;
+        case "temperature": return java.lang.Double.class;
+        case "timeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -92,6 +114,10 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "agentConfiguration": return target.getConfiguration().getAgentConfiguration();
         case "agentfactory":
         case "agentFactory": return target.getConfiguration().getAgentFactory();
+        case "apikey":
+        case "apiKey": return target.getConfiguration().getApiKey();
+        case "baseurl":
+        case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return target.getConfiguration().getCompensateOnToolErrors();
         case "executetoolsconcurrently":
@@ -106,9 +132,16 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "mcpClients": return target.getConfiguration().getMcpClients();
         case "mcpserver":
         case "mcpServer": return target.getConfiguration().getMcpServer();
+        case "modelname":
+        case "modelName": return target.getConfiguration().getModelName();
+        case "modelproperties":
+        case "modelProperties": return target.getConfiguration().getModelProperties();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
+        case "provider": return target.getConfiguration().getProvider();
         case "tags": return target.getConfiguration().getTags();
+        case "temperature": return target.getConfiguration().getTemperature();
+        case "timeout": return target.getConfiguration().getTimeout();
         default: return null;
         }
     }
@@ -120,6 +153,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "mcpClients": return dev.langchain4j.mcp.client.McpClient.class;
         case "mcpserver":
         case "mcpServer": return java.lang.Object.class;
+        case "modelproperties":
+        case "modelProperties": return java.lang.Object.class;
         case "outputclass":
         case "outputClass": return java.lang.Object.class;
         default: return null;

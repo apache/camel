@@ -35,8 +35,12 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "agentConfiguration": getOrCreateConfiguration(target).setAgentConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class, value)); return true;
         case "agentfactory":
         case "agentFactory": getOrCreateConfiguration(target).setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
+        case "apikey":
+        case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "baseurl":
+        case "baseUrl": getOrCreateConfiguration(target).setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "compensateontoolerrors":
         case "compensateOnToolErrors": getOrCreateConfiguration(target).setCompensateOnToolErrors(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class, value)); return true;
@@ -52,9 +56,16 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "mcpClients": getOrCreateConfiguration(target).setMcpClients(property(camelContext, java.util.List.class, value)); return true;
         case "mcpserver":
         case "mcpServer": getOrCreateConfiguration(target).setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
+        case "modelname":
+        case "modelName": getOrCreateConfiguration(target).setModelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "modelproperties":
+        case "modelProperties": getOrCreateConfiguration(target).setModelProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "outputclass":
         case "outputClass": getOrCreateConfiguration(target).setOutputClass(property(camelContext, java.lang.Class.class, value)); return true;
+        case "provider": getOrCreateConfiguration(target).setProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "temperature": getOrCreateConfiguration(target).setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -72,8 +83,12 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "agentConfiguration": return org.apache.camel.component.langchain4j.agent.api.AgentConfiguration.class;
         case "agentfactory":
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "baseurl":
+        case "baseUrl": return java.lang.String.class;
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return java.lang.Boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class;
@@ -89,9 +104,16 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "mcpClients": return java.util.List.class;
         case "mcpserver":
         case "mcpServer": return java.util.Map.class;
+        case "modelname":
+        case "modelName": return java.lang.String.class;
+        case "modelproperties":
+        case "modelProperties": return java.util.Map.class;
         case "outputclass":
         case "outputClass": return java.lang.Class.class;
+        case "provider": return java.lang.String.class;
         case "tags": return java.lang.String.class;
+        case "temperature": return java.lang.Double.class;
+        case "timeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -105,8 +127,12 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "agentConfiguration": return getOrCreateConfiguration(target).getAgentConfiguration();
         case "agentfactory":
         case "agentFactory": return getOrCreateConfiguration(target).getAgentFactory();
+        case "apikey":
+        case "apiKey": return getOrCreateConfiguration(target).getApiKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "baseurl":
+        case "baseUrl": return getOrCreateConfiguration(target).getBaseUrl();
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return getOrCreateConfiguration(target).getCompensateOnToolErrors();
         case "configuration": return target.getConfiguration();
@@ -122,9 +148,16 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "mcpClients": return getOrCreateConfiguration(target).getMcpClients();
         case "mcpserver":
         case "mcpServer": return getOrCreateConfiguration(target).getMcpServer();
+        case "modelname":
+        case "modelName": return getOrCreateConfiguration(target).getModelName();
+        case "modelproperties":
+        case "modelProperties": return getOrCreateConfiguration(target).getModelProperties();
         case "outputclass":
         case "outputClass": return getOrCreateConfiguration(target).getOutputClass();
+        case "provider": return getOrCreateConfiguration(target).getProvider();
         case "tags": return getOrCreateConfiguration(target).getTags();
+        case "temperature": return getOrCreateConfiguration(target).getTemperature();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
         default: return null;
         }
     }
@@ -136,6 +169,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "mcpClients": return dev.langchain4j.mcp.client.McpClient.class;
         case "mcpserver":
         case "mcpServer": return java.lang.Object.class;
+        case "modelproperties":
+        case "modelProperties": return java.lang.Object.class;
         case "outputclass":
         case "outputClass": return java.lang.Object.class;
         default: return null;

@@ -34,6 +34,42 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Configuring the model by provider
+
+The embedding model can be declared by its provider and the options every provider has, without a bean of the
+provider's model class (since Camel 4.23). In `application.properties`, for every endpoint of the component:
+
+[source,properties]
+----
+camel.component.langchain4j-embeddings.provider = ollama
+camel.component.langchain4j-embeddings.model-name = nomic-embed-text
+camel.component.langchain4j-embeddings.base-url = http://localhost:11434
+----
+
+Or on the endpoint, where `model.` prefixes a provider-specific option of the model's builder:
+
+[source,yaml]
+----
+- to:
+    uri: langchain4j-embeddings:documents
+    parameters:
+      provider: openai
+      apiKey: "{{openai.api.key}}"
+      modelName: text-embedding-3-small
+      timeout: 30s
+----
+
+The provider is one of `ollama`, `openai`, `anthropic`, `azure-openai`, `mistral`, `gemini`, `vertex-ai`, `github`,
+`hugging-face`, or the fully qualified class name of any LangChain4j model class with a `builder()`. The LangChain4j
+module of the provider (`dev.langchain4j:langchain4j-ollama`, `dev.langchain4j:langchain4j-open-ai`, ...) must be
+on the classpath; Camel JBang downloads it. The common options are `modelName`, `baseUrl`, `apiKey`, `temperature`
+and `timeout`, set under the name the provider's builder uses for them (`apiKey` is the access token of Hugging Face,
+`modelName` the deployment name of Azure OpenAI); an option the provider does not have (an `apiKey` for Ollama), or a
+`model.` property its builder does not have, is an error naming what the builder accepts.
+
+Endpoints with the same provider options share one model instance. The provider is ignored when a model bean is
+configured (`embeddingModel`).
+
 === Using Embedding Models
 
 The Camel LangChain4j embeddings component provides support for generating embeddings using various embedding models supported by https://docs.langchain4j.dev/[LangChain4j].
