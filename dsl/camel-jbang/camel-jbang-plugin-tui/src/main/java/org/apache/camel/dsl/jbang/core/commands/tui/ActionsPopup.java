@@ -1062,7 +1062,7 @@ class ActionsPopup {
                 ? TuiIcons.menuItem(TuiIcons.KEYSTROKES, "Hide Keystrokes")
                 : TuiIcons.menuItem(TuiIcons.KEYSTROKES, "Show Keystrokes");
         String tapeLabel = tapeRecordingActive.get()
-                ? TuiIcons.menuItem(TuiIcons.STOP, "Stop Tape Recording")
+                ? TuiIcons.menuItem(TuiIcons.STOP_RECORD, "Stop Tape Recording")
                 : TuiIcons.menuItem(TuiIcons.RECORD, "Start Tape Recording");
         List<ListItem> items = new ArrayList<>();
         items.add(ListItem.from("  .."));

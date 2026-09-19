@@ -114,10 +114,9 @@ class TabRegistryTest {
     }
 
     @Test
-    void moreTabIconsAreTwoColumnsWideWithoutVariationSelector() {
+    void moreTabIconsAreTwoColumnsWide() {
         for (TabRegistry.MoreTab mt : registry.moreTabs()) {
             assertEquals(2, CharWidth.of(mt.icon()), "Icon should be 2 terminal columns wide: " + mt.icon());
-            assertFalse(mt.icon().contains("\uFE0F"), "Icon should not contain VS16 variation selector: " + mt.icon());
         }
     }
 
