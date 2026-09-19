@@ -19,6 +19,7 @@ package org.apache.camel.component.openai;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -135,11 +136,16 @@ public class OpenAIBatchAggregationStrategy implements AggregationStrategy {
     }
 
     private BufferedWriter writer(OpenAIBatchSpool spool) throws IOException {
-        BufferedWriter writer = writers.get(spool.getFile());
-        if (writer == null) {
-            writer = spool.open();
-            writers.put(spool.getFile(), writer);
+        try {
+            return writers.computeIfAbsent(spool.getFile(), file -> {
+                try {
+                    return spool.open();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
         }
-        return writer;
     }
 }
