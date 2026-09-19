@@ -633,10 +633,10 @@ public class OpenAIMockBuilder {
             currentBatchExpectation = null;
         }
         log.info("Built OpenAIMock with {} chat, {} embedding, {} transcription, {} translation, "
-                 + "{} speech, {} moderation, {} image generation, and {} image edit expectations",
+                 + "{} speech, {} moderation, {} image generation, {} image edit, and {} batch expectations",
                 expectations.size(), embeddingExpectations.size(), audioTranscriptionExpectations.size(),
                 audioTranslationExpectations.size(), speechExpectations.size(), moderationExpectations.size(),
-                imageGenerationExpectations.size(), imageEditExpectations.size());
+                imageGenerationExpectations.size(), imageEditExpectations.size(), batchExpectations.size());
         return mock;
     }
 
