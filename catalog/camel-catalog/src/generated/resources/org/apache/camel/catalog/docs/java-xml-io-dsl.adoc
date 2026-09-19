@@ -208,6 +208,25 @@ The builder class is then used to create the actual bean by using fluent builder
 So the properties will be set on the builder class, and the bean is created by invoking the `builderMethod`
 at the end. The invocation of this method is done via Java reflection.
 
+A class that has no public no-arg constructor but a public static `builder()` or `newBuilder()` method
+(Lombok `@Builder`, Immutables, LangChain4j, the AWS SDK v2, protobuf, the JDK `HttpClient` and many others)
+needs no `builderClass` and `builderMethod`: Camel calls the `builder()` method, sets the properties on the returned
+builder, and creates the bean with its `build()` method (or, when there is no `build()`, its single public no-arg
+method that returns the type):
+
+[source,xml]
+----
+	<bean name="chatModel" type="dev.langchain4j.model.ollama.OllamaChatModel">
+        <properties>
+          <property key="baseUrl" value="{{ollama.base.url}}"/>
+          <property key="modelName" value="{{ollama.model}}"/>
+        </properties>
+	</bean>
+----
+
+Set `builderMethod` when the builder has several methods that return the type, or the method has another name.
+A class that has a public no-arg constructor is created with the constructor as usual, even if it also has a `builder()` method.
+
 === Creating beans from factory bean
 
 A bean can also be created from a factory bean as shown below:

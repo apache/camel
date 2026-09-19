@@ -112,8 +112,9 @@ public class AuthoringTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options "
                         + "such as logLevel instead of loggingLevel), endpoint URIs, simple expressions, camel.* "
-                        + "options. Use on content before writing it, or on an existing file (no content) to explain "
-                        + "a reload error.")
+                        + "options, and how each bean under beans: is created (the properties a class built through "
+                        + "its builder() accepts, the ways to create a class with no constructor). Use on content "
+                        + "before writing it, or on an existing file (no content) to explain a reload error.")
     public JsonObject camel_validate_source(
             @ToolArg(description = DIRECTORY_DESC + "; needed when no content is given", required = false) String directory,
             @ToolArg(description = "File name; picks the checks by extension, read when no content",

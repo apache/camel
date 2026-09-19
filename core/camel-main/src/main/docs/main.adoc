@@ -1081,6 +1081,27 @@ Then we can create a bean instance with name `foo` and provide parameters to the
 camel.beans.foo = #class:com.foo.MyBean("Hello World", true, 123)
 ----
 
+=== Creating custom beans from a builder
+
+A class that has no public no-arg constructor but a public static `builder()` or `newBuilder()` method
+(Lombok `@Builder`, Immutables, LangChain4j, Spring AI, the AWS SDK v2, Jackson, protobuf, the JDK `HttpClient`
+and many others) is created via its builder: Camel calls the `builder()` method, sets the properties on the
+returned builder, and creates the bean with its `build()` method. A LangChain4j chat model is then declared like
+any other bean, with the property names of the builder's fluent setters:
+
+[source,properties]
+----
+camel.beans.chatModel = #class:dev.langchain4j.model.ollama.OllamaChatModel
+camel.beans.chatModel.baseUrl = http://localhost:11434
+camel.beans.chatModel.modelName = qwen2.5
+camel.beans.chatModel.timeout = 2m
+----
+
+If the builder has no `build()` method, Camel uses its single public no-arg method that returns the type.
+A class that has a public no-arg constructor is created with the constructor as usual, even if it also has a `builder()` method;
+a class whose builder is a separate class, or has several methods that return the type, is declared in YAML or XML
+with `builderClass` and `builderMethod` (see the xref:components:others:yaml-dsl.adoc[YAML DSL]).
+
 === Creating custom beans with factory method
 
 When creating a bean then parameters to a factorty method can be provided.
