@@ -2831,6 +2831,19 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIBatchMetadata";
         }
         /**
+         * The custom_id of the request that OpenAIBatchAggregationStrategy
+         * builds from this message. Defaults to the message id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIBatchCustomId}.
+         */
+        public String openAIBatchCustomId() {
+            return "CamelOpenAIBatchCustomId";
+        }
+        /**
          * Which result file the batch-results operation downloads: 'output' or
          * 'error'. Overrides the batchResultsFile option.
          * 
