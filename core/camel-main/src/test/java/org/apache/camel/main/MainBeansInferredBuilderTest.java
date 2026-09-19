@@ -40,6 +40,8 @@ public class MainBeansInferredBuilderTest {
         main.addProperty("camel.beans.chatModel.base-url", "http://localhost:11434");
         main.addProperty("camel.beans.chatModel.modelName", "qwen2.5");
         main.addProperty("camel.beans.chatModel.timeout", "2m");
+        // label is not a builder property but a setter of the created bean
+        main.addProperty("camel.beans.chatModel.label", "support");
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -47,6 +49,22 @@ public class MainBeansInferredBuilderTest {
         assertEquals("http://localhost:11434", model.baseUrl);
         assertEquals("qwen2.5", model.modelName);
         assertEquals(Duration.ofMinutes(2), model.timeout);
+        assertEquals("support", model.label);
+
+        main.stop();
+    }
+
+    @Test
+    public void testUnknownPropertyIsIgnoredWhenNotFailFast() {
+        Main main = new Main();
+        main.configure().withAutoConfigurationFailFast(false);
+        main.addProperty("camel.beans.chatModel", "#class:" + ChatModel.class.getName());
+        main.addProperty("camel.beans.chatModel.modelName", "qwen2.5");
+        main.addProperty("camel.beans.chatModel.model", "ignored");
+        main.start();
+
+        ChatModel model = assertInstanceOf(ChatModel.class, main.getCamelContext().getRegistry().lookupByName("chatModel"));
+        assertEquals("qwen2.5", model.modelName);
 
         main.stop();
     }
@@ -74,7 +92,7 @@ public class MainBeansInferredBuilderTest {
         String msg = e.getMessage() + (e.getCause() != null ? " " + e.getCause().getMessage() : "");
         assertTrue(msg.contains("model=qwen2.5"), msg);
         assertTrue(msg.contains("The bean is created through its builder " + ChatModel.Builder.class.getName()
-                                + ", which accepts: baseUrl, modelName, timeout"),
+                                + ", which accepts: baseUrl, modelName, timeout; the created bean accepts: label"),
                 msg);
     }
 
@@ -83,6 +101,7 @@ public class MainBeansInferredBuilderTest {
         final String baseUrl;
         final String modelName;
         final Duration timeout;
+        String label;
 
         private ChatModel(Builder b) {
             this.baseUrl = b.baseUrl;
@@ -92,6 +111,10 @@ public class MainBeansInferredBuilderTest {
 
         public static Builder builder() {
             return new Builder();
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
         }
 
         public static final class Builder {

@@ -2675,9 +2675,16 @@ public abstract class BaseMainSupport extends BaseService {
         String bm = PropertyBindingSupport.findBuilderMethod(builder, type, null);
         OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
         if (!config.isEmpty()) {
-            // the properties are set on the builder (and reported as configured on the bean)
+            // the properties the builder accepts are set on it (and reported as configured on the bean); the rest
+            // are left in config for the created bean, as a bean can have setters of its own besides its builder
+            MainHelper.setPropertiesOnTarget(camelContext, builder, config, optionPrefix + name + ".", false,
+                    ignoreCase, autoConfiguredProperties);
+        }
+        LOG.debug("Creating bean: {} of type: {} via builder: {} ({})", name, className, builder.getClass().getName(), bm);
+        Object bean = org.apache.camel.support.ObjectHelper.invokeMethodSafe(bm, builder);
+        if (!config.isEmpty()) {
             try {
-                MainHelper.setPropertiesOnTarget(camelContext, builder, config, optionPrefix + name + ".", failIfNotSet,
+                MainHelper.setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + ".", failIfNotSet,
                         ignoreCase, autoConfiguredProperties);
             } catch (PropertyBindingException e) {
                 // the property names of a builder are not those of the bean, so name what the builder accepts
@@ -2685,8 +2692,7 @@ public abstract class BaseMainSupport extends BaseService {
                         e.getMessage() + ". " + BeanModelHelper.builderPropertiesHint(builder, type), e);
             }
         }
-        LOG.debug("Creating bean: {} of type: {} via builder: {} ({})", name, className, builder.getClass().getName(), bm);
-        return org.apache.camel.support.ObjectHelper.invokeMethodSafe(bm, builder);
+        return bean;
     }
 
     private void bindBeansToRegistry(
