@@ -3597,8 +3597,33 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapTcp(String path) {
         return coap("coap+tcp", path);
+    }
+    /**
+     * CoAP (camel-coap)
+     * Send and receive messages to/from CoAP (Constrained Application Protocol)
+     * capable devices.
+     * 
+     * Category: iot
+     * Since: 2.16
+     * Maven coordinates: org.apache.camel:camel-coap
+     * 
+     * Syntax: <code>coap:uri</code>
+     * 
+     * Path parameter: uri
+     * The URI for the CoAP endpoint
+     * 
+     * @deprecated use {@link #coap(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path uri
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapTcp(String componentName, String path) {
+        return coap(componentName, path);
     }
     /**
      * CoAP (Secure) (camel-coap)
@@ -3617,8 +3642,33 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coaps(String path) {
         return coap("coaps", path);
+    }
+    /**
+     * CoAP (camel-coap)
+     * Send and receive messages to/from CoAP (Constrained Application Protocol)
+     * capable devices.
+     * 
+     * Category: iot
+     * Since: 2.16
+     * Maven coordinates: org.apache.camel:camel-coap
+     * 
+     * Syntax: <code>coap:uri</code>
+     * 
+     * Path parameter: uri
+     * The URI for the CoAP endpoint
+     * 
+     * @deprecated use {@link #coap(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path uri
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coaps(String componentName, String path) {
+        return coap(componentName, path);
     }
     /**
      * CoAP (camel-coap)
@@ -3637,8 +3687,33 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapsTcp(String path) {
         return coap("coaps+tcp", path);
+    }
+    /**
+     * CoAP (camel-coap)
+     * Send and receive messages to/from CoAP (Constrained Application Protocol)
+     * capable devices.
+     * 
+     * Category: iot
+     * Since: 2.16
+     * Maven coordinates: org.apache.camel:camel-coap
+     * 
+     * Syntax: <code>coap:uri</code>
+     * 
+     * Path parameter: uri
+     * The URI for the CoAP endpoint
+     * 
+     * @deprecated use {@link #coap(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path uri
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapsTcp(String componentName, String path) {
+        return coap(componentName, path);
     }
     /**
      * CometD (camel-cometd)
@@ -3720,8 +3795,40 @@ public class StaticEndpointBuilders {
      * @param path host:port/channelName
      * @return the dsl builder
      */
+    @Deprecated
     public static CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(String path) {
         return cometd("cometds", path);
+    }
+    /**
+     * CometD (camel-cometd)
+     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
+     * messaging using the CometD/Bayeux protocol.
+     * 
+     * Category: networking,messaging
+     * Since: 2.0
+     * Maven coordinates: org.apache.camel:camel-cometd
+     * 
+     * Syntax: <code>cometd:host:port/channelName</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname
+     * 
+     * Path parameter: port (required)
+     * Host port number
+     * 
+     * Path parameter: channelName (required)
+     * The channelName represents a topic that can be subscribed to by the Camel
+     * endpoints.
+     * 
+     * @deprecated use {@link #cometd(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port/channelName
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(String componentName, String path) {
+        return cometd(componentName, path);
     }
     /**
      * Consul (camel-consul)
@@ -7094,6 +7201,50 @@ public class StaticEndpointBuilders {
         return HashicorpVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Hazelcast Atomic Number (camel-hazelcast)
+     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
+     * number).
+     * 
+     * Category: cache,clustering
+     * Since: 2.7
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
+     * 
+     * @param path cacheName
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String path) {
+        return hazelcastAtomicvalue("hazelcast-atomicvalue", path);
+    }
+    /**
+     * Hazelcast Atomic Number (camel-hazelcast)
+     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
+     * number).
+     * 
+     * Category: cache,clustering
+     * Since: 2.7
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path cacheName
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String componentName, String path) {
+        return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
@@ -7633,8 +7784,32 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
+    @Deprecated
     public static HttpEndpointBuilderFactory.HttpEndpointBuilder https(String path) {
         return http("https", path);
+    }
+    /**
+     * HTTP (camel-http)
+     * Send requests to external HTTP servers using Apache HTTP Client 5.x.
+     * 
+     * Category: http
+     * Since: 2.3
+     * Maven coordinates: org.apache.camel:camel-http
+     * 
+     * Syntax: <code>http://httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The url of the HTTP endpoint to call.
+     * 
+     * @deprecated use {@link #http(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path httpUri
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static HttpEndpointBuilderFactory.HttpEndpointBuilder https(String componentName, String path) {
+        return http(componentName, path);
     }
     /**
      * Hugging Face (camel-huggingface)
@@ -8695,8 +8870,35 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder imaps(String path) {
         return imap("imaps", path);
+    }
+    /**
+     * IMAP (camel-mail)
+     * Send and receive emails using imap, pop3 and smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>imap:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     * 
+     * @deprecated use {@link #imap(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static MailEndpointBuilderFactory.MailEndpointBuilder imaps(String componentName, String path) {
+        return imap(componentName, path);
     }
     /**
      * Infinispan (camel-infinispan)
@@ -11233,6 +11435,64 @@ public class StaticEndpointBuilders {
         return LdifEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * LLM (camel-openai)
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * Syntax: <code>llm:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform: 'chat-completion', 'responses',
+     * 'responses-retrieve', 'responses-cancel', 'embeddings', 'tool-execution',
+     * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
+     * 'image-generation', or 'image-edit'
+     * There are 12 enums and the value can be one of: chat-completion,
+     * responses, responses-retrieve, responses-cancel, embeddings,
+     * tool-execution, audio-transcription, audio-translation, audio-speech,
+     * moderation, image-generation, image-edit
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder llm(String path) {
+        return llm("llm", path);
+    }
+    /**
+     * LLM (camel-openai)
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * Syntax: <code>llm:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform: 'chat-completion', 'responses',
+     * 'responses-retrieve', 'responses-cancel', 'embeddings', 'tool-execution',
+     * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
+     * 'image-generation', or 'image-edit'
+     * There are 12 enums and the value can be one of: chat-completion,
+     * responses, responses-retrieve, responses-cancel, embeddings,
+     * tool-execution, audio-transcription, audio-translation, audio-speech,
+     * moderation, image-generation, image-edit
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder llm(String componentName, String path) {
+        return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Log Data (camel-log)
      * Prints data from the routed message (such as body and headers) to the
      * logger.
@@ -12728,8 +12988,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech.
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
      * 
      * Category: ai
      * Since: 4.17
@@ -12750,19 +13011,21 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String path) {
-        return openai("openai", path);
+        return llm("openai", path);
     }
     /**
-     * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech.
+     * LLM (camel-openai)
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
      * 
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-openai
      * 
-     * Syntax: <code>openai:operation</code>
+     * Syntax: <code>llm:operation</code>
      * 
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses',
@@ -12774,13 +13037,15 @@ public class StaticEndpointBuilders {
      * tool-execution, audio-transcription, audio-translation, audio-speech,
      * moderation, image-generation, image-edit
      * 
+     * @deprecated use {@link #llm(String, String)} instead.
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String componentName, String path) {
-        return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return llm(componentName, path);
     }
     /**
      * OpenSearch (camel-opensearch)
@@ -13751,8 +14016,35 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3(String path) {
         return imap("pop3", path);
+    }
+    /**
+     * IMAP (camel-mail)
+     * Send and receive emails using imap, pop3 and smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>imap:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     * 
+     * @deprecated use {@link #imap(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static MailEndpointBuilderFactory.MailEndpointBuilder pop3(String componentName, String path) {
+        return imap(componentName, path);
     }
     /**
      * POP3S (camel-mail)
@@ -13773,8 +14065,35 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3s(String path) {
         return imap("pop3s", path);
+    }
+    /**
+     * IMAP (camel-mail)
+     * Send and receive emails using imap, pop3 and smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>imap:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     * 
+     * @deprecated use {@link #imap(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static MailEndpointBuilderFactory.MailEndpointBuilder pop3s(String componentName, String path) {
+        return imap(componentName, path);
     }
     /**
      * PQC Algorithms (camel-pqc)
@@ -15368,8 +15687,38 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static SmppEndpointBuilderFactory.SmppEndpointBuilder smpps(String path) {
         return smpp("smpps", path);
+    }
+    /**
+     * SMPP (camel-smpp)
+     * Send and receive SMS messages using a SMSC (Short Message Service
+     * Center).
+     * 
+     * Category: mobile
+     * Since: 2.2
+     * Maven coordinates: org.apache.camel:camel-smpp
+     * 
+     * Syntax: <code>smpp:host:port</code>
+     * 
+     * Path parameter: host
+     * Hostname for the SMSC server to use.
+     * Default value: localhost
+     * 
+     * Path parameter: port
+     * Port number for the SMSC server to use.
+     * Default value: 2775
+     * 
+     * @deprecated use {@link #smpp(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static SmppEndpointBuilderFactory.SmppEndpointBuilder smpps(String componentName, String path) {
+        return smpp(componentName, path);
     }
     /**
      * SMTP (camel-mail)
@@ -15390,8 +15739,35 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder smtp(String path) {
         return imap("smtp", path);
+    }
+    /**
+     * IMAP (camel-mail)
+     * Send and receive emails using imap, pop3 and smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>imap:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     * 
+     * @deprecated use {@link #imap(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static MailEndpointBuilderFactory.MailEndpointBuilder smtp(String componentName, String path) {
+        return imap(componentName, path);
     }
     /**
      * SMTPS (camel-mail)
@@ -15412,8 +15788,35 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder smtps(String path) {
         return imap("smtps", path);
+    }
+    /**
+     * IMAP (camel-mail)
+     * Send and receive emails using imap, pop3 and smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>imap:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     * 
+     * @deprecated use {@link #imap(String, String)} instead.
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static MailEndpointBuilderFactory.MailEndpointBuilder smtps(String componentName, String path) {
+        return imap(componentName, path);
     }
     /**
      * SNMP (camel-snmp)

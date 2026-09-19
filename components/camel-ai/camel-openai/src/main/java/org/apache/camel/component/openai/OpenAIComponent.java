@@ -26,9 +26,11 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * OpenAI component for chat completion, embeddings, and audio transcription.
+ * LLM component for chat completion, embeddings, audio, and images using OpenAI-compatible APIs.
+ * <p>
+ * The {@code llm} scheme is the primary name; {@code openai} remains a supported alias for backward compatibility.
  */
-@Component("openai")
+@Component("llm,openai")
 public class OpenAIComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(description = "Default API key for all endpoints", security = "secret")

@@ -260,6 +260,20 @@ public interface ${builderName}Factory {
         default ${componentName}HeaderNameBuilder ${mojo.camelCaseLower($model.scheme)}() {
             return ${componentName}HeaderNameBuilder.INSTANCE;
         }
+        #if( $aliases.size() > 1 )
+            #foreach( $componentModel in $aliases )
+                #if( $foreach.index > 0 )
+        #set( $javadoc = $mojo.getMainDescription($model, false) + $newline + $newline
+                            + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}()} instead." + $newline
+                            + "@return the dsl builder for the headers' name." + $newline )
+        ${mojo.javadoc("        ", $javadoc)}
+        @Deprecated
+        default ${componentName}HeaderNameBuilder ${mojo.camelCaseLower($componentModel.scheme)}() {
+            return ${mojo.camelCaseLower($model.scheme)}();
+        }
+                #end
+            #end
+        #end
     #end
     #if( $aliases.size() == 1 )
         #set( $javadoc = $mojo.getMainDescription($model, true) + $newline + $newline
@@ -286,11 +300,18 @@ public interface ${builderName}Factory {
     #else
         #set( $firstAlias = true )
         #foreach( $componentModel in $aliases )
-            #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
+            #if( $foreach.index > 0 )
+        #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
+                            + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}(String)} instead." + $newline
                             + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
                             + "@return the dsl builder" + $newline )
+            #else
+        #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
+                            + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
+                            + "@return the dsl builder" + $newline )
+            #end
         ${mojo.javadoc("        ", $javadoc)}
-            #if( $componentModel.deprecated )
+            #if( $componentModel.deprecated || $foreach.index > 0 )
         @Deprecated
             #end
         default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String path) {
@@ -311,6 +332,20 @@ public interface ${builderName}Factory {
         }
             #end
         #end
+            #foreach( $componentModel in $aliases )
+                #if( $foreach.index > 0 )
+        #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
+                            + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}(String, String)} instead." + $newline
+                            + "@param componentName to use a custom component name for the endpoint instead of the default name" + $newline
+                            + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
+                            + "@return the dsl builder" + $newline )
+        ${mojo.javadoc("        ", $javadoc)}
+        @Deprecated
+        default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String componentName, String path) {
+            return ${mojo.camelCaseLower($model.scheme)}(componentName, path);
+        }
+                #end
+            #end
     #end
 
     }
