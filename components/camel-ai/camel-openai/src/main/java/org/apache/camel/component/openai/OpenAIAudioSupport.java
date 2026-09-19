@@ -91,7 +91,7 @@ final class OpenAIAudioSupport {
         if (ObjectHelper.isNotEmpty(extension)) {
             return "audio." + extension;
         }
-        return "audio.mp3";
+        return "audio";
     }
 
     private static MultipartField<InputStream> multipartWithFilename(Message in, InputStream stream) {

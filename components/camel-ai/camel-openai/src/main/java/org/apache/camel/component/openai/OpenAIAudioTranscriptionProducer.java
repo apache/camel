@@ -34,11 +34,15 @@ import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OpenAI producer for audio transcription.
  */
 public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpenAIAudioTranscriptionProducer.class);
 
     public OpenAIAudioTranscriptionProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -215,7 +219,9 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
         }
         try {
             return ObjectMappers.jsonMapper().readValue(text, TranscriptionCreateResponse.class);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            LOG.warn("Failed to re-parse diarized_json transcription response; returning raw text. Error: {}",
+                    e.getMessage());
             return null;
         }
     }
