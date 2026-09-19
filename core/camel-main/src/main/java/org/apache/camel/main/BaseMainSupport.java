@@ -2645,6 +2645,42 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    /**
+     * Creates a bean declared as <tt>#class:</tt> whose class has no public no-arg constructor but a builder (such as a
+     * LangChain4j model or a Lombok class), by setting the properties of the bean (dot style) on the builder before the
+     * bean is built, as such a bean cannot be configured after it is created.
+     *
+     * @return the created bean, or <tt>null</tt> if the bean is not created via an inferred builder
+     */
+    private static Object createBeanViaInferredBuilder(
+            CamelContext camelContext, String name, Object value, OrderedLocationProperties properties,
+            String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
+            OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+        if (!(value instanceof String text) || !text.startsWith("#class:")) {
+            return null;
+        }
+        String className = camelContext.resolvePropertyPlaceholders(text.substring(7));
+        if (className.indexOf('#') != -1 || className.indexOf('(') != -1) {
+            // a factory method or constructor arguments say how to create the bean
+            return null;
+        }
+        Class<?> type = camelContext.getClassResolver().resolveMandatoryClass(className);
+        Object builder = PropertyBindingSupport.newBuilderInstance(type);
+        if (builder == null) {
+            return null;
+        }
+        String bm = PropertyBindingSupport.findBuilderMethod(builder, type, null);
+        OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
+        if (!config.isEmpty()) {
+            // the properties are set on the builder (and reported as configured on the bean)
+            MainHelper.setPropertiesOnTarget(camelContext, builder, config, optionPrefix + name + ".", failIfNotSet,
+                    ignoreCase, autoConfiguredProperties);
+        }
+        LOG.debug("Creating bean: {} of type: {} via builder: {} ({})", name, className, builder.getClass().getName(), bm);
+        return org.apache.camel.support.ObjectHelper.invokeMethodSafe(bm, builder);
+    }
+
     private void bindBeansToRegistry(
             CamelContext camelContext, OrderedLocationProperties properties,
             String optionPrefix, boolean failIfNotSet, boolean logSummary, boolean ignoreCase,
@@ -2671,7 +2707,11 @@ public abstract class BaseMainSupport extends BaseService {
         for (String key : keys) {
             if (key.indexOf('.') == -1 && key.indexOf('[') == -1) {
                 Object value = properties.remove(key);
-                Object bean = PropertyBindingSupport.resolveBean(camelContext, value);
+                Object bean = createBeanViaInferredBuilder(camelContext, key, value, properties, optionPrefix,
+                        failIfNotSet, ignoreCase, autoConfiguredProperties);
+                if (bean == null) {
+                    bean = PropertyBindingSupport.resolveBean(camelContext, value);
+                }
                 if (bean == null) {
                     throw new IllegalArgumentException(
                             "Cannot create/resolve bean with name " + key + " from value: " + value);

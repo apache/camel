@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.dsl.yaml.support.model.MyBean
 import org.apache.camel.dsl.yaml.support.model.MyBeanBuilder
+import org.apache.camel.dsl.yaml.support.model.MyBuiltBean
 import org.apache.camel.dsl.yaml.support.model.MyCtrBean
 import org.apache.camel.dsl.yaml.support.model.MyDestroyBean
 import org.apache.camel.dsl.yaml.support.model.MyFacBean
@@ -323,6 +324,45 @@ class BeansTest extends YamlTestSupport {
             it.field1 == 'builder1'
             it.field2 == 'builder2'
         }
+    }
+
+    // CAMEL-24820: a type with no public constructor but a builder() needs no builderClass and builderMethod
+    def "beans with inferred builder"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: chatModel
+                    type: ${MyBuiltBean.class.name}
+                    properties:
+                      baseUrl: http://localhost:11434
+                      modelName: qwen2.5
+                      timeout: 2m
+                      label: support
+            """
+
+        then:
+        with(context.registry.lookupByName('chatModel'), MyBuiltBean) {
+            it.baseUrl == 'http://localhost:11434'
+            it.modelName == 'qwen2.5'
+            it.timeout == java.time.Duration.ofMinutes(2)
+            // label is not a builder property but has a setter on the bean
+            it.label == 'support'
+        }
+    }
+
+    def "beans with inferred builder and unknown property fails with the property name"() {
+        when:
+        loadRoutes """
+                - beans:
+                  - name: chatModel
+                    type: ${MyBuiltBean.class.name}
+                    properties:
+                      model: qwen2.5
+            """
+
+        then:
+        def e = thrown(Exception)
+        messages(e).contains('model=qwen2.5')
     }
 
     // CAMEL-24709: a class that was not found names the built-in bean that was likely meant, from the bean metadata on the classpath

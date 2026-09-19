@@ -516,6 +516,47 @@ The builder class is then used to create the actual bean by using fluent builder
 So the properties will be set on the builder class, and the bean is created by invoking the `builderMethod`
 at the end. The invocation of this method is done via Java reflection.
 
+==== Classes with a builder() method
+
+Many libraries create their objects through a builder only: the class has no public constructor but a
+public static `builder()` method (Lombok `@Builder`, Immutables, LangChain4j, Spring AI, the AWS SDK v2, Jackson,
+MongoDB, OpenTelemetry) or `newBuilder()` method (the JDK `HttpClient`, protobuf, gRPC, Caffeine, Guava),
+returning a builder with fluent setters and a `build()` method.
+
+Such a class needs no `builderClass` and `builderMethod`: when the type has no public no-arg constructor,
+Camel calls its `builder()` (or `newBuilder()`) method, sets the properties on the returned builder,
+and creates the bean with the builder's `build()` method. A LangChain4j chat model is then declared like any other bean:
+
+[source,yaml]
+----
+- beans:
+  - name: chatModel
+    type: dev.langchain4j.model.ollama.OllamaChatModel
+    properties:
+      baseUrl: "{{ollama.base.url}}"
+      modelName: "{{ollama.model}}"
+      timeout: 2m
+----
+
+The property names are those of the builder's fluent setters (`modelName`, not `model`); a property the builder does
+not take is set on the created bean if it has a setter, and an unknown property is an error naming the property.
+If the builder has no `build()` method, Camel uses its single public no-arg method that returns the type (such as
+`create()`), and if there are several such methods, or the method has another name, then set `builderMethod`:
+
+[source,yaml]
+----
+- beans:
+  - name: myBean
+    type: com.acme.MyBean
+    builderMethod: createMyBean
+    properties:
+      id: 123
+----
+
+NOTE: A class that has a public no-arg constructor is created with the constructor as usual, even if it also has a
+`builder()` method. Use `builderClass` for a builder that is a separate class, or is not obtained from a `builder()`
+or `newBuilder()` method, and `factoryMethod` for a static method that takes the values as arguments.
+
 === Creating beans using script language
 
 For advanced use-cases then Camel allows to inline a script language, such as groovy, java, javascript, etc, to create the bean.

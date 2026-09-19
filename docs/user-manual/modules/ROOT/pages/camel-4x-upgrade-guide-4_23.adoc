@@ -487,6 +487,23 @@ The XML schemas (`camel-spring.xsd`, `camel-xml-io.xsd`) and the YAML schema no 
 ran. A bean that is neither scripted nor built still needs a `type`, and the error for a missing one
 is now an `IllegalArgumentException` naming the bean instead of a `NullPointerException`.
 
+=== camel-core - a bean whose class has a builder() method is created via the builder
+
+A bean declaration (`bean` under `beans` in YAML and XML, `templateBean` of a route template, `camel.beans.` in
+Camel Main, and a `#class:` value in property binding) whose class has no public no-arg constructor but a public
+static `builder()` or `newBuilder()` method is now created via that builder: the properties are set on the builder
+and the bean is created with the builder's `build()` method (or its single public no-arg method that returns the
+type). This makes a class built by Lombok, Immutables, LangChain4j, the AWS SDK v2 or protobuf declarable with only
+its `type` and `properties`, where `builderClass` and `builderMethod` had to be given before.
+
+Such a declaration previously failed, as there was no constructor to call, so no working declaration changes
+behaviour: a class that has a public no-arg constructor is still created with the constructor, and `builderClass`,
+`factoryMethod` and `constructors` are used when given. `builderMethod` can now be set without `builderClass`, to
+name the method of an inferred builder.
+
+`PropertyBindingSupport.setPropertiesOnTarget` now reports an unknown property with the property name and value, as
+it rethrew the `PropertyBindingException` with its null cause since 4.21, which surfaced as `NullPointerException: e`.
+
 === camel-core - Splitter unwraps Exchange parts
 
 The Splitter EIP now unwraps parts of type `org.apache.camel.Exchange`, the same way it already unwrapped parts of

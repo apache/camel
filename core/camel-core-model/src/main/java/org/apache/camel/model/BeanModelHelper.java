@@ -107,38 +107,18 @@ public final class BeanModelHelper {
             // builder class and method
             Class<?> clazz = context.getClassResolver().resolveMandatoryClass(def.getBuilderClass());
             Object builder = context.getInjector().newInstance(clazz);
-            String bm = def.getBuilderMethod() != null ? def.getBuilderMethod() : "build";
-
-            // create bean via builder and assign as target output
-            target = PropertyBindingSupport.build()
-                    .withCamelContext(context)
-                    .withTarget(builder)
-                    .withRemoveParameters(true)
-                    .withProperties(def.getProperties())
-                    .build(Object.class, bm);
+            String bm = def.getBuilderMethod() != null ? def.getBuilderMethod() : PropertyBindingSupport.DEFAULT_BUILDER_METHOD;
+            target = newInstanceViaBuilder(context, builder, bm, def.getProperties());
         } else {
-            // factory bean/method
-            if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
-                type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
-            } else if (def.getFactoryMethod() != null) {
-                type = type + "#" + def.getFactoryMethod();
+            Object builder = inferBuilder(context, def, type);
+            if (builder != null) {
+                // the type has no public no-arg constructor but a builder, so create the bean via the builder
+                String bm = PropertyBindingSupport.findBuilderMethod(builder, resolveBeanClass(context, type),
+                        def.getBuilderMethod());
+                target = newInstanceViaBuilder(context, builder, bm, def.getProperties());
+            } else {
+                target = PropertyBindingSupport.resolveBean(context, factoryOrConstructorType(def, type));
             }
-            // property binding support has constructor arguments as part of the type
-            StringJoiner ctr = new StringJoiner(", ");
-            if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
-                // need to sort constructor args based on index position
-                Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
-                for (Object val : sorted.values()) {
-                    String text = val.toString();
-                    if (!StringHelper.isQuoted(text)) {
-                        text = "\"" + text + "\"";
-                    }
-                    ctr.add(text);
-                }
-                type = type + "(" + ctr + ")";
-            }
-
-            target = PropertyBindingSupport.resolveBean(context, type);
         }
 
         // do not set properties when using #type as it uses an existing shared bean
@@ -274,14 +254,9 @@ public final class BeanModelHelper {
                 try {
                     Class<?> builderClass = camelContext.getClassResolver().resolveMandatoryClass(def.getBuilderClass());
                     Object builder = camelContext.getInjector().newInstance(builderClass);
-                    String bm = def.getBuilderMethod() != null ? def.getBuilderMethod() : "build";
-                    // create bean via builder and assign as target output
-                    Object local = PropertyBindingSupport.build()
-                            .withCamelContext(camelContext)
-                            .withTarget(builder)
-                            .withRemoveParameters(true)
-                            .withProperties(props)
-                            .build(Object.class, bm);
+                    String bm = def.getBuilderMethod() != null
+                            ? def.getBuilderMethod() : PropertyBindingSupport.DEFAULT_BUILDER_METHOD;
+                    Object local = newInstanceViaBuilder(camelContext, builder, bm, props);
                     // set the optional properties the builder did not take on the created bean
                     if (!props.isEmpty()) {
                         PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
@@ -306,39 +281,29 @@ public final class BeanModelHelper {
             if (!type.startsWith("#")) {
                 type = "#class:" + type;
             }
-            // factory bean/method
-            if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
-                type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
-            } else if (def.getFactoryMethod() != null) {
-                type = type + "#" + def.getFactoryMethod();
-            }
-            // property binding support has constructor arguments as part of the type
-            StringJoiner ctr = new StringJoiner(", ");
-            if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
-                // need to sort constructor args based on index position
-                Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
-                for (Object val : sorted.values()) {
-                    String text = val.toString();
-                    if (!StringHelper.isQuoted(text)) {
-                        text = "\"" + text + "\"";
-                    }
-                    ctr.add(text);
-                }
-                type = type + "(" + ctr + ")";
-            }
-            final String classType = type;
+            final String beanType = type;
+            final String classType = factoryOrConstructorType(def, type);
 
             final CamelContext camelContext = routeTemplateContext.getCamelContext();
             routeTemplateContext.bind(def.getName(), Object.class, Suppliers.memorize(() -> {
                 try {
-                    Object local = PropertyBindingSupport.resolveBean(camelContext, classType);
+                    Object local;
+                    Object builder = inferBuilder(camelContext, def, beanType);
+                    if (builder != null) {
+                        // the type has no public no-arg constructor but a builder, so create the bean via the builder
+                        String bm = PropertyBindingSupport.findBuilderMethod(builder, resolveBeanClass(camelContext, beanType),
+                                def.getBuilderMethod());
+                        local = newInstanceViaBuilder(camelContext, builder, bm, props);
+                    } else {
+                        local = PropertyBindingSupport.resolveBean(camelContext, classType);
+                    }
 
                     // do not set properties when using #type as it uses an existing shared bean
                     boolean setProps = !classType.startsWith("#type");
                     if (setProps) {
-                        // set optional properties on created bean
-                        if (def.getProperties() != null && !def.getProperties().isEmpty()) {
-                            PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, def.getProperties());
+                        // set optional properties on created bean (the properties the builder took are removed)
+                        if (!props.isEmpty()) {
+                            PropertyBindingSupport.setPropertiesOnTarget(camelContext, local, props);
                         }
                     }
                     if (def.getInitMethod() != null) {
@@ -359,6 +324,74 @@ public final class BeanModelHelper {
                     "Route template local bean: " + def.getName() + " has invalid type syntax: " + def.getType()
                                                + ". To refer to a class then prefix the value with #class such as: #class:fullyQualifiedClassName");
         }
+    }
+
+    /**
+     * Appends the factory method and constructor arguments of the bean definition to the <tt>#class:</tt> type, in the
+     * syntax {@link PropertyBindingSupport#resolveBean(CamelContext, Object)} understands.
+     */
+    private static String factoryOrConstructorType(BeanFactoryDefinition<?> def, String type) {
+        // factory bean/method
+        if (def.getFactoryBean() != null && def.getFactoryMethod() != null) {
+            type = type + "#" + def.getFactoryBean() + ":" + def.getFactoryMethod();
+        } else if (def.getFactoryMethod() != null) {
+            type = type + "#" + def.getFactoryMethod();
+        }
+        // property binding support has constructor arguments as part of the type
+        StringJoiner ctr = new StringJoiner(", ");
+        if (def.getConstructors() != null && !def.getConstructors().isEmpty()) {
+            // need to sort constructor args based on index position
+            Map<Integer, Object> sorted = new TreeMap<>(def.getConstructors());
+            for (Object val : sorted.values()) {
+                String text = val.toString();
+                if (!StringHelper.isQuoted(text)) {
+                    text = "\"" + text + "\"";
+                }
+                ctr.add(text);
+            }
+            type = type + "(" + ctr + ")";
+        }
+        return type;
+    }
+
+    /**
+     * Infers the builder of a bean whose type has no public no-arg constructor but a <tt>builder()</tt> (or
+     * <tt>newBuilder()</tt>) method, so a class such as a LangChain4j model or a Lombok <tt>@Builder</tt> class can be
+     * declared with only its type and properties. Nothing is inferred when the definition says how to create the bean
+     * (a builder class, a factory method, or constructor arguments), or when the type is not a <tt>#class:</tt>.
+     *
+     * @return the builder to set the properties on, or <tt>null</tt> if the bean is not created via an inferred builder
+     */
+    private static Object inferBuilder(CamelContext camelContext, BeanFactoryDefinition<?> def, String type) throws Exception {
+        boolean explicit = def.getBuilderClass() != null || def.getFactoryMethod() != null || def.getFactoryBean() != null
+                || def.getConstructors() != null && !def.getConstructors().isEmpty();
+        if (explicit || type == null || !type.startsWith("#class:")) {
+            return null;
+        }
+        // the type can also carry a factory method or constructor arguments (#class:com.foo.Bar#create('x'))
+        if (type.indexOf('#', 7) != -1 || type.indexOf('(') != -1) {
+            return null;
+        }
+        return PropertyBindingSupport.newBuilderInstance(resolveBeanClass(camelContext, type));
+    }
+
+    private static Class<?> resolveBeanClass(CamelContext camelContext, String type) throws ClassNotFoundException {
+        String fqn = type.startsWith("#class:") ? type.substring(7) : type;
+        return camelContext.getClassResolver().resolveMandatoryClass(fqn);
+    }
+
+    /**
+     * Creates the bean by setting the properties on the builder (the properties the builder accepts are removed from
+     * the map, so the remaining can be set on the created bean) and invoking the builder method.
+     */
+    private static Object newInstanceViaBuilder(
+            CamelContext camelContext, Object builder, String builderMethod, Map<String, Object> properties) {
+        return PropertyBindingSupport.build()
+                .withCamelContext(camelContext)
+                .withTarget(builder)
+                .withRemoveParameters(true)
+                .withProperties(properties)
+                .build(Object.class, builderMethod);
     }
 
     private static String resolveScript(CamelContext camelContext, BeanFactoryDefinition<?> def) {

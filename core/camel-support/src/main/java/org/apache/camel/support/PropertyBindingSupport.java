@@ -76,7 +76,11 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello World', 5, true).
  * If the factory method is on another bean or class, then you must specify this as shown:
  * #class:com.foo.MyClassType#com.foo.MyFactory:myFactoryMethod. Where com.foo.MyFactory either refers to an class name,
- * or can refer to an existing bean by id, such as: #class:com.foo.MyClassType#myFactoryBean:myFactoryMethod.</li>.
+ * or can refer to an existing bean by id, such as: #class:com.foo.MyClassType#myFactoryBean:myFactoryMethod. A class
+ * that has no public no-arg constructor but is created through a builder, such as #class:com.foo.MyImmutableType with a
+ * public static builder() (or newBuilder()) method whose builder has a public build() method, is created by calling the
+ * builder, and any properties to set are set on the builder before build() is invoked (see
+ * {@link #newBuilderInstance(Class)}).</li>.
  * <li>valueAs(type):value</li> - To declare that the value should be converted to the given type, such as
  * #valueAs(int):123 which indicates that the value 123 should be converted to an integer.
  * <li>ignore case - Whether to ignore case for property keys</li>
@@ -211,13 +215,15 @@ public final class PropertyBindingSupport {
             }
 
             // enrich the error with more precise details with option prefix and key
+            // (an unknown property has no cause, so the exception itself is the cause)
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
             throw new PropertyBindingException(
                     e.getTarget(),
                     e.getPropertyName(),
                     e.getValue(),
                     null,
                     key,
-                    e.getCause());
+                    cause);
         }
     }
 
@@ -1234,6 +1240,150 @@ public final class PropertyBindingSupport {
     }
 
     /**
+     * The names of the public static no-arg factory methods that, by convention, return the builder of a class: Lombok
+     * (@Builder), Immutables, LangChain4j, Spring AI, AWS SDK v2, Jackson, MongoDB and OpenTelemetry use builder(); the
+     * JDK HttpClient, protobuf, gRPC, Caffeine and Guava use newBuilder().
+     */
+    private static final String[] BUILDER_FACTORY_METHODS = { "builder", "newBuilder" };
+
+    /**
+     * The name of the method that, by convention, creates the bean from its builder.
+     */
+    public static final String DEFAULT_BUILDER_METHOD = "build";
+
+    /**
+     * Whether the given type must be created through its builder, because it has no public no-arg constructor but has a
+     * public static no-arg <tt>builder()</tt> or <tt>newBuilder()</tt> method, as classes built by Lombok, Immutables,
+     * LangChain4j, the AWS SDK, protobuf and many others have. Camel then creates a bean of the type via the builder
+     * instead of failing on the missing constructor, so such a class can be declared like any other bean, in YAML and
+     * XML as <tt>type</tt> and in properties as <tt>#class:</tt>, without naming the builder class.
+     * <p/>
+     * A class that has a public no-arg constructor is never regarded as builder-only, so that a class which offers both
+     * keeps being created with its constructor as before.
+     *
+     * @param  type the class of the bean to create
+     * @return      <tt>true</tt> if the type is created through an inferred builder, <tt>false</tt> if the type can be
+     *              created with a public no-arg constructor, or has no recognised builder
+     */
+    public static boolean isBuilderOnly(Class<?> type) {
+        return findBuilderFactoryMethod(type) != null;
+    }
+
+    /**
+     * Creates the builder of the given type, when the type is {@link #isBuilderOnly(Class) builder-only}, by invoking
+     * its public static <tt>builder()</tt> or <tt>newBuilder()</tt> method.
+     * <p/>
+     * The properties of the bean are then set on the returned builder, and the bean is created by invoking the
+     * {@link #findBuilderMethod(Object, Class) builder method}, such as with {@link Builder#build(Class, String)}.
+     *
+     * @param  type      the class of the bean to create
+     * @return           the builder, or <tt>null</tt> if the type is not builder-only
+     * @throws Exception is thrown if the builder factory method fails
+     */
+    public static Object newBuilderInstance(Class<?> type) throws Exception {
+        Method factory = findBuilderFactoryMethod(type);
+        if (factory == null) {
+            return null;
+        }
+        Object builder = ObjectHelper.invokeMethodSafe(factory, null);
+        if (builder == null) {
+            throw new IllegalStateException(
+                    "Cannot create builder for class: " + type.getName() + " as " + factory.getName() + "() returned null");
+        }
+        return builder;
+    }
+
+    /**
+     * Finds the name of the method that creates the bean from the given builder: the given <tt>builderMethod</tt> if
+     * set, otherwise <tt>build</tt>, and if the builder has no such method, its single public no-arg method that
+     * returns the type of the bean (such as <tt>create</tt>).
+     *
+     * @param  builder       the builder, typically from {@link #newBuilderInstance(Class)}
+     * @param  type          the class of the bean the builder creates
+     * @param  builderMethod the name of the builder method if explicitly configured, or <tt>null</tt> to find it
+     * @return               the name of the method to invoke on the builder to create the bean
+     */
+    public static String findBuilderMethod(Object builder, Class<?> type, String builderMethod) {
+        if (builderMethod != null) {
+            return builderMethod;
+        }
+        Class<?> builderClass = builder.getClass();
+        if (hasPublicNoArgMethod(builderClass, DEFAULT_BUILDER_METHOD)) {
+            return DEFAULT_BUILDER_METHOD;
+        }
+        // no build method, so the builder must have exactly one public no-arg method that returns the bean type
+        Method found = null;
+        for (Method m : builderClass.getMethods()) {
+            boolean candidate = m.getParameterCount() == 0
+                    && Modifier.isPublic(m.getModifiers()) && !Modifier.isStatic(m.getModifiers())
+                    && m.getDeclaringClass() != Object.class
+                    && type.isAssignableFrom(m.getReturnType());
+            if (candidate) {
+                if (found != null) {
+                    throw new IllegalArgumentException(
+                            "Cannot infer the builder method of " + builderClass.getName() + " for class: " + type.getName()
+                                                       + " as it has no build() method and several methods return the type ("
+                                                       + found.getName() + ", " + m.getName()
+                                                       + "). Specify the method to use with builderMethod");
+                }
+                found = m;
+            }
+        }
+        if (found == null) {
+            throw new IllegalArgumentException(
+                    "Cannot infer the builder method of " + builderClass.getName() + " for class: " + type.getName()
+                                               + " as it has no build() method or other public no-arg method returning the type."
+                                               + " Specify the method to use with builderMethod");
+        }
+        return found.getName();
+    }
+
+    /**
+     * Finds the public static no-arg <tt>builder()</tt> or <tt>newBuilder()</tt> method of the given type, when the
+     * type has no public no-arg constructor.
+     */
+    private static Method findBuilderFactoryMethod(Class<?> type) {
+        if (type == null || type.isPrimitive() || type.isArray() || type.isInterface() || type.isEnum()) {
+            return null;
+        }
+        if (hasPublicNoArgConstructor(type)) {
+            // the class is created with its constructor as usual
+            return null;
+        }
+        for (String name : BUILDER_FACTORY_METHODS) {
+            try {
+                Method m = type.getMethod(name);
+                boolean ok = Modifier.isStatic(m.getModifiers()) && m.getReturnType() != Void.TYPE
+                        && m.getReturnType() != type;
+                if (ok) {
+                    return m;
+                }
+            } catch (NoSuchMethodException e) {
+                // try the next name
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasPublicNoArgConstructor(Class<?> type) {
+        try {
+            type.getConstructor();
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
+    private static boolean hasPublicNoArgMethod(Class<?> type, String name) {
+        try {
+            Method m = type.getMethod(name);
+            return !Modifier.isStatic(m.getModifiers());
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
+    /**
      * Creates a new bean instance using the constructor that takes the given set of parameters.
      *
      * @param  camelContext the camel context
@@ -1641,7 +1791,14 @@ public final class PropertyBindingSupport {
                 // special to support constructor parameters
                 answer = newInstanceConstructorParameters(camelContext, type, parameters);
             } else {
-                answer = camelContext.getInjector().newInstance(type);
+                // a class without a public no-arg constructor but with a builder is created via the builder
+                Object builder = newBuilderInstance(type);
+                if (builder != null) {
+                    String bm = findBuilderMethod(builder, type, null);
+                    answer = ObjectHelper.invokeMethodSafe(bm, builder);
+                } else {
+                    answer = camelContext.getInjector().newInstance(type);
+                }
             }
             if (answer == null) {
                 throw new IllegalStateException("Cannot create instance of class: " + className);
