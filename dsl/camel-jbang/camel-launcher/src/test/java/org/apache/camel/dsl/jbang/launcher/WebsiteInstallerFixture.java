@@ -455,13 +455,12 @@ final class WebsiteInstallerFixture implements AutoCloseable {
                     pb.environment().put(name, value);
                 }
             }
-            // Without PSModulePath, Windows PowerShell's first cmdlet call (install.ps1's Join-Path on line 29)
-            // spends ~18s in command discovery on windows-latest, which made every install.ps1 run in this
-            // suite cost ~25s. Measured on CI: a Join-Path probe in this cleared environment took 17.7s, and
-            // 0.2s with only PSModulePath restored. The per-test HOME/USERPROFILE/LOCALAPPDATA are unaffected.
-            String psModulePath = System.getenv("PSModulePath");
-            if (psModulePath != null) {
-                pb.environment().put("PSModulePath", psModulePath);
+            // Limit module discovery to Windows PowerShell's built-in modules, which hold every cmdlet
+            // install.ps1 uses. Without PSModulePath, or with the runner's own, the first cmdlet call
+            // (install.ps1's Join-Path on line 29) spends ~18s searching the other module directories on
+            // windows-latest, which made every install.ps1 run in this suite cost ~20s.
+            if (sysRoot != null) {
+                pb.environment().put("PSModulePath", sysRoot + "\\System32\\WindowsPowerShell\\v1.0\\Modules");
             }
         }
         pb.environment().putAll(env);
