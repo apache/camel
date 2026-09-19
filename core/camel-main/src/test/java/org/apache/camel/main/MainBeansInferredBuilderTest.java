@@ -72,7 +72,10 @@ public class MainBeansInferredBuilderTest {
 
         Exception e = assertThrows(Exception.class, main::start);
         String msg = e.getMessage() + (e.getCause() != null ? " " + e.getCause().getMessage() : "");
-        assertTrue(msg.contains("model"), msg);
+        assertTrue(msg.contains("model=qwen2.5"), msg);
+        assertTrue(msg.contains("The bean is created through its builder " + ChatModel.Builder.class.getName()
+                                + ", which accepts: baseUrl, modelName, timeout"),
+                msg);
     }
 
     /** The shape of a LangChain4j model: no public constructor, builder(), nested builder with build() */

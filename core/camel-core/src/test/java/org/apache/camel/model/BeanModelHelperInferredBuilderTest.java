@@ -118,12 +118,35 @@ public class BeanModelHelperInferredBuilderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testUnknownPropertyFails() {
+    public void testUnknownPropertyNamesWhatTheBuilderAccepts() {
         Exception e = assertThrows(Exception.class, () -> BeanModelHelper.newInstance(
                 bean(ChatModel.class.getName(), props("modelName", "qwen2.5", "unknown", "x")), context));
-        e.printStackTrace();
         String msg = e.getMessage();
-        assertTrue(msg.contains("unknown"), msg);
+        assertTrue(msg.contains("unknown=x"), msg);
+        assertTrue(msg.contains("The bean is created through its builder " + ChatModel.ChatModelBuilder.class.getName()
+                                + ", which accepts: baseUrl, modelName, temperature, timeout"),
+                msg);
+        assertTrue(msg.contains("the created bean accepts: label"), msg);
+    }
+
+    @Test
+    public void testNoConstructorAndNoBuilderNamesTheAlternatives() {
+        Exception e = assertThrows(Exception.class,
+                () -> BeanModelHelper.newInstance(bean(Factories.class.getName(), props("name", "x")), context));
+        String msg = e.getMessage();
+        assertTrue(msg.startsWith("Cannot create bean of class " + Factories.class.getName()
+                                  + " has no public no-arg constructor and no builder() or newBuilder() method"),
+                msg);
+        assertTrue(msg.contains("constructor arguments (constructors: in YAML, or #class:" + Factories.class.getName()
+                                + "('value', ...) in properties) for Factories(String, int)"),
+                msg);
+        assertTrue(msg.contains("with factoryMethod (and constructors: for its arguments) for the static of(String), "
+                                + "ofDefault()"),
+                msg);
+        assertTrue(msg.contains("or with a builder class of its own (builderClass and builderMethod)"), msg);
+
+        assertNull(PropertyBindingSupport.noPublicConstructorHint(ChatModel.class), "a builder needs no hint");
+        assertNull(PropertyBindingSupport.noPublicConstructorHint(Plain.class), "a constructor needs no hint");
     }
 
     @Test
@@ -156,7 +179,9 @@ public class BeanModelHelperInferredBuilderTest extends ContextTestSupport {
     public void testNoBuilderStillFails() {
         Exception e = assertThrows(Exception.class,
                 () -> BeanModelHelper.newInstance(bean(NoBuilder.class.getName(), null), context));
-        assertTrue(e.getMessage().contains(NoBuilder.class.getName()), e.getMessage());
+        String msg = e.getMessage();
+        assertTrue(msg.contains(NoBuilder.class.getName() + " has no public no-arg constructor"), msg);
+        assertTrue(msg.contains("Create it with a builder class of its own (builderClass and builderMethod)"), msg);
     }
 
     @Test
@@ -343,6 +368,25 @@ public class BeanModelHelperInferredBuilderTest extends ContextTestSupport {
     /** No public constructor and no builder: fails as before */
     public static final class NoBuilder {
         private NoBuilder() {
+        }
+    }
+
+    /** No no-arg constructor and no builder, but a constructor with arguments and static factory methods */
+    public static final class Factories {
+        public Factories(String name, int port) {
+        }
+
+        public static Factories of(String name) {
+            return new Factories(name, 80);
+        }
+
+        public static Factories ofDefault() {
+            return of("default");
+        }
+
+        // returns another type, so not a factory
+        public static String describe() {
+            return "factories";
         }
     }
 }

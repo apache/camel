@@ -362,7 +362,11 @@ class BeansTest extends YamlTestSupport {
 
         then:
         def e = thrown(Exception)
-        messages(e).contains('model=qwen2.5')
+        def msg = messages(e)
+        msg.contains('model=qwen2.5')
+        // (a Groovy class also has a metaClass property, which the runtime lists as any other setter)
+        msg.contains("The bean is created through its builder ${MyBuiltBean.Builder.class.name}, which accepts: baseUrl, ")
+        msg.contains("modelName, timeout; the created bean accepts: label")
     }
 
     // CAMEL-24709: a class that was not found names the built-in bean that was likely meant, from the bean metadata on the classpath

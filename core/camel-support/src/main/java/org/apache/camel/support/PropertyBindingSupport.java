@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
@@ -1270,6 +1271,19 @@ public final class PropertyBindingSupport {
     }
 
     /**
+     * The class of the builder of a {@link #isBuilderOnly(Class) builder-only} type, from the return type of its
+     * <tt>builder()</tt> or <tt>newBuilder()</tt> method, without creating a builder; for a validator that reasons
+     * about a declaration without running anything.
+     *
+     * @param  type the class of the bean
+     * @return      the class of the builder, or null if the type is not builder-only
+     */
+    public static Class<?> builderType(Class<?> type) {
+        Method factory = findBuilderFactoryMethod(type);
+        return factory != null ? factory.getReturnType() : null;
+    }
+
+    /**
      * Creates the builder of the given type, when the type is {@link #isBuilderOnly(Class) builder-only}, by invoking
      * its public static <tt>builder()</tt> or <tt>newBuilder()</tt> method.
      * <p/>
@@ -1336,6 +1350,126 @@ public final class PropertyBindingSupport {
                                                + " Specify the method to use with builderMethod");
         }
         return found.getName();
+    }
+
+    /**
+     * The names of the properties a builder accepts, for an error message or a validator: its public one-argument
+     * methods that return the builder (the fluent setters, <tt>modelName(String)</tt>) and its plain setters
+     * (<tt>setModelName</tt>), sorted.
+     *
+     * @param  builderType the class of the builder
+     * @return             the property names, in the form used to set them (<tt>modelName</tt>)
+     */
+    public static List<String> builderPropertyNames(Class<?> builderType) {
+        Set<String> names = new TreeSet<>();
+        for (Method m : builderType.getMethods()) {
+            if (m.getParameterCount() != 1 || Modifier.isStatic(m.getModifiers()) || m.getDeclaringClass() == Object.class) {
+                continue;
+            }
+            String name = m.getName();
+            if (name.startsWith("set") && name.length() > 3 && Character.isUpperCase(name.charAt(3))) {
+                names.add(Character.toLowerCase(name.charAt(3)) + name.substring(4));
+            } else if (builderType.isAssignableFrom(m.getReturnType())) {
+                names.add(name);
+            }
+        }
+        return new ArrayList<>(names);
+    }
+
+    /**
+     * The names of the properties a bean accepts once created: its public setters (<tt>setLabel</tt> becomes
+     * <tt>label</tt>), sorted. Together with {@link #builderPropertyNames(Class)} this is what a declaration of a bean
+     * created via a builder can set.
+     */
+    public static List<String> setterPropertyNames(Class<?> type) {
+        Set<String> names = new TreeSet<>();
+        for (Method m : type.getMethods()) {
+            String name = m.getName();
+            if (m.getParameterCount() == 1 && !Modifier.isStatic(m.getModifiers()) && m.getDeclaringClass() != Object.class
+                    && name.startsWith("set") && name.length() > 3 && Character.isUpperCase(name.charAt(3))) {
+                names.add(Character.toLowerCase(name.charAt(3)) + name.substring(4));
+            }
+        }
+        return new ArrayList<>(names);
+    }
+
+    /**
+     * Explains, for an error message or a validator, how a class that has no public no-arg constructor and no inferable
+     * builder can be created: with the arguments of one of its public constructors, with one of its public static
+     * factory methods that return the type, or with a builder class of its own. Null when the class has a public no-arg
+     * constructor or a {@link #isBuilderOnly(Class) builder}, as it then needs no help.
+     *
+     * @param  type the class of the bean
+     * @return      the explanation, starting with "class ... has no public no-arg constructor", or null
+     */
+    public static String noPublicConstructorHint(Class<?> type) {
+        if (hasPublicNoArgConstructor(type) || isBuilderOnly(type) || type.isInterface() || type.isPrimitive()
+                || type.isArray()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("class ").append(type.getName())
+                .append(" has no public no-arg constructor and no builder() or newBuilder() method");
+        if (Modifier.isAbstract(type.getModifiers())) {
+            sb.append(" and is abstract: use a concrete class");
+            return sb.toString();
+        }
+        List<String> ctors = new ArrayList<>();
+        for (Constructor<?> c : type.getConstructors()) {
+            ctors.add(type.getSimpleName() + "(" + parameterTypes(c.getParameterTypes()) + ")");
+        }
+        List<String> factories = new ArrayList<>();
+        for (Method m : type.getMethods()) {
+            if (Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers())
+                    && type.isAssignableFrom(m.getReturnType()) && m.getDeclaringClass() != Object.class) {
+                factories.add(m.getName() + "(" + parameterTypes(m.getParameterTypes()) + ")");
+            }
+        }
+        java.util.Collections.sort(ctors);
+        java.util.Collections.sort(factories);
+        List<String> ways = new ArrayList<>();
+        if (!ctors.isEmpty()) {
+            ways.add("with constructor arguments (constructors: in YAML, or #class:" + type.getName()
+                     + "('value', ...) in properties) for " + join(ctors, 6));
+        }
+        if (!factories.isEmpty()) {
+            ways.add("with factoryMethod (and constructors: for its arguments) for the static " + join(factories, 8));
+        }
+        ways.add("with a builder class of its own (builderClass and builderMethod)");
+        sb.append(". Create it ");
+        for (int i = 0; i < ways.size(); i++) {
+            if (i > 0) {
+                sb.append(i == ways.size() - 1 ? ", or " : ", ");
+            }
+            sb.append(ways.get(i));
+        }
+        return sb.toString();
+    }
+
+    private static String parameterTypes(Class<?>[] types) {
+        StringBuilder sb = new StringBuilder();
+        for (Class<?> t : types) {
+            if (!sb.isEmpty()) {
+                sb.append(", ");
+            }
+            sb.append(t.getSimpleName());
+        }
+        return sb.toString();
+    }
+
+    private static String join(List<String> items, int max) {
+        StringBuilder sb = new StringBuilder();
+        int n = Math.min(items.size(), max);
+        for (int i = 0; i < n; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(items.get(i));
+        }
+        if (items.size() > max) {
+            sb.append(", ... (").append(items.size() - max).append(" more)");
+        }
+        return sb.toString();
     }
 
     /**
@@ -1797,6 +1931,10 @@ public final class PropertyBindingSupport {
                     String bm = findBuilderMethod(builder, type, null);
                     answer = ObjectHelper.invokeMethodSafe(bm, builder);
                 } else {
+                    String hint = noPublicConstructorHint(type);
+                    if (hint != null) {
+                        throw new IllegalArgumentException("Cannot create bean of " + hint);
+                    }
                     answer = camelContext.getInjector().newInstance(type);
                 }
             }

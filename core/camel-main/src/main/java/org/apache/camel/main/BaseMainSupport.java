@@ -51,6 +51,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.PropertiesLookupListener;
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.StartupStep;
@@ -62,6 +63,7 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
+import org.apache.camel.model.BeanModelHelper;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.saga.CamelSagaService;
@@ -2674,8 +2676,14 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
         if (!config.isEmpty()) {
             // the properties are set on the builder (and reported as configured on the bean)
-            MainHelper.setPropertiesOnTarget(camelContext, builder, config, optionPrefix + name + ".", failIfNotSet,
-                    ignoreCase, autoConfiguredProperties);
+            try {
+                MainHelper.setPropertiesOnTarget(camelContext, builder, config, optionPrefix + name + ".", failIfNotSet,
+                        ignoreCase, autoConfiguredProperties);
+            } catch (PropertyBindingException e) {
+                // the property names of a builder are not those of the bean, so name what the builder accepts
+                throw new IllegalArgumentException(
+                        e.getMessage() + ". " + BeanModelHelper.builderPropertiesHint(builder, type), e);
+            }
         }
         LOG.debug("Creating bean: {} of type: {} via builder: {} ({})", name, className, builder.getClass().getName(), bm);
         return org.apache.camel.support.ObjectHelper.invokeMethodSafe(bm, builder);

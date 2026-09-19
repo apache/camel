@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.TreeMap;
@@ -25,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Language;
@@ -60,6 +62,7 @@ public final class BeanModelHelper {
 
         boolean script = def.getScriptLanguage() != null && def.getScript() != null;
         boolean viaBuilder = def.getBuilderClass() != null;
+        boolean viaInferredBuilder = false;
 
         // the type (class name) is optional for a bean created by a script or a builder
         String type = def.getType();
@@ -116,13 +119,15 @@ public final class BeanModelHelper {
                 String bm = PropertyBindingSupport.findBuilderMethod(builder, resolveBeanClass(context, type),
                         def.getBuilderMethod());
                 target = newInstanceViaBuilder(context, builder, bm, def.getProperties());
+                setRemainingProperties(context, target, def.getProperties(), builder);
+                viaInferredBuilder = true;
             } else {
                 target = PropertyBindingSupport.resolveBean(context, factoryOrConstructorType(def, type));
             }
         }
 
         // do not set properties when using #type as it uses an existing shared bean
-        boolean setProps = type == null || !type.startsWith("#type");
+        boolean setProps = !viaInferredBuilder && (type == null || !type.startsWith("#type"));
         if (setProps) {
             // set optional properties on created bean
             if (def.getProperties() != null && !def.getProperties().isEmpty()) {
@@ -294,12 +299,13 @@ public final class BeanModelHelper {
                         String bm = PropertyBindingSupport.findBuilderMethod(builder, resolveBeanClass(camelContext, beanType),
                                 def.getBuilderMethod());
                         local = newInstanceViaBuilder(camelContext, builder, bm, props);
+                        setRemainingProperties(camelContext, local, props, builder);
                     } else {
                         local = PropertyBindingSupport.resolveBean(camelContext, classType);
                     }
 
                     // do not set properties when using #type as it uses an existing shared bean
-                    boolean setProps = !classType.startsWith("#type");
+                    boolean setProps = builder == null && !classType.startsWith("#type");
                     if (setProps) {
                         // set optional properties on created bean (the properties the builder took are removed)
                         if (!props.isEmpty()) {
@@ -392,6 +398,37 @@ public final class BeanModelHelper {
                 .withRemoveParameters(true)
                 .withProperties(properties)
                 .build(Object.class, builderMethod);
+    }
+
+    /**
+     * Sets the properties the builder did not take on the created bean, and names the properties the builder and the
+     * bean accept when one of them is unknown, as the property names of a builder are not those of the bean.
+     */
+    private static void setRemainingProperties(
+            CamelContext camelContext, Object target, Map<String, Object> properties, Object builder) {
+        if (properties == null || properties.isEmpty()) {
+            return;
+        }
+        try {
+            PropertyBindingSupport.setPropertiesOnTarget(camelContext, target, properties);
+        } catch (PropertyBindingException e) {
+            throw new IllegalArgumentException(e.getMessage() + ". " + builderPropertiesHint(builder, target.getClass()), e);
+        }
+    }
+
+    /**
+     * Names the properties a bean created via its builder accepts: those of the builder, and those of the bean.
+     */
+    public static String builderPropertiesHint(Object builder, Class<?> type) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("The bean is created through its builder ").append(builder.getClass().getName())
+                .append(", which accepts: ")
+                .append(String.join(", ", PropertyBindingSupport.builderPropertyNames(builder.getClass())));
+        List<String> setters = PropertyBindingSupport.setterPropertyNames(type);
+        if (!setters.isEmpty()) {
+            sb.append("; the created bean accepts: ").append(String.join(", ", setters));
+        }
+        return sb.toString();
     }
 
     private static String resolveScript(CamelContext camelContext, BeanFactoryDefinition<?> def) {

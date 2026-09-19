@@ -557,6 +557,12 @@ NOTE: A class that has a public no-arg constructor is created with the construct
 `builder()` method. Use `builderClass` for a builder that is a separate class, or is not obtained from a `builder()`
 or `newBuilder()` method, and `factoryMethod` for a static method that takes the values as arguments.
 
+When a property is not one the builder or the bean accepts, the error names the properties they accept, and
+a class that has neither a public no-arg constructor nor a builder is reported with the ways it can be created:
+its constructors (for `constructors`), its static factory methods (for `factoryMethod`), or a builder class of its own.
+`camel validate` (and the `camel_validate_source` tool of the Camel MCP server) report the same for the classes
+they can load, before the integration runs.
+
 === Creating beans using script language
 
 For advanced use-cases then Camel allows to inline a script language, such as groovy, java, javascript, etc, to create the bean.

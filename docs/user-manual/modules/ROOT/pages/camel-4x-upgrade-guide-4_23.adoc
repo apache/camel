@@ -501,6 +501,12 @@ behaviour: a class that has a public no-arg constructor is still created with th
 `factoryMethod` and `constructors` are used when given. `builderMethod` can now be set without `builderClass`, to
 name the method of an inferred builder.
 
+A bean whose class has neither a public no-arg constructor nor a builder now fails with a message naming the ways it
+can be created (its constructors for `constructors`, its static factory methods for `factoryMethod`, or a builder
+class of its own), instead of the `NoSuchMethodException` or `IllegalAccessException` of the reflection call, and an
+unknown property of a bean created through its builder names the properties the builder and the bean accept.
+`camel validate` and the `camel_validate_source` MCP tool report the same for the classes they can load.
+
 `PropertyBindingSupport.setPropertiesOnTarget` now reports an unknown property with the property name and value, as
 it rethrew the `PropertyBindingException` with its null cause since 4.21, which surfaced as `NullPointerException: e`.
 
