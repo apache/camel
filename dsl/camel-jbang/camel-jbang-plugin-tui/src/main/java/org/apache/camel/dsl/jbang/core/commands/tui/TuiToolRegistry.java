@@ -1731,7 +1731,7 @@ class TuiToolRegistry {
             groups.add(g);
             for (JsonObject entry : group.getValue()) {
                 if (examples.size() >= limit) {
-                    break;
+                    continue;
                 }
                 JsonObject ex = new JsonObject();
                 ex.put("name", entry.getStringOrDefault("name", ""));

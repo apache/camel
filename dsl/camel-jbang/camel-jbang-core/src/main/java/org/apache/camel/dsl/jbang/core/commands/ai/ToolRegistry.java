@@ -963,6 +963,9 @@ public final class ToolRegistry {
                     if (limitArg != null && !limitArg.isBlank()) {
                         try {
                             limit = Integer.parseInt(limitArg.trim());
+                            if (limit <= 0) {
+                                limit = 50;
+                            }
                         } catch (NumberFormatException e) {
                             throw new ToolExecutionException("limit must be a number: " + limitArg);
                         }

@@ -111,6 +111,8 @@ class ToolRegistryTest {
         assertFalse(json.contains("\"level\":\"quick-start\""), "Should only return the run group");
         assertThrows(ToolExecutionException.class,
                 () -> ToolRegistry.execute("list_examples", ctx, Map.of("limit", "many")));
+        String zero = ToolRegistry.execute("list_examples", ctx, Map.of("level", "run", "limit", "0")).toString();
+        assertFalse(zero.contains("\"count\":0"), "limit 0 falls back to the default: " + zero.substring(0, 60));
     }
 
     @Test

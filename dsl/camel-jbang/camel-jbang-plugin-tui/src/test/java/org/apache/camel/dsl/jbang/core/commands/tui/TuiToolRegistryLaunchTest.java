@@ -108,5 +108,8 @@ class TuiToolRegistryLaunchTest {
         assertTrue(one.contains("\"count\":1"), one);
         assertTrue(one.contains("\"total\":" + run.substring(run.indexOf("\"total\":") + 8, run.indexOf("\"total\":") + 9)),
                 "total counts the whole group");
+
+        String two = registry.execute("tui_list_examples", Map.of("limit", 2));
+        assertTrue(two.contains("\"count\":2"), "the limit caps across all groups: " + two.substring(0, 80));
     }
 }
