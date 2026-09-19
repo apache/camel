@@ -76,7 +76,7 @@ public class OpenAIAudioTranslationProducer extends DefaultProducer {
         }
 
         TranslationCreateParams params = paramsBuilder.build();
-        GenAiObservation observation = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.TRANSCRIPTION, model);
+        GenAiObservation observation = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.TRANSLATION, model);
         TranslationCreateResponse response;
         try {
             response = getEndpoint().getClient().audio().translations().create(params);
