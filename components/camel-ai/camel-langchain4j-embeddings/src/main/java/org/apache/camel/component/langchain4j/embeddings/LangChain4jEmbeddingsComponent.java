@@ -63,7 +63,7 @@ public class LangChain4jEmbeddingsComponent extends DefaultComponent {
         configuration.setModelProperties(
                 LangChain4jModelFactory.extractModelProperties(parameters, configuration.getModelProperties()));
         setProperties(endpoint, parameters);
-        if (configuration.getEmbeddingModel() == null && configuration.getProvider() != null) {
+        if (configuration.getEmbeddingModel() == null && configuration.modelSpec() != null) {
             // the model is declared by its provider and options (CAMEL-24820); endpoints with the same options share it
             LangChain4jModelFactory.ModelSpec spec = configuration.modelSpec();
             configuration.setEmbeddingModel(

@@ -50,8 +50,10 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private AgentConfiguration agentConfiguration;
 
-    @UriParam(label = "model")
+    @UriParam(label = "model", enums = LangChain4jModelFactory.Provider.NAMES)
     private String provider;
+    @UriParam(label = "model,advanced")
+    private String customProvider;
     @UriParam(label = "model")
     private String modelName;
     @UriParam(label = "model")
@@ -144,13 +146,25 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     /**
      * The LangChain4j provider of the chat model that drives the agent, to create the model from the options here
      * (modelName, baseUrl, apiKey, temperature, timeout, and provider-specific model.* properties) instead of a
-     * AgentConfiguration bean: ollama, openai, anthropic, azure-openai, mistral, gemini, vertex-ai, github,
-     * hugging-face, or the fully qualified class name of a model class with a builder(). The LangChain4j module of the
-     * provider (dev.langchain4j:langchain4j-ollama, ...) must be on the classpath; Camel JBang downloads it. Ignored
-     * when a AgentConfiguration is configured.
+     * AgentConfiguration bean. The LangChain4j module of the provider (dev.langchain4j:langchain4j-ollama, ...) must be
+     * on the classpath; Camel JBang downloads it. Ignored when a AgentConfiguration is configured. For a provider not
+     * listed, set customProvider instead.
      */
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+
+    public String getCustomProvider() {
+        return customProvider;
+    }
+
+    /**
+     * The fully qualified class name of the LangChain4j model class of a provider that is not listed in provider
+     * (dev.langchain4j.model.jlama.JlamaChatModel), created from the options here through its builder() as a listed
+     * provider is. Set either provider or customProvider.
+     */
+    public void setCustomProvider(String customProvider) {
+        this.customProvider = customProvider;
     }
 
     public String getModelName() {
@@ -225,11 +239,11 @@ public class LangChain4jAgentConfiguration implements Cloneable {
      * The model to create from the provider, or null when no provider is set.
      */
     public LangChain4jModelFactory.ModelSpec modelSpec() {
-        if (provider == null) {
+        if (provider == null && customProvider == null) {
             return null;
         }
         return new LangChain4jModelFactory.ModelSpec(
-                provider, modelName, baseUrl, apiKey, temperature, timeout,
+                provider, customProvider, modelName, baseUrl, apiKey, temperature, timeout,
                 modelProperties != null ? Map.copyOf(modelProperties) : null);
     }
 

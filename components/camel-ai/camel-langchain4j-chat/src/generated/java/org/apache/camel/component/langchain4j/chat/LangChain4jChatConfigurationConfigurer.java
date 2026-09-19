@@ -31,6 +31,8 @@ public class LangChain4jChatConfigurationConfigurer extends org.apache.camel.sup
         case "chatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
         case "chatoperation":
         case "chatOperation": target.setChatOperation(property(camelContext, org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class, value)); return true;
+        case "customprovider":
+        case "customProvider": target.setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "modelname":
         case "modelName": target.setModelName(property(camelContext, java.lang.String.class, value)); return true;
         case "modelproperties":
@@ -53,6 +55,8 @@ public class LangChain4jChatConfigurationConfigurer extends org.apache.camel.sup
         case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
         case "chatoperation":
         case "chatOperation": return org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "modelname":
         case "modelName": return java.lang.String.class;
         case "modelproperties":
@@ -76,6 +80,8 @@ public class LangChain4jChatConfigurationConfigurer extends org.apache.camel.sup
         case "chatModel": return target.getChatModel();
         case "chatoperation":
         case "chatOperation": return target.getChatOperation();
+        case "customprovider":
+        case "customProvider": return target.getCustomProvider();
         case "modelname":
         case "modelName": return target.getModelName();
         case "modelproperties":

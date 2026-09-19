@@ -34,6 +34,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "compensateontoolerrors":
         case "compensateOnToolErrors": target.getConfiguration().setCompensateOnToolErrors(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "customprovider":
+        case "customProvider": target.getConfiguration().setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": target.getConfiguration().setExecuteToolsConcurrently(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "jsonschema":
@@ -79,6 +81,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "baseUrl": return java.lang.String.class;
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return java.lang.Boolean.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": return java.lang.Boolean.class;
         case "jsonschema":
@@ -120,6 +124,8 @@ public class LangChain4jAgentEndpointConfigurer extends PropertyConfigurerSuppor
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return target.getConfiguration().getCompensateOnToolErrors();
+        case "customprovider":
+        case "customProvider": return target.getConfiguration().getCustomProvider();
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": return target.getConfiguration().getExecuteToolsConcurrently();
         case "jsonschema":

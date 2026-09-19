@@ -60,7 +60,9 @@ public final class LangChain4jModelFactory {
     /**
      * The options every provider has, and the provider-specific extras.
      *
-     * @param provider        the provider name (see {@link Provider}) or the fully qualified class name of the model
+     * @param provider        the provider name (see {@link Provider}), or null when a custom provider is given
+     * @param customProvider  the fully qualified class name of a model class with a builder(), for a provider that has
+     *                        no name; null otherwise
      * @param modelName       the model, such as qwen2.5 or gpt-4o-mini
      * @param baseUrl         the URL of the provider's API, for a local or self-hosted provider
      * @param apiKey          the API key or access token of the provider
@@ -69,8 +71,13 @@ public final class LangChain4jModelFactory {
      * @param modelProperties provider-specific properties of the model's builder, set as they are (numPredict on
      *                        Ollama, maxTokens on OpenAI); may be null
      */
-    public record ModelSpec(String provider, String modelName, String baseUrl, String apiKey, Double temperature,
-            Duration timeout, Map<String, Object> modelProperties) {
+    public record ModelSpec(String provider, String customProvider, String modelName, String baseUrl, String apiKey,
+            Double temperature, Duration timeout, Map<String, Object> modelProperties) {
+
+        /** The provider as named in messages: the provider name, or the custom class name. */
+        public String name() {
+            return provider != null ? provider : customProvider;
+        }
     }
 
     /** The LangChain4j providers with a short name, and the module each is in. */
@@ -90,7 +97,13 @@ public final class LangChain4jModelFactory {
         GITHUB("github", "dev.langchain4j.model.github", "GitHubModelsChatModel", "GitHubModelsEmbeddingModel",
                "langchain4j-github-models", "github-models"),
         HUGGING_FACE("hugging-face", "dev.langchain4j.model.huggingface", "HuggingFaceChatModel",
-                     "HuggingFaceEmbeddingModel", "langchain4j-hugging-face", "huggingface");
+                     "HuggingFaceEmbeddingModel", "langchain4j-hugging-face", "huggingface"),
+        BEDROCK("bedrock", "dev.langchain4j.model.bedrock", "BedrockChatModel", "BedrockTitanEmbeddingModel",
+                "langchain4j-bedrock", "aws-bedrock", "amazon-bedrock");
+
+        /** The provider names, for the enums of the provider option. */
+        public static final String NAMES
+                = "ollama,openai,anthropic,azure-openai,mistral,gemini,vertex-ai,github,hugging-face,bedrock";
 
         private final String id;
         private final String pkg;
@@ -146,20 +159,13 @@ public final class LangChain4jModelFactory {
         }
 
         static String ids() {
-            StringBuilder sb = new StringBuilder();
-            for (Provider p : values()) {
-                if (!sb.isEmpty()) {
-                    sb.append(", ");
-                }
-                sb.append(p.id);
-            }
-            return sb.toString();
+            return NAMES.replace(",", ", ");
         }
     }
 
     /** The names the builders of the providers use for the common options, tried in order. */
     private static final Map<String, String[]> ALIASES = Map.of(
-            "modelName", new String[] { "modelName", "modelId", "deploymentName" },
+            "modelName", new String[] { "modelName", "modelId", "deploymentName", "model" },
             "baseUrl", new String[] { "baseUrl", "endpoint" },
             "apiKey", new String[] { "apiKey", "accessToken", "gitHubToken" },
             "temperature", new String[] { "temperature" },
@@ -208,18 +214,27 @@ public final class LangChain4jModelFactory {
     }
 
     /**
-     * The class of the model of the provider: the provider's chat or embedding model class, or the provider itself when
-     * it is a class name.
+     * The class of the model: the chat or embedding model class of the named provider, or the custom provider's class.
+     *
+     * @param provider       the provider name, or null
+     * @param customProvider the fully qualified class name of the model, or null
+     * @param kind           {@link ChatModel} or {@link EmbeddingModel}
      */
-    public static String modelClassName(String provider, Class<?> kind) {
+    public static String modelClassName(String provider, String customProvider, Class<?> kind) {
+        if (customProvider != null && !customProvider.isBlank()) {
+            if (provider != null && !provider.isBlank()) {
+                throw new IllegalArgumentException(
+                        "Set either provider (" + provider + ") or customProvider (" + customProvider + "), not both");
+            }
+            return customProvider.trim();
+        }
         Provider p = Provider.of(provider);
         if (p == null) {
-            if (provider != null && provider.contains(".")) {
-                return provider;
-            }
-            throw new IllegalArgumentException(
-                    "Unknown LangChain4j provider: " + provider + ". Use one of: " + Provider.ids()
-                                               + ", or the fully qualified class name of a model class with a builder()");
+            String hint = provider != null && provider.contains(".")
+                    ? ". A class name is set as customProvider, not as provider; provider is one of: " + Provider.ids()
+                    : ". Use one of: " + Provider.ids() + ", or set customProvider to the fully qualified class name"
+                      + " of a model class with a builder()";
+            throw new IllegalArgumentException("Unknown LangChain4j provider: " + provider + hint);
         }
         String name = kind == EmbeddingModel.class ? p.embeddingModelClass() : p.chatModelClass();
         if (name == null) {
@@ -230,8 +245,8 @@ public final class LangChain4jModelFactory {
     }
 
     private static <T> T create(CamelContext camelContext, ModelSpec spec, Class<T> kind) {
-        String className = modelClassName(spec.provider(), kind);
-        Provider provider = Provider.of(spec.provider());
+        String className = modelClassName(spec.provider(), spec.customProvider(), kind);
+        Provider provider = spec.customProvider() != null ? null : Provider.of(spec.provider());
         Class<?> clazz;
         try {
             clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
@@ -239,27 +254,27 @@ public final class LangChain4jModelFactory {
             String dep = provider != null
                     ? "dev.langchain4j:" + provider.artifactId() : "the LangChain4j module of " + className;
             throw new IllegalArgumentException(
-                    "LangChain4j provider " + spec.provider() + " needs " + dep + " on the classpath (with Camel JBang:"
+                    "LangChain4j provider " + spec.name() + " needs " + dep + " on the classpath (with Camel JBang:"
                                                + " camel.jbang.dependencies=" + dep + " in application.properties, or --dep)",
                     e);
         }
         if (!kind.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException(
-                    "LangChain4j provider " + spec.provider() + ": " + className + " is not a " + kind.getName());
+                    "LangChain4j provider " + spec.name() + ": " + className + " is not a " + kind.getName());
         }
         Object builder = newBuilder(clazz);
         List<String> accepts = PropertyBindingSupport.builderPropertyNames(builder.getClass());
 
         Map<String, Object> properties = new LinkedHashMap<>();
-        common(properties, accepts, clazz, spec.provider(), "modelName", spec.modelName());
-        common(properties, accepts, clazz, spec.provider(), "baseUrl", spec.baseUrl());
-        common(properties, accepts, clazz, spec.provider(), "apiKey", spec.apiKey());
-        common(properties, accepts, clazz, spec.provider(), "temperature", spec.temperature());
-        common(properties, accepts, clazz, spec.provider(), "timeout", spec.timeout());
+        common(properties, accepts, clazz, spec.name(), "modelName", spec.modelName());
+        common(properties, accepts, clazz, spec.name(), "baseUrl", spec.baseUrl());
+        common(properties, accepts, clazz, spec.name(), "apiKey", spec.apiKey());
+        common(properties, accepts, clazz, spec.name(), "temperature", spec.temperature());
+        common(properties, accepts, clazz, spec.name(), "timeout", spec.timeout());
         if (spec.modelProperties() != null) {
             properties.putAll(spec.modelProperties());
         }
-        LOG.debug("Creating {} of provider {} with: {}", className, spec.provider(), properties.keySet());
+        LOG.debug("Creating {} of provider {} with: {}", className, spec.name(), properties.keySet());
         try {
             Object model = PropertyBindingSupport.build()
                     .withCamelContext(camelContext)
@@ -270,7 +285,7 @@ public final class LangChain4jModelFactory {
             return kind.cast(model);
         } catch (PropertyBindingException e) {
             throw new IllegalArgumentException(
-                    "Cannot configure " + className + " of LangChain4j provider " + spec.provider() + ": "
+                    "Cannot configure " + className + " of LangChain4j provider " + spec.name() + ": "
                                                + e.getMessage() + ". The builder " + builder.getClass().getName()
                                                + " accepts: " + String.join(", ", accepts),
                     e);

@@ -69,6 +69,18 @@ public class LangChain4jChatProviderTest extends CamelTestSupport {
     }
 
     @Test
+    void customProviderIsAClassName() {
+        LangChain4jChatEndpoint endpoint = context.getEndpoint(
+                "langchain4j-chat:test?customProvider=dev.langchain4j.model.openai.OpenAiChatModel&apiKey=demo&modelName=gpt-4o",
+                LangChain4jChatEndpoint.class);
+        assertThat(endpoint.getConfiguration().getChatModel()).isInstanceOf(OpenAiChatModel.class);
+
+        assertThatThrownBy(() -> context.getEndpoint(
+                "langchain4j-chat:test?provider=dev.langchain4j.model.openai.OpenAiChatModel&apiKey=demo"))
+                .hasMessageContaining("A class name is set as customProvider, not as provider");
+    }
+
+    @Test
     void anOptionTheProviderDoesNotHaveFailsWithWhatItAccepts() {
         assertThatThrownBy(() -> context.getEndpoint("langchain4j-chat:test?provider=openai&modelName=x&model.numPredict=1"))
                 .hasMessageContaining("Cannot configure dev.langchain4j.model.openai.OpenAiChatModel of LangChain4j provider"

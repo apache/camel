@@ -41,6 +41,8 @@ public class LangChain4jChatComponentConfigurer extends PropertyConfigurerSuppor
         case "chatoperation":
         case "chatOperation": getOrCreateConfiguration(target).setChatOperation(property(camelContext, org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration.class, value)); return true;
+        case "customprovider":
+        case "customProvider": getOrCreateConfiguration(target).setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "modelname":
@@ -73,6 +75,8 @@ public class LangChain4jChatComponentConfigurer extends PropertyConfigurerSuppor
         case "chatoperation":
         case "chatOperation": return org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class;
         case "configuration": return org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "modelname":
@@ -101,6 +105,8 @@ public class LangChain4jChatComponentConfigurer extends PropertyConfigurerSuppor
         case "chatoperation":
         case "chatOperation": return getOrCreateConfiguration(target).getChatOperation();
         case "configuration": return target.getConfiguration();
+        case "customprovider":
+        case "customProvider": return getOrCreateConfiguration(target).getCustomProvider();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "modelname":

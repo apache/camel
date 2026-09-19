@@ -67,7 +67,7 @@ public class LangChain4jChatComponent extends DefaultComponent {
         langchain4jChatConfiguration.setModelProperties(
                 LangChain4jModelFactory.extractModelProperties(parameters, langchain4jChatConfiguration.getModelProperties()));
         setProperties(endpoint, parameters);
-        if (langchain4jChatConfiguration.getChatModel() == null && langchain4jChatConfiguration.getProvider() != null) {
+        if (langchain4jChatConfiguration.getChatModel() == null && langchain4jChatConfiguration.modelSpec() != null) {
             // the model is declared by its provider and options (CAMEL-24820); endpoints with the same options share it
             LangChain4jModelFactory.ModelSpec spec = langchain4jChatConfiguration.modelSpec();
             langchain4jChatConfiguration.setChatModel(

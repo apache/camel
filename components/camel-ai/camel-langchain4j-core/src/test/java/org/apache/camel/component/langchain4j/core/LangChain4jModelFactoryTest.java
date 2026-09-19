@@ -38,15 +38,22 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public class LangChain4jModelFactoryTest extends CamelTestSupport {
 
+    private static final String PROVIDERS
+            = "ollama, openai, anthropic, azure-openai, mistral, gemini, vertex-ai, github, hugging-face, bedrock";
+
     private static ModelSpec spec(String provider, String modelName, String baseUrl, String apiKey) {
-        return new ModelSpec(provider, modelName, baseUrl, apiKey, null, null, null);
+        return new ModelSpec(provider, null, modelName, baseUrl, apiKey, null, null, null);
+    }
+
+    private static ModelSpec custom(String className, String modelName, String baseUrl, String apiKey) {
+        return new ModelSpec(null, className, modelName, baseUrl, apiKey, null, null, null);
     }
 
     @Test
     void ollamaChatModel() {
         ModelSpec spec = new ModelSpec(
-                "ollama", "qwen2.5", "http://localhost:11434", null, 0.0, Duration.ofMinutes(2),
-                Map.of("numPredict", "512"));
+                "ollama", null, "qwen2.5", "http://localhost:11434", null, 0.0,
+                Duration.ofMinutes(2), Map.of("numPredict", "512"));
         ChatModel model = LangChain4jModelFactory.createChatModel(context, spec);
         assertThat(model).isInstanceOf(OllamaChatModel.class);
 
@@ -67,7 +74,7 @@ public class LangChain4jModelFactoryTest extends CamelTestSupport {
 
     @Test
     void aModelPropertyTheBuilderDoesNotHaveNamesWhatItAccepts() {
-        ModelSpec spec = new ModelSpec("ollama", "qwen2.5", null, null, null, null, Map.of("maxTokens", "10"));
+        ModelSpec spec = new ModelSpec("ollama", null, "qwen2.5", null, null, null, null, Map.of("maxTokens", "10"));
         assertThatThrownBy(() -> LangChain4jModelFactory.createChatModel(context, spec))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("Cannot configure dev.langchain4j.model.ollama.OllamaChatModel of LangChain4j"
@@ -92,9 +99,16 @@ public class LangChain4jModelFactoryTest extends CamelTestSupport {
     @Test
     void anUnknownProviderListsTheKnownOnes() {
         assertThatThrownBy(() -> LangChain4jModelFactory.createChatModel(context, spec("llama", "x", null, null)))
-                .hasMessage("Unknown LangChain4j provider: llama. Use one of: ollama, openai, anthropic, azure-openai,"
-                            + " mistral, gemini, vertex-ai, github, hugging-face, or the fully qualified class name of a"
-                            + " model class with a builder()");
+                .hasMessage("Unknown LangChain4j provider: llama. Use one of: " + PROVIDERS + ", or set customProvider"
+                            + " to the fully qualified class name of a model class with a builder()");
+        // a class name goes in customProvider, not in provider
+        assertThatThrownBy(() -> LangChain4jModelFactory.createChatModel(context,
+                spec("dev.langchain4j.model.ollama.OllamaChatModel", "x", null, null)))
+                .hasMessage("Unknown LangChain4j provider: dev.langchain4j.model.ollama.OllamaChatModel. A class name is"
+                            + " set as customProvider, not as provider; provider is one of: " + PROVIDERS);
+        assertThatThrownBy(() -> LangChain4jModelFactory.createChatModel(context,
+                new ModelSpec("ollama", "com.acme.Model", "x", null, null, null, null, null)))
+                .hasMessage("Set either provider (ollama) or customProvider (com.acme.Model), not both");
     }
 
     @Test
@@ -104,30 +118,38 @@ public class LangChain4jModelFactoryTest extends CamelTestSupport {
         assertThat(Provider.of("azure")).isEqualTo(Provider.AZURE_OPENAI);
         assertThat(Provider.of("google-ai-gemini")).isEqualTo(Provider.GEMINI);
         assertThat(Provider.of("huggingface")).isEqualTo(Provider.HUGGING_FACE);
+        assertThat(Provider.of("aws-bedrock")).isEqualTo(Provider.BEDROCK);
         assertThat(Provider.of("com.acme.Model")).isNull();
-        assertThat(LangChain4jModelFactory.modelClassName("gemini", ChatModel.class))
+        assertThat(LangChain4jModelFactory.modelClassName("gemini", null, ChatModel.class))
                 .isEqualTo("dev.langchain4j.model.googleai.GoogleAiGeminiChatModel");
-        assertThat(LangChain4jModelFactory.modelClassName("azure", EmbeddingModel.class))
+        assertThat(LangChain4jModelFactory.modelClassName("azure", null, EmbeddingModel.class))
                 .isEqualTo("dev.langchain4j.model.azure.AzureOpenAiEmbeddingModel");
+        assertThat(LangChain4jModelFactory.modelClassName("bedrock", null, EmbeddingModel.class))
+                .isEqualTo("dev.langchain4j.model.bedrock.BedrockTitanEmbeddingModel");
+        assertThat(LangChain4jModelFactory.modelClassName(null, "com.acme.Model", ChatModel.class))
+                .isEqualTo("com.acme.Model");
+        // the names the catalog offers for the provider option are the providers
+        assertThat(Provider.NAMES.split(",")).hasSize(Provider.values().length)
+                .allSatisfy(name -> assertThat(Provider.of(name)).isNotNull());
     }
 
     @Test
-    void aClassNameIsAProviderAndTheCommonOptionsFollowTheBuildersNames() {
+    void aCustomProviderIsAClassNameAndTheCommonOptionsFollowTheBuildersNames() {
         // as Hugging Face (accessToken, modelId) and Azure OpenAI (endpoint, deploymentName)
         ModelSpec spec = new ModelSpec(
-                HostedModel.class.getName(), "tiny", "https://hub.example", "token", 0.5,
+                null, HostedModel.class.getName(), "tiny", "https://hub.example", "token", 0.5,
                 Duration.ofSeconds(30), Map.of("waitForModel", "true"));
         ChatModel model = LangChain4jModelFactory.createChatModel(context, spec);
 
         HostedModel hosted = (HostedModel) model;
-        assertThat(hosted.values).containsExactlyInAnyOrder("modelId=tiny", "endpoint=https://hub.example", "accessToken=token",
-                "temperature=0.5", "timeout=PT30S", "waitForModel=true");
+        assertThat(hosted.values).containsExactlyInAnyOrder("modelId=tiny", "endpoint=https://hub.example",
+                "accessToken=token", "temperature=0.5", "timeout=PT30S", "waitForModel=true");
     }
 
     @Test
-    void aClassNameThatIsNotAModelOfTheKind() {
-        assertThatThrownBy(
-                () -> LangChain4jModelFactory.createEmbeddingModel(context, spec(HostedModel.class.getName(), "x", null, null)))
+    void aCustomProviderThatIsNotAModelOfTheKind() {
+        assertThatThrownBy(() -> LangChain4jModelFactory.createEmbeddingModel(context,
+                custom(HostedModel.class.getName(), "x", null, null)))
                 .hasMessage("LangChain4j provider " + HostedModel.class.getName() + ": " + HostedModel.class.getName()
                             + " is not a dev.langchain4j.model.embedding.EmbeddingModel");
     }

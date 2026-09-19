@@ -71,7 +71,7 @@ public class LangChain4jAgentComponent extends DefaultComponent {
         boolean noAgent = langchain4jChatConfiguration.getAgent() == null
                 && langchain4jChatConfiguration.getAgentFactory() == null
                 && langchain4jChatConfiguration.getAgentConfiguration() == null;
-        if (noAgent && langchain4jChatConfiguration.getProvider() != null) {
+        if (noAgent && langchain4jChatConfiguration.modelSpec() != null) {
             // the chat model is declared by its provider and options (CAMEL-24820): the agent is created from it as
             // with an AgentConfiguration holding only the model; endpoints with the same options share the model
             LangChain4jModelFactory.ModelSpec spec = langchain4jChatConfiguration.modelSpec();

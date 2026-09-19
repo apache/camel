@@ -27,6 +27,8 @@ public class LangChain4jEmbeddingsEndpointConfigurer extends PropertyConfigurerS
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "customprovider":
+        case "customProvider": target.getConfiguration().setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "embeddingmodel":
         case "embeddingModel": target.getConfiguration().setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "lazystartproducer":
@@ -54,6 +56,8 @@ public class LangChain4jEmbeddingsEndpointConfigurer extends PropertyConfigurerS
         case "apiKey": return java.lang.String.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "embeddingmodel":
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "lazystartproducer":
@@ -77,6 +81,8 @@ public class LangChain4jEmbeddingsEndpointConfigurer extends PropertyConfigurerS
         case "apiKey": return target.getConfiguration().getApiKey();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
+        case "customprovider":
+        case "customProvider": return target.getConfiguration().getCustomProvider();
         case "embeddingmodel":
         case "embeddingModel": return target.getConfiguration().getEmbeddingModel();
         case "lazystartproducer":

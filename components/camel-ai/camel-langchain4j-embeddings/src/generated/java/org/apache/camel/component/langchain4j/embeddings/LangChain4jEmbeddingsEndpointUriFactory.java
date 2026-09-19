@@ -24,9 +24,10 @@ public class LangChain4jEmbeddingsEndpointUriFactory extends org.apache.camel.su
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(11);
         props.add("apiKey");
         props.add("baseUrl");
+        props.add("customProvider");
         props.add("embeddingId");
         props.add("embeddingModel");
         props.add("lazyStartProducer");

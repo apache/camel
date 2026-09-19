@@ -27,6 +27,8 @@ public class LangChain4jEmbeddingsConfigurationConfigurer extends org.apache.cam
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "customprovider":
+        case "customProvider": target.setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "embeddingmodel":
         case "embeddingModel": target.setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "modelname":
@@ -47,6 +49,8 @@ public class LangChain4jEmbeddingsConfigurationConfigurer extends org.apache.cam
         case "apiKey": return java.lang.String.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "embeddingmodel":
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "modelname":
@@ -68,6 +72,8 @@ public class LangChain4jEmbeddingsConfigurationConfigurer extends org.apache.cam
         case "apiKey": return target.getApiKey();
         case "baseurl":
         case "baseUrl": return target.getBaseUrl();
+        case "customprovider":
+        case "customProvider": return target.getCustomProvider();
         case "embeddingmodel":
         case "embeddingModel": return target.getEmbeddingModel();
         case "modelname":

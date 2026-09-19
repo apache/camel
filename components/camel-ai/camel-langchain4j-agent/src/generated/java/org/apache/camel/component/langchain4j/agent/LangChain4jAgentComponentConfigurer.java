@@ -44,6 +44,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "compensateontoolerrors":
         case "compensateOnToolErrors": getOrCreateConfiguration(target).setCompensateOnToolErrors(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class, value)); return true;
+        case "customprovider":
+        case "customProvider": getOrCreateConfiguration(target).setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": getOrCreateConfiguration(target).setExecuteToolsConcurrently(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "jsonschema":
@@ -92,6 +94,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return java.lang.Boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": return java.lang.Boolean.class;
         case "jsonschema":
@@ -136,6 +140,8 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "compensateontoolerrors":
         case "compensateOnToolErrors": return getOrCreateConfiguration(target).getCompensateOnToolErrors();
         case "configuration": return target.getConfiguration();
+        case "customprovider":
+        case "customProvider": return getOrCreateConfiguration(target).getCustomProvider();
         case "executetoolsconcurrently":
         case "executeToolsConcurrently": return getOrCreateConfiguration(target).getExecuteToolsConcurrently();
         case "jsonschema":
