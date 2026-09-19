@@ -71,6 +71,22 @@ public class SourceValidatorBeanTypesTest {
     }
 
     @Test
+    void aSetterOfTheCreatedBeanIsSuggestedToo() {
+        String yaml = """
+                - beans:
+                    - name: widget
+                      type: %s
+                      properties:
+                        Label: hello
+                """.formatted(Widget.class.getName());
+        List<String> msgs = SourceValidator.validateBeanTypes(yaml);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0))
+                .startsWith("Line 5: Label: unknown property of " + Widget.class.getName() + " (did you mean label?)")
+                .endsWith("; the builder accepts: size; the created bean accepts: label");
+    }
+
+    @Test
     void builderMethodMustExistOnTheBuilder() {
         String yaml = """
                 - beans:
@@ -125,5 +141,35 @@ public class SourceValidatorBeanTypesTest {
                         anything: goes
                 """;
         assertThat(SourceValidator.validateBeanTypes(yaml)).isEmpty();
+    }
+
+    /** Created through its builder, with a setter of its own: the label is a property of the bean, not the builder */
+    public static final class Widget {
+        private String label;
+
+        private Widget() {
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public static final class Builder {
+            public Builder size(int size) {
+                return this;
+            }
+
+            public Widget build() {
+                return new Widget();
+            }
+        }
     }
 }

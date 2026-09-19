@@ -197,6 +197,14 @@ final class BeanTypeChecks {
                     suggestion = " (did you mean " + candidate + "?)";
                 }
             }
+            if (suggestion.isEmpty()) {
+                // a setter of the created bean is as valid a property as one of the builder
+                for (String candidate : beanProperties) {
+                    if (candidate.equalsIgnoreCase(name)) {
+                        suggestion = " (did you mean " + candidate + "?)";
+                    }
+                }
+            }
             StringBuilder sb = new StringBuilder();
             sb.append("Line ").append(property.getValue()).append(": ").append(key).append(": unknown property of ")
                     .append(clazz.getName()).append(suggestion).append(", which is created through its builder ")
