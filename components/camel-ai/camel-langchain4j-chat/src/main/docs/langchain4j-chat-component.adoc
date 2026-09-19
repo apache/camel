@@ -49,6 +49,50 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Configuring the model by provider
+
+The chat model can be declared by its provider and the options every provider has, without a bean of the
+provider's model class (since Camel 4.23). In `application.properties`, for every endpoint of the component:
+
+[source,properties]
+----
+camel.component.langchain4j-chat.provider = ollama
+camel.component.langchain4j-chat.model-name = qwen2.5
+camel.component.langchain4j-chat.base-url = http://localhost:11434
+----
+
+Or on the endpoint, where `model.` prefixes a provider-specific option of the model's builder:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: langchain4j-chat:assistant
+            parameters:
+              provider: openai
+              apiKey: "{{openai.api.key}}"
+              modelName: gpt-4o-mini
+              timeout: 30s
+              model.maxTokens: 1024
+----
+
+The provider is one of `ollama`, `openai`, `anthropic`, `azure-openai`, `mistral`, `gemini`, `vertex-ai`, `github`,
+`hugging-face`, `bedrock`; a provider not in the list is set as `customProvider`, the fully qualified class name of
+its LangChain4j model class (any class with a `builder()`, such as `dev.langchain4j.model.jlama.JlamaChatModel`).
+The LangChain4j module of the provider (`dev.langchain4j:langchain4j-ollama`, `dev.langchain4j:langchain4j-open-ai`,
+...) must be on the classpath; Camel JBang downloads it for the listed providers. Ollama, LocalAI, vLLM, LM Studio and
+the other servers that speak the OpenAI API can also be used through `provider: openai` with their `baseUrl`, which
+needs no module of their own. The common options are `modelName`, `baseUrl`, `apiKey`, `temperature`
+and `timeout`, set under the name the provider's builder uses for them (`apiKey` is the access token of Hugging Face,
+`modelName` the deployment name of Azure OpenAI); an option the provider does not have (an `apiKey` for Ollama), or a
+`model.` property its builder does not have, is an error naming what the builder accepts.
+
+Endpoints with the same provider options share one model instance. The provider is ignored when a model bean is
+configured (`chatModel`).
+
 === Using a specific Chat Model
 
 The Camel LangChain4j chat component provides an abstraction for interacting with various types of Large Language Models (LLMs) supported by https://github.com/langchain4j/langchain4j[LangChain4j].

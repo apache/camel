@@ -23,10 +23,23 @@ public class LangChain4jEmbeddingsEndpointConfigurer extends PropertyConfigurerS
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jEmbeddingsEndpoint target = (LangChain4jEmbeddingsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "baseurl":
+        case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "customprovider":
+        case "customProvider": target.getConfiguration().setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "embeddingmodel":
         case "embeddingModel": target.getConfiguration().setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "modelname":
+        case "modelName": target.getConfiguration().setModelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "modelproperties":
+        case "modelProperties": target.getConfiguration().setModelProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "provider": target.getConfiguration().setProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -39,10 +52,23 @@ public class LangChain4jEmbeddingsEndpointConfigurer extends PropertyConfigurerS
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
+        case "baseurl":
+        case "baseUrl": return java.lang.String.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "embeddingmodel":
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "modelname":
+        case "modelName": return java.lang.String.class;
+        case "modelproperties":
+        case "modelProperties": return java.util.Map.class;
+        case "provider": return java.lang.String.class;
+        case "temperature": return java.lang.Double.class;
+        case "timeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -51,10 +77,32 @@ public class LangChain4jEmbeddingsEndpointConfigurer extends PropertyConfigurerS
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jEmbeddingsEndpoint target = (LangChain4jEmbeddingsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return target.getConfiguration().getApiKey();
+        case "baseurl":
+        case "baseUrl": return target.getConfiguration().getBaseUrl();
+        case "customprovider":
+        case "customProvider": return target.getConfiguration().getCustomProvider();
         case "embeddingmodel":
         case "embeddingModel": return target.getConfiguration().getEmbeddingModel();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "modelname":
+        case "modelName": return target.getConfiguration().getModelName();
+        case "modelproperties":
+        case "modelProperties": return target.getConfiguration().getModelProperties();
+        case "provider": return target.getConfiguration().getProvider();
+        case "temperature": return target.getConfiguration().getTemperature();
+        case "timeout": return target.getConfiguration().getTimeout();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "modelproperties":
+        case "modelProperties": return java.lang.Object.class;
         default: return null;
         }
     }

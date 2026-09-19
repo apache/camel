@@ -30,13 +30,26 @@ public class LangChain4jEmbeddingsComponentConfigurer extends PropertyConfigurer
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jEmbeddingsComponent target = (LangChain4jEmbeddingsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "baseurl":
+        case "baseUrl": getOrCreateConfiguration(target).setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration.class, value)); return true;
+        case "customprovider":
+        case "customProvider": getOrCreateConfiguration(target).setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "embeddingmodel":
         case "embeddingModel": getOrCreateConfiguration(target).setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "modelname":
+        case "modelName": getOrCreateConfiguration(target).setModelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "modelproperties":
+        case "modelProperties": getOrCreateConfiguration(target).setModelProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "provider": getOrCreateConfiguration(target).setProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "temperature": getOrCreateConfiguration(target).setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -49,13 +62,26 @@ public class LangChain4jEmbeddingsComponentConfigurer extends PropertyConfigurer
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "baseurl":
+        case "baseUrl": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.langchain4j.embeddings.LangChain4jEmbeddingsConfiguration.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
         case "embeddingmodel":
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "modelname":
+        case "modelName": return java.lang.String.class;
+        case "modelproperties":
+        case "modelProperties": return java.util.Map.class;
+        case "provider": return java.lang.String.class;
+        case "temperature": return java.lang.Double.class;
+        case "timeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -64,13 +90,35 @@ public class LangChain4jEmbeddingsComponentConfigurer extends PropertyConfigurer
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jEmbeddingsComponent target = (LangChain4jEmbeddingsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return getOrCreateConfiguration(target).getApiKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "baseurl":
+        case "baseUrl": return getOrCreateConfiguration(target).getBaseUrl();
         case "configuration": return target.getConfiguration();
+        case "customprovider":
+        case "customProvider": return getOrCreateConfiguration(target).getCustomProvider();
         case "embeddingmodel":
         case "embeddingModel": return getOrCreateConfiguration(target).getEmbeddingModel();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "modelname":
+        case "modelName": return getOrCreateConfiguration(target).getModelName();
+        case "modelproperties":
+        case "modelProperties": return getOrCreateConfiguration(target).getModelProperties();
+        case "provider": return getOrCreateConfiguration(target).getProvider();
+        case "temperature": return getOrCreateConfiguration(target).getTemperature();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "modelproperties":
+        case "modelProperties": return java.lang.Object.class;
         default: return null;
         }
     }

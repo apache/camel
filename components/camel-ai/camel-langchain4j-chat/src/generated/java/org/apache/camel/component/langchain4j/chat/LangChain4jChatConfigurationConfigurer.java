@@ -23,10 +23,23 @@ public class LangChain4jChatConfigurationConfigurer extends org.apache.camel.sup
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration target = (org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "baseurl":
+        case "baseUrl": target.setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "chatmodel":
         case "chatModel": target.setChatModel(property(camelContext, dev.langchain4j.model.chat.ChatModel.class, value)); return true;
         case "chatoperation":
         case "chatOperation": target.setChatOperation(property(camelContext, org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class, value)); return true;
+        case "customprovider":
+        case "customProvider": target.setCustomProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "modelname":
+        case "modelName": target.setModelName(property(camelContext, java.lang.String.class, value)); return true;
+        case "modelproperties":
+        case "modelProperties": target.setModelProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "provider": target.setProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "temperature": target.setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         default: return false;
         }
     }
@@ -34,10 +47,23 @@ public class LangChain4jChatConfigurationConfigurer extends org.apache.camel.sup
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
+        case "baseurl":
+        case "baseUrl": return java.lang.String.class;
         case "chatmodel":
         case "chatModel": return dev.langchain4j.model.chat.ChatModel.class;
         case "chatoperation":
         case "chatOperation": return org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.class;
+        case "customprovider":
+        case "customProvider": return java.lang.String.class;
+        case "modelname":
+        case "modelName": return java.lang.String.class;
+        case "modelproperties":
+        case "modelProperties": return java.util.Map.class;
+        case "provider": return java.lang.String.class;
+        case "temperature": return java.lang.Double.class;
+        case "timeout": return java.time.Duration.class;
         default: return null;
         }
     }
@@ -46,10 +72,32 @@ public class LangChain4jChatConfigurationConfigurer extends org.apache.camel.sup
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration target = (org.apache.camel.component.langchain4j.chat.LangChain4jChatConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return target.getApiKey();
+        case "baseurl":
+        case "baseUrl": return target.getBaseUrl();
         case "chatmodel":
         case "chatModel": return target.getChatModel();
         case "chatoperation":
         case "chatOperation": return target.getChatOperation();
+        case "customprovider":
+        case "customProvider": return target.getCustomProvider();
+        case "modelname":
+        case "modelName": return target.getModelName();
+        case "modelproperties":
+        case "modelProperties": return target.getModelProperties();
+        case "provider": return target.getProvider();
+        case "temperature": return target.getTemperature();
+        case "timeout": return target.getTimeout();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "modelproperties":
+        case "modelProperties": return java.lang.Object.class;
         default: return null;
         }
     }
