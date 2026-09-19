@@ -334,6 +334,134 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             doSetProperty("tags", tags);
             return this;
         }
+        /**
+         * The URL of the provider's API (http://localhost:11434 for a local
+         * Ollama), when the model is created from the provider. The provider's
+         * default when not set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: model
+         * 
+         * @param baseUrl the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder baseUrl(String baseUrl) {
+            doSetProperty("baseUrl", baseUrl);
+            return this;
+        }
+        /**
+         * The name of the model at the provider (qwen2.5, gpt-4o-mini, ...),
+         * when the model is created from the provider.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: model
+         * 
+         * @param modelName the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder modelName(String modelName) {
+            doSetProperty("modelName", modelName);
+            return this;
+        }
+        /**
+         * The LangChain4j provider of the chat model that drives the agent, to
+         * create the model from the options here (modelName, baseUrl, apiKey,
+         * temperature, timeout, and provider-specific model. properties)
+         * instead of a AgentConfiguration bean. The LangChain4j module of the
+         * provider (dev.langchain4j:langchain4j-ollama, ...) must be on the
+         * classpath; Camel JBang downloads it. Ignored when a
+         * AgentConfiguration is configured. For a provider not listed, set
+         * customProvider instead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: model
+         * 
+         * @param provider the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder provider(String provider) {
+            doSetProperty("provider", provider);
+            return this;
+        }
+        /**
+         * The sampling temperature of the model, when the model is created from
+         * the provider.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: model
+         * 
+         * @param temperature the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder temperature(Double temperature) {
+            doSetProperty("temperature", temperature);
+            return this;
+        }
+        /**
+         * The sampling temperature of the model, when the model is created from
+         * the provider.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: model
+         * 
+         * @param temperature the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder temperature(String temperature) {
+            doSetProperty("temperature", temperature);
+            return this;
+        }
+        /**
+         * The request timeout of the model (30s, 2m), when the model is created
+         * from the provider.
+         * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Group: model
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder timeout(java.time.Duration timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * The request timeout of the model (30s, 2m), when the model is created
+         * from the provider.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Group: model
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder timeout(String timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+        /**
+         * The API key or access token of the provider, when the model is
+         * created from the provider.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder apiKey(String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
     }
 
     /**
@@ -473,6 +601,67 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          */
         default AdvancedLangChain4jAgentEndpointBuilder mcpServer(Map values) {
             doSetMultiValueProperties("mcpServer", "mcpServer.", values);
+            return this;
+        }
+        /**
+         * The fully qualified class name of the LangChain4j model class of a
+         * provider that is not listed in provider
+         * (dev.langchain4j.model.jlama.JlamaChatModel), created from the
+         * options here through its builder() as a listed provider is. Set
+         * either provider or customProvider.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: model (advanced)
+         * 
+         * @param customProvider the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jAgentEndpointBuilder customProvider(String customProvider) {
+            doSetProperty("customProvider", customProvider);
+            return this;
+        }
+        /**
+         * Provider-specific properties of the model, set on the model's builder
+         * as they are (model.numPredict=512 for Ollama, model.maxTokens=1024
+         * for OpenAI), when the model is created from the provider. This is a
+         * multi-value option with prefix: model.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * modelProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: model (advanced)
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jAgentEndpointBuilder modelProperties(String key, Object value) {
+            doSetMultiValueProperty("modelProperties", "model." + key, value);
+            return this;
+        }
+        /**
+         * Provider-specific properties of the model, set on the model's builder
+         * as they are (model.numPredict=512 for Ollama, model.maxTokens=1024
+         * for OpenAI), when the model is created from the provider. This is a
+         * multi-value option with prefix: model.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * modelProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: model (advanced)
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jAgentEndpointBuilder modelProperties(Map values) {
+            doSetMultiValueProperties("modelProperties", "model.", values);
             return this;
         }
     }

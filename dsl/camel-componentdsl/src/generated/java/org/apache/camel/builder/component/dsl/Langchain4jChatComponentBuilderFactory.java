@@ -148,6 +148,146 @@ public interface Langchain4jChatComponentBuilderFactory {
             doSetProperty("chatModel", chatModel);
             return this;
         }
+    
+        /**
+         * The URL of the provider's API (http://localhost:11434 for a local
+         * Ollama), when the model is created from the provider. The provider's
+         * default when not set.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: model
+         * 
+         * @param baseUrl the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder baseUrl(java.lang.String baseUrl) {
+            doSetProperty("baseUrl", baseUrl);
+            return this;
+        }
+    
+        /**
+         * The name of the model at the provider (qwen2.5, gpt-4o-mini, ...),
+         * when the model is created from the provider.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: model
+         * 
+         * @param modelName the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder modelName(java.lang.String modelName) {
+            doSetProperty("modelName", modelName);
+            return this;
+        }
+    
+        /**
+         * The LangChain4j provider of the chat model, to create the model from
+         * the options here (modelName, baseUrl, apiKey, temperature, timeout,
+         * and provider-specific model. properties) instead of a ChatModel bean.
+         * The LangChain4j module of the provider
+         * (dev.langchain4j:langchain4j-ollama, ...) must be on the classpath;
+         * Camel JBang downloads it. Ignored when a ChatModel is configured. For
+         * a provider not listed, set customProvider instead.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: model
+         * 
+         * @param provider the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder provider(java.lang.String provider) {
+            doSetProperty("provider", provider);
+            return this;
+        }
+    
+        /**
+         * The sampling temperature of the model, when the model is created from
+         * the provider.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Group: model
+         * 
+         * @param temperature the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder temperature(java.lang.Double temperature) {
+            doSetProperty("temperature", temperature);
+            return this;
+        }
+    
+        /**
+         * The request timeout of the model (30s, 2m), when the model is created
+         * from the provider.
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Group: model
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder timeout(java.time.Duration timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+    
+        /**
+         * The fully qualified class name of the LangChain4j model class of a
+         * provider that is not listed in provider
+         * (dev.langchain4j.model.jlama.JlamaChatModel), created from the
+         * options here through its builder() as a listed provider is. Set
+         * either provider or customProvider.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: model (advanced)
+         * 
+         * @param customProvider the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder customProvider(java.lang.String customProvider) {
+            doSetProperty("customProvider", customProvider);
+            return this;
+        }
+    
+        /**
+         * Provider-specific properties of the model, set on the model's builder
+         * as they are (model.numPredict=512 for Ollama, model.maxTokens=1024
+         * for OpenAI), when the model is created from the provider. This is a
+         * multi-value option with prefix: model.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: model (advanced)
+         * 
+         * @param modelProperties the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder modelProperties(java.util.Map<java.lang.String, java.lang.Object> modelProperties) {
+            doSetProperty("modelProperties", modelProperties);
+            return this;
+        }
+    
+        /**
+         * The API key or access token of the provider, when the model is
+         * created from the provider.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jChatComponentBuilder apiKey(java.lang.String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
     }
 
     class Langchain4jChatComponentBuilderImpl
@@ -174,6 +314,14 @@ public interface Langchain4jChatComponentBuilderFactory {
             case "lazyStartProducer": ((LangChain4jChatComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((LangChain4jChatComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "chatModel": getOrCreateConfiguration((LangChain4jChatComponent) component).setChatModel((dev.langchain4j.model.chat.ChatModel) value); return true;
+            case "baseUrl": getOrCreateConfiguration((LangChain4jChatComponent) component).setBaseUrl((java.lang.String) value); return true;
+            case "modelName": getOrCreateConfiguration((LangChain4jChatComponent) component).setModelName((java.lang.String) value); return true;
+            case "provider": getOrCreateConfiguration((LangChain4jChatComponent) component).setProvider((java.lang.String) value); return true;
+            case "temperature": getOrCreateConfiguration((LangChain4jChatComponent) component).setTemperature((java.lang.Double) value); return true;
+            case "timeout": getOrCreateConfiguration((LangChain4jChatComponent) component).setTimeout((java.time.Duration) value); return true;
+            case "customProvider": getOrCreateConfiguration((LangChain4jChatComponent) component).setCustomProvider((java.lang.String) value); return true;
+            case "modelProperties": getOrCreateConfiguration((LangChain4jChatComponent) component).setModelProperties((java.util.Map) value); return true;
+            case "apiKey": getOrCreateConfiguration((LangChain4jChatComponent) component).setApiKey((java.lang.String) value); return true;
             default: return false;
             }
         }
