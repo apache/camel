@@ -269,6 +269,7 @@ public class VertxPlatformHttpRouter implements Router {
     }
 
     @Override
+    @Deprecated(since = "4.23")
     public Route mountSubRouter(String mountPoint, Router subRouter) {
         if (mountPoint.endsWith("*")) {
             throw new IllegalArgumentException("Don't include * when mounting a sub router");

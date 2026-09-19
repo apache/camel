@@ -84,6 +84,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     private static final String PRE_AUTHENTICATED_EXCHANGE = VertxPlatformHttpConsumer.class.getName()
                                                              + ".preAuthenticatedExchange";
     private static final String AUTHORIZATION = "Authorization";
+    private static final long HTTP2_INTERNAL_ERROR = 2;
 
     private final List<Handler<RoutingContext>> handlers;
     private final String fileNameExtWhitelist;
@@ -373,10 +374,24 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     }
 
     private void handleFailure(Exchange exchange, RoutingContext ctx, Throwable failure) {
-        getExceptionHandler().handleException(
-                "Failed handling platform-http endpoint " + getEndpoint().getPath(),
-                failure);
-        ctx.fail(failure);
+        if (ctx.response().closed()) {
+            LOGGER.debug("Client closed the connection of platform-http endpoint {} before the response completed",
+                    getEndpoint().getPath(), failure);
+        } else {
+            getExceptionHandler().handleException(
+                    "Failed handling platform-http endpoint " + getEndpoint().getPath(),
+                    failure);
+            if (!ctx.response().headWritten()) {
+                ctx.fail(failure);
+            } else if (!ctx.response().ended() && !ctx.response().closed()) {
+                // The response has already started, so there is no error status left to send, and failing the
+                // routing context would only log the failure a second time as an unhandled router exception.
+                // Reset it directly instead: the client still has to be told that the response it is reading is
+                // truncated, rather than being left waiting for a body that will never be completed.
+                ctx.response().reset(HTTP2_INTERNAL_ERROR);
+            }
+        }
+
         if (handleWriteResponseError && failure != null) {
             Exception existing = exchange.getException();
             if (existing != null) {
