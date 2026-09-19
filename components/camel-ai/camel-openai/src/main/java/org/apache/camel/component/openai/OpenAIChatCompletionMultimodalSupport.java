@@ -106,6 +106,9 @@ final class OpenAIChatCompletionMultimodalSupport {
 
     private static ChatCompletionMessageParam buildBinaryMessage(Message in, String userPrompt) throws Exception {
         String mime = MimeTypeHelper.resolveForBinary(in);
+        if (MimeTypeHelper.isText(mime)) {
+            return buildTextMessage(in, userPrompt);
+        }
         if (MimeTypeHelper.isImage(mime)) {
             return createImageMessage(readBodyBytes(in), mime, userPrompt);
         }
@@ -115,7 +118,7 @@ final class OpenAIChatCompletionMultimodalSupport {
         if (MimeTypeHelper.isAudio(mime)) {
             return createAudioMessage(readBodyBytes(in), mime, userPrompt);
         }
-        return buildTextMessage(in, userPrompt);
+        throw unsupportedMimeType(mime, in.getHeader(Exchange.FILE_NAME, String.class));
     }
 
     private static ChatCompletionMessageParam createTextMessage(String prompt) {

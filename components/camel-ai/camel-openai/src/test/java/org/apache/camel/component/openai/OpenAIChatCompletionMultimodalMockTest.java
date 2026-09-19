@@ -150,6 +150,19 @@ class OpenAIChatCompletionMultimodalMockTest extends CamelTestSupport {
                 .hasMessageContaining("Unsupported audio MIME type");
     }
 
+    @Test
+    void binaryBodyWithoutMimeTypeFails() {
+        Exchange result = template.request("direct:chat", e -> {
+            e.getIn().setBody(WAV_BYTES);
+            e.getIn().setHeader(OpenAIConstants.USER_MESSAGE, "Transcribe this clip");
+        });
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Only text, image, PDF and audio files are supported")
+                .hasMessageContaining(OpenAIConstants.MEDIA_TYPE);
+    }
+
     private static void assertFilePart(String request, String expectedMime, byte[] expectedBytes) {
         try {
             JsonNode root = OBJECT_MAPPER.readTree(request);
