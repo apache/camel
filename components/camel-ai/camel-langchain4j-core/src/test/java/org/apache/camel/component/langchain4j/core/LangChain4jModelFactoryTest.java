@@ -154,6 +154,48 @@ public class LangChain4jModelFactoryTest extends CamelTestSupport {
                             + " is not a dev.langchain4j.model.embedding.EmbeddingModel");
     }
 
+    @Test
+    void aModelClassThatCannotInitializeNamesItselfAndTheCause() {
+        // the class resolves, so a missing dependency of its module only shows when builder() initializes it
+        assertThatThrownBy(() -> LangChain4jModelFactory.createChatModel(context,
+                custom(UninitializableModel.class.getName(), "x", null, null)))
+                .isInstanceOf(IllegalArgumentException.class)
+                // the JVM rethrows an Error from a static initializer as-is (UnsatisfiedLinkError here) and reports
+                // NoClassDefFoundError once the class has failed before, so only the family is pinned down
+                .hasMessageStartingWith("Cannot initialize " + UninitializableModel.class.getName() + " (java.lang.")
+                .hasMessageEndingWith("a dependency of its LangChain4j module may be missing from the classpath")
+                .hasCauseInstanceOf(LinkageError.class);
+    }
+
+    @Test
+    void aBuilderThatFailsNamesTheModelAndTheCause() {
+        assertThatThrownBy(() -> LangChain4jModelFactory.createChatModel(context,
+                custom(BuilderlessModel.class.getName(), "x", null, null)))
+                .hasMessage("Cannot create " + BuilderlessModel.class.getName()
+                            + " as its builder() failed: java.lang.IllegalStateException: no builder today")
+                .hasCauseInstanceOf(IllegalStateException.class);
+    }
+
+    /** A chat model whose static initializer fails, as when a native library of the module is absent */
+    public static final class UninitializableModel implements ChatModel {
+        static {
+            if (true) {
+                throw new UnsatisfiedLinkError("no native library");
+            }
+        }
+
+        public static Object builder() {
+            return null;
+        }
+    }
+
+    /** A chat model whose builder() throws */
+    public static final class BuilderlessModel implements ChatModel {
+        public static Object builder() {
+            throw new IllegalStateException("no builder today");
+        }
+    }
+
     /** A chat model whose builder names the common options as Hugging Face and Azure do */
     public static final class HostedModel implements ChatModel {
         final List<String> values;

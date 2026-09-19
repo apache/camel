@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.Duration;
@@ -250,6 +251,8 @@ public final class LangChain4jModelFactory {
         Class<?> clazz;
         try {
             clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+        } catch (LinkageError e) {
+            throw cannotInitialize(className, e);
         } catch (ClassNotFoundException e) {
             String dep = provider != null
                     ? "dev.langchain4j:" + provider.artifactId() : "the LangChain4j module of " + className;
@@ -318,9 +321,27 @@ public final class LangChain4jModelFactory {
                 throw new NoSuchMethodException("builder");
             }
             return m.invoke(null);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(
+                    "Cannot create " + clazz.getName() + " as its builder() failed: " + e.getCause(), e.getCause());
         } catch (ReflectiveOperationException e) {
             throw new IllegalArgumentException(
                     "Cannot create " + clazz.getName() + " as it has no public static builder() method", e);
+        } catch (LinkageError e) {
+            throw cannotInitialize(clazz.getName(), e);
         }
+    }
+
+    /**
+     * The model class is there but cannot link or initialize (a NoClassDefFoundError, or the error its static
+     * initializer threw: wrapped in an ExceptionInInitializerError when it is an exception, rethrown as-is when it is
+     * an error such as UnsatisfiedLinkError), typically because a dependency of its LangChain4j module is missing;
+     * resolving the model class itself does not detect that.
+     */
+    private static IllegalArgumentException cannotInitialize(String className, LinkageError e) {
+        return new IllegalArgumentException(
+                "Cannot initialize " + className + " (" + e + "); a dependency of its LangChain4j module may be"
+                                            + " missing from the classpath",
+                e);
     }
 }
