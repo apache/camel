@@ -21,7 +21,9 @@ import java.util.List;
 /**
  * Single source of truth for emoji and symbolic icons used across the Camel TUI.
  * <p/>
- * Tab/menu icons use plain 2-column-wide emoji without VS16 variation selectors (see CAMEL-23818). Doctor and legacy
+ * Tab/menu icons use plain 2-column-wide emoji without VS16 variation selectors (CAMEL-23818). TamboUI 0.5.0 measures a
+ * base glyph + VS16 sequence as 2 columns (tamboui/tamboui#388), but the xterm.js Unicode 11 width tables that the
+ * {@code --web} frontend uses treat VS16 as zero-width, so such a sequence still misaligns there. Doctor and legacy
  * status glyphs may still use mixed-width symbols until migrated.
  */
 final class TuiIcons {
@@ -60,8 +62,8 @@ final class TuiIcons {
     // memo (📝) reads as "edit"; the letters glyph reads as changing the name
     static final String RENAME = "🔤";
     static final String DUPLICATE = "📑";
-    // NOTE: the wastebasket emoji (🗑) is width-ambiguous and TamboUI does not align it correctly yet, so use the
-    // cross-mark instead until that is fixed upstream.
+    // the wastebasket (🗑) is a text-default glyph: TamboUI counts it as 2 columns while terminals draw it in 1 unless
+    // it carries VS16, which the --web frontend cannot measure (see the class javadoc), so use the cross-mark instead
     static final String DELETE = "❌";
 
     // ---- Actions menu ----

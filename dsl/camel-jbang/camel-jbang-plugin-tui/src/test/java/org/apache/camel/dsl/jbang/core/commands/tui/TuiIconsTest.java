@@ -24,9 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Validates {@link TuiIcons} primary tab emoji width (CAMEL-23818: avoid VS16 mismeasurement in TamboUI) and the
- * mnemonic and runtime/platform icon helpers. More-submenu icons and labels are validated in {@link TabRegistryTest}
- * where the {@link TabRegistry.MoreTab} records that own them are constructed.
+ * Validates {@link TuiIcons} primary tab emoji width (CAMEL-23818: no VS16 sequences, which the {@code --web} xterm.js
+ * width tables measure differently from TamboUI) and the mnemonic and runtime/platform icon helpers. More-submenu icons
+ * and labels are validated in {@link TabRegistryTest} where the {@link TabRegistry.MoreTab} records that own them are
+ * constructed.
  */
 class TuiIconsTest {
 
