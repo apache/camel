@@ -17,7 +17,8 @@ Four operations cover the flow:
 == Building the input
 
 The body of the `batch` operation is either the JSONL itself (`File`, `Path`, `WrappedFile`, `InputStream`,
-`byte[]` or String), or a `Map` keyed by `custom_id`, the id that ties each answer back to its request.
+`byte[]` or String), or a `Map` keyed by `custom_id`, the id that ties each answer back to its request. A `List` of
+values is accepted too, with the position of each value as its `custom_id`.
 
 For a map, the component writes the envelope of every line (`method` and the `url` of `batchEndpoint`). What the
 value holds decides the request body:
@@ -69,6 +70,27 @@ YAML::
 ----
 ====
 
+=== Building a batch from a stream of messages
+
+A stream of prompts, one per message, becomes a batch with the aggregator and `OpenAIBatchAggregationStrategy`. The
+body of each message is the value of its request, as for a `Map` body, and its `custom_id` is the
+`CamelOpenAIBatchCustomId` header when set, or the message id otherwise:
+
+[source,java]
+----
+from("kafka:tickets")
+    .setHeader("CamelOpenAIBatchCustomId", header("kafka.KEY"))
+    .aggregate(constant(true), new OpenAIBatchAggregationStrategy())
+        .completionSize(1000).completionTimeout(600000)
+    .to("openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini&systemMessage=Classify the ticket");
+----
+
+The strategy collects the requests in memory, which suits batches of a few thousand short requests. For larger
+batches, `OpenAIBatchAggregationStrategy.spooled()` writes them to a file in the temporary directory instead, or
+`new OpenAIBatchAggregationStrategy(path)` in a directory of your choice. The batch is then aggregated with constant
+memory, a persistent `AggregationRepository` stores a path rather than the requests, and the file is removed once
+the batch is created. Either way the `batch` operation streams the requests to the API one line at a time.
+
 == Waiting for the batch
 
 `batch-retrieve` reads `CamelOpenAIBatchId` and reports the batch on the headers, leaving the body untouched. A
@@ -106,44 +128,28 @@ it at `completed` and the next run retries it.
 
 == Reading the results
 
-`batch-results` reads `CamelOpenAIBatchId`, downloads the output file and sets it as an `InputStream`, so it can be
-split line by line. Set `batchResultsFile=error` for the failed requests instead. Each line carries the `custom_id`
-of its request.
+`batch-results` reads `CamelOpenAIBatchId`, downloads the output file and sets the body to an iterator of its lines,
+each parsed into a `Map`. Set `batchResultsFile=error` for the failed requests instead. Each line carries the
+`custom_id` of its request and the response of the endpoint under `response.body`.
 
-The polling routes above hand a finished batch to `direct:collect`, which reads the file. With the defaults, stream
-caching reads the file into memory when the next step runs, and the splitter works on that copy. For a batch of a
-few thousand requests this is fine, and the route needs nothing special:
+The polling routes above hand a finished batch to `direct:collect`. The splitter streams the iterator, so only the
+current line is in memory whatever the size of the file, and the download is closed once the last line is read:
 
 [source,java]
 ----
 from("direct:collect")
     .to("openai:batch-results")
-    .split(body().tokenize("\n"))
-        .setHeader("ticketId", jsonpath("$.custom_id"))
-        .setBody(jsonpath("$.response.body.choices[0].message.content"))
+    .split(body()).streaming()
+        .setHeader("ticketId", simple("${body[custom_id]}"))
+        .setBody(simple("${body[response][body][choices][0][message][content]}"))
         .to("sql:update ticket set category = :#${body} where id = :#${header.ticketId}")
     .end();
 ----
 
-A result file can reach hundreds of megabytes, and holding it in memory is then the problem. Turning stream
-caching off on the route keeps the body as the response stream, and a splitter in streaming mode reads it one line
-at a time as each line is processed. The body can then be read only once, which is what the splitter does:
-
-[source,java]
-----
-from("direct:collect")
-    .noStreamCaching()                       // keep the response as a stream instead of caching it in memory
-    .to("openai:batch-results")
-    .split(body().tokenize("\n")).streaming()   // read one line at a time
-        .setHeader("ticketId", jsonpath("$.custom_id"))
-        .setBody(jsonpath("$.response.body.choices[0].message.content"))
-        .to("sql:update ticket set category = :#${body} where id = :#${header.ticketId}")
-    .end();
-----
-
-An embedding backfill works the same way, straight into a vector store. Embedding vectors make for large result
-files, so this one uses the streaming form. The batch is created by the first route, and a polling route like the
-ones above hands it to `direct:store` once it is finished:
+An embedding backfill works the same way, straight into a vector store. The batch is created by the first route,
+and a polling route like the ones above hands it to `direct:store` once it is finished. The numbers of a result line
+are parsed as `Double`, while the vector store components read a `List<Float>`, so the vector is converted on the
+way:
 
 [source,java]
 ----
@@ -152,23 +158,25 @@ from("direct:embeddings")
     .to("openai:batch?batchEndpoint=/v1/embeddings&embeddingModel=text-embedding-3-small");
 
 from("direct:store")
-    .noStreamCaching()
     .to("openai:batch-results")
-    .split(body().tokenize("\n")).streaming()
+    .split(body()).streaming()
         .setHeader("CamelPgVectorAction", constant("UPSERT"))
-        .setHeader("CamelPgVectorRecordId", jsonpath("$.custom_id"))
-        .setBody(jsonpath("$.response.body.data[0].embedding"))
+        .setHeader("CamelPgVectorRecordId", simple("${body[custom_id]}"))
+        .setBody(simple("${body[response][body][data][0][embedding]}"))
+        .process(e -> e.getMessage().setBody(e.getMessage().getBody(List.class).stream()
+                .map(n -> ((Number) n).floatValue()).toList()))
         .to("pgvector:documents")
     .end();
 ----
 
 == Notes
 
-* The results stream is closed when the exchange completes, so it must be consumed inside the route.
+* The result lines are read from the download as the splitter consumes them, so they must be consumed inside the
+  route; the download is closed after the last line, or when the exchange completes.
 * `batch-results` downloads a file as soon as the API has created it, which happens when the batch stops
   processing (`completed`, `expired` or `cancelled`). It fails while the batch is still running, and for a `failed`
   batch it reports the validation errors, which are also in the `CamelOpenAIBatchErrors` header.
-* A batch without failures has no error file, and the body is then `null`, which splits into nothing.
+* A batch without failures has no error file, and the body is then an empty iterator, which splits into nothing.
 * The API accepts up to 50,000 requests or 200 MB per batch, and only a 24 hour completion window. Input files are
   kept for 30 days by default.
 * Because a batch request runs once, `streaming`, `conversationMemory`, `mcpServer` and `tags` are rejected when the

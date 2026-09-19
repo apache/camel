@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -81,20 +82,30 @@ public class OpenAIBatchMockTest extends CamelTestSupport {
                 from("direct:cancel")
                         .to("openai:batch-cancel");
                 from("direct:results")
-                        .noStreamCaching()
                         .to("openai:batch-results")
-                        .split(body().tokenize("\n")).streaming()
+                        .split(body()).streaming()
                         .to("mock:results")
                         .end();
                 from("direct:errors")
-                        .noStreamCaching()
                         .to("openai:batch-results?batchResultsFile=error")
-                        .split(body().tokenize("\n")).streaming()
+                        .split(body()).streaming()
                         .to("mock:errors")
                         .end();
+                from("direct:aggregate")
+                        .aggregate(constant(true), new OpenAIBatchAggregationStrategy()).completionSize(2)
+                        .to("openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini")
+                        .to("mock:aggregated");
+                from("direct:aggregateSpooled")
+                        .aggregate(constant(true), new OpenAIBatchAggregationStrategy(spoolDirectory))
+                        .completionSize(2)
+                        .to("openai:batch?batchEndpoint=/v1/chat/completions&model=gpt-4o-mini")
+                        .to("mock:aggregated");
             }
         };
     }
+
+    @TempDir
+    static Path spoolDirectory;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -252,10 +263,80 @@ public class OpenAIBatchMockTest extends CamelTestSupport {
 
     @Test
     void shouldRejectAnUnsupportedBody() {
-        assertThatThrownBy(() -> template.requestBody("direct:create", List.of("not a map")))
+        assertThatThrownBy(() -> template.requestBody("direct:create", new Object()))
                 .rootCause()
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Unsupported body type");
+    }
+
+    @Test
+    void shouldRejectANullValueBeforeUploading() {
+        Map<String, Object> prompts = new LinkedHashMap<>();
+        prompts.put("ticket-1", null);
+
+        assertThatThrownBy(() -> template.requestBody("direct:create", prompts))
+                .rootCause()
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("null custom_ids or values");
+        assertThat(openAIMock.getReceivedRequests()).isEmpty();
+    }
+
+    @Test
+    void shouldNumberTheLinesOfAListBody() {
+        template.requestBody("direct:create", List.of("I was charged twice", "The app crashes on startup"));
+
+        assertThat(openAIMock.getBatchStore().getUploadedFile().lines())
+                .hasSize(2)
+                .anySatisfy(line -> assertThat(line).contains("\"custom_id\":\"0\""))
+                .anySatisfy(line -> assertThat(line).contains("\"custom_id\":\"1\""));
+    }
+
+    @Test
+    void shouldAggregateMessagesIntoABatch() throws Exception {
+        MockEndpoint aggregated = getMockEndpoint("mock:aggregated");
+        aggregated.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:aggregate", "I was charged twice", OpenAIConstants.BATCH_CUSTOM_ID,
+                "ticket-1");
+        template.sendBody("direct:aggregate", "The app crashes on startup");
+
+        aggregated.assertIsSatisfied();
+        Exchange batch = aggregated.getExchanges().get(0);
+        assertThat(batch.getMessage().getHeader(OpenAIConstants.BATCH_ID, String.class)).isNotBlank();
+        // the custom_id is the header when set, and the message id otherwise
+        assertThat(openAIMock.getBatchStore().getUploadedFile().lines())
+                .hasSize(2)
+                .anySatisfy(line -> assertThat(line)
+                        .contains("\"custom_id\":\"ticket-1\"")
+                        .contains("\"content\":\"I was charged twice\""))
+                .anySatisfy(line -> assertThat(line)
+                        .contains("\"content\":\"The app crashes on startup\"")
+                        .matches(".*\"custom_id\":\"[0-9A-F]+-[0-9]+\".*"));
+    }
+
+    @Test
+    void shouldAggregateMessagesIntoASpooledBatch() throws Exception {
+        MockEndpoint aggregated = getMockEndpoint("mock:aggregated");
+        aggregated.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:aggregateSpooled", "I was charged twice", OpenAIConstants.BATCH_CUSTOM_ID,
+                "ticket-1");
+        template.sendBodyAndHeader("direct:aggregateSpooled", Map.of("model", "o3-mini", "messages", List.of()),
+                OpenAIConstants.BATCH_CUSTOM_ID, "ticket-2");
+
+        aggregated.assertIsSatisfied();
+        assertThat(openAIMock.getBatchStore().getUploadedFile().lines())
+                .hasSize(2)
+                .anySatisfy(line -> assertThat(line)
+                        .contains("\"custom_id\":\"ticket-1\"")
+                        .contains("\"content\":\"I was charged twice\""))
+                .anySatisfy(line -> assertThat(line)
+                        .contains("\"custom_id\":\"ticket-2\"")
+                        .contains("\"model\":\"o3-mini\""));
+        // the spool is consumed by the batch, so nothing is left in the directory
+        try (Stream<Path> files = Files.list(spoolDirectory)) {
+            assertThat(files).isEmpty();
+        }
     }
 
     @Test
@@ -295,10 +376,15 @@ public class OpenAIBatchMockTest extends CamelTestSupport {
         template.request("direct:results", e -> e.getIn().setHeader(OpenAIConstants.BATCH_ID, batchId));
 
         results.assertIsSatisfied();
-        List<String> lines = results.getExchanges().stream()
-                .map(e -> e.getMessage().getBody(String.class)).toList();
-        assertThat(lines.get(0)).contains("\"custom_id\":\"ticket-1\"").contains("billing");
-        assertThat(lines.get(1)).contains("\"custom_id\":\"ticket-2\"").contains("bug");
+        // each line is a map, so the route reads it with simple or jsonpath without parsing anything
+        List<Map<String, Object>> lines = results.getExchanges().stream()
+                .map(e -> e.getMessage().getBody(Map.class))
+                .map(m -> (Map<String, Object>) m)
+                .toList();
+        assertThat(lines.get(0)).containsEntry("custom_id", "ticket-1");
+        assertThat(lines.get(0).toString()).contains("billing");
+        assertThat(lines.get(1)).containsEntry("custom_id", "ticket-2");
+        assertThat(lines.get(1).toString()).contains("bug");
     }
 
     @Test
@@ -310,9 +396,9 @@ public class OpenAIBatchMockTest extends CamelTestSupport {
         template.request("direct:errors", e -> e.getIn().setHeader(OpenAIConstants.BATCH_ID, batchId));
 
         errors.assertIsSatisfied();
-        assertThat(errors.getExchanges().get(0).getMessage().getBody(String.class))
-                .contains("\"custom_id\":\"ticket-3\"")
-                .contains("rate_limit_exceeded");
+        Map<String, Object> line = errors.getExchanges().get(0).getMessage().getBody(Map.class);
+        assertThat(line).containsEntry("custom_id", "ticket-3");
+        assertThat(line.toString()).contains("rate_limit_exceeded");
     }
 
     @Test

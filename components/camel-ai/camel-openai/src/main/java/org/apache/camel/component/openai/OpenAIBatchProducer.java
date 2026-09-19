@@ -17,11 +17,15 @@
 package org.apache.camel.component.openai;
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,6 +45,7 @@ import com.openai.models.moderations.ModerationCreateParams;
 import com.openai.models.responses.ResponseCreateParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.component.openai.OpenAIResponsesInputBuilder.InputSpec;
@@ -56,8 +61,9 @@ import org.slf4j.LoggerFactory;
  * The body is either the JSONL itself, as a {@link File}, {@link Path}, {@link WrappedFile}, {@link InputStream},
  * {@code byte[]} or String, or a {@link Map} keyed by {@code custom_id}. A map value that is itself a map is used as
  * the request body as it is, while a String value is turned into a request built from the endpoint options, so a route
- * that only has prompts does not have to assemble the API payload itself. Such a request is built with the same SDK
- * parameters as the synchronous operation of the endpoint, so the options and headers of that operation apply.
+ * that only has prompts does not have to assemble the API payload itself. An {@link Iterable} body, such as the
+ * {@link OpenAIBatchSpool} of an aggregation, is read the same way one item at a time. Such a request is built with the
+ * same SDK parameters as the synchronous operation of the endpoint, so the options and headers of that operation apply.
  */
 public class OpenAIBatchProducer extends DefaultProducer {
 
@@ -101,23 +107,27 @@ public class OpenAIBatchProducer extends DefaultProducer {
         Object body = in.getBody();
         String inputFileId;
         if (body instanceof Map<?, ?> map) {
-            // an in-memory upload is the one the SDK can resend on a transient failure
-            byte[] lines = requestLines(map, endpoint, in, config);
-            inputFileId = upload(exchange, new ByteArrayInputStream(lines), INPUT_FILE_NAME);
+            inputFileId = upload(exchange, requestLines(map.entrySet(), endpoint, in, config), INPUT_FILE_NAME);
+        } else if (body instanceof Iterable<?> items) {
+            inputFileId = upload(exchange, requestLines(items, endpoint, in, config), INPUT_FILE_NAME);
         } else {
             InputStream stream = in.getBody(InputStream.class);
             if (stream == null) {
                 throw new IllegalArgumentException(
                         "Unsupported body type for the batch operation: "
                                                    + (body != null ? body.getClass().getName() : "null")
-                                                   + ". Supported: File, Path, InputStream, byte[], String, or a Map "
-                                                   + "keyed by custom_id");
+                                                   + ". Supported: File, Path, InputStream, byte[], String, a Map "
+                                                   + "keyed by custom_id, or an Iterable");
             }
             inputFileId = upload(exchange, stream, inputFileName(body));
         }
         in.setHeader(OpenAIConstants.BATCH_INPUT_FILE_ID, inputFileId);
 
         Batch batch = create(exchange, inputFileId, endpoint, in, config);
+        if (body instanceof OpenAIBatchSpool spool) {
+            // the spool of an aggregation is consumed by this batch, so it is not left behind in the directory
+            spool.delete();
+        }
         if (config.isStoreFullResponse()) {
             exchange.setProperty(OpenAIConstants.BATCH_RESPONSE, batch);
         }
@@ -190,39 +200,77 @@ public class OpenAIBatchProducer extends DefaultProducer {
     }
 
     /**
-     * Turns a map keyed by {@code custom_id} into the request lines of the input file, writing the envelope every line
-     * needs around the request body.
+     * Turns the requests into the lines of the input file, one at a time while the upload reads them, so a batch of any
+     * size is uploaded with only the current line in memory. An item that is a {@link Map.Entry} is a {@code custom_id}
+     * and its value, as the entries of a {@link Map} body or an {@link OpenAIBatchSpool}; any other item is a value
+     * whose {@code custom_id} is its position. The first line is built before the upload starts, so an option missing
+     * for the requests is reported as such rather than as an upload failure.
      */
-    private byte[] requestLines(Map<?, ?> body, String endpoint, Message in, OpenAIConfiguration config)
+    private InputStream requestLines(Iterable<?> items, String endpoint, Message in, OpenAIConfiguration config)
             throws Exception {
-        StringBuilder lines = new StringBuilder();
-        for (Map.Entry<?, ?> entry : body.entrySet()) {
-            if (entry.getKey() == null || entry.getValue() == null) {
-                throw new IllegalArgumentException("The batch input map must not contain null keys or values");
-            }
-            String customId = String.valueOf(entry.getKey());
-            Object value = entry.getValue();
+        Iterator<?> iterator = items.iterator();
+        Enumeration<InputStream> lines = new Enumeration<>() {
+            private int index;
 
-            Object requestBody;
-            if (value instanceof Map || value instanceof JsonNode) {
-                requestBody = value;
-            } else if (value instanceof String text) {
-                requestBody = requestBody(endpoint, text, in, config);
-            } else {
-                throw new IllegalArgumentException(
-                        "Unsupported batch input value for custom_id " + customId + ": "
-                                                   + value.getClass().getName()
-                                                   + ". Supported: String, Map or JsonNode");
+            @Override
+            public boolean hasMoreElements() {
+                return iterator.hasNext();
             }
 
-            Map<String, Object> line = new LinkedHashMap<>();
-            line.put("custom_id", customId);
-            line.put("method", "POST");
-            line.put("url", endpoint);
-            line.put("body", requestBody);
-            lines.append(OBJECT_MAPPER.writeValueAsString(line)).append('\n');
+            @Override
+            public InputStream nextElement() {
+                Object item = iterator.next();
+                try {
+                    return new ByteArrayInputStream(requestLine(item, index++, endpoint, in, config));
+                } catch (RuntimeException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Cannot build batch request line " + index, e);
+                }
+            }
+        };
+        // the sequence reads its first line now, and the rest as the upload consumes them
+        return new SequenceInputStream(lines) {
+            @Override
+            public void close() throws IOException {
+                super.close();
+                if (iterator instanceof Closeable closeable) {
+                    closeable.close();
+                }
+            }
+        };
+    }
+
+    private byte[] requestLine(Object item, int index, String endpoint, Message in, OpenAIConfiguration config)
+            throws Exception {
+        Object key = index;
+        Object value = item;
+        if (item instanceof Map.Entry<?, ?> entry) {
+            key = entry.getKey();
+            value = entry.getValue();
         }
-        return lines.toString().getBytes(StandardCharsets.UTF_8);
+        if (key == null || value == null) {
+            throw new IllegalArgumentException("The batch input must not contain null custom_ids or values");
+        }
+        String customId = String.valueOf(key);
+
+        Object requestBody;
+        if (value instanceof Map || value instanceof JsonNode) {
+            requestBody = value;
+        } else if (value instanceof String text) {
+            requestBody = requestBody(endpoint, text, in, config);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported batch input value for custom_id " + customId + ": " + value.getClass().getName()
+                                               + ". Supported: String, Map or JsonNode");
+        }
+
+        Map<String, Object> line = new LinkedHashMap<>();
+        line.put("custom_id", customId);
+        line.put("method", "POST");
+        line.put("url", endpoint);
+        line.put("body", requestBody);
+        return (OBJECT_MAPPER.writeValueAsString(line) + "\n").getBytes(StandardCharsets.UTF_8);
     }
 
     /**

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,20 +29,17 @@ import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * OpenAI producer for the {@code batch-results} operation, which downloads the output or error file of a finished
  * batch.
  * <p>
- * The body is the file as an {@link java.io.InputStream}, so a large result can be split line by line with the splitter
- * in streaming mode. The HTTP response is closed when the exchange completes. Stream caching reads such a body into
- * memory before the next step, so a route handling large results should turn it off.
+ * The body is an {@link java.util.Iterator} of the lines of the file, each parsed into a {@link Map}, read from the
+ * response as the splitter consumes them, so a result of any size is handled with only the current line in memory. The
+ * response is closed once the last line is read, or when the exchange completes.
  */
 public class OpenAIBatchResultsProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OpenAIBatchResultsProducer.class);
     private static final String ERROR_FILE = "error";
 
     public OpenAIBatchResultsProducer(OpenAIEndpoint endpoint) {
@@ -93,7 +91,7 @@ public class OpenAIBatchResultsProducer extends DefaultProducer {
                 }
                 case COMPLETED, EXPIRED, CANCELLED ->
                     // a batch without failures has no error file, and one without successes no output file
-                    exchange.getMessage().setBody(null);
+                    exchange.getMessage().setBody(Collections.emptyIterator());
                 default -> throw new CamelExchangeException(
                         "Batch " + batchId + " is " + batch.status().asString() + " and has no " + resultsFile
                                                             + " file yet",
@@ -109,17 +107,14 @@ public class OpenAIBatchResultsProducer extends DefaultProducer {
             GenAiErrorSupport.apply(exchange, e);
             throw e;
         }
+        OpenAIBatchResultLines lines = new OpenAIBatchResultLines(response);
+        // the lines close the response once read to the end; this covers a route that stops before that
         exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange completed) {
-                try {
-                    response.close();
-                } catch (Exception e) {
-                    // the exchange is done, so a failure to close the response must not replace its outcome
-                    LOG.debug("Could not close the batch results response of batch {}", batchId, e);
-                }
+                lines.close();
             }
         });
-        exchange.getMessage().setBody(response.body());
+        exchange.getMessage().setBody(lines);
     }
 }

@@ -146,6 +146,10 @@ public final class OpenAIConstants {
     @Metadata(description = "Metadata to attach to the batch. Overrides the batchMetadata option",
               javaType = "java.util.Map<String, String>")
     public static final String BATCH_METADATA = "CamelOpenAIBatchMetadata";
+    @Metadata(description = "The custom_id of the request that OpenAIBatchAggregationStrategy builds from this "
+                            + "message. Defaults to the message id",
+              javaType = "String")
+    public static final String BATCH_CUSTOM_ID = "CamelOpenAIBatchCustomId";
     @Metadata(description = "Which result file the batch-results operation downloads: 'output' or 'error'. "
                             + "Overrides the batchResultsFile option",
               javaType = "String")
