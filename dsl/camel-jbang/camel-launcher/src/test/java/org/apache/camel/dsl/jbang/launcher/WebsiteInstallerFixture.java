@@ -455,15 +455,18 @@ final class WebsiteInstallerFixture implements AutoCloseable {
                     pb.environment().put(name, value);
                 }
             }
-            // Limit module discovery to Windows PowerShell's built-in modules, which hold every cmdlet
-            // install.ps1 uses. Without PSModulePath, or with the runner's own, the first cmdlet call
-            // (install.ps1's Join-Path on line 29) spends ~18s searching the other module directories on
-            // windows-latest, which made every install.ps1 run in this suite cost ~20s.
-            if (sysRoot != null) {
-                pb.environment().put("PSModulePath", sysRoot + "\\System32\\WindowsPowerShell\\v1.0\\Modules");
-            }
         }
         pb.environment().putAll(env);
+        String userProfile = env.get("USERPROFILE");
+        if (FakeJava.WINDOWS && userProfile != null) {
+            // Point PSModulePath at the isolated home's own (empty) user module directory. When PSModulePath
+            // is unset, or lists Windows PowerShell's built-in module directory, the first cmdlet call
+            // (install.ps1's Join-Path on line 29) spends ~18s on windows-latest, whose
+            // Program Files\WindowsPowerShell\Modules holds AWSPowerShell, Microsoft.Graph and SqlServer; that
+            // made every install.ps1 run in this suite cost ~20s. With only an unrelated directory listed, the
+            // same call takes 0.2s and Windows PowerShell still finds its built-in cmdlets.
+            pb.environment().put("PSModulePath", Path.of(userProfile, "Documents", "WindowsPowerShell", "Modules").toString());
+        }
         String home = env.get("HOME");
         if (home != null && Files.isDirectory(Path.of(home))) {
             // Any accidental relative-path side effect lands in the isolated test HOME rather than
