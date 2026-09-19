@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -38,38 +39,51 @@ import org.apache.camel.util.json.JsonObject;
 public class ExampleTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "List available Camel CLI examples. "
-                        + "Returns name, title, description, difficulty level, and tags. "
-                        + "Use filter to search by name, description, or tag. "
-                        + "Use level to filter by difficulty (beginner, intermediate, advanced).")
+          description = "List the Camel CLI examples, grouped as the ladder of the examples: "
+                        + "quick-start, run, transform, route, fail-well, connect, connect-service, contracts, ai, "
+                        + "cloud and showcase, in that reading order. Returns the groups (level, title, introduction) "
+                        + "and the examples in reading order with name, title, description, level, order, tags, "
+                        + "what they teach (components, EIPs, languages, data formats), the infra services they need "
+                        + "(start them with camel infra run), whether they are bundled and their files. "
+                        + "Call it without arguments for the whole ladder, with level for one group, "
+                        + "or with filter to search by name, description or tag. "
+                        + "Use camel_catalog_example_file to read a file of an example.")
     public ExampleListResult camel_catalog_examples(
-            @ToolArg(description = "Filter examples by name, description, or tag (case-insensitive substring match)") String filter,
-            @ToolArg(description = "Filter by difficulty level: beginner, intermediate, or advanced") String level,
-            @ToolArg(description = "Maximum number of results to return (default: 50)") Integer limit) {
+            @ToolArg(description = "Filter examples by name, description, or tag (case-insensitive substring match)",
+                     required = false) String filter,
+            @ToolArg(description = "Only the examples of one group (level): quick-start, run, transform, route, "
+                                   + "fail-well, connect, connect-service, contracts, ai, cloud or showcase",
+                     required = false) String level,
+            @ToolArg(description = "Maximum number of examples to return (default: 50)",
+                     required = false) Integer limit) {
 
-        int maxResults = limit != null ? limit : 50;
+        int maxResults = limit != null && limit > 0 ? limit : 50;
 
         try {
             List<JsonObject> catalog = ExampleHelper.loadCatalog();
             List<JsonObject> filtered = ExampleHelper.filterExamples(catalog, filter);
 
+            List<GroupInfo> groups = new ArrayList<>();
             List<ExampleInfo> result = new ArrayList<>();
-            for (JsonObject entry : filtered) {
-                if (level != null && !level.isBlank()) {
-                    String entryLevel = entry.getString("level");
-                    if (entryLevel == null || !entryLevel.equalsIgnoreCase(level)) {
-                        continue;
-                    }
+            int total = 0;
+            for (Map.Entry<String, List<JsonObject>> group : ExampleHelper.groupByLevel(filtered).entrySet()) {
+                if (level != null && !level.isBlank() && !group.getKey().equalsIgnoreCase(level)) {
+                    continue;
                 }
-
-                result.add(toExampleInfo(entry));
-
-                if (result.size() >= maxResults) {
-                    break;
+                total += group.getValue().size();
+                groups.add(new GroupInfo(
+                        group.getKey(),
+                        ExampleHelper.getGroupTitle(group.getKey()),
+                        ExampleHelper.getGroupIntro(group.getKey()),
+                        group.getValue().size()));
+                for (JsonObject entry : group.getValue()) {
+                    if (result.size() < maxResults) {
+                        result.add(toExampleInfo(entry));
+                    }
                 }
             }
 
-            return new ExampleListResult(result.size(), result);
+            return new ExampleListResult(result.size(), total, groups, result);
         } catch (Throwable e) {
             throw new ToolCallException(
                     "Failed to list examples (" + e.getClass().getName() + "): " + e.getMessage(), null);
@@ -136,7 +150,10 @@ public class ExampleTools {
                 entry.getString("title"),
                 entry.getString("description"),
                 entry.getString("level"),
+                ExampleHelper.getOrder(entry) == Integer.MAX_VALUE ? null : ExampleHelper.getOrder(entry),
                 tags != null ? new ArrayList<>(tags) : List.of(),
+                ExampleHelper.getTeaches(entry),
+                ExampleHelper.getInfraServices(entry),
                 ExampleHelper.isBundled(entry),
                 ExampleHelper.requiresDocker(entry),
                 ExampleHelper.getFiles(entry));
@@ -144,11 +161,15 @@ public class ExampleTools {
 
     // Result records
 
-    public record ExampleListResult(int count, List<ExampleInfo> examples) {
+    public record ExampleListResult(int count, int total, List<GroupInfo> groups, List<ExampleInfo> examples) {
     }
 
-    public record ExampleInfo(String name, String title, String description, String level,
-            List<String> tags, boolean bundled, boolean requiresDocker, List<String> files) {
+    public record GroupInfo(String level, String title, String intro, int count) {
+    }
+
+    public record ExampleInfo(String name, String title, String description, String level, Integer order,
+            List<String> tags, Map<String, List<String>> teaches, List<String> infraServices,
+            boolean bundled, boolean requiresDocker, List<String> files) {
     }
 
     public record ExampleFileResult(String example, String file, String content, String githubUrl) {
