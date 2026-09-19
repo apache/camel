@@ -64,8 +64,6 @@ final class WebsiteInstallerFixture implements AutoCloseable {
     private static final String KEY_ALIAS = "camel-installer-test";
     private static final String DEFAULT_BASE_VERSION = "9.9.9";
     private static final Duration PROCESS_TIMEOUT = Duration.ofSeconds(60);
-    private static final Path POWERSHELL_MODULE_ANALYSIS_CACHE
-            = Path.of("target", "powershell", "ModuleAnalysisCache").toAbsolutePath();
 
     record Result(int exit, String stdout, String stderr) {
     }
@@ -457,13 +455,18 @@ final class WebsiteInstallerFixture implements AutoCloseable {
                     pb.environment().put(name, value);
                 }
             }
-            // PowerShell keeps its module analysis cache under LOCALAPPDATA, which every test points at a
-            // fresh home, so each powershell.exe launch would rebuild it from scratch when auto-loading
-            // Expand-Archive / Get-FileHash. Share one cache file across the whole test run instead.
-            Files.createDirectories(POWERSHELL_MODULE_ANALYSIS_CACHE.getParent());
-            pb.environment().put("PSModuleAnalysisCachePath", POWERSHELL_MODULE_ANALYSIS_CACHE.toString());
         }
         pb.environment().putAll(env);
+        String userProfile = env.get("USERPROFILE");
+        if (FakeJava.WINDOWS && userProfile != null) {
+            // Point PSModulePath at the isolated home's own (empty) user module directory. When PSModulePath
+            // is unset, or lists Windows PowerShell's built-in module directory, the first cmdlet call
+            // (install.ps1's Join-Path on line 29) spends ~18s on windows-latest, whose
+            // Program Files\WindowsPowerShell\Modules holds AWSPowerShell, Microsoft.Graph and SqlServer; that
+            // made every install.ps1 run in this suite cost ~20s. With only an unrelated directory listed, the
+            // same call takes 0.2s and Windows PowerShell still finds its built-in cmdlets.
+            pb.environment().put("PSModulePath", Path.of(userProfile, "Documents", "WindowsPowerShell", "Modules").toString());
+        }
         String home = env.get("HOME");
         if (home != null && Files.isDirectory(Path.of(home))) {
             // Any accidental relative-path side effect lands in the isolated test HOME rather than
