@@ -51,7 +51,7 @@ public class StaticEndpointBuilders {
                         + "@param path " + $mojo.pathParameterJavaDoc($model) + $newline
                         + "@return the dsl builder" + $newline )
     ${mojo.javadoc("    ", $javadoc)}
-    #if( $model.deprecated )
+    #if( $model.deprecated || !$firstAlias )
     @Deprecated
     #end
     public static ${builderName}Factory.${builderName} ${mojo.camelCaseLower($model.scheme)}(String path) {

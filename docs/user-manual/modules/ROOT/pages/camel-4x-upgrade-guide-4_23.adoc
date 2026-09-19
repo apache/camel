@@ -613,7 +613,7 @@ The `camel-openai` component now registers the primary URI scheme `llm` alongsid
 Java packages, exchange headers (`CamelOpenAI*`), and the Maven artifact id are unchanged.
 
 When using the Java Endpoint DSL, the primary scheme name changes generated helper methods:
-`EndpointHeaderBuilders.openai()` is replaced by `llm()`. Use `llm(path)` or `openai(path)`
+`EndpointHeaderBuilders.openai()` is deprecated in favour of `llm()`. Use `llm(path)` or `openai(path)`
 (both delegate to the same component). The Component DSL still exposes both
 `Components.llm()` and `Components.openai()`.
 

@@ -300,11 +300,18 @@ public interface ${builderName}Factory {
     #else
         #set( $firstAlias = true )
         #foreach( $componentModel in $aliases )
-            #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
+            #if( $foreach.index > 0 )
+        #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
+                            + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}(String)} instead." + $newline
                             + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
                             + "@return the dsl builder" + $newline )
+            #else
+        #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
+                            + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
+                            + "@return the dsl builder" + $newline )
+            #end
         ${mojo.javadoc("        ", $javadoc)}
-            #if( $componentModel.deprecated )
+            #if( $componentModel.deprecated || $foreach.index > 0 )
         @Deprecated
             #end
         default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String path) {

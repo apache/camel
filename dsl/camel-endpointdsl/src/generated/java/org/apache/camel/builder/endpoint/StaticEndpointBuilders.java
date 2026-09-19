@@ -3597,6 +3597,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapTcp(String path) {
         return coap("coap+tcp", path);
     }
@@ -3617,6 +3618,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coaps(String path) {
         return coap("coaps", path);
     }
@@ -3637,6 +3639,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapsTcp(String path) {
         return coap("coaps+tcp", path);
     }
@@ -3720,6 +3723,7 @@ public class StaticEndpointBuilders {
      * @param path host:port/channelName
      * @return the dsl builder
      */
+    @Deprecated
     public static CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(String path) {
         return cometd("cometds", path);
     }
@@ -7094,6 +7098,50 @@ public class StaticEndpointBuilders {
         return HashicorpVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Hazelcast Atomic Number (camel-hazelcast)
+     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
+     * number).
+     * 
+     * Category: cache,clustering
+     * Since: 2.7
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
+     * 
+     * @param path cacheName
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String path) {
+        return hazelcastAtomicvalue("hazelcast-atomicvalue", path);
+    }
+    /**
+     * Hazelcast Atomic Number (camel-hazelcast)
+     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
+     * number).
+     * 
+     * Category: cache,clustering
+     * Since: 2.7
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path cacheName
+     * @return the dsl builder
+     */
+    @Deprecated
+    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String componentName, String path) {
+        return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
@@ -7633,6 +7681,7 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
+    @Deprecated
     public static HttpEndpointBuilderFactory.HttpEndpointBuilder https(String path) {
         return http("https", path);
     }
@@ -8695,6 +8744,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder imaps(String path) {
         return imap("imaps", path);
     }
@@ -11245,12 +11295,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>llm:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses', 'embeddings',
-     * 'tool-execution', 'audio-transcription', 'audio-translation', or
-     * 'audio-speech'
-     * There are 7 enums and the value can be one of: chat-completion,
-     * responses, embeddings, tool-execution, audio-transcription,
-     * audio-translation, audio-speech
+     * The operation to perform: 'chat-completion', 'responses',
+     * 'responses-retrieve', 'responses-cancel', 'embeddings', 'tool-execution',
+     * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
+     * 'image-generation', or 'image-edit'
+     * There are 12 enums and the value can be one of: chat-completion,
+     * responses, responses-retrieve, responses-cancel, embeddings,
+     * tool-execution, audio-transcription, audio-translation, audio-speech,
+     * moderation, image-generation, image-edit
      * 
      * @param path operation
      * @return the dsl builder
@@ -11271,12 +11323,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>llm:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses', 'embeddings',
-     * 'tool-execution', 'audio-transcription', 'audio-translation', or
-     * 'audio-speech'
-     * There are 7 enums and the value can be one of: chat-completion,
-     * responses, embeddings, tool-execution, audio-transcription,
-     * audio-translation, audio-speech
+     * The operation to perform: 'chat-completion', 'responses',
+     * 'responses-retrieve', 'responses-cancel', 'embeddings', 'tool-execution',
+     * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
+     * 'image-generation', or 'image-edit'
+     * There are 12 enums and the value can be one of: chat-completion,
+     * responses, responses-retrieve, responses-cancel, embeddings,
+     * tool-execution, audio-transcription, audio-translation, audio-speech,
+     * moderation, image-generation, image-edit
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12805,38 +12859,9 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String path) {
         return llm("openai", path);
-    }
-    /**
-     * OpenAI (camel-openai)
-     * LLM endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech using
-     * OpenAI-compatible APIs. The openai scheme is a supported alias.
-     * 
-     * Category: ai
-     * Since: 4.17
-     * Maven coordinates: org.apache.camel:camel-openai
-     * 
-     * Syntax: <code>openai:operation</code>
-     * 
-     * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
-     * 'responses-retrieve', 'responses-cancel', 'embeddings', 'tool-execution',
-     * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
-     * 'image-generation', or 'image-edit'
-     * There are 12 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, embeddings,
-     * tool-execution, audio-transcription, audio-translation, audio-speech,
-     * moderation, image-generation, image-edit
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path operation
-     * @return the dsl builder
-     */
-    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String componentName, String path) {
-        return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * OpenSearch (camel-opensearch)
@@ -13807,6 +13832,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3(String path) {
         return imap("pop3", path);
     }
@@ -13829,6 +13855,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3s(String path) {
         return imap("pop3s", path);
     }
@@ -15424,6 +15451,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static SmppEndpointBuilderFactory.SmppEndpointBuilder smpps(String path) {
         return smpp("smpps", path);
     }
@@ -15446,6 +15474,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder smtp(String path) {
         return imap("smtp", path);
     }
@@ -15468,6 +15497,7 @@ public class StaticEndpointBuilders {
      * @param path host:port
      * @return the dsl builder
      */
+    @Deprecated
     public static MailEndpointBuilderFactory.MailEndpointBuilder smtps(String path) {
         return imap("smtps", path);
     }
