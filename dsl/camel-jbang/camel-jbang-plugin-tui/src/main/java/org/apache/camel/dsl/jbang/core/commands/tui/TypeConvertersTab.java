@@ -187,7 +187,7 @@ class TypeConvertersTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, visible.size());
+        renderScrollbar(frame, table, visible.size());
     }
 
     @Override

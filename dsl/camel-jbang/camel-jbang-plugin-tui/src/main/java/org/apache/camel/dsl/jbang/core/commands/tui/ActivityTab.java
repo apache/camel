@@ -204,7 +204,7 @@ class ActivityTab extends AbstractTableTab {
 
         lastTableArea = chunks.get(1);
         frame.renderStatefulWidget(table, chunks.get(1), tableState);
-        renderScrollbar(frame, sorted.size());
+        renderScrollbar(frame, table, sorted.size());
 
         if (showDetail) {
             renderDetail(frame, chunks.get(2), selectedEntry);

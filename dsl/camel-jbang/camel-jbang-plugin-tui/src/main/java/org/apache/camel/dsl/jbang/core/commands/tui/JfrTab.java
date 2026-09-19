@@ -402,7 +402,7 @@ class JfrTab extends AbstractTab {
                 .build();
         lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, scrollState, data.size());
+        renderTableScrollbar(frame, lastTableArea, table, tableState, scrollState, data.size());
 
         Integer selectedRoute = tableState.selected();
         if (selectedRoute != null && selectedRoute >= 0 && selectedRoute < data.size()) {
@@ -471,7 +471,7 @@ class JfrTab extends AbstractTab {
                         .title(" Processors [" + routeId + "] (" + data.size() + ") ").build())
                 .build();
         frame.renderStatefulWidget(table, area, processorTableState);
-        renderTableScrollbar(frame, area, processorTableState, processorScrollState, data.size());
+        renderTableScrollbar(frame, area, table, processorTableState, processorScrollState, data.size());
     }
 
     private void renderProcessorsTable(Frame frame, Rect area) {
@@ -526,7 +526,7 @@ class JfrTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, scrollState, data.size());
+        renderTableScrollbar(frame, lastTableArea, table, tableState, scrollState, data.size());
     }
 
     private void renderEndpointsTable(Frame frame, Rect area) {
@@ -577,7 +577,7 @@ class JfrTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, scrollState, data.size());
+        renderTableScrollbar(frame, lastTableArea, table, tableState, scrollState, data.size());
     }
 
     private void renderFailuresTable(Frame frame, Rect area) {
@@ -613,7 +613,7 @@ class JfrTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, scrollState, failureData.size());
+        renderTableScrollbar(frame, lastTableArea, table, tableState, scrollState, failureData.size());
     }
 
     private void renderRedeliveriesTable(Frame frame, Rect area) {
@@ -646,7 +646,7 @@ class JfrTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderTableScrollbar(frame, lastTableArea, tableState, scrollState, redeliveryData.size());
+        renderTableScrollbar(frame, lastTableArea, table, tableState, scrollState, redeliveryData.size());
     }
 
     private static String formatMs(double ms) {

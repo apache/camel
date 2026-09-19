@@ -17,8 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import dev.tamboui.backend.jline3.JLineBackend;
-import dev.tamboui.internal.record.RecordingBackend;
-import dev.tamboui.internal.record.RecordingConfig;
 import dev.tamboui.terminal.Backend;
 import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
@@ -40,26 +38,12 @@ final class TuiBackendHelper {
         return createTuiRunner(backend);
     }
 
+    /**
+     * Creates the runner for an explicitly built backend. {@code TuiRunner.create} wraps it for Asciinema recording
+     * itself when {@code --record} configured the {@code tamboui.record*} system properties.
+     */
     static TuiRunner createTuiRunner(Backend backend) throws Exception {
         return TuiRunner.create(
-                TuiConfig.builder().backend(applyRecording(backend)).mouseCapture(true).bracketedPaste(true).build());
-    }
-
-    /**
-     * Wraps the backend for Asciinema recording when {@code --record} configured the {@code tamboui.record*} system
-     * properties.
-     * <p>
-     * TamboUI normally does this inside {@code BackendFactory.create()}, but {@code TuiRunner} only calls that factory
-     * when no explicit backend is configured. Because we must pass an explicit backend (see
-     * {@link #createTuiRunner()}), the wrapping has to be done here instead, otherwise {@code --record} exits cleanly
-     * without replaying the tape or writing a {@code .cast} file.
-     */
-    static Backend applyRecording(Backend backend) {
-        // Guard on isEnabled() first: load() caches its result process-wide and installs a System.out capture
-        if (!RecordingConfig.isEnabled()) {
-            return backend;
-        }
-        RecordingConfig config = RecordingConfig.load();
-        return config != null ? new RecordingBackend(backend, config) : backend;
+                TuiConfig.builder().backend(backend).mouseCapture(true).bracketedPaste(true).build());
     }
 }

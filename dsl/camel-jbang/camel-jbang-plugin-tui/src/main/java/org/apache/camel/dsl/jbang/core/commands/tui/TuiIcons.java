@@ -21,8 +21,10 @@ import java.util.List;
 /**
  * Single source of truth for emoji and symbolic icons used across the Camel TUI.
  * <p/>
- * Tab/menu icons use plain 2-column-wide emoji without VS16 variation selectors (see CAMEL-23818). Doctor and legacy
- * status glyphs may still use mixed-width symbols until migrated.
+ * Tab/menu icons are 2-column emoji. A text-default glyph such as the keyboard or the wastebasket must carry the VS16
+ * variation selector (U+FE0F): TamboUI counts the bare glyph as 2 columns while terminals draw it in 1, and with VS16
+ * both TamboUI 0.5.0 (tamboui/tamboui#388) and the xterm.js grapheme width tables used by {@code --web} agree on 2.
+ * Doctor and legacy status glyphs may still use mixed-width symbols until migrated.
  */
 final class TuiIcons {
 
@@ -60,18 +62,17 @@ final class TuiIcons {
     // memo (📝) reads as "edit"; the letters glyph reads as changing the name
     static final String RENAME = "🔤";
     static final String DUPLICATE = "📑";
-    // NOTE: the wastebasket emoji (🗑) is width-ambiguous and TamboUI does not align it correctly yet, so use the
-    // cross-mark instead until that is fixed upstream.
-    static final String DELETE = "❌";
+    static final String DELETE = "🗑️";
 
     // ---- Actions menu ----
     static final String GO_TO = "🔍";
     static final String MESSAGE = "📩";
-    static final String KEYSTROKES = "🔤";
+    static final String KEYSTROKES = "⌨️";
     static final String SLEEP = "💤";
     static final String STOP = "🛑";
     static final String QUIT = "🚪";
-    static final String RECORD = "🔴";
+    static final String RECORD = "⏺️";
+    static final String STOP_RECORD = "⏹️";
     static final String DOCTOR = "🩺";
     static final String RESET = "🔄";
     static final String CLEAN = "🧹";
