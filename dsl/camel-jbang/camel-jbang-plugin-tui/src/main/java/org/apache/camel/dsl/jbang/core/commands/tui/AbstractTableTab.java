@@ -26,6 +26,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
@@ -138,7 +139,7 @@ abstract class AbstractTableTab extends AbstractTab {
         return sortStyle(column, sort);
     }
 
-    protected void renderScrollbar(Frame frame, int rowCount) {
-        renderTableScrollbar(frame, lastTableArea, tableState, tableScrollState, rowCount);
+    protected void renderScrollbar(Frame frame, Table table, int rowCount) {
+        renderTableScrollbar(frame, lastTableArea, table, tableState, tableScrollState, rowCount);
     }
 }

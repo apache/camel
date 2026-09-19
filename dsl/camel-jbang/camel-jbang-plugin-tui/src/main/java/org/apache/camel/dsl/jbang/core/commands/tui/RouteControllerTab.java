@@ -147,7 +147,7 @@ class RouteControllerTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, sorted.size());
+        renderScrollbar(frame, table, sorted.size());
     }
 
     private void renderEmptyState(Frame frame, Rect area, String message, String title) {

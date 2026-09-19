@@ -1298,10 +1298,9 @@ class HistoryTab extends AbstractTab {
                 .build();
 
         lastTraceTableArea = area;
-        int traceVisibleRows = Math.max(0, area.height() - 3);
-        traceTableState.scrollToSelected(traceVisibleRows, rows);
+        traceTableState.scrollToSelected(table.viewportHeight(area), rows);
         frame.renderStatefulWidget(table, area, traceTableState);
-        renderTableScrollbar(frame, lastTraceTableArea, traceTableState, tableScrollState,
+        renderTableScrollbar(frame, lastTraceTableArea, table, traceTableState, tableScrollState,
                 traceSortedExchangeIds.size());
     }
 
@@ -1332,12 +1331,10 @@ class HistoryTab extends AbstractTab {
         Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastTraceStepArea = chunks.get(0);
         detailSplit.setBorderPos(chunks.get(1).y());
-        int stepVisibleRows = Math.max(0, chunks.get(0).height() - 3);
-        traceStepTableState.scrollToSelected(stepVisibleRows, rows);
-        frame.renderStatefulWidget(
-                buildStepTable(rows, stepTitle, showDescription, tableBorderStyle, tableHighlight),
-                chunks.get(0), traceStepTableState);
-        renderTableScrollbar(frame, lastTraceStepArea, traceStepTableState, traceStepScrollState,
+        Table stepTable = buildStepTable(rows, stepTitle, showDescription, tableBorderStyle, tableHighlight);
+        traceStepTableState.scrollToSelected(stepTable.viewportHeight(chunks.get(0)), rows);
+        frame.renderStatefulWidget(stepTable, chunks.get(0), traceStepTableState);
+        renderTableScrollbar(frame, lastTraceStepArea, stepTable, traceStepTableState, traceStepScrollState,
                 steps.size());
 
         if (showWaterfall) {
@@ -1618,12 +1615,10 @@ class HistoryTab extends AbstractTab {
         Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastHistoryTableArea = chunks.get(0);
         vSplit.setBorderPos(chunks.get(1).y());
-        int histVisibleRows = Math.max(0, chunks.get(0).height() - 3);
-        historyTableState.scrollToSelected(histVisibleRows, rows);
-        frame.renderStatefulWidget(
-                buildStepTable(rows, historyTitle, showDescription, tableBorderStyle, tableHighlight),
-                chunks.get(0), historyTableState);
-        renderTableScrollbar(frame, lastHistoryTableArea, historyTableState, historyTableScrollState,
+        Table historyTable = buildStepTable(rows, historyTitle, showDescription, tableBorderStyle, tableHighlight);
+        historyTableState.scrollToSelected(historyTable.viewportHeight(chunks.get(0)), rows);
+        frame.renderStatefulWidget(historyTable, chunks.get(0), historyTableState);
+        renderTableScrollbar(frame, lastHistoryTableArea, historyTable, historyTableState, historyTableScrollState,
                 current.size());
 
         if (showWaterfall) {

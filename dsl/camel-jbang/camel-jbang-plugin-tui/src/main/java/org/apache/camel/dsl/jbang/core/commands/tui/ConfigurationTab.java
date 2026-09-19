@@ -212,7 +212,7 @@ class ConfigurationTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, props.size());
+        renderScrollbar(frame, table, props.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<ConfigProperty> props) {

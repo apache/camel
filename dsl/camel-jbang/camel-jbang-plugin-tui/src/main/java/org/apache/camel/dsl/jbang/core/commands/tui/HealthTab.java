@@ -138,7 +138,7 @@ class HealthTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, healthChecks.size());
+        renderScrollbar(frame, table, healthChecks.size());
     }
 
     @Override

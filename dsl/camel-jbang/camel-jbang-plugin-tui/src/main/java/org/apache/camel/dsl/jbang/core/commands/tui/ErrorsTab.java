@@ -389,7 +389,7 @@ class ErrorsTab extends AbstractTableTab {
 
         lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        renderScrollbar(frame, filteredSize());
+        renderScrollbar(frame, table, filteredSize());
 
         if (showDetail) {
             renderDetail(frame, chunks.get(1), selectedError);

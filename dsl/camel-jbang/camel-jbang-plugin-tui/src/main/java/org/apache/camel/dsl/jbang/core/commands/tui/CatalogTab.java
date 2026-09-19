@@ -302,7 +302,7 @@ class CatalogTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, sorted.size());
+        renderScrollbar(frame, table, sorted.size());
     }
 
     private void renderDetail(Frame frame, Rect area, List<CatalogEntry> sorted) {

@@ -114,7 +114,7 @@ class EventTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, sorted.size());
+        renderScrollbar(frame, table, sorted.size());
     }
 
     private int sortEvent(EventInfo a, EventInfo b) {

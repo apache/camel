@@ -35,6 +35,7 @@ import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
+import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 
 abstract class AbstractTab implements MonitorTab {
@@ -118,15 +119,21 @@ abstract class AbstractTab implements MonitorTab {
 
     // ---- Mouse / scrollbar helpers ----
 
+    /**
+     * Draws a scrollbar over the right border of a bordered table with a header row, sized to the rows the table
+     * actually shows in {@code tableArea} (so a footer row, as in the Ollama tab, shortens it accordingly).
+     */
     protected static void renderTableScrollbar(
-            Frame frame, Rect tableArea, TableState tableState, ScrollbarState scrollState, int rowCount) {
-        if (tableArea == null || tableState == null || scrollState == null) {
+            Frame frame, Rect tableArea, Table table, TableState tableState, ScrollbarState scrollState,
+            int rowCount) {
+        if (tableArea == null || table == null || tableState == null || scrollState == null) {
             return;
         }
-        int visibleRows = tableArea.height() - 3;
+        int visibleRows = table.viewportHeight(tableArea);
         if (visibleRows <= 0 || rowCount <= visibleRows) {
             return;
         }
+        // the data rows start below the top border and the header row
         Rect scrollRect = new Rect(
                 tableArea.x() + tableArea.width() - 1,
                 tableArea.y() + 2,

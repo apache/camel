@@ -417,7 +417,7 @@ class SpansTab extends AbstractTab {
                 .build();
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, traceListState);
-        renderTableScrollbar(frame, lastTableArea, traceListState, tableScrollState, summaries.size());
+        renderTableScrollbar(frame, lastTableArea, table, traceListState, tableScrollState, summaries.size());
     }
 
     private void renderWaterfallView(Frame frame, Rect area) {
