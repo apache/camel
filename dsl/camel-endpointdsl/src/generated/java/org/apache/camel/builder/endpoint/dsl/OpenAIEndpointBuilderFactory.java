@@ -2277,7 +2277,7 @@ public interface OpenAIEndpointBuilderFactory {
          */
         @Deprecated
         default OpenAIEndpointBuilder openai(String path) {
-            return OpenAIEndpointBuilderFactory.endpointBuilder("openai", path);
+            return llm("openai", path);
         }
         /**
          * OpenAI (camel-openai)

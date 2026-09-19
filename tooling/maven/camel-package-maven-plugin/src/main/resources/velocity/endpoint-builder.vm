@@ -314,9 +314,15 @@ public interface ${builderName}Factory {
             #if( $componentModel.deprecated || $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
         @Deprecated
             #end
+            #if( $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
+        default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String path) {
+            return ${mojo.camelCaseLower($model.scheme)}("${componentModel.scheme}", path);
+        }
+            #else
         default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String path) {
             return ${builderName}Factory.endpointBuilder("${componentModel.scheme}", path);
         }
+            #end
             #if( $firstAlias )
                 #set( $firstAlias = false )
                 #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
