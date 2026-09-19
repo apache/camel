@@ -17,6 +17,7 @@
 package org.apache.camel.component.openai;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -66,12 +67,23 @@ public final class OpenAIBatchSpool implements Iterable<Map.Entry<String, Object
         return file;
     }
 
-    void append(String customId, Object value) throws IOException {
+    /**
+     * Opens the spool for appending. The writer is kept by the strategy for the life of the aggregation, so a message
+     * costs one write rather than an open and close of the file, and is flushed after every line so the file is
+     * complete at any point for a persistent repository that recovers the aggregation.
+     */
+    BufferedWriter open() throws IOException {
+        return Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND);
+    }
+
+    static void append(BufferedWriter writer, String customId, Object value) throws IOException {
         Map<String, Object> line = new LinkedHashMap<>();
         line.put("custom_id", customId);
         line.put("value", value);
-        Files.writeString(file.toPath(), OBJECT_MAPPER.writeValueAsString(line) + "\n", StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        writer.write(OBJECT_MAPPER.writeValueAsString(line));
+        writer.write('\n');
+        writer.flush();
     }
 
     void delete() throws IOException {

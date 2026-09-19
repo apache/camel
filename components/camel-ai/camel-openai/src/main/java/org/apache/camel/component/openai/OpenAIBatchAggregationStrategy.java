@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.openai;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -51,6 +55,8 @@ import org.apache.camel.util.ObjectHelper;
 public class OpenAIBatchAggregationStrategy implements AggregationStrategy {
 
     private final Path spoolDirectory;
+    // the writer of each spool being aggregated, closed when its aggregation completes
+    private final Map<File, BufferedWriter> writers = new ConcurrentHashMap<>();
 
     /**
      * Collects the requests in memory.
@@ -92,7 +98,7 @@ public class OpenAIBatchAggregationStrategy implements AggregationStrategy {
             if (oldExchange == null) {
                 if (isSpooled()) {
                     OpenAIBatchSpool spool = OpenAIBatchSpool.create(spoolDirectory);
-                    spool.append(customId, value);
+                    OpenAIBatchSpool.append(writer(spool), customId, value);
                     message.setBody(spool);
                 } else {
                     Map<String, Object> requests = new LinkedHashMap<>();
@@ -104,7 +110,7 @@ public class OpenAIBatchAggregationStrategy implements AggregationStrategy {
 
             Object aggregated = oldExchange.getMessage().getBody();
             if (aggregated instanceof OpenAIBatchSpool spool) {
-                spool.append(customId, value);
+                OpenAIBatchSpool.append(writer(spool), customId, value);
             } else if (aggregated instanceof Map<?, ?> requests) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> map = (Map<String, Object>) requests;
@@ -116,5 +122,24 @@ public class OpenAIBatchAggregationStrategy implements AggregationStrategy {
         } catch (IOException e) {
             throw new RuntimeCamelException("Cannot spool the batch request of custom_id " + customId, e);
         }
+    }
+
+    @Override
+    public void onCompletion(Exchange exchange) {
+        if (exchange != null && exchange.getMessage().getBody() instanceof OpenAIBatchSpool spool) {
+            BufferedWriter writer = writers.remove(spool.getFile());
+            if (writer != null) {
+                IOHelper.close(writer);
+            }
+        }
+    }
+
+    private BufferedWriter writer(OpenAIBatchSpool spool) throws IOException {
+        BufferedWriter writer = writers.get(spool.getFile());
+        if (writer == null) {
+            writer = spool.open();
+            writers.put(spool.getFile(), writer);
+        }
+        return writer;
     }
 }
