@@ -233,6 +233,19 @@ public interface ComponentsBuilderFactory {
         return AmqpComponentBuilderFactory.amqp();
     }
     /**
+     * Apicurio Registry (camel-apicurio-registry)
+     * Manage artifacts, versions, and groups in Apicurio Registry v3.
+     * 
+     * Category: cloud,api
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-apicurio-registry
+     * 
+     * @return the dsl builder
+     */
+    static ApicurioRegistryComponentBuilderFactory.ApicurioRegistryComponentBuilder apicurioRegistry() {
+        return ApicurioRegistryComponentBuilderFactory.apicurioRegistry();
+    }
+    /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
