@@ -1370,9 +1370,11 @@ public final class PropertyBindingSupport {
             String name = m.getName();
             if (name.startsWith("set") && name.length() > 3 && Character.isUpperCase(name.charAt(3))) {
                 names.add(Character.toLowerCase(name.charAt(3)) + name.substring(4));
-            } else if (org.apache.camel.util.ObjectHelper.isSubclass(m.getDeclaringClass(), m.getReturnType())) {
+            } else if (m.getReturnType() != Object.class
+                    && org.apache.camel.util.ObjectHelper.isSubclass(m.getDeclaringClass(), m.getReturnType())) {
                 // a fluent setter returns the builder: the class it is declared on, or (a generic base builder
-                // as with a self-typed B extends Builder<B>) a superclass of it, as the property binding sees it
+                // as with a self-typed B extends Builder<B>) a superclass of it, as the property binding sees it;
+                // a method that returns Object (as Groovy's propertyMissing) is not one
                 names.add(name);
             }
         }

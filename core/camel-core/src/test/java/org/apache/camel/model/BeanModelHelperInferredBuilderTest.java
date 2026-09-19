@@ -398,6 +398,11 @@ public class BeanModelHelperInferredBuilderTest extends ContextTestSupport {
                 return this;
             }
 
+            /** a single-arg method that returns Object (as Groovy's propertyMissing) is not a fluent setter */
+            public Object lookup(String key) {
+                return null;
+            }
+
             public Regional build() {
                 return new Regional();
             }
