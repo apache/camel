@@ -64,8 +64,6 @@ final class WebsiteInstallerFixture implements AutoCloseable {
     private static final String KEY_ALIAS = "camel-installer-test";
     private static final String DEFAULT_BASE_VERSION = "9.9.9";
     private static final Duration PROCESS_TIMEOUT = Duration.ofSeconds(60);
-    private static final Path POWERSHELL_MODULE_ANALYSIS_CACHE
-            = Path.of("target", "powershell", "ModuleAnalysisCache").toAbsolutePath();
 
     record Result(int exit, String stdout, String stderr) {
     }
@@ -457,11 +455,14 @@ final class WebsiteInstallerFixture implements AutoCloseable {
                     pb.environment().put(name, value);
                 }
             }
-            // PowerShell keeps its module analysis cache under LOCALAPPDATA, which every test points at a
-            // fresh home, so each powershell.exe launch would rebuild it from scratch when auto-loading
-            // Expand-Archive / Get-FileHash. Share one cache file across the whole test run instead.
-            Files.createDirectories(POWERSHELL_MODULE_ANALYSIS_CACHE.getParent());
-            pb.environment().put("PSModuleAnalysisCachePath", POWERSHELL_MODULE_ANALYSIS_CACHE.toString());
+            // Without PSModulePath, Windows PowerShell's first cmdlet call (install.ps1's Join-Path on line 29)
+            // spends ~18s in command discovery on windows-latest, which made every install.ps1 run in this
+            // suite cost ~25s. Measured on CI: a Join-Path probe in this cleared environment took 17.7s, and
+            // 0.2s with only PSModulePath restored. The per-test HOME/USERPROFILE/LOCALAPPDATA are unaffected.
+            String psModulePath = System.getenv("PSModulePath");
+            if (psModulePath != null) {
+                pb.environment().put("PSModulePath", psModulePath);
+            }
         }
         pb.environment().putAll(env);
         String home = env.get("HOME");
