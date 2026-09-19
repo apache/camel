@@ -936,54 +936,6 @@ public class EndpointHeaderBuilders {
         return CoAPEndpointBuilderFactory.CoAPHeaderNameBuilder.INSTANCE;
     }
     /**
-     * CoAP (camel-coap)
-     * Send and receive messages to/from CoAP (Constrained Application Protocol)
-     * capable devices.
-     * 
-     * Category: iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-coap
-     * 
-     * @deprecated use {@link #coap()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static CoAPEndpointBuilderFactory.CoAPHeaderNameBuilder coapTcp() {
-        return coap();
-    }
-    /**
-     * CoAP (camel-coap)
-     * Send and receive messages to/from CoAP (Constrained Application Protocol)
-     * capable devices.
-     * 
-     * Category: iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-coap
-     * 
-     * @deprecated use {@link #coap()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static CoAPEndpointBuilderFactory.CoAPHeaderNameBuilder coaps() {
-        return coap();
-    }
-    /**
-     * CoAP (camel-coap)
-     * Send and receive messages to/from CoAP (Constrained Application Protocol)
-     * capable devices.
-     * 
-     * Category: iot
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-coap
-     * 
-     * @deprecated use {@link #coap()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static CoAPEndpointBuilderFactory.CoAPHeaderNameBuilder coapsTcp() {
-        return coap();
-    }
-    /**
      * CometD (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
      * messaging using the CometD/Bayeux protocol.
@@ -996,22 +948,6 @@ public class EndpointHeaderBuilders {
      */
     public static CometdEndpointBuilderFactory.CometdHeaderNameBuilder cometd() {
         return CometdEndpointBuilderFactory.CometdHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * CometD (camel-cometd)
-     * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
-     * messaging using the CometD/Bayeux protocol.
-     * 
-     * Category: networking,messaging
-     * Since: 2.0
-     * Maven coordinates: org.apache.camel:camel-cometd
-     * 
-     * @deprecated use {@link #cometd()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static CometdEndpointBuilderFactory.CometdHeaderNameBuilder cometds() {
-        return cometd();
     }
     /**
      * Consul (camel-consul)
@@ -1750,6 +1686,21 @@ public class EndpointHeaderBuilders {
         return HashicorpVaultEndpointBuilderFactory.HashicorpVaultHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Hazelcast Atomic Number (camel-hazelcast)
+     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
+     * number).
+     * 
+     * Category: cache,clustering
+     * Since: 2.7
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    @Deprecated
+    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberHeaderNameBuilder hazelcastAtomicvalue() {
+        return HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
@@ -1891,21 +1842,6 @@ public class EndpointHeaderBuilders {
      */
     public static HttpEndpointBuilderFactory.HttpHeaderNameBuilder http() {
         return HttpEndpointBuilderFactory.HttpHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * HTTP (camel-http)
-     * Send requests to external HTTP servers using Apache HTTP Client 5.x.
-     * 
-     * Category: http
-     * Since: 2.3
-     * Maven coordinates: org.apache.camel:camel-http
-     * 
-     * @deprecated use {@link #http()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static HttpEndpointBuilderFactory.HttpHeaderNameBuilder https() {
-        return http();
     }
     /**
      * Hugging Face (camel-huggingface)
@@ -2133,21 +2069,6 @@ public class EndpointHeaderBuilders {
      */
     public static MailEndpointBuilderFactory.MailHeaderNameBuilder imap() {
         return MailEndpointBuilderFactory.MailHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * IMAP (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @deprecated use {@link #imap()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static MailEndpointBuilderFactory.MailHeaderNameBuilder imaps() {
-        return imap();
     }
     /**
      * Infinispan (camel-infinispan)
@@ -3357,36 +3278,6 @@ public class EndpointHeaderBuilders {
         return PineconeVectorDbEndpointBuilderFactory.PineconeVectorDbHeaderNameBuilder.INSTANCE;
     }
     /**
-     * IMAP (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @deprecated use {@link #imap()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static MailEndpointBuilderFactory.MailHeaderNameBuilder pop3() {
-        return imap();
-    }
-    /**
-     * IMAP (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @deprecated use {@link #imap()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static MailEndpointBuilderFactory.MailHeaderNameBuilder pop3s() {
-        return imap();
-    }
-    /**
      * PQC Algorithms (camel-pqc)
      * Post Quantum Cryptography Signature and Verification component.
      * 
@@ -3679,52 +3570,6 @@ public class EndpointHeaderBuilders {
      */
     public static SmppEndpointBuilderFactory.SmppHeaderNameBuilder smpp() {
         return SmppEndpointBuilderFactory.SmppHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * SMPP (camel-smpp)
-     * Send and receive SMS messages using a SMSC (Short Message Service
-     * Center).
-     * 
-     * Category: mobile
-     * Since: 2.2
-     * Maven coordinates: org.apache.camel:camel-smpp
-     * 
-     * @deprecated use {@link #smpp()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static SmppEndpointBuilderFactory.SmppHeaderNameBuilder smpps() {
-        return smpp();
-    }
-    /**
-     * IMAP (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @deprecated use {@link #imap()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static MailEndpointBuilderFactory.MailHeaderNameBuilder smtp() {
-        return imap();
-    }
-    /**
-     * IMAP (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @deprecated use {@link #imap()} instead.
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static MailEndpointBuilderFactory.MailHeaderNameBuilder smtps() {
-        return imap();
     }
     /**
      * Solr (camel-solr)

@@ -387,6 +387,22 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         return Arrays.stream(files).sorted(Comparator.comparing(File::getName)).toList();
     }
 
+    public boolean isDeprecatedSchemeAlias(ComponentModel master, ComponentModel alias) {
+        if (master == null || alias == null || master.getScheme().equals(alias.getScheme())) {
+            return false;
+        }
+        String deprecatedSchemes = master.getDeprecatedSchemes();
+        if (deprecatedSchemes == null || deprecatedSchemes.isEmpty()) {
+            return false;
+        }
+        for (String scheme : deprecatedSchemes.split(",")) {
+            if (alias.getScheme().equals(scheme.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String camelCaseLower(String s) {
         int i;
         while (s != null && (i = s.indexOf('-')) > 0) {

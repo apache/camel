@@ -15,6 +15,7 @@
     "scheme": "llm",
     "extendsScheme": "",
     "alternativeSchemes": "llm,openai",
+    "deprecatedSchemes": "openai",
     "syntax": "llm:operation",
     "async": false,
     "api": false,

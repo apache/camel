@@ -78,6 +78,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "4.17.0",
              scheme = "llm,openai",
+             deprecatedSchemes = "openai",
              title = "LLM,OpenAI",
              syntax = "llm:operation",
              category = { Category.AI },

@@ -262,7 +262,7 @@ public interface ${builderName}Factory {
         }
         #if( $aliases.size() > 1 )
             #foreach( $componentModel in $aliases )
-                #if( $foreach.index > 0 )
+                #if( $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
         #set( $javadoc = $mojo.getMainDescription($model, false) + $newline + $newline
                             + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}()} instead." + $newline
                             + "@return the dsl builder for the headers' name." + $newline )
@@ -300,7 +300,7 @@ public interface ${builderName}Factory {
     #else
         #set( $firstAlias = true )
         #foreach( $componentModel in $aliases )
-            #if( $foreach.index > 0 )
+            #if( $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
         #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
                             + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}(String)} instead." + $newline
                             + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
@@ -311,7 +311,7 @@ public interface ${builderName}Factory {
                             + "@return the dsl builder" + $newline )
             #end
         ${mojo.javadoc("        ", $javadoc)}
-            #if( $componentModel.deprecated || $foreach.index > 0 )
+            #if( $componentModel.deprecated || $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
         @Deprecated
             #end
         default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String path) {
@@ -333,7 +333,7 @@ public interface ${builderName}Factory {
             #end
         #end
             #foreach( $componentModel in $aliases )
-                #if( $foreach.index > 0 )
+                #if( $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
         #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
                             + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}(String, String)} instead." + $newline
                             + "@param componentName to use a custom component name for the endpoint instead of the default name" + $newline

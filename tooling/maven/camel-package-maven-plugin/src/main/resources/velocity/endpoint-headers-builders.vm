@@ -72,7 +72,7 @@ public class EndpointHeaderBuilders {
     public static ${factoryName}.${headerNameBuilder} ${mojo.camelCaseLower($model.scheme)}() {
         return ${factoryName}.${headerNameBuilder}.INSTANCE;
     }
-        #else
+        #elseif( $mojo.isDeprecatedSchemeAlias($models.get($model.javaType).get(0), $model) )
     #set( $componentName = $mojo.getComponentNameFromType($model.javaType) )
     #set( $headerNameBuilder = ${componentName} + "HeaderNameBuilder" )
     #set( $factoryName = ${componentName} + "EndpointBuilderFactory" )

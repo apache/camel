@@ -51,14 +51,14 @@ public class StaticEndpointBuilders {
                         + "@param path " + $mojo.pathParameterJavaDoc($model) + $newline
                         + "@return the dsl builder" + $newline )
     ${mojo.javadoc("    ", $javadoc)}
-    #if( $model.deprecated || !$firstAlias )
+    #set( $masterModel = $models.get($model.javaType).get(0) )
+    #if( $model.deprecated || $mojo.isDeprecatedSchemeAlias($masterModel, $model) )
     @Deprecated
     #end
     public static ${builderName}Factory.${builderName} ${mojo.camelCaseLower($model.scheme)}(String path) {
-        return ${mojo.camelCaseLower($models.get($model.javaType).get(0).scheme)}("${model.scheme}", path);
+        return ${mojo.camelCaseLower($masterModel.scheme)}("${model.scheme}", path);
     }
-    #if( !$firstAlias )
-        #set( $masterModel = $models.get($model.javaType).get(0) )
+    #if( $mojo.isDeprecatedSchemeAlias($masterModel, $model) )
         #set( $javadoc = $mojo.getMainDescription($masterModel, true) + $newline + $newline
                             + "@deprecated use {@link #${mojo.camelCaseLower($masterModel.scheme)}(String, String)} instead." + $newline
                             + "@param componentName to use a custom component name for the endpoint instead of the default name" + $newline

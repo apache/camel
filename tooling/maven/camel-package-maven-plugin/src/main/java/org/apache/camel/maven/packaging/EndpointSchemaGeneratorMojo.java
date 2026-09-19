@@ -832,6 +832,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (schemes != null && schemes.length > 1) {
             model.setAlternativeSchemes(String.join(",", schemes));
         }
+        if (!Strings.isNullOrEmpty(uriEndpoint.deprecatedSchemes())) {
+            model.setDeprecatedSchemes(uriEndpoint.deprecatedSchemes());
+        }
         // if the scheme is an alias then replace the scheme name from the
         // syntax with the alias
         String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");

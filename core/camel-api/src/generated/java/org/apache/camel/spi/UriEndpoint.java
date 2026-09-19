@@ -203,4 +203,11 @@ public @interface UriEndpoint {
      * this to false for internal components such as log, message transformations and other kinds.
      */
     boolean remote() default true;
+
+    /**
+     * Comma-separated scheme names that are backward-compatible aliases of the primary scheme and should be marked
+     * {@code @Deprecated} in the Endpoint DSL. Peer schemes such as {@code http}/{@code https} or {@code coap}/
+     * {@code coaps} must not be listed here.
+     */
+    String deprecatedSchemes() default "";
 }

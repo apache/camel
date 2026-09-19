@@ -25,10 +25,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class OpenAISchemeAliasTest extends CamelTestSupport {
 
@@ -41,8 +38,8 @@ public class OpenAISchemeAliasTest extends CamelTestSupport {
 
     @Test
     void llmAndOpenaiComponentsResolveToOpenAIComponent() {
-        assertInstanceOf(OpenAIComponent.class, context.getComponent("llm"));
-        assertInstanceOf(OpenAIComponent.class, context.getComponent("openai"));
+        assertThat(context.getComponent("llm")).isInstanceOf(OpenAIComponent.class);
+        assertThat(context.getComponent("openai")).isInstanceOf(OpenAIComponent.class);
     }
 
     @Test
@@ -50,13 +47,13 @@ public class OpenAISchemeAliasTest extends CamelTestSupport {
         OpenAIComponent llm = context.getComponent("llm", OpenAIComponent.class);
         OpenAIComponent openai = context.getComponent("openai", OpenAIComponent.class);
 
-        assertNotSame(llm, openai);
+        assertThat(llm).isNotSameAs(openai);
 
         llm.setModel("llm-model");
         openai.setModel("openai-model");
 
-        assertEquals("llm-model", llm.getModel());
-        assertEquals("openai-model", openai.getModel());
+        assertThat(llm.getModel()).isEqualTo("llm-model");
+        assertThat(openai.getModel()).isEqualTo("openai-model");
     }
 
     @Test
@@ -75,18 +72,18 @@ public class OpenAISchemeAliasTest extends CamelTestSupport {
         OpenAIEndpoint llmEndpoint = (OpenAIEndpoint) llm.createEndpoint("llm:chat-completion");
         OpenAIEndpoint openaiEndpoint = (OpenAIEndpoint) openai.createEndpoint("openai:chat-completion");
 
-        assertEquals("llm-key", llmEndpoint.getConfiguration().getApiKey());
-        assertEquals("openai-key", openaiEndpoint.getConfiguration().getApiKey());
-        assertEquals("llm-model", llmEndpoint.getConfiguration().getModel());
-        assertEquals("openai-model", openaiEndpoint.getConfiguration().getModel());
+        assertThat(llmEndpoint.getConfiguration().getApiKey()).isEqualTo("llm-key");
+        assertThat(openaiEndpoint.getConfiguration().getApiKey()).isEqualTo("openai-key");
+        assertThat(llmEndpoint.getConfiguration().getModel()).isEqualTo("llm-model");
+        assertThat(openaiEndpoint.getConfiguration().getModel()).isEqualTo("openai-model");
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "llm", "openai" })
     void chatCompletionWorksForBothSchemes(String scheme) {
         Exchange result = template.request("direct:" + scheme, e -> e.getIn().setBody("hello"));
-        assertEquals("Hi from mock", result.getMessage().getBody(String.class));
-        assertNotNull(result.getMessage().getHeader(OpenAIConstants.RESPONSE_ID));
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Hi from mock");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_ID)).isNotNull();
     }
 
     @Test
@@ -98,11 +95,11 @@ public class OpenAISchemeAliasTest extends CamelTestSupport {
                 = (OpenAIEndpoint) context
                         .getEndpoint("openai:chat-completion?apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl() + "/v1");
 
-        assertEquals(OpenAIOperations.chatCompletion, llmEndpoint.getOperation());
-        assertEquals(OpenAIOperations.chatCompletion, openaiEndpoint.getOperation());
+        assertThat(llmEndpoint.getOperation()).isEqualTo(OpenAIOperations.chatCompletion);
+        assertThat(openaiEndpoint.getOperation()).isEqualTo(OpenAIOperations.chatCompletion);
         // getDefaultName() returns the first scheme in @Component("llm,openai"), not the URI scheme used
-        assertEquals("llm", llmEndpoint.getComponent().getDefaultName());
-        assertEquals("llm", openaiEndpoint.getComponent().getDefaultName());
+        assertThat(llmEndpoint.getComponent().getDefaultName()).isEqualTo("llm");
+        assertThat(openaiEndpoint.getComponent().getDefaultName()).isEqualTo("llm");
     }
 
     @Override
