@@ -125,8 +125,13 @@ public class OpenAIBatchProducer extends DefaultProducer {
 
         Batch batch = create(exchange, inputFileId, endpoint, in, config);
         if (body instanceof OpenAIBatchSpool spool) {
-            // the spool of an aggregation is consumed by this batch, so it is not left behind in the directory
-            spool.delete();
+            // the spool of an aggregation is consumed by this batch, so it is not left behind in the directory; a
+            // failure to remove it is cleanup only and must not hide the batch that was just created
+            try {
+                spool.delete();
+            } catch (IOException e) {
+                LOG.warn("Could not delete the batch spool file {} of batch {}", spool.getFile(), batch.id(), e);
+            }
         }
         if (config.isStoreFullResponse()) {
             exchange.setProperty(OpenAIConstants.BATCH_RESPONSE, batch);
