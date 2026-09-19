@@ -50,13 +50,17 @@ Or on the endpoint, where `model.` prefixes a provider-specific option of the mo
 
 [source,yaml]
 ----
-- to:
-    uri: langchain4j-embeddings:documents
-    parameters:
-      provider: openai
-      apiKey: "{{openai.api.key}}"
-      modelName: text-embedding-3-small
-      timeout: 30s
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: langchain4j-embeddings:documents
+            parameters:
+              provider: openai
+              apiKey: "{{openai.api.key}}"
+              modelName: text-embedding-3-small
+              timeout: 30s
 ----
 
 The provider is one of `ollama`, `openai`, `anthropic`, `azure-openai`, `mistral`, `gemini`, `vertex-ai`, `github`,
