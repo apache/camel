@@ -41,6 +41,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
@@ -81,7 +82,8 @@ import org.slf4j.LoggerFactory;
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("http,https")
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {
+public class HttpComponent extends HttpCommonComponent
+        implements RestProducerFactory, SSLContextParametersAware, SecretRotationAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
     private static final String TARGET_URI_PARAMETER = HttpComponent.class.getName() + ".targetUri";
@@ -584,6 +586,30 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         endpoint.setHttpClientOptions(httpClientOptions);
         endpoint.setHttpConnectionOptions(httpConnectionOptions);
         return endpoint;
+    }
+
+    /**
+     * Notifies this component that a secret has been rotated.
+     * <p>
+     * The component options ({@code authUsername}, {@code authPassword}, {@code proxyAuthUsername},
+     * {@code proxyAuthPassword}, etc.) have already been re-applied with the newly resolved secret values before this
+     * callback fires. No further action is taken here.
+     *
+     * @implNote This method is intentionally a no-op beyond logging. The route restart that follows this callback —
+     *           triggered by {@code DefaultContextReloadStrategy.reloadRoutes()} — stops the active routes, shuts down
+     *           their endpoints, and recreates them from the updated component fields, so subsequent requests will use
+     *           the new credentials. Re-authenticating inside this method would be wrong: the callback fires
+     *           <em>before</em> {@code reloadRoutes()}, so any connection re-established here would be closed again
+     *           immediately by the route shutdown. The shared
+     *           {@link org.apache.hc.client5.http.io.HttpClientConnectionManager} is preserved across the restart
+     *           because {@code HttpEndpoint.createHttpClient()} marks it as shared when it belongs to the component,
+     *           letting the pool drain naturally rather than being closed abruptly.
+     */
+    @Override
+    public void onSecretRotation(Object source) throws Exception {
+        LOG.info("Secret rotation triggered (source={}): HTTP component credentials have been updated; "
+                 + "endpoints will be rebuilt with the new credentials on the next route start",
+                source);
     }
 
     protected HttpClientConnectionManager createConnectionManager(
