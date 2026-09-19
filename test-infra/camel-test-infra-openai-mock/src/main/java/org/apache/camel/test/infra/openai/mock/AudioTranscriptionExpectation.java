@@ -24,6 +24,7 @@ public class AudioTranscriptionExpectation {
     private String transcriptionText;
     private String language = "en";
     private double duration = 0.0;
+    private boolean diarized;
 
     public String getTranscriptionText() {
         return transcriptionText;
@@ -50,7 +51,15 @@ public class AudioTranscriptionExpectation {
     }
 
     public boolean isVerbose() {
-        return duration > 0;
+        return !diarized && duration > 0;
+    }
+
+    public boolean isDiarized() {
+        return diarized;
+    }
+
+    public void setDiarized(boolean diarized) {
+        this.diarized = diarized;
     }
 
     @Override

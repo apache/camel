@@ -210,7 +210,7 @@ public class OpenAIVisionBodyTypesMockTest extends CamelTestSupport {
         });
         Exception exception = result.getException();
         assertInstanceOf(IllegalArgumentException.class, exception);
-        assertTrue(exception.getMessage().contains("Only text and image files are supported"));
+        assertTrue(exception.getMessage().contains("Only text, image, PDF and audio files are supported"));
     }
 
     private static void assertImageDataUrl(String request, String expectedMime, byte[] expectedBytes) {

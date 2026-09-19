@@ -24,6 +24,8 @@ public enum GenAiOperationName {
     CHAT("chat"),
     EMBEDDINGS("embeddings"),
     GENERATE_CONTENT("generate_content"),
+    /** Audio transcription and translation operations. */
+    TRANSCRIPTION("transcription"),
     /** OpenAI moderation and similar content-policy checks. */
     MODERATION("moderation");
 

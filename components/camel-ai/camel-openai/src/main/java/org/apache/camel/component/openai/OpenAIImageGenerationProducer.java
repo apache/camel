@@ -20,6 +20,9 @@ import com.openai.models.images.ImageGenerateParams;
 import com.openai.models.images.ImagesResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -106,7 +109,17 @@ public class OpenAIImageGenerationProducer extends DefaultProducer {
             params.moderation(ImageGenerateParams.Moderation.of(moderation));
         }
 
-        ImagesResponse response = getEndpoint().getClient().images().generate(params.build());
+        GenAiObservation observation = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.GENERATE_CONTENT, model);
+        ImagesResponse response;
+        try {
+            response = getEndpoint().getClient().images().generate(params.build());
+            OpenAIGenAiProducerSupport.recordSuccess(observation, GenAiUsage.of((Long) null, null, null, model));
+        } catch (Exception e) {
+            OpenAIGenAiProducerSupport.recordFailure(exchange, observation, e);
+            throw e;
+        } finally {
+            observation.close();
+        }
 
         OpenAIImageSupport.applyResponse(exchange, response, outputFormat, config.isStoreFullResponse());
     }
