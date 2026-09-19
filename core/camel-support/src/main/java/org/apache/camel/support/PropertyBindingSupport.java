@@ -1288,7 +1288,8 @@ public final class PropertyBindingSupport {
      * its public static <tt>builder()</tt> or <tt>newBuilder()</tt> method.
      * <p/>
      * The properties of the bean are then set on the returned builder, and the bean is created by invoking the
-     * {@link #findBuilderMethod(Object, Class, String) builder method}, such as with {@link Builder#build(Class, String)}.
+     * {@link #findBuilderMethod(Object, Class, String) builder method}, such as with
+     * {@link Builder#build(Class, String)}.
      *
      * @param  type      the class of the bean to create
      * @return           the builder, or <tt>null</tt> if the type is not builder-only
