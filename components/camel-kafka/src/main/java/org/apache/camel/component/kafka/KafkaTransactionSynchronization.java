@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.KafkaException;
+import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +32,21 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaTransactionSynchronization.class);
     private final String transactionId;
     private final Producer kafkaProducer;
+    // Non-null only for exactly-once semantics: the source consumer offsets to commit inside this transaction.
+    private final Map<TopicPartition, OffsetAndMetadata> offsetsToCommit;
+    private final ConsumerGroupMetadata groupMetadata;
 
     public KafkaTransactionSynchronization(String transactionId, Producer kafkaProducer) {
+        this(transactionId, kafkaProducer, null, null);
+    }
+
+    public KafkaTransactionSynchronization(String transactionId, Producer kafkaProducer,
+                                           Map<TopicPartition, OffsetAndMetadata> offsetsToCommit,
+                                           ConsumerGroupMetadata groupMetadata) {
         this.transactionId = transactionId;
         this.kafkaProducer = kafkaProducer;
+        this.offsetsToCommit = offsetsToCommit;
+        this.groupMetadata = groupMetadata;
     }
 
     @Override
@@ -46,6 +62,21 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                     kafkaProducer.abortTransaction();
                 }
             } else {
+                // Exactly-once: commit the source consumer offsets as part of this producer transaction so that the
+                // consumed record and the produced records are committed atomically.
+                if (offsetsToCommit != null && groupMetadata != null) {
+                    LOG.debug("Sending {} consumer offset(s) to kafka transaction {}", offsetsToCommit.size(), transactionId);
+                    try {
+                        kafkaProducer.sendOffsetsToTransaction(offsetsToCommit, groupMetadata);
+                    } catch (KafkaException e) {
+                        // A failed sendOffsetsToTransaction leaves the transaction open, so abort it explicitly
+                        // rather than falling through to the commit (and to the catch below which does not abort).
+                        LOG.warn("Aborting kafka transaction {} due to sendOffsetsToTransaction failure", transactionId, e);
+                        kafkaProducer.abortTransaction();
+                        exchange.setException(e);
+                        return;
+                    }
+                }
                 LOG.debug("Commit kafka transaction {} with exchange {}", transactionId, exchange.getExchangeId());
                 kafkaProducer.commitTransaction();
             }
