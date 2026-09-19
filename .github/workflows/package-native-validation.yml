@@ -184,6 +184,71 @@ jobs:
           mvn -B -P apache-snapshots -ntp \
             -pl buildingtools,dsl/camel-jbang/camel-launcher install -DskipTests
 
+      # TEMPORARY (CAMEL-24829): isolates the ~24s every install.ps1 test launch pays before doing any work.
+      # Remove before this PR leaves draft.
+      - name: Diagnose install.ps1 launch cost (temporary, CAMEL-24829)
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = (Resolve-Path 'dsl/camel-jbang/camel-launcher/src/install/install.ps1').Path
+          $work = Join-Path $env:RUNNER_TEMP 'install-diag'
+          New-Item -ItemType Directory -Force -Path $work | Out-Null
+
+          # Any PEM certificate works here: -Version 1.2.3-SNAPSHOT is rejected before the CA is used for TLS.
+          $root = Get-ChildItem Cert:\LocalMachine\Root | Select-Object -First 1
+          $caPem = Join-Path $work 'ca.pem'
+          Set-Content -LiteralPath $caPem -Encoding ascii -Value ("-----BEGIN CERTIFICATE-----`n" +
+              [Convert]::ToBase64String($root.RawData, 'InsertLineBreaks') + "`n-----END CERTIFICATE-----")
+
+          function Measure-Launch {
+              param([string] $Label, [string[]] $Arguments, [switch] $ClearedEnv, [hashtable] $ExtraEnv = @{})
+              $fresh = New-Item -ItemType Directory -Path (Join-Path $work ([guid]::NewGuid().ToString('N')))
+              $psi = [System.Diagnostics.ProcessStartInfo]::new('powershell.exe')
+              foreach ($a in $Arguments) { $psi.ArgumentList.Add($a) }
+              $psi.UseShellExecute = $false
+              $psi.RedirectStandardOutput = $true
+              $psi.RedirectStandardError = $true
+              if ($ClearedEnv) {
+                  # Mirrors WebsiteInstallerFixture.run(): only these survive, plus a fresh per-launch home.
+                  $keep = @{}
+                  foreach ($n in 'PATH', 'SystemRoot', 'PATHEXT', 'TEMP', 'TMP') {
+                      $keep[$n] = [Environment]::GetEnvironmentVariable($n)
+                  }
+                  $psi.Environment.Clear()
+                  foreach ($n in $keep.Keys) { if ($keep[$n]) { $psi.Environment[$n] = $keep[$n] } }
+                  $psi.Environment['OS'] = 'Windows_NT'
+                  $psi.Environment['HOME'] = $fresh.FullName
+                  $psi.Environment['USERPROFILE'] = $fresh.FullName
+                  $psi.Environment['LOCALAPPDATA'] = Join-Path $fresh.FullName 'AppData\Local'
+              }
+              foreach ($k in $ExtraEnv.Keys) { $psi.Environment[$k] = $ExtraEnv[$k] }
+              $sw = [System.Diagnostics.Stopwatch]::StartNew()
+              $p = [System.Diagnostics.Process]::Start($psi)
+              $out = $p.StandardOutput.ReadToEndAsync()
+              $err = $p.StandardError.ReadToEndAsync()
+              if ($p.WaitForExit(180000)) { $exit = $p.ExitCode } else { $p.Kill($true); $exit = 'TIMEOUT' }
+              $sw.Stop()
+              '{0,-52} exit={1,-7} {2,6:N1} s' -f $Label, $exit, $sw.Elapsed.TotalSeconds
+              $e = $err.Result.Trim()
+              if ($e) { '    stderr: ' + ($e -split "`n")[0] }
+          }
+
+          $noop = @('-NoProfile', '-Command', 'exit 0')
+          $addType = @('-NoProfile', '-Command', 'Add-Type -TypeDefinition ''public static class CamelDiag { public static int F() { return 1; } }''')
+          $snapshot = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $installer, '-Version', '1.2.3-SNAPSHOT')
+          $ca = @{ CAMEL_INSTALL_CA_CERT = $caPem }
+          foreach ($i in 1..2) {
+              Measure-Launch "[$i] startup only, full env" $noop
+              Measure-Launch "[$i] startup only, cleared env" $noop -ClearedEnv
+              Measure-Launch "[$i] Add-Type only, full env" $addType
+              Measure-Launch "[$i] Add-Type only, cleared env" $addType -ClearedEnv
+              Measure-Launch "[$i] install.ps1 SNAPSHOT, full env, no CA" $snapshot
+              Measure-Launch "[$i] install.ps1 SNAPSHOT, full env, CA" $snapshot -ExtraEnv $ca
+              Measure-Launch "[$i] install.ps1 SNAPSHOT, cleared env, no CA" $snapshot -ClearedEnv
+              Measure-Launch "[$i] install.ps1 SNAPSHOT, cleared env, CA" $snapshot -ClearedEnv -ExtraEnv $ca
+          }
+
       - name: Run Windows installer unit tests
         shell: bash
         # The PowerShell suite has taken 10-20 minutes on windows-latest, straddling camel-launcher's 1200s
