@@ -30,13 +30,16 @@ public record OpenAIMockExpectations(
         List<SpeechExpectation> speeches,
         List<ModerationExpectation> moderations,
         List<ImageExpectation> imageGenerations,
-        List<ImageExpectation> imageEdits) {
+        List<ImageExpectation> imageEdits,
+        List<BatchExpectation> batches,
+        BatchStore batchStore) {
 
     /**
      * Convenience factory for callers that only need chat completion expectations (e.g. SSL/TLS tests).
      */
     public static OpenAIMockExpectations ofChat(List<MockExpectation> chat) {
         return new OpenAIMockExpectations(
-                chat, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of());
+                chat, List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of(),
+                List.of(), new BatchStore());
     }
 }

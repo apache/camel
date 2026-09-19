@@ -24,7 +24,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(87);
+        Set<String> props = new HashSet<>(90);
         props.add("additionalBodyProperty");
         props.add("additionalHeader");
         props.add("additionalResponseHeader");
@@ -38,6 +38,9 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("autoToolExecution");
         props.add("background");
         props.add("baseUrl");
+        props.add("batchEndpoint");
+        props.add("batchMetadata");
+        props.add("batchResultsFile");
         props.add("builtinTools");
         props.add("connectTimeout");
         props.add("conversationHistoryProperty");
@@ -122,10 +125,11 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         secretProps.add("sslTruststorePassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
-        Map<String, String> prefixes = new HashMap<>(4);
+        Map<String, String> prefixes = new HashMap<>(5);
         prefixes.put("additionalBodyProperty", "additionalBodyProperty.");
         prefixes.put("additionalHeader", "additionalHeader.");
         prefixes.put("additionalResponseHeader", "additionalResponseHeader.");
+        prefixes.put("batchMetadata", "batchMetadata.");
         prefixes.put("mcpServer", "mcpServer.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }

@@ -48,6 +48,12 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "background": target.getConfiguration().setBackground(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "batchendpoint":
+        case "batchEndpoint": target.getConfiguration().setBatchEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "batchmetadata":
+        case "batchMetadata": target.getConfiguration().setBatchMetadata(property(camelContext, java.util.Map.class, value)); return true;
+        case "batchresultsfile":
+        case "batchResultsFile": target.getConfiguration().setBatchResultsFile(property(camelContext, java.lang.String.class, value)); return true;
         case "builtintools":
         case "builtinTools": target.getConfiguration().setBuiltinTools(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -221,6 +227,12 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "background": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "batchendpoint":
+        case "batchEndpoint": return java.lang.String.class;
+        case "batchmetadata":
+        case "batchMetadata": return java.util.Map.class;
+        case "batchresultsfile":
+        case "batchResultsFile": return java.lang.String.class;
         case "builtintools":
         case "builtinTools": return java.lang.String.class;
         case "connecttimeout":
@@ -395,6 +407,12 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "background": return target.getConfiguration().isBackground();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
+        case "batchendpoint":
+        case "batchEndpoint": return target.getConfiguration().getBatchEndpoint();
+        case "batchmetadata":
+        case "batchMetadata": return target.getConfiguration().getBatchMetadata();
+        case "batchresultsfile":
+        case "batchResultsFile": return target.getConfiguration().getBatchResultsFile();
         case "builtintools":
         case "builtinTools": return target.getConfiguration().getBuiltinTools();
         case "connecttimeout":
@@ -549,6 +567,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalHeader": return java.lang.Object.class;
         case "additionalresponseheader":
         case "additionalResponseHeader": return java.lang.Object.class;
+        case "batchmetadata":
+        case "batchMetadata": return java.lang.Object.class;
         case "mcpserver":
         case "mcpServer": return java.lang.Object.class;
         default: return null;
