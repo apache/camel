@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,6 +45,52 @@ final class PropertiesChecks {
     public static List<String> validateProperties(
             String content, CamelCatalog catalog, Function<String, String> extraPropertyLine) {
         return validatePropertiesLines(content, line -> validatePropertyLine(line, catalog, extraPropertyLine));
+    }
+
+    /** camel.<group>.<rest>=: the option groups of the main model (resilience4j, faulttolerance, threadpool...). */
+    static final Pattern GROUP_KEY_PATTERN = Pattern.compile("^\\s*camel\\.([a-zA-Z0-9-]+)\\.([^=\\s]+)\\s*=");
+
+    /** The camel.* prefixes whose keys legitimately nest, or that other checks own. */
+    private static final Set<String> NESTING_GROUPS = Set.of("component", "dataformat", "language", "beans", "variable",
+            "kamelet", "jbang", "route-template", "routeTemplate", "main", "rest", "server", "management");
+
+    /**
+     * camel.resilience4j.circuitbreaker.supplierCircuitBreaker.slidingWindowSize=4, an invented per-id form: the
+     * catalog accepts it and the run dies at startup ("Cannot find getter method: supplierCircuitBreaker on bean: class
+     * java.lang.String"). The options of a group are global, one segment after the group; resilience4j is also set per
+     * circuit breaker in the route (CAMEL-24856).
+     */
+    static String nestedGroupKeyHint(String line, CamelCatalog catalog) {
+        Matcher m = GROUP_KEY_PATTERN.matcher(line);
+        if (!m.find()) {
+            return null;
+        }
+        String group = m.group(1);
+        String rest = m.group(2);
+        if (!rest.contains(".") || rest.contains("[") || NESTING_GROUPS.contains(group)) {
+            return null;
+        }
+        String prefix = "camel." + group + ".";
+        List<String> options = new ArrayList<>();
+        for (var o : catalog.mainModel().getOptions()) {
+            if (o.getName().startsWith(prefix) && !o.getName().substring(prefix.length()).contains(".")) {
+                options.add(o.getName().substring(prefix.length()));
+            }
+        }
+        if (options.isEmpty()) {
+            return null; // not a known group: the catalog reports the key
+        }
+        String first = rest.substring(0, rest.indexOf('.'));
+        String last = rest.substring(rest.lastIndexOf('.') + 1);
+        String option = options.contains(last) ? last : closestName(last, options);
+        String example = "camel." + group + "." + (option != null ? option : options.get(0)) + "=...";
+        String more = "resilience4j".equals(group)
+                ? ", or per circuit breaker in the route: circuitBreaker: {resilience4jConfiguration: {"
+                  + (option != null ? option : "...") + ": ...}}"
+                : "; the options are " + String.join(", ", options.size() > 8 ? options.subList(0, 8) : options)
+                  + (options.size() > 8 ? ", ..." : "");
+        return first + "    Unknown option (camel." + group + " has no nested settings such as " + first
+               + ": its options are global, " + example + more + ")";
     }
 
     /** Validates one properties line: a {@code camel.*} key against the catalog, any other with the extra check. */
@@ -75,6 +122,11 @@ final class PropertiesChecks {
                 String closest = closestName(name, known);
                 return name + "    Unknown " + kind + (closest != null ? " (did you mean " + closest + "?)" : "");
             }
+        }
+        // camel.resilience4j.circuitbreaker.<id>.<option>: a nested segment under a known option group (CAMEL-24856)
+        String nested = nestedGroupKeyHint(line, catalog);
+        if (nested != null) {
+            return nested;
         }
         try {
             ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
