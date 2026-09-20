@@ -123,14 +123,33 @@ The syntax for the ternary operator is:
 
 [source,text]
 ----
-${leftValue} OP rightValue ? trueValue : falseValue
+${leftValue OP rightValue ? trueValue : falseValue}
 ----
+
+The whole ternary must be inside a single `${ }`. Outside `${ }` a Simple expression is a template,
+so a `?` and a `:` there are literal text and the operator is not evaluated. For example:
+
+[source,text]
+----
+${body.size()} == 0 ? ${null} : ${body[0]}
+----
+
+is not a ternary: it returns the text `1 == 0 ?  : ...`, because only the two functions are
+evaluated and the rest is copied as-is.
 
 For example the following ternary operator will return `positive` if header `foo` is greater than 0, otherwise `negative`:
 
 [source,java]
 ----
 simple("${header.foo > 0 ? 'positive' : 'negative'}");
+----
+
+The two values can be a quoted literal, a number, `true`, `false`, `null`, or a nested function:
+
+[source,java]
+----
+simple("${header.foo > 0 ? 1 : 0}");
+simple("${header.foo > 0 ? ${header.foo} : null}");
 ----
 
 Ternary operators can also be nested to handle multiple conditions:

@@ -943,6 +943,25 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testTernaryValueForms() {
+        // a value form the ternary accepts must be used as that value and not looked up as a function,
+        // which is what an unquoted number or boolean used to be (CAMEL-24826)
+        exchange.getIn().setBody(5);
+        assertExpression("${body > 0 ? 1 : 0}", 1);
+        assertExpression("${body > 0 ? true : false}", true);
+        assertExpression("${body > 0 ? 1.5 : 2.5}", 1.5);
+        assertExpression("${body > 0 ? -7 : 7}", -7);
+        assertExpression("${body > 0 ? ${body} : 0}", 5);
+
+        // and the other branch is reached just as well
+        exchange.getIn().setBody(-1);
+        assertExpression("${body > 0 ? 1 : 0}", 0);
+        assertExpression("${body > 0 ? true : false}", false);
+        assertExpression("${body > 0 ? 1.5 : 2.5}", 2.5);
+        assertExpression("${body > 0 ? ${body} : 0}", 0);
+    }
+
+    @Test
     public void testTernaryLog() {
         exchange.getIn().setBody("Hello World");
         assertExpression(">>> Message received from WebSocket Client : ${body}",

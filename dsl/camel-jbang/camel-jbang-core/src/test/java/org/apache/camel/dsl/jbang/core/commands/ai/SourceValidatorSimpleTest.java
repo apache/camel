@@ -331,4 +331,94 @@ class SourceValidatorSimpleTest {
         assertThat(msgs.get(0)).startsWith("Line 10:").contains("Unexpected token body");
         assertThat(msgs.get(1)).startsWith("Line 14:").contains("Unexpected token body");
     }
+
+    @Test
+    void aTopLevelTernaryInAnExpressionIsReported() {
+        // the ? and : are outside ${...} so they are literal text: the route silently sets the body to
+        // "1 == 0 ?  : ..." instead of a value, which is why the parser cannot report it (CAMEL-24826)
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "${body.size()} == 0 ? ${null} : ${body[0]}"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).startsWith("Line 5:")
+                .contains("Simple has no top-level ternary")
+                .contains("the ? at index 20")
+                .contains("inside one function");
+    }
+
+    @Test
+    void aTernaryInsideOneFunctionIsAccepted() {
+        // the form that does evaluate the operator, so it must not be reported
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "${body.size() == 0 ? ${null} : ${body[0]}}"
+                      - setBody:
+                          simple: "${header.foo > 0 ? 1 : 0}"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void aTopLevelTernaryInAPredicateIsAccepted() {
+        // a predicate has no literal text, so the predicate parser does evaluate a top-level ternary
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - filter:
+                          simple: "${header.foo} > 0 ? 'yes' : 'no'"
+                          steps:
+                            - log: "x"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void proseWithAQuestionMarkAndAColonIsNotReported() {
+        // literal text is the whole point of the top level; reporting these regressed twice already
+        // (CAMEL-22904, CAMEL-23035), so the check needs a function present and skips a log message
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "Is it ok ? yes : no"
+                      - log: ">>> Message received from WebSocket Client : ${body}"
+                      - log: "Shipped ${header.id} ? yes : no"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void aTernaryInsideAQuotedLiteralIsNotReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "${body} and 'a ? b : c'"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void aSyntaxErrorIsReportedInsteadOfTheTernaryHint() {
+        // one message per expression: the syntax error is the more actionable one
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          simple: "${body ? ${null} : ${body}"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("Simple syntax error");
+    }
 }
