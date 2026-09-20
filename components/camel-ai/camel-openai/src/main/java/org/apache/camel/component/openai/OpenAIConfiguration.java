@@ -339,7 +339,7 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Optional text to guide the model's style or continue a previous audio segment")
     private String audioPrompt;
 
-    @UriParam(enums = "json,text,srt,verbose_json,vtt", defaultValue = "json")
+    @UriParam(enums = "json,text,srt,verbose_json,vtt,diarized_json", defaultValue = "json")
     @Metadata(description = "The format of the transcription output")
     private String audioResponseFormat = "json";
 
@@ -351,6 +351,30 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Comma-separated timestamp granularities: 'word', 'segment', or 'word,segment'. "
                             + "Only applicable with verbose_json response format.")
     private String audioTimestampGranularities;
+
+    @UriParam(enums = "auto,vad")
+    @Metadata(description = "Chunking strategy for diarized transcription models such as gpt-4o-transcribe-diarize")
+    private String audioChunkingStrategy;
+
+    @UriParam
+    @Metadata(description = "Comma-separated known speaker names for diarized transcription")
+    private String audioKnownSpeakerNames;
+
+    @UriParam
+    @Metadata(description = "Comma-separated known speaker reference audio file ids for diarized transcription")
+    private String audioKnownSpeakerReferences;
+
+    @UriParam
+    @Metadata(description = "Comma-separated keywords to improve transcription accuracy")
+    private String audioKeywords;
+
+    @UriParam
+    @Metadata(description = "Comma-separated input audio languages (ISO-639-1 or ISO-639-3)")
+    private String audioLanguages;
+
+    @UriParam
+    @Metadata(description = "Comma-separated extra response fields to include (e.g. logprobs)")
+    private String audioInclude;
 
     // ========== MODERATION CONFIGURATION ==========
 
@@ -863,6 +887,54 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAudioTimestampGranularities(String audioTimestampGranularities) {
         this.audioTimestampGranularities = audioTimestampGranularities;
+    }
+
+    public String getAudioChunkingStrategy() {
+        return audioChunkingStrategy;
+    }
+
+    public void setAudioChunkingStrategy(String audioChunkingStrategy) {
+        this.audioChunkingStrategy = audioChunkingStrategy;
+    }
+
+    public String getAudioKnownSpeakerNames() {
+        return audioKnownSpeakerNames;
+    }
+
+    public void setAudioKnownSpeakerNames(String audioKnownSpeakerNames) {
+        this.audioKnownSpeakerNames = audioKnownSpeakerNames;
+    }
+
+    public String getAudioKnownSpeakerReferences() {
+        return audioKnownSpeakerReferences;
+    }
+
+    public void setAudioKnownSpeakerReferences(String audioKnownSpeakerReferences) {
+        this.audioKnownSpeakerReferences = audioKnownSpeakerReferences;
+    }
+
+    public String getAudioKeywords() {
+        return audioKeywords;
+    }
+
+    public void setAudioKeywords(String audioKeywords) {
+        this.audioKeywords = audioKeywords;
+    }
+
+    public String getAudioLanguages() {
+        return audioLanguages;
+    }
+
+    public void setAudioLanguages(String audioLanguages) {
+        this.audioLanguages = audioLanguages;
+    }
+
+    public String getAudioInclude() {
+        return audioInclude;
+    }
+
+    public void setAudioInclude(String audioInclude) {
+        this.audioInclude = audioInclude;
     }
 
     public String getModerationModel() {

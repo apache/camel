@@ -31,8 +31,20 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalResponseHeader": target.getConfiguration().setAdditionalResponseHeader(property(camelContext, java.util.Map.class, value)); return true;
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiochunkingstrategy":
+        case "audioChunkingStrategy": target.getConfiguration().setAudioChunkingStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "audioinclude":
+        case "audioInclude": target.getConfiguration().setAudioInclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiokeywords":
+        case "audioKeywords": target.getConfiguration().setAudioKeywords(property(camelContext, java.lang.String.class, value)); return true;
+        case "audioknownspeakernames":
+        case "audioKnownSpeakerNames": target.getConfiguration().setAudioKnownSpeakerNames(property(camelContext, java.lang.String.class, value)); return true;
+        case "audioknownspeakerreferences":
+        case "audioKnownSpeakerReferences": target.getConfiguration().setAudioKnownSpeakerReferences(property(camelContext, java.lang.String.class, value)); return true;
         case "audiolanguage":
         case "audioLanguage": target.getConfiguration().setAudioLanguage(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiolanguages":
+        case "audioLanguages": target.getConfiguration().setAudioLanguages(property(camelContext, java.lang.String.class, value)); return true;
         case "audiomodel":
         case "audioModel": target.getConfiguration().setAudioModel(property(camelContext, java.lang.String.class, value)); return true;
         case "audioprompt":
@@ -210,8 +222,20 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalResponseHeader": return java.util.Map.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "audiochunkingstrategy":
+        case "audioChunkingStrategy": return java.lang.String.class;
+        case "audioinclude":
+        case "audioInclude": return java.lang.String.class;
+        case "audiokeywords":
+        case "audioKeywords": return java.lang.String.class;
+        case "audioknownspeakernames":
+        case "audioKnownSpeakerNames": return java.lang.String.class;
+        case "audioknownspeakerreferences":
+        case "audioKnownSpeakerReferences": return java.lang.String.class;
         case "audiolanguage":
         case "audioLanguage": return java.lang.String.class;
+        case "audiolanguages":
+        case "audioLanguages": return java.lang.String.class;
         case "audiomodel":
         case "audioModel": return java.lang.String.class;
         case "audioprompt":
@@ -390,8 +414,20 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalResponseHeader": return target.getConfiguration().getAdditionalResponseHeader();
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
+        case "audiochunkingstrategy":
+        case "audioChunkingStrategy": return target.getConfiguration().getAudioChunkingStrategy();
+        case "audioinclude":
+        case "audioInclude": return target.getConfiguration().getAudioInclude();
+        case "audiokeywords":
+        case "audioKeywords": return target.getConfiguration().getAudioKeywords();
+        case "audioknownspeakernames":
+        case "audioKnownSpeakerNames": return target.getConfiguration().getAudioKnownSpeakerNames();
+        case "audioknownspeakerreferences":
+        case "audioKnownSpeakerReferences": return target.getConfiguration().getAudioKnownSpeakerReferences();
         case "audiolanguage":
         case "audioLanguage": return target.getConfiguration().getAudioLanguage();
+        case "audiolanguages":
+        case "audioLanguages": return target.getConfiguration().getAudioLanguages();
         case "audiomodel":
         case "audioModel": return target.getConfiguration().getAudioModel();
         case "audioprompt":

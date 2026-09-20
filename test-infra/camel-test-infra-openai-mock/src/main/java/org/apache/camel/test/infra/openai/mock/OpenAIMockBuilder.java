@@ -408,6 +408,14 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    public OpenAIMockBuilder replyWithDiarizedTranscription(String text) {
+        validateCurrentAudioTranscriptionExpectation("replyWithDiarizedTranscription()");
+        log.debug("Setting diarized transcription text: {}", text);
+        currentAudioTranscriptionExpectation.setTranscriptionText(text);
+        currentAudioTranscriptionExpectation.setDiarized(true);
+        return this;
+    }
+
     // Audio Translation API methods
 
     public OpenAIMockBuilder whenTranslation() {

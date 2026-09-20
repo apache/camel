@@ -190,6 +190,78 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Chunking strategy for diarized transcription models such as
+         * gpt-4o-transcribe-diarize.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param audioChunkingStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder audioChunkingStrategy(String audioChunkingStrategy) {
+            doSetProperty("audioChunkingStrategy", audioChunkingStrategy);
+            return this;
+        }
+        /**
+         * Comma-separated extra response fields to include (e.g. logprobs).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param audioInclude the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder audioInclude(String audioInclude) {
+            doSetProperty("audioInclude", audioInclude);
+            return this;
+        }
+        /**
+         * Comma-separated keywords to improve transcription accuracy.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param audioKeywords the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder audioKeywords(String audioKeywords) {
+            doSetProperty("audioKeywords", audioKeywords);
+            return this;
+        }
+        /**
+         * Comma-separated known speaker names for diarized transcription.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param audioKnownSpeakerNames the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder audioKnownSpeakerNames(String audioKnownSpeakerNames) {
+            doSetProperty("audioKnownSpeakerNames", audioKnownSpeakerNames);
+            return this;
+        }
+        /**
+         * Comma-separated known speaker reference audio file ids for diarized
+         * transcription.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param audioKnownSpeakerReferences the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder audioKnownSpeakerReferences(String audioKnownSpeakerReferences) {
+            doSetProperty("audioKnownSpeakerReferences", audioKnownSpeakerReferences);
+            return this;
+        }
+        /**
          * The language of the input audio in ISO-639-1 format (e.g., 'en').
          * Improves accuracy and latency.
          * 
@@ -202,6 +274,20 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder audioLanguage(String audioLanguage) {
             doSetProperty("audioLanguage", audioLanguage);
+            return this;
+        }
+        /**
+         * Comma-separated input audio languages (ISO-639-1 or ISO-639-3).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param audioLanguages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder audioLanguages(String audioLanguages) {
+            doSetProperty("audioLanguages", audioLanguages);
             return this;
         }
         /**
@@ -3188,7 +3274,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * The response format for audio transcription (json, text, srt,
-         * verbose_json, vtt).
+         * verbose_json, vtt, diarized_json).
          * 
          * The option is a: {@code String} type.
          * 
@@ -3239,7 +3325,81 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIAudioTimestampGranularities";
         }
         /**
-         * Duration of the audio in seconds (verbose_json only).
+         * Chunking strategy for diarized transcription models: auto or vad.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAudioChunkingStrategy}.
+         */
+        public String openAIAudioChunkingStrategy() {
+            return "CamelOpenAIAudioChunkingStrategy";
+        }
+        /**
+         * Comma-separated known speaker names for diarized transcription.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAudioKnownSpeakerNames}.
+         */
+        public String openAIAudioKnownSpeakerNames() {
+            return "CamelOpenAIAudioKnownSpeakerNames";
+        }
+        /**
+         * Comma-separated known speaker reference audio file ids for diarized
+         * transcription.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * OpenAIAudioKnownSpeakerReferences}.
+         */
+        public String openAIAudioKnownSpeakerReferences() {
+            return "CamelOpenAIAudioKnownSpeakerReferences";
+        }
+        /**
+         * Comma-separated keywords to improve transcription accuracy.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAudioKeywords}.
+         */
+        public String openAIAudioKeywords() {
+            return "CamelOpenAIAudioKeywords";
+        }
+        /**
+         * Comma-separated input audio languages (ISO-639-1 or ISO-639-3).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAudioLanguages}.
+         */
+        public String openAIAudioLanguages() {
+            return "CamelOpenAIAudioLanguages";
+        }
+        /**
+         * Comma-separated extra response fields to include (e.g. logprobs).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAudioInclude}.
+         */
+        public String openAIAudioInclude() {
+            return "CamelOpenAIAudioInclude";
+        }
+        /**
+         * Duration of the audio in seconds (verbose_json or diarized_json).
          * 
          * The option is a: {@code Double} type.
          * 
@@ -3249,6 +3409,18 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIAudioDuration() {
             return "CamelOpenAIAudioDuration";
+        }
+        /**
+         * Speaker-labelled segments from diarized_json transcription.
+         * 
+         * The option is a: {@code java.util.List} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIAudioDiarizedSegments}.
+         */
+        public String openAIAudioDiarizedSegments() {
+            return "CamelOpenAIAudioDiarizedSegments";
         }
         /**
          * Language detected in the audio (verbose_json only).

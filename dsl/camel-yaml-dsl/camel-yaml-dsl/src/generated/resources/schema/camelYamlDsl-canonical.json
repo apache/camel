@@ -284,37 +284,6 @@
         },
         "required" : [ "steps", "uri" ]
       },
-      "org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "note" : {
-            "type" : "string"
-          },
-          "parameters" : {
-            "type" : "object"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
-            }
-          },
-          "uri" : {
-            "type" : "string"
-          },
-          "variableReceive" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "steps", "uri" ]
-      },
       "org.apache.camel.model.A2ASubTaskDefinition" : {
         "title" : "A2A Sub Task",
         "description" : "Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails",
@@ -13337,9 +13306,6 @@
       },
       "errorHandler" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.ErrorHandlerDeserializer"
-      },
-      "from" : {
-        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.RouteFromDefinitionDeserializer"
       },
       "intercept" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.InterceptDefinition"

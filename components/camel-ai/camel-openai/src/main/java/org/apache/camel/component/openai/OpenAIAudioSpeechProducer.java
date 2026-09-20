@@ -23,6 +23,9 @@ import com.openai.core.http.HttpResponse;
 import com.openai.models.audio.speech.SpeechCreateParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -84,12 +87,21 @@ public class OpenAIAudioSpeechProducer extends DefaultProducer {
 
         SpeechCreateParams params = paramsBuilder.build();
 
+        GenAiObservation observation = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.SPEECH, model);
         byte[] audio;
         String contentType;
-        try (HttpResponse response = getEndpoint().getClient().audio().speech().create(params);
-             InputStream body = response.body()) {
-            audio = body.readAllBytes();
-            contentType = resolveContentType(response, responseFormat);
+        try {
+            try (HttpResponse response = getEndpoint().getClient().audio().speech().create(params);
+                 InputStream body = response.body()) {
+                audio = body.readAllBytes();
+                contentType = resolveContentType(response, responseFormat);
+            }
+            OpenAIGenAiProducerSupport.recordSuccess(observation, GenAiUsage.of((Long) null, null, null, model));
+        } catch (Exception e) {
+            OpenAIGenAiProducerSupport.recordFailure(exchange, observation, e);
+            throw e;
+        } finally {
+            observation.close();
         }
 
         Message out = exchange.getMessage();
