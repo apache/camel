@@ -62,7 +62,7 @@ public class KameletOptimisedComponentResolverTest {
     }
 
     @Test
-    void shouldLoadTemplateFromLocationWhenKameletNotRegisteredAsBean() {
+    void shouldLoadTemplateFromLocationWhenTemplateNotInModel() {
         assertThrows(RuntimeException.class, () -> resolver.resolveComponent("kamelet:unknownKamelet"));
     }
 }
