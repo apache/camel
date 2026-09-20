@@ -43,6 +43,9 @@ public class KameletOptimisedComponentResolverTest {
     }
 
     @Test
+    // Note: @BindToRegistry kamelets are also registered via Model.routeTemplateDefinitions
+    // (through AnnotationDependencyInjection → addRoutes → prepareModel → populateRouteTemplates),
+    // so this RouteBuilder-based registration exercises the same guard as the declared regression.
     void shouldNotLoadTemplateFromLocationWhenTemplateInModel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
