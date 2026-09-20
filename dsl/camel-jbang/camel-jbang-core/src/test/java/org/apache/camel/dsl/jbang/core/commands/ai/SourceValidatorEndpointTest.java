@@ -607,10 +607,15 @@ class SourceValidatorEndpointTest {
                             uri: log:done
                 """;
         List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
-        assertThat(errors).anyMatch(e -> e.startsWith("Line 5: file: include=.*\\\\.json$ matches a backslash in the file name")
-                && e.endsWith("write include='.*\\.json$'"));
+        assertThat(errors)
+                .anyMatch(e -> e.startsWith("Line 5: file: include=.*\\\\.json$ matches a literal backslash in the file name")
+                        && e.endsWith("write include='.*\\.json$'"));
 
         List<String> ok = SourceValidator.validateYamlEndpoints(yaml.replace("\\\\.json", "\\.json"), catalog);
         assertThat(ok).noneMatch(e -> e.contains("backslash"));
+
+        // \\myfile is a backslash on purpose: \myfile is not a regex escape, so there is nothing else it can mean
+        List<String> literal = SourceValidator.validateYamlEndpoints(yaml.replace(".*\\\\.json$", ".*\\\\myfile.*"), catalog);
+        assertThat(literal).noneMatch(e -> e.contains("backslash"));
     }
 }
