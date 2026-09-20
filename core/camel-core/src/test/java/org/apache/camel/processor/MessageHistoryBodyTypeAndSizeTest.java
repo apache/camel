@@ -38,6 +38,7 @@ public class MessageHistoryBodyTypeAndSizeTest extends ContextTestSupport {
 
     @Test
     public void testBodyTypeAndSizePerStep() throws Exception {
+        context.getMessageSizeStrategy().setEnabled(true);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         Exchange out = template.request("direct:start", e -> e.getMessage().setBody("Hello World"));
@@ -74,6 +75,25 @@ public class MessageHistoryBodyTypeAndSizeTest extends ContextTestSupport {
         assertTrue(table.contains("null"), table);
     }
 
+    @Test
+    public void testTypeCapturedSizeNotWhenTheStrategyIsOff() throws Exception {
+        // the default outside the dev profile: the type is always captured (one class lookup), the size is not
+        context.getMessageSizeStrategy().setEnabled(false);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        Exchange out = template.request("direct:start", e -> e.getMessage().setBody("Hello World"));
+        assertMockEndpointsSatisfied();
+
+        List<MessageHistory> history = out.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+        assertEquals(4, history.size());
+        assertEquals("java.lang.String", history.get(0).getBodyType());
+        assertEquals("byte[]", history.get(1).getBodyType());
+        assertEquals("null", history.get(3).getBodyType());
+        for (MessageHistory h : history) {
+            assertEquals(-1, h.getBodySize(), h.getNode().getId());
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -81,7 +101,6 @@ public class MessageHistoryBodyTypeAndSizeTest extends ContextTestSupport {
             public void configure() {
                 context.setMessageHistory(true);
                 context.getMessageHistoryFactory().setNodePattern("step");
-                context.getMessageSizeStrategy().setEnabled(true);
                 from("direct:start")
                         .step("a").convertBodyTo(byte[].class).end()
                         .step("b").transform().constant(new ArrayList<>(List.of(1, 2, 3))).end()

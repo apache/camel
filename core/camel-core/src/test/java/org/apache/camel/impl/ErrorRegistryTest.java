@@ -222,6 +222,8 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertNotNull(entry.getMessageHistory(), "Message history should be captured when enabled");
         assertTrue(entry.getMessageHistory().length > 0, "Message history should have at least one entry");
         assertTrue(entry.getMessageHistory()[0].contains("foo"), "Message history should contain route id");
+        // the body as each step was reached (CAMEL-24844)
+        assertTrue(entry.getMessageHistory()[0].contains(" bodyType=java.lang.String"), entry.getMessageHistory()[0]);
     }
 
     @Test
@@ -301,6 +303,22 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertTrue((long) json.get("elapsed") >= 0);
     }
 
+    @Test
+    public void testMessageHistoryStepSaysTheBodyWasNull() throws Exception {
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+        context.getMessageSizeStrategy().setEnabled(true);
+
+        template.sendBody("direct:nullbody", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        BacklogErrorEventMessage entry = context.getErrorRegistry().browse().iterator().next();
+        String[] steps = entry.getMessageHistory();
+        assertNotNull(steps);
+        // the throwException step was reached with a null body (set by the step before)
+        String last = steps[steps.length - 1];
+        assertTrue(last.contains("bodyType=null bodySize=0"), last);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -313,6 +331,10 @@ public class ErrorRegistryTest extends ContextTestSupport {
 
                 from("direct:start2").routeId("bar")
                         .throwException(new IllegalArgumentException("Forced error 2"));
+
+                from("direct:nullbody").routeId("nullbody")
+                        .setBody().constant(null)
+                        .throwException(new IllegalArgumentException("Forced error on a null body"));
 
                 from("direct:unhandled").routeId("unhandled")
                         .errorHandler(noErrorHandler())

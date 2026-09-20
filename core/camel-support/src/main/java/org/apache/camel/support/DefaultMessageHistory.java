@@ -16,9 +16,13 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.spi.MessageSizeStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default {@link org.apache.camel.MessageHistory}.
@@ -68,6 +72,22 @@ public class DefaultMessageHistory implements MessageHistory {
 
     public void setBodySize(long bodySize) {
         this.bodySize = bodySize;
+    }
+
+    /**
+     * Captures the body's type and size as the node is reached: the type is one class lookup ({@code "null"} for a null
+     * body), the size the {@link MessageSizeStrategy}'s (lengths only, no reading or conversion) and only when that
+     * strategy is enabled. For every factory that builds a history entry (CAMEL-24844).
+     */
+    public void captureBody(Exchange exchange) {
+        Message current = exchange.getMessage();
+        Object body = current.getBody();
+        bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        CamelContext context = exchange.getContext();
+        MessageSizeStrategy sizeStrategy = context != null ? context.getMessageSizeStrategy() : null;
+        if (sizeStrategy != null && sizeStrategy.isEnabled()) {
+            bodySize = sizeStrategy.computeBodySize(current);
+        }
     }
 
     @Override
