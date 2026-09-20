@@ -349,7 +349,8 @@ final class EndpointChecks {
         if (colon < 0 || !FILE_SCHEMES.contains(fullUri.substring(0, colon))) {
             return;
         }
-        if (eipName != null && !eipName.equals("to") && !eipName.equals("from")) {
+        if (eipName == null || !eipName.equals("to") && !eipName.equals("from")) {
+            // an unresolved parent may be a toD: or wireTap:, which evaluate the uri first: leave it alone
             return;
         }
         int q = fullUri.indexOf('?');
