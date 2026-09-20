@@ -70,7 +70,9 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
         // the body's type and size as it reaches the node: the type is one class lookup, the size is the message
         // size strategy's (lengths only, no reading or conversion) and only when that is enabled (CAMEL-24844)
         Message current = exchange.getMessage();
-        answer.setBodyType(ObjectHelper.classCanonicalName(current.getBody()));
+        Object body = current.getBody();
+        // a null body is a fact worth showing (a timer route has none), not the same as "not captured"
+        answer.setBodyType(body != null ? ObjectHelper.classCanonicalName(body) : "null");
         MessageSizeStrategy sizeStrategy = camelContext != null ? camelContext.getMessageSizeStrategy() : null;
         if (sizeStrategy != null && sizeStrategy.isEnabled()) {
             answer.setBodySize(sizeStrategy.computeBodySize(current));

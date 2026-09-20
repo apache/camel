@@ -45,7 +45,7 @@ public class MessageHistoryBodyTypeAndSizeTest extends ContextTestSupport {
 
         List<MessageHistory> history = out.getProperty(Exchange.MESSAGE_HISTORY, List.class);
         assertNotNull(history);
-        assertEquals(3, history.size());
+        assertEquals(4, history.size());
 
         // as each step was reached: the text sent, the bytes the first step made, the list the second step made
         assertEquals("a", history.get(0).getNode().getId());
@@ -60,12 +60,18 @@ public class MessageHistoryBodyTypeAndSizeTest extends ContextTestSupport {
         assertEquals("java.util.ArrayList", history.get(2).getBodyType());
         assertEquals(3, history.get(2).getBodySize(), "the size strategy counts the elements of a collection");
 
+        // a null body is shown as such, not left blank like a body that was not captured
+        assertEquals("d", history.get(3).getNode().getId());
+        assertEquals("null", history.get(3).getBodyType());
+        assertEquals(0, history.get(3).getBodySize());
+
         // the failure table shows both columns
         String table = MessageHelper.dumpMessageHistoryStacktrace(out, null, false);
         assertTrue(table.contains("Body type"), table);
         assertTrue(table.contains("java.lang.String"), table);
         assertTrue(table.contains("byte[]"), table);
         assertTrue(table.contains("java.util.ArrayList"), table);
+        assertTrue(table.contains("null"), table);
     }
 
     @Override
@@ -79,7 +85,8 @@ public class MessageHistoryBodyTypeAndSizeTest extends ContextTestSupport {
                 from("direct:start")
                         .step("a").convertBodyTo(byte[].class).end()
                         .step("b").transform().constant(new ArrayList<>(List.of(1, 2, 3))).end()
-                        .step("c").to("mock:result").end();
+                        .step("c").process(e -> e.getMessage().setBody(null)).end()
+                        .step("d").to("mock:result").end();
             }
         };
     }
