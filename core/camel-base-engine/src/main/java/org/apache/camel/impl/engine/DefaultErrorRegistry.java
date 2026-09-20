@@ -216,11 +216,18 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             MessageHistory mh = history.get(i);
             String nodeId = mh.getNode() != null ? mh.getNode().getId() : null;
             long elapsed = mh.getElapsed();
+            String step = mh.getRouteId() + "[" + nodeId + "]";
             if (elapsed > 0) {
-                result[i] = mh.getRouteId() + "[" + nodeId + "] (" + elapsed + " ms)";
-            } else {
-                result[i] = mh.getRouteId() + "[" + nodeId + "]";
+                step += " (" + elapsed + " ms)";
             }
+            // the body as the node was reached: the type it arrived with, and its size when known (CAMEL-24844)
+            if (mh.getBodyType() != null) {
+                step += " body=" + mh.getBodyType();
+                if (mh.getBodySize() >= 0) {
+                    step += " size=" + mh.getBodySize();
+                }
+            }
+            result[i] = step;
         }
         return result;
     }
