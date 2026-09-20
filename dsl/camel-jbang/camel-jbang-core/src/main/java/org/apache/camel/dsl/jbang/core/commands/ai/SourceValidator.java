@@ -228,6 +228,7 @@ public final class SourceValidator {
         }
         msgs.addAll(validateYamlEndpoints(content, catalog));
         msgs.addAll(validateYamlSimple(content, catalog));
+        msgs.addAll(JsonPathChecks.validateYamlJsonPath(content, catalog));
         msgs.addAll(validateKnownHeaders(content, catalog));
         msgs.addAll(validateBeanTypes(content));
         return msgs;

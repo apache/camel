@@ -326,6 +326,12 @@ final class SchemaHints {
             unknownProperty(null, m -> m.unknown().equals("bean") && !m.locationEndsWith("/steps"),
                     m -> "the bean language is written as method: (expression: {method: {ref: myBean, method:"
                          + " process}}), or call the bean as a step with - bean: {ref: myBean, method: process}"),
+            // dataFormatProperty: [- prettyPrint: "true"]: an item of a key/value property list is a key and a value
+            unknownProperty(".*/restConfiguration/(dataFormatProperty|componentProperty|endpointProperty|consumerProperty"
+                            + "|apiProperty|corsHeaders)/\\d+",
+                    ANY,
+                    m -> "an item of " + m.parentName() + " is a key and a value: - key: " + m.unknown()
+                         + " followed by value: \"...\" (indented under the -)"),
             // setHeader: {CamelNumberA: {simple: ...}} : the name is a property, not the key
             unknownProperty(".*/(setHeader|setProperty|setVariable|removeHeader|removeProperty|removeVariable)",
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) == null,
