@@ -658,4 +658,154 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage()).contains("no-such-file.camel.yaml");
     }
+
+    /**
+     * CAMEL-24837: a list item indented differently from the first item of its list gets the raw snakeyaml "expected
+     * <block end>, but found '-'"; say which list it belongs to and that the items share one column.
+     */
+    @Test
+    void aListItemInAnotherColumnNamesTheListItBelongsTo() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} > 1"
+                                steps:
+                                  - log:
+                                      message: big
+                            - simple: "${body} > 2"
+                              steps:
+                                - log:
+                                    message: bigger
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 11: this list item starts in column 13")
+                .contains("the list that starts at line 7 has its items in column 15")
+                .contains("every item of a list must start in the same column")
+                .doesNotContain("block end");
+    }
+
+    /** CAMEL-24837: the item is over-indented, so the list it belongs to is the shallower one above it. */
+    @Test
+    void anOverIndentedListItemNamesTheListAboveIt() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: a
+                          - log:
+                              message: b
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 7: this list item starts in column 11")
+                .contains("the list that starts at line 5 has its items in column 9");
+    }
+
+    /**
+     * CAMEL-24837: a key indented differently from its siblings gets "expected <block end>, but found '&lt;block
+     * mapping start&gt;'"; name the key and the column its siblings are in.
+     */
+    @Test
+    void aKeyInAnotherColumnNamesTheMappingItBelongsTo() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: hi
+                     id: foo
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 7: id starts in column 6")
+                .contains("the keys of the mapping that starts at line 2 are in column 5")
+                .contains("every key of a mapping must start in the same column")
+                .doesNotContain("block mapping start");
+    }
+
+    /**
+     * CAMEL-24837: a key indented deeper than its siblings gets "mapping values are not allowed here", the same message
+     * as a colon inside a value; the marker is on the key's own colon, so it is the indentation.
+     */
+    @Test
+    void anOverIndentedKeySaysItIsTheIndentation() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                       steps:
+                        - log:
+                            message: hi
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 4: steps starts in column 8")
+                .contains("the keys of the mapping that starts at line 3 are in column 7")
+                .doesNotContain("mapping values are not allowed here");
+    }
+
+    /**
+     * CAMEL-24837: the other cause of "mapping values are not allowed here" is a colon inside an unquoted value; the
+     * marker is on a later colon of the line, not on the key's own.
+     */
+    @Test
+    void aColonInsideAnUnquotedValueSaysToQuoteIt() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: hello: world
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 6: the value of message holds a colon")
+                .contains("\"hello: world\"")
+                .doesNotContain("mapping values are not allowed here");
+    }
+
+    /**
+     * CAMEL-24837: a backslash inside double quotes is an escape character; the value is meant literally, so it goes in
+     * single quotes.
+     */
+    @Test
+    void aBackslashInDoubleQuotesSaysToUseSingleQuotes() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: "file:orders?include=.*\\.json"
+                      steps:
+                        - log:
+                            message: hi
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 3: \\. inside double quotes is an escape character")
+                .contains("'file:orders?include=.*\\.json'")
+                .doesNotContain("unknown escape character");
+    }
+
+    /** CAMEL-24837: a tab used for indentation, said in YAML words instead of "cannot start any token". */
+    @Test
+    void aTabUsedForIndentationIsNamed() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                \t      uri: timer:tick
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 3: the indentation uses a tab")
+                .contains("YAML indents with spaces")
+                .doesNotContain("cannot start any token");
+    }
 }
