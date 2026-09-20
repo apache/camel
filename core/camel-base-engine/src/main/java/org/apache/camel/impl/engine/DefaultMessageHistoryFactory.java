@@ -24,9 +24,11 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.support.DefaultMessageHistory;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed MessageHistoryFactory")
 public class DefaultMessageHistoryFactory extends ServiceSupport implements MessageHistoryFactory {
@@ -65,6 +67,14 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
 
         DefaultMessageHistory answer = new DefaultMessageHistory(routeId, node, msg);
         answer.setAcceptDebugger(node.acceptDebugger(exchange));
+        // the body's type and size as it reaches the node: the type is one class lookup, the size is the message
+        // size strategy's (lengths only, no reading or conversion) and only when that is enabled (CAMEL-24844)
+        Message current = exchange.getMessage();
+        answer.setBodyType(ObjectHelper.classCanonicalName(current.getBody()));
+        MessageSizeStrategy sizeStrategy = camelContext != null ? camelContext.getMessageSizeStrategy() : null;
+        if (sizeStrategy != null && sizeStrategy.isEnabled()) {
+            answer.setBodySize(sizeStrategy.computeBodySize(current));
+        }
         return answer;
     }
 

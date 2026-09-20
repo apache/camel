@@ -33,6 +33,8 @@ public class DefaultMessageHistory implements MessageHistory {
     private boolean acceptDebugger;
     private boolean debugSkipOver;
     private long elapsed;
+    private String bodyType;
+    private long bodySize = -1;
 
     public DefaultMessageHistory(String routeId, NamedNode node) {
         this(routeId, node, null);
@@ -48,6 +50,24 @@ public class DefaultMessageHistory implements MessageHistory {
     @Override
     public String getRouteId() {
         return routeId;
+    }
+
+    @Override
+    public String getBodyType() {
+        return bodyType;
+    }
+
+    public void setBodyType(String bodyType) {
+        this.bodyType = bodyType;
+    }
+
+    @Override
+    public long getBodySize() {
+        return bodySize;
+    }
+
+    public void setBodySize(long bodySize) {
+        this.bodySize = bodySize;
     }
 
     @Override
