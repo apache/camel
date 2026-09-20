@@ -87,7 +87,7 @@ public class OpenAIAudioSpeechProducer extends DefaultProducer {
 
         SpeechCreateParams params = paramsBuilder.build();
 
-        GenAiObservation observation = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.GENERATE_CONTENT, model);
+        GenAiObservation observation = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.SPEECH, model);
         byte[] audio;
         String contentType;
         try {

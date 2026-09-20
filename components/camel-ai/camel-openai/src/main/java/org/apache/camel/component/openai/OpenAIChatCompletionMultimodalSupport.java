@@ -118,6 +118,9 @@ final class OpenAIChatCompletionMultimodalSupport {
         if (MimeTypeHelper.isAudio(mime)) {
             return createAudioMessage(readBodyBytes(in), mime, userPrompt);
         }
+        if (mime == null) {
+            return buildTextMessage(in, userPrompt);
+        }
         throw unsupportedMimeType(mime, in.getHeader(Exchange.FILE_NAME, String.class));
     }
 

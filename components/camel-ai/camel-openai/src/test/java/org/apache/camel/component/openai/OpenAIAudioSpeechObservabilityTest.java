@@ -59,7 +59,7 @@ class OpenAIAudioSpeechObservabilityTest extends CamelTestSupport {
     }
 
     @Test
-    void shouldEmitGenerateContentGenAiSpan() {
+    void shouldEmitSpeechGenAiSpan() {
         Exchange result = template.request("direct:speak", e -> e.getIn().setBody("Hello from Apache Camel"));
 
         assertThat(result.getException()).isNull();
@@ -69,7 +69,7 @@ class OpenAIAudioSpeechObservabilityTest extends CamelTestSupport {
                 = OpenAIObservabilityTestSupport.tracer(context);
         assertThat(tracer.genAiSpans()).hasSize(1);
         Map<String, String> tags = tracer.genAiSpans().get(0).tags();
-        assertThat(tags.get(GenAiAttributes.OPERATION_NAME)).isEqualTo("generate_content");
+        assertThat(tags.get(GenAiAttributes.OPERATION_NAME)).isEqualTo("speech");
         assertThat(tags.get(GenAiAttributes.SYSTEM)).isEqualTo("openai");
         assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("tts-1");
         assertThat(tags.get(GenAiAttributes.CAMEL_COMPONENT)).isEqualTo("openai");

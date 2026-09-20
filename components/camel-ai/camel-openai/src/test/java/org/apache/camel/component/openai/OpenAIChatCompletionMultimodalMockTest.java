@@ -151,9 +151,10 @@ class OpenAIChatCompletionMultimodalMockTest extends CamelTestSupport {
     }
 
     @Test
-    void binaryBodyWithoutMimeTypeFails() {
+    void binaryBodyWithUnsupportedMimeTypeFails() {
         Exchange result = template.request("direct:chat", e -> {
             e.getIn().setBody(WAV_BYTES);
+            e.getIn().setHeader(OpenAIConstants.MEDIA_TYPE, "application/octet-stream");
             e.getIn().setHeader(OpenAIConstants.USER_MESSAGE, "Transcribe this clip");
         });
 

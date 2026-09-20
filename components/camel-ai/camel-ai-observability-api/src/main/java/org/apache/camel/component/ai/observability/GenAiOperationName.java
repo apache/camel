@@ -28,6 +28,8 @@ public enum GenAiOperationName {
     TRANSCRIPTION("transcription"),
     /** Audio translation operation. */
     TRANSLATION("translation"),
+    /** Text-to-speech operation. */
+    SPEECH("speech"),
     /** OpenAI moderation and similar content-policy checks. */
     MODERATION("moderation");
 
