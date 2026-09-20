@@ -19,6 +19,7 @@ package org.apache.camel.component.openai;
 import java.io.File;
 import java.util.Locale;
 
+import com.openai.models.chat.completions.ChatCompletionContentPartInputAudio;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
@@ -93,6 +94,45 @@ final class MimeTypeHelper {
         }
         // XML and JSON are textual formats usable as prompt text, but map to application/* MIME types
         return mime.startsWith("text/") || "application/xml".equals(mime) || "application/json".equals(mime);
+    }
+
+    static boolean isPdf(String mime) {
+        return "application/pdf".equals(mime);
+    }
+
+    static boolean isAudio(String mime) {
+        if (mime == null) {
+            return false;
+        }
+        return mime.startsWith("audio/");
+    }
+
+    /**
+     * Maps a MIME type to the OpenAI chat-completion {@code input_audio} format (wav or mp3 only).
+     */
+    static ChatCompletionContentPartInputAudio.InputAudio.Format audioInputFormat(String mime) {
+        if (mime == null) {
+            return null;
+        }
+        String normalized = mime.toLowerCase(Locale.ROOT);
+        if (normalized.contains("wav") || "audio/x-wav".equals(normalized)) {
+            return ChatCompletionContentPartInputAudio.InputAudio.Format.WAV;
+        }
+        if (normalized.contains("mpeg") || normalized.contains("mp3")) {
+            return ChatCompletionContentPartInputAudio.InputAudio.Format.MP3;
+        }
+        return null;
+    }
+
+    static String audioExtension(String mime) {
+        ChatCompletionContentPartInputAudio.InputAudio.Format format = audioInputFormat(mime);
+        if (format == ChatCompletionContentPartInputAudio.InputAudio.Format.WAV) {
+            return "wav";
+        }
+        if (format == ChatCompletionContentPartInputAudio.InputAudio.Format.MP3) {
+            return "mp3";
+        }
+        return null;
     }
 
     private static String headerMimeType(Message in, String header) {

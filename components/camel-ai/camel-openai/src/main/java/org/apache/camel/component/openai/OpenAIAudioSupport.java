@@ -20,12 +20,15 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.openai.core.MultipartField;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -57,9 +60,9 @@ final class OpenAIAudioSupport {
         } else if (body instanceof Path path) {
             pathConsumer.accept(path);
         } else if (body instanceof byte[] bytes) {
-            multipartConsumer.accept(multipartWithFilename(new ByteArrayInputStream(bytes), resolveFilename(in)));
+            multipartConsumer.accept(multipartWithFilename(in, new ByteArrayInputStream(bytes)));
         } else if (body instanceof InputStream inputStream) {
-            multipartConsumer.accept(multipartWithFilename(inputStream, resolveFilename(in)));
+            multipartConsumer.accept(multipartWithFilename(in, inputStream));
         } else {
             InputStream converted = in.getBody(InputStream.class);
             if (converted == null) {
@@ -68,23 +71,53 @@ final class OpenAIAudioSupport {
                                                    + (body != null ? body.getClass().getName() : "null")
                                                    + ". Supported: File, Path, InputStream, byte[]");
             }
-            multipartConsumer.accept(multipartWithFilename(converted, resolveFilename(in)));
+            multipartConsumer.accept(multipartWithFilename(in, converted));
         }
     }
 
     private static String resolveFilename(Message in) {
         String filename = in.getHeader(Exchange.FILE_NAME_ONLY, String.class);
+        if (ObjectHelper.isEmpty(filename)) {
+            filename = in.getHeader(Exchange.FILE_NAME, String.class);
+        }
         if (ObjectHelper.isNotEmpty(filename)) {
-            return filename;
+            filename = FileUtil.stripPath(filename);
+            if (ObjectHelper.isNotEmpty(FileUtil.onlyExt(filename))) {
+                return filename;
+            }
+        }
+        String mime = MimeTypeHelper.resolveForBinary(in);
+        String extension = MimeTypeHelper.audioExtension(mime);
+        if (ObjectHelper.isNotEmpty(extension)) {
+            return "audio." + extension;
         }
         return "audio";
     }
 
-    private static MultipartField<InputStream> multipartWithFilename(InputStream stream, String filename) {
-        return MultipartField.<InputStream> builder()
+    private static MultipartField<InputStream> multipartWithFilename(Message in, InputStream stream) {
+        String filename = resolveFilename(in);
+        MultipartField.Builder<InputStream> builder = MultipartField.<InputStream> builder()
                 .value(stream)
-                .filename(filename)
-                .build();
+                .filename(filename);
+        String mime = MimeTypeHelper.resolveForBinary(in);
+        if (ObjectHelper.isNotEmpty(mime)) {
+            builder.contentType(mime);
+        }
+        return builder.build();
+    }
+
+    static List<String> parseCommaSeparatedValues(String value) {
+        if (ObjectHelper.isEmpty(value)) {
+            return List.of();
+        }
+        List<String> values = new ArrayList<>();
+        for (String item : value.split(",")) {
+            String trimmed = item.trim();
+            if (!trimmed.isEmpty()) {
+                values.add(trimmed);
+            }
+        }
+        return values;
     }
 
     /**

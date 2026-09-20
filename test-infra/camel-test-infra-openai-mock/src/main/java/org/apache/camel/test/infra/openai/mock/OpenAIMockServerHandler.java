@@ -97,6 +97,12 @@ public class OpenAIMockServerHandler implements HttpHandler {
 
                 byte[] responseBytes = response.getBytes();
                 if (exchange.getResponseCode() == -1) {
+                    if (path.endsWith("/audio/transcriptions") || path.endsWith("/audio/translations")
+                            || path.endsWith("/embeddings") || path.endsWith("/moderations")
+                            || path.endsWith("/images/generations") || path.endsWith("/images/edits")
+                            || path.endsWith("/responses") || path.endsWith("/chat/completions")) {
+                        exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    }
                     exchange.sendResponseHeaders(200, responseBytes.length);
                 }
                 try (OutputStream os = exchange.getResponseBody()) {
