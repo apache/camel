@@ -47,6 +47,7 @@ import jdk.jfr.Configuration;
 import jdk.jfr.Recording;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
@@ -73,6 +74,7 @@ import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.main.MainListenerSupport;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.BacklogDebugger;
@@ -1421,6 +1423,17 @@ public class Run extends CamelCommand {
         } else {
             // run default in current JVM with same camel version
             try {
+                // a YAML route file that did not load: the validator's report (what to write) before the loader's
+                // error, on a failed start and on a failed reload in dev mode (CAMEL-24851)
+                final List<String> runFiles = new ArrayList<>(files);
+                main.setStartFailureListener(ex -> YamlLoadFailureReport.logIfYamlLoadFailure(ex, runFiles));
+                main.addMainListener(new MainListenerSupport() {
+                    @Override
+                    public void afterConfigure(BaseMainSupport main) {
+                        main.getCamelContext().getManagementStrategy()
+                                .addEventNotifier(new YamlLoadFailureReport.ReloadFailureNotifier());
+                    }
+                });
                 return runKameletMain(main);
             } catch (Exception ex) {
                 if (ignoreLoadingError) {

@@ -786,6 +786,11 @@ Running an existing Maven project (`camel run pom.xml`) is unchanged, and still 
 from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
 `camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
 
+The file watcher reload strategy (camel-support) now emits the `CamelContextReloadFailure` event when a single
+file fails to reload, with the file name as the event's action; before, only a failed reload of the whole context
+emitted it. A listener of that event fires for these failures too. `camel run` uses it to print the report of
+`camel validate yaml` when a YAML route file does not load, at start and on a reload in `--dev` mode.
+
 The YAML that `camel init` writes (`camel init foo.yaml`, and the Integration and Kamelet templates), the
 bundled examples (`camel init --example`) and the routes the `camel_ai_pipeline_scaffold` and
 `camel_openapi_scaffold` MCP tools generate are now written in the canonical YAML DSL format, with an

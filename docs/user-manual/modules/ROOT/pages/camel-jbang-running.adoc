@@ -20,6 +20,17 @@ This works for all DSLs (YAML, Java, XML).
 NOTE: Live reload is for development purposes. If you encounter JVM class loading issues,
 restart the integration. Java files are not live-reloadable in Spring Boot runtime.
 
+When a YAML route file does not load, at start or after a save in dev mode, `camel run` prints the report of
+`camel validate yaml` for the file before the loader's error, so the message says what to write:
+
+[source,text]
+----
+The route file did not load. camel validate yaml says what to write:
+  orders.camel.yaml:
+    pollEnrich: property 'uri' is not defined in the schema ... (the endpoint of pollEnrich is an expression: write pollEnrich: {expression: {constant: {expression: "file:./order.json"}}})
+  (camel validate yaml <file> for the full report; the loader's error follows)
+----
+
 === Source directory
 
 Use `--source-dir` for more flexibility — Camel watches the entire directory (including subfolders)

@@ -314,6 +314,8 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                             } catch (Exception e) {
                                 setLastError(e);
                                 incFailedCounter();
+                                // the same event a failed context reload emits, so a listener can act on the file
+                                EventHelper.notifyContextReloadFailure(getCamelContext(), name, e);
                                 String msg = e.getMessage();
                                 if (msg.endsWith(".")) {
                                     msg = msg.substring(0, msg.length() - 1);
