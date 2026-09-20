@@ -38,6 +38,95 @@ public class YamlValidatorPropertyHintTest {
         validator.init();
     }
 
+    /** CAMEL-24850: the three shapes get the form to write, in both schema modes. */
+    private static List<YamlValidator> bothModes() throws Exception {
+        YamlValidator canonical = new YamlValidator(true);
+        canonical.init();
+        return List.of(validator, canonical);
+    }
+
+    @Test
+    public void testPollEnrichWithAUriSaysItIsAnExpression() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: timer:tick
+                          steps:
+                            - pollEnrich:
+                                uri: file:./order.json
+                            - enrich:
+                                resourceUri: direct:prices
+                    """);
+            assertThat(errors).hasSize(2);
+            assertThat(errors.get(0).getMessage())
+                    .contains("the endpoint of pollEnrich is an expression: write pollEnrich: {expression: {constant:"
+                              + " {expression: \"file:./order.json\"}}}");
+            assertThat(errors.get(1).getMessage())
+                    .contains("the endpoint of enrich is an expression: write enrich: {expression: {constant:"
+                              + " {expression: \"direct:prices\"}}}");
+        }
+    }
+
+    @Test
+    public void testStepsAsAGroupItemSaysThereIsNoGroup() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: timer:tick
+                          steps:
+                            - steps:
+                                - setHeader:
+                                    name: a
+                                    expression:
+                                      constant:
+                                        expression: "1"
+                            - to:
+                                uri: mock:a
+                                steps:
+                                  - log:
+                                      message: hi
+                    """);
+            assertThat(errors).hasSize(2);
+            for (Error e : errors) {
+                assertThat(e.getMessage())
+                        .contains("steps: is the list of a route or of an EIP that owns a pipeline")
+                        .contains("step: {id: ..., steps: [...]} for a named group")
+                        .doesNotContain("did you mean");
+            }
+        }
+    }
+
+    @Test
+    public void testEipsDirectlyUnderStepGetOneMessageWithTheShape() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: timer:tick
+                          steps:
+                            - step:
+                                setHeader:
+                                  name: a
+                                  expression:
+                                    constant:
+                                      expression: "1"
+                                split:
+                                  expression:
+                                    simple:
+                                      expression: "${body}"
+                                  steps:
+                                    - log:
+                                        message: hi
+                    """);
+            assertThat(errors).hasSize(1);
+            assertThat(errors.get(0).getMessage())
+                    .isEqualTo("step is the Step EIP, a named group: its EIPs go in its steps: list"
+                               + " (step: {id: ..., steps: [- setHeader: ...]})");
+        }
+    }
+
     @Test
     public void testMisspelledOptionGetsTheClosestName() throws Exception {
         List<Error> errors = validator.validate("""

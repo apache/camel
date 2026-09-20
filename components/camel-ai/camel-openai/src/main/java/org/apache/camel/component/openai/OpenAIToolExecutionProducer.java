@@ -82,6 +82,15 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        try {
+            processInternal(exchange);
+        } catch (Exception e) {
+            OpenAIGenAiProducerSupport.applyErrorMetadata(exchange, e);
+            throw e;
+        }
+    }
+
+    private void processInternal(Exchange exchange) throws Exception {
         // Get the full ChatCompletion response (stored by storeFullResponse=true on chat-completion)
         ChatCompletion response = exchange.getProperty(OpenAIConstants.RESPONSE, ChatCompletion.class);
         if (response == null) {

@@ -796,6 +796,11 @@ The compact notation they used to be written in (`setBody: {simple: "..."}`, `lo
 rewrites a file in the canonical format. Existing files keep working; only the generated starting point
 changed. Scripts that post-process the generated YAML by matching the old text need to be updated.
 
+`camel export` keeps a Groovy script that a route references as a resource (`resource:classpath:mapping.groovy`
+or `resource:file:mapping.groovy`, a mapping script used as the body of an expression) at the resources root, where
+the reference resolves in the exported project. Other Groovy files go to `src/main/resources/camel-groovy` as before,
+where they are compiled as scripts at startup.
+
 `camel run` now looks up a `classpath:` or `file:` resource that is not found in the directories of the route
 files (the working directory first), the way it already did under `--source-dir`. A script next to the route is
 found as `resource:classpath:mapping.groovy`, the reference that also works in the project `camel export` writes,
@@ -875,6 +880,16 @@ its conversation history for a local provider once the prompt Ollama measured pa
 to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
 file as the local session. Previously the combination was accepted, but recording never produced any
 output, so run the two modes in separate processes instead.
+
+=== camel-yaml-dsl - the canonical schema requires route:
+
+A top-level `- from:` without `- route:` is the compact notation of a route, and the canonical schema
+(`camelYamlDsl-canonical.json`) no longer lists `from` among its top-level entries: a route is written under
+`route:`, as an XML route is always a `<route>`, and as Kaoto and Karavan write it. `camel validate yaml --canonical`
+now reports a top-level `from:` with the form to write, the way it reports the other compact shapes, and
+`camel validate normalize` rewrites it. The Integration template of `camel init` writes its flows in the `- route:`
+form as well; a Kamelet's `template:` keeps its `from:`, which is the Kamelet spec's shape. The classic schema and `camel run` are unchanged: the file keeps working,
+with the compact notation warning `camel run` already logged for it.
 
 === camel-mail
 

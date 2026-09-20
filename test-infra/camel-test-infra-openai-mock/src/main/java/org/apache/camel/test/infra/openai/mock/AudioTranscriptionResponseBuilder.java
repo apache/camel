@@ -31,6 +31,9 @@ public class AudioTranscriptionResponseBuilder {
     }
 
     public String createTranscriptionResponse(AudioTranscriptionExpectation expectation) throws Exception {
+        if (expectation.isDiarized()) {
+            return createDiarizedResponse(expectation);
+        }
         if (expectation.isVerbose()) {
             return createVerboseResponse(expectation);
         }
@@ -55,5 +58,24 @@ public class AudioTranscriptionResponseBuilder {
                 expectation.getDuration(),
                 List.of(),
                 List.of()));
+    }
+
+    private String createDiarizedResponse(AudioTranscriptionExpectation expectation) throws Exception {
+        record DiarizedSegment(String id, double start, double end, String speaker, String text, String type) {
+        }
+
+        record DiarizedTranscriptionResponse(String text, double duration, List<DiarizedSegment> segments) {
+        }
+
+        double duration = expectation.getDuration() > 0 ? expectation.getDuration() : 3.5;
+        List<DiarizedSegment> segments = List.of(
+                new DiarizedSegment(
+                        "seg_0", 0.0, duration, "A", expectation.getTranscriptionText(),
+                        "transcript.text.segment"));
+
+        return objectMapper.writeValueAsString(new DiarizedTranscriptionResponse(
+                expectation.getTranscriptionText(),
+                duration,
+                segments));
     }
 }

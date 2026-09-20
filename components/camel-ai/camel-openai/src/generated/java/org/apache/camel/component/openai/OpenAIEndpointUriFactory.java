@@ -24,12 +24,18 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(90);
+        Set<String> props = new HashSet<>(96);
         props.add("additionalBodyProperty");
         props.add("additionalHeader");
         props.add("additionalResponseHeader");
         props.add("apiKey");
+        props.add("audioChunkingStrategy");
+        props.add("audioInclude");
+        props.add("audioKeywords");
+        props.add("audioKnownSpeakerNames");
+        props.add("audioKnownSpeakerReferences");
         props.add("audioLanguage");
+        props.add("audioLanguages");
         props.add("audioModel");
         props.add("audioPrompt");
         props.add("audioResponseFormat");

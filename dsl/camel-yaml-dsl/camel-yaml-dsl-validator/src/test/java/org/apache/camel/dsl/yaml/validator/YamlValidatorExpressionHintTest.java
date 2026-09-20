@@ -73,18 +73,19 @@ public class YamlValidatorExpressionHintTest {
     @Test
     public void testAggregateCompletionSizeAsPlainValue() {
         String yaml = """
-                - from:
-                    uri: timer:tick
-                    steps:
-                      - aggregate:
-                          correlationExpression:
-                            constant:
-                              expression: "a"
-                          completionSizeExpression: 10
-                          aggregationStrategy: myStrategy
-                          steps:
-                            - log:
-                                message: "${body}"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - aggregate:
+                            correlationExpression:
+                              constant:
+                                expression: "a"
+                            completionSizeExpression: 10
+                            aggregationStrategy: myStrategy
+                            steps:
+                              - log:
+                                  message: "${body}"
                 """;
         assertHint(yaml, "completionSizeExpression: {constant: {expression: \"10\"}}");
     }

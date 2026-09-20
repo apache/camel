@@ -76,6 +76,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     @Parameter(defaultValue = "false")
     private boolean canonical;
 
+    /** The top-level entries the canonical schema leaves out: the compact notation of a route. */
+    private static final Set<String> COMPACT_TOP_LEVEL_NODES = Set.of("from");
+
     private ObjectNode items;
     private ObjectNode definitions;
     private ObjectNode step;
@@ -135,6 +138,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 continue;
             }
             if (hasAnnotation(entry.getValue(), YAML_IN_ANNOTATION)) {
+                if (canonical && !nodes.isEmpty() && COMPACT_TOP_LEVEL_NODES.containsAll(nodes)) {
+                    // a top-level from: without route: is the compact notation of a route (the runtime warns on it,
+                    // CAMEL-24745): the canonical schema requires - route: {from: ...}, as XML requires <route>
+                    continue;
+                }
                 nodes.forEach(node -> {
                     items.withObject("/properties")
                             .putObject(node)
