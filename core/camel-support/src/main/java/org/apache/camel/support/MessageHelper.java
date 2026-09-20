@@ -39,6 +39,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ImportantHeaderUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -1078,7 +1079,7 @@ public final class MessageHelper {
             JsonObject jb = new JsonObject();
             jo.put("body", jb);
             Object body = message.getBody();
-            String type = ObjectHelper.classCanonicalName(body);
+            String type = body != null ? ObjectHelper.classCanonicalName(body) : "null";
             if (type != null) {
                 jb.put("type", type);
             }
@@ -1107,6 +1108,17 @@ public final class MessageHelper {
                 long size = streamCache.length();
                 if (size > 0) {
                     jb.put("size", size);
+                }
+            }
+            if (!jb.containsKey("size") && message.getExchange() != null && message.getExchange().getContext() != null) {
+                // the size of a text or byte body, from the message size strategy when it is enabled (the dev
+                // profile does): lengths only, nothing is read or converted (CAMEL-24844)
+                MessageSizeStrategy sizeStrategy = message.getExchange().getContext().getMessageSizeStrategy();
+                if (sizeStrategy != null && sizeStrategy.isEnabled()) {
+                    long size = sizeStrategy.computeBodySize(message);
+                    if (size >= 0) {
+                        jb.put("size", size);
+                    }
                 }
             }
             String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);

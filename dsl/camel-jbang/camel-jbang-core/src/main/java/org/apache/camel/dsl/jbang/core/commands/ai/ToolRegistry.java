@@ -213,10 +213,20 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_history",
-                "Get the message history trace of the last completed exchange.")
+                "Get the message history trace of the last completed exchange: every step with the message as it was"
+                                     + " there. With summary=true only the steps, each with route, node, elapsed, and the"
+                                     + " body's type and size as it reached the step (what to read to see where the body"
+                                     + " changed from text into a Map or bytes).")
+                .param("summary", "boolean", "Only the steps with route, node, elapsed, body type and size", false)
                 .executor((ctx, args) -> {
                     JsonObject history = ctx.readHistoryFile();
-                    return history != null ? history.toJson() : "No message history available.";
+                    if (history == null) {
+                        return "No message history available.";
+                    }
+                    if ("true".equalsIgnoreCase(args.get("summary"))) {
+                        return historySummary(history).toJson();
+                    }
+                    return history.toJson();
                 }));
 
         register(tool("get_route_source",
@@ -1175,5 +1185,44 @@ public final class ToolRegistry {
         return (name != null && name.toLowerCase().contains(lf))
                 || (title != null && title.toLowerCase().contains(lf))
                 || (description != null && description.toLowerCase().contains(lf));
+    }
+
+    /**
+     * The steps of the last completed exchange, one line each: route, node, elapsed, and the body's type and size as it
+     * reached the step (from the message dump of the trace event), without the bodies, headers and properties.
+     */
+    static JsonObject historySummary(JsonObject history) {
+        JsonObject answer = new JsonObject();
+        if (history.get("name") != null) {
+            answer.put("name", history.get("name"));
+        }
+        JsonArray steps = new JsonArray();
+        Object traces = history.get("traces");
+        if (traces instanceof java.util.List<?> list) {
+            for (Object o : list) {
+                if (!(o instanceof JsonObject t)) {
+                    continue;
+                }
+                JsonObject step = new JsonObject();
+                for (String key : new String[] {
+                        "routeId", "nodeId", "nodeShortName", "nodeLabel", "location", "elapsed",
+                        "first", "last", "failed" }) {
+                    if (t.get(key) != null) {
+                        step.put(key, t.get(key));
+                    }
+                }
+                if (t.get("message") instanceof JsonObject m && m.get("body") instanceof JsonObject b) {
+                    if (b.get("type") != null) {
+                        step.put("bodyType", b.get("type"));
+                    }
+                    if (b.get("size") != null) {
+                        step.put("bodySize", b.get("size"));
+                    }
+                }
+                steps.add(step);
+            }
+        }
+        answer.put("steps", steps);
+        return answer;
     }
 }

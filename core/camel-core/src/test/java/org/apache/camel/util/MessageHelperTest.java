@@ -300,4 +300,19 @@ public class MessageHelperTest {
         assertTrue(out.contains("Hello World"));
     }
 
+    @Test
+    public void testDumpAsJSonBodySizeAndNull() {
+        // CAMEL-24844: the size from the message size strategy when it is enabled, and a null body says so
+        camelContext.getMessageSizeStrategy().setEnabled(true);
+        Exchange exchange = new DefaultExchange(camelContext);
+        Message message = exchange.getIn();
+        message.setBody("Hello World");
+        String out = MessageHelper.dumpAsJSon(message, true);
+        assertTrue(out.contains("\"type\": \"java.lang.String\""), out);
+        assertTrue(out.contains("\"size\": 11"), out);
+
+        message.setBody(null);
+        out = MessageHelper.dumpAsJSon(message, true);
+        assertTrue(out.contains("\"type\": \"null\""), out);
+    }
 }

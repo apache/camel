@@ -41,6 +41,7 @@ class HistoryEntry {
     long epochMs;
     String body;
     String bodyType;
+    long bodySize = -1;
     String exception;
     Map<String, Object> headers;
     Map<String, String> headerTypes;

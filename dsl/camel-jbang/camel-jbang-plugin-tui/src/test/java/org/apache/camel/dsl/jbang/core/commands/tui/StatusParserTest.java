@@ -404,6 +404,25 @@ class StatusParserTest {
     }
 
     @Test
+    void parseMessageBodyTypeAndSize() {
+        // CAMEL-24844: the body's type and the size the running app measured
+        JsonObject body = new JsonObject();
+        body.put("type", "java.lang.String");
+        body.put("size", 11);
+        body.put("value", "Hello World");
+        JsonObject message = new JsonObject();
+        message.put("body", body);
+
+        StatusParser.MessageData md = StatusParser.parseMessage(message);
+        assertEquals("Hello World", md.body());
+        assertEquals("String", md.bodyType());
+        assertEquals(11, md.bodySize());
+
+        body.remove("size");
+        assertEquals(-1, StatusParser.parseMessage(message).bodySize());
+    }
+
+    @Test
     void parseMessageWithHeadersAsMap() {
         JsonObject message = new JsonObject();
         Map<String, Object> headers = new LinkedHashMap<>();

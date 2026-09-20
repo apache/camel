@@ -42,6 +42,7 @@ class TraceEntry {
     long epochMs;
     String body;
     String bodyType;
+    long bodySize = -1;
     String bodyPreview;
     Map<String, Object> headers;
     Map<String, String> headerTypes;
