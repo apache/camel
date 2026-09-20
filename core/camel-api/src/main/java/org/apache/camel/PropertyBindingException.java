@@ -27,6 +27,8 @@ import org.jspecify.annotations.Nullable;
  */
 public class PropertyBindingException extends RuntimeCamelException {
 
+    private static final int MAX_CAUSE_DEPTH = 100;
+
     private final Object target;
     private final @Nullable String propertyName;
     private final @Nullable Object value;
@@ -99,12 +101,32 @@ public class PropertyBindingException extends RuntimeCamelException {
         if (optionPrefix != null && optionKey != null) {
             key = optionPrefix.endsWith(".") ? optionPrefix + optionKey : optionPrefix + "." + optionKey;
         }
+        String reason = rootCauseMessage();
         if (key != null) {
             return "Error binding property (" + key + "=" + stringValue + ") with name: " + propertyName
-                   + " on bean: " + target + " with value: " + stringValue;
+                   + " on bean: " + target + " with value: " + stringValue + (reason != null ? ": " + reason : "");
         } else {
-            return "Error binding properties on bean: " + target;
+            return "Error binding properties on bean: " + target + (reason != null ? ": " + reason : "");
         }
+    }
+
+    /**
+     * The message of the deepest cause, the reason the binding failed (host must be an absolute URI, no type converter
+     * available): the first line is what a person reads, and it said only that the binding failed (CAMEL-24836).
+     */
+    private @Nullable String rootCauseMessage() {
+        Throwable t = getCause();
+        Throwable deepest = null;
+        // bounded: a cause chain assembled outside initCause (a getCause override, deserialization) may loop
+        for (int i = 0; t != null && i < MAX_CAUSE_DEPTH; i++) {
+            deepest = t;
+            t = t.getCause();
+        }
+        if (deepest == null || deepest instanceof PropertyBindingException) {
+            return null;
+        }
+        String msg = deepest.getMessage();
+        return msg != null && !msg.isBlank() ? msg.trim() : null;
     }
 
     public Object getTarget() {
