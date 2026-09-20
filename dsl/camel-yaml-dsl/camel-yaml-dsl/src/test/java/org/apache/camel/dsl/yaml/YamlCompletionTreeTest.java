@@ -55,9 +55,11 @@ class YamlCompletionTreeTest {
         assertThat(root).as("root node must exist").isNotNull();
 
         Set<String> names = childNames(root);
-        assertThat(names).contains("route", "from", "rest", "beans",
+        assertThat(names).contains("route", "rest", "beans",
                 "errorHandler", "onException", "routeConfiguration",
                 "intercept", "interceptFrom", "interceptSendToEndpoint");
+        // a top-level from: is the compact notation of a route: the canonical tree has it under route only (CAMEL-24745)
+        assertThat(names).doesNotContain("from");
     }
 
     @Test

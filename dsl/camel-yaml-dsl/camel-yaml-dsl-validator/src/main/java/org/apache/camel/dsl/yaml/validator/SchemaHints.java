@@ -372,6 +372,12 @@ final class SchemaHints {
      * line, and the normalize command.
      */
     static final List<Hint> COMPACT = List.of(
+            // - from: at the top level: the route is written under route:, as XML writes <route> (CAMEL-24745)
+            replace("additionalProperties", null,
+                    m -> "from".equals(m.unknown()) && m.nameIsIndex() && m.parentName().isEmpty(),
+                    m -> "a top-level from: is the deprecated compact notation: a route is written under route:"
+                         + " (- route: {from: {uri: \"...\", steps: [...]}})" + NORMALIZE_HINT,
+                    COMPACT_NOTATION, COMPACT_NOTATION),
             // setBody: {simple: ...} or when: [- simple: ...]: the language key sits on the EIP, not under expression:
             replace("additionalProperties", null,
                     m -> m.unknown() != null && m.validator().languageKeys().contains(m.unknown()),
