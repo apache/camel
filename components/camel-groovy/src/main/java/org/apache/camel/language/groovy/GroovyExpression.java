@@ -37,6 +37,7 @@ import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.support.LanguageHelper;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,8 +131,13 @@ public class GroovyExpression extends ExpressionSupport {
                         = exchange.getContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
                 GroovyShell shell = shellFactory != null ? shellFactory.createGroovyShell(exchange)
                         : cl != null ? new GroovyShell(cl) : new GroovyShell();
-                return name != null
-                        ? shell.getClassLoader().parseClass(text, name) : shell.getClassLoader().parseClass(text);
+                GroovyLanguage.preCompile(exchange.getContext(), name, text);
+                try {
+                    return name != null
+                            ? shell.getClassLoader().parseClass(text, name) : shell.getClassLoader().parseClass(text);
+                } catch (CompilationFailedException e) {
+                    throw GroovyLanguage.compileFailure(e);
+                }
             });
             c = new CompiledScript(r.context, r.language, generation, fileName, scriptClass, constructor(scriptClass));
             compiled = c;

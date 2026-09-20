@@ -33,8 +33,9 @@ import org.apache.camel.tooling.model.PojoBeanModel;
  */
 public class JavaKnownImportsDownloader implements CompilePreProcessor {
 
+    // Java and Groovy: import a.b.C; import a.b.C (no semicolon in Groovy); import static a.b.C.member
     private static final Pattern IMPORT_PATTERN = Pattern.compile(
-            "^import\\s+([a-zA-Z][.\\w]*)\\s*;", Pattern.MULTILINE);
+            "^\\s*import\\s+(static\\s+)?([a-zA-Z][.\\w]*(?:\\.\\*)?)\\s*;?\\s*$", Pattern.MULTILINE);
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
@@ -73,12 +74,18 @@ public class JavaKnownImportsDownloader implements CompilePreProcessor {
         }
     }
 
-    private static List<String> determineImports(String content) {
+    static List<String> determineImports(String content) {
         List<String> answer = new ArrayList<>();
         final Matcher matcher = IMPORT_PATTERN.matcher(content);
         while (matcher.find()) {
-            String imp = matcher.group(1);
-            imp = imp.trim();
+            String imp = matcher.group(2).trim();
+            if (matcher.group(1) != null && imp.contains(".")) {
+                // import static a.b.C.member: the class is a.b.C
+                imp = imp.substring(0, imp.lastIndexOf('.'));
+            }
+            if (imp.endsWith(".*")) {
+                imp = imp.substring(0, imp.length() - 2);
+            }
             answer.add(imp);
         }
         return answer;
