@@ -861,6 +861,21 @@ class ExportTest {
                 "a script the routes do not reference as a resource goes to camel-groovy as before");
     }
 
+    /** CAMEL-24853: the same for a route given as a classpath: resource, read from the classpath for the scan. */
+    @Test
+    public void shouldExportAResourceReferencedGroovyScriptOfAClasspathRoute() throws Exception {
+        Export command = createCommand(RuntimeType.main,
+                new String[] {
+                        "classpath:groovy-resource-demo.camel.yaml", "src/test/resources/shipment-mapping.groovy",
+                        "src/test/resources/demo.groovy" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Assertions.assertEquals(0, command.doCall());
+
+        Assertions.assertTrue(workingDir.toPath().resolve("src/main/resources/shipment-mapping.groovy").toFile().isFile(),
+                "the script the classpath: route references is at the resources root");
+        Assertions.assertTrue(workingDir.toPath().resolve("src/main/resources/camel-groovy/demo.groovy").toFile().isFile());
+    }
+
     @Test
     public void shouldExportGenAiRouteWithObservability() throws Exception {
         Export command = new Export(new CamelJBangMain());

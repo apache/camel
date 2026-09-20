@@ -889,7 +889,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
      * resource:file:, as written in the reference (a relative path, or a bare name), so the export can keep them where
      * the reference resolves. A file: route is read from the file system, a classpath: route from the classpath.
      */
-    private Set<String> resourceReferencedFiles(String routeFiles) {
+    private static Set<String> resourceReferencedFiles(String routeFiles) {
         Set<String> paths = new HashSet<>();
         if (routeFiles == null || routeFiles.isBlank()) {
             return paths;
@@ -903,7 +903,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
             String content = null;
             try {
                 if ("classpath".equals(scheme)) {
-                    try (InputStream is = getClass().getClassLoader().getResourceAsStream(f)) {
+                    try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream(f)) {
                         content = is != null ? new String(is.readAllBytes(), StandardCharsets.UTF_8) : null;
                     }
                 } else if (scheme == null || "file".equals(scheme)) {
