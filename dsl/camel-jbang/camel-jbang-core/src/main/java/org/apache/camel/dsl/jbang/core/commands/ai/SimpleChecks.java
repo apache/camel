@@ -102,6 +102,7 @@ final class SimpleChecks {
             // Determine predicate vs expression context
             boolean predicate = !isLogMessage && isPredicate(catalog, lines, i, lineIndent);
 
+            boolean parsed = true;
             try {
                 LanguageValidationResult result = predicate
                         ? catalog.validateLanguagePredicate(null, "simple", simpleText)
@@ -109,6 +110,7 @@ final class SimpleChecks {
                 if (!result.isSuccess()) {
                     String error = result.getShortError() != null ? result.getShortError() : result.getError();
                     if (error != null && !isMissingDependency(error)) {
+                        parsed = false;
                         errors.add("Line " + lineNum + ": Simple syntax error: " + error
                                    + aggregatedSizeHint(error, lines, i, lineIndent));
                     }
@@ -116,8 +118,67 @@ final class SimpleChecks {
             } catch (Exception e) {
                 // best effort
             }
+
+            // the parser cannot report this one: the expression is valid, it just does not mean what it says
+            if (parsed && !predicate && !isLogMessage) {
+                String ternary = topLevelTernary(simpleText);
+                if (ternary != null) {
+                    errors.add("Line " + lineNum + ": " + ternary);
+                }
+            }
         }
         return errors;
+    }
+
+    /**
+     * The top level of a Simple expression is a template, so a <tt>?</tt> and a <tt>:</tt> outside <tt>${...}</tt> are
+     * literal text and not a ternary operator: the expression parses, and the text is used as the value with the
+     * operator never evaluated (CAMEL-24826). The ternary operator is evaluated inside a single <tt>${...}</tt>, and at
+     * the top level of a predicate, where there is no literal text to be ambiguous with.
+     * <p/>
+     * Reported only when the expression already uses a function, so prose such as <tt>Is it ok ? yes : no</tt> is left
+     * alone, and not for a log message, where a <tt>?</tt> followed by a <tt>:</tt> is most often a sentence. Making
+     * the parser itself report this is not an option: it regressed literal text twice already (CAMEL-22904,
+     * CAMEL-23035).
+     *
+     * @param  text the simple expression
+     * @return      the message to report, or <tt>null</tt> when the expression has no top-level ternary
+     */
+    static String topLevelTernary(String text) {
+        if (text == null || !text.contains("${")) {
+            return null;
+        }
+        int question = indexOfTopLevel(text, " ? ", 0);
+        if (question < 0 || indexOfTopLevel(text, " : ", question + 3) < 0) {
+            return null;
+        }
+        return "Simple has no top-level ternary: the ? at index " + (question + 1)
+               + " and its : are outside ${...}, so they are literal text and the operator is never evaluated."
+               + " Write the whole ternary inside one function, as in ${body.size() == 0 ? ${null} : ${body[0]}}";
+    }
+
+    /** The index of the token at the top level of the text: outside every ${...} and outside every quoted literal. */
+    private static int indexOfTopLevel(String text, String token, int from) {
+        char quote = 0;
+        int depth = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (quote != 0) {
+                if (ch == quote) {
+                    quote = 0;
+                }
+            } else if (ch == '\'' || ch == '"') {
+                quote = ch;
+            } else if (ch == '$' && i < text.length() - 1 && text.charAt(i + 1) == '{') {
+                depth++;
+                i++;
+            } else if (ch == '}' && depth > 0) {
+                depth--;
+            } else if (depth == 0 && i >= from && text.startsWith(token, i)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
