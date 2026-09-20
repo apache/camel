@@ -99,12 +99,31 @@ public class PropertyBindingException extends RuntimeCamelException {
         if (optionPrefix != null && optionKey != null) {
             key = optionPrefix.endsWith(".") ? optionPrefix + optionKey : optionPrefix + "." + optionKey;
         }
+        String reason = rootCauseMessage();
         if (key != null) {
             return "Error binding property (" + key + "=" + stringValue + ") with name: " + propertyName
-                   + " on bean: " + target + " with value: " + stringValue;
+                   + " on bean: " + target + " with value: " + stringValue + (reason != null ? ": " + reason : "");
         } else {
-            return "Error binding properties on bean: " + target;
+            return "Error binding properties on bean: " + target + (reason != null ? ": " + reason : "");
         }
+    }
+
+    /**
+     * The message of the deepest cause, the reason the binding failed (host must be an absolute URI, no type converter
+     * available): the first line is what a person reads, and it said only that the binding failed (CAMEL-24836).
+     */
+    private @Nullable String rootCauseMessage() {
+        Throwable t = getCause();
+        Throwable deepest = null;
+        while (t != null && t != deepest) {
+            deepest = t;
+            t = t.getCause();
+        }
+        if (deepest == null || deepest instanceof PropertyBindingException) {
+            return null;
+        }
+        String msg = deepest.getMessage();
+        return msg != null && !msg.isBlank() ? msg.trim() : null;
     }
 
     public Object getTarget() {

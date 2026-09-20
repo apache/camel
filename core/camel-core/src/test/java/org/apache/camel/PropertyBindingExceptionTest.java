@@ -25,6 +25,32 @@ public class PropertyBindingExceptionTest {
             = "Error binding property (prefix.property=value) with name: property";
 
     @Test
+    public void messageCarriesTheReason() {
+        // CAMEL-24836: the first line said only that the binding failed; the reason sat two causes down
+        IllegalArgumentException reason = new IllegalArgumentException(
+                "host must be an absolute URI (e.g. http://api.example.com), given: `http://localhost:8080/api`");
+        PropertyBindingException inner
+                = new PropertyBindingException(new Object(), "host", "http://localhost:8080/api", reason);
+        PropertyBindingException outer = new PropertyBindingException(
+                new Object(), "host", "http://localhost:8080/api", "camel.component.rest-openapi", "host", inner);
+        assertTrue(outer.getMessage().endsWith("with value: http://localhost:8080/api: host must be an absolute URI"
+                                               + " (e.g. http://api.example.com), given: `http://localhost:8080/api`"),
+                outer.getMessage());
+        assertTrue(inner.getMessage().endsWith(": host must be an absolute URI (e.g. http://api.example.com), given:"
+                                               + " `http://localhost:8080/api`"),
+                inner.getMessage());
+        // no reason to add: a cause without a message, or no cause at all
+        PropertyBindingException noReason = new PropertyBindingException(new Object(), "host", "x", new RuntimeException());
+        assertTrue(noReason.getMessage().endsWith("with value: x"), noReason.getMessage());
+        PropertyBindingException noCause = new PropertyBindingException(new Object(), "host", "x");
+        assertTrue(noCause.getMessage().endsWith("with value: x"), noCause.getMessage());
+        PropertyBindingException noName = new PropertyBindingException(new Object(), reason);
+        assertTrue(noName.getMessage().endsWith(": host must be an absolute URI (e.g. http://api.example.com), given:"
+                                                + " `http://localhost:8080/api`"),
+                noName.getMessage());
+    }
+
+    @Test
     public void exceptionMessageTest() {
         PropertyBindingException pbe = new PropertyBindingException(
                 new Object(), "property", "value", "prefix", "property", new Throwable("The casue!"));
