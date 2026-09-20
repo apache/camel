@@ -134,6 +134,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format")
+    boolean jsonOutput;
+
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
@@ -165,6 +169,20 @@ public class CamelHistoryAction extends ActionWatchCommand {
     public Integer doWatchCall() throws Exception {
         if (name == null) {
             name = "*";
+        }
+
+        if (jsonOutput) {
+            for (long pid : findPids(name)) {
+                Path p = getMessageHistoryFile(Long.toString(pid));
+                if (Files.exists(p)) {
+                    for (String line : Files.readAllLines(p)) {
+                        if (!line.isBlank()) {
+                            printer().println(line);
+                        }
+                    }
+                }
+            }
+            return 0;
         }
 
         List<List<Row>> pids = loadRows();

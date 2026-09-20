@@ -44,6 +44,7 @@ final class StatusParser {
             Map<String, String> headerTypes,
             String body,
             String bodyType,
+            long bodySize,
             Map<String, Object> exchangeProperties,
             Map<String, String> exchangePropertyTypes,
             Map<String, Object> exchangeVariables,
@@ -968,6 +969,7 @@ final class StatusParser {
             entry.headerTypes = md.headerTypes();
             entry.body = md.body();
             entry.bodyType = md.bodyType();
+            entry.bodySize = md.bodySize();
             if (entry.body != null) {
                 entry.bodyPreview = entry.body.replace("\n", " ").replace("\r", "");
             }
@@ -1076,6 +1078,7 @@ final class StatusParser {
             entry.headerTypes = md.headerTypes();
             entry.body = md.body();
             entry.bodyType = md.bodyType();
+            entry.bodySize = md.bodySize();
             entry.exchangeProperties = md.exchangeProperties();
             entry.exchangePropertyTypes = md.exchangePropertyTypes();
             entry.exchangeVariables = md.exchangeVariables();
@@ -1102,6 +1105,7 @@ final class StatusParser {
         Map<String, String> headerTypes = null;
         String body = null;
         String bodyType = null;
+        long bodySize = -1;
         Map<String, Object> exchangeProperties = null;
         Map<String, String> exchangePropertyTypes = null;
         Map<String, Object> exchangeVariables = null;
@@ -1130,6 +1134,9 @@ final class StatusParser {
             Object val = bodyJson.get("value");
             body = val != null ? val.toString() : null;
             bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
+            if (bodyJson.get("size") instanceof Number n) {
+                bodySize = n.longValue();
+            }
         } else if (bodyObj != null) {
             body = bodyObj.toString();
         }
@@ -1171,7 +1178,7 @@ final class StatusParser {
         }
 
         return new MessageData(
-                headers, headerTypes, body, bodyType,
+                headers, headerTypes, body, bodyType, bodySize,
                 exchangeProperties, exchangePropertyTypes, exchangeVariables, exchangeVariableTypes);
     }
 
@@ -1439,6 +1446,9 @@ final class StatusParser {
                 if (bodyObj instanceof JsonObject bodyJson) {
                     ei.body = bodyJson.getString("value");
                     ei.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
+                    if (bodyJson.get("size") instanceof Number n) {
+                        ei.bodySize = n.longValue();
+                    }
                 } else if (bodyObj != null) {
                     ei.body = bodyObj.toString();
                 }

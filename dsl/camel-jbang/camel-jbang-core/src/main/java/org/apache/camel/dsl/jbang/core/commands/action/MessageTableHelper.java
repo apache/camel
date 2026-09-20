@@ -467,6 +467,18 @@ public class MessageTableHelper {
             return s;
         }
 
+        /** Whether the dump's size counts elements (a collection, a map or an array other than bytes). */
+        static boolean sizeIsCount(String type) {
+            if (type == null) {
+                return false;
+            }
+            if (type.endsWith("[]")) {
+                return !type.equals("byte[]");
+            }
+            return type.startsWith("java.util.") && (type.contains("List") || type.contains("Set") || type.contains("Map")
+                    || type.contains("Collection") || type.contains("Queue") || type.contains("Deque"));
+        }
+
         String typeAndLengthAsString() {
             String s;
             if (type == null) {
@@ -493,13 +505,15 @@ public class MessageTableHelper {
             long p = position != null ? position : -1;
             StringBuilder sb = new StringBuilder();
             if (sz != -1) {
-                sb.append(" size: ").append(sz);
+                // the dump's size is a count for a collection or an array, bytes for text, bytes, a stream or a file
+                sb.append(" size: ").append(sz).append(sizeIsCount(type) ? " elements" : " bytes");
             }
             if (p != -1) {
                 sb.append(" pos: ").append(p);
             }
-            if (l != -1) {
-                sb.append(" bytes: ").append(l);
+            if (l != -1 && l != sz) {
+                // the length of the value as dumped (it may be cut), when it is not the size already shown
+                sb.append(" shown: ").append(l);
             }
             if (!sb.isEmpty()) {
                 s = s + " (" + sb.toString().trim() + ")";

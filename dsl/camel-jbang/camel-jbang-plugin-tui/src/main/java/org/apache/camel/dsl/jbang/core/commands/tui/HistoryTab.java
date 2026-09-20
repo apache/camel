@@ -906,6 +906,7 @@ class HistoryTab extends AbstractTab {
         boolean failed = false;
         String body = null;
         String bodyType = null;
+        long bodySize = -1;
         String exception = null;
         Map<String, Object> headers = null;
         Map<String, Object> properties = null;
@@ -927,6 +928,7 @@ class HistoryTab extends AbstractTab {
             failed = e.failed;
             body = e.body;
             bodyType = e.bodyType;
+            bodySize = e.bodySize;
             exception = e.exception;
             headers = e.headers;
             properties = e.exchangeProperties;
@@ -950,6 +952,7 @@ class HistoryTab extends AbstractTab {
             failed = e.failed;
             body = e.body;
             bodyType = e.bodyType;
+            bodySize = e.bodySize;
             exception = e.exception;
             headers = e.headers;
             properties = e.exchangeProperties;
@@ -1050,9 +1053,11 @@ class HistoryTab extends AbstractTab {
         if (showBody && body != null) {
             Style headerStyle = bodyChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
+            String detail = bodyType != null && bodySize >= 0
+                    ? bodyType + ", " + HeapHistogramTab.formatBytes(bodySize) : bodyType;
             lines.add(Line.from(
                     Span.styled(" Body", headerStyle),
-                    bodyType != null ? Span.styled(" (" + bodyType + ")", Style.EMPTY.dim()) : Span.raw("")));
+                    detail != null ? Span.styled(" (" + detail + ")", Style.EMPTY.dim()) : Span.raw("")));
             for (String line : body.split("\n")) {
                 lines.add(Line.from(Span.raw(" " + line)));
             }
@@ -1388,7 +1393,7 @@ class HistoryTab extends AbstractTab {
                     headersChanged, prev != null ? prev.headers : null);
         }
         if (showTraceBody) {
-            addBodyLines(lines, entry.body, entry.bodyType, bodyChanged);
+            addBodyLines(lines, entry.body, entry.bodyType, entry.bodySize, bodyChanged);
         }
         addExceptionLines(lines, entry.exception);
 
@@ -1673,7 +1678,7 @@ class HistoryTab extends AbstractTab {
                     headersChanged, prev != null ? prev.headers : null);
         }
         if (showHistoryBody) {
-            addBodyLines(lines, entry.body, entry.bodyType, bodyChanged);
+            addBodyLines(lines, entry.body, entry.bodyType, entry.bodySize, bodyChanged);
         }
         addExceptionLines(lines, entry.exception);
 
@@ -2196,12 +2201,18 @@ class HistoryTab extends AbstractTab {
     }
 
     static void addBodyLines(List<Line> lines, String body, String bodyType, boolean changed) {
+        addBodyLines(lines, body, bodyType, -1, changed);
+    }
+
+    /** The body's type and, when the running app measured it, its size next to the body lines (CAMEL-24844). */
+    static void addBodyLines(List<Line> lines, String body, String bodyType, long bodySize, boolean changed) {
         Style headerStyle = changed ? Theme.change().bold() : Theme.muted();
         if (body != null) {
             if (bodyType != null) {
+                String detail = bodySize >= 0 ? bodyType + ", " + HeapHistogramTab.formatBytes(bodySize) : bodyType;
                 lines.add(Line.from(
                         Span.styled(" Body: ", headerStyle),
-                        Span.styled("(" + bodyType + ")", Style.EMPTY.dim())));
+                        Span.styled("(" + detail + ")", Style.EMPTY.dim())));
             } else {
                 lines.add(Line.from(Span.styled(" Body:", headerStyle)));
             }

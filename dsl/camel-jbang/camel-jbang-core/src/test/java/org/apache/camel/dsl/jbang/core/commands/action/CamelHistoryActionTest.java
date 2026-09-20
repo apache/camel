@@ -56,6 +56,23 @@ class CamelHistoryActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void testJsonOutputIsTheRecordedHistory() throws Exception {
+        writeStatusFile(TEST_PID, "myApp");
+        writeMessageHistoryFile(TEST_PID, singleTraceLine());
+        CamelHistoryAction command = new CamelHistoryAction(new CamelJBangMain().withPrinter(printer));
+        command.name = "myApp";
+        command.depth = 9;
+        command.loggingColor = false;
+        command.jsonOutput = true;
+        int exit = callWithSingleProcess(command);
+        assertEquals(0, exit);
+        String out = printer.getOutput();
+        assertTrue(out.contains("\"traces\""), "the recorded history as JSON, was: " + out);
+        assertTrue(out.contains("ABCDEFGH-0001"), "the exchange id in the JSON, was: " + out);
+        assertTrue(!out.contains("Message History of last completed"), "no table in JSON mode, was: " + out);
+    }
+
+    @Test
     void testRendersNothingWhenNameDoesNotMatch() throws Exception {
         writeStatusFile(TEST_PID, "myApp");
         writeMessageHistoryFile(TEST_PID, singleTraceLine());
