@@ -841,6 +841,26 @@ class ExportTest {
         Assertions.assertTrue(f.exists());
     }
 
+    /** CAMEL-24853: a Groovy script the route references as a resource: stays where the reference resolves. */
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportAResourceReferencedGroovyScriptToTheResourcesRoot(RuntimeType rt) throws Exception {
+        Export command = createCommand(rt,
+                new String[] {
+                        "src/test/resources/groovy-resource-demo.camel.yaml", "src/test/resources/shipment-mapping.groovy",
+                        "src/test/resources/demo.groovy" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        Assertions.assertEquals(0, command.doCall());
+
+        File referenced = workingDir.toPath().resolve("src/main/resources/shipment-mapping.groovy").toFile();
+        Assertions.assertTrue(referenced.isFile(), "the referenced script is at the resources root");
+        Assertions.assertFalse(workingDir.toPath().resolve("src/main/resources/camel-groovy/shipment-mapping.groovy").toFile()
+                .exists(), "and not in camel-groovy, where it would be compiled as a script");
+        File script = workingDir.toPath().resolve("src/main/resources/camel-groovy/demo.groovy").toFile();
+        Assertions.assertTrue(script.isFile(),
+                "a script the routes do not reference as a resource goes to camel-groovy as before");
+    }
+
     @Test
     public void shouldExportGenAiRouteWithObservability() throws Exception {
         Export command = new Export(new CamelJBangMain());

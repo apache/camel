@@ -881,6 +881,43 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
     }
 
+    /** resource:classpath:x or resource:file:x in a route file: the file x is referenced by name. */
+    private static final Pattern RESOURCE_REF_PATTERN = Pattern.compile("resource:(?:classpath|file):([^\"'\\s?&,]+)");
+
+    /**
+     * The names of the files the route files (camel.main.routesIncludePattern) reference as resource:classpath: or
+     * resource:file:, so the export can keep them where the reference resolves.
+     */
+    Set<String> resourceReferencedFiles(String routeFiles) {
+        Set<String> names = new HashSet<>();
+        if (routeFiles == null || routeFiles.isBlank()) {
+            return names;
+        }
+        for (String f : routeFiles.split(",")) {
+            f = f.trim();
+            String scheme = getScheme(f);
+            if (scheme != null) {
+                if (!"file".equals(scheme)) {
+                    continue;
+                }
+                f = f.substring(scheme.length() + 1);
+            }
+            Path path = Paths.get(f);
+            if (!Files.isRegularFile(path)) {
+                continue;
+            }
+            try {
+                Matcher m = RESOURCE_REF_PATTERN.matcher(Files.readString(path));
+                while (m.find()) {
+                    names.add(FileUtil.stripPath(m.group(1)));
+                }
+            } catch (IOException e) {
+                // ignore: the file is copied as is
+            }
+        }
+        return names;
+    }
+
     protected void copySourceFiles(
             Path settings, Path profile, Path srcJavaDirRoot, Path srcJavaDir, Path srcResourcesDir, Path srcCamelResourcesDir,
             Path srcKameletsResourcesDir, String packageName)
@@ -897,6 +934,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 localKameletDir = localKameletDir.substring(scheme.length() + 1);
             }
         }
+        // the files the routes reference as resource:classpath:x or resource:file:x (a Groovy mapping script used as an
+        // expression): they stay at the resources root, where the reference resolves, instead of camel-groovy where
+        // they would be compiled as scripts and be out of reach of the reference (CAMEL-24853)
+        Set<String> resourceReferenced = resourceReferencedFiles(prop.getProperty("camel.main.routesIncludePattern"));
+
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
             String files;
             if ("kamelet".equals(k)) {
@@ -944,6 +986,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         targetDir = srcKameletsResourcesDir;
                     } else if (script) {
                         targetDir = srcJavaDirRoot.getParent().resolve("scripts");
+                    } else if (groovy && resourceReferenced.contains(FileUtil.stripPath(f))) {
+                        targetDir = srcResourcesDir;
                     } else if (groovy) {
                         targetDir = srcResourcesDir.resolve("camel-groovy");
                     } else if (tls) {
