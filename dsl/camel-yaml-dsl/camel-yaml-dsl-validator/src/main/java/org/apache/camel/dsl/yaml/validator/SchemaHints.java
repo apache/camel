@@ -344,6 +344,28 @@ final class SchemaHints {
             unknownProperty(".*/bean", m -> Set.of("parameters", "args", "arguments").contains(m.unknown()),
                     m -> "arguments are written in the method call: bean: {ref: myBean, method: \"process(${body},"
                          + " 'x')\"}"),
+            // pollEnrich: {uri: ...}: the endpoint of enrich and pollEnrich is an expression (CAMEL-24850)
+            unknownProperty(".*/(enrich|pollEnrich)",
+                    m -> m.unknown().equals("uri") || m.unknown().equals("resourceUri"),
+                    m -> {
+                        JsonNode instance = m.error().getInstanceNode();
+                        JsonNode value = instance != null ? instance.get(m.unknown()) : null;
+                        String uri = value != null && value.isValueNode() ? value.asText() : "file:...";
+                        return "the endpoint of " + m.name() + " is an expression: write " + m.name()
+                               + ": {expression: {constant: {expression: \"" + uri + "\"}}}";
+                    }),
+            // - steps: [...] as an item of a steps list, or steps: on an EIP without a pipeline: there is no group item
+            // (and no "did you mean 'step'?", which leads to the Step EIP with the EIPs as its keys)
+            unknownProperty(null, m -> m.unknown().equals("steps"),
+                    m -> "steps: is the list of a route or of an EIP that owns a pipeline (filter, split, choice, step);"
+                         + " an EIP is an item of that list, not a group inside it: move the items up one level, or use"
+                         + " step: {id: ..., steps: [...]} for a named group"),
+            // step: {setHeader: ..., split: ...}: step is the Step EIP; one message for the whole item, not one per EIP
+            replace("additionalProperties", ".*/step",
+                    m -> m.unknown() != null && m.validator().stepNames().contains(m.unknown()),
+                    m -> "step is the Step EIP, a named group: its EIPs go in its steps: list (step: {id: ..., steps: [-"
+                         + " setHeader: ...]})",
+                    "additionalProperties", "additionalProperties"),
             unknownProperty(null,
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) != null,
                     m -> "did you mean '"
