@@ -102,7 +102,7 @@ final class SimpleChecks {
             // Determine predicate vs expression context
             boolean predicate = !isLogMessage && isPredicate(catalog, lines, i, lineIndent);
 
-            boolean parsed = true;
+            boolean syntaxError = false;
             try {
                 LanguageValidationResult result = predicate
                         ? catalog.validateLanguagePredicate(null, "simple", simpleText)
@@ -110,7 +110,7 @@ final class SimpleChecks {
                 if (!result.isSuccess()) {
                     String error = result.getShortError() != null ? result.getShortError() : result.getError();
                     if (error != null && !isMissingDependency(error)) {
-                        parsed = false;
+                        syntaxError = true;
                         errors.add("Line " + lineNum + ": Simple syntax error: " + error
                                    + aggregatedSizeHint(error, lines, i, lineIndent));
                     }
@@ -119,8 +119,10 @@ final class SimpleChecks {
                 // best effort
             }
 
-            // the parser cannot report this one: the expression is valid, it just does not mean what it says
-            if (parsed && !predicate && !isLogMessage) {
+            // the parser cannot report this one: the expression is valid, it just does not mean what it says.
+            // Only a reported syntax error suppresses it, to keep one message per expression; a catalog that could
+            // not be asked at all does not, because this check does not depend on it.
+            if (!syntaxError && !predicate && !isLogMessage) {
                 String ternary = topLevelTernary(simpleText);
                 if (ternary != null) {
                     errors.add("Line " + lineNum + ": " + ternary);

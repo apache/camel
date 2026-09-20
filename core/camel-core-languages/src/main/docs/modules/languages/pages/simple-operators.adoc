@@ -127,9 +127,15 @@ ${leftValue OP rightValue ? trueValue : falseValue}
 ----
 
 The whole ternary must be inside a single `${ }`. Outside `${ }` a Simple expression is a template,
-so a `?` and a `:` there are literal text and the operator is not evaluated. For example
-`${body.size()} == 0 ? ${null} : ${body[0]}` is not a ternary: it returns the text
-`1 == 0 ?  : ...`, because only the two functions are evaluated and the rest is copied as-is.
+so a `?` and a `:` there are literal text and the operator is not evaluated. For example:
+
+[source,text]
+----
+${body.size()} == 0 ? ${null} : ${body[0]}
+----
+
+is not a ternary: it returns the text `1 == 0 ?  : ...`, because only the two functions are
+evaluated and the rest is copied as-is.
 
 For example the following ternary operator will return `positive` if header `foo` is greater than 0, otherwise `negative`:
 
