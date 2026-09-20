@@ -540,6 +540,20 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testRestConfigurationPropertyListItemSaysKeyAndValue() throws Exception {
+        // CAMEL-24840: the map form already says "write it as a list"; the list item written as a map said nothing
+        List<Error> errors = validator.validate("""
+                - restConfiguration:
+                    component: platform-http
+                    bindingMode: json
+                    dataFormatProperty:
+                      - prettyPrint: "true"
+                """);
+        assertThat(errors).anySatisfy(e -> assertThat(e.getMessage()).contains("property 'prettyPrint' is not defined")
+                .contains("an item of dataFormatProperty is a key and a value: - key: prettyPrint followed by value:"));
+    }
+
+    @Test
     public void testLogMessageAsAnExpressionMapSaysPlainString() throws Exception {
         List<Error> errors = validator.validate("""
                 - from:

@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.jsonpath.easypredicate.EasyPredicateOperators;
 import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
 import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
@@ -190,6 +191,12 @@ public class JsonPathExpression extends ExpressionAdapter {
             }
             return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
         } catch (Exception e) {
+            // the path is compiled on the first evaluation: a comparison written on it fails here with the Jayway
+            // message about blank characters; say what it is and what to write (CAMEL-24841)
+            String hint = e instanceof com.jayway.jsonpath.InvalidPathException ? comparisonHint(expression) : null;
+            if (hint != null) {
+                throw new ExpressionEvaluationException(this, e.getMessage() + " (" + hint + ")", exchange, e);
+            }
             throw new ExpressionEvaluationException(this, exchange, e);
         }
     }
@@ -212,8 +219,28 @@ public class JsonPathExpression extends ExpressionAdapter {
             engine = new JsonPathEngine(
                     exp, source, writeAsString, suppressExceptions, allowSimple, options, context);
         } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(exp, e);
+            String hint = comparisonHint(exp);
+            throw new ExpressionIllegalSyntaxException(hint != null ? exp + " (" + hint + ")" : exp, e);
         }
+    }
+
+    /**
+     * The hint for a comparison written on the path ($.status == 'paid') where a path is expected: as a predicate it is
+     * read as a condition (the easy predicate syntax); as an expression it is not a path (CAMEL-24841).
+     */
+    static String comparisonHint(String exp) {
+        if (exp == null || exp.contains("[?(") || !EasyPredicateOperators.hasOperator(exp)) {
+            return null;
+        }
+        String field = exp.startsWith("$.") ? exp.substring(2) : exp.startsWith("$") ? exp.substring(1) : exp;
+        int sp = field.indexOf(' ');
+        String left = sp > 0 ? field.substring(0, sp) : field;
+        String rest = sp > 0 ? field.substring(sp) : "";
+        // ${body[key]} reads one key of a Map: the Simple form is offered for a top-level field only
+        String simple = left.contains(".")
+                ? "" : "; to keep the value use the path $." + left + " and compare it in simple, ${body[" + left + "]}" + rest;
+        return "jsonpath is a path, not a comparison: as a condition (when, filter) write " + exp
+               + " or $[?(@." + left + rest + ")]" + simple;
     }
 
     @Override
