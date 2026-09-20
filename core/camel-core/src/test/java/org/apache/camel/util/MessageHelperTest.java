@@ -314,5 +314,10 @@ public class MessageHelperTest {
         message.setBody(null);
         out = MessageHelper.dumpAsJSon(message, true);
         assertTrue(out.contains("\"type\": \"null\""), out);
+        assertTrue(!out.contains("\"size\""), "no body, no size: " + out);
+
+        message.setBody("");
+        out = MessageHelper.dumpAsJSon(message, true);
+        assertTrue(out.contains("\"size\": 0"), "an empty text has a size of 0: " + out);
     }
 }

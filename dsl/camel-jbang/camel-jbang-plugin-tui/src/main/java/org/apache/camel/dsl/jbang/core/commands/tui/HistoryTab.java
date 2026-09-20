@@ -906,6 +906,7 @@ class HistoryTab extends AbstractTab {
         boolean failed = false;
         String body = null;
         String bodyType = null;
+        long bodySize = -1;
         String exception = null;
         Map<String, Object> headers = null;
         Map<String, Object> properties = null;
@@ -927,6 +928,7 @@ class HistoryTab extends AbstractTab {
             failed = e.failed;
             body = e.body;
             bodyType = e.bodyType;
+            bodySize = e.bodySize;
             exception = e.exception;
             headers = e.headers;
             properties = e.exchangeProperties;
@@ -950,6 +952,7 @@ class HistoryTab extends AbstractTab {
             failed = e.failed;
             body = e.body;
             bodyType = e.bodyType;
+            bodySize = e.bodySize;
             exception = e.exception;
             headers = e.headers;
             properties = e.exchangeProperties;
@@ -1050,9 +1053,11 @@ class HistoryTab extends AbstractTab {
         if (showBody && body != null) {
             Style headerStyle = bodyChanged ? Theme.change().bold() : Theme.muted();
             lines.add(Line.from(Span.raw("")));
+            String detail = bodyType != null && bodySize >= 0
+                    ? bodyType + ", " + HeapHistogramTab.formatBytes(bodySize) : bodyType;
             lines.add(Line.from(
                     Span.styled(" Body", headerStyle),
-                    bodyType != null ? Span.styled(" (" + bodyType + ")", Style.EMPTY.dim()) : Span.raw("")));
+                    detail != null ? Span.styled(" (" + detail + ")", Style.EMPTY.dim()) : Span.raw("")));
             for (String line : body.split("\n")) {
                 lines.add(Line.from(Span.raw(" " + line)));
             }

@@ -1110,7 +1110,8 @@ public final class MessageHelper {
                     jb.put("size", size);
                 }
             }
-            if (!jb.containsKey("size") && message.getExchange() != null && message.getExchange().getContext() != null) {
+            if (body != null && !jb.containsKey("size") && message.getExchange() != null
+                    && message.getExchange().getContext() != null) {
                 // the size of a text or byte body, from the message size strategy when it is enabled (the dev
                 // profile does): lengths only, nothing is read or converted (CAMEL-24844)
                 MessageSizeStrategy sizeStrategy = message.getExchange().getContext().getMessageSizeStrategy();
