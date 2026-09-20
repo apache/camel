@@ -222,9 +222,9 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             }
             // the body as the node was reached: the type it arrived with, and its size when known (CAMEL-24844)
             if (mh.getBodyType() != null) {
-                step += " body=" + mh.getBodyType();
+                step += " bodyType=" + mh.getBodyType();
                 if (mh.getBodySize() >= 0) {
-                    step += " size=" + mh.getBodySize();
+                    step += " bodySize=" + mh.getBodySize();
                 }
             }
             result[i] = step;
