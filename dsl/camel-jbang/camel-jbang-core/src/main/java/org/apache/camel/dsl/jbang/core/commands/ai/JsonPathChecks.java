@@ -78,9 +78,11 @@ public final class JsonPathChecks {
             int sp = field.indexOf(' ');
             String left = sp > 0 ? field.substring(0, sp) : field;
             String rest = sp > 0 ? field.substring(sp) : "";
+            // ${body[key]} reads one key of a Map: the Simple form is offered for a top-level field only
+            String simple = left.contains(".") ? "" : " and compare it in simple (${body[" + left + "]}" + rest + ")";
             errors.add("Line " + lineNum + ": jsonpath is a path, not a comparison: here it must give a value, write the"
-                       + " path $." + left + " and compare it in simple (${body[" + left + "]}" + rest + "); as a"
-                       + " condition in a when or filter, " + text + " is read as $[?(@." + left + rest + ")]");
+                       + " path $." + left + simple + "; as a condition in a when or filter, " + text
+                       + " is read as $[?(@." + left + rest + ")]");
         }
         return errors;
     }

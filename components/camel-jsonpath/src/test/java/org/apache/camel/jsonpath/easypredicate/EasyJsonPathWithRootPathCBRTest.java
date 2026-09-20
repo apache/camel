@@ -70,4 +70,5 @@ public class EasyJsonPathWithRootPathCBRTest extends CamelTestSupport {
         assertTrue(msg.contains("$[?(@.status == 'paid')]"), msg);
         assertTrue(msg.contains("${body[status]} == 'paid'"), msg);
     }
+
 }

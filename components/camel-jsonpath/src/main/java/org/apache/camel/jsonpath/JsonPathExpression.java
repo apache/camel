@@ -236,9 +236,11 @@ public class JsonPathExpression extends ExpressionAdapter {
         int sp = field.indexOf(' ');
         String left = sp > 0 ? field.substring(0, sp) : field;
         String rest = sp > 0 ? field.substring(sp) : "";
+        // ${body[key]} reads one key of a Map: the Simple form is offered for a top-level field only
+        String simple = left.contains(".")
+                ? "" : "; to keep the value use the path $." + left + " and compare it in simple, ${body[" + left + "]}" + rest;
         return "jsonpath is a path, not a comparison: as a condition (when, filter) write " + exp
-               + " or $[?(@." + left + rest + ")]; to keep the value use the path $." + left
-               + " and compare it in simple, ${body[" + left + "]}" + rest;
+               + " or $[?(@." + left + rest + ")]" + simple;
     }
 
     @Override

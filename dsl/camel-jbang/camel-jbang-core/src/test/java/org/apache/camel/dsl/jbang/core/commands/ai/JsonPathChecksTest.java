@@ -56,6 +56,22 @@ class JsonPathChecksTest {
     }
 
     @Test
+    void nestedPathHasNoSimpleForm() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: "timer:t?repeatCount=1"
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath: "$.store.book.price < 10"
+                """;
+        List<String> errors = JsonPathChecks.validateYamlJsonPath(yaml, catalog);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).contains("write the path $.store.book.price;").doesNotContain("${body[");
+    }
+
+    @Test
     void comparisonAsACondition() {
         // a when or filter reads it as the easy predicate: nothing to say
         String yaml = """
