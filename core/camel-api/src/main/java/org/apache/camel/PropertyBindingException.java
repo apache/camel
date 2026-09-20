@@ -27,6 +27,8 @@ import org.jspecify.annotations.Nullable;
  */
 public class PropertyBindingException extends RuntimeCamelException {
 
+    private static final int MAX_CAUSE_DEPTH = 100;
+
     private final Object target;
     private final @Nullable String propertyName;
     private final @Nullable Object value;
@@ -115,7 +117,8 @@ public class PropertyBindingException extends RuntimeCamelException {
     private @Nullable String rootCauseMessage() {
         Throwable t = getCause();
         Throwable deepest = null;
-        while (t != null && t != deepest) {
+        // bounded: a cause chain assembled outside initCause (a getCause override, deserialization) may loop
+        for (int i = 0; t != null && i < MAX_CAUSE_DEPTH; i++) {
             deepest = t;
             t = t.getCause();
         }

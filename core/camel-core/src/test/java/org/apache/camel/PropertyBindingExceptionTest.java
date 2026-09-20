@@ -51,17 +51,43 @@ public class PropertyBindingExceptionTest {
     }
 
     @Test
+    public void messageOnACyclicCauseChain() {
+        // a cause chain assembled outside initCause can loop (A -> B -> A); the walk must still end
+        CyclicException a = new CyclicException("a");
+        CyclicException b = new CyclicException("b");
+        a.next = b;
+        b.next = a;
+        PropertyBindingException pbe = new PropertyBindingException(new Object(), "host", "x", a);
+        assertTrue(pbe.getMessage().startsWith("Error binding property (host=x)"), pbe.getMessage());
+    }
+
+    private static final class CyclicException extends RuntimeException {
+        Throwable next;
+
+        CyclicException(String message) {
+            super(message);
+        }
+
+        @Override
+        public synchronized Throwable getCause() {
+            return next;
+        }
+    }
+
+    @Test
     public void exceptionMessageTest() {
         PropertyBindingException pbe = new PropertyBindingException(
-                new Object(), "property", "value", "prefix", "property", new Throwable("The casue!"));
+                new Object(), "property", "value", "prefix", "property", new Throwable("The cause!"));
         assertTrue(pbe.getMessage().startsWith(EXPECTED_EXCEPTION_MESSAGE),
                 "PropertyBindingException message should start with [" + EXPECTED_EXCEPTION_MESSAGE + "] while is ["
                                                                             + pbe.getMessage() + "] instead.");
+        assertTrue(pbe.getMessage().endsWith(": The cause!"), pbe.getMessage());
 
         pbe = new PropertyBindingException(
-                new Object(), "property", "value", "prefix.", "property", new Throwable("The casue!"));
+                new Object(), "property", "value", "prefix.", "property", new Throwable("The cause!"));
         assertTrue(pbe.getMessage().startsWith(EXPECTED_EXCEPTION_MESSAGE),
                 "PropertyBindingException message should start with [" + EXPECTED_EXCEPTION_MESSAGE + "] while is ["
                                                                             + pbe.getMessage() + "] instead.");
+        assertTrue(pbe.getMessage().endsWith(": The cause!"), pbe.getMessage());
     }
 }
