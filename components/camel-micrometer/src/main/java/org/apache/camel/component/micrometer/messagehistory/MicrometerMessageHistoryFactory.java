@@ -161,7 +161,10 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
 
         Route route = camelContext.getRoute(routeId);
         if (route != null) {
-            return new MicrometerMessageHistory(getMeterRegistry(), route, namedNode, getNamingStrategy(), msg);
+            MicrometerMessageHistory answer
+                    = new MicrometerMessageHistory(getMeterRegistry(), route, namedNode, getNamingStrategy(), msg);
+            answer.captureBody(exchange);
+            return answer;
         } else {
             return null;
         }

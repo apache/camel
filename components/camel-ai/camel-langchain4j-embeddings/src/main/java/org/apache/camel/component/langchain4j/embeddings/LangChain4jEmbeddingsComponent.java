@@ -17,9 +17,12 @@
 package org.apache.camel.component.langchain4j.embeddings;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.langchain4j.core.LangChain4jModelFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -28,6 +31,8 @@ import org.apache.camel.support.DefaultComponent;
 public class LangChain4jEmbeddingsComponent extends DefaultComponent {
     @Metadata
     private LangChain4jEmbeddingsConfiguration configuration;
+
+    private final Map<LangChain4jModelFactory.ModelSpec, EmbeddingModel> models = new ConcurrentHashMap<>();
 
     public LangChain4jEmbeddingsComponent() {
         this(null);
@@ -55,7 +60,15 @@ public class LangChain4jEmbeddingsComponent extends DefaultComponent {
         LangChain4jEmbeddingsConfiguration configuration = this.configuration.copy();
 
         LangChain4jEmbeddingsEndpoint endpoint = new LangChain4jEmbeddingsEndpoint(uri, this, remaining, configuration);
+        configuration.setModelProperties(
+                LangChain4jModelFactory.extractModelProperties(parameters, configuration.getModelProperties()));
         setProperties(endpoint, parameters);
+        if (configuration.getEmbeddingModel() == null && configuration.modelSpec() != null) {
+            // the model is declared by its provider and options (CAMEL-24820); endpoints with the same options share it
+            LangChain4jModelFactory.ModelSpec spec = configuration.modelSpec();
+            configuration.setEmbeddingModel(
+                    models.computeIfAbsent(spec, s -> LangChain4jModelFactory.createEmbeddingModel(getCamelContext(), s)));
+        }
 
         return endpoint;
     }

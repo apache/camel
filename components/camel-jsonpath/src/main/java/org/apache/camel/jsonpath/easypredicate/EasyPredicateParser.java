@@ -38,9 +38,19 @@ public class EasyPredicateParser {
      */
     public String parse(String predicate) {
 
+        boolean rooted = false;
         if (predicate.startsWith("$")) {
-            // regular json path so skip
-            return predicate;
+            if (predicate.contains("[?(") || !hasOperator(predicate)) {
+                // regular json path (a filter, or a plain path) so skip
+                return predicate;
+            }
+            // $.status == 'paid': the easy form written with its root, the way a path is written (CAMEL-24841);
+            // the filter goes on the parent of the field, the root here
+            rooted = true;
+            predicate = predicate.substring(1);
+            if (predicate.startsWith(".")) {
+                predicate = predicate.substring(1);
+            }
         }
 
         // must have an operator
@@ -63,14 +73,15 @@ public class EasyPredicateParser {
                 String after;
                 int pos = prev.lastIndexOf('.');
                 if (pos == -1) {
-                    before = "..*";
+                    // without a root the field is looked for anywhere ($..*), with a root ($.status) at the root
+                    before = rooted ? "" : "..*";
                     after = prev;
                 } else {
                     before = prev.substring(0, pos);
                     after = prev.substring(pos + 1);
                 }
                 sb.append("$");
-                if (!before.startsWith(".")) {
+                if (!before.isEmpty() && !before.startsWith(".")) {
                     sb.append(".");
                 }
                 sb.append(before);

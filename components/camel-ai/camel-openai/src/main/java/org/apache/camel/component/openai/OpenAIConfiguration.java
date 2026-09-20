@@ -198,6 +198,22 @@ public class OpenAIConfiguration implements Cloneable {
                             + "The thinking content is stored in the CamelOpenAIThinkingContent header.")
     private boolean stripThinking = false;
 
+    @UriParam(enums = "/v1/responses,/v1/chat/completions,/v1/embeddings,/v1/completions,/v1/moderations,"
+                      + "/v1/images/generations,/v1/images/edits,/v1/videos")
+    @Metadata(description = "The endpoint every request in a batch calls. Required by the batch operation, which "
+                            + "validates it against the endpoints the Batch API supports.")
+    private String batchEndpoint;
+
+    @UriParam(prefix = "batchMetadata.", multiValue = true)
+    @Metadata(description = "Metadata to attach to a batch, used to find it again later "
+                            + "(e.g. batchMetadata.job=nightly-enrichment)")
+    private Map<String, Object> batchMetadata;
+
+    @UriParam(defaultValue = "output", enums = "output,error")
+    @Metadata(description = "Which result file the batch-results operation downloads: the output file holding the "
+                            + "results of the successful requests, or the error file holding the failed ones.")
+    private String batchResultsFile = "output";
+
     @UriParam(prefix = "additionalBodyProperty.", multiValue = true)
     @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
     private Map<String, Object> additionalBodyProperty;
@@ -759,6 +775,30 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setStripThinking(boolean stripThinking) {
         this.stripThinking = stripThinking;
+    }
+
+    public String getBatchEndpoint() {
+        return batchEndpoint;
+    }
+
+    public void setBatchEndpoint(String batchEndpoint) {
+        this.batchEndpoint = batchEndpoint;
+    }
+
+    public Map<String, Object> getBatchMetadata() {
+        return batchMetadata;
+    }
+
+    public void setBatchMetadata(Map<String, Object> batchMetadata) {
+        this.batchMetadata = batchMetadata;
+    }
+
+    public String getBatchResultsFile() {
+        return batchResultsFile;
+    }
+
+    public void setBatchResultsFile(String batchResultsFile) {
+        this.batchResultsFile = batchResultsFile;
     }
 
     public Map<String, Object> getAdditionalBodyProperty() {

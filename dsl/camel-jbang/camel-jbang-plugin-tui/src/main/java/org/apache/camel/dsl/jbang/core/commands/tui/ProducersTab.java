@@ -97,7 +97,7 @@ class ProducersTab extends AbstractTableTab {
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
-        renderScrollbar(frame, sorted.size());
+        renderScrollbar(frame, table, sorted.size());
     }
 
     private int sortProducer(ProducerInfo a, ProducerInfo b) {

@@ -336,7 +336,7 @@ class EndpointsTab extends AbstractTableTab {
 
         lastTableArea = chunks.get(0);
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
-        renderScrollbar(frame, sortedEndpoints.size());
+        renderScrollbar(frame, table, sortedEndpoints.size());
 
         if (showPanel && panelMode == PANEL_DETAIL) {
             hSplit.clearBorderPos();

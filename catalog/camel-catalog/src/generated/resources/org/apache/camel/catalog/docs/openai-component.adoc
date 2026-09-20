@@ -41,8 +41,14 @@ Supported operations:
 * `responses` - Call the OpenAI Responses API (hosted tools, server-side conversation state; non-streaming)
 * `responses-retrieve` - Retrieve a stored Responses API response, such as one started in background mode
 * `responses-cancel` - Cancel a Responses API response still running in background mode
+* `batch` - Upload the requests of a batch as a JSONL file and create the batch that runs them offline
+* `batch-retrieve` - Report the status and request counts of a batch
+* `batch-cancel` - Cancel a batch that is still running
+* `batch-results` - Download the output or error file of a finished batch
 
 See xref:others:openai-responses.adoc[Responses API operation] for usage (`previousResponseId`, builtin tools, MCP pass-through, background mode).
+
+See xref:others:openai-batch.adoc[Batch API operations] for usage (building the input, polling, reading the results).
 
 * `embeddings` - Generate vector embeddings from text for semantic search and RAG applications
 * `tool-execution` - Execute MCP tool calls from a stored chat completion response (used in manual tool loops)
@@ -1311,6 +1317,7 @@ For more details on specific features, see:
 
 * xref:ai-llm-integration-guide.adoc[LLM Integration Guide] - Choosing components, structured output, streaming, dynamic prompts
 * xref:others:openai-responses.adoc[Responses API operation] - OpenAI Responses API, hosted tools, and server-side conversation state
+* xref:others:openai-batch.adoc[Batch API operations] - Offline batches at half the price: input files, polling, and result files
 * xref:others:openai-mcp.adoc[MCP Tool Calling] - Model Context Protocol server configuration, agentic loop, streaming, and connection recovery
 * xref:others:openai-providers.adoc[OpenAI-Compatible Providers] - Using Ollama, LM Studio, vLLM, and OpenRouter as alternative backends
 * xref:others:openai-operations.adoc[Embeddings, Moderation, Audio and Image Operations] - Text embeddings, vector database integration, content moderation, audio transcription, and image generation

@@ -143,7 +143,7 @@
 
   <script src="/vendor/xterm.js"></script>
   <script src="/vendor/xterm-addon-fit.js"></script>
-  <script src="/vendor/xterm-addon-unicode11.js"></script>
+  <script src="/vendor/xterm-addon-unicode-graphemes.js"></script>
   <script>
     (function () {
       'use strict';
@@ -199,9 +199,12 @@
 
           fitAddon = new FitAddon.FitAddon();
           term.loadAddon(fitAddon);
-          var unicode11Addon = new Unicode11Addon.Unicode11Addon();
-          term.loadAddon(unicode11Addon);
-          term.unicode.activeVersion = '11';
+          // Unicode 15 width tables with grapheme clustering, so a text-default glyph followed by
+          // VS16 (e.g. the keyboard or record icons) takes the same 2 columns as in tamboui.
+          // The Unicode 11 addon treats VS16 as zero-width and misaligns everything after it.
+          var unicodeGraphemesAddon = new UnicodeGraphemesAddon.UnicodeGraphemesAddon();
+          term.loadAddon(unicodeGraphemesAddon);
+          term.unicode.activeVersion = '15-graphemes';
           term.open(document.getElementById('terminal-container'));
 
           function sendInit() {

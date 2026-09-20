@@ -61,6 +61,7 @@
 ** xref:mina-sftp-security.adoc[MINA SFTP SSH Security]
 ** xref:oauth.adoc[Oauth]
 ** xref:observability-services.adoc[Observability Services]
+** xref:openai-batch.adoc[OpenAI - Batch API Operations]
 ** xref:openai-providers.adoc[OpenAI - Compatible Providers]
 ** xref:openai-operations.adoc[OpenAI - Embeddings, Moderation, Audio and Image Operations]
 ** xref:openai-mcp.adoc[OpenAI - MCP Tool Calling]

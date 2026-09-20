@@ -50,6 +50,42 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void queryOptionsInTheUriAndAParametersBlock() {
+        // CAMEL-24842: the runtime refuses options in both places; the schema does not see it
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: file://inbox?fileExist=Override
+                            parameters:
+                              fileName: invoice-2001.json
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).startsWith("Line 6: ")
+                .contains("query options (fileExist=Override)")
+                .contains("parameters: (fileExist: Override)")
+                .contains("Uri should not contains query parameters");
+    }
+
+    @Test
+    void queryOptionsInTheUriAndAParametersBlockOnFrom() {
+        String yaml = """
+                - from:
+                    uri: "timer:t?period=1000"
+                    parameters:
+                      repeatCount: 1
+                    steps:
+                      - log: "hello"
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).startsWith("Line 2: ").contains("(period: 1000)");
+    }
+
+    @Test
     void expandedFormUnknownOption() {
         String yaml = """
                 - from:
@@ -119,6 +155,7 @@ class SourceValidatorEndpointTest {
 
     @Test
     void expandedUriWithQueryParamsAndParametersBlock() {
+        // the options are valid, but the runtime refuses them in both places (CAMEL-24842)
         String yaml = """
                 - from:
                     uri: timer:tick?period=1000
@@ -128,7 +165,8 @@ class SourceValidatorEndpointTest {
                     - log: "${body}"
                 """;
         List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
-        assertThat(errors).isEmpty();
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).startsWith("Line 2: ").contains("query options (period=1000)");
     }
 
     @Test
@@ -142,8 +180,10 @@ class SourceValidatorEndpointTest {
                     - log: "${body}"
                 """;
         List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
-        assertThat(errors).isNotEmpty();
-        assertThat(errors.get(0)).contains("timer:");
+        // the mix is reported, and the unknown option still is
+        assertThat(errors).hasSize(2);
+        assertThat(errors.get(0)).contains("query options (period=1000)");
+        assertThat(errors.get(1)).contains("timer:").containsIgnoringCase("unknown");
     }
 
     @Test

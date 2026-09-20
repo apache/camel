@@ -16,17 +16,19 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.List;
+
 import dev.tamboui.text.CharWidth;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Validates {@link TuiIcons} primary tab emoji width (CAMEL-23818: avoid VS16 mismeasurement in TamboUI) and the
- * mnemonic and runtime/platform icon helpers. More-submenu icons and labels are validated in {@link TabRegistryTest}
- * where the {@link TabRegistry.MoreTab} records that own them are constructed.
+ * Validates {@link TuiIcons} emoji widths (CAMEL-23818: every icon has to take the 2 columns TamboUI reserves for it,
+ * which for text-default glyphs means carrying VS16) and the mnemonic and runtime/platform icon helpers. More-submenu
+ * icons and labels are validated in {@link TabRegistryTest} where the {@link TabRegistry.MoreTab} records that own them
+ * are constructed.
  */
 class TuiIconsTest {
 
@@ -59,9 +61,12 @@ class TuiIconsTest {
     }
 
     @Test
-    void primaryTabEmojisHaveNoVariationSelector() {
-        for (String icon : TuiIcons.PRIMARY_TAB_ICONS) {
-            assertFalse(icon.contains("\uFE0F"), "Icon should not contain VS16 variation selector: " + icon);
+    void textDefaultMenuEmojisCarryVs16AndAreTwoColumnsWide() {
+        // bare U+2328, U+23F9, U+23FA and U+1F5D1 render in one column on terminals; the VS16 sequence is what
+        // makes the terminal, the --web xterm.js tables and TamboUI agree on two
+        for (String icon : List.of(TuiIcons.KEYSTROKES, TuiIcons.RECORD, TuiIcons.STOP_RECORD, TuiIcons.DELETE)) {
+            assertTrue(icon.endsWith("\uFE0F"), "Icon should end with the VS16 variation selector: " + icon);
+            assertEquals(2, CharWidth.of(icon), "Icon should be 2 terminal columns wide: " + icon);
         }
     }
 

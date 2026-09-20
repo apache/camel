@@ -107,8 +107,10 @@ public final class SourceValidator {
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator);
             if (directory != null && msgs.isEmpty()) {
                 msgs = new ArrayList<>(msgs);
-                msgs.addAll(validateYamlBeanRefs(content, BeanDeclarations.scan(directory, fileName), catalog));
+                BeanDeclarations declarations = BeanDeclarations.scan(directory, fileName);
+                msgs.addAll(validateYamlBeanRefs(content, declarations, catalog));
                 msgs.addAll(validateResourceRefs(content, directory));
+                msgs.addAll(GroovyImportChecks.validateYamlGroovyImports(content, null, declarations.javaClasses()));
             }
             return msgs;
         }
@@ -226,9 +228,12 @@ public final class SourceValidator {
         if (content == null || content.isBlank()) {
             return msgs;
         }
+        msgs.addAll(StructureChecks.validateTopLevelOrder(content));
         msgs.addAll(validateYamlEndpoints(content, catalog));
         msgs.addAll(validateYamlSimple(content, catalog));
+        msgs.addAll(JsonPathChecks.validateYamlJsonPath(content, catalog));
         msgs.addAll(validateKnownHeaders(content, catalog));
+        msgs.addAll(validateBeanTypes(content));
         return msgs;
     }
 
@@ -412,6 +417,15 @@ public final class SourceValidator {
      */
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         return HeaderChecks.validateKnownHeaders(content, catalog);
+    }
+
+    /**
+     * How each bean under {@code beans:} is created, for the classes the validator can load: the properties of a class
+     * created through its builder are checked against what the builder accepts, and a class with no public no-arg
+     * constructor and no builder is reported with the ways it can be created (CAMEL-24820).
+     */
+    public static List<String> validateBeanTypes(String content) {
+        return BeanTypeChecks.validateBeanTypes(content);
     }
 
     /** The bean names declared under {@code beans:} in the YAML content. */

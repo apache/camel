@@ -169,7 +169,9 @@ public class MetricsMessageHistoryFactory extends ServiceSupport
         }
 
         Timer timer = metricsRegistry.timer(createName("history", routeId, node.getId()));
-        return new MetricsMessageHistory(routeId, node, timer, msg);
+        MetricsMessageHistory answer = new MetricsMessageHistory(routeId, node, timer, msg);
+        answer.captureBody(exchange);
+        return answer;
     }
 
     private String createName(String type, String routeId, String id) {

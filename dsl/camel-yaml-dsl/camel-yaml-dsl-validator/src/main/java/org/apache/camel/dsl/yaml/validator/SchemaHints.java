@@ -326,12 +326,21 @@ final class SchemaHints {
             unknownProperty(null, m -> m.unknown().equals("bean") && !m.locationEndsWith("/steps"),
                     m -> "the bean language is written as method: (expression: {method: {ref: myBean, method:"
                          + " process}}), or call the bean as a step with - bean: {ref: myBean, method: process}"),
+            // dataFormatProperty: [- prettyPrint: "true"]: an item of a key/value property list is a key and a value
+            unknownProperty(".*/restConfiguration/(dataFormatProperty|componentProperty|endpointProperty|consumerProperty"
+                            + "|apiProperty|corsHeaders)/\\d+",
+                    ANY,
+                    m -> "an item of " + m.parentName() + " is a key and a value: - key: " + m.unknown()
+                         + " followed by value: \"...\" (indented under the -)"),
             // setHeader: {CamelNumberA: {simple: ...}} : the name is a property, not the key
             unknownProperty(".*/(setHeader|setProperty|setVariable|removeHeader|removeProperty|removeVariable)",
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) == null,
                     m -> "the name is a property: " + m.name() + ": {name: " + m.unknown()
                          + (m.name().startsWith("set") ? ", expression: {simple: {expression: \"...\"}}}" : "}")
                          + " (" + m.unknown() + " is not the key)"),
+            // unmarshal: {jackson: {}}: the data format named as its artifact or catalog entry, not by its key
+            unknownProperty(".*/(marshal|unmarshal)", ANY,
+                    m -> m.validator().dataFormatHint(m.unknown(), m.name(), m.schemaLocation())),
             unknownProperty(".*/bean", m -> Set.of("parameters", "args", "arguments").contains(m.unknown()),
                     m -> "arguments are written in the method call: bean: {ref: myBean, method: \"process(${body},"
                          + " 'x')\"}"),

@@ -36,6 +36,7 @@ class ErrorInfo {
     String[] messageHistory;
     String body;
     String bodyType;
+    long bodySize = -1;
     final Map<String, Object> headers = new LinkedHashMap<>();
     final Map<String, String> headerTypes = new LinkedHashMap<>();
     final Map<String, Object> properties = new LinkedHashMap<>();

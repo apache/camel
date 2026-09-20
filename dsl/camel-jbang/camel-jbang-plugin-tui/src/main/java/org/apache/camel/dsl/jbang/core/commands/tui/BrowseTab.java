@@ -344,7 +344,7 @@ class BrowseTab extends AbstractTab {
 
         lastEndpointTableArea = area;
         frame.renderStatefulWidget(table, area, endpointTableState);
-        renderTableScrollbar(frame, lastEndpointTableArea, endpointTableState, endpointTableScrollState,
+        renderTableScrollbar(frame, lastEndpointTableArea, table, endpointTableState, endpointTableScrollState,
                 sorted.size());
     }
 
@@ -406,7 +406,7 @@ class BrowseTab extends AbstractTab {
 
         lastMessageTableArea = area;
         frame.renderStatefulWidget(table, area, messageTableState);
-        renderTableScrollbar(frame, lastMessageTableArea, messageTableState, messageTableScrollState,
+        renderTableScrollbar(frame, lastMessageTableArea, table, messageTableState, messageTableScrollState,
                 messages.size());
     }
 

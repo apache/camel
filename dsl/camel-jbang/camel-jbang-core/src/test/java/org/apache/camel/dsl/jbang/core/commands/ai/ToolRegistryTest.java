@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -86,6 +88,33 @@ class ToolRegistryTest {
         assertNotNull(result);
         String json = result.toString();
         assertTrue(json.contains("split"), "Should find split EIP");
+    }
+
+    @Test
+    void listExamplesGroupsTheLadderWithoutArguments() {
+        ToolContext ctx = new ToolContext();
+        String json = ToolRegistry.execute("list_examples", ctx, Map.of()).toString();
+        assertTrue(json.contains("\"groups\""), "Should return the groups");
+        assertTrue(json.contains("\"level\":\"quick-start\""), "Should start with the quick-start group");
+        assertTrue(json.contains("timer-log"), "Should list the examples");
+        assertTrue(json.contains("\"teaches\""), "Should tell what the examples teach");
+        // more than the old cap of 20 examples
+        assertTrue(json.indexOf("\"total\":") > 0);
+        String total = json.replaceAll(".*\"total\":(\\d+).*", "$1");
+        assertTrue(Integer.parseInt(total) > 20, "Should count all examples, got " + total);
+    }
+
+    @Test
+    void listExamplesFiltersOneGroupAndLimits() {
+        ToolContext ctx = new ToolContext();
+        String json = ToolRegistry.execute("list_examples", ctx, Map.of("level", "run", "limit", "1")).toString();
+        assertTrue(json.contains("\"count\":1"), "Should honour the limit: " + json);
+        assertTrue(json.contains("\"level\":\"run\""));
+        assertFalse(json.contains("\"level\":\"quick-start\""), "Should only return the run group");
+        assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("list_examples", ctx, Map.of("limit", "many")));
+        String zero = ToolRegistry.execute("list_examples", ctx, Map.of("level", "run", "limit", "0")).toString();
+        assertFalse(zero.contains("\"count\":0"), "limit 0 falls back to the default: " + zero.substring(0, 60));
     }
 
     @Test
@@ -162,5 +191,38 @@ class ToolRegistryTest {
                 () -> ToolRegistry.execute("get_eip_stats", ctx, Map.of()));
         assertThrows(ToolExecutionException.class,
                 () -> ToolRegistry.execute("detect_config_drift", ctx, Map.of()));
+    }
+
+    @Test
+    void historySummaryKeepsTheStepsAndTheBodyTypeAndSize() {
+        // CAMEL-24844: the compact form of get_history a small model can read
+        JsonObject body = new JsonObject();
+        body.put("type", "java.util.LinkedHashMap");
+        body.put("size", 3);
+        body.put("value", "{orderId=ORD-1001}");
+        JsonObject message = new JsonObject();
+        message.put("body", body);
+        message.put("headers", new JsonArray());
+        JsonObject trace = new JsonObject();
+        trace.put("routeId", "route1");
+        trace.put("nodeId", "unmarshal1");
+        trace.put("nodeShortName", "unmarshal");
+        trace.put("elapsed", 2);
+        trace.put("message", message);
+        JsonArray traces = new JsonArray();
+        traces.add(trace);
+        JsonObject history = new JsonObject();
+        history.put("name", "shop");
+        history.put("traces", traces);
+
+        JsonObject summary = ToolRegistry.historySummary(history);
+        assertEquals("shop", summary.get("name"));
+        JsonArray steps = summary.getCollection("steps");
+        assertEquals(1, steps.size());
+        JsonObject step = (JsonObject) steps.get(0);
+        assertEquals("unmarshal1", step.get("nodeId"));
+        assertEquals("java.util.LinkedHashMap", step.get("bodyType"));
+        assertEquals(3, step.get("bodySize"));
+        assertNull(step.get("message"), "no bodies, headers or properties in the summary");
     }
 }

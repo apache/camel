@@ -149,7 +149,8 @@ class AiCliCommandExecutorTest {
                     .executeAsync(new AiCliCommandExecutor.Request(List.of("tui-test"), "camel tui-test"))
                     .get(5, TimeUnit.SECONDS);
 
-            assertEquals(0, result.exitCode());
+            // a non-zero exit carries the exception the command or the invoker threw in the output, so show it
+            assertEquals(0, result.exitCode(), () -> "unexpected exit code, output was: " + result.output());
             assertEquals("captured command output\n", result.output());
             assertSame(originalPrinter, main.getOut());
         } finally {

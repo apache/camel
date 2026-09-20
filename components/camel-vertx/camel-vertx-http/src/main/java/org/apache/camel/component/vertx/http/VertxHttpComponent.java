@@ -71,7 +71,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     private String proxyPassword;
 
     @Metadata(label = "advanced")
-    private Vertx vertx;
+    private volatile Vertx vertx;
     @Metadata(label = "advanced")
     private VertxOptions vertxOptions;
     @Metadata(label = "advanced")
@@ -234,26 +234,44 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
         super.doStart();
 
         if (vertx == null) {
-            if (vertxOptions != null) {
-                vertx = Vertx.vertx(vertxOptions);
-            } else {
-                vertx = Vertx.vertx();
-            }
-            managedVertx = true;
+            createManagedVertx();
         }
+    }
+
+    private void createManagedVertx() {
+        if (vertxOptions != null) {
+            vertx = Vertx.vertx(vertxOptions);
+        } else {
+            vertx = Vertx.vertx();
+        }
+        managedVertx = true;
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (managedVertx && vertx != null) {
-            vertx.close();
+        synchronized (this) {
+            if (managedVertx && vertx != null) {
+                vertx.close();
+            }
+            vertx = null;
         }
-        vertx = null;
     }
 
     public Vertx getVertx() {
+        if (vertx == null && (isNew() || isInit() || isStarting() || isStarted())) {
+            // an endpoint can start before this component: a component resolved while the routes start (the
+            // rest-openapi producer picks its HTTP client at that point) is built and initialized but not started,
+            // and its endpoint then found no Vert.x (CAMEL-24822); the managed instance is created on first use
+            synchronized (this) {
+                // re-checked under the monitor doStop uses: a stop that won the race must not be followed by an
+                // instance nobody closes
+                if (vertx == null && (isNew() || isInit() || isStarting() || isStarted())) {
+                    createManagedVertx();
+                }
+            }
+        }
         return vertx;
     }
 

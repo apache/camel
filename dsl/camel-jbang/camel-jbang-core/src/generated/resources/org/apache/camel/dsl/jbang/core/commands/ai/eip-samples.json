@@ -64,6 +64,14 @@
     },
     {
       "source": "yaml-dsl.adoc",
+      "yaml": "- beans:\n  - name: chatModel\n    type: dev.langchain4j.model.ollama.OllamaChatModel\n    properties:\n      baseUrl: \"{{ollama.base.url}}\"\n      modelName: \"{{ollama.model}}\"\n      timeout: 2m\n"
+    },
+    {
+      "source": "yaml-dsl.adoc",
+      "yaml": "- beans:\n  - name: myBean\n    type: com.acme.MyBean\n    builderMethod: createMyBean\n    properties:\n      id: 123\n"
+    },
+    {
+      "source": "yaml-dsl.adoc",
       "yaml": "- beans:\n  - name: myBean\n    type: com.acme.MyBean\n    scriptLanguage: groovy\n    script: >\n      \/\/ some groovy script here to create the bean\n      def bean = new com.acme.MyBean()\n      bean.name = 'Camel'\n      return bean\n"
     },
     {

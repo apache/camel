@@ -213,10 +213,20 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_history",
-                "Get the message history trace of the last completed exchange.")
+                "Get the message history trace of the last completed exchange: every step with the message as it was"
+                                     + " there. With summary=true only the steps, each with route, node, elapsed, and the"
+                                     + " body's type and size as it reached the step (what to read to see where the body"
+                                     + " changed from text into a Map or bytes).")
+                .param("summary", "boolean", "Only the steps with route, node, elapsed, body type and size", false)
                 .executor((ctx, args) -> {
                     JsonObject history = ctx.readHistoryFile();
-                    return history != null ? history.toJson() : "No message history available.";
+                    if (history == null) {
+                        return "No message history available.";
+                    }
+                    if ("true".equalsIgnoreCase(args.get("summary"))) {
+                        return historySummary(history).toJson();
+                    }
+                    return history.toJson();
                 }));
 
         register(tool("get_route_source",
@@ -942,39 +952,74 @@ public final class ToolRegistry {
 
     private static void registerExampleTools() {
         register(tool("list_examples",
-                "List available Camel CLI examples. Returns name, title, description, difficulty level, and tags.")
+                "List the Camel CLI examples, grouped as the ladder of the examples (quick-start, run, transform, "
+                                       + "route, fail-well, connect, connect-service, contracts, ai, cloud, showcase). "
+                                       + "Returns the groups (level, title, intro) and the examples in reading order with "
+                                       + "name, title, description, level, order, tags, what they teach, the infra "
+                                       + "services they need, whether they are bundled and their files. "
+                                       + "Call it without arguments for the whole ladder, with level for one group.")
                 .param("filter", "string",
                         "Filter by name, description, or tag (case-insensitive)", false)
                 .param("level", "string",
-                        "Filter by difficulty: beginner, intermediate, or advanced", false)
+                        "Only the examples of one group: quick-start, run, transform, route, fail-well, connect, "
+                                          + "connect-service, contracts, ai, cloud or showcase",
+                        false)
+                .param("limit", "integer", "Maximum number of examples to return (default: 50)", false)
                 .executor((ctx, args) -> {
                     String filter = args.get("filter");
                     String level = args.get("level");
+                    int limit = 50;
+                    String limitArg = args.get("limit");
+                    if (limitArg != null && !limitArg.isBlank()) {
+                        try {
+                            limit = Integer.parseInt(limitArg.trim());
+                            if (limit <= 0) {
+                                limit = 50;
+                            }
+                        } catch (NumberFormatException e) {
+                            throw new ToolExecutionException("limit must be a number: " + limitArg);
+                        }
+                    }
                     List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
                     List<JsonObject> filtered = ExampleHelper.filterExamples(catalog2, filter);
+                    List<JsonObject> groups = new ArrayList<>();
                     List<JsonObject> results = new ArrayList<>();
-                    for (JsonObject entry : filtered) {
-                        if (level != null && !level.isBlank()) {
-                            String entryLevel = entry.getString("level");
-                            if (entryLevel == null || !entryLevel.equalsIgnoreCase(level)) {
+                    int total = 0;
+                    for (Map.Entry<String, List<JsonObject>> group : ExampleHelper.groupByLevel(filtered).entrySet()) {
+                        if (level != null && !level.isBlank() && !group.getKey().equalsIgnoreCase(level)) {
+                            continue;
+                        }
+                        total += group.getValue().size();
+                        JsonObject g = new JsonObject();
+                        g.put("level", group.getKey());
+                        g.put("title", ExampleHelper.getGroupTitle(group.getKey()));
+                        g.put("intro", ExampleHelper.getGroupIntro(group.getKey()));
+                        g.put("count", group.getValue().size());
+                        groups.add(g);
+                        for (JsonObject entry : group.getValue()) {
+                            if (results.size() >= limit) {
                                 continue;
                             }
-                        }
-                        JsonObject jo = new JsonObject();
-                        jo.put("name", entry.getString("name"));
-                        jo.put("title", entry.getString("title"));
-                        jo.put("description", entry.getString("description"));
-                        jo.put("level", entry.getString("level"));
-                        jo.put("tags", entry.get("tags"));
-                        jo.put("bundled", ExampleHelper.isBundled(entry));
-                        jo.put("files", ExampleHelper.getFiles(entry));
-                        results.add(jo);
-                        if (results.size() >= 20) {
-                            break;
+                            JsonObject jo = new JsonObject();
+                            jo.put("name", entry.getString("name"));
+                            jo.put("title", entry.getString("title"));
+                            jo.put("description", entry.getString("description"));
+                            jo.put("level", entry.getString("level"));
+                            if (ExampleHelper.getOrder(entry) != Integer.MAX_VALUE) {
+                                jo.put("order", ExampleHelper.getOrder(entry));
+                            }
+                            jo.put("tags", entry.get("tags"));
+                            jo.put("teaches", ExampleHelper.getTeaches(entry));
+                            jo.put("infraServices", ExampleHelper.getInfraServices(entry));
+                            jo.put("bundled", ExampleHelper.isBundled(entry));
+                            jo.put("files", ExampleHelper.getFiles(entry));
+                            results.add(jo);
                         }
                     }
                     JsonObject response = new JsonObject();
                     response.put("count", results.size());
+                    response.put("total", total);
+                    response.put("groups", groups);
                     response.put("examples", results);
                     return response.toJson();
                 }));
@@ -1140,5 +1185,44 @@ public final class ToolRegistry {
         return (name != null && name.toLowerCase().contains(lf))
                 || (title != null && title.toLowerCase().contains(lf))
                 || (description != null && description.toLowerCase().contains(lf));
+    }
+
+    /**
+     * The steps of the last completed exchange, one line each: route, node, elapsed, and the body's type and size as it
+     * reached the step (from the message dump of the trace event), without the bodies, headers and properties.
+     */
+    static JsonObject historySummary(JsonObject history) {
+        JsonObject answer = new JsonObject();
+        if (history.get("name") != null) {
+            answer.put("name", history.get("name"));
+        }
+        JsonArray steps = new JsonArray();
+        Object traces = history.get("traces");
+        if (traces instanceof java.util.List<?> list) {
+            for (Object o : list) {
+                if (!(o instanceof JsonObject t)) {
+                    continue;
+                }
+                JsonObject step = new JsonObject();
+                for (String key : new String[] {
+                        "routeId", "nodeId", "nodeShortName", "nodeLabel", "location", "elapsed",
+                        "first", "last", "failed" }) {
+                    if (t.get(key) != null) {
+                        step.put(key, t.get(key));
+                    }
+                }
+                if (t.get("message") instanceof JsonObject m && m.get("body") instanceof JsonObject b) {
+                    if (b.get("type") != null) {
+                        step.put("bodyType", b.get("type"));
+                    }
+                    if (b.get("size") != null) {
+                        step.put("bodySize", b.get("size"));
+                    }
+                }
+                steps.add(step);
+            }
+        }
+        answer.put("steps", steps);
+        return answer;
     }
 }

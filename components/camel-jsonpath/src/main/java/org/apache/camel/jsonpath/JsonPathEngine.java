@@ -216,11 +216,26 @@ public class JsonPathEngine {
         }
 
         // okay it was not then lets throw a failure
-        if (source != null) {
-            throw new CamelExchangeException("Cannot read " + source + " as supported JSON value", exchange);
-        } else {
-            throw new CamelExchangeException("Cannot read message body as supported JSON value", exchange);
+        // a null source is the message body as well: the deprecated single-argument constructor leaves it unset
+        final boolean fromBody = source == null || "body".equals(source.toString());
+        final String input = fromBody ? "body" : source.toString();
+        if (json == null) {
+            // a timer alone, or a jsonpath step placed before the file was read: nothing to evaluate
+            if (fromBody) {
+                throw new CamelExchangeException(
+                        "The jsonpath expression got no message body to evaluate (the body is null): read the JSON before"
+                                                 + " the step with poll: file:..., pollEnrich or a from: consumer, or set it with setBody",
+                        exchange);
+            }
+            throw new CamelExchangeException(
+                    "The jsonpath expression got no input from " + input + " to evaluate (it is null): set it before the"
+                                             + " step, or leave source unset to use the message body",
+                    exchange);
         }
+        throw new CamelExchangeException(
+                "Cannot read " + input + " as supported JSON value (" + (fromBody ? "the body" : "it")
+                                         + " has type: " + ObjectHelper.classCanonicalName(json) + ")",
+                exchange);
     }
 
     private Object readWithInputStream(String path, Exchange exchange) throws IOException {

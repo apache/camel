@@ -47,6 +47,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -333,12 +334,19 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         GroovyShell shell = new GroovyShell(cl, cc);
 
         // parse code into classes and add to classloader
-        for (String code : codes.values()) {
+        for (Map.Entry<String, String> entry : codes.entrySet()) {
+            String code = entry.getValue();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Compiling Groovy source:\n{}", code);
             }
             counter++;
-            Class<?> clazz = shell.getClassLoader().parseClass(code);
+            GroovyLanguage.preCompile(camelContext, entry.getKey(), code);
+            Class<?> clazz;
+            try {
+                clazz = shell.getClassLoader().parseClass(code);
+            } catch (CompilationFailedException e) {
+                throw GroovyLanguage.compileFailure(e);
+            }
             if (clazz != null) {
                 String name = clazz.getName();
                 LOG.debug("Compiled Groovy class: {}", name);

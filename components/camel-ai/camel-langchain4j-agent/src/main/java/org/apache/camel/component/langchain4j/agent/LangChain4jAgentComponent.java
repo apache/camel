@@ -17,9 +17,13 @@
 package org.apache.camel.component.langchain4j.agent;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import dev.langchain4j.model.chat.ChatModel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.core.LangChain4jModelFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -30,6 +34,8 @@ import static org.apache.camel.component.langchain4j.agent.LangChain4jAgent.SCHE
 public class LangChain4jAgentComponent extends DefaultComponent {
     @Metadata
     LangChain4jAgentConfiguration configuration;
+
+    private final Map<LangChain4jModelFactory.ModelSpec, ChatModel> models = new ConcurrentHashMap<>();
 
     public LangChain4jAgentComponent() {
         this(null);
@@ -59,7 +65,20 @@ public class LangChain4jAgentComponent extends DefaultComponent {
         LangChain4jAgentConfiguration langchain4jChatConfiguration = this.configuration.copy();
 
         Endpoint endpoint = new LangChain4jAgentEndpoint(uri, this, remaining, langchain4jChatConfiguration);
+        langchain4jChatConfiguration.setModelProperties(
+                LangChain4jModelFactory.extractModelProperties(parameters, langchain4jChatConfiguration.getModelProperties()));
         setProperties(endpoint, parameters);
+        boolean noAgent = langchain4jChatConfiguration.getAgent() == null
+                && langchain4jChatConfiguration.getAgentFactory() == null
+                && langchain4jChatConfiguration.getAgentConfiguration() == null;
+        if (noAgent && langchain4jChatConfiguration.modelSpec() != null) {
+            // the chat model is declared by its provider and options (CAMEL-24820): the agent is created from it as
+            // with an AgentConfiguration holding only the model; endpoints with the same options share the model
+            LangChain4jModelFactory.ModelSpec spec = langchain4jChatConfiguration.modelSpec();
+            ChatModel chatModel
+                    = models.computeIfAbsent(spec, s -> LangChain4jModelFactory.createChatModel(getCamelContext(), s));
+            langchain4jChatConfiguration.setAgentConfiguration(new AgentConfiguration().withChatModel(chatModel));
+        }
         return endpoint;
     }
 }

@@ -2,8 +2,27 @@
     {
         "name": "ai/docling-langchain4j-rag",
         "title": "Document Analysis with Docling and LangChain4j RAG",
-        "description": "RAG workflow combining Docling document conversion with LangChain4j and Ollama",
-        "level": "advanced",
+        "description": "Documents dropped in a directory are converted by a running Docling service, chunked and summarised by a local Ollama model through langchain4j-chat, and written to an output directory; an HTTP endpoint answers questions against the converted documents.",
+        "level": "ai",
+        "teaches": {
+            "components": [
+                "file",
+                "docling",
+                "langchain4j-chat",
+                "platform-http",
+                "timer"
+            ],
+            "eips": [
+                "split",
+                "choice",
+                "script",
+                "setProperty",
+                "setHeader"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
         "tags": [
             "ai",
             "rag",
@@ -22,41 +41,114 @@
         "infraServices": [
             "docling",
             "ollama"
-        ]
+        ],
+        "order": 4
     },
     {
-        "name": "ai/financial-doc-analyzer",
-        "title": "Financial Document Analyzer",
-        "description": "Automated financial document analysis with Docling, LangChain4j, and market data",
-        "level": "advanced",
+        "name": "ai/langchain4j-chat",
+        "title": "LangChain4j chat",
+        "description": "A local Ollama model started with camel infra writes the shipping notification for each of the three orders; the chat model is a bean built from properties, the prompt comes from the order, and the log shows the reply with its token counts.",
+        "level": "ai",
+        "teaches": {
+            "components": [
+                "langchain4j-chat",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "setBody",
+                "setProperty",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
         "tags": [
+            "shop",
             "ai",
-            "langchain4j",
-            "docling",
-            "finance"
+            "llm",
+            "ollama",
+            "langchain4j"
         ],
         "bundled": false,
         "requiresDocker": true,
-        "hasCitrusTests": false,
+        "hasCitrusTests": true,
         "files": [
             "README.md",
             "application.properties",
-            "examples/banking-sector-brief.pdf",
-            "examples/magnificent-seven-update.pdf",
-            "examples/semiconductor-sector-analysis.pdf",
-            "examples/tesla-q3-2024.pdf",
-            "financial-doc-analyzer.yaml"
+            "langchain4j-chat.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
         ],
         "infraServices": [
-            "docling",
             "ollama"
-        ]
+        ],
+        "ciSkip": true,
+        "order": 1
+    },
+    {
+        "name": "ai/mcp-server",
+        "title": "MCP server",
+        "description": "Two routes are exposed as MCP tools, stock_level by SKU and order_status by order id, on http://localhost:8080/mcp with nothing but properties to switch the server on; any MCP client, a coding agent included, can list and call them, and the log shows each call.",
+        "level": "ai",
+        "teaches": {
+            "components": [
+                "ai-tool",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "pollEnrich",
+                "choice",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple",
+                "jsonpath",
+                "constant"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "ai",
+            "mcp",
+            "agent",
+            "tools"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "mcp-server.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json",
+            "stock.json"
+        ],
+        "order": 2
     },
     {
         "name": "ai/openai-pii-redaction",
         "title": "OpenAI PII Redaction",
-        "description": "Redact personal identifiable information from text using OpenAI-compatible LLMs",
-        "level": "advanced",
+        "description": "Text typed on standard input is sent to an OpenAI-compatible model with a JSON schema that asks for the personal identifiers redacted, and the redacted text is printed on standard output.",
+        "level": "ai",
+        "teaches": {
+            "components": [
+                "stream",
+                "direct",
+                "openai"
+            ]
+        },
         "tags": [
             "ai",
             "openai",
@@ -71,13 +163,1146 @@
             "application.properties",
             "pii-redaction.camel.yaml",
             "pii.schema.json"
-        ]
+        ],
+        "order": 3
     },
     {
-        "name": "ai/smart-log-analyzer",
+        "name": "cloud/aws-sqs",
+        "title": "AWS SQS",
+        "description": "Each of the three orders is put on an Amazon SQS queue called shipments and a courier route takes it off and logs the order, country and line count; locally the queue lives on the LocalStack that camel infra run aws sqs starts, and the same properties point at real AWS.",
+        "level": "cloud",
+        "teaches": {
+            "components": [
+                "aws2-sqs",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "setHeader",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple",
+                "jsonpath"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "aws",
+            "sqs",
+            "cloud",
+            "messaging"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "aws-sqs.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "infraServices": [
+            "aws"
+        ],
+        "order": 1
+    },
+    {
+        "name": "connect-service/artemis",
+        "title": "Artemis queue",
+        "description": "The three orders are put on the orders queue of an ActiveMQ Artemis broker started with camel infra, and a consumer route takes them off and logs the customer and line count; the connection factory is declared in application.properties.",
+        "level": "connect-service",
+        "teaches": {
+            "components": [
+                "jms",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "setHeader",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple",
+                "jsonpath"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "jms",
+            "artemis",
+            "queue",
+            "messaging"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "artemis.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "infraServices": [
+            "artemis"
+        ],
+        "order": 2
+    },
+    {
+        "name": "connect-service/camel-1-tribute",
+        "title": "Camel 1.0 tribute",
+        "description": "The very first Camel example of 2007, JMS to file: a timer sends ten messages to a queue on an Artemis broker started with camel infra, and the consumer writes each message to a file in outbox; the log shows both sides.",
+        "level": "connect-service",
+        "teaches": {
+            "components": [
+                "jms",
+                "file",
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "setBody"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "history",
+            "jms",
+            "artemis",
+            "file"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "jms-to-file.camel.yaml"
+        ],
+        "infraServices": [
+            "artemis"
+        ],
+        "order": 6
+    },
+    {
+        "name": "connect-service/ftp",
+        "title": "FTP courier",
+        "description": "Each order on the shipments queue of an Artemis broker becomes a file on the courier's FTP server, both started with camel infra; the log shows each shipment uploaded and camel infra get ftp shows where the files landed.",
+        "level": "connect-service",
+        "teaches": {
+            "components": [
+                "ftp",
+                "jms",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "setHeader"
+            ],
+            "languages": [
+                "simple",
+                "jsonpath"
+            ]
+        },
+        "tags": [
+            "shop",
+            "ftp",
+            "jms",
+            "artemis",
+            "courier"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "ftp.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "infraServices": [
+            "artemis",
+            "ftp"
+        ],
+        "order": 5
+    },
+    {
+        "name": "connect-service/kafka-orders",
+        "title": "Kafka orders",
+        "description": "The three orders go through a shared validation route to a Kafka topic on a broker started with camel infra; the pending one is stopped, the paid ones are dispatched to the fulfilment and notifications topics, whose consumers log the picking and the email; camel cmd route-topology draws the flow.",
+        "level": "connect-service",
+        "teaches": {
+            "components": [
+                "kafka",
+                "file",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "multicast",
+                "choice",
+                "stop",
+                "setHeader",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple",
+                "jsonpath"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "kafka",
+            "topology",
+            "messaging"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "kafka-orders.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "infraServices": [
+            "kafka"
+        ],
+        "order": 4
+    },
+    {
+        "name": "connect-service/mqtt",
+        "title": "MQTT sensors",
+        "description": "Temperature sensors in the warehouse's cold rooms publish JSON readings on an MQTT topic of a Mosquitto broker started with camel infra; a consumer logs each reading and raises a warning when a room is above 8 degrees.",
+        "level": "connect-service",
+        "teaches": {
+            "components": [
+                "paho-mqtt5",
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "choice",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "mqtt",
+            "mosquitto",
+            "iot"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "mqtt.camel.yaml"
+        ],
+        "infraServices": [
+            "mosquitto"
+        ],
+        "order": 3
+    },
+    {
+        "name": "connect-service/sql",
+        "title": "SQL database",
+        "description": "Against a Postgres started with camel infra, a customers table is created, the three orders register their customers with an insert that counts orders on conflict, and every ten seconds a select lists the customers; run it twice and the order counts go up.",
+        "level": "connect-service",
+        "teaches": {
+            "components": [
+                "sql",
+                "file",
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "split",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "sql",
+            "postgres",
+            "database"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json",
+            "sql.camel.yaml"
+        ],
+        "infraServices": [
+            "postgres"
+        ],
+        "order": 1
+    },
+    {
+        "name": "connect/file-processing",
+        "title": "File processing",
+        "description": "A courier route copies five files into an inbox; the invoices are checked, archived under a month directory and moved to done, the invoice with a negative amount is rejected with a warning and moved to failed, and the driver's note is left alone because only .json files are picked up.",
+        "level": "connect",
+        "teaches": {
+            "components": [
+                "file",
+                "log"
+            ],
+            "eips": [
+                "validate",
+                "onException",
+                "unmarshal",
+                "marshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "file",
+            "inbox",
+            "archive"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "file-processing.camel.yaml",
+            "samples/invoice-2001.json",
+            "samples/invoice-2002.json",
+            "samples/invoice-2003.json",
+            "samples/invoice-2004.json",
+            "samples/note-2005.txt"
+        ],
+        "order": 1
+    },
+    {
+        "name": "connect/http-client",
+        "title": "HTTP client",
+        "description": "Every line of the three orders is checked against the stock service over HTTP, served by the same example; the log shows each line as ok, or back-order when the stock is short, with the stock level from the response.",
+        "level": "connect",
+        "teaches": {
+            "components": [
+                "file",
+                "http",
+                "rest",
+                "platform-http",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "split",
+                "setProperty",
+                "toD",
+                "choice",
+                "unmarshal",
+                "marshal"
+            ],
+            "languages": [
+                "simple",
+                "jsonpath"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "http",
+            "rest",
+            "client"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "http-client.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json",
+            "stock.json"
+        ],
+        "order": 3
+    },
+    {
+        "name": "connect/stock-api",
+        "title": "Stock API",
+        "description": "The shop's stock service on port 8080: GET /stock returns the stock file, GET /stock/{sku} returns one SKU as JSON and a 404 with an error message for an unknown SKU.",
+        "level": "connect",
+        "teaches": {
+            "components": [
+                "rest",
+                "platform-http",
+                "direct"
+            ],
+            "eips": [
+                "setBody",
+                "setHeader",
+                "choice",
+                "marshal"
+            ],
+            "languages": [
+                "constant",
+                "jsonpath",
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "rest",
+            "http",
+            "platform-http"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "stock-api.camel.yaml",
+            "stock.json"
+        ],
+        "order": 2
+    },
+    {
+        "name": "contracts/keycloak-security-rest",
+        "title": "Keycloak security",
+        "description": "Two HTTP endpoints on port 8081: the public one answers everyone, the protected one requires a bearer token from a Keycloak started with camel infra whose user has the admin role, otherwise 403; the realm, client and users are created in the Keycloak console as the README describes.",
+        "level": "contracts",
+        "teaches": {
+            "components": [
+                "platform-http",
+                "keycloak",
+                "log"
+            ],
+            "eips": [
+                "policy",
+                "onException",
+                "setHeader",
+                "setBody"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "security",
+            "keycloak",
+            "oauth",
+            "jwt",
+            "rest"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "application.properties",
+            "rest-api.camel.yaml"
+        ],
+        "infraServices": [
+            "keycloak"
+        ],
+        "order": 3
+    },
+    {
+        "name": "contracts/openapi-client",
+        "title": "OpenAPI client",
+        "description": "The picking desk reserves stock for every order line by calling the stock API by contract: rest-openapi turns the operationId reserveStock into the HTTP call from stock-api.json; the log shows each reservation and one 409 for the cap that is out of stock. Needs the openapi-server example running.",
+        "level": "contracts",
+        "teaches": {
+            "components": [
+                "rest-openapi",
+                "http",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "split",
+                "onException",
+                "setProperty",
+                "setHeader",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "openapi",
+            "rest",
+            "client",
+            "contract"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "openapi-client.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json",
+            "stock-api.json"
+        ],
+        "order": 2
+    },
+    {
+        "name": "contracts/openapi-server",
+        "title": "OpenAPI server",
+        "description": "The stock API contract first: stock-api.json is the OpenAPI contract, the REST DSL serves its three operations on port 8080 with request validation, GET /stock/{sku} answers from a file or 404, POST /stock/{sku}/reserve answers 200, 409 when the stock is short or 400 for a bad reservation, and /openapi serves the contract.",
+        "level": "contracts",
+        "teaches": {
+            "components": [
+                "rest",
+                "rest-openapi",
+                "platform-http",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "choice",
+                "validate",
+                "onException",
+                "marshal",
+                "unmarshal",
+                "setProperty"
+            ],
+            "languages": [
+                "simple",
+                "jsonpath",
+                "constant"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "openapi",
+            "rest",
+            "contract"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "openapi-server.camel.yaml",
+            "stock-api.json",
+            "stock.json"
+        ],
+        "order": 1
+    },
+    {
+        "name": "fail-well/circuit-breaker",
+        "title": "Circuit breaker",
+        "description": "A stock check calls the supplier every second; the supplier goes down for nine calls, the breaker opens after two failures in its window of four, answers from the fallback while open, tries the supplier again after five seconds and closes once a call succeeds; each line logs the breaker state.",
+        "level": "fail-well",
+        "teaches": {
+            "components": [
+                "timer",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "circuitBreaker",
+                "onFallback",
+                "throwException",
+                "choice"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "shop",
+            "resilience",
+            "circuit-breaker"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "circuit-breaker.camel.yaml"
+        ],
+        "order": 2
+    },
+    {
+        "name": "fail-well/error-handling",
+        "title": "Error handling",
+        "description": "The three orders go to a payment provider: the first is charged at once, the second gets no answer twice and is charged on the third attempt after two retries logged as warnings, and the third is declined, logged as such and parked as a file for manual review.",
+        "level": "fail-well",
+        "teaches": {
+            "components": [
+                "file",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "errorHandler",
+                "deadLetterChannel",
+                "redeliveryPolicy",
+                "onException",
+                "throwException",
+                "choice",
+                "unmarshal",
+                "marshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "error-handling",
+            "retry",
+            "dead-letter"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "error-handling.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json",
+            "parked/order-1003.json"
+        ],
+        "order": 1
+    },
+    {
+        "name": "quick-start/rest-api",
+        "title": "REST API",
+        "description": "A REST API on port 8080: GET /api/hello answers the greeting from application.properties and GET /api/hello/{name} answers a greeting with the name.",
+        "level": "quick-start",
+        "teaches": {
+            "components": [
+                "platform-http",
+                "direct"
+            ],
+            "eips": [
+                "rest"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "beginner",
+            "rest",
+            "http"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "application.properties",
+            "rest-api.camel.yaml"
+        ],
+        "order": 4
+    },
+    {
+        "name": "quick-start/routes",
+        "title": "Routes",
+        "description": "A timer route in YAML calls a Java bean, Greeter, that builds the message, and logs what the bean returned; the first step from YAML into your own code.",
+        "level": "quick-start",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "bean"
+            ]
+        },
+        "tags": [
+            "beginner",
+            "yaml",
+            "bean"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "Greeter.java",
+            "README.md",
+            "application.properties",
+            "beans.yaml",
+            "routes.camel.yaml"
+        ],
+        "order": 2
+    },
+    {
+        "name": "quick-start/splitter",
+        "title": "Splitter",
+        "description": "A timer creates a comma-separated batch of items, the splitter turns it into one message per item, and each item is logged on its own line.",
+        "level": "quick-start",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "split"
+            ],
+            "languages": [
+                "tokenize",
+                "simple"
+            ]
+        },
+        "tags": [
+            "eip",
+            "splitter",
+            "batch"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "splitter.camel.yaml"
+        ],
+        "order": 3
+    },
+    {
+        "name": "quick-start/timer-log",
+        "title": "Timer Log",
+        "description": "A timer fires every second and a log line prints the greeting from application.properties; the hello of Camel in one file.",
+        "level": "quick-start",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "beginner",
+            "timer",
+            "log"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "application.properties",
+            "timer-log.camel.yaml"
+        ],
+        "order": 1
+    },
+    {
+        "name": "route/aggregator",
+        "title": "Aggregator",
+        "description": "The warehouse reports each picked line on its own and the aggregator collects the lines of one order back into a shipment, correlated by the order id and complete when as many lines are in as the order had; each shipment is logged as JSON.",
+        "level": "route",
+        "teaches": {
+            "components": [
+                "file",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "aggregate",
+                "split",
+                "setHeader",
+                "marshal",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "eip",
+            "aggregator",
+            "batch"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "aggregator.camel.yaml",
+            "application.properties",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "order": 3
+    },
+    {
+        "name": "route/content-based-router",
+        "title": "Content-based router",
+        "description": "Three orders from three countries are read from the orders directory and a choice routes each by its country: the Danish order to local delivery, the German order to EU shipping without customs, the US order to export with a customs declaration; each branch logs what it did.",
+        "level": "route",
+        "teaches": {
+            "components": [
+                "file",
+                "log"
+            ],
+            "eips": [
+                "choice",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "eip",
+            "choice",
+            "routing"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "content-based-router.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "order": 1
+    },
+    {
+        "name": "route/filter-and-multicast",
+        "title": "Filter and multicast",
+        "description": "Three orders are read from the orders directory; a filter lets only the paid ones through and a multicast sends each paid order to both the warehouse route and the invoicing route, which log their part; the pending order is logged as received and goes no further.",
+        "level": "route",
+        "teaches": {
+            "components": [
+                "file",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "filter",
+                "multicast",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "eip",
+            "filter",
+            "multicast"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "filter-and-multicast.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "order": 4
+    },
+    {
+        "name": "route/order-lines",
+        "title": "Order lines",
+        "description": "Each order read from the orders directory is split into one message per line, the order id travels along in a header, and the log shows the order, one pick line per line, and the parent's confirmation that all lines went to picking.",
+        "level": "route",
+        "teaches": {
+            "components": [
+                "file",
+                "log"
+            ],
+            "eips": [
+                "split",
+                "setHeader",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "eip",
+            "splitter",
+            "split"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "order-lines.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "order": 2
+    },
+    {
+        "name": "run/nightly-report",
+        "title": "Nightly report",
+        "description": "A cron schedule runs the shop's inventory report, every ten seconds in the demo and nightly with a one-line change, and each run logs the stock counts with a timestamp.",
+        "level": "run",
+        "teaches": {
+            "components": [
+                "cron",
+                "log"
+            ],
+            "eips": [
+                "setBody"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "shop",
+            "cron",
+            "schedule"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "nightly-report.camel.yaml"
+        ],
+        "order": 2
+    },
+    {
+        "name": "run/order-generator",
+        "title": "Order generator",
+        "description": "A timer creates a shop order every five seconds: a Java bean hands out the order number, the body is the order as JSON, and the log shows each new order. The order feed every later example starts from.",
+        "level": "run",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "setHeader",
+                "setBody"
+            ],
+            "languages": [
+                "simple",
+                "method"
+            ]
+        },
+        "tags": [
+            "shop",
+            "timer",
+            "bean",
+            "json"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "OrderNumber.java",
+            "README.md",
+            "application.properties",
+            "beans.yaml",
+            "order-generator.camel.yaml"
+        ],
+        "order": 1
+    },
+    {
+        "name": "run/properties-and-profiles",
+        "title": "Properties and profiles",
+        "description": "A timer logs a welcome with the shop name and currency from application.properties; run with --profile=prod and application-prod.properties overrides both, so the same route greets with the production values.",
+        "level": "run",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "setBody"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "shop",
+            "properties",
+            "profiles",
+            "configuration"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application-prod.properties",
+            "application.properties",
+            "properties-and-profiles.camel.yaml"
+        ],
+        "order": 3
+    },
+    {
+        "name": "showcase/memory-leak",
+        "title": "Memory Leak",
+        "description": "Three timer routes run side by side: two leak memory into a cache and a buffer, one is healthy, so a JFR Old Object Sample recording and the CLI's heap tools show which route leaks.",
+        "level": "showcase",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "process"
+            ]
+        },
+        "tags": [
+            "observability",
+            "jfr",
+            "diagnostics",
+            "tui"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "MemoryLeak.java",
+            "README.md"
+        ],
+        "order": 2
+    },
+    {
+        "name": "showcase/message-size",
+        "title": "Message Size",
+        "description": "Timer routes send messages of small, medium and large sizes to seda queues with a Content-Length header, so camel cmd and the CLI's message-size views show sizes per endpoint.",
+        "level": "showcase",
+        "teaches": {
+            "components": [
+                "timer",
+                "seda",
+                "log"
+            ],
+            "eips": [
+                "setHeader"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "observability",
+            "monitoring",
+            "seda"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "orders.camel.yaml"
+        ],
+        "order": 3
+    },
+    {
+        "name": "showcase/smart-log-analyzer",
         "title": "Smart Log Analyzer",
-        "description": "Intelligent observability correlating OpenTelemetry logs and traces with LLM analysis",
-        "level": "advanced",
+        "description": "A multi-part showcase: a load generator produces logs and traces, a correlator maps OpenTelemetry logs to traces, an LLM analyses the correlated records, and a small web console with a REST API shows the results.",
+        "level": "showcase",
+        "teaches": {
+            "components": [
+                "platform-http",
+                "jms",
+                "file",
+                "langchain4j-chat"
+            ],
+            "eips": [
+                "rest"
+            ]
+        },
         "tags": [
             "ai",
             "observability",
@@ -118,116 +1343,25 @@
             "ui-console/index.html",
             "ui-console/jms-file-storage.camel.yaml",
             "ui-console/rest-api.camel.yaml"
-        ]
+        ],
+        "order": 4
     },
     {
-        "name": "beginner/camel-1-tribute",
-        "title": "Camel 1.0 Tribute",
-        "description": "A tribute to the very first Apache Camel example from 2007 - JMS to File",
-        "level": "beginner",
-        "tags": [
-            "beginner",
-            "jms",
-            "file",
-            "artemis",
-            "tribute"
-        ],
-        "bundled": true,
-        "requiresDocker": true,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "jms-to-file.camel.yaml"
-        ],
-        "infraServices": [
-            "artemis"
-        ]
-    },
-    {
-        "name": "beginner/cron-log",
-        "title": "Cron Log",
-        "description": "Scheduled task that logs every 5 seconds",
-        "level": "beginner",
-        "tags": [
-            "beginner",
-            "timer",
-            "cron",
-            "log"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "cron-log.camel.yaml"
-        ]
-    },
-    {
-        "name": "beginner/rest-api",
-        "title": "REST API",
-        "description": "REST API with hello endpoints",
-        "level": "beginner",
-        "tags": [
-            "beginner",
-            "rest",
-            "http"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "rest-api.camel.yaml"
-        ]
-    },
-    {
-        "name": "beginner/routes",
-        "title": "Routes",
-        "description": "Define routes in YAML with Java beans",
-        "level": "beginner",
-        "tags": [
-            "beginner",
-            "yaml",
-            "bean"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "Greeter.java",
-            "README.md",
-            "application.properties",
-            "beans.yaml",
-            "routes.camel.yaml"
-        ]
-    },
-    {
-        "name": "beginner/timer-log",
-        "title": "Timer Log",
-        "description": "Simple timer that logs a hello message every second",
-        "level": "beginner",
-        "tags": [
-            "beginner",
-            "timer",
-            "log"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "timer-log.camel.yaml"
-        ]
-    },
-    {
-        "name": "beginner/tui-hello-world",
+        "name": "showcase/tui-hello-world",
         "title": "TUI Hello World",
-        "description": "Say hello via TUI Send Message (F2) or CLI",
-        "level": "beginner",
+        "description": "A one-shot timer prints an invitation; the route direct:greet then logs and greets any message sent to it from the CLI (camel cmd send --endpoint=direct:greet --body=...) or from a tool that can send messages.",
+        "level": "showcase",
+        "teaches": {
+            "components": [
+                "timer",
+                "direct",
+                "log"
+            ],
+            "languages": [
+                "simple",
+                "constant"
+            ]
+        },
         "tags": [
             "beginner",
             "direct",
@@ -240,19 +1374,38 @@
         "files": [
             "README.md",
             "tui-hello-world.yaml"
-        ]
+        ],
+        "order": 1
     },
     {
-        "name": "cloud/aws-s3-event-based",
-        "title": "AWS S3 CDC",
-        "description": "Consume S3 events using EventBridge and SQS for change data capture",
-        "level": "advanced",
+        "name": "transform/csv-to-json",
+        "title": "CSV to JSON",
+        "description": "A CSV of invoices dropped in the inbox directory is read with the CSV data format, its header line naming the fields, split into one message per invoice, and each invoice is logged as JSON and written to the outbox directory as its own file.",
+        "level": "transform",
+        "teaches": {
+            "components": [
+                "file",
+                "log"
+            ],
+            "eips": [
+                "unmarshal",
+                "split",
+                "marshal"
+            ],
+            "dataformats": [
+                "csv",
+                "json"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
         "tags": [
-            "aws",
-            "s3",
-            "sqs",
-            "eventbridge",
-            "cloud"
+            "shop",
+            "csv",
+            "json",
+            "file",
+            "transformation"
         ],
         "bundled": false,
         "requiresDocker": false,
@@ -260,284 +1413,40 @@
         "files": [
             "README.md",
             "application.properties",
-            "aws-s3-cdc-log.camel.yaml",
-            "example-file.txt",
-            "policy-queue.json",
-            "terraform/main.tf"
-        ]
+            "csv-to-json.camel.yaml",
+            "inbox/invoices.csv"
+        ],
+        "order": 3
     },
     {
-        "name": "cloud/aws-sqs",
-        "title": "AWS SQS Sink",
-        "description": "Push messages to AWS SQS queue via HTTP service",
-        "level": "advanced",
+        "name": "transform/data-mapping",
+        "title": "Data mapping",
+        "description": "The shop's order in order.json is mapped field by field to the courier's shipment format, with renamed fields, a nested recipient, one parcel per line, a computed total and a service chosen from the country; the order is parsed to a map, the script shipment-mapping.groovy builds the shipment, and it is logged as JSON.",
+        "level": "transform",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "unmarshal",
+                "setBody",
+                "marshal"
+            ],
+            "languages": [
+                "groovy",
+                "constant"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
         "tags": [
-            "aws",
-            "sqs",
-            "http",
-            "cloud"
-        ],
-        "bundled": false,
-        "requiresDocker": false,
-        "hasCitrusTests": true,
-        "files": [
-            "README.md",
-            "application.properties",
-            "http-to-aws-sqs.camel.yaml"
-        ]
-    },
-    {
-        "name": "database/sql",
-        "title": "SQL Database",
-        "description": "Use a SQL database with Camel and Postgres",
-        "level": "intermediate",
-        "tags": [
-            "database",
-            "sql",
-            "postgres"
-        ],
-        "bundled": true,
-        "requiresDocker": true,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "sql.camel.yaml"
-        ],
-        "infraServices": [
-            "postgres"
-        ]
-    },
-    {
-        "name": "eip/aggregator",
-        "title": "Aggregator",
-        "description": "Collect individual messages into a batch using the Aggregator EIP",
-        "level": "beginner",
-        "tags": [
-            "eip",
-            "aggregator",
-            "batch"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "aggregator.camel.yaml"
-        ]
-    },
-    {
-        "name": "eip/circuit-breaker",
-        "title": "Circuit Breaker",
-        "description": "Use the circuit breaker EIP for fault tolerance",
-        "level": "beginner",
-        "tags": [
-            "eip",
-            "resilience"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "route.camel.yaml"
-        ]
-    },
-    {
-        "name": "eip/content-based-router",
-        "title": "Content Based Router",
-        "description": "Route messages to different destinations based on message content using the Choice EIP",
-        "level": "beginner",
-        "tags": [
-            "eip",
-            "choice",
-            "routing"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "content-based-router.camel.yaml"
-        ]
-    },
-    {
-        "name": "eip/splitter",
-        "title": "Splitter",
-        "description": "Split a batch of items into individual messages for processing",
-        "level": "beginner",
-        "tags": [
-            "eip",
-            "splitter",
-            "batch"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "splitter.camel.yaml"
-        ]
-    },
-    {
-        "name": "language/groovy",
-        "title": "Groovy",
-        "description": "Use Groovy with extra dependencies and content-based routing",
-        "level": "beginner",
-        "tags": [
-            "language",
+            "shop",
+            "mapping",
             "groovy",
-            "eip"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "groovy.camel.yaml"
-        ]
-    },
-    {
-        "name": "messaging/artemis",
-        "title": "Apache ActiveMQ Artemis",
-        "description": "Setup connection factory to a remote Apache ActiveMQ Artemis messaging broker",
-        "level": "intermediate",
-        "tags": [
-            "messaging",
-            "jms",
-            "artemis"
-        ],
-        "bundled": false,
-        "requiresDocker": true,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "consumer.camel.yaml",
-            "producer.camel.yaml"
-        ],
-        "infraServices": [
-            "artemis"
-        ]
-    },
-    {
-        "name": "messaging/ftp",
-        "title": "ActiveMQ to FTP",
-        "description": "Integrate ActiveMQ messaging with an FTP server",
-        "level": "intermediate",
-        "tags": [
-            "messaging",
-            "ftp",
-            "activemq"
-        ],
-        "bundled": false,
-        "requiresDocker": true,
-        "hasCitrusTests": true,
-        "files": [
-            "README.md",
-            "application.properties",
-            "ftp.camel.yaml",
-            "jbang.properties"
-        ],
-        "infraServices": [
-            "artemis",
-            "ftp"
-        ]
-    },
-    {
-        "name": "messaging/mqtt",
-        "title": "MQTT",
-        "description": "Receive MQTT events from an external MQTT broker",
-        "level": "intermediate",
-        "tags": [
-            "messaging",
-            "mqtt",
-            "iot"
-        ],
-        "bundled": false,
-        "requiresDocker": true,
-        "hasCitrusTests": true,
-        "files": [
-            "README.md",
-            "application.properties",
-            "infra/mosquitto.conf",
-            "mqtt.camel.yaml",
-            "start.sh"
-        ],
-        "infraServices": [
-            "mosquitto"
-        ]
-    },
-    {
-        "name": "observability/memory-leak",
-        "title": "Memory Leak",
-        "description": "Simulates a memory leak for testing JFR Old Object Sample diagnostics",
-        "level": "beginner",
-        "tags": [
-            "observability",
-            "jfr",
-            "diagnostics",
-            "tui"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "MemoryLeak.java",
-            "README.md"
-        ]
-    },
-    {
-        "name": "observability/message-size",
-        "title": "Message Size",
-        "description": "Track message body and header sizes per endpoint",
-        "level": "beginner",
-        "tags": [
-            "observability",
-            "monitoring",
-            "seda"
-        ],
-        "bundled": true,
-        "requiresDocker": false,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "orders.camel.yaml"
-        ]
-    },
-    {
-        "name": "observability/route-topology",
-        "title": "Route Topology",
-        "description": "Demonstrates inter-route topology with triggers, shared routes, and external systems",
-        "level": "intermediate",
-        "tags": [
-            "topology",
-            "direct",
-            "kafka",
-            "timer"
-        ],
-        "bundled": true,
-        "requiresDocker": true,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "route-topology.camel.yaml"
-        ],
-        "infraServices": [
-            "kafka"
-        ]
-    },
-    {
-        "name": "rest/openapi-client",
-        "title": "OpenAPI Client",
-        "description": "REST client generated from an OpenAPI specification",
-        "level": "intermediate",
-        "tags": [
-            "rest",
-            "openapi",
-            "client"
+            "json",
+            "transformation"
         ],
         "bundled": false,
         "requiresDocker": false,
@@ -545,20 +1454,40 @@
         "files": [
             "README.md",
             "application.properties",
-            "examples/1001.json",
-            "petstore-api.json",
-            "petstore-client.camel.yaml"
-        ]
+            "data-mapping.camel.yaml",
+            "order.json",
+            "shipment-mapping.groovy"
+        ],
+        "order": 4
     },
     {
-        "name": "rest/openapi-server",
-        "title": "OpenAPI Server",
-        "description": "REST service implemented from an OpenAPI specification",
-        "level": "intermediate",
+        "name": "transform/groovy",
+        "title": "Groovy",
+        "description": "Two orders come in, one with a valid customer email and one with a bad one; a Groovy expression checks the address with Apache Commons Validator, a third-party library declared in application.properties, and the log shows one order accepted and one rejected.",
+        "level": "transform",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "choice",
+                "unmarshal",
+                "setBody"
+            ],
+            "languages": [
+                "groovy",
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
         "tags": [
-            "rest",
-            "openapi",
-            "server"
+            "shop",
+            "groovy",
+            "validation",
+            "dependencies"
         ],
         "bundled": false,
         "requiresDocker": false,
@@ -566,75 +1495,120 @@
         "files": [
             "README.md",
             "application.properties",
-            "examples/pet/1000.json",
-            "petstore-api.json",
-            "petstore.camel.yaml"
-        ]
+            "groovy.camel.yaml",
+            "order-bad-email.json",
+            "order.json"
+        ],
+        "order": 5
     },
     {
-        "name": "security/keycloak-introspection-rest",
-        "title": "Keycloak Token Introspection REST API",
-        "description": "Secure REST APIs with Keycloak OAuth 2.0 token introspection",
-        "level": "advanced",
+        "name": "transform/json-transform",
+        "title": "JSON transform",
+        "description": "The shop's order in order.json is reshaped for the warehouse: jsonpath reads the order id and the number of lines into headers, jq builds the pick list with only sku and quantity per line, and both the order and the pick list are logged.",
+        "level": "transform",
+        "teaches": {
+            "components": [
+                "timer",
+                "log"
+            ],
+            "eips": [
+                "transform",
+                "setHeader",
+                "setBody"
+            ],
+            "languages": [
+                "jq",
+                "jsonpath",
+                "constant",
+                "simple"
+            ]
+        },
         "tags": [
-            "security",
-            "keycloak",
-            "rest",
-            "oauth"
+            "shop",
+            "json",
+            "jq",
+            "jsonpath",
+            "transformation"
         ],
         "bundled": false,
-        "requiresDocker": true,
-        "hasCitrusTests": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
         "files": [
             "README.md",
             "application.properties",
-            "rest-api.camel.yaml"
+            "json-transform.camel.yaml",
+            "order.json"
         ],
-        "infraServices": [
-            "keycloak"
-        ]
+        "order": 1
     },
     {
-        "name": "security/keycloak-security-rest",
-        "title": "Keycloak Security REST API",
-        "description": "Secure REST APIs with Keycloak authentication and authorization",
-        "level": "advanced",
+        "name": "transform/xml-to-json",
+        "title": "XML to JSON",
+        "description": "A supplier's XML order dropped in the inbox directory is read with the Jackson XML data format and written out as the shop's JSON with the Jackson JSON data format, both logged; no mapping code, the XML elements and attributes become JSON fields.",
+        "level": "transform",
+        "teaches": {
+            "components": [
+                "file",
+                "log"
+            ],
+            "eips": [
+                "unmarshal",
+                "marshal"
+            ],
+            "dataformats": [
+                "jacksonXml",
+                "json"
+            ]
+        },
         "tags": [
-            "security",
-            "keycloak",
-            "rest",
-            "oauth"
-        ],
-        "bundled": false,
-        "requiresDocker": true,
-        "hasCitrusTests": false,
-        "files": [
-            "README.md",
-            "application.properties",
-            "rest-api.camel.yaml"
-        ],
-        "infraServices": [
-            "keycloak"
-        ]
-    },
-    {
-        "name": "transformation/xslt",
-        "title": "XSLT Transformation",
-        "description": "Basic XML transformation using XSLT style sheets",
-        "level": "beginner",
-        "tags": [
-            "transformation",
+            "shop",
             "xml",
-            "xslt"
+            "json",
+            "jackson",
+            "transformation"
         ],
-        "bundled": true,
+        "bundled": false,
         "requiresDocker": false,
-        "hasCitrusTests": false,
+        "hasCitrusTests": true,
         "files": [
             "README.md",
-            "consumer.camel.yaml",
-            "input/account.xml",
-            "stylesheet.xsl"
-        ]
+            "application.properties",
+            "inbox/supplier-order.xml",
+            "xml-to-json.camel.yaml"
+        ],
+        "order": 2
+    },
+    {
+        "name": "transform/xslt",
+        "title": "XSLT",
+        "description": "A supplier's XML order dropped in the inbox directory is transformed by the stylesheet packing-slip.xsl into the packing slip the warehouse prints, one item per line and the total pieces to pick, and the slip is logged.",
+        "level": "transform",
+        "teaches": {
+            "components": [
+                "file",
+                "xslt",
+                "log"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "shop",
+            "xml",
+            "xslt",
+            "transformation"
+        ],
+        "bundled": false,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "inbox/supplier-order.xml",
+            "packing-slip.xsl",
+            "xslt.camel.yaml"
+        ],
+        "order": 6
     }
 ]

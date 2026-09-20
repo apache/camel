@@ -44,7 +44,13 @@ public final class EasyPredicateOperators {
     /**
      * Does the expression have any operator (with single space around)?
      */
-    static boolean hasOperator(String exp) {
+    /**
+     * Does the expression have any operator (with a single space around it on each side)?
+     *
+     * @param  exp the expression to inspect
+     * @return     true if the expression contains a recognised operator surrounded by spaces
+     */
+    public static boolean hasOperator(String exp) {
         // need to have space around operator to not match eg in used in some other word
         return Arrays.stream(OPS).anyMatch(o -> exp.contains(" " + o));
     }

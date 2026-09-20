@@ -1,0 +1,55 @@
+# The shop checks stock at its supplier every second. The supplier goes down
+# for a while; the circuit breaker notices, stops calling it and answers from
+# the fallback until a trial call shows the supplier is back.
+- route:
+    id: stock-check
+    from:
+      uri: timer
+      parameters:
+        timerName: stock
+        period: 1000
+        includeMetadata: true
+      steps:
+        - circuitBreaker:
+            resilience4jConfiguration:
+              slidingWindowSize: 4
+              minimumNumberOfCalls: 4
+              failureRateThreshold: 50
+              waitDurationInOpenState: 5000
+              automaticTransitionFromOpenToHalfOpenEnabled: true
+              permittedNumberOfCallsInHalfOpenState: 1
+            steps:
+              - to:
+                  uri: direct:supplier
+            onFallback:
+              steps:
+                - setBody:
+                    expression:
+                      simple:
+                        expression: "no answer, using last known stock"
+        - log:
+            message: "Stock check ${header.CamelTimerCounter} (breaker ${exchangeProperty.CamelCircuitBreakerState}): ${body}"
+
+# The supplier's stock service, down from the 4th to the 12th call
+- route:
+    id: supplier
+    errorHandler:
+      noErrorHandler: {}
+    from:
+      uri: direct:supplier
+      steps:
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${header.CamelTimerCounter} > 3 && ${header.CamelTimerCounter} <= 12"
+                steps:
+                  - throwException:
+                      exceptionType: java.net.ConnectException
+                      message: "supplier unreachable"
+            otherwise:
+              steps:
+                - setBody:
+                    expression:
+                      simple:
+                        expression: "CAMEL-MUG: ${random(20,60)} in stock at the supplier"

@@ -23,6 +23,7 @@ camel get history [options]
 | `--depth` | Depth of tracing. 0=Created Completed. 1=All events on 1st route, 2=All events on 1st 2nd depth, and so on. 9 = all events on every depth. | 9 | int
 | `--diagram` | Display a route diagram with the message path highlighted |  | boolean
 | `--it` | Interactive mode for enhanced history information |  | boolean
+| `--json` | Output in JSON Format |  | boolean
 | `--limit-split` | Limit Split to a maximum number of entries to be displayed |  | int
 | `--logging-color` | Use colored logging | true | boolean
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean

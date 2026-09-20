@@ -27,8 +27,11 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -77,6 +80,20 @@ public final class ExampleHelper {
             }
         }
         return null;
+    }
+
+    /**
+     * All examples with the given short name (the part after the group), so a caller can tell an ambiguous short name
+     * from an unknown one.
+     */
+    public static List<JsonObject> findExamplesByShortName(List<JsonObject> catalog, String name) {
+        List<JsonObject> matches = new ArrayList<>();
+        for (JsonObject entry : catalog) {
+            if (name.equals(getShortName(entry))) {
+                matches.add(entry);
+            }
+        }
+        return matches;
     }
 
     public static List<String> getExampleNames(List<JsonObject> catalog) {
@@ -135,6 +152,203 @@ public final class ExampleHelper {
         return false;
     }
 
+    /**
+     * The groups of the example ladder in reading order: level, title, and the one-line introduction the README of
+     * camel-jbang-examples uses. Quick start comes first, showcase last; a level not listed here sorts after them.
+     */
+    private static final String[][] GROUPS = {
+            {
+                    "quick-start", "Quick start",
+                    "The first ten minutes: generic examples with no story and no service, each running in seconds." },
+            { "run", "Run", "Running Camel: timers and cron schedules, a bean in a route, properties and profiles." },
+            { "transform", "Transform and map", "JSON, XML and CSV in and out, field-by-field mapping, Groovy and XSLT." },
+            {
+                    "route", "Route",
+                    "The routing patterns: content-based router, splitter, aggregator, filter and multicast." },
+            {
+                    "fail-well", "Fail well",
+                    "Retries, a dead letter channel, and a circuit breaker in front of a flaky service." },
+            {
+                    "connect", "Connect without a service",
+                    "Files, an HTTP client and a REST server; everything runs inside the example." },
+            {
+                    "connect-service", "Connect to one service",
+                    "SQL, JMS, MQTT, Kafka and FTP against a service the Camel CLI starts with camel infra run." },
+            {
+                    "contracts", "Contracts and security",
+                    "An OpenAPI contract served and called, and an API protected by Keycloak." },
+            { "ai", "AI", "A local model writing text, routes exposed as MCP tools, RAG over documents, PII redaction." },
+            {
+                    "cloud", "Cloud",
+                    "A cloud service, run locally through LocalStack and switched to the real thing by properties." },
+            {
+                    "showcase", "Showcase",
+                    "Tooling demos outside the ladder: the TUI, a memory leak, message sizes, log analysis." },
+    };
+
+    /**
+     * The levels of the ladder in reading order.
+     */
+    public static List<String> getGroupOrder() {
+        List<String> order = new ArrayList<>();
+        for (String[] g : GROUPS) {
+            order.add(g[0]);
+        }
+        return order;
+    }
+
+    /**
+     * The title of a group (level), for example "Quick start" for quick-start; an unknown level is capitalized.
+     */
+    public static String getGroupTitle(String level) {
+        for (String[] g : GROUPS) {
+            if (g[0].equals(level)) {
+                return g[1];
+            }
+        }
+        return formatCategory(level);
+    }
+
+    /**
+     * The one-line introduction of a group (level), or an empty string for an unknown level.
+     */
+    public static String getGroupIntro(String level) {
+        for (String[] g : GROUPS) {
+            if (g[0].equals(level)) {
+                return g[2];
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Groups the examples by level in ladder order, each group sorted by name; empty groups are left out and levels not
+     * on the ladder come last in the order they appear.
+     */
+    public static Map<String, List<JsonObject>> groupByLevel(List<JsonObject> catalog) {
+        Map<String, List<JsonObject>> groups = new LinkedHashMap<>();
+        for (String level : getGroupOrder()) {
+            groups.put(level, new ArrayList<>());
+        }
+        for (JsonObject entry : catalog) {
+            String level = entry.getStringOrDefault("level", "other");
+            groups.computeIfAbsent(level, k -> new ArrayList<>()).add(entry);
+        }
+        groups.values().removeIf(List::isEmpty);
+        for (List<JsonObject> entries : groups.values()) {
+            entries.sort(Comparator.comparingInt(ExampleHelper::getOrder)
+                    .thenComparing(e -> e.getStringOrDefault("name", "")));
+        }
+        return groups;
+    }
+
+    /**
+     * The reading order of the example within its group from the metadata, or a large number when it has none, so
+     * examples with an order come first and the rest sort by name.
+     */
+    public static int getOrder(JsonObject entry) {
+        Object order = entry.get("order");
+        if (order instanceof Number n) {
+            return n.intValue();
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * What the example teaches from its metadata: the components, EIPs, languages and data formats, each as a list of
+     * names in that order; keys without names are left out, so an example without metadata gives an empty map.
+     */
+    public static Map<String, List<String>> getTeaches(JsonObject entry) {
+        Map<String, List<String>> answer = new LinkedHashMap<>();
+        JsonObject teaches = entry.getMap("teaches");
+        if (teaches == null || teaches.isEmpty()) {
+            return answer;
+        }
+        for (String key : new String[] { "components", "eips", "languages", "dataformats" }) {
+            // the catalog holds string arrays here; anything else in a hand-edited metadata file is skipped
+            if (!(teaches.get(key) instanceof Collection<?> values) || values.isEmpty()) {
+                continue;
+            }
+            List<String> names = new ArrayList<>();
+            for (Object value : values) {
+                if (value instanceof String s) {
+                    names.add(s);
+                }
+            }
+            if (!names.isEmpty()) {
+                answer.put(key, names);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * What the example teaches, as one line: the components and the EIPs from its metadata, or an empty string.
+     */
+    public static String getTeachesSummary(JsonObject entry) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, List<String>> e : getTeaches(entry).entrySet()) {
+            if (sb.length() > 0) {
+                sb.append(" · ");
+            }
+            sb.append(e.getKey()).append(": ").append(String.join(", ", e.getValue()));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Whether the example's test is skipped in CI because it needs a language model or another resource a build agent
+     * does not have.
+     */
+    public static boolean isCiSkip(JsonObject entry) {
+        Boolean skip = entry.getBoolean("ciSkip");
+        return skip != null && skip;
+    }
+
+    /**
+     * Whether the name is one of the groups (levels) of the ladder.
+     */
+    public static boolean isGroup(String name) {
+        if (name == null) {
+            return false;
+        }
+        for (String[] g : GROUPS) {
+            if (g[0].equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Wraps the text at word boundaries so no line is longer than the width; a single word longer than the width stays
+     * on its own line.
+     */
+    public static List<String> wrap(String text, int width) {
+        List<String> lines = new ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            return lines;
+        }
+        if (width < 20) {
+            width = 20;
+        }
+        StringBuilder line = new StringBuilder();
+        for (String word : text.split("\\s+")) {
+            if (line.length() > 0 && line.length() + 1 + word.length() > width) {
+                lines.add(line.toString());
+                line.setLength(0);
+            }
+            if (line.length() > 0) {
+                line.append(' ');
+            }
+            line.append(word);
+        }
+        if (line.length() > 0) {
+            lines.add(line.toString());
+        }
+        return lines;
+    }
+
     public static String getCategory(JsonObject entry) {
         String name = entry.getString("name");
         int slash = name != null ? name.indexOf('/') : -1;
@@ -142,8 +356,15 @@ public final class ExampleHelper {
     }
 
     public static String formatCategory(String category) {
+        if (category == null || category.isEmpty()) {
+            return "";
+        }
+        for (String[] g : GROUPS) {
+            if (g[0].equals(category)) {
+                return g[1];
+            }
+        }
         return switch (category) {
-            case "ai" -> "AI";
             case "eip" -> "EIP";
             case "rest" -> "REST";
             default -> category.substring(0, 1).toUpperCase(Locale.ROOT) + category.substring(1);
