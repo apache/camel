@@ -592,4 +592,25 @@ class SourceValidatorEndpointTest {
         assertThat(SourceValidator.validateYamlEndpoints(fromYaml, catalog))
                 .anyMatch(e -> e.startsWith("Line 3: file: the directory archived/${header.monthDir} cannot be dynamic"));
     }
+
+    /** CAMEL-24854: a doubled backslash in an include regex (kept as is inside single quotes) matches no file. */
+    @Test
+    void aDoubledBackslashInAnIncludeRegexIsReported() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:orders
+                      parameters:
+                        include: '.*\\\\.json$'
+                      steps:
+                        - to:
+                            uri: log:done
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).anyMatch(e -> e.startsWith("Line 5: file: include=.*\\\\.json$ matches a backslash in the file name")
+                && e.endsWith("write include='.*\\.json$'"));
+
+        List<String> ok = SourceValidator.validateYamlEndpoints(yaml.replace("\\\\.json", "\\.json"), catalog);
+        assertThat(ok).noneMatch(e -> e.contains("backslash"));
+    }
 }

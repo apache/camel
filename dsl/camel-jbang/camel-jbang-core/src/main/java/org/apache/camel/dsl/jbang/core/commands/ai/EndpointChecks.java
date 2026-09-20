@@ -326,6 +326,14 @@ final class EndpointChecks {
             if (!name.equals("include") && !name.equals("exclude") || value.startsWith("{{")) {
                 continue;
             }
+            if (value.contains("\\\\")) {
+                // '.*\\.json$' in single quotes: YAML keeps both backslashes, and the regex then matches a file name
+                // with a literal backslash, so no file matches and the route runs in silence (CAMEL-24854)
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
+                           + name + "=" + value + " matches a backslash in the file name (in single quotes one backslash"
+                           + " escapes the dot): write " + name + "='" + value.replace("\\\\", "\\") + "'");
+                continue;
+            }
             try {
                 Pattern.compile(value);
             } catch (java.util.regex.PatternSyntaxException e) {
