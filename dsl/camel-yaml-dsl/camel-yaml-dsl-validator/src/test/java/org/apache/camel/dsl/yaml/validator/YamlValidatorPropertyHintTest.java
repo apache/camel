@@ -631,6 +631,85 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors.get(0).getMessage()).contains("no YAML").contains("- route:");
     }
 
+    // CAMEL-24847: a data format named as its artifact or catalog entry says which YAML key and option to write
+
+    private static String unmarshalError(YamlValidator v, String key) throws Exception {
+        List<Error> errors = v.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - unmarshal:
+                          %s: {}
+                """.formatted(key));
+        assertThat(errors).as(key).hasSize(1);
+        return errors.get(0).getMessage();
+    }
+
+    @Test
+    public void testDataFormatLibraryNameSaysTheKeyAndTheLibrary() throws Exception {
+        assertThat(unmarshalError(validator, "jackson"))
+                .contains("property 'jackson' is not defined")
+                .contains("the data format is json, Jackson is its library: write json: {library: Jackson}");
+        assertThat(unmarshalError(validator, "gson")).contains("write json: {library: Gson}");
+        assertThat(unmarshalError(validator, "json-b")).contains("write json: {library: Jsonb}");
+        assertThat(unmarshalError(validator, "protobuf-jackson")).contains("write protobuf: {library: Jackson}");
+        assertThat(unmarshalError(validator, "jackson-avro")).contains("write avro: {library: Jackson}");
+        assertThat(unmarshalError(validator, "bindy-csv"))
+                .contains("the data format is bindy, Csv is its type: write bindy: {type: Csv}");
+        assertThat(unmarshalError(validator, "snake-yaml")).contains("the data format is yaml: write yaml: {...}");
+    }
+
+    @Test
+    public void testDataFormatArtifactNameSaysTheKeyAndTheLibrary() throws Exception {
+        // json-jackson is the artifact, not a data format name: the catalog's suggestion is jackson
+        assertThat(unmarshalError(validator, "json-jackson"))
+                .contains("the data format is json, Jackson is its library: write json: {library: Jackson}");
+    }
+
+    @Test
+    public void testDataFormatKeySpelledDifferentlyGetsTheKey() throws Exception {
+        assertThat(unmarshalError(validator, "jackson-xml")).contains("did you mean 'jacksonXml'?");
+        assertThat(unmarshalError(validator, "JSON")).contains("did you mean 'json'?");
+        assertThat(unmarshalError(validator, "base-64")).contains("did you mean 'base64'?");
+    }
+
+    @Test
+    public void testDataFormatWordListsTheCatalogMatches() throws Exception {
+        assertThat(unmarshalError(validator, "xml")).contains("did you mean fhirXml, groovyXml or jacksonXml?");
+        assertThat(unmarshalError(validator, "zip")).contains("did you mean zipDeflater, zipFile or gzipDeflater?");
+        assertThat(unmarshalError(validator, "gzip")).contains("did you mean 'gzipDeflater'?");
+    }
+
+    @Test
+    public void testDataFormatTypoGetsTheClosestKey() throws Exception {
+        assertThat(unmarshalError(validator, "jsn")).contains("did you mean 'json'?");
+        assertThat(unmarshalError(validator, "yml")).contains("did you mean 'yaml'?");
+    }
+
+    @Test
+    public void testUnknownDataFormatSaysWhatTheKeyIs() throws Exception {
+        assertThat(unmarshalError(validator, "xstream"))
+                .contains("the key of unmarshal is the data format: json, jacksonXml, csv, yaml")
+                .contains("camel catalog dataformat");
+    }
+
+    @Test
+    public void testCanonicalDataFormatHintIsNotFollowedByTheListOfEveryDataFormat() throws Exception {
+        YamlValidator canonical = new YamlValidator(true);
+        List<Error> errors = canonical.validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - marshal:
+                            json-jackson: {}
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .contains("write json: {library: Jackson}")
+                .doesNotContain("must have exactly one of");
+    }
+
     @Test
     public void testDistance() {
         assertThat(YamlValidator.distance("loggername", "logname")).isEqualTo(3);

@@ -48,6 +48,7 @@ import com.networknt.schema.path.NodePath;
 import com.networknt.schema.path.PathType;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.yaml.common.DataFormatKeyHints;
 import org.apache.camel.tooling.model.EipModel;
 
 /**
@@ -76,7 +77,7 @@ public class YamlValidator {
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     private final boolean canonical;
     private final String schemaJson;
-    private final CamelCatalog catalog;
+    private CamelCatalog catalog;
     private Schema schema;
     private Map<String, OneOfGroup> oneOfGroups;
 
@@ -535,6 +536,11 @@ public class YamlValidator {
         }
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
+            // unmarshal: {jackson: {}}: the unknown key already got its hint; the list of every data format that
+            // "found none" adds at the same location only buries it
+            errors.removeIf(e -> "oneOf".equals(e.getKeyword())
+                    && hinted.contains(String.valueOf(e.getInstanceLocation()))
+                    && String.valueOf(e.getMessage()).endsWith("but found none"));
         }
         return errors;
     }
@@ -895,7 +901,7 @@ public class YamlValidator {
      */
     private Map<String, OneOfGroup> loadOneOfGroups() {
         Map<String, OneOfGroup> groups = new HashMap<>();
-        CamelCatalog catalog = this.catalog != null ? this.catalog : new DefaultCamelCatalog();
+        CamelCatalog catalog = catalog();
         for (String name : catalog.findModelNames()) {
             EipModel model = catalog.eipModel(name);
             if (model == null) {
@@ -997,6 +1003,43 @@ public class YamlValidator {
         }
         collectProperties(model.at(pointer), answer, 0);
         return answer;
+    }
+
+    /**
+     * The hint for a marshal/unmarshal key that is not a data format key: the key spelled as the schema has it
+     * (jackson-xml: jacksonXml), the data format named as its artifact or catalog entry (jackson, json-jackson: json
+     * with library Jackson), the catalog's suggestions for a word of a name (xml: jacksonXml, fhirXml, groovyXml), the
+     * closest key for a typo (jsn: json), and failing all that, what the key is.
+     */
+    String dataFormatHint(String unknown, String eip, String schemaLocation) {
+        Set<String> keys = knownProperties(schemaLocation);
+        String hint = DataFormatKeyHints.hint(unknown, keys);
+        if (hint != null) {
+            return hint;
+        }
+        List<String> names = catalog().suggestDataFormatNames(unknown, 3);
+        List<String> forms = names.stream().map(DataFormatKeyHints::form).distinct().toList();
+        if (forms.size() == 1) {
+            hint = DataFormatKeyHints.hint(names.get(0), keys);
+            return hint != null ? hint : "did you mean '" + forms.get(0) + "'?";
+        }
+        if (forms.size() > 1) {
+            return "did you mean " + String.join(", ", forms.subList(0, forms.size() - 1)) + " or "
+                   + forms.get(forms.size() - 1) + "?";
+        }
+        String closest = closest(unknown, keys);
+        if (closest != null) {
+            return "did you mean '" + closest + "'?";
+        }
+        return "the key of " + eip + " is the data format: json, jacksonXml, csv, yaml, jaxb, avro, protobuf...;"
+               + " camel catalog dataformat lists them";
+    }
+
+    private CamelCatalog catalog() {
+        if (catalog == null) {
+            catalog = new DefaultCamelCatalog();
+        }
+        return catalog;
     }
 
     private void collectProperties(JsonNode node, Set<String> answer, int depth) {

@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.UnmarshalDefinition
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
+import org.apache.camel.support.ResourceHelper
 
 class UnmarshalTest extends YamlTestSupport {
 
@@ -127,5 +128,32 @@ class UnmarshalTest extends YamlTestSupport {
         expected << [
                 'true', 'false', null
         ]
+    }
+
+    // CAMEL-24847: a data format named as its artifact or catalog entry says which key and option to write
+    def "unmarshal with #key fails with a message naming the data format key"(String key, String hint) {
+        when:
+            loadRoutes([ResourceHelper.fromString("route-1.yaml", """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - unmarshal:
+                          ${key}: {}
+            """.stripIndent())], false)
+        then:
+            def e = thrown(Exception)
+            def messages = []
+            for (Throwable t = e; t != null; t = t.cause) {
+                messages << t.message
+            }
+            messages.any { it != null && it.contains("Error constructing YAML node id: unmarshal: unsupported field: ${key}") && it.contains(hint) }
+        where:
+            key            | hint
+            'jackson'      | 'the data format is json, Jackson is its library: write json: {library: Jackson}'
+            'json-jackson' | 'write json: {library: Jackson}'
+            'gson'         | 'write json: {library: Gson}'
+            'bindy-csv'    | 'the data format is bindy, Csv is its type: write bindy: {type: Csv}'
+            'snake-yaml'   | 'the data format is yaml: write yaml: {...}'
+            'JSON'         | "did you mean 'json'?"
     }
 }
