@@ -74,8 +74,9 @@ public class MessageHistoryBodyTypeAndSizeTest extends ContextTestSupport {
         assertTrue(table.contains("java.util.ArrayList"), table);
         assertTrue(table.contains("null"), table);
         // the route's own row (the body as it is now, null after step c) shows no size either
-        String routeRow = table.lines().filter(l -> l.contains("/route1 ")).findFirst().orElse("");
-        assertTrue(routeRow.contains("null") && !routeRow.trim().endsWith("0"), routeRow);
+        // (the row is found by its from[] label as the route id is auto assigned and depends on the JVM's test order)
+        String routeRow = table.lines().filter(l -> l.contains("from[direct://start]")).findFirst().orElse("");
+        assertTrue(routeRow.contains("null") && !routeRow.trim().endsWith("0"), "route row: " + routeRow);
     }
 
     @Test
