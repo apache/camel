@@ -53,8 +53,8 @@ import org.apache.camel.util.json.Jsoner;
  */
 public final class MessageHelper {
 
-    private static final String MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
-    private static final String MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s";
+    private static final String MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s %-32s %-9s";
+    private static final String MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s %-32.32s %9.9s";
 
     /**
      * Utility classes should not have a public constructor.
@@ -768,15 +768,24 @@ public final class MessageHelper {
         }
         sb.append("\n");
         sb.append(
-                "---------------------------------------------------------------------------------------------------------------------------------------\n");
+                "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
         String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
         sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
-                "Source", "ID", "Processor", "Elapsed (ms)"));
+                "Source", "ID", "Processor", "Elapsed (ms)", "Body type", "Size"));
         sb.append("\n");
 
+        // the body as it is now, for the route's own row (the history rows carry the body as each node was reached)
+        Object body = exchange.getMessage().getBody();
+        String bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        String bodySize = "";
+        if (body != null && exchange.getContext().getMessageSizeStrategy() != null
+                && exchange.getContext().getMessageSizeStrategy().isEnabled()) {
+            long size = exchange.getContext().getMessageSizeStrategy().computeBodySize(exchange.getMessage());
+            bodySize = size >= 0 ? Long.toString(size) : "";
+        }
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
         goMessageHistoryOutput = goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput;
-        sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
+        sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed, bodyType, bodySize));
         sb.append("\n");
 
         if (list == null || list.isEmpty()) {
@@ -803,7 +812,7 @@ public final class MessageHelper {
                 label = URISupport.sanitizeUri(StringHelper.limitLength(label, 100));
                 // we do not have elapsed time
                 sb.append("\t...\n");
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, 0));
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, 0, "", ""));
                 sb.append("\n");
             }
         } else {
@@ -824,7 +833,10 @@ public final class MessageHelper {
                 // fast
                 label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
 
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, history.getElapsed()));
+                String type = history.getBodyType() != null ? history.getBodyType() : "";
+                String size = history.getBodySize() >= 0 ? Long.toString(history.getBodySize()) : "";
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, history.getElapsed(),
+                        type, size));
                 sb.append("\n");
             }
         }
@@ -832,7 +844,7 @@ public final class MessageHelper {
         if (exchangeFormatter != null) {
             sb.append("\nExchange\n");
             sb.append(
-                    "---------------------------------------------------------------------------------------------------------------------------------------\n");
+                    "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             sb.append(exchangeFormatter.format(exchange));
             sb.append("\n");
         }

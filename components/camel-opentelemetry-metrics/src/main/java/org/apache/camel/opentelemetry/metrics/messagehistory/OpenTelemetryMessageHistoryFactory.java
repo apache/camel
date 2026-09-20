@@ -133,7 +133,10 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
 
         Route route = camelContext.getRoute(routeId);
         if (route != null) {
-            return new OpenTelemetryMessageHistory(timer, getTimeUnit(), route, namedNode, getNamingStrategy(), msg);
+            OpenTelemetryMessageHistory answer
+                    = new OpenTelemetryMessageHistory(timer, getTimeUnit(), route, namedNode, getNamingStrategy(), msg);
+            answer.captureBody(exchange);
+            return answer;
         } else {
             return null;
         }
