@@ -82,7 +82,7 @@ public final class DataFormatKeyHints {
                 return "did you mean '" + known + "'?";
             }
         }
-        Alias alias = alias(normalized);
+        Alias alias = alias(key);
         return alias != null ? hint(alias) : null;
     }
 
@@ -139,7 +139,7 @@ public final class DataFormatKeyHints {
     }
 
     /** Lower case with no separators: json-jackson, json_jackson, jsonJackson and JSON-Jackson are one name. */
-    static String normalize(String name) {
+    public static String normalize(String name) {
         return name.replaceAll("[-_ .]", "").toLowerCase(Locale.ROOT);
     }
 }

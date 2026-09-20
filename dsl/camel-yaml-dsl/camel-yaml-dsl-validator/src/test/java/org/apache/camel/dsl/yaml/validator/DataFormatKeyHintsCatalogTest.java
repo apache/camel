@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -62,6 +63,9 @@ public class DataFormatKeyHintsCatalogTest {
                 assertThat(selector.getEnums()).as(name + " " + selector.getName()).contains(alias.value());
             }
         }
+        // and nothing in the table that the catalog does not have: a misspelled key would keep the sizes equal
+        assertThat(DataFormatKeyHints.ALIASES.keySet()).as("every alias is the normalized name of a catalog data format")
+                .isSubsetOf(aliased.stream().map(DataFormatKeyHints::normalize).collect(Collectors.toSet()));
         assertThat(DataFormatKeyHints.ALIASES).as("aliases without a catalog data format: " + aliased)
                 .hasSize(aliased.size());
     }
