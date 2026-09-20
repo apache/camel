@@ -870,6 +870,15 @@ to the whole process, so a browser session served by `--web` would be recorded i
 file as the local session. Previously the combination was accepted, but recording never produced any
 output, so run the two modes in separate processes instead.
 
+=== camel-yaml-dsl - the canonical schema requires route:
+
+A top-level `- from:` without `- route:` is the compact notation of a route, and the canonical schema
+(`camelYamlDsl-canonical.json`) no longer lists `from` among its top-level entries: a route is written under
+`route:`, as an XML route is always a `<route>`, and as Kaoto and Karavan write it. `camel validate yaml --canonical`
+now reports a top-level `from:` with the form to write, the way it reports the other compact shapes, and
+`camel validate normalize` rewrites it. The classic schema and `camel run` are unchanged: the file keeps working,
+with the compact notation warning `camel run` already logged for it.
+
 === camel-mail
 
 `MimeMultipartDataFormat` now uses `MailHeaderFilterStrategy` instead of a plain

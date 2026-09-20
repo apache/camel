@@ -23,13 +23,6 @@
         "description" : "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered",
         "label" : "configuration,error,errorhandling"
       }, {
-        "name" : "from",
-        "type" : "object",
-        "ref" : "from",
-        "title" : "From",
-        "description" : "Defines the consumer endpoint that acts as the input source for a route",
-        "label" : "eip,endpoint,routing"
-      }, {
         "name" : "intercept",
         "type" : "object",
         "ref" : "intercept",
@@ -863,58 +856,6 @@
       }, {
         "name" : "variableReceive",
         "type" : "string"
-      } ]
-    },
-    "from" : {
-      "title" : "From",
-      "description" : "Defines the consumer endpoint that acts as the input source for a route",
-      "label" : "eip,endpoint,routing",
-      "aliases" : [ "source", "ingress" ],
-      "isListItem" : true,
-      "children" : [ {
-        "name" : "id",
-        "type" : "string",
-        "displayName" : "Id",
-        "kind" : "attribute",
-        "index" : 0,
-        "group" : "common"
-      }, {
-        "name" : "note",
-        "type" : "string",
-        "displayName" : "Note",
-        "kind" : "attribute",
-        "index" : 1,
-        "group" : "common"
-      }, {
-        "name" : "description",
-        "type" : "string",
-        "displayName" : "Description",
-        "kind" : "attribute",
-        "index" : 2,
-        "group" : "common"
-      }, {
-        "name" : "uri",
-        "type" : "string",
-        "required" : true,
-        "displayName" : "Uri",
-        "kind" : "attribute",
-        "index" : 3,
-        "group" : "common"
-      }, {
-        "name" : "variableReceive",
-        "type" : "string",
-        "displayName" : "Variable Receive",
-        "kind" : "attribute",
-        "index" : 4,
-        "group" : "common"
-      }, {
-        "name" : "parameters",
-        "type" : "object"
-      }, {
-        "name" : "steps",
-        "type" : "array",
-        "ref" : "steps",
-        "required" : true
       } ]
     },
     "a2aSubTask" : {
@@ -3045,6 +2986,57 @@
         "name" : "steps",
         "type" : "array",
         "ref" : "steps"
+      } ]
+    },
+    "from" : {
+      "title" : "From",
+      "description" : "Defines the consumer endpoint that acts as the input source for a route",
+      "label" : "eip,endpoint,routing",
+      "aliases" : [ "source", "ingress" ],
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "description",
+        "type" : "string",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "uri",
+        "type" : "string",
+        "required" : true,
+        "displayName" : "Uri",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "common"
+      }, {
+        "name" : "variableReceive",
+        "type" : "string",
+        "displayName" : "Variable Receive",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
+      }, {
+        "name" : "steps",
+        "type" : "array",
+        "ref" : "steps",
+        "required" : true
       } ]
     },
     "globalOption" : {

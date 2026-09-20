@@ -19,20 +19,21 @@ A route is collection of elements defined as follows:
 
 [source,yaml]
 ----
-- from: #<1>
-    uri: "direct:start"
-    steps: #<2>
-      - filter:
-          expression:
-            simple: "${in.header.continue} == true"
-          steps: #<2>
-            - to:
-                uri: "log:filtered"
-      - to:
-          uri: "log:original"
+- route: #<1>
+    from:
+      uri: "direct:start"
+      steps: #<2>
+        - filter:
+            expression:
+              simple: "${in.header.continue} == true"
+            steps: #<2>
+              - to:
+                  uri: "log:filtered"
+        - to:
+            uri: "log:original"
 ----
 
-<1> route entry point, by default `from` and `rest` are supported
+<1> a route, with the `from` endpoint it consumes from (`rest`, `beans`, `onException` and more are the other top-level entries)
 <2> processing steps
 
 [NOTE]
@@ -190,14 +191,15 @@ This allows YAML such as:
 
 [source,yaml]
 ----
-- from:
-    uri: "direct:start"
-    steps:
-      - myStep:
-          id: "custom-step"
-          steps:
-            - to:
-                uri: "mock:result"
+- route:
+    from:
+      uri: "direct:start"
+      steps:
+        - myStep:
+            id: "custom-step"
+            steps:
+              - to:
+                  uri: "mock:result"
 ----
 
 Resolvers are discovered when YAML routes are parsed. Camel starts with the built-in YAML DSL resolvers, then adds the
@@ -295,25 +297,27 @@ To define an endpoint with the YAML dsl you have two options:
 +
 [source,yaml]
 ----
-- from:
-    uri: "timer:tick?period=1s"
-    steps:
-      - to:
-          uri: "telegram:bots?authorizationToken=XXX"
+- route:
+    from:
+      uri: "timer:tick?period=1s"
+      steps:
+        - to:
+            uri: "telegram:bots?authorizationToken=XXX"
 ----
 . Using URI and parameters:
 +
 [source,yaml]
 ----
-- from:
-    uri: "timer://tick"
-    parameters:
-      period: "1s"
-    steps:
-      - to:
-          uri: "telegram:bots"
-          parameters:
-            authorizationToken: "XXX"
+- route:
+    from:
+      uri: "timer://tick"
+      parameters:
+        period: "1s"
+      steps:
+        - to:
+            uri: "telegram:bots"
+            parameters:
+              authorizationToken: "XXX"
 ----
 
 === Map values for parameters
@@ -326,16 +330,17 @@ configure _tags_ as a Map:
 
 [source,yaml]
 ----
-- from:
-    uri: "plc4x"
-    parameters:
-      driver: "some driver url here"
-      tags:
-        "tags_2": "XXX"
-        "tags_6": "YYY"
-    steps:
-      - to:
-          uri: "log:plc"
+- route:
+    from:
+      uri: "plc4x"
+      parameters:
+        driver: "some driver url here"
+        tags:
+          "tags_2": "XXX"
+          "tags_6": "YYY"
+      steps:
+        - to:
+            uri: "log:plc"
 ----
 
 In this example the _tags_ options is of Map type and can be configured using YAML map syntax.
@@ -671,27 +676,28 @@ as shown below:
 
 [source,yaml]
 ----
-- from:
-    uri: "direct:start"
-    steps:
-      - choice:
-          when:
-          - jsonpath:
-              expression: "person.middlename"
-              suppressExceptions: true
-            steps:
-            - to:
-                uri: mock:middle
-          - jsonpath:
-              expression: "person.lastname"
-              suppressExceptions: true
-            steps:
-            - to:
-                uri: mock:last
-          otherwise:
-            steps:
+- route:
+    from:
+      uri: "direct:start"
+      steps:
+        - choice:
+            when:
+            - jsonpath:
+                expression: "person.middlename"
+                suppressExceptions: true
+              steps:
               - to:
-                  uri: mock:other
+                  uri: mock:middle
+            - jsonpath:
+                expression: "person.lastname"
+                suppressExceptions: true
+              steps:
+              - to:
+                  uri: mock:last
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:other
 ----
 
 In the route above, the following message
@@ -735,6 +741,7 @@ The canonical schema removes all implicit patterns:
 * No string shorthands: EIPs like `log` must use the object form with explicit properties.
 * No implicit expressions: Expression-aware EIPs require the `expression` wrapper.
 * No `oneOf`/`anyOf`/`not` constructs: The schema uses only simple `type: object` with `properties`.
+* A route is written under `route:`: a top-level `from:` is the compact notation of a route.
 
 This results in a schema that is approximately 25% smaller and significantly easier for tooling to process.
 
@@ -932,8 +939,9 @@ camel validate normalize --output normalized/ myroute.yaml
 Camel logs a WARN message when YAML routes use compact (shorthand) notation instead of
 the canonical (explicit) form: a step written as a string (`log: "..."`), a language written as a
 string (`simple: "..."`), or a language key directly on the EIP (`setBody: {simple: ...}`) instead of
-under `expression:`. This is to encourage adopting the canonical style which is
-more friendly for tooling and AI assistants.
+under `expression:`. A top-level `- from:` without `- route:` is compact notation as well: a route is
+written under `route:`, as an XML route is always a `<route>`. This is to encourage adopting the canonical
+style which is more friendly for tooling and AI assistants.
 
 The warning is logged once per resource file and looks like:
 
@@ -964,6 +972,7 @@ This reports each use of the compact notation with the canonical form to write, 
 ----
 /0/route/from/steps/0/setBody: setBody: {simple: ...} is the deprecated compact notation: an expression is written under expression: (setBody: {expression: {simple: {expression: "..."}}}); camel validate normalize rewrites a file in the canonical format
 /0/route/from/steps/1/log: log: "..." is the deprecated compact notation: write log: {message: "..."}; camel validate normalize rewrites a file in the canonical format
+/1: a top-level from: is the deprecated compact notation: a route is written under route: (- route: {from: {uri: "...", steps: [...]}}); camel validate normalize rewrites a file in the canonical format
 ----
 
 The `YamlValidator` class supports both schemas programmatically:
