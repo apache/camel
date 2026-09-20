@@ -579,5 +579,17 @@ class SourceValidatorEndpointTest {
 
         List<String> dynamic = SourceValidator.validateYamlEndpoints(yaml.replace("- to:", "- toD:"), catalog);
         assertThat(dynamic).noneMatch(e -> e.contains("cannot be dynamic"));
+
+        // a from: with a dynamic directory fails at startup the same way
+        String fromYaml = """
+                - route:
+                    from:
+                      uri: "file://archived/${header.monthDir}"
+                      steps:
+                        - to:
+                            uri: log:done
+                """;
+        assertThat(SourceValidator.validateYamlEndpoints(fromYaml, catalog))
+                .anyMatch(e -> e.startsWith("Line 3: file: the directory archived/${header.monthDir} cannot be dynamic"));
     }
 }
