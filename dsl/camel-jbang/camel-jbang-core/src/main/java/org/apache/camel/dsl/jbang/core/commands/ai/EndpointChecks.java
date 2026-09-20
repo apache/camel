@@ -150,6 +150,20 @@ final class EndpointChecks {
                 }
                 String nextTrimmed = next.trim();
                 if (nextIndent == lineIndent && nextTrimmed.startsWith("parameters:")) {
+                    if (hasParams) {
+                        // to: {uri: "file:inbox?fileExist=Override", parameters: {fileName: x}}: the YAML DSL refuses
+                        // options in both places at startup ("Uri should not contains query parameters"), the schema
+                        // does not see it (CAMEL-24842); say it here, with what to write
+                        String query = uri.substring(uri.indexOf('?') + 1);
+                        String first = query.contains("&") ? query.substring(0, query.indexOf('&')) : query;
+                        String asYaml = first.contains("=")
+                                ? first.substring(0, first.indexOf('=')) + ": " + first.substring(first.indexOf('=') + 1)
+                                : first;
+                        errors.add(linePrefix(i) + "the uri has query options (" + query + ") and the step also has"
+                                   + " parameters: put every option under parameters: (" + asYaml + ") or all of them"
+                                   + " in the uri, not both (the runtime refuses the mix with 'Uri should not contains"
+                                   + " query parameters')");
+                    }
                     int paramBlockIndent = nextIndent;
                     int blockScalarIndent = -1;
                     String mapKey = null;
