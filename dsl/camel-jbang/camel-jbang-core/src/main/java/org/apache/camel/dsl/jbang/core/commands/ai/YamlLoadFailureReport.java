@@ -166,11 +166,10 @@ public final class YamlLoadFailureReport {
 
         public ReloadFailureNotifier(Consumer<String> printer) {
             this.printer = printer;
-            setIgnoreCamelContextEvents(false);
             setIgnoreExchangeEvents(true);
-            // the reload events are dispatched under the route events flag: it must stay off
-            setIgnoreRouteEvents(false);
             setIgnoreServiceEvents(true);
+            // EventHelper.notifyContextReloadFailure skips notifiers where isIgnoreRouteEvents() is true;
+            // leave ignoreRouteEvents at its default (false) so CamelContextReloadFailureEvent reaches us.
         }
 
         @Override
