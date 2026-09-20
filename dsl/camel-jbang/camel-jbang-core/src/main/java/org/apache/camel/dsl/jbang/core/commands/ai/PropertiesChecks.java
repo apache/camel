@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
+import org.apache.camel.tooling.model.MainModel;
 
 /**
  * The application.properties checks of {@link SourceValidator}: unknown camel.* options with the option meant, an
@@ -70,9 +71,13 @@ final class PropertiesChecks {
         if (!rest.contains(".") || rest.contains("[") || NESTING_GROUPS.contains(group)) {
             return null;
         }
+        MainModel mm = catalog.mainModel();
+        if (mm == null) {
+            return null; // a catalog without the main model: the key goes to the catalog as is
+        }
         String prefix = "camel." + group + ".";
         List<String> options = new ArrayList<>();
-        for (var o : catalog.mainModel().getOptions()) {
+        for (var o : mm.getOptions()) {
             if (o.getName().startsWith(prefix) && !o.getName().substring(prefix.length()).contains(".")) {
                 options.add(o.getName().substring(prefix.length()));
             }
