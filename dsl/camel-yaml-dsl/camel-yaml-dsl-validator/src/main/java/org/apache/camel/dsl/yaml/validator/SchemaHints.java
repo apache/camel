@@ -332,6 +332,9 @@ final class SchemaHints {
                     m -> "the name is a property: " + m.name() + ": {name: " + m.unknown()
                          + (m.name().startsWith("set") ? ", expression: {simple: {expression: \"...\"}}}" : "}")
                          + " (" + m.unknown() + " is not the key)"),
+            // unmarshal: {jackson: {}}: the data format named as its artifact or catalog entry, not by its key
+            unknownProperty(".*/(marshal|unmarshal)", ANY,
+                    m -> m.validator().dataFormatHint(m.unknown(), m.name(), m.schemaLocation())),
             unknownProperty(".*/bean", m -> Set.of("parameters", "args", "arguments").contains(m.unknown()),
                     m -> "arguments are written in the method call: bean: {ref: myBean, method: \"process(${body},"
                          + " 'x')\"}"),

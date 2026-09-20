@@ -33,6 +33,8 @@ import org.apache.camel.dsl.yaml.common.exception.UnknownNodeIdException;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.annotations.YamlProperty;
+import org.apache.camel.spi.annotations.YamlType;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -419,11 +421,30 @@ public class YamlDeserializationContext extends StandardConstructor implements C
             } else if ("expression".equals(field) || "language".equals(field)) {
                 hint = " (an expression is written with the expression: wrapper and the language as the key: expression: {simple:"
                        + " {expression: \"...\"}}, expression: {constant: {expression: \"...\"}})";
+            } else if (field != null && ("marshal".equals(id) || "unmarshal".equals(id))) {
+                // unmarshal: {jackson: {}}: the data format named as its artifact or catalog entry, not by its key
+                String dataFormat = DataFormatKeyHints.hint(field, propertyNames(constructor));
+                if (dataFormat != null) {
+                    hint = " (" + dataFormat + ")";
+                }
             }
             throw new YamlDeserializationException(
                     node, "Error constructing YAML node id: " + id + ": unsupported field: " + field + hint, e);
         } catch (RuntimeException e) {
             throw new YamlDeserializationException(node, "Error constructing YAML node id: " + id, e);
         }
+    }
+
+    /** The property names a deserializer declares: the data format keys of marshal and unmarshal. */
+    private static List<String> propertyNames(ConstructNode constructor) {
+        YamlType type = constructor.getClass().getAnnotation(YamlType.class);
+        if (type == null) {
+            return List.of();
+        }
+        List<String> names = new ArrayList<>(type.properties().length);
+        for (YamlProperty property : type.properties()) {
+            names.add(property.name());
+        }
+        return names;
     }
 }
