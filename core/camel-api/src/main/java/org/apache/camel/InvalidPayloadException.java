@@ -60,7 +60,7 @@ public class InvalidPayloadException extends CamelExchangeException {
      * @param hint     what to do about it, appended to the message
      * @since          4.23
      */
-    public InvalidPayloadException(Exchange exchange, Class<?> type, Message message, String hint) {
+    public InvalidPayloadException(Exchange exchange, Class<?> type, Message message, @Nullable String hint) {
         super("No body available of type: " + Objects.requireNonNull(type, "type").getCanonicalName()
               + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())
               + " on: " + message
