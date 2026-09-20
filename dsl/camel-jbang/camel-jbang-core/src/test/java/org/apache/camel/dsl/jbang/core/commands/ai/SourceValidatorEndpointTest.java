@@ -560,4 +560,24 @@ class SourceValidatorEndpointTest {
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("mock is a producer-only component: it cannot be a from:").contains("direct:name");
     }
+
+    /** CAMEL-24852: the directory of a file endpoint on a to: cannot be dynamic; toD: evaluates the uri first. */
+    @Test
+    void aDynamicDirectoryOnAFileEndpointSaysToUseFileNameOrToD() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: "file://archived/${header.monthDir}?fileName=${header.CamelFileName}"
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors)
+                .anyMatch(e -> e.startsWith("Line 6: file: the directory archived/${header.monthDir} cannot be dynamic")
+                        && e.contains("fileName (file:archived?fileName=${...})") && e.contains("use toD:"));
+
+        List<String> dynamic = SourceValidator.validateYamlEndpoints(yaml.replace("- to:", "- toD:"), catalog);
+        assertThat(dynamic).noneMatch(e -> e.contains("cannot be dynamic"));
+    }
 }
