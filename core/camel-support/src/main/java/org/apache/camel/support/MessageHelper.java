@@ -778,7 +778,7 @@ public final class MessageHelper {
         Object body = exchange.getMessage().getBody();
         String bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
         String bodySize = "";
-        if (exchange.getContext().getMessageSizeStrategy() != null
+        if (body != null && exchange.getContext().getMessageSizeStrategy() != null
                 && exchange.getContext().getMessageSizeStrategy().isEnabled()) {
             long size = exchange.getContext().getMessageSizeStrategy().computeBodySize(exchange.getMessage());
             bodySize = size >= 0 ? Long.toString(size) : "";
