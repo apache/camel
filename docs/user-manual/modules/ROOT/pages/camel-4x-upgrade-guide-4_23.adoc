@@ -761,6 +761,16 @@ polyglot `Value` itself needs to work with these types instead.
 
 `JavaScriptHelper.newContext()` is deprecated: contexts are created by the language from its shared engine.
 
+=== camel-rest, camel-rest-openapi, camel-jbang - camel-http is the default REST client
+
+When a REST producer (`rest:` in producer mode, or `rest-openapi` calling an operation of a contract) has no
+`componentName` (`producerComponentName`) and no `RestProducerFactory` component exists in the context or the
+registry yet, the default components are tried in the order `http`, `vertx-http`, `undertow`, `netty-http`;
+before, `vertx-http` came first. An application with both camel-http and camel-vertx-http on the classpath now calls
+through camel-http; set `componentName=vertx-http` to keep the Vert.x client. An application with only one of them
+is not affected. The Camel CLI (`camel run`) now adds camel-http, not camel-vertx-http, for a rest-openapi producer
+without `componentName`.
+
 === camel-jbang
 
 The `--runtime` option of `camel run` has a new default value `jbang`, which is the existing in-process
