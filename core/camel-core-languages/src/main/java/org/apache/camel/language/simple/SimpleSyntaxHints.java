@@ -19,6 +19,7 @@ package org.apache.camel.language.simple;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Hints that turn a Simple parser error into a message that says what to write (CAMEL-24703). Every consumer of the
@@ -45,6 +46,12 @@ public final class SimpleSyntaxHints {
             "messageHistory", "pretty", "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath",
             "function", "list", "map", "range", "split", "sort", "forEach", "filter", "listAdd", "listRemove",
             "mapAdd", "mapRemove", "file", "null");
+
+    /**
+     * Functions that delegate to another language, all of them written {@code ${name(exp)}}. Unlike {@code bean:} or
+     * {@code date:} they take no colon form, which is the mistake CAMEL-24845 is about.
+     */
+    static final Set<String> QUERY_FUNCTIONS = Set.of("jq", "jsonpath", "xpath", "simpleJsonpath");
 
     /** Names from older Camel versions or other languages that a model still writes. */
     static final Map<String, String> ALIASES = Map.ofEntries(
@@ -198,9 +205,18 @@ public final class SimpleSyntaxHints {
             return "simple is the language, not a function: the text is already a simple expression, write the values"
                    + " with ${body}, ${header.name}, ${date:now:HH:mm:ss} and leave the rest as plain text";
         }
-        if (bare.matches("groovy|jsonpath|xpath|xquery|jq|mvel|ognl|spel|js|python|java|constant|tokenize|method")) {
+        if (bare.matches("groovy|xquery|mvel|ognl|spel|js|python|java|constant|tokenize|method")) {
             return bare + " is a language, not a simple function: another language cannot be nested inside ${...}; write"
                    + " the expression with its own key, for example " + bare + ": \"...\"";
+        }
+        // ${jsonpath:$.status}: written the way bean: and date: are, but these four take parentheses (CAMEL-24845)
+        int colon = function.indexOf(':');
+        if (colon > 0 && QUERY_FUNCTIONS.contains(function.substring(0, colon))) {
+            return parentheses(function.substring(0, colon), function.substring(colon + 1));
+        }
+        if (QUERY_FUNCTIONS.contains(bare)) {
+            // ${jsonpath}: a simple function of its own since QueryLanguageFunctionFactory, not a nested language
+            return parentheses(bare, "exp");
         }
         if (function.matches(".*\\S\\s+[-+*/%]\\s+\\S.*")) {
             // ${exchangeCounter % 3}, ${header.total * 2}: there is no arithmetic in simple
@@ -217,6 +233,10 @@ public final class SimpleSyntaxHints {
             }
         }
         if (alias != null) {
+            if (rest.startsWith(":") && QUERY_FUNCTIONS.contains(alias)) {
+                // ${json:$.status}: the alias resolves to jsonpath, so the argument moves into parentheses too
+                return parentheses(alias, rest.substring(1));
+            }
             return "did you mean ${" + alias + rest + "}?";
         }
         for (String f : FUNCTIONS) {
@@ -225,10 +245,16 @@ public final class SimpleSyntaxHints {
             }
         }
         String closest = closest(name);
-        if (closest != null) {
+        if (closest != null && !closest.equals(name)) {
+            // a suggestion that repeats the rejected text teaches nothing, and the reader writes it again (CAMEL-24845)
             return "did you mean ${" + closest + rest + "}?";
         }
         return "the functions are documented on the simple language page (functions)";
+    }
+
+    /** The did-you-mean for a function whose argument was written after a colon instead of in parentheses. */
+    private static String parentheses(String name, String argument) {
+        return "the argument goes in parentheses: did you mean ${" + name + "(" + argument + ")}?";
     }
 
     static String functionName(String function) {
