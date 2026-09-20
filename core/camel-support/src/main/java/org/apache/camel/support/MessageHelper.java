@@ -768,7 +768,7 @@ public final class MessageHelper {
         }
         sb.append("\n");
         sb.append(
-                "---------------------------------------------------------------------------------------------------------------------------------------\n");
+                "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
         String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
         sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
                 "Source", "ID", "Processor", "Elapsed (ms)", "Body type", "Size"));
@@ -844,7 +844,7 @@ public final class MessageHelper {
         if (exchangeFormatter != null) {
             sb.append("\nExchange\n");
             sb.append(
-                    "---------------------------------------------------------------------------------------------------------------------------------------\n");
+                    "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
             sb.append(exchangeFormatter.format(exchange));
             sb.append("\n");
         }
