@@ -45,12 +45,13 @@ public final class GroovyImportChecks {
     }
 
     /**
-     * @param content      the YAML route file
-     * @param runtime      null or "jbang" for the Camel CLI (a known library is downloaded when the script is
-     *                     compiled), "main", "spring-boot" or "quarkus" for a Maven project (the library must be
-     *                     declared in the pom)
-     * @param projectTypes the classes the project declares itself (simple name to fully qualified name), from the Java
-     *                     and Groovy files next to the route
+     * @param  content      the YAML route file
+     * @param  runtime      null or "jbang" for the Camel CLI (a known library is downloaded when the script is
+     *                      compiled), "main", "spring-boot" or "quarkus" for a Maven project (the library must be
+     *                      declared in the pom)
+     * @param  projectTypes the classes the project declares itself (simple name to fully qualified name), from the Java
+     *                      and Groovy files next to the route
+     * @return              the messages, one per import to act on, empty when there is nothing to say
      */
     public static List<String> validateYamlGroovyImports(String content, String runtime, Map<String, String> projectTypes) {
         List<String> errors = new ArrayList<>();
@@ -86,6 +87,8 @@ public final class GroovyImportChecks {
             for (int[] sl : scriptLines) {
                 String line = lines[sl[0]].trim();
                 if (line.startsWith("expression:")) {
+                    // the canonical form: groovy: on its own line, expression: | below it, the script under that;
+                    // the expression: line is collected with the script lines and is not one of them
                     continue;
                 }
                 Matcher m = IMPORT.matcher(line);

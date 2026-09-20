@@ -64,6 +64,28 @@ class GroovyImportChecksTest {
     }
 
     @Test
+    void canonicalFormWithExpressionBlock() {
+        // groovy: on its own line and the script under expression: | (what camel validate normalize writes)
+        String yaml = """
+                - route:
+                    from:
+                      uri: "timer:t?repeatCount=1"
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: |
+                                  import com.example.Unknown
+                                  import org.apache.commons.validator.routines.EmailValidator
+                                  Unknown.of(body)
+                """;
+        List<String> errors = GroovyImportChecks.validateYamlGroovyImports(yaml, null, Map.of());
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).startsWith("Line 9: the Groovy import com.example.Unknown");
+        assertThat(GroovyImportChecks.validateYamlGroovyImports(yaml, "main", Map.of())).hasSize(2);
+    }
+
+    @Test
     void inlineExpressionAndNoImports() {
         String yaml = """
                 - route:
