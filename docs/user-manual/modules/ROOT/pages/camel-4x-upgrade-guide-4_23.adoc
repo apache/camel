@@ -782,15 +782,14 @@ cost of a slower startup. If you passed `--runtime=main` explicitly and want the
 run, use `--runtime=jbang` (or leave the option out). The options `--background`, `--code`, `--open-api`,
 `--empty` and `--mcp-stdio` are not supported with `--runtime=main`.
 
-When a YAML route file does not load, `camel run` now prints the report of `camel validate yaml` for the route
-files before the loader's error, so the message says what to write (`pollEnrich: {expression: {constant: ...}}`
-instead of "unsupported field: uri"). The same report is printed when a file fails to reload in `--dev` mode. The
-file watcher reload strategy (camel-support) emits the `CamelContextReloadFailure` event on a failed reload, the
-event a failed context reload already emitted, with the file name as the source.
-
 Running an existing Maven project (`camel run pom.xml`) is unchanged, and still detects the runtime
 from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
 `camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
+
+The file watcher reload strategy (camel-support) now emits the `CamelContextReloadFailure` event when a single
+file fails to reload, with the file name as the event's action; before, only a failed reload of the whole context
+emitted it. A listener of that event fires for these failures too. `camel run` uses it to print the report of
+`camel validate yaml` when a YAML route file does not load, at start and on a reload in `--dev` mode.
 
 The YAML that `camel init` writes (`camel init foo.yaml`, and the Integration and Kamelet templates), the
 bundled examples (`camel init --example`) and the routes the `camel_ai_pipeline_scaffold` and

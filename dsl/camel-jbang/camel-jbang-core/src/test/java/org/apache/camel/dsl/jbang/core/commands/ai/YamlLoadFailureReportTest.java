@@ -87,7 +87,7 @@ class YamlLoadFailureReportTest {
         List<Path> files
                 = YamlLoadFailureReport.yamlFiles(List.of("file:" + route, route.toString(), dir.resolve("Foo.java").toString(),
                         "github:apache:camel:x.yaml", dir.resolve("missing.yaml").toString()));
-        assertThat(files).containsExactly(route, route);
+        assertThat(files).containsExactly(route);
     }
 
     @Test

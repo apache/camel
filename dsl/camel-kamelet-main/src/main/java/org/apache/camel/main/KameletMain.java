@@ -189,8 +189,9 @@ public class KameletMain extends MainCommandLineSupport {
         if (startFailureListener != null) {
             try {
                 startFailureListener.accept(e);
-            } catch (Exception ignore) {
+            } catch (Exception listenerFailure) {
                 // the listener must not hide the failure
+                LOG.debug("Start failure listener failed: {}", listenerFailure.getMessage(), listenerFailure);
             }
         }
         // ensure any unhandled fatal errors are also logged before terminating process

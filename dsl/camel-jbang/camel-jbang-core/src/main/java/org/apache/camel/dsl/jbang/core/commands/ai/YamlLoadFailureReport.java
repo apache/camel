@@ -27,6 +27,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.impl.event.CamelContextReloadFailureEvent;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +93,8 @@ public final class YamlLoadFailureReport {
                 Path dir = file.toAbsolutePath().getParent();
                 errors = SourceValidator.validate(file.getFileName().toString(), content, catalog(), null, dir);
             } catch (Exception e) {
+                // the validator must never hide the loader's error
+                LOG.debug("Cannot validate {}", file, e);
                 continue;
             }
             if (!errors.isEmpty()) {
@@ -123,12 +126,13 @@ public final class YamlLoadFailureReport {
             if (f.startsWith("file:")) {
                 f = f.substring(5);
             }
-            if (f.contains(":")) {
-                continue; // github:, https:, classpath:
+            if (ResourceHelper.hasScheme(f) || f.startsWith("github:")) {
+                continue; // github:, https:, classpath: (the check Run makes; a Windows drive letter is not a scheme)
             }
             String lower = f.toLowerCase();
-            if ((lower.endsWith(".yaml") || lower.endsWith(".yml")) && Files.isRegularFile(Path.of(f))) {
-                answer.add(Path.of(f));
+            Path path = Path.of(f);
+            if ((lower.endsWith(".yaml") || lower.endsWith(".yml")) && Files.isRegularFile(path) && !answer.contains(path)) {
+                answer.add(path);
             }
         }
         return answer;
