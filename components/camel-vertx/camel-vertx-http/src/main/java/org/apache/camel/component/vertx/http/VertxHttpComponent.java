@@ -71,7 +71,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     private String proxyPassword;
 
     @Metadata(label = "advanced")
-    private Vertx vertx;
+    private volatile Vertx vertx;
     @Metadata(label = "advanced")
     private VertxOptions vertxOptions;
     @Metadata(label = "advanced")
@@ -234,13 +234,17 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
         super.doStart();
 
         if (vertx == null) {
-            if (vertxOptions != null) {
-                vertx = Vertx.vertx(vertxOptions);
-            } else {
-                vertx = Vertx.vertx();
-            }
-            managedVertx = true;
+            createManagedVertx();
         }
+    }
+
+    private void createManagedVertx() {
+        if (vertxOptions != null) {
+            vertx = Vertx.vertx(vertxOptions);
+        } else {
+            vertx = Vertx.vertx();
+        }
+        managedVertx = true;
     }
 
     @Override
@@ -254,6 +258,16 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     }
 
     public Vertx getVertx() {
+        if (vertx == null && (isNew() || isInit() || isStarting() || isStarted())) {
+            // an endpoint can start before this component: a component resolved while the routes start (the
+            // rest-openapi producer picks its HTTP client at that point) is built and initialized but not started,
+            // and its endpoint then found no Vert.x (CAMEL-24822); the managed instance is created on first use
+            synchronized (this) {
+                if (vertx == null) {
+                    createManagedVertx();
+                }
+            }
+        }
         return vertx;
     }
 
