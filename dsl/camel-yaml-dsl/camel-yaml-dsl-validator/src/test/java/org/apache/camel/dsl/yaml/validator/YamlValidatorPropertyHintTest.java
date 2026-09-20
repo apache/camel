@@ -808,4 +808,57 @@ public class YamlValidatorPropertyHintTest {
                 .contains("YAML indents with spaces")
                 .doesNotContain("cannot start any token");
     }
+
+    /**
+     * CAMEL-24837: a list whose items start with a bare "-" on its own line is still the list the stray item belongs
+     * to; naming the nested list instead would point at the wrong place.
+     */
+    @Test
+    void aListWrittenWithBareDashesIsStillTheListThatIsNamed() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                              -
+                                simple: "${body} > 1"
+                                steps:
+                                  - log:
+                                      message: big
+                            - simple: "${body} > 2"
+                              steps:
+                                - log:
+                                    message: bigger
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 12: this list item starts in column 13")
+                .contains("the list that starts at line 7 has its items in column 15");
+    }
+
+    /**
+     * CAMEL-24837: the parser names the stray item "&lt;block sequence start&gt;" instead of "-" when the list it broke
+     * uses bare dashes; it is the same mistake and gets the same message.
+     */
+    @Test
+    void aStrayItemReportedAsABlockSequenceStartIsNamedToo() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        -
+                          log:
+                            message: hi
+                         - log:
+                             message: there
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 8: this list item starts in column 10")
+                .contains("the list that starts at line 5 has its items in column 9")
+                .doesNotContain("block sequence start");
+    }
 }

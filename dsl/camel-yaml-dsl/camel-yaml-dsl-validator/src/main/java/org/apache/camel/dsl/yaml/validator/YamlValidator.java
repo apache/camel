@@ -238,7 +238,9 @@ public class YamlValidator {
             return null;
         }
         Mark problem = marks.get(marks.size() - 1);
-        if (msg.contains("expected <block end>, but found '-'")) {
+        // the stray item is named '-', or '<block sequence start>' when the list it broke uses bare dashes
+        if (msg.contains("expected <block end>, but found '-'")
+                || msg.contains("expected <block end>, but found '<block sequence start>'")) {
             return listItemColumn(problem, lines);
         }
         if (msg.contains("expected <block end>, but found '<block mapping start>'")) {
@@ -304,7 +306,7 @@ public class YamlValidator {
                 continue;
             }
             int indent = lines[i].length() - stripped.length();
-            if (stripped.startsWith("- ") && indent <= deepest) {
+            if (listItem(stripped) && indent <= deepest) {
                 firstItem.put(indent + 1, i + 1);
             }
             deepest = Math.min(deepest, indent);
@@ -312,6 +314,12 @@ public class YamlValidator {
         List<Mark> open = new ArrayList<>();
         firstItem.forEach((column, line) -> open.add(new Mark(line, column)));
         return open;
+    }
+
+    /** A list item: the indicator followed by its value, or alone on its line with the value below it. */
+    private static boolean listItem(String stripped) {
+        return stripped.startsWith("-")
+                && (stripped.length() == 1 || Character.isWhitespace(stripped.charAt(1)));
     }
 
     /** A key in a column of its own, where the parser names the mapping it was reading. */
