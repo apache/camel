@@ -876,7 +876,8 @@ A top-level `- from:` without `- route:` is the compact notation of a route, and
 (`camelYamlDsl-canonical.json`) no longer lists `from` among its top-level entries: a route is written under
 `route:`, as an XML route is always a `<route>`, and as Kaoto and Karavan write it. `camel validate yaml --canonical`
 now reports a top-level `from:` with the form to write, the way it reports the other compact shapes, and
-`camel validate normalize` rewrites it. The classic schema and `camel run` are unchanged: the file keeps working,
+`camel validate normalize` rewrites it. The Integration template of `camel init` writes its flows in the `- route:`
+form as well; a Kamelet's `template:` keeps its `from:`, which is the Kamelet spec's shape. The classic schema and `camel run` are unchanged: the file keeps working,
 with the compact notation warning `camel run` already logged for it.
 
 === camel-mail
