@@ -83,6 +83,10 @@ public class DefaultMessageHistory implements MessageHistory {
         Message current = exchange.getMessage();
         Object body = current.getBody();
         bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        if (body == null) {
+            // no body, no size: "null" says it, and 0 would read as an empty text or byte array
+            return;
+        }
         CamelContext context = exchange.getContext();
         MessageSizeStrategy sizeStrategy = context != null ? context.getMessageSizeStrategy() : null;
         if (sizeStrategy != null && sizeStrategy.isEnabled()) {

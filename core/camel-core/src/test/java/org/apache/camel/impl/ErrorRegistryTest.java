@@ -316,7 +316,8 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertNotNull(steps);
         // the throwException step was reached with a null body (set by the step before)
         String last = steps[steps.length - 1];
-        assertTrue(last.contains("bodyType=null bodySize=0"), last);
+        assertTrue(last.contains("bodyType=null"), last);
+        assertTrue(!last.contains("bodySize="), "no body, no size: " + last);
     }
 
     @Override

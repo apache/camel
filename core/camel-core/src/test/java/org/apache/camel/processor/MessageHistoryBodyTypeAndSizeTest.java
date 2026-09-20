@@ -64,7 +64,7 @@ public class MessageHistoryBodyTypeAndSizeTest extends ContextTestSupport {
         // a null body is shown as such, not left blank like a body that was not captured
         assertEquals("d", history.get(3).getNode().getId());
         assertEquals("null", history.get(3).getBodyType());
-        assertEquals(0, history.get(3).getBodySize());
+        assertEquals(-1, history.get(3).getBodySize(), "no body, no size");
 
         // the failure table shows both columns
         String table = MessageHelper.dumpMessageHistoryStacktrace(out, null, false);
