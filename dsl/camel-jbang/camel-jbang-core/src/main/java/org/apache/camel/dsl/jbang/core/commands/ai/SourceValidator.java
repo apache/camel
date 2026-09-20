@@ -226,6 +226,7 @@ public final class SourceValidator {
         if (content == null || content.isBlank()) {
             return msgs;
         }
+        msgs.addAll(StructureChecks.validateTopLevelOrder(content));
         msgs.addAll(validateYamlEndpoints(content, catalog));
         msgs.addAll(validateYamlSimple(content, catalog));
         msgs.addAll(validateKnownHeaders(content, catalog));
