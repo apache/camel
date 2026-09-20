@@ -459,9 +459,8 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         if (!created) {
             LOG.warn("Cannot auto create starting directory: {}", file);
         } else {
-            // said at INFO: a consumer of a directory that was not there finds nothing and waits, and without this
-            // line nothing in the log says why (CAMEL-24855)
-            LOG.info("Created starting directory: {} (it did not exist): waiting for files", file);
+            // CAMEL-24855: INFO so the log says why the consumer is waiting on an empty directory
+            LOG.info("Auto-created starting directory: {}; waiting for files", file);
         }
     }
 
