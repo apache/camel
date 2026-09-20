@@ -796,6 +796,12 @@ The compact notation they used to be written in (`setBody: {simple: "..."}`, `lo
 rewrites a file in the canonical format. Existing files keep working; only the generated starting point
 changed. Scripts that post-process the generated YAML by matching the old text need to be updated.
 
+When a YAML route file does not load, `camel run` now prints the report of `camel validate yaml` for the route
+files before the loader's error, so the message says what to write (`pollEnrich: {expression: {constant: ...}}`
+instead of "unsupported field: uri"). The same report is printed when a file fails to reload in `--dev` mode. The
+file watcher reload strategy (camel-support) emits the `CamelContextReloadFailure` event on a failed reload, the
+event a failed context reload already emitted, with the file name as the source.
+
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the
