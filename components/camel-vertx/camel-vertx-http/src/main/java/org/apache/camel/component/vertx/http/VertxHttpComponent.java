@@ -251,10 +251,12 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (managedVertx && vertx != null) {
-            vertx.close();
+        synchronized (this) {
+            if (managedVertx && vertx != null) {
+                vertx.close();
+            }
+            vertx = null;
         }
-        vertx = null;
     }
 
     public Vertx getVertx() {
@@ -263,7 +265,9 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
             // rest-openapi producer picks its HTTP client at that point) is built and initialized but not started,
             // and its endpoint then found no Vert.x (CAMEL-24822); the managed instance is created on first use
             synchronized (this) {
-                if (vertx == null) {
+                // re-checked under the monitor doStop uses: a stop that won the race must not be followed by an
+                // instance nobody closes
+                if (vertx == null && (isNew() || isInit() || isStarting() || isStarted())) {
                     createManagedVertx();
                 }
             }
