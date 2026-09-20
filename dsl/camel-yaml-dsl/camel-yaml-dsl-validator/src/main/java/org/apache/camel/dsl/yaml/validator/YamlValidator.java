@@ -255,7 +255,7 @@ public class YamlValidator {
         return null;
     }
 
-    /** {@code found character '\t(TAB)' that cannot start any token}: the line is indented with a tab. */
+    /** {@code Do not use (TAB) for indentation}: the line is indented with a tab. */
     static Error tabIndentation(String msg) {
         if (!msg.contains("(TAB) for indentation")) {
             return null;
