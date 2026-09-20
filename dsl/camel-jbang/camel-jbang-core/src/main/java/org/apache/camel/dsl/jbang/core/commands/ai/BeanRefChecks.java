@@ -553,7 +553,45 @@ final class BeanRefChecks {
             errors.add("Line " + (i + 1) + ": " + scheme + ": the file " + path + " does not exist in the directory"
                        + hint);
         }
+        validateExpressionResourceRefs(lines, directory, errors);
         return errors;
+    }
+
+    /** resource:classpath:x or resource:file:x as the value of an expression (groovy, xslt, ...) or an option. */
+    private static final Pattern RESOURCE_REF_PATTERN = Pattern.compile("resource:(classpath|file):([^\"'\\s?&,]+)");
+
+    /**
+     * A resource:classpath:x or resource:file:x in an expression whose file is not in the directory fails when the
+     * route starts (camel run looks a resource up next to the route files, CAMEL-24852). Says what is missing and, when
+     * a file of that name is elsewhere in the directory, the reference to write.
+     */
+    static void validateExpressionResourceRefs(String[] lines, Path directory, List<String> errors) {
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.trim().startsWith("#")) {
+                continue;
+            }
+            Matcher m = RESOURCE_REF_PATTERN.matcher(line);
+            while (m.find()) {
+                String scheme = m.group(1);
+                String path = m.group(2);
+                if (path.startsWith("//")) {
+                    path = path.substring(2);
+                }
+                if (path.startsWith("{{") || path.contains("${")) {
+                    continue; // a placeholder
+                }
+                String base = path.substring(path.lastIndexOf('/') + 1);
+                boolean exists = Files.exists(directory.resolve(path));
+                if (!exists && !path.startsWith("/")) {
+                    String hint = !base.isEmpty() && !base.equals(path) && Files.exists(directory.resolve(base))
+                            ? " (the directory has " + base + ": write resource:" + scheme + ":" + base + ")"
+                            : " (add the file next to the route files)";
+                    errors.add("Line " + (i + 1) + ": resource:" + scheme + ":" + path
+                               + ": the file does not exist in the directory" + hint);
+                }
+            }
+        }
     }
 
 }

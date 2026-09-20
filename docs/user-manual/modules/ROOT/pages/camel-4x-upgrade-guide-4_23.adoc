@@ -801,6 +801,12 @@ or `resource:file:mapping.groovy`, a mapping script used as the body of an expre
 the reference resolves in the exported project. Other Groovy files go to `src/main/resources/camel-groovy` as before,
 where they are compiled as scripts at startup.
 
+`camel run` now looks up a `classpath:` or `file:` resource that is not found in the directories of the route
+files (the working directory first), the way it already did under `--source-dir`. A script next to the route is
+found as `resource:classpath:mapping.groovy`, the reference that also works in the project `camel export` writes,
+where before only `resource:file:mapping.groovy` worked in the CLI. A resource that exists nowhere fails as before,
+named as written.
+
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the

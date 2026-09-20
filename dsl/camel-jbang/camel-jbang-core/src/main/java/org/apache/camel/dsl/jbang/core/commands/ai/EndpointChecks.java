@@ -233,6 +233,7 @@ final class EndpointChecks {
                     collectEndpointErrors(errors, result, scheme, i, optionLineMap);
                 }
                 checkRegexOptions(errors, fullUri, i, optionLineMap);
+                checkDynamicDirectory(errors, fullUri, i, eipName);
             } catch (Exception e) {
                 // ignore validation errors
             }
@@ -335,6 +336,40 @@ final class EndpointChecks {
                            + "=" + value);
             }
         }
+    }
+
+    /**
+     * file:archived/${header.monthDir} on a to: fails at startup: the directory of a file endpoint cannot be dynamic
+     * (the runtime says "Dynamic expressions with ${ } placeholders is not allowed. Use the fileName option"). Says to
+     * keep the directory fixed and put the dynamic part in fileName, or to use toD: (which evaluates the uri first).
+     * toD, wireTap, enrich and pollEnrich evaluate the expression before the endpoint is created and are left alone.
+     */
+    static void checkDynamicDirectory(List<String> errors, String fullUri, int uriLineIdx, String eipName) {
+        int colon = fullUri.indexOf(':');
+        if (colon < 0 || !FILE_SCHEMES.contains(fullUri.substring(0, colon))) {
+            return;
+        }
+        if (eipName == null || !eipName.equals("to") && !eipName.equals("from")) {
+            // an unresolved parent may be a toD: or wireTap:, which evaluate the uri first: leave it alone
+            return;
+        }
+        int q = fullUri.indexOf('?');
+        String dir = q >= 0 ? fullUri.substring(colon + 1, q) : fullUri.substring(colon + 1);
+        if (dir.startsWith("//")) {
+            dir = dir.substring(2);
+        }
+        if (!dir.contains("${")) {
+            return;
+        }
+        String scheme = fullUri.substring(0, colon);
+        String fixed = dir.substring(0, dir.indexOf("${"));
+        if (fixed.endsWith("/")) {
+            fixed = fixed.substring(0, fixed.length() - 1);
+        }
+        errors.add(linePrefix(uriLineIdx) + scheme + ": the directory " + dir + " cannot be dynamic (the runtime"
+                   + " says 'Dynamic expressions with ${ } placeholders is not allowed. Use the fileName option'):"
+                   + " keep the directory fixed and put the dynamic part in fileName (" + scheme + ":" + fixed
+                   + "?fileName=${...}), or use toD: with the whole uri, which evaluates it per message");
     }
 
     /** A wildcard such as *.txt as the regex .*\\.txt. */
