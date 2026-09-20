@@ -881,6 +881,64 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
     }
 
+    /** resource:classpath:x or resource:file:x in a route file: the file x is referenced by its path. */
+    private static final Pattern RESOURCE_REF_PATTERN = Pattern.compile("resource:(?:classpath|file):([^\"'\\s?&,]+)");
+
+    /**
+     * The paths of the files the route files (camel.main.routesIncludePattern) reference as resource:classpath: or
+     * resource:file:, as written in the reference (a relative path, or a bare name), so the export can keep them where
+     * the reference resolves. A file: route is read from the file system, a classpath: route from the classpath.
+     */
+    private static Set<String> resourceReferencedFiles(String routeFiles) {
+        Set<String> paths = new HashSet<>();
+        if (routeFiles == null || routeFiles.isBlank()) {
+            return paths;
+        }
+        for (String f : routeFiles.split(",")) {
+            f = f.trim();
+            String scheme = getScheme(f);
+            if (scheme != null) {
+                f = f.substring(scheme.length() + 1);
+            }
+            String content = null;
+            try {
+                if ("classpath".equals(scheme)) {
+                    try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream(f)) {
+                        content = is != null ? new String(is.readAllBytes(), StandardCharsets.UTF_8) : null;
+                    }
+                } else if (scheme == null || "file".equals(scheme)) {
+                    Path path = Paths.get(f);
+                    content = Files.isRegularFile(path) ? Files.readString(path) : null;
+                }
+            } catch (IOException e) {
+                // ignore: the file is copied as is
+            }
+            if (content == null) {
+                continue;
+            }
+            Matcher m = RESOURCE_REF_PATTERN.matcher(content);
+            while (m.find()) {
+                String ref = m.group(1);
+                if (ref.startsWith("./")) {
+                    ref = ref.substring(2);
+                }
+                paths.add(ref);
+            }
+        }
+        return paths;
+    }
+
+    /** Whether the file is one the routes reference as a resource: by its path, or by its name alone. */
+    private static boolean isResourceReferenced(Set<String> referenced, String file) {
+        String name = FileUtil.stripPath(file);
+        for (String ref : referenced) {
+            if (file.equals(ref) || file.endsWith("/" + ref) || name.equals(ref)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected void copySourceFiles(
             Path settings, Path profile, Path srcJavaDirRoot, Path srcJavaDir, Path srcResourcesDir, Path srcCamelResourcesDir,
             Path srcKameletsResourcesDir, String packageName)
@@ -897,6 +955,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 localKameletDir = localKameletDir.substring(scheme.length() + 1);
             }
         }
+        // the files the routes reference as resource:classpath:x or resource:file:x (a Groovy mapping script used as an
+        // expression): they stay at the resources root, where the reference resolves, instead of camel-groovy where
+        // they would be compiled as scripts and be out of reach of the reference (CAMEL-24853)
+        Set<String> resourceReferenced = resourceReferencedFiles(prop.getProperty("camel.main.routesIncludePattern"));
+
         for (String k : SETTINGS_PROP_SOURCE_KEYS) {
             String files;
             if ("kamelet".equals(k)) {
@@ -944,6 +1007,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         targetDir = srcKameletsResourcesDir;
                     } else if (script) {
                         targetDir = srcJavaDirRoot.getParent().resolve("scripts");
+                    } else if (groovy && isResourceReferenced(resourceReferenced, f)) {
+                        targetDir = srcResourcesDir;
                     } else if (groovy) {
                         targetDir = srcResourcesDir.resolve("camel-groovy");
                     } else if (tls) {
