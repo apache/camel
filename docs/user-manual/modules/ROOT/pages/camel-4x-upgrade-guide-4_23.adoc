@@ -796,6 +796,12 @@ The compact notation they used to be written in (`setBody: {simple: "..."}`, `lo
 rewrites a file in the canonical format. Existing files keep working; only the generated starting point
 changed. Scripts that post-process the generated YAML by matching the old text need to be updated.
 
+`camel run` now looks a `classpath:` or `file:` resource that is not found up in the directories of the route
+files (the working directory first), the way it already did under `--source-dir`. A script next to the route is
+found as `resource:classpath:mapping.groovy`, the reference that also works in the project `camel export` writes,
+where before only `resource:file:mapping.groovy` worked in the CLI. A resource that exists nowhere fails as before,
+named as written.
+
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the

@@ -561,16 +561,9 @@ final class BeanRefChecks {
     private static final Pattern RESOURCE_REF_PATTERN = Pattern.compile("resource:(classpath|file):([^\"'\\s?&,]+)");
 
     /**
-     * The files camel run loads as sources (routes, scripts, properties) rather than adding to the classpath: a
-     * resource:classpath: reference to one of them fails with "Cannot find resource", where resource:file: works
-     * (CAMEL-24852).
-     */
-    private static final Set<String> SOURCE_EXTENSIONS = Set.of("groovy", "java", "js", "kts", "jsh", "properties", "sh");
-
-    /**
      * A resource:classpath:x or resource:file:x in an expression whose file is not in the directory fails when the
-     * route starts, and with camel run a classpath: reference to a file it loads as a source (a .groovy script next to
-     * the route) fails too. Says what is missing, or the scheme to write.
+     * route starts (camel run looks a resource up next to the route files, CAMEL-24852). Says what is missing and, when
+     * a file of that name is elsewhere in the directory, the reference to write.
      */
     static void validateExpressionResourceRefs(String[] lines, Path directory, List<String> errors) {
         for (int i = 0; i < lines.length; i++) {
@@ -589,13 +582,8 @@ final class BeanRefChecks {
                     continue; // a placeholder
                 }
                 String base = path.substring(path.lastIndexOf('/') + 1);
-                String ext = base.contains(".") ? base.substring(base.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT) : "";
                 boolean exists = Files.exists(directory.resolve(path));
-                if (exists && scheme.equals("classpath") && SOURCE_EXTENSIONS.contains(ext)) {
-                    errors.add("Line " + (i + 1) + ": resource:classpath:" + path + ": camel run loads a ." + ext
-                               + " file next to the route as a source and does not put it on the classpath, so classpath:"
-                               + " does not find it: write resource:file:" + path);
-                } else if (!exists && !path.startsWith("/")) {
+                if (!exists && !path.startsWith("/")) {
                     String hint = !base.isEmpty() && !base.equals(path) && Files.exists(directory.resolve(base))
                             ? " (the directory has " + base + ": write resource:" + scheme + ":" + base + ")"
                             : " (add the file next to the route files)";

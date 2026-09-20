@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * CAMEL-24852: a resource:classpath: or resource:file: reference in an expression, checked against the files next to
- * the route the way camel run loads them.
+ * the route, where camel run looks them up.
  */
 class SourceValidatorResourceRefsTest {
 
@@ -48,13 +48,10 @@ class SourceValidatorResourceRefsTest {
             """;
 
     @Test
-    void aClasspathReferenceToAScriptNextToTheRouteSaysToWriteFile() throws Exception {
+    void aClasspathReferenceToAScriptNextToTheRouteIsFine() throws Exception {
+        // camel run looks a classpath: resource up next to the route files (DependencyDownloaderResourceLoader)
         Files.writeString(dir.resolve("shipment-mapping.groovy"), "body");
-        List<String> errors = SourceValidator.validateResourceRefs(ROUTE.formatted("classpath:shipment-mapping.groovy"), dir);
-        assertThat(errors).hasSize(1);
-        assertThat(errors.get(0))
-                .startsWith("Line 8: resource:classpath:shipment-mapping.groovy: camel run loads a .groovy file next to the")
-                .endsWith("write resource:file:shipment-mapping.groovy");
+        assertThat(SourceValidator.validateResourceRefs(ROUTE.formatted("classpath:shipment-mapping.groovy"), dir)).isEmpty();
     }
 
     @Test
