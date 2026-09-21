@@ -199,8 +199,8 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                     // the copy's entry stays (it names the node), but the original reporting the failure as
                     // handled (a circuit breaker's fallback, a doCatch around a multicast) means the exchange
                     // recovered: the entry is an error that was handled, not an error (CAMEL-24863)
-                    if (handled && !e.isHandled() && e instanceof DefaultBacklogErrorEventMessage impl) {
-                        impl.setHandled(true);
+                    if (handled && !e.isHandled()) {
+                        e.markHandled();
                     }
                     return;
                 }
@@ -589,8 +589,9 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             return handled;
         }
 
-        void setHandled(boolean handled) {
-            this.handled = handled;
+        @Override
+        public void markHandled() {
+            this.handled = true;
         }
 
         @Override

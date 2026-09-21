@@ -78,6 +78,14 @@ public interface BacklogErrorEventMessage extends BacklogEventMessage {
     boolean isHandled();
 
     /**
+     * Marks the error as handled after the fact: the failure was recorded from a copy of the exchange (a circuit
+     * breaker's call, a multicast branch) before the original reported it as handled by its fallback or catch.
+     *
+     * @since 4.23
+     */
+    void markHandled();
+
+    /**
      * The fully qualified class name of the exception (e.g. "java.lang.IllegalArgumentException").
      */
     String getExceptionType();
