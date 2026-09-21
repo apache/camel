@@ -385,7 +385,50 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 }
             }
         } catch (Exception e) {
+            // the routes that ran before were removed above and the new ones failed to load: the app has no routes
+            // until the next successful reload. Restore the previous routes now, without the failed resources, so a
+            // mistake in one file leaves the rest running (CAMEL-24860); the failed file loads on its next save
+            restorePreviousRoutes(resources, e);
             throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+    }
+
+    /**
+     * Reloads the sources of the routes that ran before a failed reload, without the resources that failed, so a
+     * mistake in one file does not leave the application without routes. After a successful restore the remembered set
+     * is cleared: the running routes are the last working set again, and the next reload collects their sources itself.
+     * The failed file is loaded again on its next save.
+     */
+    protected void restorePreviousRoutes(Collection<Resource> failed, Exception cause) {
+        if (!removeAllRoutes || previousSources.isEmpty()) {
+            return;
+        }
+        List<Resource> restore = new ArrayList<>();
+        for (Resource rs : previousSources) {
+            if (rs != null && (failed == null || !equalResourceLocation(failed, rs))) {
+                restore.add(rs);
+            }
+        }
+        if (restore.isEmpty()) {
+            LOG.warn("Reload failed and there are no previous routes to restore: the application runs without routes"
+                     + " until the file is fixed");
+            return;
+        }
+        try {
+            // a partial load may have left routes or endpoints behind
+            getCamelContext().getRouteController().removeAllRoutes();
+            getCamelContext().removeRouteTemplates("*");
+            getCamelContext().getEndpointRegistry().clear();
+            Set<String> ids = PluginHelper.getRoutesLoader(getCamelContext()).updateRoutes(restore);
+            // the running routes are the last working set again: the next reload collects their sources itself
+            previousSources.clear();
+            LOG.warn("Reload failed due to: {}. The previous routes were restored ({} route(s) running); the changed"
+                     + " file loads on its next save",
+                    cause.getMessage(), ids.size());
+        } catch (Exception e) {
+            LOG.warn("Reload failed and the previous routes could not be restored due to: {}. The application runs"
+                     + " without routes until the file is fixed",
+                    e.getMessage(), e);
         }
     }
 

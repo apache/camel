@@ -473,6 +473,14 @@ set here, because that would reject input that parses today. Routes that genuine
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
 
+=== camel-core - a failed route reload restores the previous routes
+
+When a route file is reloaded in dev mode (`camel run --dev`, or the route watcher reload strategy in general) and
+the new content fails to load, the routes that ran before are restored right away, without the routes of the failed
+file, and a WARN says so. Before, the previous routes stayed stopped until the next successful reload, so a mistake
+in one file left the application without routes. The failed file loads again on its next save. The
+`CamelContextReloadFailure` event and the reload error log line are unchanged.
+
 === camel-core - the recursive file watcher watches directories created while it runs
 
 The file watcher reload strategy (`camel run --dev`, the route watcher reload strategy with a recursive directory)
