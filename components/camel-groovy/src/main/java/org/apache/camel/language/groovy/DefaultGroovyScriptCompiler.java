@@ -303,21 +303,25 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
 
     private Set<String> doPreloadClasses(Map<String, byte[]> classes) {
         Set<String> answer = new HashSet<>();
-        for (var entry : classes.entrySet()) {
-            String name = entry.getKey();
-            groovyPreCompiledClassLoader.addClass(name, entry.getValue());
-            try {
-                Class<?> clazz = groovyPreCompiledClassLoader.findClass(name);
-                classLoader.addClass(clazz.getName(), clazz);
-                postCompile(clazz, entry.getValue());
-                answer.add(name);
-            } catch (ClassNotFoundException e) {
-                LOG.debug("Error loading pre-compiled class: {}. This exception is ignored.", name, e);
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
+        try {
+            for (var entry : classes.entrySet()) {
+                String name = entry.getKey();
+                groovyPreCompiledClassLoader.addClass(name, entry.getValue());
+                try {
+                    Class<?> clazz = groovyPreCompiledClassLoader.findClass(name);
+                    classLoader.addClass(clazz.getName(), clazz);
+                    postCompile(clazz, entry.getValue());
+                    answer.add(name);
+                } catch (ClassNotFoundException e) {
+                    LOG.debug("Error loading pre-compiled class: {}. This exception is ignored.", name, e);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
             }
+        } finally {
+            // also close if a post-processor failed on one of the classes
+            IOHelper.close(groovyPreCompiledClassLoader);
         }
-        IOHelper.close(groovyPreCompiledClassLoader);
         preloadCounter = answer.size();
         return answer;
     }

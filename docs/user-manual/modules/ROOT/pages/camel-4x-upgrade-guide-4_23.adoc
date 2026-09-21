@@ -849,10 +849,6 @@ named as written.
 `--dep=camel-groovy`; before, the file was silently ignored unless the dependency was added. The dependency is
 also written to the run settings, so `camel export` includes it.
 
-In the `dev` profile (`camel run --dev`) a custom simple function backed by a `SimpleFunction` bean in the registry
-is now resolved again per evaluation, so an edited bean (from a reloaded `.groovy` file or YAML bean) takes effect
-on the next message; before, the simple language expression cache kept the first bean until a restart.
-
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the

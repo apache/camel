@@ -1224,7 +1224,8 @@ public class Run extends CamelCommand {
             main.addInitialProperty(GROOVY_FILES, sjGroovyFiles.toString());
             writeSettings(GROOVY_FILES, sjGroovyFiles.toString());
             // the groovy sources are compiled by camel-groovy, which nothing else on the classpath pulls in
-            if (dependencies.stream().noneMatch(d -> d.endsWith("camel-groovy") || "camel:groovy".equals(d))) {
+            // (camel:groovy, camel:groovy:x.y.z, mvn:org.apache.camel:camel-groovy:x.y.z)
+            if (dependencies.stream().noneMatch(d -> d.startsWith("camel:groovy") || d.contains(":camel-groovy"))) {
                 dependencies.add("camel:groovy");
             }
         } else {

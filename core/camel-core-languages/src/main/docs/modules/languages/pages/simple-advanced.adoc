@@ -1056,6 +1056,10 @@ In dev mode (`--dev`) an edit of the function, in the `.groovy` file or in the Y
 message: the bean is created again on reload and the simple expression resolves the function again per evaluation
 when the `dev` profile is active.
 
+NOTE: The `@BindToRegistry` binding of a `.groovy` file is done by the Camel CLI. In a project created with
+`camel export` the file is compiled, but the class is not bound as a bean, so the function is unknown. For a project
+that is exported, use the inline YAML bean shown above, which works in every runtime, or write the function in Java.
+
 
 == JavaScript Validator
 
