@@ -354,7 +354,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         Document document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
 
         if (null != keyCipherAlgorithm
-                && (resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_v1dot5) || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP)
+                && (resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_v1dot5)
+                        || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP)
                         || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP_11))) {
             encryptAsymmetric(exchange, document, stream);
         } else if (null != recipientKeyAlias) {
@@ -531,7 +532,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         }
 
         if (null != keyCipherAlgorithm
-                && (resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_v1dot5) || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP)
+                && (resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_v1dot5)
+                        || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP)
                         || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP_11))) {
             return decodeWithAsymmetricKey(exchange, encodedDocument);
         } else {
