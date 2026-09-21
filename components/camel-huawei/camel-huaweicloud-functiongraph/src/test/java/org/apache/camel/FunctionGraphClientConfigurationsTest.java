@@ -18,7 +18,7 @@ package org.apache.camel;
 
 import org.apache.camel.constants.FunctionGraphConstants;
 import org.apache.camel.models.ClientConfigurations;
-import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
