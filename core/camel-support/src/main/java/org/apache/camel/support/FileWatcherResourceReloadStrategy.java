@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -30,9 +29,11 @@ import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +69,10 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     ExecutorService executorService;
     WatchFileChangesTask task;
     Map<WatchKey, Path> folderKeys;
+    Set<Path> watchedFolders;
     WatchEvent.Modifier watchModifier;
+    /** The compile work directory, resolved once at start (null when there is none). */
+    Path compileWorkDir;
     FileFilter fileFilter;
     String folder;
     boolean isRecursive;
@@ -194,8 +198,10 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                 watcher = path.getFileSystem().newWatchService();
                 // we cannot support deleting files as we don't know which routes that would be
                 this.watchModifier = modifier;
+                this.compileWorkDir = resolveCompileWorkDir();
                 if (isRecursive) {
                     this.folderKeys = new HashMap<>();
+                    this.watchedFolders = new HashSet<>();
                     registerRecursive(watcher, path, modifier);
                 } else {
                     registerPathToWatcher(modifier, path, watcher);
@@ -236,6 +242,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                 }
                 WatchKey key = registerPathToWatcher(modifier, dir, watcher);
                 folderKeys.put(key, dir);
+                watchedFolders.add(dir);
                 return FileVisitResult.CONTINUE;
             }
         });
@@ -251,11 +258,12 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
             Files.walkFileTree(dir, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) throws IOException {
-                    if (isCompileWorkDir(d) || folderKeys.containsValue(d)) {
+                    if (isCompileWorkDir(d) || watchedFolders.contains(d)) {
                         return FileVisitResult.SKIP_SUBTREE;
                     }
                     WatchKey k = registerPathToWatcher(watchModifier, d, watcher);
                     folderKeys.put(k, d);
+                    watchedFolders.add(d);
                     LOG.debug("Watching new directory: {}", d);
                     return FileVisitResult.CONTINUE;
                 }
@@ -277,14 +285,14 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
      * compiles again, which writes again (CAMEL-24862).
      */
     protected boolean isCompileWorkDir(Path dir) {
+        return compileWorkDir != null && dir.toAbsolutePath().normalize().startsWith(compileWorkDir);
+    }
+
+    private Path resolveCompileWorkDir() {
         CompileStrategy cs = getCamelContext() != null
                 ? getCamelContext().getCamelContextExtension().getContextPlugin(CompileStrategy.class) : null;
         String workDir = cs != null ? cs.getWorkDir() : null;
-        if (workDir == null) {
-            return false;
-        }
-        Path work = Paths.get(workDir).toAbsolutePath().normalize();
-        return dir.toAbsolutePath().normalize().startsWith(work);
+        return workDir != null ? Path.of(workDir).toAbsolutePath().normalize() : null;
     }
 
     @Override
