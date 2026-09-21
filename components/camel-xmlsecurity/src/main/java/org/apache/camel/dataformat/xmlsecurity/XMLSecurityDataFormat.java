@@ -73,6 +73,73 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLSecurityDataFormat.class);
 
+    /**
+     * Maps the Java constant names exposed in the model (e.g. {@code "AES_256_GCM"}, {@code "RSA_OAEP"},
+     * {@code "SHA1"}, {@code "MGF1_SHA1"}) to the W3C algorithm URIs expected by {@link XMLCipher#getInstance(String)}.
+     * A value that is already a URI (i.e. not present in the map) is passed through unchanged, so existing routes that
+     * use URIs directly continue to work.
+     */
+    private static final Map<String, String> ALGORITHM_NAME_TO_URI;
+
+    static {
+        ALGORITHM_NAME_TO_URI = Map.ofEntries(
+                // XMLCipher data-encryption algorithms
+                Map.entry("TRIPLEDES", XMLCipher.TRIPLEDES),
+                Map.entry("AES_128", XMLCipher.AES_128),
+                Map.entry("AES_128_GCM", XMLCipher.AES_128_GCM),
+                Map.entry("AES_192", XMLCipher.AES_192),
+                Map.entry("AES_192_GCM", XMLCipher.AES_192_GCM),
+                Map.entry("AES_256", XMLCipher.AES_256),
+                Map.entry("AES_256_GCM", XMLCipher.AES_256_GCM),
+                Map.entry("SEED_128", XMLCipher.SEED_128),
+                Map.entry("CAMELLIA_128", XMLCipher.CAMELLIA_128),
+                Map.entry("CAMELLIA_192", XMLCipher.CAMELLIA_192),
+                Map.entry("CAMELLIA_256", XMLCipher.CAMELLIA_256),
+                // XMLCipher key-encryption algorithms
+                Map.entry("RSA_v1dot5", XMLCipher.RSA_v1dot5),
+                Map.entry("RSA_OAEP", XMLCipher.RSA_OAEP),
+                Map.entry("RSA_OAEP_11", XMLCipher.RSA_OAEP_11),
+                // Digest algorithms (used with RSA-OAEP)
+                Map.entry("SHA1", XMLCipher.SHA1),
+                Map.entry("SHA256", XMLCipher.SHA256),
+                Map.entry("SHA512", XMLCipher.SHA512),
+                // MGF algorithms (used with RSA-OAEP)
+                Map.entry("MGF1_SHA1", EncryptionConstants.MGF1_SHA1),
+                Map.entry("MGF1_SHA256", EncryptionConstants.MGF1_SHA256),
+                Map.entry("MGF1_SHA512", EncryptionConstants.MGF1_SHA512));
+    }
+
+    /**
+     * Resolves a constant name (e.g. {@code "AES_256_GCM"}) to its W3C URI. If the value is already a URI or
+     * {@code null}, it is returned unchanged.
+     */
+    static String resolveAlgorithm(String nameOrUri) {
+        if (nameOrUri == null) {
+            return null;
+        }
+        return ALGORITHM_NAME_TO_URI.getOrDefault(nameOrUri, nameOrUri);
+    }
+
+    /** Returns the resolved (W3C URI) form of {@link #xmlCipherAlgorithm} for use in crypto operations. */
+    private String resolvedXmlCipherAlgorithm() {
+        return resolveAlgorithm(xmlCipherAlgorithm);
+    }
+
+    /** Returns the resolved (W3C URI) form of {@link #keyCipherAlgorithm} for use in crypto operations. */
+    private String resolvedKeyCipherAlgorithm() {
+        return resolveAlgorithm(keyCipherAlgorithm);
+    }
+
+    /** Returns the resolved (W3C URI) form of {@link #digestAlgorithm} for use in crypto operations. */
+    private String resolvedDigestAlgorithm() {
+        return resolveAlgorithm(digestAlgorithm);
+    }
+
+    /** Returns the resolved (W3C URI) form of {@link #mgfAlgorithm} for use in crypto operations. */
+    private String resolvedMgfAlgorithm() {
+        return resolveAlgorithm(mgfAlgorithm);
+    }
+
     private String xmlCipherAlgorithm;
     private String keyCipherAlgorithm;
 
@@ -287,8 +354,9 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         Document document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
 
         if (null != keyCipherAlgorithm
-                && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP)
-                        || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP_11))) {
+                && (resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_v1dot5)
+                        || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP)
+                        || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP_11))) {
             encryptAsymmetric(exchange, document, stream);
         } else if (null != recipientKeyAlias) {
             encryptAsymmetric(exchange, document, stream);
@@ -334,9 +402,9 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
         XMLCipher keyCipher;
         if (null != this.getKeyCipherAlgorithm()) {
-            keyCipher = XMLCipher.getInstance(this.getKeyCipherAlgorithm(), null, digestAlgorithm);
+            keyCipher = XMLCipher.getInstance(resolvedKeyCipherAlgorithm(), null, resolvedDigestAlgorithm());
         } else {
-            keyCipher = XMLCipher.getInstance(XMLCipher.RSA_OAEP, null, digestAlgorithm);
+            keyCipher = XMLCipher.getInstance(XMLCipher.RSA_OAEP, null, resolvedDigestAlgorithm());
         }
 
         keyCipher.init(XMLCipher.WRAP_MODE, keyEncryptionKey);
@@ -353,13 +421,13 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     private void encryptSymmetric(Exchange exchange, Document document, OutputStream stream) throws Exception {
         SecretKey keyEncryptionKey;
         SecretKey dataEncryptionKey;
-        if (xmlCipherAlgorithm.equals(XMLCipher.TRIPLEDES)) {
+        if (resolvedXmlCipherAlgorithm().equals(XMLCipher.TRIPLEDES)) {
             keyEncryptionKey = generateKeyEncryptionKey("DESede");
             dataEncryptionKey = generateDataEncryptionKey();
-        } else if (xmlCipherAlgorithm.equals(XMLCipher.SEED_128)) {
+        } else if (resolvedXmlCipherAlgorithm().equals(XMLCipher.SEED_128)) {
             keyEncryptionKey = generateKeyEncryptionKey("SEED");
             dataEncryptionKey = generateDataEncryptionKey();
-        } else if (xmlCipherAlgorithm.contains("camellia")) {
+        } else if (resolvedXmlCipherAlgorithm().contains("camellia")) {
             keyEncryptionKey = generateKeyEncryptionKey("CAMELLIA");
             dataEncryptionKey = generateDataEncryptionKey();
         } else {
@@ -416,7 +484,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             Exchange exchange, Document document, OutputStream stream, Key dataEncryptionKey,
             XMLCipher keyCipher, Key keyEncryptionKey)
             throws Exception {
-        XMLCipher xmlCipher = XMLCipher.getInstance(xmlCipherAlgorithm);
+        XMLCipher xmlCipher = XMLCipher.getInstance(resolvedXmlCipherAlgorithm());
         xmlCipher.init(XMLCipher.ENCRYPT_MODE, dataEncryptionKey);
 
         if (secureTag.equalsIgnoreCase("")) {
@@ -464,8 +532,9 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         }
 
         if (null != keyCipherAlgorithm
-                && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP)
-                        || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP_11))) {
+                && (resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_v1dot5)
+                        || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP)
+                        || resolvedKeyCipherAlgorithm().equals(XMLCipher.RSA_OAEP_11))) {
             return decodeWithAsymmetricKey(exchange, encodedDocument);
         } else {
             LOG.debug("No (known) asymmetric keyCipherAlgorithm specified. Attempting to "
@@ -476,7 +545,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     private Object decodeWithSymmetricKey(Exchange exchange, Document encodedDocument) throws Exception {
         SecretKey keyEncryptionKey;
-        if (xmlCipherAlgorithm.equals(XMLCipher.TRIPLEDES)) {
+        if (resolvedXmlCipherAlgorithm().equals(XMLCipher.TRIPLEDES)) {
             keyEncryptionKey = generateKeyEncryptionKey("DESede");
         } else {
             keyEncryptionKey = generateKeyEncryptionKey("AES");
@@ -630,23 +699,23 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     private SecretKey generateDataEncryptionKey() throws Exception {
         KeyGenerator keyGenerator = null;
-        if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.TRIPLEDES)) {
+        if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.TRIPLEDES)) {
             keyGenerator = KeyGenerator.getInstance("DESede");
         } else {
             keyGenerator = KeyGenerator.getInstance("AES");
 
-            if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)
-                    || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)
-                    || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.SEED_128)
-                    || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_128)) {
+            if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_128)
+                    || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_128_GCM)
+                    || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.SEED_128)
+                    || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.CAMELLIA_128)) {
                 keyGenerator.init(128);
-            } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)
-                    || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192_GCM)
-                    || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_192)) {
+            } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_192)
+                    || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_192_GCM)
+                    || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.CAMELLIA_192)) {
                 keyGenerator.init(192);
-            } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)
-                    || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)
-                    || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_256)) {
+            } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_256)
+                    || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_256_GCM)
+                    || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.CAMELLIA_256)) {
                 keyGenerator.init(256);
             }
         }
@@ -659,7 +728,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             Key keyEncryptionKey)
             throws XMLEncryptionException {
 
-        EncryptedKey encryptedKey = keyCipher.encryptKey(document, dataEncryptionkey, mgfAlgorithm, null);
+        EncryptedKey encryptedKey = keyCipher.encryptKey(document, dataEncryptionkey, resolvedMgfAlgorithm(), null);
         if (addKeyValueForEncryptedKey && keyEncryptionKey instanceof PublicKey) {
             KeyInfo keyInfo = new KeyInfo(document);
             keyInfo.add((PublicKey) keyEncryptionKey);
@@ -674,24 +743,24 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     private String generateXmlCipherAlgorithmKeyWrap() {
         String algorithmKeyWrap = null;
-        if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.TRIPLEDES)) {
+        if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.TRIPLEDES)) {
             algorithmKeyWrap = XMLCipher.TRIPLEDES_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)
-                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)) {
+        } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_128)
+                || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_128_GCM)) {
             algorithmKeyWrap = XMLCipher.AES_128_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)
-                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192_GCM)) {
+        } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_192)
+                || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_192_GCM)) {
             algorithmKeyWrap = XMLCipher.AES_192_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)
-                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)) {
+        } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_256)
+                || resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.AES_256_GCM)) {
             algorithmKeyWrap = XMLCipher.AES_256_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.SEED_128)) {
+        } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.SEED_128)) {
             algorithmKeyWrap = XMLCipher.SEED_128_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_128)) {
+        } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.CAMELLIA_128)) {
             algorithmKeyWrap = XMLCipher.CAMELLIA_128_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_192)) {
+        } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.CAMELLIA_192)) {
             algorithmKeyWrap = XMLCipher.CAMELLIA_192_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.CAMELLIA_256)) {
+        } else if (resolvedXmlCipherAlgorithm().equalsIgnoreCase(XMLCipher.CAMELLIA_256)) {
             algorithmKeyWrap = XMLCipher.CAMELLIA_256_KeyWrap;
         }
 
@@ -700,7 +769,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
 
     // Check to see if the asymmetric key transport algorithm is allowed
     private void checkEncryptionAlgorithm(Key keyEncryptionKey, Element parentElement) throws Exception {
-        if (XMLCipher.RSA_v1dot5.equals(keyCipherAlgorithm)
+        if (XMLCipher.RSA_v1dot5.equals(resolvedKeyCipherAlgorithm())
                 || keyCipherAlgorithm == null
                 || !(keyEncryptionKey instanceof PrivateKey)) {
             // This only applies for Asymmetric Encryption
