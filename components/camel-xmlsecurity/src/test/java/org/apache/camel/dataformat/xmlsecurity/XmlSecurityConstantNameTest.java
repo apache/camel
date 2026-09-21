@@ -106,9 +106,9 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
         df.setSecureTag("//cheesesites/italy/cheese");
         // Use the constant name, not the URI
         df.setXmlCipherAlgorithm("AES_256_GCM");
-
-        // verify the setter resolved it to the URI
-        assertEquals(XMLCipher.AES_256_GCM, df.getXmlCipherAlgorithm());
+        // In this backport the setter is a plain assignment; resolution happens lazily at crypto
+        // call-sites via the private resolvedXxx() helpers.  The encrypt/decrypt at the end of
+        // this method is the real functional validation.
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -135,8 +135,7 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
         df.setSecureTagContents(true);
         df.setSecureTag("//cheesesites/italy/cheese");
         df.setXmlCipherAlgorithm("AES_128");
-
-        assertEquals(XMLCipher.AES_128, df.getXmlCipherAlgorithm());
+        // Lazy resolution — getter returns the constant name; functional validation is below.
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -160,9 +159,7 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
         sendingDataFormat.setXmlCipherAlgorithm("AES_128");      // constant name
         sendingDataFormat.setKeyCipherAlgorithm("RSA_OAEP");     // constant name
         sendingDataFormat.setRecipientKeyAlias("recipient");
-
-        assertEquals(XMLCipher.AES_128, sendingDataFormat.getXmlCipherAlgorithm());
-        assertEquals(XMLCipher.RSA_OAEP, sendingDataFormat.getKeyCipherAlgorithm());
+        // Lazy resolution — getters return constant names; functional validation is the encrypt/decrypt below.
 
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
@@ -173,8 +170,7 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
         receivingDataFormat.setKeyCipherAlgorithm("RSA_OAEP");   // constant name
         receivingDataFormat.setRecipientKeyAlias("recipient");
         receivingDataFormat.setSecureTag("//cheesesites/italy/cheese");
-
-        assertEquals(XMLCipher.RSA_OAEP, receivingDataFormat.getKeyCipherAlgorithm());
+        // Lazy resolution — getter returns constant name; functional validation is the encrypt/decrypt below.
 
         KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
@@ -205,11 +201,7 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
         sendingDataFormat.setDigestAlgorithm("SHA256");          // constant name
         sendingDataFormat.setMgfAlgorithm("MGF1_SHA256");        // constant name
         sendingDataFormat.setRecipientKeyAlias("recipient");
-
-        assertEquals(XMLCipher.AES_128, sendingDataFormat.getXmlCipherAlgorithm());
-        assertEquals(XMLCipher.RSA_OAEP_11, sendingDataFormat.getKeyCipherAlgorithm());
-        assertEquals(XMLCipher.SHA256, sendingDataFormat.getDigestAlgorithm());
-        assertEquals(EncryptionConstants.MGF1_SHA256, sendingDataFormat.getMgfAlgorithm());
+        // Lazy resolution — getters return constant names; functional validation is the encrypt/decrypt below.
 
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
