@@ -43,18 +43,25 @@ class OpaSecurityPolicyTest extends CamelTestSupport {
 
     private final OPAClient client = mock(OPAClient.class);
     private final OpaSecurityPolicy policy = new OpaSecurityPolicy();
+    private final OpaSecurityPolicy failOpenPolicy = new OpaSecurityPolicy();
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         policy.setPolicyPath(PATH);
         policy.setOpaClient(client);
         policy.setIncludeProperties("subject");
+        failOpenPolicy.setPolicyPath(PATH);
+        failOpenPolicy.setOpaClient(client);
+        failOpenPolicy.setFailOpen(true);
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start")
                         .policy(policy)
                         .to("mock:result");
+                from("direct:failOpen")
+                        .policy(failOpenPolicy)
+                        .to("mock:failOpen");
             }
         };
     }
@@ -111,7 +118,23 @@ class OpaSecurityPolicyTest extends CamelTestSupport {
 
         assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class)
                 .hasCauseInstanceOf(OpaPolicyEvaluationException.class);
+        // the marker belongs to the deliberate failOpen path only - a denial is not a fail-open
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
         result.assertIsSatisfied();
+    }
+
+    @Test
+    void marksAnExchangeTheFailOpenPolicyLetThrough() throws Exception {
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+        MockEndpoint result = getMockEndpoint("mock:failOpen");
+        result.expectedMessageCount(1);
+
+        Exchange out = template.request("direct:failOpen", e -> e.getMessage().setBody("an order"));
+
+        assertThat(out.getException()).isNull();
+        result.assertIsSatisfied();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
     }
 
     @SuppressWarnings("unchecked")
