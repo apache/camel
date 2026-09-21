@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Line-level helpers over a YAML source shared by the checks of {@link SourceValidator}: the enclosing EIP of a line,
@@ -157,9 +158,23 @@ final class YamlLines {
                 && val.substring(1).chars().allMatch(c -> c == '-' || c == '+' || Character.isDigit(c));
     }
 
+    /**
+     * The value of a quoted scalar: inside double quotes YAML reads \\ as one backslash and \" as a quote (so
+     * ".*\\.pdf" is the regex .*\.pdf), inside single quotes a backslash is a backslash.
+     */
     static String unquote(String val) {
         if (val.length() >= 2 && val.startsWith("\"") && val.endsWith("\"")) {
-            return val.substring(1, val.length() - 1);
+            String inner = val.substring(1, val.length() - 1);
+            if (inner.indexOf('\\') < 0) {
+                return inner;
+            }
+            try {
+                // the JSON escapes are the YAML ones that matter here (\\ \" \n \t and unicode)
+                return Jsoner.unescape(inner);
+            } catch (RuntimeException e) {
+                // a YAML-only escape such as \e or \x41: the text as written
+                return inner;
+            }
         }
         if (val.length() >= 2 && val.startsWith("'") && val.endsWith("'")) {
             return val.substring(1, val.length() - 1);

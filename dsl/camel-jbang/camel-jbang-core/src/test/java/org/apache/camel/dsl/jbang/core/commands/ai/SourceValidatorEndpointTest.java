@@ -614,6 +614,11 @@ class SourceValidatorEndpointTest {
         List<String> ok = SourceValidator.validateYamlEndpoints(yaml.replace("\\\\.json", "\\.json"), catalog);
         assertThat(ok).noneMatch(e -> e.contains("backslash"));
 
+        // in double quotes YAML reads \\ as one backslash: ".*\\.json$" is the regex .*\.json$, nothing to report
+        List<String> doubleQuoted
+                = SourceValidator.validateYamlEndpoints(yaml.replace("'.*\\\\.json$'", "\".*\\\\.json$\""), catalog);
+        assertThat(doubleQuoted).noneMatch(e -> e.contains("backslash"));
+
         // \\myfile is a backslash on purpose: \myfile is not a regex escape, so there is nothing else it can mean
         List<String> literal = SourceValidator.validateYamlEndpoints(yaml.replace(".*\\\\.json$", ".*\\\\myfile.*"), catalog);
         assertThat(literal).noneMatch(e -> e.contains("backslash"));
