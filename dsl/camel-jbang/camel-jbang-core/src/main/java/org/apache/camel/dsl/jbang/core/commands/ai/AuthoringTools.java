@@ -359,6 +359,9 @@ public final class AuthoringTools {
         return result;
     }
 
+    /** How long a write waits for the running integration's reload record before answering without it. */
+    static final long RELOAD_WAIT_MILLIS = 8000;
+
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
@@ -378,6 +381,16 @@ public final class AuthoringTools {
                 return result;
             }
         }
+        // the reload of a running integration is reported in the answer (CAMEL-24859): the reload records newer
+        // than the ones before the write
+        String processName = null;
+        String sinceKey = null;
+        boolean watch = ctx.hasProcess() && SourceValidator.isValidatableFile(file);
+        if (watch) {
+            RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(Long.toString(ctx.pid()));
+            processName = p != null ? p.name() : null;
+            sinceKey = ReloadOutcome.latestReloadKey(ReloadOutcome.records(ctx.pid(), processName));
+        }
         try {
             Files.createDirectories(path.getParent());
             Files.writeString(path, content, StandardCharsets.UTF_8);
@@ -390,8 +403,21 @@ public final class AuthoringTools {
         result.put("directory", dir.toString());
         result.put("lines", content.isEmpty() ? 0 : (int) content.lines().count());
         result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
-        result.put("message", "An integration running the file in dev mode reloads it now; otherwise restart the"
-                              + " integration for the change to take effect.");
+        if (watch) {
+            JsonObject reload = ReloadOutcome.await(ctx.pid(), processName, sinceKey, RELOAD_WAIT_MILLIS);
+            result.put("reload", reload);
+            String status = reload.getString("status");
+            result.put("message", switch (status) {
+                case "reloaded" -> "The running integration reloaded the file.";
+                case "properties" -> "The running integration reloaded the properties.";
+                case "failed" -> "The running integration FAILED to reload the file, the route is not running; fix the"
+                                 + " content and write again (see reload.message).";
+                default -> "Written; " + reload.getString("message");
+            });
+        } else {
+            result.put("message", "An integration running the file in dev mode reloads it now; otherwise restart the"
+                                  + " integration for the change to take effect.");
+        }
         return result;
     }
 

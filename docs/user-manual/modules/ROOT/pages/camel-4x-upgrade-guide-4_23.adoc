@@ -819,6 +819,11 @@ same `camel_` names by both MCP servers, `camel mcp` and `camel tui --mcp`: `cam
 `camel_catalog_find`, `camel_validate_source`, `camel_get_files`, `camel_write_file`, `camel_run`,
 `camel_control`, `camel_get_log`, `camel_get_errors`, `camel_eval_expression` and `camel_error_diagnose`.
 
+The `camel_write_file` tool, when an integration of the project is selected and runs in dev mode, waits up to
+eight seconds for the reload of the written file and answers with its outcome (`reload.status` reloaded, failed
+with the cause and the validator's report, properties, or unknown), so an agent does not go on with a route that
+did not load. A write with no selected integration answers as before.
+
 In the TUI MCP server the tools `tui_catalog_doc`, `tui_validate_source`, `tui_write_file`, `tui_get_files`,
 `tui_control`, `tui_get_log`, `tui_get_errors` and `tui_eval_expression` were renamed to the `camel_` names
 above; the `tui_` prefix is now reserved for the tools that only make sense in front of the screen. Update
