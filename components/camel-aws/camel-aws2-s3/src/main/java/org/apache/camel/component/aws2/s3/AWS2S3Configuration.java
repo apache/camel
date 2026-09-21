@@ -121,6 +121,8 @@ public class AWS2S3Configuration implements Cloneable, AwsCommonConfiguration {
     private boolean useSessionCredentials;
     @UriParam(label = "security")
     private String profileCredentialsName;
+    @UriParam(label = "security")
+    private boolean useAutoDetectCredentialsProvider;
     @UriParam(label = "producer")
     private String keyName;
     @UriParam
@@ -612,6 +614,21 @@ public class AWS2S3Configuration implements Cloneable, AwsCommonConfiguration {
      */
     public void setUseSessionCredentials(boolean useSessionCredentials) {
         this.useSessionCredentials = useSessionCredentials;
+    }
+
+    @Override
+    public boolean isUseAutoDetectCredentialsProvider() {
+        return useAutoDetectCredentialsProvider;
+    }
+
+    /**
+     * Set whether the S3 client should auto-detect the runtime environment (environment variables, web identity / IRSA,
+     * shared profile, ECS / EKS Pod Identity container, or EC2 instance metadata) and select the matching AWS
+     * credentials provider. Opt-in; it takes precedence over the other credential options and falls back to the SDK
+     * default credentials provider chain when the environment cannot be recognised.
+     */
+    public void setUseAutoDetectCredentialsProvider(boolean useAutoDetectCredentialsProvider) {
+        this.useAutoDetectCredentialsProvider = useAutoDetectCredentialsProvider;
     }
 
     public boolean isAutoCreateBucket() {

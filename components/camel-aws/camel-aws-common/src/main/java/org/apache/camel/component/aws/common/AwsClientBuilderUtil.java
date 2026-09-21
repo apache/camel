@@ -243,6 +243,7 @@ public final class AwsClientBuilderUtil {
      * <p>
      * The priority order is:
      * <ol>
+     * <li>Runtime auto-detection (opt-in, via {@code useAutoDetectCredentialsProvider})</li>
      * <li>Default credentials provider (IAM roles, environment variables, etc.)</li>
      * <li>Profile credentials provider</li>
      * <li>Session credentials (temporary credentials with session token)</li>
@@ -254,6 +255,13 @@ public final class AwsClientBuilderUtil {
      * @return        The resolved credentials provider, or null to use SDK default chain
      */
     private static AwsCredentialsProvider resolveCredentialsProvider(AwsCommonConfiguration config) {
+
+        // Priority 0: Auto-detect the runtime environment and select the matching provider (opt-in).
+        // Takes precedence over the other options; falls back to the SDK default chain when nothing is detected.
+        if (config.isUseAutoDetectCredentialsProvider()) {
+            warnOnConflictingCredentialsOptions(config);
+            return AwsRuntimeCredentialsResolver.resolve();
+        }
 
         // Priority 1: Default credentials provider (IAM roles, env vars, etc.)
         if (config.isUseDefaultCredentialsProvider()) {
@@ -298,5 +306,17 @@ public final class AwsClientBuilderUtil {
         // No explicit credentials - let SDK use its default chain
         LOG.trace("No explicit credentials configured, using SDK default chain");
         return null;
+    }
+
+    private static void warnOnConflictingCredentialsOptions(AwsCommonConfiguration config) {
+        if (config.isUseDefaultCredentialsProvider()
+                || config.isUseProfileCredentialsProvider()
+                || config.isUseSessionCredentials()
+                || ObjectHelper.isNotEmpty(config.getAccessKey())
+                || ObjectHelper.isNotEmpty(config.getSecretKey())) {
+            LOG.warn("useAutoDetectCredentialsProvider is enabled together with other credential options"
+                     + " (static keys / useDefault / useProfile / useSession); auto-detection takes precedence"
+                     + " and the other credential options are ignored");
+        }
     }
 }

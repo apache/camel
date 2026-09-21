@@ -163,6 +163,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
         case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
+        case "useautodetectcredentialsprovider":
+        case "useAutoDetectCredentialsProvider": target.getConfiguration().setUseAutoDetectCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useawskms":
         case "useAwsKMS": target.getConfiguration().setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
         case "usecustomerkey":
@@ -329,6 +331,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
         case "uriEndpointOverride": return java.lang.String.class;
+        case "useautodetectcredentialsprovider":
+        case "useAutoDetectCredentialsProvider": return boolean.class;
         case "useawskms":
         case "useAwsKMS": return boolean.class;
         case "usecustomerkey":
@@ -491,6 +495,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
         case "uriendpointoverride":
         case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
+        case "useautodetectcredentialsprovider":
+        case "useAutoDetectCredentialsProvider": return target.getConfiguration().isUseAutoDetectCredentialsProvider();
         case "useawskms":
         case "useAwsKMS": return target.getConfiguration().isUseAwsKMS();
         case "usecustomerkey":

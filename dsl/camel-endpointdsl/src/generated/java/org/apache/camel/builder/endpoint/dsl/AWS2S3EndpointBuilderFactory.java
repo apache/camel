@@ -1292,6 +1292,46 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the S3 client should auto-detect the runtime environment
+         * (environment variables, web identity / IRSA, shared profile, ECS /
+         * EKS Pod Identity container, or EC2 instance metadata) and select the
+         * matching AWS credentials provider. Opt-in; it takes precedence over
+         * the other credential options and falls back to the SDK default
+         * credentials provider chain when the environment cannot be recognised.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useAutoDetectCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder useAutoDetectCredentialsProvider(boolean useAutoDetectCredentialsProvider) {
+            doSetProperty("useAutoDetectCredentialsProvider", useAutoDetectCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should auto-detect the runtime environment
+         * (environment variables, web identity / IRSA, shared profile, ECS /
+         * EKS Pod Identity container, or EC2 instance metadata) and select the
+         * matching AWS credentials provider. Opt-in; it takes precedence over
+         * the other credential options and falls back to the SDK default
+         * credentials provider chain when the environment cannot be recognised.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useAutoDetectCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder useAutoDetectCredentialsProvider(String useAutoDetectCredentialsProvider) {
+            doSetProperty("useAutoDetectCredentialsProvider", useAutoDetectCredentialsProvider);
+            return this;
+        }
+        /**
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
@@ -2623,6 +2663,46 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the S3 client should auto-detect the runtime environment
+         * (environment variables, web identity / IRSA, shared profile, ECS /
+         * EKS Pod Identity container, or EC2 instance metadata) and select the
+         * matching AWS credentials provider. Opt-in; it takes precedence over
+         * the other credential options and falls back to the SDK default
+         * credentials provider chain when the environment cannot be recognised.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useAutoDetectCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder useAutoDetectCredentialsProvider(boolean useAutoDetectCredentialsProvider) {
+            doSetProperty("useAutoDetectCredentialsProvider", useAutoDetectCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should auto-detect the runtime environment
+         * (environment variables, web identity / IRSA, shared profile, ECS /
+         * EKS Pod Identity container, or EC2 instance metadata) and select the
+         * matching AWS credentials provider. Opt-in; it takes precedence over
+         * the other credential options and falls back to the SDK default
+         * credentials provider chain when the environment cannot be recognised.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useAutoDetectCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder useAutoDetectCredentialsProvider(String useAutoDetectCredentialsProvider) {
+            doSetProperty("useAutoDetectCredentialsProvider", useAutoDetectCredentialsProvider);
+            return this;
+        }
+        /**
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
@@ -3436,6 +3516,46 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder trustAllCertificates(String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should auto-detect the runtime environment
+         * (environment variables, web identity / IRSA, shared profile, ECS /
+         * EKS Pod Identity container, or EC2 instance metadata) and select the
+         * matching AWS credentials provider. Opt-in; it takes precedence over
+         * the other credential options and falls back to the SDK default
+         * credentials provider chain when the environment cannot be recognised.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useAutoDetectCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder useAutoDetectCredentialsProvider(boolean useAutoDetectCredentialsProvider) {
+            doSetProperty("useAutoDetectCredentialsProvider", useAutoDetectCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the S3 client should auto-detect the runtime environment
+         * (environment variables, web identity / IRSA, shared profile, ECS /
+         * EKS Pod Identity container, or EC2 instance metadata) and select the
+         * matching AWS credentials provider. Opt-in; it takes precedence over
+         * the other credential options and falls back to the SDK default
+         * credentials provider chain when the environment cannot be recognised.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useAutoDetectCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder useAutoDetectCredentialsProvider(String useAutoDetectCredentialsProvider) {
+            doSetProperty("useAutoDetectCredentialsProvider", useAutoDetectCredentialsProvider);
             return this;
         }
         /**
