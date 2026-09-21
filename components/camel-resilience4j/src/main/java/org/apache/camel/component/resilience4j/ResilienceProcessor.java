@@ -68,6 +68,7 @@ import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
@@ -1019,8 +1020,14 @@ public class ResilienceProcessor extends BaseProcessorSupport
                     LOG.trace("Processing exchange: {} using circuit breaker ({}):{} with fallback: {}",
                             exchange.getExchangeId(), state, id, fallback);
                 }
+                // the failure is handled by the fallback: say so with the events a doCatch emits, so the error
+                // registry (camel get errors, the dev console) records a recovered failure as handled (CAMEL-24863)
+                EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, fallback, false, null);
                 // process the fallback until its fully done
                 fallback.process(exchange);
+                if (exchange.getException() == null) {
+                    EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, fallback, false, null);
+                }
             } catch (Throwable e) {
                 exchange.setException(e);
             }

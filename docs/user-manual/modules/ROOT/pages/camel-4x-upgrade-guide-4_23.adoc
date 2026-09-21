@@ -473,6 +473,16 @@ set here, because that would reject input that parses today. Routes that genuine
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
 
+=== camel-core, camel-resilience4j - a failure the circuit breaker's fallback recovered from is recorded as handled
+
+The error registry (`camel get errors`, the error dev console) recorded a call that failed inside a
+`circuitBreaker` and was answered by its `onFallback` as an error that was not handled, one per call, since the
+breaker runs the call on a copy of the exchange whose failure is reported before the fallback runs, and the breaker
+did not report the recovery. The breaker now emits the failure-handling and failure-handled events around the
+fallback, as `doCatch` does, and the registry marks the copy's entry as handled when the original reports the
+failure as handled, keeping the entry that names the node that failed. `camel get errors --handled=false` no longer
+lists such calls. The `handled` field of the entries is unchanged in shape.
+
 === camel-core - the type of a bean created by a script or a builder is optional
 
 The `type` (class name) of a bean definition — `bean` under `beans`, `templateBean` of a route
