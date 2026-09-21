@@ -9592,6 +9592,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -9632,6 +9635,9 @@
             "title" : "Output Media Type",
             "description" : "The media type to use for the output result."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -9666,6 +9672,9 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "trim" : {
             "type" : "boolean",
@@ -9779,6 +9788,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -9809,6 +9821,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "trim" : {
             "type" : "boolean",
             "title" : "Trim",
@@ -9833,6 +9848,9 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -9868,6 +9886,9 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -9905,6 +9926,9 @@
             "description" : "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.",
             "default" : true
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -9941,6 +9965,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -9970,6 +9997,9 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -10023,6 +10053,9 @@
             "title" : "Option",
             "description" : "To configure additional options on JSONPath. Multiple values can be separated by comma.",
             "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -10082,6 +10115,9 @@
             "title" : "Language",
             "description" : "The name of the language to use."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "trim" : {
             "type" : "boolean",
             "title" : "Trim",
@@ -10116,6 +10152,9 @@
             "type" : "string",
             "title" : "Ref",
             "description" : "Reference to an existing bean (bean id) to lookup in the registry."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -10159,6 +10198,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10190,6 +10232,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10219,6 +10264,9 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -10250,6 +10298,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10280,6 +10331,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10309,6 +10363,9 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -10352,6 +10409,9 @@
             "description" : "To pretty format the output (only JSon or XML supported).",
             "default" : false
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10387,6 +10447,9 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -10445,6 +10508,9 @@
             "description" : "If the token is a regular expression pattern.",
             "default" : false
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10497,6 +10563,9 @@
             "title" : "Id",
             "description" : "The id of this node."
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "trim" : {
             "type" : "boolean",
             "title" : "Trim",
@@ -10526,6 +10595,9 @@
             "type" : "string",
             "title" : "Module",
             "description" : "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -10581,6 +10653,9 @@
             "type" : "string",
             "title" : "Namespaces Ref",
             "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",
@@ -10657,6 +10732,9 @@
             "description" : "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default.",
             "default" : true
           },
+          "resolveResource" : {
+            "type" : "boolean"
+          },
           "resultQName" : {
             "type" : "string",
             "title" : "Result QName",
@@ -10728,6 +10806,9 @@
             "type" : "string",
             "title" : "Namespaces Ref",
             "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
+          },
+          "resolveResource" : {
+            "type" : "boolean"
           },
           "resultType" : {
             "type" : "string",

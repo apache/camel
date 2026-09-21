@@ -14879,6 +14879,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "datasonnet" : {
@@ -14951,6 +14960,15 @@
         "index" : 6,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "exchangeProperty" : {
@@ -14987,6 +15005,15 @@
         "index" : 2,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "groovy" : {
@@ -15032,6 +15059,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "header" : {
@@ -15068,6 +15104,15 @@
         "index" : 2,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "hl7Terser" : {
@@ -15084,6 +15129,9 @@
         "type" : "string",
         "description" : "The id of this node.",
         "title" : "Id"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15145,6 +15193,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "java" : {
@@ -15212,6 +15269,15 @@
         "index" : 5,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "javaScript" : {
@@ -15228,6 +15294,9 @@
         "type" : "string",
         "description" : "The id of this node.",
         "title" : "Id"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15293,6 +15362,15 @@
         "index" : 4,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "jsonPath" : {
@@ -15327,6 +15405,9 @@
         "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ],
         "description" : "To configure additional options on JSONPath. Multiple values can be separated by comma.",
         "title" : "Option"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15407,6 +15488,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "methodCall" : {
@@ -15432,6 +15522,9 @@
         "type" : "string",
         "description" : "Reference to an existing bean (bean id) to lookup in the registry.",
         "title" : "Ref"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15501,6 +15594,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "ognl" : {
@@ -15547,6 +15649,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "python3" : {
@@ -15592,6 +15703,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "python" : {
@@ -15637,6 +15757,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "quickjs" : {
@@ -15682,6 +15811,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "ref" : {
@@ -15727,6 +15865,15 @@
         "index" : 3,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "simple" : {
@@ -15803,6 +15950,15 @@
         "index" : 6,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "spEL" : {
@@ -15819,6 +15975,9 @@
         "type" : "string",
         "description" : "The id of this node.",
         "title" : "Id"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15872,6 +16031,9 @@
         "description" : "If the token is a regular expression pattern.",
         "title" : "Regex",
         "default" : "false"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15942,6 +16104,15 @@
         "index" : 2,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "wasm" : {
@@ -15997,6 +16168,15 @@
         "index" : 4,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean",
+        "displayName" : "Resolve Resource",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "advanced",
+        "label" : "advanced",
+        "default" : "false"
       } ]
     },
     "xMLTokenizer" : {
@@ -16036,6 +16216,9 @@
         "type" : "string",
         "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespaces Ref"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -16107,6 +16290,9 @@
         "title" : "Pre Compile",
         "default" : "true"
       }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
+      }, {
         "name" : "resultQName",
         "type" : "enum",
         "enum" : [ "NUMBER", "STRING", "BOOLEAN", "NODESET", "NODE" ],
@@ -16173,6 +16359,9 @@
         "type" : "string",
         "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespaces Ref"
+      }, {
+        "name" : "resolveResource",
+        "type" : "boolean"
       }, {
         "name" : "resultType",
         "type" : "string",
