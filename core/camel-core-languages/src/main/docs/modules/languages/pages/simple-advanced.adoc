@@ -160,9 +160,7 @@ and then refer to the file such as `resource:classpath:mymapping.txt` where the 
 
 === Init Blocks with custom functions
 
-You can also declare custom functions using
-
-Inside the init block, it is a lso possible to define custom functions in the syntax `$nane ~:= <statement>;` where you can then use simple language to declare
+Inside the init block, it is also possible to define custom functions in the syntax `$name ~:= <statement>;` where you can then use simple language to declare
 the structure of the function. Then you can later use these custom functions in your simple language expressions.
 
 For example to create a function that can cleanup a `String` value:

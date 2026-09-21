@@ -239,6 +239,26 @@ public final class SimpleOperatorConstants {
               annotations = { "kind=other", "syntax=expr ?: defaultValue", "precedence=20" })
     public static final String ELVIS = "?:";
 
+    // --- Init block operators (only inside $init{ ... }init$ at the start of an expression) ---
+
+    @Metadata(description = "Assigns a local variable in the init block at the top of an expression ($init{ ... }init$),"
+                            + " computed once and used in the expression as ${name}. Each statement ends with a semicolon and a new line.",
+              label = "init",
+              examples = { "$init{\n  $minAge := 18;\n  $greeting := 'Hello ${body}';\n}init$\n${greeting} (${minAge})" },
+              annotations = { "kind=init", "syntax=$name := expr;", "precedence=1" })
+    public static final String INIT_VARIABLE = ":=";
+
+    @Metadata(description = "Declares a local custom function in the init block at the top of an expression ($init{ ... }init$),"
+                            + " usually as a chain of functions on the input, called as ${name()} (the message body as input),"
+                            + " ${name(exp)} (an explicit input) or from another function as ${function(name)}."
+                            + " Each statement ends with a semicolon and a new line.",
+              label = "init",
+              examples = {
+                      "$init{\n  $cleanName ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};\n}init$\nCustomer: ${cleanName(${header.customerName})}",
+                      "$init{\n  $clean ~:= ${trim()} ~> ${normalizeWhitespace()};\n  $count ~:= ${clean()} ~> ${split(' ')} ~> ${size()};\n}init$\nYou said: ${clean()} in ${count()} words" },
+              annotations = { "kind=init", "syntax=$name ~:= expr ~> expr;", "precedence=1" })
+    public static final String INIT_FUNCTION = "~:=";
+
     private SimpleOperatorConstants() {
     }
 }
