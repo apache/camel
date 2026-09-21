@@ -325,12 +325,28 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals(1, nodes.size());
         assertEquals("foo", nodes.iterator().next());
 
-        // update body and header
-        mbeanServer.invoke(on, "removeMessageBodyOnBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
-        mbeanServer.invoke(on, "removeMessageHeaderOnBreakpoint", new Object[] { "foo", "beer" },
+        // remove body, header, and exchange property
+        mbeanServer.invoke(on, "removeMessageBodyOnBreakpoint",
+                new Object[] { "foo" },
+                new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "removeMessageHeaderOnBreakpoint",
+                new Object[] { "foo", "beer" },
                 new String[] { "java.lang.String", "java.lang.String" });
-        mbeanServer.invoke(on, "removeExchangePropertyOnBreakpoint", new Object[] { "foo", "food" },
+        mbeanServer.invoke(on, "removeExchangePropertyOnBreakpoint",
+                new Object[] { "foo", "food" },
                 new String[] { "java.lang.String", "java.lang.String" });
+
+        // verify removals at breakpoint "foo" where they were performed
+        String xmlAtFoo = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "foo", true },
+                new String[] { "java.lang.String", "boolean" });
+        assertNotNull(xmlAtFoo);
+        log.info(xmlAtFoo);
+
+        assertTrue(xmlAtFoo.contains("<toNode>foo</toNode>"), "Should contain foo node");
+        assertFalse(xmlAtFoo.contains("<header"), "Should not contain any headers at foo");
+        assertFalse(xmlAtFoo.contains("<exchangeProperty key=\"food\""),
+                "Should not contain exchange property 'food' at foo");
+        assertTrue(xmlAtFoo.contains("<body></body>"), "Body should be empty at foo");
 
         // resume breakpoint
         mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
@@ -350,9 +366,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         log.info(xml);
 
         assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
-        assertFalse(xml.contains("<header"), "Should not contain any headers");
-        assertFalse(xml.contains("<exchangeProperty key=\"food\""), "Should not contain exchange property 'food'");
-        assertTrue(xml.contains("<body></body>"), "Should not contain our body");
+        // Note: removals at foo do not persist to bar - new SuspendedExchange is created at bar
 
         resetMocks();
         mock.expectedMessageCount(1);
