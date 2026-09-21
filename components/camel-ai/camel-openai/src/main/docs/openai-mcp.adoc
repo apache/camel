@@ -253,6 +253,8 @@ A final text response is still returned when cumulative usage exceeds the budget
 During the agentic loop, `CamelOpenAIAgenticPromptTokens`, `CamelOpenAIAgenticCompletionTokens`, and `CamelOpenAIAgenticTotalTokens` expose cumulative usage across all iterations.
 The per-call headers `CamelOpenAIPromptTokens`, `CamelOpenAICompletionTokens`, and `CamelOpenAITotalTokens` reflect only the latest API call.
 
+The xref:others:openai-responses.adoc[responses operation] runs the same loop over the Responses API, with the same budget, headers, trace and events.
+
 Set `autoToolExecution=false` to disable the agentic loop and receive raw tool calls in the message body instead:
 
 [tabs]

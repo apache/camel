@@ -156,7 +156,11 @@ loop: it executes the calls, sends their results back together with the conversa
 model answers or `maxToolIterations` is exceeded. `toolExecutionErrorStrategy`, `hallucinatedToolNameStrategy`,
 `parallelToolExecution` and tools returning directly behave as they do for `chat-completion`, and the
 `CamelOpenAIToolIterations`, `CamelOpenAIMcpToolCalls` and `CamelOpenAIMcpReturnDirect` headers report what the loop did.
-`maxAgenticTokens` and the agentic trace and events are only supported by `chat-completion`.
+`maxAgenticTokens` caps the cumulative usage of the loop, the `CamelOpenAIAgenticPromptTokens`,
+`CamelOpenAIAgenticCompletionTokens` and `CamelOpenAIAgenticTotalTokens` headers report that usage after every call of
+the model, and the loop publishes the `CamelOpenAIAgenticTrace` exchange property and the agentic lifecycle events
+described in xref:others:openai-mcp.adoc[MCP Tool Calling]. The Responses API counts input and output tokens where
+`chat-completion` counts prompt and completion tokens; the headers keep the `chat-completion` names.
 
 With `autoToolExecution=false`, the model is not called again: the function calls it requested are returned as the
 message body, a `List` of `com.openai.models.responses.ResponseFunctionToolCall`, for the route to handle.

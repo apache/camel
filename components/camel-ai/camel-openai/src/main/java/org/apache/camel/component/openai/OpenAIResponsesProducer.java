@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
+import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseFunctionToolCall;
@@ -223,51 +224,104 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         List<ResponseInputItem> conversation = new ArrayList<>(input);
         List<ResponseInputItem> requestInput = input;
         List<String> toolCallsLog = new ArrayList<>();
+        OpenAIAgenticTokenTracker tokenTracker = new OpenAIAgenticTokenTracker();
+        OpenAIAgenticObservability observability = new OpenAIAgenticObservability(exchange);
+        observability.onLoopStarted(getEndpoint().getMcpToolState().knownToolNames().size(), config.getMaxToolIterations());
         int iteration = 0;
+        int modelCall = 0;
+        String stopReason = "unknown";
 
-        // as in chat-completion, at most maxToolIterations model calls are made
-        while (iteration < config.getMaxToolIterations()) {
-            Response response = createResponse(exchange, model, params.toBuilder().inputOfResponse(requestInput).build());
-            List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
-            if (functionCalls.isEmpty()) {
-                finishExchange(exchange, config, response, OpenAIResponsesSupport.extractAssistantText(response));
-                setToolHeaders(exchange.getMessage(), iteration, toolCallsLog, false);
-                return;
-            }
-            iteration++;
+        try {
+            // as in chat-completion, at most maxToolIterations model calls are made
+            while (iteration < config.getMaxToolIterations()) {
+                modelCall++;
+                long iterationStartNanos = System.nanoTime();
+                OpenAIAgenticTokenTracker.Snapshot tokensBefore = tokenTracker.snapshot();
 
-            functionCalls.forEach(call -> toolCallsLog.add(call.name()));
-            List<McpToolCallExecutor.ToolResult> results
-                    = toolCallExecutor.execute(OpenAIResponsesSupport.toChatToolCalls(functionCalls));
+                Response response
+                        = createResponse(exchange, model, params.toBuilder().inputOfResponse(requestInput).build());
+                tokenTracker.addUsage(response);
+                tokenTracker.setHeaders(exchange.getMessage());
+                long iterationPromptTokens = tokenTracker.promptTokensSince(tokensBefore);
+                long iterationCompletionTokens = tokenTracker.completionTokensSince(tokensBefore);
 
-            if (results.stream().allMatch(McpToolCallExecutor.ToolResult::returnDirect)) {
-                // the results are not sent back, so conversation memory is not moved to this response
-                Message out = exchange.getMessage();
-                out.setBody(results.stream()
-                        .map(McpToolCallExecutor.ToolResult::content)
-                        .collect(Collectors.joining("\n")));
-                setResponseHeaders(out, response);
-                setToolHeaders(out, iteration, toolCallsLog, true);
-                return;
+                List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
+                if (functionCalls.isEmpty()) {
+                    stopReason = OpenAIResponsesSupport.extractFinishStatus(response)
+                            .map(OpenAIResponsesProducer::mapFinishReason)
+                            .orElse("stop");
+                    observability.recordFinalIteration(
+                            modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
+                    observability.onLoopCompleted(iteration, tokenTracker, stopReason);
+                    finishExchange(exchange, config, response, OpenAIResponsesSupport.extractAssistantText(response));
+                    setToolHeaders(exchange.getMessage(), iteration, toolCallsLog, false);
+                    return;
+                }
+
+                // an answer that goes over the budget is still returned, only a further model call is refused
+                if (tokenTracker.exceedsBudget(config.getMaxAgenticTokens())) {
+                    observability.recordFinalIteration(
+                            modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
+                    stopReason = "token_budget_exceeded";
+                    throw new IllegalStateException(
+                            "Max agentic tokens (%d) exceeded at iteration %d. Cumulative usage: prompt=%d, completion=%d, total=%d"
+                                    .formatted(config.getMaxAgenticTokens(), iteration, tokenTracker.getPromptTokens(),
+                                            tokenTracker.getCompletionTokens(), tokenTracker.getTotalTokens()));
+                }
+
+                iteration++;
+
+                functionCalls.forEach(call -> toolCallsLog.add(call.name()));
+                List<ChatCompletionMessageToolCall> toolCalls = OpenAIResponsesSupport.toChatToolCalls(functionCalls);
+                List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls);
+                observability.recordIteration(
+                        modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
+                        results);
+
+                if (results.stream().allMatch(McpToolCallExecutor.ToolResult::returnDirect)) {
+                    // the results are not sent back, so conversation memory is not moved to this response
+                    Message out = exchange.getMessage();
+                    out.setBody(results.stream()
+                            .map(McpToolCallExecutor.ToolResult::content)
+                            .collect(Collectors.joining("\n")));
+                    setResponseHeaders(out, response);
+                    setToolHeaders(out, iteration, toolCallsLog, true);
+                    stopReason = "return_direct";
+                    observability.onLoopCompleted(iteration, tokenTracker, stopReason);
+                    return;
+                }
+                List<ResponseInputItem> toolOutputs = results.stream()
+                        .map(result -> ResponseInputItem.ofFunctionCallOutput(ResponseInputItem.FunctionCallOutput.builder()
+                                .callId(result.toolCallId())
+                                .output(result.content())
+                                .build()))
+                        .toList();
+                if (storedConversation) {
+                    // the server already added the function calls of this response to the conversation
+                    requestInput = toolOutputs;
+                } else {
+                    // the function calls, and the reasoning that led to them, must precede their results
+                    conversation.addAll(OpenAIResponsesSupport.toInputItems(response));
+                    conversation.addAll(toolOutputs);
+                    requestInput = conversation;
+                }
             }
-            List<ResponseInputItem> toolOutputs = results.stream()
-                    .map(result -> ResponseInputItem.ofFunctionCallOutput(ResponseInputItem.FunctionCallOutput.builder()
-                            .callId(result.toolCallId())
-                            .output(result.content())
-                            .build()))
-                    .toList();
-            if (storedConversation) {
-                // the server already added the function calls of this response to the conversation
-                requestInput = toolOutputs;
-            } else {
-                // the function calls, and the reasoning that led to them, must precede their results
-                conversation.addAll(OpenAIResponsesSupport.toInputItems(response));
-                conversation.addAll(toolOutputs);
-                requestInput = conversation;
+            stopReason = "max_iterations_exceeded";
+            observability.onLoopCompleted(config.getMaxToolIterations(), tokenTracker, stopReason);
+            throw new IllegalStateException(
+                    "Max tool iterations (%d) exceeded. Tools called: %s"
+                            .formatted(config.getMaxToolIterations(), toolCallsLog));
+        } catch (IllegalStateException e) {
+            if ("unknown".equals(stopReason)) {
+                stopReason = "error";
             }
+            throw e;
+        } catch (Exception e) {
+            stopReason = "error";
+            throw e;
+        } finally {
+            observability.finalizeObservability(tokenTracker, iteration, stopReason);
         }
-        throw new IllegalStateException(
-                "Max tool iterations (%d) exceeded. Tools called: %s".formatted(config.getMaxToolIterations(), toolCallsLog));
     }
 
     private Response createResponse(Exchange exchange, String model, ResponseCreateParams params) throws Exception {
