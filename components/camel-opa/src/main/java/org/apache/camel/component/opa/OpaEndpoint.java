@@ -31,6 +31,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Evaluate Open Policy Agent (Rego) policies against an Exchange and record the allow/deny decision on it.
@@ -40,8 +42,10 @@ import org.apache.camel.util.ObjectHelper;
              headersClass = OpaConstants.class)
 public class OpaEndpoint extends DefaultEndpoint {
 
-    private static final String WASM_MODE = "wasm";
+    static final String WASM_MODE = "wasm";
     private static final String REST_MODE = "rest";
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpaEndpoint.class);
 
     @UriPath(description = "Path of the Rego rule head to evaluate, relative to the OPA data document. For a rule"
                            + " named allow in a policy declaring package authz.orders, this is authz/orders/allow."
@@ -67,6 +71,7 @@ public class OpaEndpoint extends DefaultEndpoint {
         super.doStart();
         String mode = configuration.getEvaluationMode();
         if (WASM_MODE.equalsIgnoreCase(mode)) {
+            warnAboutIgnoredServerOptions();
             evaluator = createWasmEvaluator();
         } else if (!REST_MODE.equalsIgnoreCase(mode)) {
             // silently falling back to rest would leave a typo'd mode running against a server while quietly
@@ -113,6 +118,24 @@ public class OpaEndpoint extends DefaultEndpoint {
      */
     SSLContext getSslContext() {
         return sslContext;
+    }
+
+    /**
+     * {@code serverUrl} and {@code bearerToken} address and authenticate to an OPA server, of which there is none in
+     * {@code wasm} mode, so they are ignored - a startup warning is clearer than silence for an operator who set one
+     * and expects it to take effect. {@code failOpen} is deliberately not among these: a {@code wasm} evaluation can
+     * still fail (a busy pool, a bad bundle), and {@code failOpen} governs that outcome exactly as in {@code rest}
+     * mode, so it applies in both.
+     */
+    private void warnAboutIgnoredServerOptions() {
+        if (ObjectHelper.isNotEmpty(configuration.getBearerToken())) {
+            LOG.warn("bearerToken is ignored when evaluationMode=wasm: there is no server to authenticate to");
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getServerUrl())
+                && !OpaConfiguration.DEFAULT_SERVER_URL.equals(configuration.getServerUrl())) {
+            LOG.warn("serverUrl '{}' is ignored when evaluationMode=wasm: the policy is evaluated in-process",
+                    configuration.getServerUrl());
+        }
     }
 
     private OpaPolicyEvaluator createWasmEvaluator() throws Exception {

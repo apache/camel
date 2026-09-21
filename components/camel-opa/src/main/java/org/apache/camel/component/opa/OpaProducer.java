@@ -41,9 +41,10 @@ public class OpaProducer extends DefaultProducer {
         super.doStart();
 
         OpaConfiguration configuration = getEndpoint().getConfiguration();
-        // an injected client can point anywhere, and the endpoint has no way to ask it where; only probe a
-        // server we were told the address of
-        if (configuration.getOpaClient() != null || ObjectHelper.isEmpty(configuration.getServerUrl())) {
+        // an injected client can point anywhere, and the endpoint has no way to ask it where; wasm mode evaluates
+        // in-process with no server at all - in neither case is there a server we know the address of to probe
+        if (configuration.getOpaClient() != null || ObjectHelper.isEmpty(configuration.getServerUrl())
+                || OpaEndpoint.WASM_MODE.equalsIgnoreCase(configuration.getEvaluationMode())) {
             return;
         }
 
