@@ -63,7 +63,8 @@ public final class IntegrationLauncher {
         List<String> sources = sourceDir ? sourceFiles(directory) : files;
         cmd.addAll(sourceDir ? sourceDirArguments(name, dev, extraArgs) : runArguments(sources, name, dev, extraArgs));
         JsonObject result = new JsonObject();
-        if (sources.isEmpty()) {
+        // with --source-dir the guard looks at the top level only; a class under src/main/java is an app too
+        if (!sourceDir && sources.isEmpty()) {
             result.put("directory", directory.toString());
             result.put("status", "failed");
             result.put("error", "No source files to run in " + directory
@@ -164,15 +165,6 @@ public final class IntegrationLauncher {
         return names;
     }
 
-    /**
-     * The {@code camel run} arguments for the given files, name and mode.
-     *
-     * @param  files     the source files, relative to the directory
-     * @param  name      the integration name, or null for the default
-     * @param  dev       whether to run in dev mode
-     * @param  extraArgs further {@code camel run} arguments
-     * @return           the arguments after the camel command itself
-     */
     /** The {@code camel run --source-dir=.} arguments: the directory the process starts in is the app. */
     static List<String> sourceDirArguments(String name, boolean dev, List<String> extraArgs) {
         List<String> cmd = new ArrayList<>();
@@ -191,6 +183,15 @@ public final class IntegrationLauncher {
         return cmd;
     }
 
+    /**
+     * The {@code camel run} arguments for the given files, name and mode.
+     *
+     * @param  files     the source files, relative to the directory
+     * @param  name      the integration name, or null for the default
+     * @param  dev       whether to run in dev mode
+     * @param  extraArgs further {@code camel run} arguments
+     * @return           the arguments after the camel command itself
+     */
     static List<String> runArguments(List<String> files, String name, boolean dev, List<String> extraArgs) {
         List<String> cmd = new ArrayList<>();
         cmd.add("run");
