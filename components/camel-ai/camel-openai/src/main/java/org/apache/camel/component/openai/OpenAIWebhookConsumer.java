@@ -199,17 +199,27 @@ public class OpenAIWebhookConsumer extends DefaultConsumer {
 
     private byte[] readPayload(Exchange exchange) throws IOException {
         int max = endpoint.getConfiguration().getWebhookMaxPayloadSize();
-        Object body = exchange.getMessage().getBody();
+        Message message = exchange.getMessage();
+        Object body = message.getBody();
+        if (body == null) {
+            return new byte[0];
+        }
         byte[] payload;
         if (body instanceof byte[] bytes) {
+            // the request is already in memory, so the limit can only reject it
             payload = bytes;
-        } else if (body instanceof InputStream stream) {
-            try (InputStream in = stream) {
-                payload = in.readNBytes(max + 1);
-            }
         } else {
-            String text = exchange.getMessage().getBody(String.class);
-            payload = text != null ? text.getBytes(StandardCharsets.UTF_8) : new byte[0];
+            // everything else is read one byte past the limit rather than materialized whole, which for
+            // platform-http is the stream of the request and for another factory whatever converts to one
+            InputStream stream = body instanceof InputStream in ? in : message.getBody(InputStream.class);
+            if (stream != null) {
+                try (InputStream in = stream) {
+                    payload = in.readNBytes(max + 1);
+                }
+            } else {
+                byte[] bytes = message.getBody(byte[].class);
+                payload = bytes != null ? bytes : new byte[0];
+            }
         }
         if (payload.length > max) {
             throw new IOException("The request body is larger than webhookMaxPayloadSize (" + max + " bytes)");

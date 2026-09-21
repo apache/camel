@@ -200,6 +200,24 @@ class OpenAIWebhookConsumerTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    void aBodyLargerThanTheLimitIsRejectedWhenItArrivesAsText() throws Exception {
+        MockEndpoint events = getMockEndpoint("mock:events");
+        events.expectedMessageCount(0);
+
+        String payload = "{\"data\":\"" + "x".repeat(2048) + "\"}";
+        Exchange request = request(payload, signedHeaders("evt_big_text", payload, now()));
+        webhookEndpoint().getConfiguration().setWebhookMaxPayloadSize(1024);
+        try {
+            factory.dispatch(request);
+
+            events.assertIsSatisfied();
+            assertThat(request.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(413);
+        } finally {
+            webhookEndpoint().getConfiguration().setWebhookMaxPayloadSize(1048576);
+        }
+    }
+
     private OpenAIEndpoint webhookEndpoint() {
         return context.getEndpoints().stream()
                 .filter(OpenAIEndpoint.class::isInstance)
