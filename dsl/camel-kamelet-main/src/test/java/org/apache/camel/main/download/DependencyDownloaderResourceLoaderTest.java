@@ -61,6 +61,26 @@ public class DependencyDownloaderResourceLoaderTest {
         assertEquals("classpath:missing.groovy", resource.getLocation(), "the error names the resource as written");
     }
 
+    /** CAMEL-24865: under --source-dir a resource that exists nowhere keeps its original (not found) answer. */
+    @Test
+    void aMissingResourceUnderSourceDirIsStillMissing() throws Exception {
+        Path sourceDir = Files.createDirectory(routes.resolve("src"));
+        SimpleCamelContext context = new SimpleCamelContext();
+        DependencyDownloaderResourceLoader loader
+                = new DependencyDownloaderResourceLoader(context, sourceDir.toString(), List.of());
+
+        Resource resource = loader.resolveResource("classpath:camel-joor.properties");
+        assertFalse(resource.exists());
+        assertEquals("classpath:camel-joor.properties", resource.getLocation(),
+                "not replaced by a file in the source dir that does not exist");
+
+        // the form of the bug: with ?optional=true it is still optional (JavaLanguage failed on it)
+        Resource optional = loader.resolveResource("classpath:camel-joor.properties?optional=true");
+        assertFalse(optional.exists());
+        assertEquals("classpath:camel-joor.properties?optional=true", optional.getLocation(),
+                "?optional=true resource must not be replaced by a non-existent file");
+    }
+
     @Test
     void theSourceDirWinsWhenSet() throws Exception {
         Path sourceDir = Files.createDirectory(routes.resolve("src"));

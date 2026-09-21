@@ -71,9 +71,14 @@ public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
                 path = path.substring(2);
             }
             if (sourceDir != null) {
-                // if not found then we need to look again inside the source-dir which we can do
-                // for file and classpath resources: force to load from file system when using source-dir
-                answer = super.resolveResource("file:" + sourceDir + File.separator + path);
+                // if not found then we need to look again inside the source-dir which we can do for file and
+                // classpath resources; only when the file is there: a resource that exists nowhere keeps the
+                // original answer, so ?optional=true still means optional and an error names it as written
+                // (CAMEL-24865: classpath:camel-joor.properties?optional=true became a file that did not exist)
+                Resource candidate = super.resolveResource("file:" + sourceDir + File.separator + path);
+                if (candidate != null && candidate.exists()) {
+                    answer = candidate;
+                }
             } else {
                 // the files next to the routes: the first directory that has it wins, else the original answer
                 // (so the error names the resource as written)
