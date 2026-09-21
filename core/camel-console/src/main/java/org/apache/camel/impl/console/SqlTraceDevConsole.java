@@ -25,12 +25,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -234,6 +238,29 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
         return "resource:" + uri;
     }
 
+    /**
+     * Whether the endpoint honours the {@code CamelSqlQuery} header.
+     * <p/>
+     * camel-sql gates that header behind the {@code allowQueryFromHeader} option, disabled by default; when it is
+     * disabled the endpoint-configured query runs instead, so reporting the header would show a statement that never
+     * executed. The option is read through the generated property configurer rather than by casting, because
+     * camel-console must not depend on camel-sql. Endpoints that do not declare the option at all - jdbc, which takes
+     * its query from the body - never honour the header.
+     */
+    private static boolean isQueryHeaderHonoured(Endpoint endpoint) {
+        if (!(endpoint instanceof DefaultEndpoint defaultEndpoint)) {
+            return false;
+        }
+        Component component = defaultEndpoint.getComponent();
+        if (component == null) {
+            return false;
+        }
+        if (component.getEndpointPropertyConfigurer() instanceof PropertyConfigurerGetter getter) {
+            return Boolean.TRUE.equals(getter.getOptionValue(endpoint, "allowQueryFromHeader", true));
+        }
+        return false;
+    }
+
     private static String detectCategory(String query) {
         if (query != null && !query.isEmpty()) {
             String upper = query.stripLeading().toUpperCase(Locale.ENGLISH);
@@ -273,11 +300,15 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
                 if (uri.startsWith("sql:") || uri.startsWith("jdbc:")) {
                     Exchange exchange = ese.getExchange();
 
-                    // prefer the CamelSqlQuery header (runtime override) over the URI
+                    // prefer the CamelSqlQuery header (runtime override) over the URI, but only when the
+                    // endpoint actually honours it - otherwise the console would report a statement that
+                    // was never executed
                     String query = null;
-                    Object headerQuery = exchange.getMessage().getHeader("CamelSqlQuery");
-                    if (headerQuery != null) {
-                        query = headerQuery.toString();
+                    if (isQueryHeaderHonoured(ese.getEndpoint())) {
+                        Object headerQuery = exchange.getMessage().getHeader("CamelSqlQuery");
+                        if (headerQuery != null) {
+                            query = headerQuery.toString();
+                        }
                     }
                     if (query == null) {
                         query = extractQuery(uri);
