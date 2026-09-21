@@ -299,14 +299,16 @@ cannot be overridden by message headers:
 
 [options="header"]
 |===
-| Option               | Default | Effect when set to `false`
-| `useHeaderRecipients`| `true`  | Endpoint URI to/cc/bcc always used; To/CC/BCC headers ignored.
-| `useHeaderFrom`      | `true`  | Endpoint URI from always used; From/Sender headers ignored.
-| `useHeaderSubject`   | `true`  | Endpoint URI subject always used; Subject header ignored.
-| `useHeaderReplyTo`   | `true`  | Endpoint URI replyTo always used; Reply-To header ignored.
+| Option               | Default | Effect when set to `true`
+| `useHeaderRecipients`| `false` | Message To/CC/BCC headers can override the endpoint URI recipients.
+| `useHeaderFrom`      | `false` | Message From/Sender headers can override the endpoint URI sender.
+| `useHeaderSubject`   | `false` | Message Subject header can override the endpoint URI subject.
+| `useHeaderReplyTo`   | `false` | Message Reply-To header can override the endpoint URI replyTo.
 |===
 
-All four default to `true` so existing behaviour is preserved. Example:
+All four default to `false`. Set to `true` to let message headers override the endpoint configuration.
+
+Example:
 
 [tabs]
 ====
