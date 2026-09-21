@@ -44,6 +44,8 @@ public class AggregationStrategyGroupedBodyTest extends ContextTestSupport {
         assertEquals("A", list.get(0));
         assertEquals("B", list.get(1));
         assertEquals("C", list.get(2));
+        // CAMEL-24880: the bodies print as any list, the short List<Exchange>(n elements) form is for exchanges only
+        assertEquals("[A, B, C]", list.toString());
     }
 
     @Override
