@@ -22,12 +22,15 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -64,6 +68,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     ExecutorService executorService;
     WatchFileChangesTask task;
     Map<WatchKey, Path> folderKeys;
+    WatchEvent.Modifier watchModifier;
     FileFilter fileFilter;
     String folder;
     boolean isRecursive;
@@ -188,6 +193,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                 Path path = dir.toPath();
                 watcher = path.getFileSystem().newWatchService();
                 // we cannot support deleting files as we don't know which routes that would be
+                this.watchModifier = modifier;
                 if (isRecursive) {
                     this.folderKeys = new HashMap<>();
                     registerRecursive(watcher, path, modifier);
@@ -225,11 +231,60 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         Files.walkFileTree(root, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                if (isCompileWorkDir(dir)) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
                 WatchKey key = registerPathToWatcher(modifier, dir, watcher);
                 folderKeys.put(key, dir);
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    /**
+     * Registers a directory created while watching recursively, and its subdirectories, and collects the files already
+     * in them as changes: a tree such as src/main/java/com/acme is usually created with its first file in it, before
+     * the watcher can see the directory.
+     */
+    private void registerNewDirectory(Path dir, List<File> changed) {
+        try {
+            Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) throws IOException {
+                    if (isCompileWorkDir(d) || folderKeys.containsValue(d)) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    WatchKey k = registerPathToWatcher(watchModifier, d, watcher);
+                    folderKeys.put(k, d);
+                    LOG.debug("Watching new directory: {}", d);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path f, BasicFileAttributes attrs) {
+                    changed.add(f.toFile());
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            LOG.warn("Cannot watch new directory: {} due to: {}. This exception is ignored.", dir, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Whether the directory is the compile work directory (or inside it): the class files the runtime writes there when
+     * it compiles a Java source are not changes to watch, and would otherwise trigger a reload of their own, which
+     * compiles again, which writes again (CAMEL-24862).
+     */
+    protected boolean isCompileWorkDir(Path dir) {
+        CompileStrategy cs = getCamelContext() != null
+                ? getCamelContext().getCamelContextExtension().getContextPlugin(CompileStrategy.class) : null;
+        String workDir = cs != null ? cs.getWorkDir() : null;
+        if (workDir == null) {
+            return false;
+        }
+        Path work = Paths.get(workDir).toAbsolutePath().normalize();
+        return dir.toAbsolutePath().normalize().startsWith(work);
     }
 
     @Override
@@ -290,15 +345,28 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         pathToReload = folder;
                     }
 
+                    // the files of the events, plus the files of a directory created under a watched one
+                    // when recursive (registered here, since the watch service only reports what is registered
+                    // at the time; a class under src/main/java added while running was never seen, CAMEL-24862)
+                    List<File> changed = new ArrayList<>();
                     for (WatchEvent<?> event : key.pollEvents()) {
                         WatchEvent<Path> we = (WatchEvent<Path>) event;
                         Path path = we.context();
                         File file = pathToReload.resolve(path).toFile();
                         LOG.trace("File watch-event: {} on file: {}", we, file);
                         if (file.isDirectory()) {
+                            if (isRecursive && we.kind() == ENTRY_CREATE && !isCompileWorkDir(file.toPath())) {
+                                registerNewDirectory(file.toPath(), changed);
+                            }
                             continue;
                         }
-
+                        if (isCompileWorkDir(file.toPath().getParent())) {
+                            // a class file the runtime wrote while compiling: not a change of ours
+                            continue;
+                        }
+                        changed.add(file);
+                    }
+                    for (File file : changed) {
                         String name = FileUtil.compactPath(file.getPath());
                         LOG.debug("Detected Modified/Created file: {}", name);
                         boolean accept = fileFilter == null || fileFilter.accept(file);
