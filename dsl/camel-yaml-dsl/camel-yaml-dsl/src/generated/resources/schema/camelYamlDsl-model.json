@@ -14882,12 +14882,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "datasonnet" : {
@@ -14963,12 +14965,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 7,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "exchangeProperty" : {
@@ -15008,12 +15012,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 3,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "groovy" : {
@@ -15062,12 +15068,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "header" : {
@@ -15107,12 +15115,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 3,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "hl7Terser" : {
@@ -15131,7 +15141,10 @@
         "title" : "Id"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15196,12 +15209,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "java" : {
@@ -15272,12 +15287,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 6,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "javaScript" : {
@@ -15296,7 +15313,10 @@
         "title" : "Id"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15365,12 +15385,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 5,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "jsonPath" : {
@@ -15407,7 +15429,10 @@
         "title" : "Option"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15491,12 +15516,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "methodCall" : {
@@ -15524,7 +15551,10 @@
         "title" : "Ref"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -15597,12 +15627,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "ognl" : {
@@ -15652,12 +15684,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "python3" : {
@@ -15706,12 +15740,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "python" : {
@@ -15760,12 +15796,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "quickjs" : {
@@ -15814,12 +15852,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "ref" : {
@@ -15868,12 +15908,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 4,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "simple" : {
@@ -15953,12 +15995,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 7,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "spEL" : {
@@ -15977,7 +16021,10 @@
         "title" : "Id"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -16033,7 +16080,10 @@
         "default" : "false"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -16107,12 +16157,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 3,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "wasm" : {
@@ -16171,12 +16223,14 @@
       }, {
         "name" : "resolveResource",
         "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false",
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 5,
         "group" : "advanced",
-        "label" : "advanced",
-        "default" : "false"
+        "label" : "advanced"
       } ]
     },
     "xMLTokenizer" : {
@@ -16218,7 +16272,10 @@
         "title" : "Namespaces Ref"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultType",
         "type" : "string",
@@ -16291,7 +16348,10 @@
         "default" : "true"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultQName",
         "type" : "enum",
@@ -16361,7 +16421,10 @@
         "title" : "Namespaces Ref"
       }, {
         "name" : "resolveResource",
-        "type" : "boolean"
+        "type" : "boolean",
+        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.",
+        "title" : "Resolve Resource",
+        "default" : "false"
       }, {
         "name" : "resultType",
         "type" : "string",

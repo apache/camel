@@ -2245,7 +2245,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -4143,7 +4143,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "outputMediaType", type = "string", description = "The media type to use for the output result.", displayName = "Output Media Type"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -5242,7 +5242,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
     )
@@ -6396,7 +6396,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -6830,7 +6830,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
     )
@@ -6903,7 +6903,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -7646,7 +7646,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -7726,7 +7726,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "preCompile", type = "boolean", defaultValue = "true", description = "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.", displayName = "Pre Compile"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "singleQuotes", type = "boolean", defaultValue = "true", description = "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.", displayName = "Single Quotes"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -7816,7 +7816,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -8054,7 +8054,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -8375,7 +8375,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "option", type = "enum:DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES", description = "To configure additional options on JSONPath. Multiple values can be separated by comma.", displayName = "Option"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "suppressExceptions", type = "boolean", defaultValue = "false", description = "Whether to suppress exceptions such as PathNotFoundException.", displayName = "Suppress Exceptions"),
@@ -9035,7 +9035,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "language", type = "string", required = true, description = "The name of the language to use.", displayName = "Language"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
     )
@@ -9864,7 +9864,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "method", type = "string", description = "Name of method to call.", displayName = "Method"),
                     @YamlProperty(name = "ref", type = "string", description = "Reference to an existing bean (bean id) to lookup in the registry.", displayName = "Ref"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "scope", type = "enum:Singleton,Request,Prototype", defaultValue = "Singleton", description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.", displayName = "Scope"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim"),
@@ -10213,7 +10213,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -10485,7 +10485,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -13046,7 +13046,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -13125,7 +13125,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -13204,7 +13204,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -13724,7 +13724,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -16990,7 +16990,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "nested", type = "boolean", defaultValue = "false", description = "If the result is a nested simple expression should this expression be evaluated as well.", displayName = "Nested"),
                     @YamlProperty(name = "pretty", type = "boolean", defaultValue = "false", description = "To pretty format the output (only JSon or XML supported).", displayName = "Pretty"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim"),
                     @YamlProperty(name = "trimResult", type = "boolean", defaultValue = "false", description = "Whether to trim the returned values when this language is in use.", displayName = "Trim Result")
@@ -17303,7 +17303,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -18975,7 +18975,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "includeTokens", type = "boolean", defaultValue = "false", description = "Whether to include the tokens in the parts when using pairs. When including tokens then the endToken property must also be configured (to use pair mode).", displayName = "Include Tokens"),
                     @YamlProperty(name = "inheritNamespaceTagName", type = "string", description = "To inherit namespaces from a root/parent tag name when using XML. You can use simple language as the tag name to support dynamic names.", displayName = "Inherit Namespace Tag Name"),
                     @YamlProperty(name = "regex", type = "boolean", defaultValue = "false", description = "If the token is a regular expression pattern.", displayName = "Regex"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "skipFirst", type = "boolean", defaultValue = "false", description = "To skip the very first element.", displayName = "Skip First"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
@@ -20692,7 +20692,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
     )
@@ -20766,7 +20766,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "module", type = "string", required = true, description = "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function.", displayName = "Module"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
             }
@@ -21243,7 +21243,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mode", type = "enum:i,w,u,t", defaultValue = "i", description = "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default), w - wrapping the extracted token in its ancestor context, u - unwrapping the extracted token to its child content, t - extracting the text content of the specified element.", displayName = "Mode"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
                     @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -21355,7 +21355,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "objectModel", type = "string", description = "The XPath object model to use.", displayName = "Object Model"),
                     @YamlProperty(name = "preCompile", type = "boolean", defaultValue = "true", description = "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default.", displayName = "Pre Compile"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultQName", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE", defaultValue = "NODESET", description = "Sets the output type supported by XPath.", displayName = "Result QName"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "saxon", type = "boolean", defaultValue = "false", description = "Whether to use Saxon.", displayName = "Saxon"),
@@ -21496,7 +21496,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
                     @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
-                    @YamlProperty(name = "resolveResource", type = "boolean"),
+                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved.", displayName = "Resolve Resource"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
