@@ -86,10 +86,16 @@ class VertxWebsocketProducerNoPeerTest {
 
         Exchange exchange = new DefaultExchange(context);
 
+        AtomicInteger callbacks = new AtomicInteger();
         AtomicReference<Boolean> doneSync = new AtomicReference<>();
-        boolean result = producer.process(exchange, doneSync::set);
+        boolean result = producer.process(exchange, sync -> {
+            callbacks.incrementAndGet();
+            doneSync.set(sync);
+        });
 
         assertTrue(result, "process must report that it finished the exchange itself");
+        // the same triple as the first test: completing the callback twice would also satisfy the other two
+        assertEquals(1, callbacks.get());
         assertTrue(doneSync.get());
     }
 }
