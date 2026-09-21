@@ -1145,6 +1145,28 @@ public interface Aws2S3ComponentBuilderFactory {
     
         
         /**
+         * Set whether the S3 client should auto-detect the runtime environment
+         * (environment variables, web identity / IRSA, shared profile, ECS /
+         * EKS Pod Identity container, or EC2 instance metadata) and select the
+         * matching AWS credentials provider. Opt-in; it takes precedence over
+         * the other credential options and falls back to the SDK default
+         * credentials provider chain when the environment cannot be recognised.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useAutoDetectCredentialsProvider the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder useAutoDetectCredentialsProvider(boolean useAutoDetectCredentialsProvider) {
+            doSetProperty("useAutoDetectCredentialsProvider", useAutoDetectCredentialsProvider);
+            return this;
+        }
+    
+        
+        /**
          * Set whether the S3 client should expect to load credentials through a
          * default credentials provider.
          * 
@@ -1279,6 +1301,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "secretKey": getOrCreateConfiguration((AWS2S3Component) component).setSecretKey((java.lang.String) value); return true;
             case "sessionToken": getOrCreateConfiguration((AWS2S3Component) component).setSessionToken((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((AWS2S3Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "useAutoDetectCredentialsProvider": getOrCreateConfiguration((AWS2S3Component) component).setUseAutoDetectCredentialsProvider((boolean) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((AWS2S3Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((AWS2S3Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "useSessionCredentials": getOrCreateConfiguration((AWS2S3Component) component).setUseSessionCredentials((boolean) value); return true;
