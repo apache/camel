@@ -315,6 +315,7 @@ context.getRegistry().bind("opaTls", spiffe);
 
 None of this applies in `wasm` mode, where there is no server to reach.
 
+[[failure-handling]]
 == Failure handling
 
 The component fails closed. If the policy cannot be evaluated at all — the OPA server is unreachable, times out,
@@ -365,7 +366,9 @@ more important of the two: a denied producer merely records a verdict the route 
 `CamelAuthorizationException` and stops the exchange, so an unreachable server there fails every message outright.
 That is why the policy's check is on by default rather than opt-in like the producer's. Set
 `healthCheckEnabled=false` on the policy for a route that should stay ready regardless — one running `failOpen`, say
-— in preference to hiding the check with `camel.health.exclude-pattern`.
+— in preference to hiding the check with `camel.health.exclude-pattern`. A policy running `failOpen` marks the
+exchanges it let through with `CamelOpaDecisionFailedOpen`, exactly as the producer does; the evaluator is shared,
+so everything in <<failure-handling>> about that header applies to `.policy(...)` too.
 
 Neither check is registered when an `opaClient` was injected: that client may point anywhere and neither the
 endpoint nor the policy has a way to ask it where, so probing the configured `serverUrl` would report on a server
