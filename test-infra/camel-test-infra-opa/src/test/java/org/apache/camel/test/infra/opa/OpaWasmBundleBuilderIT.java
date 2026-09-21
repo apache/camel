@@ -27,14 +27,14 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "skipITs", matches = "true")
-public class OpaWasmBundleBuilderTest {
+public class OpaWasmBundleBuilderIT {
+    // an IT rather than a Test on purpose: this needs a container, and the convention in this tree is that
+    // anything requiring Docker runs under failsafe so a plain build stays green without it
 
     private static final String REGO = """
             package authz
