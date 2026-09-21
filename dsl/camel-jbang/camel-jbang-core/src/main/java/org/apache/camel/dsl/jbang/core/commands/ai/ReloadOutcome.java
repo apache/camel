@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.List;
 
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -114,9 +115,8 @@ public final class ReloadOutcome {
 
     /** Polls the integration's log for the reload of a just written file, up to the timeout. */
     public static JsonObject await(long pid, String name, String sinceKey, long timeoutMillis) {
-        // a monotonic clock: a wall-clock correction must not cut the wait short or stretch it
-        long end = System.nanoTime() + timeoutMillis * 1_000_000L;
-        while (System.nanoTime() < end) {
+        StopWatch watch = new StopWatch();
+        while (watch.taken() < timeoutMillis) {
             JsonObject outcome = classify(records(pid, name), sinceKey);
             if (outcome != null) {
                 return outcome;
