@@ -622,10 +622,11 @@ public class AWS2S3Configuration implements Cloneable, AwsCommonConfiguration {
     }
 
     /**
-     * Set whether the S3 client should auto-detect the runtime credentials source (environment variables, web identity
-     * / IRSA, shared profile, or ECS / EKS Pod Identity container credentials), select the matching AWS credentials
-     * provider, and log the detected source. Opt-in; it takes precedence over the other credential options and falls
-     * back to the SDK default credentials provider chain (which also covers EC2) when the source cannot be recognised.
+     * Set whether the S3 client should auto-detect the runtime credentials source (JVM system properties, environment
+     * variables, web identity / IRSA, shared profile, or ECS / EKS Pod Identity container credentials), select the
+     * matching AWS credentials provider, and log the detected source. Opt-in; it takes precedence over the other
+     * credential options and falls back to the SDK default credentials provider chain (which also covers EC2) when the
+     * source cannot be recognised.
      */
     public void setUseAutoDetectCredentialsProvider(boolean useAutoDetectCredentialsProvider) {
         this.useAutoDetectCredentialsProvider = useAutoDetectCredentialsProvider;

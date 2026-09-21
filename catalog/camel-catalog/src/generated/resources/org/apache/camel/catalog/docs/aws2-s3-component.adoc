@@ -56,6 +56,7 @@ the https://aws.amazon.com/s3[Amazon's S3].
 Set `useAutoDetectCredentialsProvider=true` to have the component detect which credentials source applies to the
 runtime, select the matching AWS credentials provider, and log the detected source at INFO:
 
+* JVM system properties (`aws.accessKeyId` / `aws.secretAccessKey`)
 * environment variables (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`)
 * web identity / IRSA (`AWS_WEB_IDENTITY_TOKEN_FILE`) - requires `software.amazon.awssdk:sts` on the classpath
 * shared profile (`AWS_PROFILE` or `~/.aws/credentials`)
