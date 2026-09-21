@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 import java.util.List;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,6 +65,23 @@ class RuntimeToolsTest {
         assertThatThrownBy(() -> tools.camel_runtime_route_control(null, "myRoute", null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("command is required");
+    }
+
+    @Test
+    void sqlRequiresQuery() {
+        RuntimeTools tools = createTools();
+        assertThatThrownBy(() -> tools.camel_runtime_sql(null, null, null, null))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining("query is required");
+    }
+
+    @Test
+    void theNewWrappersDelegateToRegistryTools() {
+        // CAMEL-24867: every wrapper names a tool the shared registry has, so a typo cannot hide until runtime
+        for (String name : List.of("execute_sql", "get_datasources", "get_sql_trace", "get_circuit_breakers", "get_metrics",
+                "get_eip_stats", "get_spans", "get_startup_steps", "get_route_analysis", "detect_config_drift")) {
+            assertThat(ToolRegistry.findTool(name)).as(name).isNotNull();
+        }
     }
 
     @Test

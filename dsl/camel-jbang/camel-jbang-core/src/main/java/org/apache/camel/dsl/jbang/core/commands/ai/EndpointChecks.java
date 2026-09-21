@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,6 +235,8 @@ final class EndpointChecks {
                 }
                 checkRegexOptions(errors, fullUri, i, optionLineMap);
                 checkDynamicDirectory(errors, fullUri, i, eipName);
+                checkSimplePlaceholders(errors, fullUri, i, optionLineMap, eipName);
+                checkRequiredPathOptions(errors, fullUri, catalog, i, eipName);
             } catch (Exception e) {
                 // ignore validation errors
             }
@@ -307,6 +310,13 @@ final class EndpointChecks {
     static final Set<String> FILE_SCHEMES = Set.of("file", "ftp", "ftps", "sftp", "file-watch", "smb");
 
     /**
+     * A doubled backslash before a character that a single backslash would escape in a regex (\\. \\d \\( ...): the
+     * user meant the escape. A doubled backslash before any other character (\\myfile) is left alone: \myfile is not a
+     * regex escape, so a literal backslash is the only thing it can mean.
+     */
+    static final Pattern DOUBLED_BACKSLASH_ESCAPE = Pattern.compile("\\\\\\\\[.dswDSWbB()\\[\\]{}+*?|^$]");
+
+    /**
      * include and exclude on the file components are regular expressions: include=*.txt fails at startup with a
      * PatternSyntaxException wrapped in a binding error. Says to write .*\\.txt or use antInclude.
      */
@@ -324,6 +334,15 @@ final class EndpointChecks {
             String name = pair.substring(0, eq);
             String value = pair.substring(eq + 1);
             if (!name.equals("include") && !name.equals("exclude") || value.startsWith("{{")) {
+                continue;
+            }
+            if (DOUBLED_BACKSLASH_ESCAPE.matcher(value).find()) {
+                // '.*\\.json$' in single quotes: YAML keeps both backslashes, and in a regex \\ is one literal
+                // backslash, so the pattern matches a file name with a backslash in it: no file matches and the route
+                // runs in silence (CAMEL-24854)
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
+                           + name + "=" + value + " matches a literal backslash in the file name (in a regex \\\\ is one"
+                           + " backslash and \\. is a dot): write " + name + "='" + value.replace("\\\\", "\\") + "'");
                 continue;
             }
             try {
@@ -370,6 +389,87 @@ final class EndpointChecks {
                    + " says 'Dynamic expressions with ${ } placeholders is not allowed. Use the fileName option'):"
                    + " keep the directory fixed and put the dynamic part in fileName (" + scheme + ":" + fixed
                    + "?fileName=${...}), or use toD: with the whole uri, which evaluates it per message");
+    }
+
+    /** The EIPs whose uri is a Simple expression evaluated per message: ${...} is right there. */
+    private static final Set<String> DYNAMIC_URI_EIPS = Set.of("toD", "to-d", "wireTap", "wire-tap", "enrich", "pollEnrich",
+            "poll-enrich", "recipientList", "recipient-list", "routingSlip", "routing-slip", "dynamicRouter", "dynamic-router");
+
+    /**
+     * period=${welcome.period} or period=${properties:welcome.period} on a to: or from:: a Simple expression, which an
+     * endpoint option is not; the property placeholder is {{welcome.period}}. The runtime fails to bind the option at
+     * startup or on the reload, and camel validate said nothing (CAMEL-24857). toD and the other dynamic EIPs evaluate
+     * the uri as Simple first and are left alone.
+     */
+    static void checkSimplePlaceholders(
+            List<String> errors, String fullUri, int uriLineIdx, Map<String, Integer> optionLineMap, String eipName) {
+        if (eipName != null && DYNAMIC_URI_EIPS.contains(eipName)) {
+            return;
+        }
+        int q = fullUri.indexOf('?');
+        if (q < 0) {
+            return;
+        }
+        String scheme = fullUri.substring(0, Math.max(0, fullUri.indexOf(':')));
+        for (String pair : fullUri.substring(q + 1).split("&")) {
+            int eq = pair.indexOf('=');
+            if (eq < 0) {
+                continue;
+            }
+            String name = pair.substring(0, eq);
+            String value = pair.substring(eq + 1);
+            if (!YamlLines.isPropertyKeyInSimpleSyntax(value)) {
+                continue;
+            }
+            String key = YamlLines.propertyKeyOf(value);
+            errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + scheme + ": " + name + "=" + value
+                       + " is a Simple expression, which an endpoint option is not evaluated as: a property placeholder"
+                       + " is written {{key}}, so " + name + ": \"{{" + key + "}}\"");
+        }
+    }
+
+    /**
+     * uri: cron with only a schedule under parameters: the required path option name is neither in the uri nor among
+     * the parameters; camel run fails with "Option name is required when creating endpoint uri with syntax cron:name"
+     * (CAMEL-24858). Says both places it can go.
+     */
+    static void checkRequiredPathOptions(
+            List<String> errors, String fullUri, CamelCatalog catalog, int uriLineIdx, String eipName) {
+        int colon = fullUri.indexOf(':');
+        if (colon < 0 || fullUri.contains("{{") || !"from".equals(eipName) && !"to".equals(eipName)) {
+            return; // only an endpoint that is created: an intercept pattern such as jms* names no destination
+        }
+        String scheme = fullUri.substring(0, colon);
+        int q = fullUri.indexOf('?');
+        String path = q >= 0 ? fullUri.substring(colon + 1, q) : fullUri.substring(colon + 1);
+        if (path.startsWith("//") || !path.isEmpty()) {
+            // a path is given: which path option it fills is the component's business; an explicit empty authority
+            // (infinispan:// with a custom listener) is a choice, a bare scheme with the options under parameters is
+            // the slip this catches
+            return;
+        }
+        Set<String> given = new HashSet<>();
+        if (q >= 0) {
+            for (String pair : fullUri.substring(q + 1).split("&")) {
+                given.add(pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair);
+            }
+        }
+        try {
+            var model = catalog.componentModel(scheme);
+            if (model == null) {
+                return;
+            }
+            for (var option : model.getEndpointOptions()) {
+                if (option.isRequired() && "path".equals(option.getKind()) && !given.contains(option.getName())) {
+                    errors.add(linePrefix(uriLineIdx) + scheme + ": the required option '" + option.getName()
+                               + "' is missing (the runtime says 'Option " + option.getName() + " is required'): write"
+                               + " it in the uri, uri: " + scheme + ":<" + option.getName() + ">, or under parameters"
+                               + " as " + option.getName() + ": <value>");
+                }
+            }
+        } catch (Exception e) {
+            // ignore: a component the catalog does not know is reported elsewhere
+        }
     }
 
     /** A wildcard such as *.txt as the regex .*\\.txt. */

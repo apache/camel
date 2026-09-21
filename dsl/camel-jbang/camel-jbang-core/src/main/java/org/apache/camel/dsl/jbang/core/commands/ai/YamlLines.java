@@ -16,9 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Line-level helpers over a YAML source shared by the checks of {@link SourceValidator}: the enclosing EIP of a line,
@@ -111,6 +114,40 @@ final class YamlLines {
         return unquote(trimmed.substring(trimmed.indexOf(':') + 1).trim());
     }
 
+    /** The roots of a Simple expression: ${body...}, ${header.x}, ${date:...}: a value evaluated as Simple is fine. */
+    private static final Set<String> SIMPLE_ROOTS = Set.of("body", "bodyAs", "mandatoryBodyAs",
+            "originalBody", "header", "headers", "headerAs", "exchangeProperty", "exchangeProperties", "exchangePropertyAs",
+            "variable", "variables", "variableAs", "exchange", "camelContext", "camelId", "routeId", "routeGroup", "stepId",
+            "id", "messageId", "exchangeId", "messageTimestamp", "messageHistory", "threadName", "threadId", "hostname",
+            "null", "date", "bean", "random", "file", "env", "sys", "sysenv", "ref", "type", "uuid", "empty", "collate",
+            "exception", "in", "out",
+            "skip", "jsonpath", "xpath", "jq", "iif", "join", "replace", "substring", "pretty", "hash", "messageAs",
+            "properties", "propertiesExist");
+
+    private static final Pattern DOTTED_KEY = Pattern.compile("^\\$\\{([A-Za-z_][\\w-]*)(?:[.-][\\w-]+)+\\}$");
+
+    /**
+     * Whether a ${...} value is a property key wearing Simple's syntax (${welcome.period}, ${properties:x}) rather than
+     * a Simple expression (${body.id}, ${date:now:yyyy}): the first segment is not a Simple root (CAMEL-24857).
+     */
+    static boolean isPropertyKeyInSimpleSyntax(String value) {
+        if (value == null) {
+            return false;
+        }
+        if (value.startsWith("${properties:") && value.endsWith("}")) {
+            return true;
+        }
+        Matcher m = DOTTED_KEY.matcher(value);
+        return m.find() && !SIMPLE_ROOTS.contains(m.group(1));
+    }
+
+    /** The key of such a value: welcome.period for ${welcome.period} or ${properties:welcome.period}. */
+    static String propertyKeyOf(String value) {
+        return value.startsWith("${properties:")
+                ? value.substring("${properties:".length(), value.length() - 1)
+                : value.substring(2, value.length() - 1);
+    }
+
     static String extractEipFromLine(String trimmed) {
         if (trimmed.startsWith("- ")) {
             trimmed = trimmed.substring(2).trim();
@@ -157,9 +194,23 @@ final class YamlLines {
                 && val.substring(1).chars().allMatch(c -> c == '-' || c == '+' || Character.isDigit(c));
     }
 
+    /**
+     * The value of a quoted scalar: inside double quotes YAML reads \\ as one backslash and \" as a quote (so
+     * ".*\\.pdf" is the regex .*\.pdf), inside single quotes a backslash is a backslash.
+     */
     static String unquote(String val) {
         if (val.length() >= 2 && val.startsWith("\"") && val.endsWith("\"")) {
-            return val.substring(1, val.length() - 1);
+            String inner = val.substring(1, val.length() - 1);
+            if (inner.indexOf('\\') < 0) {
+                return inner;
+            }
+            try {
+                // the JSON escapes are the YAML ones that matter here (\\ \" \n \t and unicode)
+                return Jsoner.unescape(inner);
+            } catch (RuntimeException e) {
+                // a YAML-only escape such as \e or \x41: the text as written
+                return inner;
+            }
         }
         if (val.length() >= 2 && val.startsWith("'") && val.endsWith("'")) {
             return val.substring(1, val.length() - 1);
