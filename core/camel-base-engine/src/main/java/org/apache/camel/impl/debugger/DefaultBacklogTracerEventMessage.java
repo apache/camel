@@ -519,7 +519,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             sb.append(prefix);
             sb.append("  <body");
             String type = jo.getString("type");
-            if (type != null) {
+            // the JSON dump says "null" for a null body; the XML dump has no type attribute then
+            if (type != null && !"null".equals(type)) {
                 sb.append(" type=\"").append(type).append("\"");
             }
             Long size = jo.getLong("size");
