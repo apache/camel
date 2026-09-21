@@ -73,6 +73,12 @@ public class DependencyDownloaderResourceLoaderTest {
         assertFalse(resource.exists());
         assertEquals("classpath:camel-joor.properties", resource.getLocation(),
                 "not replaced by a file in the source dir that does not exist");
+
+        // the form of the bug: with ?optional=true it is still optional (JavaLanguage failed on it)
+        Resource optional = loader.resolveResource("classpath:camel-joor.properties?optional=true");
+        assertFalse(optional.exists());
+        assertEquals("classpath:camel-joor.properties?optional=true", optional.getLocation(),
+                "?optional=true resource must not be replaced by a non-existent file");
     }
 
     @Test
