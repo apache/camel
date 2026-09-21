@@ -1388,6 +1388,9 @@
           "java" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
           },
+          "jev" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JevExpression"
+          },
           "jq" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
           },
@@ -9704,6 +9707,9 @@
           "java" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
           },
+          "jev" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.JevExpression"
+          },
           "jq" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
           },
@@ -9945,6 +9951,31 @@
             "type" : "string",
             "title" : "Result Type",
             "description" : "The class of the result type (type from output)."
+          },
+          "trim" : {
+            "type" : "boolean",
+            "title" : "Trim",
+            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+            "default" : true
+          }
+        },
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.JevExpression" : {
+        "title" : "Jev",
+        "description" : "Evaluates a Noul question using a configured Jev endpoint",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "expression" : {
+            "type" : "string",
+            "title" : "Expression",
+            "description" : "The expression value in your chosen language syntax."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node."
           },
           "trim" : {
             "type" : "boolean",

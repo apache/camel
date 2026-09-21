@@ -1300,6 +1300,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteJavaScriptExpression(sb, def);
         return sb.toString();
     }
+    public String writeJevExpression(JevExpression def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "jev", def);
+        doWriteJevExpression(sb, def);
+        return sb.toString();
+    }
     public String writeJqExpression(JqExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -3514,6 +3521,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteJavaScriptExpression(StringBuilder sb, JavaScriptExpression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
+        doWriteValue(sb, def.getExpression());
+    }
+    protected void doWriteJevExpression(StringBuilder sb, JevExpression def) {
+        doWriteExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
     protected void doWriteJqExpression(StringBuilder sb, JqExpression def) {
@@ -6346,6 +6357,11 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "js", v);
                     doWriteJavaScriptExpression(sb, (JavaScriptExpression) v);
                     endStep(sb, "js", v);
+                }
+                case "JevExpression" -> {
+                    beginStep(sb, "jev", v);
+                    doWriteJevExpression(sb, (JevExpression) v);
+                    endStep(sb, "jev", v);
                 }
                 case "JqExpression" -> {
                     beginStep(sb, "jq", v);

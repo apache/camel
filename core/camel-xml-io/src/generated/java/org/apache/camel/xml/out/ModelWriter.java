@@ -593,6 +593,9 @@ public class ModelWriter extends BaseWriter {
     public void writeJavaScriptExpression(JavaScriptExpression def) throws IOException {
         doWriteJavaScriptExpression("js", def);
     }
+    public void writeJevExpression(JevExpression def) throws IOException {
+        doWriteJevExpression("jev", def);
+    }
     public void writeJqExpression(JqExpression def) throws IOException {
         doWriteJqExpression("jq", def);
     }
@@ -2962,6 +2965,12 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteJevExpression(String name, JevExpression def) throws IOException {
+        startElement(name);
+        doWriteExpressionDefinitionAttributes(def);
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
     protected void doWriteJqExpression(String name, JqExpression def) throws IOException {
         startElement(name);
         doWriteSingleInputTypedExpressionDefinitionAttributes(def);
@@ -3907,6 +3916,7 @@ public class ModelWriter extends BaseWriter {
                 case "JactlExpression" -> doWriteJactlExpression("jactl", (JactlExpression) v);
                 case "JavaExpression" -> doWriteJavaExpression("java", (JavaExpression) v);
                 case "JavaScriptExpression" -> doWriteJavaScriptExpression("js", (JavaScriptExpression) v);
+                case "JevExpression" -> doWriteJevExpression("jev", (JevExpression) v);
                 case "JqExpression" -> doWriteJqExpression("jq", (JqExpression) v);
                 case "JsonPathExpression" -> doWriteJsonPathExpression("jsonpath", (JsonPathExpression) v);
                 case "LanguageExpression" -> doWriteLanguageExpression("language", (LanguageExpression) v);

@@ -586,6 +586,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeJavaScriptExpression(JavaScriptExpression def) {
         return wrapNode("js", doWriteJavaScriptExpression(def));
     }
+    public JsonObject writeJevExpression(JevExpression def) {
+        return wrapNode("jev", doWriteJevExpression(def));
+    }
     public JsonObject writeJqExpression(JqExpression def) {
         return wrapNode("jq", doWriteJqExpression(def));
     }
@@ -2960,6 +2963,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
+    protected JsonObject doWriteJevExpression(JevExpression def) {
+        JsonObject jo = new JsonObject();
+        doWriteExpressionDefinitionAttributes(jo, def);
+        doWriteValue(jo, def.getExpression());
+        return jo;
+    }
     protected JsonObject doWriteJqExpression(JqExpression def) {
         JsonObject jo = new JsonObject();
         doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
@@ -3937,6 +3946,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "JactlExpression" -> wrapNode("jactl", doWriteJactlExpression((JactlExpression) v));
                 case "JavaExpression" -> wrapNode("java", doWriteJavaExpression((JavaExpression) v));
                 case "JavaScriptExpression" -> wrapNode("js", doWriteJavaScriptExpression((JavaScriptExpression) v));
+                case "JevExpression" -> wrapNode("jev", doWriteJevExpression((JevExpression) v));
                 case "JqExpression" -> wrapNode("jq", doWriteJqExpression((JqExpression) v));
                 case "JsonPathExpression" -> wrapNode("jsonpath", doWriteJsonPathExpression((JsonPathExpression) v));
                 case "LanguageExpression" -> wrapNode("language", doWriteLanguageExpression((LanguageExpression) v));

@@ -820,6 +820,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -1323,6 +1324,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -1417,6 +1419,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -1554,6 +1557,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -1693,6 +1697,8 @@
               }, {
                 "required" : [ "java" ]
               }, {
+                "required" : [ "jev" ]
+              }, {
                 "required" : [ "jq" ]
               }, {
                 "required" : [ "js" ]
@@ -1786,6 +1792,14 @@
             "properties" : {
               "java" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "jev" ],
+            "properties" : {
+              "jev" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JevExpression"
               }
             }
           }, {
@@ -1951,6 +1965,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -2110,6 +2125,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -2318,6 +2334,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -2819,6 +2836,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -3688,6 +3706,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -4152,6 +4171,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -4262,6 +4282,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -4426,6 +4447,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -4891,6 +4913,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -5568,6 +5591,7 @@
             "hl7terser" : { },
             "jactl" : { },
             "java" : { },
+            "jev" : { },
             "jq" : { },
             "js" : { },
             "jsonpath" : { },
@@ -5762,6 +5786,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -5834,6 +5859,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -5951,6 +5977,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6066,6 +6093,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6144,6 +6172,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6233,6 +6262,8 @@
               }, {
                 "required" : [ "java" ]
               }, {
+                "required" : [ "jev" ]
+              }, {
                 "required" : [ "jq" ]
               }, {
                 "required" : [ "js" ]
@@ -6319,6 +6350,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6502,6 +6534,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -6880,6 +6913,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -7320,6 +7354,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -7943,6 +7978,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -8038,6 +8074,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -11969,6 +12006,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "jev" ],
+            "properties" : {
+              "jev" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JevExpression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "jq" ],
             "properties" : {
               "jq" : {
@@ -12130,6 +12175,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },
@@ -12356,6 +12402,35 @@
               "type" : "string",
               "title" : "Result Type",
               "description" : "The class of the result type (type from output)."
+            },
+            "trim" : {
+              "type" : "boolean",
+              "title" : "Trim",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+              "default" : true
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.JevExpression" : {
+        "title" : "Jev",
+        "description" : "Evaluates a Noul question using a configured Jev endpoint",
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "expression" : {
+              "type" : "string",
+              "title" : "Expression",
+              "description" : "The expression value in your chosen language syntax."
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "The id of this node."
             },
             "trim" : {
               "type" : "boolean",
@@ -16295,6 +16370,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "jev" ],
+            "properties" : {
+              "jev" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JevExpression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "jq" ],
             "properties" : {
               "jq" : {
@@ -16456,6 +16539,7 @@
           "hl7terser" : { },
           "jactl" : { },
           "java" : { },
+          "jev" : { },
           "jq" : { },
           "js" : { },
           "jsonpath" : { },

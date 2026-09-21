@@ -1,0 +1,397 @@
+= Jev Component
+:doctitle: Jev
+:shortname: jev
+:artifactid: camel-jev
+:description: Evaluate text and structured state with the TypeSafe AI Jev decision API.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Jev component evaluates explicit state against Noul (yes/no), Choice (one category),
+and Score (ordered rubric) questions using https://docs.typesafe.ai/api[TypeSafe AI's HTTP API].
+It calls the service directly using the JDK HTTP client and Camel JSON utilities.
+It also provides a standard Camel `Predicate` for semantic conditions.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jev</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+== URI format
+
+[source,text]
+----
+jev:name[?options]
+----
+
+`name` identifies an endpoint; it is not sent to the model.
+Producers and predicates using the same URI share its client and configuration.
+Camel creates and closes the client with the endpoint lifecycle.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Configuration
+
+Configure credentials through property placeholders or a supported vault:
+
+[source,properties]
+----
+camel.component.jev.api-key={{env:TYPESAFE_API_KEY}}
+camel.component.jev.model=jev-1.13.0
+camel.component.jev.request-timeout=30000
+----
+
+`apiKey` is a secret option. `baseUrl` defaults to `https://api.typesafe.ai`; the client
+appends `/v1/systemone`. A base path can address a proxy. HTTP redirects are not followed.
+Use HTTPS for the service; HTTP is useful for local testing.
+
+`model` defaults to `jev-latest`. Pin a version when tuning thresholds; aliases can change
+behavior without a route change. The request map may explicitly override the endpoint's
+model for that request. The response's `model` identifies the model that answered.
+See https://docs.typesafe.ai/models[available models].
+
+== Configure questions and predicates with properties
+
+All connection, question, state-selection, and predicate settings can be supplied through
+properties. Camel discovers the component and language; no application bean needs to be
+constructed or registered.
+
+[source,properties]
+----
+camel.component.jev.api-key={{env:TYPESAFE_API_KEY}}
+camel.component.jev.model=jev-1.13.0
+camel.component.jev.request-timeout=30000
+camel.component.jev.questions={"refund":{"type":"noul","instructions":"Is a refund requested?","criteria":{"true":"Explicit request for money back","false":"Anything else"}}}
+camel.component.jev.state=${header.customerText}
+camel.component.jev.result-property=evaluation
+camel.component.jev.threshold=0.8
+camel.component.jev.uncertainty=0.05
+camel.component.jev.uncertainty-policy=NonMatch
+----
+
+When `questions` is configured, the producer evaluates the state selected by the `state`
+Simple expression (the body by default). The input body does not need to be a request map.
+`resultProperty` keeps the original body and places the structured response in the named
+exchange property:
+
+[source,java]
+----
+from("direct:evaluate").to("jev:decisions");
+
+from("direct:route").choice()
+    .when().language("jev", "jev:refund").to("direct:refund-handler")
+    .otherwise().to("direct:general-handler");
+
+from("direct:admit").filter().language("jev", "jev:refund").to("direct:refund-handler");
+from("direct:require").validate().language("jev", "jev:refund").to("direct:refund-handler");
+----
+
+The `jev` language takes a Jev endpoint URI. It requires exactly one configured Noul question
+and an explicit `threshold`; it stores the complete result in `CamelJevResult`, preserving
+the configured question name. Its expression form returns a Boolean. The component defaults
+above also apply to these endpoints; URI options can override them, including property
+placeholders such as `jev:refund?threshold={{refund.threshold}}`.
+
+XML and YAML routes can use the language directly, without a registry reference:
+
+[source,xml]
+----
+<filter>
+  <language language="jev">jev:refund</language>
+  <to uri="direct:refund-handler"/>
+</filter>
+----
+
+[source,yaml]
+----
+- filter:
+    language:
+      language: jev
+      expression: jev:refund
+    steps:
+      - to: direct:refund-handler
+----
+
+Configured producer questions may mix Noul, Choice, and Score. Only the predicate language
+requires a single Noul question. When `questions` is absent, the producer accepts a complete
+request map as described below. `state` applies only to configured questions.
+
+== Producer request and response
+
+Without configured `questions`, the input body must be a `Map<String, Object>` with `state` and a nonempty `questions` map.
+An optional `model` overrides the endpoint default. Each named question is a map with `type`
+(`noul`, `choice`, or `score`), `instructions`, and the applicable `criteria`.
+State, instructions, and descriptions can be text or structured maps/lists. Nested content
+supports strings, finite numbers, booleans, nulls, lists, and maps with string keys.
+Convert other objects explicitly before submitting them. The component does not collect
+exchange headers or properties automatically. Do not send an entire exchange as state.
+
+The output is an `org.apache.camel.util.json.JsonObject`, which implements `Map<String, Object>`.
+It preserves the API's JSON structure, including additional fields. Nested objects are maps,
+arrays are lists, and numeric values implement `Number`; use `doubleValue()` or `longValue()`
+rather than assuming a specific numeric class.
+
+Missing or mismatched answers, invalid numeric ranges, unknown choices, and inconsistent
+probability distributions fail the exchange. Probability sums and weighted Scores allow
+an absolute rounding tolerance of 0.001. The selected Choice must have maximal probability;
+ties are allowed.
+
+[source,java]
+----
+Map<String, Object> request = Map.of(
+    "state", "Please refund the duplicate payment",
+    "questions", Map.of(
+        "refund", Map.of("type", "noul", "instructions", "Is a refund requested?",
+            "criteria", Map.of("true", "An explicit request for money back", "false", "No refund requested")),
+        "team", Map.of("type", "choice", "instructions", "Which team should handle this?",
+            "criteria", Map.of("billing", "Payments and refunds", "technical", "Product failures",
+                "other", "Neither team applies")),
+        "urgency", Map.of("type", "score", "instructions", "How urgent is this?",
+            "criteria", List.of("Routine", "Urgent", "Critical"))));
+
+JsonObject response = template.requestBody("jev:decisions", request, JsonObject.class);
+JsonObject answers = response.getJsonObject("answers");
+boolean requested = answers.getJsonObject("refund").getDouble("noul") >= 0.8;
+String category = answers.getJsonObject("team").getString("choice");
+double score = answers.getJsonObject("urgency").getDouble("score");
+----
+
+This mixed batch makes one HTTP request, with the same state for every question.
+There is no implicit batching across producer calls or predicates.
+
+[cols="1,3"]
+|===
+| Answer | Mapping
+| Noul | `noul` is the probability of yes, in [0,1]. There is no separate confidence value.
+| Choice | `choice`, `probabilities` and `confidence`. Exactly one supplied category is selected. Criteria may contain up to 255 options; an option's description may be null.
+| Score | `score` is a possibly fractional position in 2 to 10 ordered levels. `legend` and `probabilities` are maps keyed by string indices starting at `"0"`; `confidence` describes uncertainty.
+| Response | `model`, `answers`, `usage.input_tokens` and `usage.output_tokens`.
+|===
+
+With `resultProperty=evaluation`, the producer stores the response on that exchange property
+and preserves the input request map. The component does not mutate that map when applying
+the default model. To retain a business message while constructing a request, save the
+original explicitly and restore it after evaluation:
+
+[source,java]
+----
+from("direct:evaluate")
+    .setProperty("original", body())
+    .process(exchange -> exchange.getMessage().setBody(Map.of(
+        "state", exchange.getMessage().getBody(String.class),
+        "questions", Map.of("refund", Map.of("type", "noul", "instructions", "Is a refund requested?")))))
+    .to("jev:decisions?resultProperty=evaluation")
+    .setBody(exchangeProperty("original"));
+----
+
+== Reusable Noul predicates
+
+`JevPredicate` implements Camel's standard `Predicate` contract. Supply an endpoint URI,
+a thread-safe state `Expression`, a question string, and an explicit threshold.
+Alternatively, supply a Noul question map to include structured instructions or yes/no criteria.
+The predicate snapshots the question at construction; later changes to the supplied map do not alter it.
+It preserves the body and stores the full response `JsonObject` in exchange property
+`JevPredicate.RESULT` (`CamelJevResult`). Each invocation replaces that property;
+it is cleared before evaluation, including when the new evaluation fails.
+
+[source,java]
+----
+JevPredicate refund = new JevPredicate("jev:refund", body(),
+        "Does this message request a refund?", 0.8);
+
+from("direct:route").choice()
+    .when(refund).to("direct:refund-handler")
+    .otherwise().to("direct:general-handler");
+
+from("direct:admit").filter(refund).to("direct:refund-handler");
+
+from("direct:require").validate(refund).to("direct:refund-handler");
+----
+
+Without an uncertainty band, a probability greater than or equal to the threshold matches.
+The optional band is inclusive on both ends, centered on the threshold. A half-width of
+zero disables it. Both boundaries must lie within [0,1].
+
+[source,java]
+----
+JevPredicate refund = new JevPredicate("jev:refund", header("customerText"),
+        Map.of("type", "noul", "instructions", "Refund requested?",
+            "criteria", Map.of("true", "An explicit request", "false", "Anything else")),
+        0.5, 0.125, JevPredicate.UncertaintyPolicy.NonMatch);
+----
+
+Here [0.375, 0.625] is uncertain and does not match. `UncertaintyPolicy.Fail` instead raises
+`JevUncertainResultException`, available through Camel's exception cause chain. The result
+remains available for uncertainty handling. Outside the band, the threshold comparison applies.
+A non-match retains each EIP's behavior: Filter discards it, Validate raises validation failure,
+and Choice tries the next branch. Uncertainty is distinct from service failure.
+
+Predicates compose normally with `PredicateBuilder.and`, `or`, and `not`. Short-circuiting
+controls whether a remote evaluation occurs. A predicate registered as a bean can be used
+through the existing `ref` language in Java, XML, or YAML:
+
+[source,xml]
+----
+<filter>
+  <ref>refundPredicate</ref>
+  <to uri="direct:refund-handler"/>
+</filter>
+----
+
+[source,yaml]
+----
+- filter:
+    ref: refundPredicate
+    steps:
+      - to: direct:refund-handler
+----
+
+The registry form is optional for applications that already construct Java predicates.
+Use the `jev` language and properties shown above when no manually registered bean is desired.
+Both forms use the same predicate implementation and preserve the core Predicate contract.
+
+== Choice classification followed by Camel Choice
+
+Independent Noul predicates preserve Camel Choice's *first matching branch* semantics.
+They do not compare categories. For best-category classification, submit one Choice question
+first, then branch on its answer. This is an explicit opt-in pattern.
+
+For example, prepare the `team` question from the batch example and store the response in
+`evaluation`. Restore the original body as shown above, then use ordinary predicates:
+
+[source,java]
+----
+from("direct:classified").choice()
+    .when(exchange -> selects(exchange, "billing")).to("direct:billing")
+    .when(exchange -> selects(exchange, "technical")).to("direct:technical")
+    .otherwise().to("direct:manual-review");
+
+// A helper in the route class:
+static boolean selects(Exchange exchange, String label) {
+    JsonObject result = exchange.getProperty("evaluation", JsonObject.class);
+    JsonObject answer = result.getJsonObject("answers").getJsonObject("team");
+    return label.equals(answer.getString("choice"))
+            && answer.getJsonObject("probabilities").getDouble(label) >= 0.8
+            && answer.getDouble("confidence") >= 0.7;
+}
+----
+
+Only route-author-defined labels map to route-author-defined destinations. Never interpret
+a model-selected label as an arbitrary endpoint URI. Include an explicit `other` category
+when the supplied categories are incomplete. Overlapping descriptions can spread probability
+across categories; a forced winner is not evidence that the distinction was clear.
+
+A valid `other` answer or a result below either threshold reaches `otherwise`.
+Timeouts, HTTP errors, missing answers, unknown categories, and malformed responses fail the
+producer before routing; they are not ordinary business fallbacks.
+
+`JevChoiceTest` exercises a complete producer-to-Choice route with these supplied responses:
+
+[cols="3,1,1,1,1"]
+|===
+| State | Winner | Probability | Confidence | Branch
+| Refund my duplicate payment | billing | 0.9 | 0.85 | billing
+| The export button fails | technical | 0.9 | 0.85 | technical
+| Thanks for the newsletter | other | 0.9 | 0.85 | manual
+| A refund or help fixing the export | billing | 0.55 | 0.2 | manual
+| A payment question | billing | 0.75 | 0.75 | manual
+| It fails sometimes | technical | 0.9 | 0.4 | manual
+|===
+
+Each fixture causes one request; four of six reach manual review. These are deterministic
+HTTP fixtures that establish routing and fallback behavior, *not measured model accuracy*.
+The two high-confidence classifications take their configured destinations and preserve the
+original body. A separate fixture proves a service failure does not select `otherwise`.
+This composition needs no Choice-specific adapter.
+
+== Other EIP integration points
+
+Let `L` be measured latency for one evaluation and `C` its cost for the selected model and
+submitted tokens. A batch shares one state and one HTTP round trip; extra questions still
+consume tokens. The following is a feasibility assessment of the existing extension points.
+All service failures propagate to Camel error handling.
+
+[cols="1,3,2,3"]
+|===
+| EIP | Extension point and mapping | Calls / latency / cost | Semantics and uncertainty
+| Filter / Validate
+| A `JevPredicate` as the admission or validation condition.
+| One call per evaluated condition: L, C.
+| Non-match follows the EIP; configure a band to reject or fail uncertain cases. Covered by executable tests.
+| Dynamic Router
+| A routing-slip expression uses a Choice result to select a known next URI or returns null for an explicit `stop` category.
+| One call per routing decision, including termination: nL, nC.
+| Set a maximum hop count in ordinary code. Select fresh route state each time. Send uncertain results to a fixed review destination or stop by policy. Unsuitable without a termination bound.
+| Recipient List
+| A producer batches one Noul or Score question per candidate; an expression builds a list of known URIs from qualifying answers.
+| One batch per recipient selection: L, batch token cost.
+| Decide independently for each candidate; uncertain answers can exclude that candidate or fail selection. One Choice answer selects only one recipient and cannot implement this pattern alone.
+| Aggregator
+| `completionPredicate` evaluates explicitly selected aggregate state.
+| Up to one call per aggregate update: nL, increasing token cost as state grows.
+| Evaluation blocks aggregation work. Bound state, completion size and timeout; reject uncertain completion. Prefer deterministic completion for high-volume or exact-count workloads.
+| Content Enricher
+| Score known candidates in a batch, or use Choice to choose one; route code obtains the corresponding resource and an `AggregationStrategy` merges it.
+| One evaluation plus resource-fetch latency and cost.
+| Return a fixed no-enrichment/manual outcome on uncertainty. Model selection does not fetch or authorize data. Perform numeric ranking and merging in code.
+|===
+
+These patterns use the producer, standard predicates and existing expressions/strategies.
+No additional EIP adapter is required by the demonstrated mappings. Dynamic Router,
+Recipient List, Aggregator and Enricher are design assessments, not live-service benchmarks.
+Before deployment, evaluate a labeled sample including overlaps, out-of-category messages,
+and misleading text; record correct/incorrect decisions, uncertainty/fallback frequency,
+request counts, token usage, and latency percentiles for a pinned model. Reassess thresholds
+when the model, questions, or input distribution changes.
+
+== Timeouts, errors, and repeated evaluation
+
+Both producer processing and `Predicate.matches` are synchronous: they block the evaluating
+thread. `requestTimeout` must be positive and bounds the caller's wait for the complete HTTP
+response. It is also passed to the client's connection/request timeout. The component does
+not retry failed evaluations; configure deliberate Camel redelivery, backoff, or a circuit breaker where needed.
+
+An unsuccessful HTTP status raises `JevHttpException` with status code, request ID and
+`Retry-After` header value where available (seconds or an HTTP date). It omits the HTTP error body because that body may
+contain submitted state. Invalid responses and network failures propagate from the client;
+the overall deadline can raise `TimeoutException`. Predicate failures retain their cause in
+a `RuntimeCamelException`. None of these errors silently become false.
+
+Timeout or interruption cancels the underlying HTTP future, including when the response
+headers have arrived but its body stalls. Endpoint shutdown rejects new calls and cancels
+in-flight transfers before closing the client. Cancellation does not guarantee that the
+remote service stopped processing or that the request consumed no tokens.
+
+Each predicate invocation makes a fresh request. A loop checks its condition repeatedly
+against its current state, and redelivery can evaluate it again. Bound loops and retries;
+include those calls in latency/cost budgets. Startup-time consumers such as Choice preconditions
+have no incoming message: use only state that is available at startup, and account for a remote
+call during startup. Ordinary message-based predicates belong in runtime conditions.
+
+There is no response cache. Store and reuse a producer response explicitly only while its
+state, questions and model remain applicable. The result property belongs to that exchange;
+sharing a predicate does not share response state. Predicates are immutable apart from their
+user-supplied expression, which must follow Camel's thread-safety contract.
+
+Structured output does not establish correctness. Jev's
+https://docs.typesafe.ai/model-jaggedness/jev-1.13[documented limitations] and the chosen
+thresholds must inform application testing. Keep arithmetic, exact ordering, permissions and
+business actions in deterministic route code. Only submit data permitted for the configured
+remote service.
+
+include::spring-boot:partial$starter.adoc[]

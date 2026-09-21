@@ -1,0 +1,43 @@
+= Jev Language
+:doctitle: Jev
+:shortname: jev
+:artifactid: camel-jev
+:description: Evaluates a Noul question using a configured Jev endpoint
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Jev language evaluates the single Noul question configured on a `jev:` endpoint and
+returns a Boolean. Its expression is the endpoint URI. Component properties configure the
+credentials, model, questions, Simple state expression, threshold, and uncertainty policy.
+No manually instantiated or registered bean is required.
+
+== Jev Language options
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END
+
+== Example
+
+[source,properties]
+----
+camel.component.jev.api-key={{env:TYPESAFE_API_KEY}}
+camel.component.jev.questions={"refund":{"type":"noul","instructions":"Is a refund requested?"}}
+camel.component.jev.threshold=0.8
+----
+
+[source,java]
+----
+from("direct:start").filter().language("jev", "jev:refund").to("direct:refund-handler");
+----
+
+The message body is the default state. Each invocation makes a fresh synchronous HTTP call,
+preserves the body, and places the full response in exchange property `CamelJevResult`.
+Timeouts, service failures, and invalid responses propagate as errors. They do not become
+non-matches. Configure an uncertainty band and policy when a binary threshold is insufficient.
+
+See xref:ROOT:jev-component.adoc[Jev component] for all properties, Java/XML/YAML examples,
+model limitations, lifecycle behavior, and the producer's batched evaluation mode.
