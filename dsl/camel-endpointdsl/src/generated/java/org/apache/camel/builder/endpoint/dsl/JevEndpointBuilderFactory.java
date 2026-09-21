@@ -51,7 +51,7 @@ public interface JevEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https://api.typesafe.ai
-         * Group: producer
+         * Group: common
          * 
          * @param baseUrl the value to set
          * @return the dsl builder
@@ -66,7 +66,7 @@ public interface JevEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: jev-latest
-         * Group: producer
+         * Group: common
          * 
          * @param model the value to set
          * @return the dsl builder
@@ -78,12 +78,11 @@ public interface JevEndpointBuilderFactory {
         /**
          * A JSON object mapping question names to Noul, Choice or Score
          * question objects. When set, producers evaluate the selected message
-         * state; otherwise the body must contain a complete request map. The
-         * Jev language requires exactly one configured Noul question.
+         * state; otherwise the body must contain a complete request map.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param questions the value to set
          * @return the dsl builder
@@ -99,7 +98,7 @@ public interface JevEndpointBuilderFactory {
          * The option is a: <code>long</code> type.
          * 
          * Default: 30000
-         * Group: producer
+         * Group: common
          * 
          * @param requestTimeout the value to set
          * @return the dsl builder
@@ -115,13 +114,28 @@ public interface JevEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 30000
-         * Group: producer
+         * Group: common
          * 
          * @param requestTimeout the value to set
          * @return the dsl builder
          */
         default JevEndpointBuilder requestTimeout(String requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * The Simple expression selecting state for configured questions. If
+         * not set, the message body is used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param state the value to set
+         * @return the dsl builder
+         */
+        default JevEndpointBuilder state(String state) {
+            doSetProperty("state", state);
             return this;
         }
         /**
@@ -137,118 +151,6 @@ public interface JevEndpointBuilderFactory {
          */
         default JevEndpointBuilder resultProperty(String resultProperty) {
             doSetProperty("resultProperty", resultProperty);
-            return this;
-        }
-        /**
-         * The Simple expression selecting state for configured questions.
-         * Defaults to the message body.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: ${body}
-         * Group: producer
-         * 
-         * @param state the value to set
-         * @return the dsl builder
-         */
-        default JevEndpointBuilder state(String state) {
-            doSetProperty("state", state);
-            return this;
-        }
-        /**
-         * The explicit Noul probability threshold for the Jev language.
-         * Required when using the language.
-         * 
-         * The option is a: <code>java.lang.Double</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param threshold the value to set
-         * @return the dsl builder
-         */
-        default JevEndpointBuilder threshold(Double threshold) {
-            doSetProperty("threshold", threshold);
-            return this;
-        }
-        /**
-         * The explicit Noul probability threshold for the Jev language.
-         * Required when using the language.
-         * 
-         * The option will be converted to a <code>java.lang.Double</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param threshold the value to set
-         * @return the dsl builder
-         */
-        default JevEndpointBuilder threshold(String threshold) {
-            doSetProperty("threshold", threshold);
-            return this;
-        }
-        /**
-         * Half-width of the inclusive uncertainty band around the predicate
-         * threshold. Zero disables the band.
-         * 
-         * The option is a: <code>double</code> type.
-         * 
-         * Default: 0.0
-         * Group: producer
-         * 
-         * @param uncertainty the value to set
-         * @return the dsl builder
-         */
-        default JevEndpointBuilder uncertainty(double uncertainty) {
-            doSetProperty("uncertainty", uncertainty);
-            return this;
-        }
-        /**
-         * Half-width of the inclusive uncertainty band around the predicate
-         * threshold. Zero disables the band.
-         * 
-         * The option will be converted to a <code>double</code> type.
-         * 
-         * Default: 0.0
-         * Group: producer
-         * 
-         * @param uncertainty the value to set
-         * @return the dsl builder
-         */
-        default JevEndpointBuilder uncertainty(String uncertainty) {
-            doSetProperty("uncertainty", uncertainty);
-            return this;
-        }
-        /**
-         * Whether the Jev language returns a non-match or raises an exception
-         * for an uncertain result.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jev.JevPredicate.UncertaintyPolicy</code> type.
-         * 
-         * Default: NonMatch
-         * Group: producer
-         * 
-         * @param uncertaintyPolicy the value to set
-         * @return the dsl builder
-         */
-        default JevEndpointBuilder uncertaintyPolicy(org.apache.camel.component.jev.JevPredicate.UncertaintyPolicy uncertaintyPolicy) {
-            doSetProperty("uncertaintyPolicy", uncertaintyPolicy);
-            return this;
-        }
-        /**
-         * Whether the Jev language returns a non-match or raises an exception
-         * for an uncertain result.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jev.JevPredicate.UncertaintyPolicy</code> type.
-         * 
-         * Default: NonMatch
-         * Group: producer
-         * 
-         * @param uncertaintyPolicy the value to set
-         * @return the dsl builder
-         */
-        default JevEndpointBuilder uncertaintyPolicy(String uncertaintyPolicy) {
-            doSetProperty("uncertaintyPolicy", uncertaintyPolicy);
             return this;
         }
         /**

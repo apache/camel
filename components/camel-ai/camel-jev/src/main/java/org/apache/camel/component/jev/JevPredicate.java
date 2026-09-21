@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -42,10 +41,10 @@ public final class JevPredicate implements Predicate {
     private final String endpointUri;
     private final Expression state;
     private final String question;
-    private final String questionName;
     private final double threshold;
     private final double uncertainty;
     private final UncertaintyPolicy uncertaintyPolicy;
+    private JevEndpoint endpoint;
 
     public JevPredicate(String endpointUri, Expression state, String instructions, double threshold) {
         this(endpointUri, state, Map.of("type", "noul", "instructions", instructions), threshold);
@@ -65,12 +64,6 @@ public final class JevPredicate implements Predicate {
      */
     public JevPredicate(String endpointUri, Expression state, Map<String, Object> question,
                         double threshold, double uncertainty, UncertaintyPolicy uncertaintyPolicy) {
-        this(endpointUri, state, "predicate", question, threshold, uncertainty, uncertaintyPolicy);
-    }
-
-    JevPredicate(String endpointUri, Expression state, String questionName, Map<String, Object> question,
-                 double threshold, double uncertainty, UncertaintyPolicy uncertaintyPolicy) {
-        this.questionName = Objects.requireNonNull(questionName, "questionName");
         this.endpointUri = Objects.requireNonNull(endpointUri, "endpointUri");
         this.state = Objects.requireNonNull(state, "state");
         this.question = JevJson.noulQuestion(Objects.requireNonNull(question, "question"));
@@ -88,20 +81,24 @@ public final class JevPredicate implements Predicate {
     public void init(CamelContext context) {
         state.init(context);
         // Register the endpoint even when it is used only by a predicate, so Camel owns its lifecycle.
-        context.getEndpoint(endpointUri, JevEndpoint.class);
+        endpoint = context.getEndpoint(endpointUri, JevEndpoint.class);
     }
 
     @Override
     public boolean matches(Exchange exchange) {
         exchange.removeProperty(RESULT);
         try {
-            JevEndpoint endpoint = exchange.getContext().getEndpoint(endpointUri, JevEndpoint.class);
-            ServiceHelper.startService(endpoint);
-            Object selected = Objects.requireNonNull(state.evaluate(exchange, Object.class), "Jev state");
+            if (endpoint == null) {
+                throw new IllegalStateException("Jev predicate must be initialized");
+            }
+            Object selected = state.evaluate(exchange, Object.class);
+            if (selected == null) {
+                throw new IllegalArgumentException("Jev state must not be null");
+            }
             JsonObject result = endpoint.evaluate(Map.of("state", selected,
-                    "questions", Map.of(questionName, JevJson.parse(question))));
+                    "questions", Map.of("predicate", JevJson.parse(question))));
             exchange.setProperty(RESULT, result);
-            double probability = result.getJsonObject("answers").getJsonObject(questionName).getDouble("noul");
+            double probability = result.getJsonObject("answers").getJsonObject("predicate").getDouble("noul");
             if (uncertainty > 0 && probability >= threshold - uncertainty && probability <= threshold + uncertainty) {
                 if (uncertaintyPolicy == UncertaintyPolicy.Fail) {
                     throw new JevUncertainResultException(probability);

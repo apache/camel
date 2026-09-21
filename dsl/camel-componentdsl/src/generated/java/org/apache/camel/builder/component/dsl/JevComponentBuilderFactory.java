@@ -58,7 +58,7 @@ public interface JevComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://api.typesafe.ai
-         * Group: producer
+         * Group: common
          * 
          * @param baseUrl the value to set
          * @return the dsl builder
@@ -81,6 +81,74 @@ public interface JevComponentBuilderFactory {
          */
         default JevComponentBuilder configuration(org.apache.camel.component.jev.JevConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        
+        /**
+         * The model ID or alias. Use a versioned ID to pin decision behavior.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: jev-latest
+         * Group: common
+         * 
+         * @param model the value to set
+         * @return the dsl builder
+         */
+        default JevComponentBuilder model(java.lang.String model) {
+            doSetProperty("model", model);
+            return this;
+        }
+    
+        /**
+         * A JSON object mapping question names to Noul, Choice or Score
+         * question objects. When set, producers evaluate the selected message
+         * state; otherwise the body must contain a complete request map.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param questions the value to set
+         * @return the dsl builder
+         */
+        default JevComponentBuilder questions(java.lang.String questions) {
+            doSetProperty("questions", questions);
+            return this;
+        }
+    
+        
+        /**
+         * The timeout in milliseconds for the complete HTTP request and
+         * response body. Must be positive.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: common
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default JevComponentBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+    
+        /**
+         * The Simple expression selecting state for configured questions. If
+         * not set, the message body is used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param state the value to set
+         * @return the dsl builder
+         */
+        default JevComponentBuilder state(java.lang.String state) {
+            doSetProperty("state", state);
             return this;
         }
     
@@ -109,59 +177,6 @@ public interface JevComponentBuilderFactory {
             return this;
         }
     
-        
-        /**
-         * The model ID or alias. Use a versioned ID to pin decision behavior.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: jev-latest
-         * Group: producer
-         * 
-         * @param model the value to set
-         * @return the dsl builder
-         */
-        default JevComponentBuilder model(java.lang.String model) {
-            doSetProperty("model", model);
-            return this;
-        }
-    
-        /**
-         * A JSON object mapping question names to Noul, Choice or Score
-         * question objects. When set, producers evaluate the selected message
-         * state; otherwise the body must contain a complete request map. The
-         * Jev language requires exactly one configured Noul question.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param questions the value to set
-         * @return the dsl builder
-         */
-        default JevComponentBuilder questions(java.lang.String questions) {
-            doSetProperty("questions", questions);
-            return this;
-        }
-    
-        
-        /**
-         * The timeout in milliseconds for the complete HTTP request and
-         * response body. Must be positive.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 30000
-         * Group: producer
-         * 
-         * @param requestTimeout the value to set
-         * @return the dsl builder
-         */
-        default JevComponentBuilder requestTimeout(long requestTimeout) {
-            doSetProperty("requestTimeout", requestTimeout);
-            return this;
-        }
-    
         /**
          * Store the producer response in this exchange property, preserving the
          * original message body.
@@ -175,75 +190,6 @@ public interface JevComponentBuilderFactory {
          */
         default JevComponentBuilder resultProperty(java.lang.String resultProperty) {
             doSetProperty("resultProperty", resultProperty);
-            return this;
-        }
-    
-        
-        /**
-         * The Simple expression selecting state for configured questions.
-         * Defaults to the message body.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: ${body}
-         * Group: producer
-         * 
-         * @param state the value to set
-         * @return the dsl builder
-         */
-        default JevComponentBuilder state(java.lang.String state) {
-            doSetProperty("state", state);
-            return this;
-        }
-    
-        /**
-         * The explicit Noul probability threshold for the Jev language.
-         * Required when using the language.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param threshold the value to set
-         * @return the dsl builder
-         */
-        default JevComponentBuilder threshold(java.lang.Double threshold) {
-            doSetProperty("threshold", threshold);
-            return this;
-        }
-    
-        /**
-         * Half-width of the inclusive uncertainty band around the predicate
-         * threshold. Zero disables the band.
-         * 
-         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param uncertainty the value to set
-         * @return the dsl builder
-         */
-        default JevComponentBuilder uncertainty(double uncertainty) {
-            doSetProperty("uncertainty", uncertainty);
-            return this;
-        }
-    
-        
-        /**
-         * Whether the Jev language returns a non-match or raises an exception
-         * for an uncertain result.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jev.JevPredicate.UncertaintyPolicy&lt;/code&gt; type.
-         * 
-         * Default: NonMatch
-         * Group: producer
-         * 
-         * @param uncertaintyPolicy the value to set
-         * @return the dsl builder
-         */
-        default JevComponentBuilder uncertaintyPolicy(org.apache.camel.component.jev.JevPredicate.UncertaintyPolicy uncertaintyPolicy) {
-            doSetProperty("uncertaintyPolicy", uncertaintyPolicy);
             return this;
         }
     
@@ -306,15 +252,12 @@ public interface JevComponentBuilderFactory {
             switch (name) {
             case "baseUrl": getOrCreateConfiguration((JevComponent) component).setBaseUrl((java.lang.String) value); return true;
             case "configuration": ((JevComponent) component).setConfiguration((org.apache.camel.component.jev.JevConfiguration) value); return true;
-            case "lazyStartProducer": ((JevComponent) component).setLazyStartProducer((boolean) value); return true;
             case "model": getOrCreateConfiguration((JevComponent) component).setModel((java.lang.String) value); return true;
             case "questions": getOrCreateConfiguration((JevComponent) component).setQuestions((java.lang.String) value); return true;
             case "requestTimeout": getOrCreateConfiguration((JevComponent) component).setRequestTimeout((long) value); return true;
-            case "resultProperty": getOrCreateConfiguration((JevComponent) component).setResultProperty((java.lang.String) value); return true;
             case "state": getOrCreateConfiguration((JevComponent) component).setState((java.lang.String) value); return true;
-            case "threshold": getOrCreateConfiguration((JevComponent) component).setThreshold((java.lang.Double) value); return true;
-            case "uncertainty": getOrCreateConfiguration((JevComponent) component).setUncertainty((double) value); return true;
-            case "uncertaintyPolicy": getOrCreateConfiguration((JevComponent) component).setUncertaintyPolicy((org.apache.camel.component.jev.JevPredicate.UncertaintyPolicy) value); return true;
+            case "lazyStartProducer": ((JevComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "resultProperty": getOrCreateConfiguration((JevComponent) component).setResultProperty((java.lang.String) value); return true;
             case "autowiredEnabled": ((JevComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "apiKey": getOrCreateConfiguration((JevComponent) component).setApiKey((java.lang.String) value); return true;
             default: return false;

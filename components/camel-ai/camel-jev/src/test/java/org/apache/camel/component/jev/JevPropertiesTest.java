@@ -16,15 +16,21 @@
  */
 package org.apache.camel.component.jev;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.apache.camel.builder.Builder.body;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -39,26 +45,32 @@ class JevPropertiesTest extends JevTestSupport {
                 Jsoner.serialize(Map.of("refund", noulQuestion("Refund requested?"))));
         main.addProperty("camel.component.jev.state", "${header.selected}");
         main.addProperty("camel.component.jev.result-property", "evaluation");
-        main.addProperty("camel.component.jev.threshold", "0.8");
-        main.addProperty("camel.component.jev.uncertainty", "0.05");
-        main.addProperty("camel.component.jev.uncertainty-policy", "NonMatch");
+        main.addProperty("refund.threshold", "0.8");
         respond = request -> result(Map.of("refund", Map.of("type", "noul",
-                "noul", "refund".equals(request.get("state")) ? 0.9 : 0.1)));
+                "noul", switch (request.getString("state")) {
+                    case "refund" -> 0.9;
+                    case "boundary" -> 0.8;
+                    default -> 0.1;
+                })));
         return main;
     }
 
     @Test
-    void configuresProducerAndInlinePredicatesEntirelyThroughProperties() throws Exception {
+    void configuresProducerAndLocalRoutingEntirelyThroughProperties() throws Exception {
         Main main = configuredMain();
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
             public void configure() {
                 errorHandler(noErrorHandler());
                 from("direct:produce").to("jev:configured");
-                from("direct:choose").choice().when().language("jev", "jev:configured")
+                from("direct:choose").to("jev:configured").choice()
+                        .when().simple("${exchangeProperty.evaluation[answers][refund][noul]} >= '{{refund.threshold}}'")
                         .setHeader("branch", constant("refund")).otherwise().setHeader("branch", constant("other"));
-                from("direct:filter").filter().language("jev", "jev:configured").setHeader("admitted", constant(true));
-                from("direct:validate").validate().language("jev", "jev:configured");
+                from("direct:filter").to("jev:configured")
+                        .filter().simple("${exchangeProperty.evaluation[answers][refund][noul]} >= '{{refund.threshold}}'")
+                        .setHeader("admitted", constant(true));
+                from("direct:validate").to("jev:configured")
+                        .validate().simple("${exchangeProperty.evaluation[answers][refund][noul]} >= '{{refund.threshold}}'");
             }
         });
         try {
@@ -72,17 +84,27 @@ class JevPropertiesTest extends JevTestSupport {
             assertThat(evaluated.getMessage().getBody()).isEqualTo("PRIVATE BODY");
             assertThat(evaluated.getProperty("evaluation", JsonObject.class).path("answers.refund.noul")).isNotNull();
             for (String route : new String[] { "direct:choose", "direct:filter", "direct:validate" }) {
-                Exchange accepted = producer.request(route, e -> {
-                    e.getMessage().setBody("PRIVATE BODY");
-                    e.getMessage().setHeader("selected", "refund");
-                });
-                assertThat(accepted.getException()).isNull();
-                assertThat(accepted.getMessage().getBody()).isEqualTo("PRIVATE BODY");
-                assertThat(accepted.getProperty(JevPredicate.RESULT)).isInstanceOf(JsonObject.class);
+                for (String selected : new String[] { "refund", "boundary" }) {
+                    Exchange accepted = producer.request(route, e -> {
+                        e.getMessage().setBody("PRIVATE BODY");
+                        e.getMessage().setHeader("selected", selected);
+                    });
+                    assertThat(accepted.getException()).isNull();
+                    assertThat(accepted.getMessage().getBody()).isEqualTo("PRIVATE BODY");
+                    assertThat(accepted.getProperty("evaluation")).isInstanceOf(JsonObject.class);
+                }
             }
             Exchange rejected = producer.request("direct:choose", e -> e.getMessage().setHeader("selected", "hello"));
+            assertThat(rejected.getException()).isNull();
+            assertThat(rejected.getProperty("evaluation", JsonObject.class)
+                    .getJsonObject("answers").getJsonObject("refund").getDouble("noul")).isEqualTo(0.1);
             assertThat(rejected.getMessage().getHeader("branch")).isEqualTo("other");
-            assertThat(requests).hasSize(5).allSatisfy(request -> assertThat(request.toJson()).doesNotContain("PRIVATE BODY"));
+            Exchange filtered = producer.request("direct:filter", e -> e.getMessage().setHeader("selected", "hello"));
+            assertThat(filtered.getException()).isNull();
+            assertThat(filtered.getMessage().getHeader("admitted")).isNull();
+            Exchange invalid = producer.request("direct:validate", e -> e.getMessage().setHeader("selected", "hello"));
+            assertThat(invalid.getException()).isNotNull();
+            assertThat(requests).hasSize(10).allSatisfy(request -> assertThat(request.toJson()).doesNotContain("PRIVATE BODY"));
             assertThat(main.getCamelContext().getRegistry().findByType(JevPredicate.class)).isEmpty();
             producer.stop();
         } finally {
@@ -90,15 +112,63 @@ class JevPropertiesTest extends JevTestSupport {
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = { "{PRIVATE", "[]", "{}", "{\"q\":{\"type\":\"unknown\"}}" })
+    void namesInvalidQuestionsOptionWithoutEchoingItsValue(String questions) throws Exception {
+        Main main = configuredMain();
+        main.addProperty("camel.component.jev.questions", questions);
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:invalid").to("jev:invalid");
+            }
+        });
+        try {
+            assertThatThrownBy(main::start).rootCause()
+                    .hasMessageStartingWith("Invalid questions option:").hasMessageNotContaining("PRIVATE");
+            assertThat(requests).isEmpty();
+        } finally {
+            main.stop();
+        }
+    }
+
     @Test
-    void languageRequiresExplicitThresholdAndOneNoulQuestion() {
+    void convertsStreamStateWithBodyAsString() throws Exception {
+        Main main = configuredMain();
+        main.addProperty("camel.component.jev.state", "${bodyAs(String)}");
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:stream").to("jev:stream");
+            }
+        });
+        try {
+            main.start();
+            try (var producer = main.getCamelContext().createProducerTemplate()) {
+                Exchange result = producer.request("direct:stream", e -> e.getMessage()
+                        .setBody(new ByteArrayInputStream("refund".getBytes(StandardCharsets.UTF_8))));
+                assertThat(result.getException()).isNull();
+                assertThat(result.getProperty("evaluation")).isInstanceOf(JsonObject.class);
+                assertThat(requests).hasSize(1);
+                assertThat(requests.peek().get("state")).isEqualTo("refund");
+            }
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void producerAndPredicateReportTheSameNullStateError() throws Exception {
         JevComponent component = context.getComponent("jev", JevComponent.class);
-        component.getConfiguration().setQuestions(Jsoner.serialize(Map.of("refund", noulQuestion("Refund?"))));
-        assertThatThrownBy(() -> context.resolveLanguage("jev").createPredicate("jev:no-threshold"))
-                .hasRootCauseMessage("An explicit threshold is required for the Jev language");
-        component.getConfiguration().setThreshold(0.8);
-        component.getConfiguration().setQuestions(Jsoner.serialize(mixedQuestions()));
-        assertThatThrownBy(() -> context.resolveLanguage("jev").createPredicate("jev:mixed"))
-                .hasRootCauseMessage("The Jev language requires exactly one configured Noul question");
+        component.getConfiguration().setQuestions("{\"q\":{\"type\":\"noul\"}}");
+        JevEndpoint endpoint = context.getEndpoint("jev:null-state", JevEndpoint.class);
+        JevPredicate predicate = new JevPredicate("jev:null-state", body(), Map.of("type", "noul"), 0.8);
+        predicate.init(context);
+
+        assertThatThrownBy(() -> new JevProducer(endpoint).process(new DefaultExchange(context)))
+                .isInstanceOf(IllegalArgumentException.class).hasMessage("Jev state must not be null");
+        assertThatThrownBy(() -> predicate.matches(new DefaultExchange(context)))
+                .hasCauseInstanceOf(IllegalArgumentException.class).hasRootCauseMessage("Jev state must not be null");
+        assertThat(requests).isEmpty();
     }
 }

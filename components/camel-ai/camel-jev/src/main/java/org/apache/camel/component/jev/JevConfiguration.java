@@ -25,28 +25,22 @@ import org.apache.camel.util.ObjectHelper;
 
 @UriParams
 public class JevConfiguration implements Cloneable {
-    @UriParam(label = "security")
-    @Metadata(required = true, secret = true)
+    @UriParam(label = "security", security = "secret")
+    @Metadata(required = true)
     private String apiKey;
-    @UriParam(defaultValue = "https://api.typesafe.ai")
+    @UriParam(label = "common", defaultValue = "https://api.typesafe.ai")
     private String baseUrl = "https://api.typesafe.ai";
-    @UriParam(defaultValue = "jev-latest")
+    @UriParam(label = "common", defaultValue = "jev-latest")
     private String model = "jev-latest";
-    @UriParam(defaultValue = "30000")
+    @UriParam(label = "common", defaultValue = "30000")
     private long requestTimeout = 30000;
 
-    @UriParam
+    @UriParam(label = "common")
     private String questions;
-    @UriParam(defaultValue = "${body}")
+    @UriParam(label = "common")
     private String state = "${body}";
-    @UriParam
+    @UriParam(label = "producer")
     private String resultProperty;
-    @UriParam
-    private Double threshold;
-    @UriParam(defaultValue = "0")
-    private double uncertainty;
-    @UriParam(defaultValue = "NonMatch")
-    private JevPredicate.UncertaintyPolicy uncertaintyPolicy = JevPredicate.UncertaintyPolicy.NonMatch;
 
     public String getQuestions() {
         return questions;
@@ -54,8 +48,7 @@ public class JevConfiguration implements Cloneable {
 
     /**
      * A JSON object mapping question names to Noul, Choice or Score question objects. When set, producers evaluate the
-     * selected message state; otherwise the body must contain a complete request map. The Jev language requires exactly
-     * one configured Noul question.
+     * selected message state; otherwise the body must contain a complete request map.
      */
     public void setQuestions(String questions) {
         this.questions = questions;
@@ -65,7 +58,7 @@ public class JevConfiguration implements Cloneable {
         return state;
     }
 
-    /** The Simple expression selecting state for configured questions. Defaults to the message body. */
+    /** The Simple expression selecting state for configured questions. If not set, the message body is used. */
     public void setState(String state) {
         this.state = state;
     }
@@ -77,33 +70,6 @@ public class JevConfiguration implements Cloneable {
     /** Store the producer response in this exchange property, preserving the original message body. */
     public void setResultProperty(String resultProperty) {
         this.resultProperty = resultProperty;
-    }
-
-    public Double getThreshold() {
-        return threshold;
-    }
-
-    /** The explicit Noul probability threshold for the Jev language. Required when using the language. */
-    public void setThreshold(Double threshold) {
-        this.threshold = threshold;
-    }
-
-    public double getUncertainty() {
-        return uncertainty;
-    }
-
-    /** Half-width of the inclusive uncertainty band around the predicate threshold. Zero disables the band. */
-    public void setUncertainty(double uncertainty) {
-        this.uncertainty = uncertainty;
-    }
-
-    public JevPredicate.UncertaintyPolicy getUncertaintyPolicy() {
-        return uncertaintyPolicy;
-    }
-
-    /** Whether the Jev language returns a non-match or raises an exception for an uncertain result. */
-    public void setUncertaintyPolicy(JevPredicate.UncertaintyPolicy uncertaintyPolicy) {
-        this.uncertaintyPolicy = uncertaintyPolicy;
     }
 
     public String getApiKey() {

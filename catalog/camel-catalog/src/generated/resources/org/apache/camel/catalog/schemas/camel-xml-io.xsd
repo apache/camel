@@ -746,15 +746,6 @@ Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="jev" type="tns:jevExpression">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Evaluates a Noul question using a configured Jev endpoint
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="jq" type="tns:jqExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -2759,7 +2750,6 @@ ensuring the aggregation repository is empty before shutdown. Default value: fal
       <xs:element ref="tns:jactl"/>
       <xs:element ref="tns:java"/>
       <xs:element ref="tns:js"/>
-      <xs:element ref="tns:jev"/>
       <xs:element ref="tns:jq"/>
       <xs:element ref="tns:jsonpath"/>
       <xs:element ref="tns:language"/>
@@ -3072,7 +3062,6 @@ Whether the script should support using Camel property placeholder syntax {{ }}.
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:jev"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
@@ -3305,7 +3294,6 @@ The exception class names (fully qualified) to catch.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -3363,7 +3351,6 @@ placeholders or simple expressions using only property placeholders are supporte
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:jev"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
@@ -4421,7 +4408,6 @@ To use a specific charset when converting.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -4485,7 +4471,6 @@ To use a custom thread pool if asyncDelay has been enabled.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -4562,7 +4547,6 @@ restriction, useful for low-code / Kamelet deployments; by default (unset) any s
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -5185,7 +5169,6 @@ The logging level to use for logging transactional rollback. Default is WARN. De
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:jev"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
@@ -5441,7 +5424,6 @@ Global option value.
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:jev"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
@@ -6237,7 +6219,6 @@ The language to use for evaluating the log message, such as simple, groovy, or o
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:jev"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
@@ -10834,7 +10815,6 @@ Timeout in millis when polling from the external service. The default value is 2
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -11021,7 +11001,6 @@ The property value.
       <xs:element ref="tns:jactl"/>
       <xs:element ref="tns:java"/>
       <xs:element ref="tns:js"/>
-      <xs:element ref="tns:jev"/>
       <xs:element ref="tns:jq"/>
       <xs:element ref="tns:jsonpath"/>
       <xs:element ref="tns:language"/>
@@ -11065,7 +11044,6 @@ The property key.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -11369,7 +11347,6 @@ Name of the variable to remove.
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:jev"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
@@ -12071,7 +12048,6 @@ Description of the template parameter for documentation purposes.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -12327,7 +12303,6 @@ The frequency of samples as a message count, using a message-frequency approach.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -12380,7 +12355,6 @@ The uri of the endpoint to send to.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -12433,7 +12407,6 @@ The new exchange pattern to use from this point forward.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -12489,7 +12462,6 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -12536,7 +12508,6 @@ name. Otherwise a constant name will be used.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -12592,7 +12563,6 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -12639,7 +12609,6 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:jev"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
@@ -13303,7 +13272,6 @@ handler. Default value: true
             <xs:element ref="tns:jactl"/>
             <xs:element ref="tns:java"/>
             <xs:element ref="tns:js"/>
-            <xs:element ref="tns:jev"/>
             <xs:element ref="tns:jq"/>
             <xs:element ref="tns:jsonpath"/>
             <xs:element ref="tns:language"/>
@@ -13788,7 +13756,6 @@ into.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -13996,7 +13963,6 @@ Indicates whether null is allowed as value of a body to unmarshall. Default valu
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>
@@ -15499,11 +15465,6 @@ strings inside strings. Default value: true
       <xs:extension base="tns:typedExpressionDefinition"/>
     </xs:simpleContent>
   </xs:complexType>
-  <xs:complexType name="jevExpression">
-    <xs:simpleContent>
-      <xs:extension base="tns:expression"/>
-    </xs:simpleContent>
-  </xs:complexType>
   <xs:complexType name="jqExpression">
     <xs:simpleContent>
       <xs:extension base="tns:singleInputTypedExpressionDefinition"/>
@@ -16383,7 +16344,6 @@ URI of the Endpoint used for validation.
           <xs:element ref="tns:jactl"/>
           <xs:element ref="tns:java"/>
           <xs:element ref="tns:js"/>
-          <xs:element ref="tns:jev"/>
           <xs:element ref="tns:jq"/>
           <xs:element ref="tns:jsonpath"/>
           <xs:element ref="tns:language"/>

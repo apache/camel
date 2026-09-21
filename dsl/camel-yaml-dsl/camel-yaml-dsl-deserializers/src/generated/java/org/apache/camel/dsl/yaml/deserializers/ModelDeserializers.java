@@ -187,7 +187,6 @@ import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.model.language.JactlExpression;
 import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
-import org.apache.camel.model.language.JevExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
@@ -7984,73 +7983,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "jev",
-            inline = true,
-            types = org.apache.camel.model.language.JevExpression.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Jev",
-            description = "Evaluates a Noul question using a configured Jev endpoint",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
-            }
-    )
-    public static class JevExpressionDeserializer extends YamlDeserializerBase<JevExpression> {
-        public JevExpressionDeserializer() {
-            super(JevExpression.class);
-        }
-
-        @Override
-        protected JevExpression newInstance() {
-            return new JevExpression();
-        }
-
-        @Override
-        protected JevExpression newInstance(String value) {
-            return new JevExpression(value);
-        }
-
-        @Override
-        protected boolean setProperty(JevExpression target, String propertyKey, String propertyName,
-                Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "expression": {
-                    String val = asText(node);
-                    target.setExpression(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "trim": {
-                    String val = asText(node);
-                    target.setTrim(val);
-                    break;
-                }
-                default: {
-                    ExpressionDefinition ed = target.getExpressionType();
-                    if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
-                    }
-                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
-                    if (ed != null) {
-                        target.setExpressionType(ed);
-                        warnCompactNotation(node);
-                    } else {
-                        return false;
-                    }
                 }
             }
             return true;

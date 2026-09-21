@@ -46,10 +46,6 @@ public class JevComponentConfigurer extends PropertyConfigurerSupport implements
         case "resultproperty":
         case "resultProperty": getOrCreateConfiguration(target).setResultProperty(property(camelContext, java.lang.String.class, value)); return true;
         case "state": getOrCreateConfiguration(target).setState(property(camelContext, java.lang.String.class, value)); return true;
-        case "threshold": getOrCreateConfiguration(target).setThreshold(property(camelContext, java.lang.Double.class, value)); return true;
-        case "uncertainty": getOrCreateConfiguration(target).setUncertainty(property(camelContext, double.class, value)); return true;
-        case "uncertaintypolicy":
-        case "uncertaintyPolicy": getOrCreateConfiguration(target).setUncertaintyPolicy(property(camelContext, org.apache.camel.component.jev.JevPredicate.UncertaintyPolicy.class, value)); return true;
         default: return false;
         }
     }
@@ -73,10 +69,6 @@ public class JevComponentConfigurer extends PropertyConfigurerSupport implements
         case "resultproperty":
         case "resultProperty": return java.lang.String.class;
         case "state": return java.lang.String.class;
-        case "threshold": return java.lang.Double.class;
-        case "uncertainty": return double.class;
-        case "uncertaintypolicy":
-        case "uncertaintyPolicy": return org.apache.camel.component.jev.JevPredicate.UncertaintyPolicy.class;
         default: return null;
         }
     }
@@ -101,10 +93,6 @@ public class JevComponentConfigurer extends PropertyConfigurerSupport implements
         case "resultproperty":
         case "resultProperty": return getOrCreateConfiguration(target).getResultProperty();
         case "state": return getOrCreateConfiguration(target).getState();
-        case "threshold": return getOrCreateConfiguration(target).getThreshold();
-        case "uncertainty": return getOrCreateConfiguration(target).getUncertainty();
-        case "uncertaintypolicy":
-        case "uncertaintyPolicy": return getOrCreateConfiguration(target).getUncertaintyPolicy();
         default: return null;
         }
     }

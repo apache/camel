@@ -78,6 +78,7 @@ class JevPredicateTest extends JevTestSupport {
         JevPredicate predicate = new JevPredicate(
                 "jev:semantic", body(), noulQuestion("Refund?"),
                 0.5, 0.125, JevPredicate.UncertaintyPolicy.NonMatch);
+        predicate.init(context);
         assertThat(predicate.matches(exchange("Refund?"))).isEqualTo(expected);
     }
 
@@ -88,6 +89,7 @@ class JevPredicateTest extends JevTestSupport {
         JevPredicate predicate = new JevPredicate(
                 "jev:semantic", body(), noulQuestion("Refund?"),
                 0.5, 0.125, JevPredicate.UncertaintyPolicy.Fail);
+        predicate.init(context);
         Exchange exchange = exchange("Refund?");
         assertThatThrownBy(() -> predicate.matches(exchange)).hasCauseInstanceOf(JevUncertainResultException.class);
         assertThat(exchange.getProperty(JevPredicate.RESULT)).isInstanceOf(JsonObject.class);
@@ -99,6 +101,7 @@ class JevPredicateTest extends JevTestSupport {
         JevPredicate predicate = new JevPredicate(
                 "jev:semantic", header("selected"),
                 noulQuestion("Refund?", "Explicit request", "Anything else"), 0.8);
+        predicate.init(context);
         Exchange exchange = exchange("PRIVATE BODY");
         exchange.getMessage().setHeader("selected", "Refund the payment");
         exchange.getMessage().setHeader("private", "PRIVATE HEADER");
@@ -114,6 +117,7 @@ class JevPredicateTest extends JevTestSupport {
     void reevaluatesChangedStateAndClearsStaleResultOnFailure() {
         respond = request -> noulResponse("refund".equals(request.get("state")) ? 0.9 : 0.1);
         JevPredicate predicate = predicate(0.8);
+        predicate.init(context);
         Exchange exchange = exchange("refund");
         assertThat(predicate.matches(exchange)).isTrue();
         Object first = exchange.getProperty(JevPredicate.RESULT);
@@ -154,6 +158,7 @@ class JevPredicateTest extends JevTestSupport {
     void worksInChoiceFilterValidateAndRefWithNormalNonMatchSemantics() throws Exception {
         respond = request -> noulResponse("refund".equals(request.get("state")) ? 0.9 : 0.1);
         JevPredicate predicate = predicate(0.8);
+        predicate.init(context);
         context.getRegistry().bind("refund", predicate);
         AtomicInteger admitted = new AtomicInteger();
         context.addRoutes(new RouteBuilder() {
@@ -227,10 +232,17 @@ class JevPredicateTest extends JevTestSupport {
     @Test
     void predicateOnlyEndpointParticipatesInContextLifecycle() throws Exception {
         JevPredicate predicate = predicate(0.8);
+        predicate.init(context);
         assertThat(predicate.matches(exchange("refund"))).isTrue();
         JevEndpoint endpoint = context.getEndpoint("jev:semantic", JevEndpoint.class);
         endpoint.stop();
         assertThat(endpoint.isStopped()).isTrue();
+        assertThatThrownBy(() -> predicate.matches(exchange("refund")))
+                .hasCauseInstanceOf(IllegalStateException.class).hasRootCauseMessage("Jev endpoint is not started");
+        assertThatThrownBy(() -> new JevProducer(endpoint).process(exchange(request("refund"))))
+                .isInstanceOf(IllegalStateException.class).hasMessage("Jev endpoint is not started");
+        assertThat(endpoint.isStopped()).isTrue();
+        assertThat(requests).hasSize(1);
         endpoint.start();
         assertThat(predicate.matches(exchange("refund"))).isTrue();
         assertThat(requests).hasSize(2);
@@ -249,12 +261,15 @@ class JevPredicateTest extends JevTestSupport {
         Map<String, Object> criteria = new HashMap<>(Map.of("true", "Explicit request", "false", "Anything else"));
         Map<String, Object> question = new HashMap<>(Map.of("type", "noul", "instructions", "Refund?", "criteria", criteria));
         JevPredicate predicate = new JevPredicate("jev:semantic", body(), question, 0.8);
+        predicate.init(context);
         criteria.put("true", "changed");
         question.put("instructions", "changed");
         assertThat(predicate.matches(exchange("Refund"))).isTrue();
         assertThat(requests.peek().path("questions.predicate.instructions")).isEqualTo("Refund?");
         assertThat(requests.peek().path("questions.predicate.criteria.true")).isEqualTo("Explicit request");
-        assertThat(new JevPredicate("jev:simple", body(), "Refund?", 0.8).matches(exchange("Refund"))).isTrue();
+        JevPredicate simple = new JevPredicate("jev:simple", body(), "Refund?", 0.8);
+        simple.init(context);
+        assertThat(simple.matches(exchange("Refund"))).isTrue();
     }
 
 }

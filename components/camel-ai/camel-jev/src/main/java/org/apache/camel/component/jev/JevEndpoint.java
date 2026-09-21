@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jev;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -73,7 +72,7 @@ public class JevEndpoint extends DefaultEndpoint {
         configuredQuestions = null;
         stateExpression = null;
         if (configuration.getQuestions() != null) {
-            configuredQuestions = parseQuestions();
+            configuredQuestions = JevJson.questions(configuration.getQuestions());
             stateExpression = createStateExpression();
         }
         client = new JevClient(configuration);
@@ -99,29 +98,6 @@ public class JevEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Jev state must not be null");
         }
         return Map.of("state", state, "questions", configuredQuestions);
-    }
-
-    /** Creates a Noul predicate from this endpoint's property-based configuration. */
-    public JevPredicate createConfiguredPredicate() throws IOException {
-        JsonObject questions = parseQuestions();
-        if (questions.size() != 1) {
-            throw new IllegalArgumentException("The Jev language requires exactly one configured Noul question");
-        }
-        if (configuration.getThreshold() == null) {
-            throw new IllegalArgumentException("An explicit threshold is required for the Jev language");
-        }
-        String name = questions.keySet().iterator().next();
-        return new JevPredicate(
-                getEndpointUri(), createStateExpression(), name, questions.getJsonObject(name),
-                configuration.getThreshold(), configuration.getUncertainty(), configuration.getUncertaintyPolicy());
-    }
-
-    private JsonObject parseQuestions() throws IOException {
-        if (configuration.getQuestions() == null) {
-            throw new IllegalArgumentException("questions must be configured for the Jev language");
-        }
-        return JevJson.request(Map.of("state", "", "questions", JevJson.parse(configuration.getQuestions())),
-                configuration.getModel()).getJsonObject("questions");
     }
 
     private Expression createStateExpression() {

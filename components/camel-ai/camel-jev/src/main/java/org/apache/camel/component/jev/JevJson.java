@@ -30,9 +30,6 @@ import org.apache.camel.util.json.Jsoner;
 
 /** Validates the documented JSON contract without changing the API's response structure. */
 final class JevJson {
-    // Allow small rounding differences in the service's probability distributions and weighted scores.
-    private static final double ROUNDING_TOLERANCE = 0.001;
-
     private JevJson() {
     }
 
@@ -41,15 +38,30 @@ final class JevJson {
         request.putIfAbsent("model", model);
         text(request.get("model"));
         content(request.get("state"));
-        Map<?, ?> questions = object(request.get("questions"));
-        require(!questions.isEmpty(), "questions must not be empty");
-        questions.forEach((key, value) -> {
-            text(key);
-            question(object(value));
-        });
+        validateQuestions(request.get("questions"));
         jsonValue(request);
         // Detach nested criteria so later caller mutations cannot change response validation.
         return parse(Jsoner.serialize(request));
+    }
+
+    static JsonObject questions(String json) throws IOException {
+        try {
+            JsonObject questions = parse(json);
+            validateQuestions(questions);
+            return questions;
+        } catch (IOException | IllegalArgumentException e) {
+            throw new IOException("Invalid questions option: " + e.getMessage());
+        }
+    }
+
+    private static void validateQuestions(Object value) {
+        Map<?, ?> questions = object(value);
+        require(!questions.isEmpty(), "questions must not be empty");
+        questions.forEach((key, definition) -> {
+            text(key);
+            question(object(definition));
+        });
+        jsonValue(questions);
     }
 
     static String noulQuestion(Map<String, Object> question) {
@@ -60,13 +72,17 @@ final class JevJson {
     }
 
     private static void question(Map<?, ?> question) {
-        content(question.get("instructions"));
+        if (question.get("instructions") != null) {
+            content(question.get("instructions"));
+        }
         Object type = question.get("type");
         if ("noul".equals(type)) {
-            if (question.containsKey("criteria")) {
+            if (question.get("criteria") != null) {
                 object(question.get("criteria")).forEach((key, value) -> {
                     require("true".equals(key) || "false".equals(key), "Noul criteria keys must be true or false");
-                    content(value);
+                    if (value != null) {
+                        content(value);
+                    }
                 });
             }
         } else if ("choice".equals(type)) {
@@ -81,7 +97,7 @@ final class JevJson {
         } else if ("score".equals(type)) {
             require(question.get("criteria") instanceof List<?>, "Score criteria must be a list");
             List<?> criteria = (List<?>) question.get("criteria");
-            require(criteria.size() >= 2 && criteria.size() <= 10, "Score requires 2 to 10 levels");
+            require(!criteria.isEmpty() && criteria.size() <= 10, "Score requires 1 to 10 levels");
             criteria.forEach(JevJson::content);
         } else {
             throw new IllegalArgumentException("Question type must be noul, choice or score");
@@ -89,8 +105,8 @@ final class JevJson {
     }
 
     static JsonObject response(String body, JsonObject request) throws IOException {
-        JsonObject response = parse(body);
         try {
+            JsonObject response = parse(body);
             text(response.get("model"));
             Map<?, ?> usage = object(response.get("usage"));
             tokens(usage.get("input_tokens"));
@@ -100,7 +116,7 @@ final class JevJson {
             require(answers.keySet().equals(questions.keySet()), "Answer names must match question names");
             questions.forEach((key, value) -> answer(object(answers.get(key)), object(value)));
             return response;
-        } catch (IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             // No response fragments in exceptions: the service may echo private submitted state.
             throw new IOException("Invalid Jev response: " + e.getMessage());
         }
@@ -116,8 +132,6 @@ final class JevJson {
         probability(answer.get("confidence"));
         Map<?, ?> probabilities = object(answer.get("probabilities"));
         probabilities.values().forEach(JevJson::probability);
-        double sum = probabilities.values().stream().mapToDouble(value -> ((Number) value).doubleValue()).sum();
-        require(Math.abs(sum - 1) <= ROUNDING_TOLERANCE, "Probabilities must sum to one");
         if ("choice".equals(type)) {
             Set<?> options = object(question.get("criteria")).keySet();
             require(options.contains(answer.get("choice")), "Choice must be one of the requested options");
@@ -131,12 +145,9 @@ final class JevJson {
             require(score >= 0 && score <= criteria.size() - 1, "Score must be within the requested levels");
             Set<String> levels = IntStream.range(0, criteria.size()).mapToObj(Integer::toString).collect(Collectors.toSet());
             require(probabilities.keySet().equals(levels), "Score probabilities must cover the requested levels");
-            double weighted = IntStream.range(0, criteria.size())
-                    .mapToDouble(index -> index * number(probabilities.get(Integer.toString(index)))).sum();
-            require(Math.abs(score - weighted) <= ROUNDING_TOLERANCE, "Score must match its probability-weighted levels");
             Map<?, ?> legend = object(answer.get("legend"));
             require(legend.keySet().equals(levels), "Score legend must cover the requested levels");
-            legend.values().forEach(value -> require(value instanceof String, "Score legend descriptions must be strings"));
+            legend.values().forEach(JevJson::content);
         }
     }
 
@@ -147,9 +158,9 @@ final class JevJson {
                 return object;
             }
         } catch (DeserializationException e) {
-            // Do not expose parser diagnostics containing response data.
+            // Do not expose parser diagnostics containing submitted or response data.
         }
-        throw new IOException("Invalid Jev response: expected a JSON object");
+        throw new IOException("Expected a JSON object");
     }
 
     private static Map<?, ?> object(Object value) {
@@ -195,6 +206,9 @@ final class JevJson {
     }
 
     private static void tokens(Object value) {
+        if (value == null) {
+            return;
+        }
         double tokens = number(value);
         require(tokens >= 0 && tokens == Math.rint(tokens), "Token usage must be a nonnegative integer");
     }

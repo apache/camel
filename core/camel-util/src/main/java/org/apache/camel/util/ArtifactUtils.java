@@ -458,7 +458,6 @@ public final class ArtifactUtils {
             Map.entry("hl7terser", "camel-hl7"),
             Map.entry("jactl", "camel-jactl"),
             Map.entry("java", "camel-joor"),
-            Map.entry("jev", "camel-jev"),
             Map.entry("jq", "camel-jq"),
             Map.entry("js", "camel-javascript"),
             Map.entry("jsonpath", "camel-jsonpath"),

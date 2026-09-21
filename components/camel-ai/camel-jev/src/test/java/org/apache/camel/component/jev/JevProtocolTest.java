@@ -46,7 +46,8 @@ class JevProtocolTest extends JevTestSupport {
                 "team", Map.of("type", "choice", "choice", "yes", "confidence", 0.7,
                         "probabilities", Map.of("yes", 0.9, "no", 0.1)),
                 "urgency", Map.of("type", "score", "score", 0.8, "confidence", 0.6,
-                        "probabilities", Map.of("0", 0.2, "1", 0.8), "legend", Map.of("0", "Routine", "1", "Urgent")))));
+                        "probabilities", Map.of("0", 0.2, "1", 0.8), "legend",
+                        Map.of("0", levels.get(0), "1", levels.get(1))))));
         expected.put("extra_metadata", Map.of("region", "test"));
         respond = request -> Jsoner.serialize(expected);
         JsonObject actual = template.requestBody("jev:structured", input, JsonObject.class);
@@ -62,10 +63,10 @@ class JevProtocolTest extends JevTestSupport {
                 Map.of("state", "hello"),
                 Map.of("state", "hello", "questions", Map.of()),
                 Map.of("state", "hello", "questions", Map.of("q", Map.of("type", "unknown", "instructions", "Question?"))),
-                Map.of("state", "hello", "questions", Map.of("q", Map.of("type", "noul"))),
+                Map.of("state", "hello", "questions", Map.of("q", Map.of("type", "noul", "instructions", 42))),
                 Map.of("state", "hello", "questions", Map.of("q", noulQuestion("Question?")), "model", " "),
                 Map.of("state", "hello", "questions",
-                        Map.of("q", Map.of("type", "score", "instructions", "Level?", "criteria", List.of("only")))),
+                        Map.of("q", Map.of("type", "score", "instructions", "Level?", "criteria", List.of()))),
                 Map.of("state", "hello", "questions",
                         Map.of("q", Map.of("type", "choice", "instructions", "Pick?", "criteria", Map.of()))),
                 Map.of("state", "hello", "questions",
@@ -91,9 +92,7 @@ class JevProtocolTest extends JevTestSupport {
                 Arguments.of("answers.department", "choice", "technical"),
                 Arguments.of("answers.department", "confidence", 1.1),
                 Arguments.of("answers.department", "probabilities", Map.of("billing", 1)),
-                Arguments.of("answers.department", "probabilities", Map.of("billing", 0.9, "technical", 0.2, "other", 0)),
                 Arguments.of("answers.department", "probabilities", Map.of("billing", 1.1, "technical", -0.1, "other", 0)),
-                Arguments.of("answers.urgency", "score", 0),
                 Arguments.of("answers.urgency", "score", 3),
                 Arguments.of("answers.urgency", "legend", Map.of("0", "Routine", "1", 3, "2", "Critical")),
                 Arguments.of("usage", "input_tokens", -1),
@@ -109,5 +108,69 @@ class JevProtocolTest extends JevTestSupport {
         respond = request -> Jsoner.serialize(invalid);
         Exchange exchange = template.request("jev:invalid", e -> e.getMessage().setBody(mixedRequest("hello")));
         assertThat(exchange.getException()).isInstanceOf(IOException.class).hasMessageNotContaining("private response text");
+    }
+
+    @Test
+    void preservesRoundedProbabilitiesAndIndependentlyRoundedScore() throws Exception {
+        JsonObject expected = (JsonObject) Jsoner.deserialize(mixedResponse());
+        ((JsonObject) expected.path("answers.department")).put("probabilities",
+                Map.of("billing", 0.33, "technical", 0.33, "other", 0.33));
+        JsonObject score = (JsonObject) expected.path("answers.urgency");
+        score.put("probabilities", Map.of("0", 0.33, "1", 0.33, "2", 0.34));
+        score.put("score", 1.0);
+        respond = request -> Jsoner.serialize(expected);
+
+        assertThat(template.requestBody("jev:rounded", mixedRequest("hello"), JsonObject.class))
+                .isEqualTo(Jsoner.deserialize(Jsoner.serialize(expected)));
+    }
+
+    static Stream<Map<String, Object>> optionalTokenCounts() {
+        Map<String, Object> nulls = new HashMap<>();
+        nulls.put("input_tokens", null);
+        nulls.put("output_tokens", null);
+        return Stream.of(Map.of(), Map.of("input_tokens", 12), Map.of("output_tokens", 3), nulls);
+    }
+
+    @ParameterizedTest
+    @MethodSource("optionalTokenCounts")
+    void preservesMissingAndNullTokenCounts(Map<String, Object> usage) throws Exception {
+        JsonObject expected = (JsonObject) Jsoner.deserialize(mixedResponse());
+        expected.put("usage", usage);
+        respond = request -> Jsoner.serialize(expected);
+
+        JsonObject actual = template.requestBody("jev:usage", mixedRequest("hello"), JsonObject.class);
+        assertThat(actual).isEqualTo(Jsoner.deserialize(Jsoner.serialize(expected)));
+        assertThat(actual.getJsonObject("usage").keySet()).isEqualTo(usage.keySet());
+    }
+
+    static Stream<String> sdkQuestions() {
+        return Stream.of(
+                "{\"type\":\"noul\"}",
+                "{\"type\":\"noul\",\"instructions\":null}",
+                "{\"type\":\"noul\",\"criteria\":null}",
+                "{\"type\":\"noul\",\"criteria\":{\"true\":null,\"false\":null}}",
+                "{\"type\":\"choice\",\"criteria\":{\"a\":null,\"b\":null}}",
+                "{\"type\":\"choice\",\"instructions\":null,\"criteria\":{\"a\":null,\"b\":null}}",
+                "{\"type\":\"score\",\"criteria\":[\"one\"]}",
+                "{\"type\":\"score\",\"instructions\":null,\"criteria\":[\"one\"]}");
+    }
+
+    @ParameterizedTest
+    @MethodSource("sdkQuestions")
+    void acceptsOptionalInstructionsNullNoulCriteriaAndSingleScoreLevel(String json) throws Exception {
+        JsonObject question = (JsonObject) Jsoner.deserialize(json);
+        Map<String, Object> answer = switch (question.getString("type")) {
+            case "noul" -> Map.of("type", "noul", "noul", 0.9);
+            case "choice" -> Map.of("type", "choice", "choice", "a", "confidence", 0.9,
+                    "probabilities", Map.of("a", 0.9, "b", 0.1));
+            default -> Map.of("type", "score", "score", 0, "confidence", 1,
+                    "legend", Map.of("0", "one"), "probabilities", Map.of("0", 1));
+        };
+        respond = request -> result(Map.of("q", answer));
+
+        JsonObject actual = template.requestBody("jev:optional",
+                Map.of("state", "test", "questions", Map.of("q", question)), JsonObject.class);
+        assertThat(actual.path("answers.q.type")).isEqualTo(question.get("type"));
+        assertThat(requests.peek().path("questions.q")).isEqualTo(question);
     }
 }

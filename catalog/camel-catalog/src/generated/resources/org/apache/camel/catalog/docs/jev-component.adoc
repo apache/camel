@@ -37,7 +37,10 @@ jev:name[?options]
 
 `name` identifies an endpoint; it is not sent to the model.
 Producers and predicates using the same URI share its client and configuration.
-Camel creates and closes the client with the endpoint lifecycle.
+Each endpoint owns one HTTP client, connection pool, and default executor. Reuse the same
+endpoint URI when its configuration is shared. Camel manages its lifecycle and cancels
+in-flight requests on stop. Java 21 and later also close the HTTP client explicitly;
+on Java 17, the JDK reclaims its remaining resources after it becomes unreachable.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -65,11 +68,11 @@ behavior without a route change. The request map may explicitly override the end
 model for that request. The response's `model` identifies the model that answered.
 See https://docs.typesafe.ai/models[available models].
 
-== Configure questions and predicates with properties
+== Configure questions and routing with properties
 
-All connection, question, state-selection, and predicate settings can be supplied through
-properties. Camel discovers the component and language; no application bean needs to be
-constructed or registered.
+All connection, question, and state-selection settings can be supplied through properties.
+Camel discovers the component; no application bean needs to be constructed or registered.
+The route calls the producer explicitly, then uses an ordinary Simple condition on its result.
 
 [source,properties]
 ----
@@ -79,63 +82,78 @@ camel.component.jev.request-timeout=30000
 camel.component.jev.questions={"refund":{"type":"noul","instructions":"Is a refund requested?","criteria":{"true":"Explicit request for money back","false":"Anything else"}}}
 camel.component.jev.state=${header.customerText}
 camel.component.jev.result-property=evaluation
-camel.component.jev.threshold=0.8
-camel.component.jev.uncertainty=0.05
-camel.component.jev.uncertainty-policy=NonMatch
+refund.threshold=0.8
 ----
 
 When `questions` is configured, the producer evaluates the state selected by the `state`
 Simple expression (the body by default). The input body does not need to be a request map.
 `resultProperty` keeps the original body and places the structured response in the named
-exchange property:
+exchange property. `refund.threshold` is an application property used by the local condition:
 
 [source,java]
 ----
 from("direct:evaluate").to("jev:decisions");
 
-from("direct:route").choice()
-    .when().language("jev", "jev:refund").to("direct:refund-handler")
+from("direct:route").to("jev:refund").choice()
+    .when().simple("${exchangeProperty.evaluation[answers][refund][noul]} >= '{{refund.threshold}}'")
+        .to("direct:refund-handler")
     .otherwise().to("direct:general-handler");
 
-from("direct:admit").filter().language("jev", "jev:refund").to("direct:refund-handler");
-from("direct:require").validate().language("jev", "jev:refund").to("direct:refund-handler");
+from("direct:admit").to("jev:refund")
+    .filter().simple("${exchangeProperty.evaluation[answers][refund][noul]} >= '{{refund.threshold}}'")
+    .to("direct:refund-handler");
+
+from("direct:require").to("jev:refund")
+    .validate().simple("${exchangeProperty.evaluation[answers][refund][noul]} >= '{{refund.threshold}}'")
+    .to("direct:refund-handler");
 ----
 
-The `jev` language takes a Jev endpoint URI. It requires exactly one configured Noul question
-and an explicit `threshold`; it stores the complete result in `CamelJevResult`, preserving
-the configured question name. Its expression form returns a Boolean. The component defaults
-above also apply to these endpoints; URI options can override them, including property
-placeholders such as `jev:refund?threshold={{refund.threshold}}`.
-
-XML and YAML routes can use the language directly, without a registry reference:
+The same pattern works in XML and YAML without a registry reference:
 
 [source,xml]
 ----
-<filter>
-  <language language="jev">jev:refund</language>
-  <to uri="direct:refund-handler"/>
-</filter>
+<route>
+  <from uri="direct:admit"/>
+  <to uri="jev:refund"/>
+  <filter>
+    <simple>${exchangeProperty.evaluation[answers][refund][noul]} &gt;= '{{refund.threshold}}'</simple>
+    <to uri="direct:refund-handler"/>
+  </filter>
+</route>
 ----
 
 [source,yaml]
 ----
-- filter:
-    language:
-      language: jev
-      expression: jev:refund
+- from:
+    uri: direct:admit
     steps:
-      - to: direct:refund-handler
+      - to: jev:refund
+      - filter:
+          simple: "${exchangeProperty.evaluation[answers][refund][noul]} >= '{{refund.threshold}}'"
+          steps:
+            - to: direct:refund-handler
 ----
 
-Configured producer questions may mix Noul, Choice, and Score. Only the predicate language
-requires a single Noul question. When `questions` is absent, the producer accepts a complete
-request map as described below. `state` applies only to configured questions.
+The HTTP call occurs at the `to` step. Subsequent conditions read its stored result locally.
+Keep the threshold quoted in Simple so it is converted to the answer's numeric type.
+Configure credentials through component properties or secret placeholders; the conditions
+contain only answer lookups and routing policy. URI options can override component defaults.
+Service failures propagate as errors before the condition is evaluated.
+
+For stream bodies, such as an HTTP consumer's `InputStream`, select text explicitly with
+`camel.component.jev.state=${bodyAs(String)}` or convert the body to a String before the Jev step.
+Reading a stream consumes it; use Camel stream caching or convert the body first when later steps need it.
+
+Configured producer questions may mix Noul, Choice, and Score. When `questions` is absent,
+the producer accepts a complete request map as described below. `state` applies only to configured questions.
 
 == Producer request and response
 
 Without configured `questions`, the input body must be a `Map<String, Object>` with `state` and a nonempty `questions` map.
 An optional `model` overrides the endpoint default. Each named question is a map with `type`
-(`noul`, `choice`, or `score`), `instructions`, and the applicable `criteria`.
+(`noul`, `choice`, or `score`), optional `instructions`, and the applicable `criteria`.
+Instructions may be omitted or null. Noul criteria and either yes/no description may also
+be omitted or null, matching the official Python SDK and OpenAPI schema.
 State, instructions, and descriptions can be text or structured maps/lists. Nested content
 supports strings, finite numbers, booleans, nulls, lists, and maps with string keys.
 Convert other objects explicitly before submitting them. The component does not collect
@@ -146,10 +164,14 @@ It preserves the API's JSON structure, including additional fields. Nested objec
 arrays are lists, and numeric values implement `Number`; use `doubleValue()` or `longValue()`
 rather than assuming a specific numeric class.
 
-Missing or mismatched answers, invalid numeric ranges, unknown choices, and inconsistent
-probability distributions fail the exchange. Probability sums and weighted Scores allow
-an absolute rounding tolerance of 0.001. The selected Choice must have maximal probability;
-ties are allowed.
+Missing or mismatched answers, invalid numeric ranges, unknown choices, and incomplete
+probability maps fail the exchange. The selected Choice must have maximal probability;
+ties are allowed. Probabilities and scores are preserved as returned. Like the official
+Python SDK, the component does not enforce a probability-sum tolerance or recompute a Score
+from its returned probabilities, which may have been rounded independently.
+
+Token counts may be missing or null. Missing values remain absent and null values remain
+null; neither is replaced with zero. Present counts must be nonnegative integers.
 
 [source,java]
 ----
@@ -179,8 +201,8 @@ There is no implicit batching across producer calls or predicates.
 | Answer | Mapping
 | Noul | `noul` is the probability of yes, in [0,1]. There is no separate confidence value.
 | Choice | `choice`, `probabilities` and `confidence`. Exactly one supplied category is selected. Criteria may contain up to 255 options; an option's description may be null.
-| Score | `score` is a possibly fractional position in 2 to 10 ordered levels. `legend` and `probabilities` are maps keyed by string indices starting at `"0"`; `confidence` describes uncertainty.
-| Response | `model`, `answers`, `usage.input_tokens` and `usage.output_tokens`.
+| Score | `score` is a possibly fractional position in 1 to 10 ordered levels. `legend` and `probabilities` are maps keyed by string indices starting at `"0"`; legend descriptions may be strings, objects, or arrays. `confidence` describes uncertainty.
+| Response | `model`, `answers`, and `usage`. The `input_tokens` and `output_tokens` counts may be absent or null.
 |===
 
 With `resultProperty=evaluation`, the producer stores the response on that exchange property
@@ -255,15 +277,43 @@ through the existing `ref` language in Java, XML, or YAML:
 
 [source,yaml]
 ----
-- filter:
-    ref: refundPredicate
+- beans:
+    - name: messageBody
+      type: org.apache.camel.Expression
+      factoryBean: org.apache.camel.support.builder.ExpressionBuilder
+      factoryMethod: bodyExpression
+    - name: refundPredicate
+      type: >-
+        org.apache.camel.component.jev.JevPredicate('jev:refund', '#bean:messageBody', 'Does this message request a refund?', 0.8)
+
+- from:
+    uri: direct:admit
     steps:
-      - to: direct:refund-handler
+      - filter:
+          ref: refundPredicate
+          steps:
+            - to: direct:refund-handler
+
+- from:
+    uri: direct:route
+    steps:
+      - choice:
+          when:
+            - ref: refundPredicate
+              steps:
+                - to: direct:refund-handler
+          otherwise:
+            steps:
+              - to: direct:general-handler
 ----
 
-The registry form is optional for applications that already construct Java predicates.
-Use the `jev` language and properties shown above when no manually registered bean is desired.
-Both forms use the same predicate implementation and preserve the core Predicate contract.
+The YAML example constructs both the body expression and the predicate declaratively;
+no Java code or manual registry registration is needed. Configure credentials with the
+component properties shown above. The explicit constructor signature selects the
+String-question overload with a numeric threshold. Each evaluation through `ref` makes
+an HTTP request and stores the response in `CamelJevResult`.
+Use the producer and local conditions shown above when no predicate bean is desired.
+`JevPredicate` uses Camel's existing Predicate contract.
 
 == Choice classification followed by Camel Choice
 
@@ -362,7 +412,11 @@ when the model, questions, or input distribution changes.
 == Timeouts, errors, and repeated evaluation
 
 Both producer processing and `Predicate.matches` are synchronous: they block the evaluating
-thread. `requestTimeout` must be positive and bounds the caller's wait for the complete HTTP
+thread. In `filter()`, `when()`, or `validate()`, that is the routing thread: each evaluated
+condition adds a remote round trip and can incur token charges. On high-volume routes,
+include this latency and repeated evaluations in throughput and cost budgets.
+
+`requestTimeout` must be positive and bounds the caller's wait for the complete HTTP
 response. It is also passed to the client's connection/request timeout. The component does
 not retry failed evaluations; configure deliberate Camel redelivery, backoff, or a circuit breaker where needed.
 
@@ -385,8 +439,11 @@ call during startup. Ordinary message-based predicates belong in runtime conditi
 
 There is no response cache. Store and reuse a producer response explicitly only while its
 state, questions and model remain applicable. The result property belongs to that exchange;
-sharing a predicate does not share response state. Predicates are immutable apart from their
-user-supplied expression, which must follow Camel's thread-safety contract.
+sharing a predicate does not share response state. Predicate question and threshold settings
+are immutable; the user-supplied expression must follow Camel's thread-safety contract.
+Camel initializes route predicates and owns their endpoint lifecycle. When calling a predicate
+programmatically, call `init(context)` before `matches(exchange)`. A stopped endpoint fails
+evaluation until it is explicitly started again; predicate evaluation does not restart it.
 
 Structured output does not establish correctness. Jev's
 https://docs.typesafe.ai/model-jaggedness/jev-1.13[documented limitations] and the chosen

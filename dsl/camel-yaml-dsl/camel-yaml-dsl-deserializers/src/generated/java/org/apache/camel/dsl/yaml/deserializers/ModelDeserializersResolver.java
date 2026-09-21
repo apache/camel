@@ -177,8 +177,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.JavaScriptExpression": return new ModelDeserializers.JavaScriptExpressionDeserializer();
             case "jaxb": return new ModelDeserializers.JaxbDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.JaxbDataFormat": return new ModelDeserializers.JaxbDataFormatDeserializer();
-            case "jev": return new ModelDeserializers.JevExpressionDeserializer();
-            case "org.apache.camel.model.language.JevExpression": return new ModelDeserializers.JevExpressionDeserializer();
             case "jq": return new ModelDeserializers.JqExpressionDeserializer();
             case "org.apache.camel.model.language.JqExpression": return new ModelDeserializers.JqExpressionDeserializer();
             case "jsonApi": return new ModelDeserializers.JsonApiDataFormatDeserializer();
