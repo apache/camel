@@ -690,6 +690,46 @@ process is running).
 | Get a JVM thread dump showing thread names, states, and stack traces.
 |===
 
+==== Data, Resilience and Analysis
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_runtime_sql`
+| Execute a SQL statement against a DataSource of the running application: columns and rows for a SELECT,
+  the update count otherwise. Lets the model look at the data a route reads or writes, or try a statement
+  before putting it in a route.
+
+| `camel_runtime_datasources`
+| Datasource connection pool status: active, idle and total connections, max pool size and waiting threads.
+
+| `camel_runtime_sql_trace`
+| Traced SQL executions of the camel-sql and camel-jdbc components with timing, row counts, route ID and
+  failure status.
+
+| `camel_runtime_circuit_breakers`
+| Circuit breaker state (CLOSED/OPEN/HALF_OPEN), call counts, failure rates and not-permitted calls.
+
+| `camel_runtime_metrics`
+| Micrometer metrics: counters, gauges, timers and distributions (requires `--observe` or camel-micrometer).
+
+| `camel_runtime_eip_stats`
+| EIP usage across all routes with processor counts and performance figures.
+
+| `camel_runtime_spans`
+| OpenTelemetry spans with trace IDs, durations, route IDs and status (requires `--observe`).
+
+| `camel_runtime_startup_steps`
+| Startup recorder steps with duration, level and type (requires `camel.main.startup-recorder=true`).
+
+| `camel_runtime_route_analysis`
+| Anti-pattern and structure analysis per route: error handling, complexity, component usage.
+
+| `camel_runtime_config_drift`
+| Compares the running route definitions with the source files to detect configuration drift.
+|===
+
 ==== Configuration and Registry
 
 [cols="1,3",options="header"]
