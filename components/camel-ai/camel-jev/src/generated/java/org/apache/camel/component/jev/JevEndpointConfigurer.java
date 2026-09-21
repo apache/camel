@@ -29,6 +29,8 @@ public class JevEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxconcurrentrequests":
+        case "maxConcurrentRequests": target.getConfiguration().setMaxConcurrentRequests(property(camelContext, int.class, value)); return true;
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
         case "questions": target.getConfiguration().setQuestions(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
@@ -49,6 +51,8 @@ public class JevEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "baseUrl": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxconcurrentrequests":
+        case "maxConcurrentRequests": return int.class;
         case "model": return java.lang.String.class;
         case "questions": return java.lang.String.class;
         case "requesttimeout":
@@ -70,6 +74,8 @@ public class JevEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxconcurrentrequests":
+        case "maxConcurrentRequests": return target.getConfiguration().getMaxConcurrentRequests();
         case "model": return target.getConfiguration().getModel();
         case "questions": return target.getConfiguration().getQuestions();
         case "requesttimeout":

@@ -133,8 +133,11 @@ class JevPredicateTest extends JevTestSupport {
     @Test
     void sharesPredicateConcurrentlyWithoutLeakingResults() throws Exception {
         respond = request -> noulResponse(request.get("state").toString().startsWith("yes") ? 0.9 : 0.1);
-        JevPredicate predicate = predicate(0.8);
+        Map<String, Object> instructions = new HashMap<>(Map.of("text", "Refund?"));
+        instructions.put("optional", null);
+        JevPredicate predicate = new JevPredicate("jev:semantic", body(), noulQuestion(instructions), 0.8);
         predicate.init(context);
+        instructions.put("text", "changed");
         ExecutorService callers = Executors.newFixedThreadPool(4);
         try {
             List<Callable<Exchange>> calls = IntStream.range(0, 12).mapToObj(i -> (Callable<Exchange>) () -> {
@@ -151,7 +154,9 @@ class JevPredicateTest extends JevTestSupport {
         } finally {
             callers.shutdownNow();
         }
-        assertThat(requests).hasSize(12);
+        assertThat(requests).hasSize(12).allSatisfy(request -> assertThat(request.getJsonObject("questions")
+                .getJsonObject("predicate").getJsonObject("instructions"))
+                .containsEntry("text", "Refund?").containsEntry("optional", null));
     }
 
     @Test

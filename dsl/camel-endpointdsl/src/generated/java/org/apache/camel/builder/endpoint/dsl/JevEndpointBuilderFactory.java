@@ -61,6 +61,42 @@ public interface JevEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum concurrent evaluations per endpoint, shared by producers and
+         * predicates. Excess requests fail immediately with
+         * RejectedExecutionException without being queued or sent. Must be
+         * positive.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 64
+         * Group: common
+         * 
+         * @param maxConcurrentRequests the value to set
+         * @return the dsl builder
+         */
+        default JevEndpointBuilder maxConcurrentRequests(int maxConcurrentRequests) {
+            doSetProperty("maxConcurrentRequests", maxConcurrentRequests);
+            return this;
+        }
+        /**
+         * Maximum concurrent evaluations per endpoint, shared by producers and
+         * predicates. Excess requests fail immediately with
+         * RejectedExecutionException without being queued or sent. Must be
+         * positive.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 64
+         * Group: common
+         * 
+         * @param maxConcurrentRequests the value to set
+         * @return the dsl builder
+         */
+        default JevEndpointBuilder maxConcurrentRequests(String maxConcurrentRequests) {
+            doSetProperty("maxConcurrentRequests", maxConcurrentRequests);
+            return this;
+        }
+        /**
          * The model ID or alias. Use a versioned ID to pin decision behavior.
          * 
          * The option is a: <code>java.lang.String</code> type.

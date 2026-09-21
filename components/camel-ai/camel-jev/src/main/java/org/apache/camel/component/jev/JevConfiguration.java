@@ -34,6 +34,8 @@ public class JevConfiguration implements Cloneable {
     private String model = "jev-latest";
     @UriParam(label = "common", defaultValue = "30000")
     private long requestTimeout = 30000;
+    @UriParam(label = "common", defaultValue = "64")
+    private int maxConcurrentRequests = 64;
 
     @UriParam(label = "common")
     private String questions;
@@ -108,6 +110,18 @@ public class JevConfiguration implements Cloneable {
         this.requestTimeout = requestTimeout;
     }
 
+    public int getMaxConcurrentRequests() {
+        return maxConcurrentRequests;
+    }
+
+    /**
+     * Maximum concurrent evaluations per endpoint, shared by producers and predicates. Excess requests fail immediately
+     * with RejectedExecutionException without being queued or sent. Must be positive.
+     */
+    public void setMaxConcurrentRequests(int maxConcurrentRequests) {
+        this.maxConcurrentRequests = maxConcurrentRequests;
+    }
+
     public JevConfiguration copy() {
         try {
             return (JevConfiguration) clone();
@@ -133,6 +147,9 @@ public class JevConfiguration implements Cloneable {
         }
         if (requestTimeout <= 0) {
             throw new IllegalArgumentException("requestTimeout must be positive");
+        }
+        if (maxConcurrentRequests <= 0) {
+            throw new IllegalArgumentException("maxConcurrentRequests must be positive");
         }
     }
 }

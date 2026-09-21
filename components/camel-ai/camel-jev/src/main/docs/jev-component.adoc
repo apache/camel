@@ -57,6 +57,7 @@ Configure credentials through property placeholders or a supported vault:
 camel.component.jev.api-key={{env:TYPESAFE_API_KEY}}
 camel.component.jev.model=jev-1.13.0
 camel.component.jev.request-timeout=30000
+camel.component.jev.max-concurrent-requests=64
 ----
 
 `apiKey` is a secret option. `baseUrl` defaults to `https://api.typesafe.ai`; the client
@@ -67,6 +68,19 @@ Use HTTPS for the service; HTTP is useful for local testing.
 behavior without a route change. The request map may explicitly override the endpoint's
 model for that request. The response's `model` identifies the model that answered.
 See https://docs.typesafe.ai/models[available models].
+
+=== Concurrent requests
+
+`maxConcurrentRequests` limits concurrent evaluations to 64 per endpoint by default and must
+be positive. Producers and predicates using the same endpoint share this limit. A component
+property sets the default for each endpoint; an endpoint URI can override it, for example
+`jev:refund?maxConcurrentRequests=8`. Different endpoints have independent limits.
+
+When the limit is reached, the evaluation fails immediately with
+`java.util.concurrent.RejectedExecutionException` before request validation, serialization,
+or HTTP submission. No request is queued. The slot is released when the evaluation finishes,
+including on failure, timeout, interruption, or cancellation. Camel's error handler can handle
+the rejection through `onException(RejectedExecutionException.class)`.
 
 == Configure questions and routing with properties
 

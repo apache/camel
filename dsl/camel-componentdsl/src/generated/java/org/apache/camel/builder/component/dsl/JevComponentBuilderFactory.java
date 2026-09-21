@@ -86,6 +86,26 @@ public interface JevComponentBuilderFactory {
     
         
         /**
+         * Maximum concurrent evaluations per endpoint, shared by producers and
+         * predicates. Excess requests fail immediately with
+         * RejectedExecutionException without being queued or sent. Must be
+         * positive.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 64
+         * Group: common
+         * 
+         * @param maxConcurrentRequests the value to set
+         * @return the dsl builder
+         */
+        default JevComponentBuilder maxConcurrentRequests(int maxConcurrentRequests) {
+            doSetProperty("maxConcurrentRequests", maxConcurrentRequests);
+            return this;
+        }
+    
+        
+        /**
          * The model ID or alias. Use a versioned ID to pin decision behavior.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -252,6 +272,7 @@ public interface JevComponentBuilderFactory {
             switch (name) {
             case "baseUrl": getOrCreateConfiguration((JevComponent) component).setBaseUrl((java.lang.String) value); return true;
             case "configuration": ((JevComponent) component).setConfiguration((org.apache.camel.component.jev.JevConfiguration) value); return true;
+            case "maxConcurrentRequests": getOrCreateConfiguration((JevComponent) component).setMaxConcurrentRequests((int) value); return true;
             case "model": getOrCreateConfiguration((JevComponent) component).setModel((java.lang.String) value); return true;
             case "questions": getOrCreateConfiguration((JevComponent) component).setQuestions((java.lang.String) value); return true;
             case "requestTimeout": getOrCreateConfiguration((JevComponent) component).setRequestTimeout((long) value); return true;

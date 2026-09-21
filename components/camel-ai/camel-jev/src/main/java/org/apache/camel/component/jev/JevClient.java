@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -40,11 +41,14 @@ final class JevClient implements AutoCloseable {
     private final String apiKey;
     private final String model;
     private final Duration timeout;
+    private final int maxConcurrentRequests;
     private final Set<CompletableFuture<HttpResponse<String>>> pending = new HashSet<>();
+    private int activeRequests;
     private boolean closed;
 
     JevClient(JevConfiguration configuration) {
         timeout = Duration.ofMillis(configuration.getRequestTimeout());
+        maxConcurrentRequests = configuration.getMaxConcurrentRequests();
         apiKey = configuration.getApiKey();
         model = configuration.getModel();
         String baseUrl = configuration.getBaseUrl();
@@ -53,6 +57,25 @@ final class JevClient implements AutoCloseable {
     }
 
     JsonObject evaluate(Map<String, Object> input) throws Exception {
+        synchronized (this) {
+            if (closed) {
+                throw new IllegalStateException("Jev client is stopped");
+            }
+            if (activeRequests >= maxConcurrentRequests) {
+                throw new RejectedExecutionException("Jev maxConcurrentRequests limit reached: " + maxConcurrentRequests);
+            }
+            activeRequests++;
+        }
+        try {
+            return send(input);
+        } finally {
+            synchronized (this) {
+                activeRequests--;
+            }
+        }
+    }
+
+    private JsonObject send(Map<String, Object> input) throws Exception {
         JsonObject request = JevJson.request(input, model);
         HttpRequest httpRequest = HttpRequest.newBuilder(uri).timeout(timeout)
                 .header("Authorization", "Bearer " + apiKey)

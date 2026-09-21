@@ -89,7 +89,9 @@ class JevProducerTest extends JevTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "requestTimeout=0", "requestTimeout=-1", "model=", "apiKey=", "baseUrl=ftp://localhost" })
+    @ValueSource(strings = {
+            "requestTimeout=0", "requestTimeout=-1", "maxConcurrentRequests=0", "maxConcurrentRequests=-1",
+            "model=", "apiKey=", "baseUrl=ftp://localhost" })
     void invalidConfigurationFailsBeforeEvaluation(String options) {
         assertThatThrownBy(() -> context.getEndpoint("jev:invalid?" + options)).isInstanceOf(Exception.class);
         assertThat(requests).isEmpty();

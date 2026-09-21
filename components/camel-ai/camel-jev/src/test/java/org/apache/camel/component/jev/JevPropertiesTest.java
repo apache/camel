@@ -19,6 +19,8 @@ package org.apache.camel.component.jev;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +35,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.apache.camel.builder.Builder.body;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 
 class JevPropertiesTest extends JevTestSupport {
     private Main configuredMain() {
@@ -128,6 +131,43 @@ class JevPropertiesTest extends JevTestSupport {
                     .hasMessageStartingWith("Invalid questions option:").hasMessageNotContaining("PRIVATE");
             assertThat(requests).isEmpty();
         } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void configuresConcurrencyLimitThroughProperties() throws Exception {
+        Main main = configuredMain();
+        main.addProperty("camel.component.jev.max-concurrent-requests", "1");
+        main.addProperty("camel.component.jev.request-timeout", "30000");
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException(RejectedExecutionException.class).handled(true).setHeader("overloaded", constant(true));
+                from("direct:limited").to("jev:limited");
+            }
+        });
+        holdHeaders = true;
+        try {
+            main.start();
+            try (var producer = main.getCamelContext().createProducerTemplate()) {
+                var first = producer.asyncSend("direct:limited", e -> e.getMessage().setHeader("selected", "refund"));
+                await().atMost(5, TimeUnit.SECONDS).until(() -> requests.size() == 1);
+                var rejected = producer.asyncSend("direct:limited", e -> e.getMessage().setHeader("selected", "refund"))
+                        .get(5, TimeUnit.SECONDS);
+                assertThat(rejected.getException()).isNull();
+                assertThat(rejected.getMessage().getHeader("overloaded")).isEqualTo(true);
+                assertThat(rejected.getProperty("evaluation")).isNull();
+                assertThat(requests).hasSize(1);
+                release.countDown();
+                assertThat(first.get(5, TimeUnit.SECONDS).getProperty("evaluation")).isInstanceOf(JsonObject.class);
+                var next = producer.request("direct:limited", e -> e.getMessage().setHeader("selected", "refund"));
+                assertThat(next.getException()).isNull();
+                assertThat(next.getProperty("evaluation")).isInstanceOf(JsonObject.class);
+                assertThat(requests).hasSize(2);
+            }
+        } finally {
+            release.countDown();
             main.stop();
         }
     }

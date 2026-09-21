@@ -40,7 +40,8 @@ public final class JevPredicate implements Predicate {
 
     private final String endpointUri;
     private final Expression state;
-    private final String question;
+    // Private snapshot, read-only after construction and safe to share between evaluations.
+    private final JsonObject question;
     private final double threshold;
     private final double uncertainty;
     private final UncertaintyPolicy uncertaintyPolicy;
@@ -96,7 +97,7 @@ public final class JevPredicate implements Predicate {
                 throw new IllegalArgumentException("Jev state must not be null");
             }
             JsonObject result = endpoint.evaluate(Map.of("state", selected,
-                    "questions", Map.of("predicate", JevJson.parse(question))));
+                    "questions", Map.of("predicate", question)));
             exchange.setProperty(RESULT, result);
             double probability = result.getJsonObject("answers").getJsonObject("predicate").getDouble("noul");
             if (uncertainty > 0 && probability >= threshold - uncertainty && probability <= threshold + uncertainty) {
