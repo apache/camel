@@ -71,6 +71,9 @@ public class OpaConfiguration implements Cloneable {
     @UriParam(label = "security", security = "insecure:dev")
     private boolean failOpen;
 
+    @UriParam(label = "producer")
+    private boolean batch;
+
     @UriParam(label = "advanced",
               description = "An existing OPAClient to use. When set, serverUrl and bearerToken are ignored.")
     @Metadata(autowired = true)
@@ -279,6 +282,23 @@ public class OpaConfiguration implements Cloneable {
 
     public void setFailOpen(boolean failOpen) {
         this.failOpen = failOpen;
+    }
+
+    public boolean isBatch() {
+        return batch;
+    }
+
+    /**
+     * Authorize a whole collection in one call. When enabled the producer expects a {@code List} body, evaluates one
+     * input document per element - each element as the {@code body}, sharing the exchange's headers and properties -
+     * and returns the per-element verdicts in the {@code CamelOpaBatchDecision} header, a {@code List<Boolean>}
+     * parallel to the input. An element whose evaluation could not be reached is denied, unless {@code failOpen} is
+     * set; the batch is never allowed or denied as a whole because one element failed. Only for
+     * {@code evaluationMode=rest}: it saves the per-element HTTP round-trip via OPA's batch API, which has no meaning
+     * for in-process {@code wasm}.
+     */
+    public void setBatch(boolean batch) {
+        this.batch = batch;
     }
 
     /**

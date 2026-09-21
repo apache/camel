@@ -160,6 +160,35 @@ boolean verdict read out of it:
 Both headers are written on every evaluation, so a verdict set by an inbound message never survives into the
 route.
 
+== Batch evaluation
+
+A route that splits a payload and authorizes each element pays one OPA round-trip per element. Set `batch=true` and
+hand the producer a `List` instead: it builds one input document per element - each element as the `body`, sharing
+the exchange's headers and properties - and evaluates them in a single call through OPA's batch API (the SDK falls
+back to sequential requests when the server does not implement it).
+
+[source,java]
+------------------------------------------------------------
+from("direct:orders")
+    // the body is a List of orders to authorize
+    .to("opa:authz/orders/allow?batch=true")
+    // CamelOpaBatchDecision is now a List<Boolean> parallel to the body
+    .process(dropTheDeniedOrders);
+------------------------------------------------------------
+
+The per-element verdicts arrive in `CamelOpaBatchDecision`, a `List<Boolean>` parallel to the input list: element
+_i_ is allowed when entry _i_ is `true`. `CamelOpaDecisionAllow` is not set in batch mode - there is no single
+verdict - and the header is cleared on entry like the other decision headers, so a value an inbound message
+supplied never survives.
+
+Fail-closed applies *per element*: an element whose evaluation could not be reached is denied (`false`), or allowed
+when `failOpen` is set, while every other element decides normally. The batch is never denied as a whole because
+one element failed, nor allowed because most of it succeeded. Only a call that fails entirely - the server could
+not be reached at all - denies every element (or, under `failOpen`, allows them).
+
+`batch` requires `evaluationMode=rest`: it saves the per-element HTTP round-trip, which has no meaning for in-process
+`wasm` evaluation, and the endpoint rejects the combination at startup.
+
 [#authorizing-an-identity]
 == Authorizing an identity
 

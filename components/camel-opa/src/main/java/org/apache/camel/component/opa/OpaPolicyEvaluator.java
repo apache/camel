@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -129,6 +130,98 @@ public abstract class OpaPolicyEvaluator {
      */
     protected abstract Object evaluateDecision(Map<String, Object> input) throws Exception;
 
+    /**
+     * Evaluates one input document per element in a single batch. The map is keyed so a result can be matched back to
+     * its element; each value carries either the decision or the failure that stopped it being reached. Only the REST
+     * evaluator implements this - wasm evaluates in-process, where batching saves nothing - so the default refuses.
+     */
+    protected Map<String, BatchElement> evaluateBatchDecisions(Map<String, Map<String, Object>> inputs) throws Exception {
+        throw new UnsupportedOperationException("batch evaluation is only supported with evaluationMode=rest");
+    }
+
+    /**
+     * Authorizes a list in one call and records the per-element verdicts in {@link OpaConstants#BATCH_DECISION}, a
+     * {@code List<Boolean>} parallel to the input.
+     * <p/>
+     * Fail-closed is per element: an element whose evaluation could not be reached is denied (or allowed under
+     * {@code failOpen}) while the others decide normally. Only a batch call that fails as a whole - the server could
+     * not be reached at all - denies (or, under {@code failOpen}, allows) every element.
+     */
+    public List<Boolean> evaluateBatch(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
+        clearDecisionHeaders(exchange);
+        Map<String, Map<String, Object>> inputs = new LinkedHashMap<>();
+        for (int i = 0; i < elements.size(); i++) {
+            inputs.put(Integer.toString(i), buildInput(exchange, elements.get(i), true));
+        }
+
+        List<Boolean> verdicts = new ArrayList<>(elements.size());
+        try {
+            Map<String, BatchElement> results = evaluateBatchDecisions(inputs);
+            for (int i = 0; i < elements.size(); i++) {
+                verdicts.add(verdictFor(i, results != null ? results.get(Integer.toString(i)) : null));
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new OpaPolicyEvaluationException(
+                    "Interrupted while evaluating policy " + getPolicyPath() + " in batch", exchange, e);
+        } catch (Exception e) {
+            // the batch call itself failed, so nothing was decided; fail closed for every element unless failOpen
+            if (!failOpen) {
+                throw new OpaPolicyEvaluationException(
+                        "Failed to evaluate policy " + getPolicyPath() + " in batch", exchange, e);
+            }
+            LOG.warn("Batch policy {} could not be evaluated, allowing all {} elements because failOpen is enabled."
+                     + " Reason: {}",
+                    getPolicyPath(), elements.size(), e.getMessage());
+            for (int i = 0; i < elements.size(); i++) {
+                verdicts.add(Boolean.TRUE);
+            }
+        }
+
+        exchange.getMessage().setHeader(OpaConstants.BATCH_DECISION, verdicts);
+        return verdicts;
+    }
+
+    private boolean verdictFor(int index, BatchElement element) {
+        if (element != null && element.succeeded()) {
+            return isAllowed(element.decision());
+        }
+        // a single element could not be reached: deny it (or allow under failOpen) without failing the whole batch
+        if (failOpen) {
+            String reason = element != null && element.failure() != null ? element.failure().getMessage() : "no result";
+            LOG.warn("Batch element {} of policy {} could not be evaluated, allowing it because failOpen is enabled."
+                     + " Reason: {}",
+                    index, getPolicyPath(), reason);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * One element's outcome in a batch: either a decision document, or the failure that stopped it being reached.
+     */
+    protected static final class BatchElement {
+        private final Object decision;
+        private final Exception failure;
+
+        BatchElement(Object decision, Exception failure) {
+            this.decision = decision;
+            this.failure = failure;
+        }
+
+        Object decision() {
+            return decision;
+        }
+
+        Exception failure() {
+            return failure;
+        }
+
+        boolean succeeded() {
+            return failure == null;
+        }
+    }
+
     protected String getPolicyPath() {
         return policyPath;
     }
@@ -137,6 +230,14 @@ public abstract class OpaPolicyEvaluator {
      * Builds the {@code input} document handed to OPA.
      */
     protected Map<String, Object> buildInput(Exchange exchange) {
+        return buildInput(exchange, exchange.getMessage().getBody(), includeBody);
+    }
+
+    /**
+     * Builds the OPA input document with an explicit body. Batch evaluation calls this once per list element, passing
+     * the element as the body so every element is authorized against the same shared headers and properties.
+     */
+    protected Map<String, Object> buildInput(Exchange exchange, Object body, boolean withBody) {
         Map<String, Object> input = new LinkedHashMap<>();
         Map<String, Object> headers = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
@@ -169,8 +270,8 @@ public abstract class OpaPolicyEvaluator {
                 input.put("properties", properties);
             }
         }
-        if (includeBody) {
-            input.put("body", toJsonSafe(exchange, exchange.getMessage().getBody()));
+        if (withBody) {
+            input.put("body", toJsonSafe(exchange, body));
         }
         input.put("exchangeId", exchange.getExchangeId());
         if (exchange.getFromRouteId() != null) {
@@ -240,6 +341,7 @@ public abstract class OpaPolicyEvaluator {
         // as attacker-settable as the verdict itself: left in place, a sender could preload it false and make a
         // fail-open read as a decision a policy actually made
         message.removeHeader(OpaConstants.DECISION_FAILED_OPEN);
+        message.removeHeader(OpaConstants.BATCH_DECISION);
     }
 
     private void setDecisionHeaders(Exchange exchange, Object decision, boolean allowed) {
@@ -277,7 +379,8 @@ public abstract class OpaPolicyEvaluator {
         return OpaConstants.DECISION_ALLOW.equalsIgnoreCase(name)
                 || OpaConstants.DECISION.equalsIgnoreCase(name)
                 || OpaConstants.POLICY_PATH.equalsIgnoreCase(name)
-                || OpaConstants.DECISION_FAILED_OPEN.equalsIgnoreCase(name);
+                || OpaConstants.DECISION_FAILED_OPEN.equalsIgnoreCase(name)
+                || OpaConstants.BATCH_DECISION.equalsIgnoreCase(name);
     }
 
     /**
