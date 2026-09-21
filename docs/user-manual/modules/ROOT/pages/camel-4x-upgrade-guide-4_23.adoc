@@ -144,6 +144,12 @@ script languages and the Camel 4 API use; `request` and `in` stay as its older n
 provided its own global variable named `message` is now hidden by the exchange variable, like the other exchange
 variable names.
 
+The Groovy script compiler now runs the registered `org.apache.camel.spi.CompilePostProcessor`s on a compiled
+class that has class-level annotations, with a new instance of the class, as the Java DSL loader does for `.java`
+sources. In the Camel CLI this binds a `@BindToRegistry` class and registers a `@Converter` class (and handles the
+Spring and Quarkus annotations) from a `.groovy` file, and binds it again on a reload in dev mode. A Groovy class
+without annotations, and a Groovy script, is not instantiated, as before.
+
 === camel-djl (Breaking change)
 
 DJL library dependency has been upgraded to 0.37+
@@ -846,6 +852,10 @@ files (the working directory first), the way it already did under `--source-dir`
 found as `resource:classpath:mapping.groovy`, the reference that also works in the project `camel export` writes,
 where before only `resource:file:mapping.groovy` worked in the CLI. A resource that exists nowhere fails as before,
 named as written.
+
+`camel run` adds `camel-groovy` as a dependency when a `.groovy` file is given, so the file is compiled without
+`--dep=camel-groovy`; before, the file was silently ignored unless the dependency was added. The dependency is
+also written to the run settings, so `camel export` includes it.
 
 === camel-jbang (MCP servers)
 
