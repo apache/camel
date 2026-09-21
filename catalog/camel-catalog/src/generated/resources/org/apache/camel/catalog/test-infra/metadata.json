@@ -260,7 +260,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-couchdb",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "3.5.1",
+  "serviceVersion" : "3.5.2",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.keycloak.services.KeycloakInfraService",
