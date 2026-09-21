@@ -39,6 +39,21 @@ public class OpaSecurityProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // drives the policy's readiness-check registration; a policy shared by several routes counts them
+        policy.onProcessorStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // remove the readiness check once the last guarded route stops, so a stopped or reloaded route does not
+        // leave a check behind reporting on a policy that is no longer enforcing anything (CAMEL-24751)
+        policy.onProcessorStop();
+        super.doStop();
+    }
+
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             authorize(exchange);
