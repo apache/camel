@@ -1024,29 +1024,41 @@ public final class MiscExpressionBuilder {
      */
     public static Expression customFunction(final String name, final String parameter) {
         return new ExpressionAdapter() {
+            private SimpleFunctionRegistry registry;
             private Expression func;
             private Expression exp;
+            private boolean dev;
 
             @Override
             public void init(CamelContext context) {
                 super.init(context);
-                SimpleFunctionRegistry registry
-                        = context.getCamelContextExtension().getContextPlugin(SimpleFunctionRegistry.class);
+                registry = context.getCamelContextExtension().getContextPlugin(SimpleFunctionRegistry.class);
                 func = registry.getFunction(name);
                 if (func == null) {
                     throw new IllegalArgumentException("No custom simple function with name: " + name);
                 }
+                // the simple language caches parsed expressions, so a route reload reuses this adapter;
+                // in dev profile the function is resolved again per evaluation so an edited
+                // SimpleFunction bean (live reload) takes effect
+                dev = "dev".equals(context.getCamelContextExtension().getProfile());
                 exp = ExpressionBuilder.simpleExpression(parameter);
                 exp.init(context);
             }
 
             @Override
             public Object evaluate(Exchange exchange) {
+                Expression target = func;
+                if (dev) {
+                    Expression latest = registry.getFunction(name);
+                    if (latest != null) {
+                        target = latest;
+                    }
+                }
                 final Object originalBody = exchange.getMessage().getBody();
                 try {
                     Object input = exp.evaluate(exchange, Object.class);
                     exchange.getMessage().setBody(input);
-                    return func.evaluate(exchange, Object.class);
+                    return target.evaluate(exchange, Object.class);
                 } finally {
                     exchange.getMessage().setBody(originalBody);
                 }

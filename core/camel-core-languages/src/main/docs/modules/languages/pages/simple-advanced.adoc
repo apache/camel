@@ -958,6 +958,104 @@ TIP: The custom function can then be made discoverable by Camel by dependency in
 If you use standalone Camel you can add `@BindToRegistry("foo-function")` to the class.
 For Spring Boot use `@Component` or `@Service` and Quarkus you can for example use `@ApplicationScoped`.
 
+=== Custom functions in Groovy with Camel CLI
+
+With the xref:manual::camel-jbang.adoc[Camel CLI] the function does not have to be Java: the same class can be a
+Groovy source file next to the route, and Camel CLI compiles it and honours `@BindToRegistry`.
+
+._MaskEmailFunction.groovy_
+[source,groovy]
+----
+import org.apache.camel.BindToRegistry
+import org.apache.camel.Exchange
+import org.apache.camel.spi.SimpleFunction
+
+@BindToRegistry("mask-email-function")
+class MaskEmailFunction implements SimpleFunction {
+
+    String getName() { 'maskEmail' }
+
+    Object apply(Exchange exchange, Object input) {
+        def email = input.toString().trim()
+        int at = email.indexOf('@')
+        if (at <= 0 || at == email.length() - 1) return '***'
+        return email[0] + '***' + email.substring(at)
+    }
+}
+----
+
+The name returned by `getName()` is the function name in simple, the value of `@BindToRegistry` is only the bean id:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:demo
+      parameters:
+        repeatCount: 1
+      steps:
+        - setHeader:
+            name: customerEmail
+            expression:
+              constant:
+                expression: "john.doe@example.com"
+        - setBody:
+            expression:
+              simple:
+                expression: "Contact: ${maskEmail(${header.customerEmail})}"
+        - log:
+            message: "${body}"
+----
+
+Run both files together (no `--dep` is needed, Camel CLI adds `camel-groovy` when a `.groovy` file is given):
+
+[source,bash]
+----
+camel run route.camel.yaml MaskEmailFunction.groovy --dev
+----
+
+The function can also be a bean in the YAML file itself, created by a Groovy script, so the whole example is one file.
+A Groovy map with the two methods of `SimpleFunction` is coerced to the interface with `as SimpleFunction`:
+
+[source,yaml]
+----
+- beans:
+    - name: mask-email-function
+      scriptLanguage: groovy
+      script: |
+        import org.apache.camel.spi.SimpleFunction
+        return [
+          getName: { 'maskEmail' },
+          apply: { exchange, input ->
+            def email = input.toString().trim()
+            int at = email.indexOf('@')
+            if (at <= 0 || at == email.length() - 1) return '***'
+            return email[0] + '***' + email.substring(at)
+          }
+        ] as SimpleFunction
+- route:
+    from:
+      uri: timer:demo
+      parameters:
+        repeatCount: 1
+      steps:
+        - setHeader:
+            name: customerEmail
+            expression:
+              constant:
+                expression: "john.doe@example.com"
+        - setBody:
+            expression:
+              simple:
+                expression: "Contact: ${maskEmail(${header.customerEmail})}"
+        - log:
+            message: "${body}"
+----
+
+In dev mode (`--dev`) an edit of the function, in the `.groovy` file or in the YAML bean, is picked up on the next
+message: the bean is created again on reload and the simple expression resolves the function again per evaluation
+when the `dev` profile is active.
+
 
 == JavaScript Validator
 

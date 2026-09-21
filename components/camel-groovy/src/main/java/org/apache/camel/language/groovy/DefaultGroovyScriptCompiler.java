@@ -17,6 +17,7 @@
 package org.apache.camel.language.groovy;
 
 import java.io.File;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,14 +27,18 @@ import java.util.Map;
 import java.util.Set;
 
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Ordered;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.GroovyScriptCompiler;
@@ -45,6 +50,7 @@ import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -303,9 +309,12 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
             try {
                 Class<?> clazz = groovyPreCompiledClassLoader.findClass(name);
                 classLoader.addClass(clazz.getName(), clazz);
+                postCompile(clazz, entry.getValue());
                 answer.add(name);
             } catch (ClassNotFoundException e) {
                 LOG.debug("Error loading pre-compiled class: {}. This exception is ignored.", name, e);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
         IOHelper.close(groovyPreCompiledClassLoader);
@@ -353,10 +362,42 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
                 // remove before adding in case it's recompiled
                 classLoader.removeClass(name);
                 classLoader.addClass(name, clazz);
+                postCompile(clazz, null);
             }
         }
         taken += watch.taken();
         last = System.currentTimeMillis();
+    }
+
+    /**
+     * Runs the registered {@link CompilePostProcessor}s on a compiled class, as the Java DSL loader does for
+     * {@code .java} sources, so annotations such as {@link BindToRegistry} and {@link org.apache.camel.Converter} (and
+     * the Spring and Quarkus equivalents camel-jbang registers) work in Groovy sources as well. On a recompile (live
+     * reload) the bean is created and bound again, replacing the previous one.
+     */
+    private void postCompile(Class<?> clazz, byte[] byteCode) throws Exception {
+        Set<CompilePostProcessor> posts = camelContext.getRegistry().findByType(CompilePostProcessor.class);
+        if (posts == null || posts.isEmpty()) {
+            return;
+        }
+        // only annotated classes are instantiated: a plain groovy class or script is a DTO or a
+        // function library, and creating it here would only run its constructor for nothing
+        if (clazz.getAnnotations().length == 0 || Script.class.isAssignableFrom(clazz)) {
+            return;
+        }
+        Object instance = null;
+        BindToRegistry bir = clazz.getAnnotation(BindToRegistry.class);
+        boolean skip = clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())
+                || Modifier.isPrivate(clazz.getModifiers()) || (bir != null && bir.lazy());
+        if (!skip && ObjectHelper.hasDefaultNoArgConstructor(clazz)) {
+            instance = camelContext.getInjector().newInstance(clazz, false);
+            if (instance != null) {
+                CamelContextAware.trySetCamelContext(instance, camelContext);
+            }
+        }
+        for (CompilePostProcessor post : posts) {
+            post.postCompile(camelContext, clazz.getName(), clazz, byteCode, instance);
+        }
     }
 
     @Override
