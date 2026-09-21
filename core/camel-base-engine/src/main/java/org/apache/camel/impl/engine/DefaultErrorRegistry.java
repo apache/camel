@@ -455,7 +455,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         private final String threadName;
         private final JsonObject data;
         private final Throwable exception;
-        private boolean handled;
+        private volatile boolean handled;
         private final String[] messageHistory;
 
         private volatile String dataAsJson;
