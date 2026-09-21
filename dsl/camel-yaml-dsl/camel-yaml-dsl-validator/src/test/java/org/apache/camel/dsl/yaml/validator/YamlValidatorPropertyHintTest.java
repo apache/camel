@@ -45,6 +45,51 @@ public class YamlValidatorPropertyHintTest {
         return List.of(validator, canonical);
     }
 
+    /** CAMEL-24881: the route-level error handler is errorHandler: with the kind as its key. */
+    @Test
+    public void testRouteErrorHandlerShapesGetTheForm() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        id: a
+                        noErrorHandler: true
+                        from:
+                          uri: direct:a
+                          steps:
+                            - log: "a"
+                    - route:
+                        id: b
+                        errorHandlerType: none
+                        from:
+                          uri: direct:b
+                          steps:
+                            - log: "b"
+                    - route:
+                        id: c
+                        errorHandler:
+                          noErrorHandler: true
+                        from:
+                          uri: direct:c
+                          steps:
+                            - log: "c"
+                    - route:
+                        id: d
+                        errorHandler:
+                          type: noErrorHandler
+                        from:
+                          uri: direct:d
+                          steps:
+                            - log: "d"
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("noErrorHandler") && m.contains("errorHandler: {noErrorHandler: {}}")
+                            && m.contains("kind as its key"))
+                    .anyMatch(m -> m.contains("errorHandlerType") && m.contains("errorHandler: {noErrorHandler: {}}"))
+                    .anyMatch(m -> m.contains("noErrorHandler takes no options: write noErrorHandler: {}"))
+                    .anyMatch(m -> m.contains("errorHandler: has the kind of handler as its key, not a type property"));
+        }
+    }
+
     @Test
     public void testPollEnrichWithAUriSaysItIsAnExpression() throws Exception {
         for (YamlValidator v : bothModes()) {
