@@ -2364,3 +2364,4 @@ The `maxRetryTimeout` endpoint and component option is deprecated in both `camel
 it had no effect. The option is kept for backward compatibility of existing endpoint URIs but is marked
 deprecated and will be removed in a future release. Routes that set `maxRetryTimeout` can simply drop it;
 behaviour is unchanged.
+ 
