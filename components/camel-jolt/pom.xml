@@ -51,13 +51,13 @@
         </dependency>
 
         <dependency>
-            <groupId>com.bazaarvoice.jolt</groupId>
-            <artifactId>jolt-core</artifactId>
+            <groupId>io.github.jolt-community.jolt</groupId>
+            <artifactId>jolt-community-core</artifactId>
             <version>${jolt-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.bazaarvoice.jolt</groupId>
-            <artifactId>json-utils</artifactId>
+            <groupId>io.github.jolt-community.jolt</groupId>
+            <artifactId>json-community-utils</artifactId>
             <version>${jolt-version}</version>
         </dependency>
 

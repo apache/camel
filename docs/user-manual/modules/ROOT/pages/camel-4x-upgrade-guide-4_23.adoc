@@ -2460,7 +2460,6 @@ The `maxRetryTimeout` endpoint and component option is deprecated in both `camel
 it had no effect. The option is kept for backward compatibility of existing endpoint URIs but is marked
 deprecated and will be removed in a future release. Routes that set `maxRetryTimeout` can simply drop it;
 behaviour is unchanged.
- 
 
 === camel-saxon - external XML entity resolution disabled by default in XQuery
 
@@ -2479,3 +2478,13 @@ A deployment that genuinely needs to parse documents with a `DOCTYPE` or externa
 its own pre-configured Saxon `Configuration` through the `configuration` option of the `xquery`
 endpoint or language (or `XQueryBuilder.setConfiguration(...)`); a user-supplied `Configuration` is
 used as-is and is not modified.
+
+=== camel-jolt - switch from unmaintained bazaarvoice jolt to the jolt-community fork
+
+The JOLT library dependency has been migrated from `com.bazaarvoice.jolt:jolt-core` to
+`io.github.jolt-community.jolt:jolt-community-core`.
+See https://github.com/jolt-community/jolt-community[JOLT (Community Edition)].
+
+Due to the package rename from `com.bazaarvoice.jolt` to `io.joltcommunity.jolt`, users who plug custom `Transform` or
+`ContextualTransform` classes into a Chainr spec need to update their imports to `io.joltcommunity.jolt.Transform` and
+`io.joltcommunity.jolt.ContextualTransform`.
