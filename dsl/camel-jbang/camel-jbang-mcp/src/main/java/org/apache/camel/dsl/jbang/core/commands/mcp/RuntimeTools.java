@@ -115,77 +115,77 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get Camel context information: name, version, state, uptime, route count, exchange statistics.")
     public JsonObject camel_runtime_context(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_context", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics.")
     public JsonObject camel_runtime_routes(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_routes", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get health check status for the Camel application.")
     public JsonObject camel_runtime_health(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_health", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List all endpoints registered in the Camel context with their URIs and usage statistics.")
     public JsonObject camel_runtime_endpoints(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_endpoints", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show currently in-flight exchanges (messages being processed).")
     public JsonObject camel_runtime_inflight(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_inflight", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show blocked exchanges that are stuck or waiting.")
     public JsonObject camel_runtime_blocked(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_blocked", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show exchange variables in the Camel context.")
     public JsonObject camel_runtime_variables(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_variables", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show consumer statistics (polling consumers, event-driven consumers).")
     public JsonObject camel_runtime_consumers(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_consumers", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show configuration properties of the running Camel application.")
     public JsonObject camel_runtime_properties(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_properties", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show services registered in the Camel service registry.")
     public JsonObject camel_runtime_services(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_services", nameOrPid, Map.of());
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show JVM memory usage (heap/non-heap), garbage collection stats, and thread counts.")
     public JsonObject camel_runtime_memory(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_memory", nameOrPid, Map.of());
     }
 
@@ -194,7 +194,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get the source code of routes in the running Camel application.")
     public JsonObject camel_runtime_route_source(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Filter source files by name (supports wildcards)") String filter) {
         return delegateToRegistry("get_route_source", nameOrPid,
                 Map.of("filter", filter != null ? filter : "*"));
@@ -203,7 +203,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Dump route definitions in XML, YAML, or Java DSL format.")
     public JsonObject camel_runtime_route_dump(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID to dump (use * for all routes)") String routeId,
             @ToolArg(description = "Output format: xml, yaml, or java (default: yaml)") String format) {
         Map<String, String> args = new HashMap<>();
@@ -215,7 +215,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show the route structure as a tree of processors.")
     public JsonObject camel_runtime_route_structure(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID to inspect (use * for all routes)") String routeId) {
         return delegateToRegistry("get_route_structure", nameOrPid,
                 Map.of("routeId", routeId != null ? routeId : "*"));
@@ -228,7 +228,7 @@ public class RuntimeTools {
                   Use includeDocs=true to enrich the response with documentation from the Camel catalog \
                   for each EIP option and component endpoint option.""")
     public JsonObject camel_runtime_processor_detail(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID to inspect (use * for all routes)") String routeId,
             @ToolArg(description = "If true, enrich each processor's options with documentation from the Camel catalog") Boolean includeDocs) {
         Map<String, String> args = new HashMap<>();
@@ -242,7 +242,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Control a route: start, stop, suspend, or resume it.")
     public JsonObject camel_runtime_route_control(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID to control") String routeId,
             @ToolArg(description = "Command: start, stop, suspend, or resume") String command) {
         if (routeId == null || routeId.isBlank()) {
@@ -271,10 +271,11 @@ public class RuntimeTools {
                   Returns columns, rows and metadata for a SELECT, or the update count for INSERT/UPDATE/DELETE. \
                   Use it to look at the data a route reads or writes, or to try a statement before putting it in a route.""")
     public JsonObject camel_runtime_sql(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "The SQL statement to execute") String query,
-            @ToolArg(description = "Name of the DataSource bean (auto-detected if only one exists)") String datasource,
-            @ToolArg(description = "Maximum number of rows to return (default 100)") String maxRows) {
+            @ToolArg(description = "Name of the DataSource bean (auto-detected if only one exists)",
+                     required = false) String datasource,
+            @ToolArg(description = "Maximum number of rows to return (default 100)", required = false) String maxRows) {
         if (query == null || query.isBlank()) {
             throw new ToolCallException("query is required", null);
         }
@@ -290,7 +291,7 @@ public class RuntimeTools {
                   Get the datasources of the running Camel application with their connection pool status: \
                   active, idle and total connections, max pool size and waiting threads (HikariCP and Agroal).""")
     public JsonObject camel_runtime_datasources(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_datasources", nameOrPid, Map.of());
     }
 
@@ -299,7 +300,7 @@ public class RuntimeTools {
                   Get the traced SQL executions of the camel-sql and camel-jdbc components: per statement timing, \
                   row counts, category (SELECT/INSERT/UPDATE/DELETE), route ID and failure status, with summary statistics.""")
     public JsonObject camel_runtime_sql_trace(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_sql_trace", nameOrPid, Map.of());
     }
 
@@ -308,7 +309,7 @@ public class RuntimeTools {
                   Get the circuit breakers of the running Camel application: state (CLOSED/OPEN/HALF_OPEN), \
                   call counts, failure rates and not-permitted calls (Resilience4j and MicroProfile Fault Tolerance).""")
     public JsonObject camel_runtime_circuit_breakers(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_circuit_breakers", nameOrPid, Map.of());
     }
 
@@ -317,7 +318,7 @@ public class RuntimeTools {
                   Get the Micrometer metrics of the running Camel application: counters, gauges, timers and \
                   distributions. Requires micrometer (run with --observe or add camel-micrometer).""")
     public JsonObject camel_runtime_metrics(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_metrics", nameOrPid, Map.of());
     }
 
@@ -326,7 +327,7 @@ public class RuntimeTools {
                   Aggregate EIP usage across all routes: which processors are used, how often, and their \
                   performance (total exchanges, failures, mean and max processing time).""")
     public JsonObject camel_runtime_eip_stats(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_eip_stats", nameOrPid, Map.of());
     }
 
@@ -335,8 +336,8 @@ public class RuntimeTools {
                   Get the OpenTelemetry spans of the running Camel application: trace IDs, span names, durations, \
                   route IDs and status. Requires tracing (run with --observe).""")
     public JsonObject camel_runtime_spans(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
-            @ToolArg(description = "Maximum number of spans to return (default 100)") String limit) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Maximum number of spans to return (default 100)", required = false) String limit) {
         Map<String, String> args = new HashMap<>();
         putIfNotBlank(args, "limit", limit);
         return delegateToRegistry("get_spans", nameOrPid, args);
@@ -347,7 +348,7 @@ public class RuntimeTools {
                   Get the startup recorder steps of the running Camel application: each step with duration, level \
                   and type, for diagnosing a slow startup. Requires camel.main.startup-recorder=true.""")
     public JsonObject camel_runtime_startup_steps(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_startup_steps", nameOrPid, Map.of());
     }
 
@@ -357,8 +358,8 @@ public class RuntimeTools {
                   error handler and dead letter channel configuration, complexity (processor count and nesting depth), \
                   component usage and potential issues, per route.""")
     public JsonObject camel_runtime_route_analysis(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
-            @ToolArg(description = "Route ID to analyze (* for all routes, the default)") String routeId) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Route ID to analyze (* for all routes, the default)", required = false) String routeId) {
         Map<String, String> args = new HashMap<>();
         putIfNotBlank(args, "routeId", routeId);
         return delegateToRegistry("get_route_analysis", nameOrPid, args);
@@ -369,8 +370,8 @@ public class RuntimeTools {
                   Compare the running route definitions with the original source files, to detect configuration \
                   drift between what runs and what is deployed.""")
     public JsonObject camel_runtime_config_drift(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
-            @ToolArg(description = "Dump format for the comparison: yaml (default) or xml") String format) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Dump format for the comparison: yaml (default) or xml", required = false) String format) {
         Map<String, String> args = new HashMap<>();
         putIfNotBlank(args, "format", format);
         return delegateToRegistry("detect_config_drift", nameOrPid, args);
@@ -385,7 +386,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = "Send a test message to a Camel endpoint in the running application.")
     public JsonObject camel_runtime_send(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to send to (e.g., direct:myRoute, seda:queue)") String endpoint,
             @ToolArg(description = "Message body to send") String body,
             @ToolArg(description = "Message headers as key=value pairs separated by newlines") String headers) {
@@ -406,7 +407,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Enable, disable, or dump message tracing for the running Camel application.")
     public JsonObject camel_runtime_trace(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Action: enable, disable, or dump") String action) {
         if (action == null || action.isBlank()) {
             throw new ToolCallException("action is required (enable, disable, dump)", null);
@@ -417,7 +418,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show top processor statistics: which processors are slowest and most active.")
     public JsonObject camel_runtime_top(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_top_processors", nameOrPid, Map.of());
     }
 
@@ -426,7 +427,7 @@ public class RuntimeTools {
                   Get the inter-route topology showing how routes connect to each other \
                   and to external endpoints. Returns nodes and edges describing the route graph.""")
     public JsonObject camel_runtime_route_topology(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Include live metrics (message counts, throughput) on nodes and edges") Boolean metric,
             @ToolArg(description = "Include external systems (databases, messaging brokers, etc.) as nodes") Boolean external) {
         Map<String, String> args = new HashMap<>();
@@ -438,7 +439,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Get a JVM thread dump showing thread names, states, and stack traces.")
     public JsonObject camel_runtime_thread_dump(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_thread_dump", nameOrPid, Map.of());
     }
 
@@ -447,7 +448,7 @@ public class RuntimeTools {
                   Get a class-level heap histogram showing instance counts and byte usage per class. \
                   Useful for diagnosing memory leaks and understanding which classes dominate heap usage.""")
     public JsonObject camel_runtime_heap_histogram(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_heap_histogram", nameOrPid, Map.of());
     }
 
@@ -456,7 +457,7 @@ public class RuntimeTools {
                   Write a heap dump (.hprof) file from a running Camel integration for deep memory analysis \
                   with tools like Eclipse MAT, VisualVM, or jhat. The dump is written to the process working directory.""")
     public JsonObject camel_runtime_heap_dump(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "File name for the heap dump (without .hprof extension). Defaults to heap-dump-<timestamp>") String name,
             @ToolArg(description = "Whether to dump only live objects (default true). Live dumps trigger a GC first") String live) {
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
@@ -484,7 +485,7 @@ public class RuntimeTools {
                   Entries with lowConfidence=true have unreliable growth percentages due to low sample counts or \
                   sample counts that diverge significantly between runs — recommend a longer recording duration.""")
     public JsonObject camel_runtime_memory_leak(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Command: start, stop, status, or query") String command,
             @ToolArg(description = "Recording duration in seconds (only for start command, default 60, use 0 for manual stop)") String duration,
             @ToolArg(description = "Recording mode: dual (default, two recordings at Xs and 2Xs with trend comparison) or single (one recording)") String mode,
@@ -620,7 +621,7 @@ public class RuntimeTools {
                   This is always captured (no need to enable tracing) and shows the single most recent exchange \
                   with its route path, processors visited, headers, body, and timing.""")
     public JsonObject camel_runtime_history(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid) {
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_history", nameOrPid, Map.of());
     }
 
@@ -629,7 +630,7 @@ public class RuntimeTools {
                   Receive (poll) a message from a Camel endpoint in the running application. \
                   This is the complement to camel_runtime_send — it consumes one message from the endpoint.""")
     public JsonObject camel_runtime_receive(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to receive from") String endpoint) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
@@ -645,7 +646,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Browse messages in a Camel endpoint (e.g., browse messages queued in a SEDA endpoint).")
     public JsonObject camel_runtime_browse(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to browse") String endpoint,
             @ToolArg(description = "Maximum number of messages to return (default: 50)") Integer limit) {
         if (endpoint == null || endpoint.isBlank()) {
