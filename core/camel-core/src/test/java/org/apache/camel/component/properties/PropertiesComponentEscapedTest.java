@@ -21,6 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class PropertiesComponentEscapedTest extends ContextTestSupport {
 
     @Test
@@ -33,6 +35,19 @@ class PropertiesComponentEscapedTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    void testTrailingBackslashPreserved() throws Exception {
+        assertEquals("test\\n", context.resolvePropertyPlaceholders("{{cool.trailing.n}}"));
+        assertEquals("test\\t", context.resolvePropertyPlaceholders("{{cool.trailing.t}}"));
+        assertEquals("test\\", context.resolvePropertyPlaceholders("{{cool.trailing.backslash}}"));
+        assertEquals("test\\{", context.resolvePropertyPlaceholders("{{cool.trailing.open.brace}}"));
+        assertEquals("test\\}", context.resolvePropertyPlaceholders("{{cool.trailing.close.brace}}"));
+        assertEquals("\\", context.resolvePropertyPlaceholders("{{cool.lone.backslash}}"));
+        assertEquals("\\\\", context.resolvePropertyPlaceholders("{{cool.double.backslash}}"));
+        assertEquals("\\\\\\", context.resolvePropertyPlaceholders("{{cool.triple.backslash}}"));
+        assertEquals("hello\\nworld", context.resolvePropertyPlaceholders("{{cool.mid.n}}"));
     }
 
     @Override

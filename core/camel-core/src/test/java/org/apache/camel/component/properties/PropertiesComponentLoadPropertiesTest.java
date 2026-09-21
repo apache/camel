@@ -41,7 +41,7 @@ class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
         Properties prop = pc.loadProperties();
 
         assertNotNull(prop);
-        assertEquals(21, prop.size());
+        assertEquals(30, prop.size());
 
         assertEquals("{{cool.b}}", prop.getProperty("cool.a"));
         assertEquals("10", prop.getProperty("myQueueSize"));
