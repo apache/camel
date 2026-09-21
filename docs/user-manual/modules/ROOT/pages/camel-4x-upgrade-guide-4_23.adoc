@@ -896,6 +896,46 @@ now reports a top-level `from:` with the form to write, the way it reports the o
 form as well; a Kamelet's `template:` keeps its `from:`, which is the Kamelet spec's shape. The classic schema and `camel run` are unchanged: the file keeps working,
 with the compact notation warning `camel run` already logged for it.
 
+
+=== camel-yaml-dsl - Pipe (kind: Pipe) support is deprecated
+
+Loading Camel K `kind: Pipe` resources (formerly `KameletBinding`), typically from a `.pipe.yaml` file, is
+deprecated in the YAML DSL and will be removed in a future release. Loading such a file now logs a deprecation
+warning.
+
+Write a plain Camel route instead, which is more expressive (any EIP, multiple routes per file, error handling
+and route configuration) and is what the tooling, catalog and validator work on. For example, a Pipe with a
+source, a step and a sink:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+    uri: timer:tick
+  steps:
+    - uri: "https://my-service/api"
+  sink:
+    uri: log:result
+----
+
+becomes:
+
+[source,yaml]
+----
+- route:
+    id: my-pipe
+    from:
+      uri: timer:tick
+      steps:
+        - to:
+            uri: "https://my-service/api"
+        - to:
+            uri: log:result
+----
 === camel-mail
 
 `MimeMultipartDataFormat` now uses `MailHeaderFilterStrategy` instead of a plain

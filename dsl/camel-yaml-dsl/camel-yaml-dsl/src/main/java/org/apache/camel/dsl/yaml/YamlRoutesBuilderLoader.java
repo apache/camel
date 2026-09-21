@@ -94,6 +94,8 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.setDeseri
 public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     public static final String EXTENSION = "yaml";
+    // Note: the "pipe.yaml" extension (Camel K Pipe / kind: Pipe) is deprecated and will be removed in a future release;
+    // use a plain Camel route instead.
     public static final String[] SUPPORTED_EXTENSION = { EXTENSION, "camel.yaml", "pipe.yaml" };
 
     private static final Logger LOG = LoggerFactory.getLogger(YamlRoutesBuilderLoader.class);
@@ -365,6 +367,11 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
             boolean pipe = anyTupleMatches(mn.getValue(), "apiVersion", v -> v.startsWith(PIPE_VERSION)) &&
                     anyTupleMatches(mn.getValue(), "kind", "Pipe");
             if (pipe) {
+                if (!preParse) {
+                    LOG.warn(
+                            "Loading Pipe (kind: Pipe) resources with the YAML DSL is deprecated and will be removed in a future release. "
+                             + "Use a plain Camel route instead.");
+                }
                 target = preConfigurePipe(root, ctx, target, preParse);
             }
         }
@@ -400,7 +407,11 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
     /**
      * Pipe file
+     *
+     * @deprecated Pipe support in the YAML DSL is deprecated and will be removed in a future release; use a plain Camel
+     *             route instead.
      */
+    @Deprecated
     private Object preConfigurePipe(Node root, YamlDeserializationContext ctx, Object target, boolean preParse) {
         // when in pre-parse phase then we only want to gather /metadata/annotations
 
