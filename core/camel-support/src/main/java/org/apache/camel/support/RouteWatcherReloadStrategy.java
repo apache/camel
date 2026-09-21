@@ -395,8 +395,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     /**
      * Reloads the sources of the routes that ran before a failed reload, without the resources that failed, so a
-     * mistake in one file does not leave the application without routes. The previous set stays remembered, so the next
-     * successful reload of the failed file brings everything back together.
+     * mistake in one file does not leave the application without routes. After a successful restore the remembered set
+     * is cleared: the running routes are the last working set again, and the next reload collects their sources itself.
+     * The failed file is loaded again on its next save.
      */
     protected void restorePreviousRoutes(Collection<Resource> failed, Exception cause) {
         if (!removeAllRoutes || previousSources.isEmpty()) {
@@ -421,9 +422,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             Set<String> ids = PluginHelper.getRoutesLoader(getCamelContext()).updateRoutes(restore);
             // the running routes are the last working set again: the next reload collects their sources itself
             previousSources.clear();
-            LOG.warn("Reload failed: the previous routes were restored ({} route(s) running); the changed file loads"
-                     + " on its next save",
-                    ids.size());
+            LOG.warn("Reload failed due to: {}. The previous routes were restored ({} route(s) running); the changed"
+                     + " file loads on its next save",
+                    cause.getMessage(), ids.size());
         } catch (Exception e) {
             LOG.warn("Reload failed and the previous routes could not be restored due to: {}. The application runs"
                      + " without routes until the file is fixed",
