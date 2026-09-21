@@ -196,6 +196,12 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         } else {
             for (BacklogErrorEventMessage e : entries) {
                 if (exchangeId.equals(e.getExchangeId())) {
+                    // the copy's entry stays (it names the node), but the original reporting the failure as
+                    // handled (a circuit breaker's fallback, a doCatch around a multicast) means the exchange
+                    // recovered: the entry is an error that was handled, not an error (CAMEL-24863)
+                    if (handled && !e.isHandled()) {
+                        e.markHandled();
+                    }
                     return;
                 }
             }
@@ -449,7 +455,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         private final String threadName;
         private final JsonObject data;
         private final Throwable exception;
-        private final boolean handled;
+        private volatile boolean handled;
         private final String[] messageHistory;
 
         private volatile String dataAsJson;
@@ -581,6 +587,11 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         @Override
         public boolean isHandled() {
             return handled;
+        }
+
+        @Override
+        public void markHandled() {
+            this.handled = true;
         }
 
         @Override
