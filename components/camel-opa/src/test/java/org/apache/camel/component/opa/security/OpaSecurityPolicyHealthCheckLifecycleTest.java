@@ -103,4 +103,26 @@ public class OpaSecurityPolicyHealthCheckLifecycleTest extends CamelTestSupport 
         context.getRouteController().startRoute("guarded1");
         assertThat(registeredChecks()).isEqualTo(1);
     }
+
+    @Test
+    void doesNotRegisterACheckWhenHealthCheckIsDisabled() throws Exception {
+        // the healthCheckEnabled guard now runs on processor start, not in beforeWrap, so it has to be exercised
+        // through a started route. A distinct serverUrl keeps the would-be check from deduplicating against the one
+        // the enabled routes share, so a missing guard would show up as a second registration.
+        OpaSecurityPolicy disabled = new OpaSecurityPolicy();
+        disabled.setPolicyPath("authz/allow");
+        disabled.setServerUrl("http://disabled-unused:8181");
+        disabled.setHealthCheckEnabled(false);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:disabled").routeId("disabled").policy(disabled).to("mock:result");
+            }
+        });
+        context.getRouteController().startRoute("disabled");
+
+        // still only the one check the two enabled routes share; the disabled policy registered nothing
+        assertThat(registeredChecks()).isEqualTo(1);
+    }
 }
