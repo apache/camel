@@ -110,6 +110,11 @@ public final class AwsRuntimeCredentialsResolver {
                 // Web identity (IRSA) requires software.amazon.awssdk:sts on the classpath to assume the role;
                 // camel-aws-common does not pull sts, so delegate to the SDK default provider, which performs the
                 // web-identity exchange when sts is present and degrades gracefully otherwise.
+                // This branch is only reached once SYSTEM_PROPERTY and ENVIRONMENT have been ruled out (both require
+                // complete static credentials), so the default provider cannot resolve system-property or environment
+                // credentials ahead of the web-identity token here - it is equivalent to a targeted (web-identity,
+                // default) head. When sts is absent the token cannot be assumed and the chain degrades to the profile,
+                // container and instance-profile providers.
                 LOG.info("AWS credentials auto-detect: detected {} - delegating to the SDK default credentials"
                          + " provider chain (web identity requires software.amazon.awssdk:sts on the classpath)",
                         source.getDescription());
