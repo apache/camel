@@ -25,7 +25,9 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * An exchange with no peer to send to is finished by the producer itself, so it has to report that it was done
@@ -72,10 +74,10 @@ class VertxWebsocketProducerNoPeerTest {
             doneSync.set(sync);
         });
 
-        assertThat(result).isTrue();
-        assertThat(callbacks).hasValue(1);
-        assertThat(doneSync).hasValue(true);
-        assertThat(exchange.getException()).isNull();
+        assertTrue(result, "process must report that it finished the exchange itself");
+        assertEquals(1, callbacks.get());
+        assertTrue(doneSync.get());
+        assertNull(exchange.getException());
     }
 
     @Test
@@ -87,7 +89,7 @@ class VertxWebsocketProducerNoPeerTest {
         AtomicReference<Boolean> doneSync = new AtomicReference<>();
         boolean result = producer.process(exchange, doneSync::set);
 
-        assertThat(result).isTrue();
-        assertThat(doneSync).hasValue(true);
+        assertTrue(result, "process must report that it finished the exchange itself");
+        assertTrue(doneSync.get());
     }
 }
