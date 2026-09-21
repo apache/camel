@@ -94,4 +94,22 @@ public class OpaSecurityPolicyWasmTest extends CamelTestSupport {
         assertThat(checks).hasSize(1);
         assertThat(checks.get(0).getId()).contains("opa-rest");
     }
+
+    @Test
+    void failsRouteStartOnABundleThatLoadsButIsNotAValidModule() {
+        // OpaWasmEvaluator borrows an instance at startup so a broken bundle fails fast, and beforeWrap - which cannot
+        // throw a checked exception - must surface that rather than swallow it, or a route would start and then
+        // authorize nothing. authz.rego is the Rego source: it loads as bytes but is not a compiled wasm module.
+        OpaSecurityPolicy corrupt = new OpaSecurityPolicy();
+        corrupt.setEvaluationMode("wasm");
+        corrupt.setPolicyBundle("classpath:authz.rego");
+        corrupt.setPolicyPath("authz/allow");
+
+        assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:corrupt").policy(corrupt).to("mock:never");
+            }
+        })).isInstanceOf(Exception.class);
+    }
 }
