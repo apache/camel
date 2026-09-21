@@ -114,8 +114,9 @@ public final class ReloadOutcome {
 
     /** Polls the integration's log for the reload of a just written file, up to the timeout. */
     public static JsonObject await(long pid, String name, String sinceKey, long timeoutMillis) {
-        long end = System.currentTimeMillis() + timeoutMillis;
-        while (System.currentTimeMillis() < end) {
+        // a monotonic clock: a wall-clock correction must not cut the wait short or stretch it
+        long end = System.nanoTime() + timeoutMillis * 1_000_000L;
+        while (System.nanoTime() < end) {
             JsonObject outcome = classify(records(pid, name), sinceKey);
             if (outcome != null) {
                 return outcome;

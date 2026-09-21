@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -431,7 +432,7 @@ final class EndpointChecks {
             // the slip this catches
             return;
         }
-        Set<String> given = new java.util.HashSet<>();
+        Set<String> given = new HashSet<>();
         if (q >= 0) {
             for (String pair : fullUri.substring(q + 1).split("&")) {
                 given.add(pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair);

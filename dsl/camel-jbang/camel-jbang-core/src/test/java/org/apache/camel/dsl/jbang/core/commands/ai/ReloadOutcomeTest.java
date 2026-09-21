@@ -78,6 +78,16 @@ class ReloadOutcomeTest {
     }
 
     @Test
+    void aPropertiesReloadIsReportedAsSuch() {
+        List<String> props = List.of(
+                "2026-09-21 10:00:30.000  INFO 42 --- [rReloadStrategy] org.apache.camel.main.DefaultConfigurationConfigurer : Reloading properties: file:application.properties");
+        String since = ReloadOutcome.latestReloadKey(records(BEFORE));
+        JsonObject out = ReloadOutcome.classify(records(BEFORE, props), since);
+        assertEquals("properties", out.getString("status"));
+        assertEquals("Reloading properties: file:application.properties", out.getString("message"));
+    }
+
+    @Test
     void aReloadAfterTheFailureIsReloaded() {
         String since = ReloadOutcome.latestReloadKey(records(BEFORE));
         JsonObject out = ReloadOutcome.classify(records(BEFORE, FAILED, RELOADED), since);
