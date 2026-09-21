@@ -460,15 +460,18 @@ public class GenericFile<T> implements WrappedFile<T> {
     }
 
     /**
-     * Fixes the path separator to be according to the protocol
+     * Fixes the path separator to be according to the protocol.
+     * <p>
+     * Only the portable forward slash is translated to the protocol separator. A backslash is a legal file-name
+     * character on POSIX, so it is preserved; on Windows the protocol separator is already a backslash, so translating
+     * the forward slash is sufficient. Rewriting a backslash unconditionally turned a legal single-component POSIX file
+     * name into a multi-component relative path (CAMEL-24415).
      */
     protected String normalizePathToProtocol(String path) {
         if (ObjectHelper.isEmpty(path)) {
             return path;
         }
-        path = path.replace('/', getFileSeparator());
-        path = path.replace('\\', getFileSeparator());
-        return path;
+        return path.replace('/', getFileSeparator());
     }
 
     @Override
