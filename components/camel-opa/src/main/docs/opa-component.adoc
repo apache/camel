@@ -326,6 +326,25 @@ decision point available".
 Setting `failOpen=true` reverses this and lets the exchange proceed when the policy cannot be evaluated. It exists
 for development and for non-critical policies, and should not be enabled in production.
 
+An exchange that proceeds that way carries `CamelOpaDecisionFailedOpen=true`. `CamelOpaDecisionAllow` is `true`
+in both cases, and on its own it cannot tell "a policy allowed this" from "no policy ran and we were told to
+proceed" — which is exactly the distinction an audit trail needs. The marker is set only on the fail-open path,
+so a route can branch on it and an operator can alert on its presence:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .to("opa:authz/orders/allow?failOpen=true")
+    .choice()
+        .when(header(OpaConstants.DECISION_FAILED_OPEN).isEqualTo(true))
+            .to("log:unauthorized?level=WARN")
+    .end()
+    .to("direct:orders")
+------------------------------------------------------------
+
+Like the other decision headers it is cleared before every evaluation, so a message cannot arrive claiming
+`CamelOpaDecisionFailedOpen=false` and disguise an unauthorized exchange as one a policy allowed.
+
 Note that OPA reports an *undefined* decision — no rule matched and the policy declares no default — as an error
 rather than as a deny, so it fails closed as well. Give every decision rule a default, as in the example above,
 so the policy always returns a verdict.

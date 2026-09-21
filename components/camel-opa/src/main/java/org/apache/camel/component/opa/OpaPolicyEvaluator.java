@@ -100,6 +100,10 @@ public abstract class OpaPolicyEvaluator {
                          + " enabled. Reason: {}",
                         policyPath, e.getMessage());
                 setDecisionHeaders(exchange, null, true);
+                // the verdict header alone cannot distinguish "a policy allowed this" from "no policy ran and we
+                // were told to proceed"; an auditor asking which exchanges went through unauthorized needs a
+                // signal it can filter on, not a log line
+                exchange.getMessage().setHeader(OpaConstants.DECISION_FAILED_OPEN, true);
                 return true;
             }
             throw new OpaPolicyEvaluationException(
@@ -233,6 +237,9 @@ public abstract class OpaPolicyEvaluator {
         message.removeHeader(OpaConstants.DECISION_ALLOW);
         message.removeHeader(OpaConstants.DECISION);
         message.removeHeader(OpaConstants.POLICY_PATH);
+        // as attacker-settable as the verdict itself: left in place, a sender could preload it false and make a
+        // fail-open read as a decision a policy actually made
+        message.removeHeader(OpaConstants.DECISION_FAILED_OPEN);
     }
 
     private void setDecisionHeaders(Exchange exchange, Object decision, boolean allowed) {
