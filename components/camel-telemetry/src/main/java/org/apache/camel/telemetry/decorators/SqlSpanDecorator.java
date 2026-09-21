@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.telemetry.Span;
 import org.apache.camel.telemetry.TagConstants;
 
+import static org.apache.camel.telemetry.decorators.SqlQueryHeaderHelper.isQueryHeaderHonoured;
+
 public class SqlSpanDecorator extends AbstractSpanDecorator {
 
     public static final String CAMEL_SQL_QUERY = "CamelSqlQuery";
@@ -40,9 +42,13 @@ public class SqlSpanDecorator extends AbstractSpanDecorator {
         super.beforeTracingEvent(span, exchange, endpoint);
         span.setTag(TagConstants.DB_SYSTEM, "sql");
 
-        String query = exchange.getIn().getHeader(CAMEL_SQL_QUERY, String.class);
-        if (query != null) {
-            span.setTag(TagConstants.DB_STATEMENT, query);
+        // the header only reaches the database when the endpoint opts in, so tagging it
+        // unconditionally would report a statement that was never executed
+        if (isQueryHeaderHonoured(endpoint)) {
+            String query = exchange.getIn().getHeader(CAMEL_SQL_QUERY, String.class);
+            if (query != null) {
+                span.setTag(TagConstants.DB_STATEMENT, query);
+            }
         }
     }
 
