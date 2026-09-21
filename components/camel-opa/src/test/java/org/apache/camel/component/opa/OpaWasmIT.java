@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.opa;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,8 +32,12 @@ import java.util.stream.IntStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.infra.opa.services.OpaWasmBundleBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,10 +58,14 @@ public class OpaWasmIT extends CamelTestSupport {
     static Path bundles;
 
     private static String authz;
+    private static String module;
     private static String roles;
 
     private static String resource(String name) throws Exception {
         try (InputStream in = OpaWasmIT.class.getResourceAsStream(name)) {
+            if (in == null) {
+                throw new IllegalStateException("Test resource not found on the classpath: " + name);
+            }
             return new String(in.readAllBytes(), StandardCharsets.UTF_8);
         }
     }
@@ -67,6 +76,7 @@ public class OpaWasmIT extends CamelTestSupport {
                 "authz.rego", resource("/authz.rego"),
                 "authz/allow", "authz/decision", "authz/strict_allow");
         authz = write("authz-bundle.tar.gz", authzBundle);
+        module = extractModule(authzBundle);
 
         // roles.rego decides from data.admins, which opa build packs beside it as data.json
         byte[] rolesBundle = OpaWasmBundleBuilder.build(
@@ -74,6 +84,20 @@ public class OpaWasmIT extends CamelTestSupport {
                         "data.json", resource("/wasm-data/data.json").getBytes(StandardCharsets.UTF_8)),
                 "roles/allow");
         roles = write("roles-bundle.tar.gz", rolesBundle);
+    }
+
+    /** The /policy.wasm inside a bundle, so the bare-module branch of loadPolicy keeps its coverage. */
+    private static String extractModule(byte[] bundle) throws Exception {
+        try (TarArchiveInputStream tar
+                = new TarArchiveInputStream(new GzipCompressorInputStream(new ByteArrayInputStream(bundle)))) {
+            TarArchiveEntry entry;
+            while ((entry = tar.getNextEntry()) != null) {
+                if (!entry.isDirectory() && entry.getName().endsWith("policy.wasm")) {
+                    return write("authz.wasm", tar.readAllBytes());
+                }
+            }
+        }
+        throw new IllegalStateException("opa build emitted no policy.wasm");
     }
 
     private static String write(String name, byte[] bundle) throws Exception {
@@ -89,6 +113,18 @@ public class OpaWasmIT extends CamelTestSupport {
     @Test
     void allowsWhenThePolicyMatches() {
         Exchange out = template.request(wasm("authz/allow"), e -> e.getMessage().setHeader("user", "alice"));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+    }
+
+    @Test
+    void acceptsABareModuleAsWellAsTheBundleTarball() {
+        // every other test here loads the tarball opa build emits, so without this the other half of loadPolicy -
+        // a bare .wasm, which is what an operator extracting the module by hand would have - goes untested
+        Exchange out = template.request(
+                "opa:authz/allow?evaluationMode=wasm&policyBundle=" + module,
+                e -> e.getMessage().setHeader("user", "alice"));
 
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
@@ -146,6 +182,8 @@ public class OpaWasmIT extends CamelTestSupport {
             assertThat(out.getMessage().getHeader(OpaConstants.DECISION))
                     .as("message %d was still decided by authz/decision", i)
                     .isInstanceOf(Map.class);
+            // the type alone would pass for any rule returning an object; the content is what pins the entrypoint
+            assertThat(out.getMessage().getHeader(OpaConstants.DECISION, Map.class)).containsEntry("allow", true);
         }
     }
 
@@ -166,6 +204,7 @@ public class OpaWasmIT extends CamelTestSupport {
     }
 
     @Test
+    @Timeout(60)
     void keepsThePoolUsableAfterRepeatedEvaluationFailures() {
         String strict = wasm("authz/strict_allow") + "&poolSize=1";
 
