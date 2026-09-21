@@ -73,7 +73,7 @@
         <aliyun-eventbridge-version>7.7.0</aliyun-eventbridge-version>
         <aliyun-eventbridge-client-version>1.3.14</aliyun-eventbridge-client-version>
         <aliyun-tablestore-version>5.17.14</aliyun-tablestore-version>
-        <tea-openapi-version>0.3.15</tea-openapi-version>
+        <tea-openapi-version>0.3.16</tea-openapi-version>
         <!-- the Alibaba SDKs declare com.aliyun:tea as an open version range, so it is pinned in dependencyManagement -->
         <tea-version>1.4.2</tea-version>
         <amazon-kinesis-client-version>3.5.2</amazon-kinesis-client-version>
