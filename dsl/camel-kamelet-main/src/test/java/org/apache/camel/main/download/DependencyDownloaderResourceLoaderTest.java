@@ -16,10 +16,15 @@
  */
 package org.apache.camel.main.download;
 
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.spi.Resource;
 import org.junit.jupiter.api.Test;
@@ -92,5 +97,34 @@ public class DependencyDownloaderResourceLoaderTest {
 
         Resource resource = loader.resolveResource("classpath:mapping.groovy");
         assertEquals("from source dir", new String(resource.getInputStream().readAllBytes()));
+    }
+
+    /** Resolving an http: resource must not fetch it: only classpath: and file: resources are probed and looked up. */
+    @Test
+    void anHttpResourceIsNotFetchedWhenResolved() throws Exception {
+        AtomicInteger requests = new AtomicInteger();
+        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        server.createContext("/openapi.json", exchange -> {
+            requests.incrementAndGet();
+            byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(body);
+            }
+        });
+        server.start();
+        try {
+            SimpleCamelContext context = new SimpleCamelContext();
+            DependencyDownloaderResourceLoader loader
+                    = new DependencyDownloaderResourceLoader(context, null, List.of(routes.toString()));
+
+            Resource resource
+                    = loader.resolveResource("http://localhost:" + server.getAddress().getPort() + "/openapi.json");
+            assertEquals(0, requests.get(), "resolving fetched the resource (rest-openapi then read its specification twice)");
+            assertEquals("{}", new String(resource.getInputStream().readAllBytes()));
+            assertEquals(1, requests.get());
+        } finally {
+            server.stop(0);
+        }
     }
 }
