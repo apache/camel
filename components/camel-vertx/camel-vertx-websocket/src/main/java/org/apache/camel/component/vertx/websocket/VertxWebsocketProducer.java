@@ -62,8 +62,10 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
             Map<String, WebSocketBase> connectedPeers = getConnectedPeers(exchange);
 
             if (connectedPeers.isEmpty()) {
-                // nothing was sent, so the exchange is done here rather than from a write handler
-                LOG.warn("No WebSocket peer to send to for endpoint {}, the message is not delivered",
+                // nothing was sent, so the exchange is done here rather than from a write handler. Having nobody
+                // connected is an ordinary state for a broadcast, so it is only worth a debug line: a connection
+                // key that matches no peer is the misconfiguration, and getConnectedPeers warns about that one
+                LOG.debug("No WebSocket peer to send to for endpoint {}, the message is not delivered",
                         getEndpoint().getEndpointUri());
                 callback.done(true);
                 return true;
