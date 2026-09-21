@@ -94,7 +94,7 @@ public class DiagnoseData {
                         + " for a name chosen per message)",
                         "Log ${body} before the unmarshal step to see the text the data format received",
                         "Unmarshal once, right after the step that reads the document"),
-                List.of("https://camel.apache.org/components/latest/dataformats/json-jackson-dataformat.html")));
+                List.of("https://camel.apache.org/components/next/dataformats/json-jackson-dataformat.html")));
 
         exceptions.put("NoSuchEndpointException", new ExceptionInfo(
                 "The specified endpoint URI could not be resolved to any known Camel component.",
