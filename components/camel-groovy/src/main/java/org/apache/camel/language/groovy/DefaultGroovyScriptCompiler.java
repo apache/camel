@@ -71,7 +71,10 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     private static final Logger LOG = LoggerFactory.getLogger(DefaultGroovyScriptCompiler.class);
 
     private GroovyPreCompiledClassLoader groovyPreCompiledClassLoader;
-    private List<CompilePostProcessor> defaultPostProcessors;
+    private final List<CompilePostProcessor> defaultPostProcessors = List.of(
+            new TypeConverterCompilePostProcessor(),
+            new EventNotifierCompilePostProcessor(),
+            new BindToRegistryCompilePostProcessor());
     private GroovyScriptClassLoader classLoader;
     private CamelContext camelContext;
     private EventNotifier notifier;
@@ -393,12 +396,6 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
         }
         Collection<CompilePostProcessor> posts = camelContext.getRegistry().findByType(CompilePostProcessor.class);
         if (posts == null || posts.isEmpty()) {
-            if (defaultPostProcessors == null) {
-                defaultPostProcessors = List.of(
-                        new TypeConverterCompilePostProcessor(),
-                        new EventNotifierCompilePostProcessor(),
-                        new BindToRegistryCompilePostProcessor());
-            }
             posts = defaultPostProcessors;
         }
         Object instance = null;
