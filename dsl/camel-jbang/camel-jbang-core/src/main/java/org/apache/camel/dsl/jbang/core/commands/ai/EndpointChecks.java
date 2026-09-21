@@ -307,6 +307,13 @@ final class EndpointChecks {
     static final Set<String> FILE_SCHEMES = Set.of("file", "ftp", "ftps", "sftp", "file-watch", "smb");
 
     /**
+     * A doubled backslash before a character that a single backslash would escape in a regex (\\. \\d \\( ...): the
+     * user meant the escape. A doubled backslash before any other character (\\myfile) is left alone: \myfile is not a
+     * regex escape, so a literal backslash is the only thing it can mean.
+     */
+    static final Pattern DOUBLED_BACKSLASH_ESCAPE = Pattern.compile("\\\\\\\\[.dswDSWbB()\\[\\]{}+*?|^$]");
+
+    /**
      * include and exclude on the file components are regular expressions: include=*.txt fails at startup with a
      * PatternSyntaxException wrapped in a binding error. Says to write .*\\.txt or use antInclude.
      */
@@ -324,6 +331,15 @@ final class EndpointChecks {
             String name = pair.substring(0, eq);
             String value = pair.substring(eq + 1);
             if (!name.equals("include") && !name.equals("exclude") || value.startsWith("{{")) {
+                continue;
+            }
+            if (DOUBLED_BACKSLASH_ESCAPE.matcher(value).find()) {
+                // '.*\\.json$' in single quotes: YAML keeps both backslashes, and in a regex \\ is one literal
+                // backslash, so the pattern matches a file name with a backslash in it: no file matches and the route
+                // runs in silence (CAMEL-24854)
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
+                           + name + "=" + value + " matches a literal backslash in the file name (in a regex \\\\ is one"
+                           + " backslash and \\. is a dot): write " + name + "='" + value.replace("\\\\", "\\") + "'");
                 continue;
             }
             try {
