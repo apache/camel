@@ -47,6 +47,9 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
+import org.apache.camel.support.compile.BindToRegistryCompilePostProcessor;
+import org.apache.camel.support.compile.EventNotifierCompilePostProcessor;
+import org.apache.camel.support.compile.TypeConverterCompilePostProcessor;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -68,6 +71,7 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     private static final Logger LOG = LoggerFactory.getLogger(DefaultGroovyScriptCompiler.class);
 
     private GroovyPreCompiledClassLoader groovyPreCompiledClassLoader;
+    private List<CompilePostProcessor> defaultPostProcessors;
     private GroovyScriptClassLoader classLoader;
     private CamelContext camelContext;
     private EventNotifier notifier;
@@ -374,20 +378,28 @@ public class DefaultGroovyScriptCompiler extends ServiceSupport
     }
 
     /**
-     * Runs the registered {@link CompilePostProcessor}s on a compiled class, as the Java DSL loader does for
-     * {@code .java} sources, so annotations such as {@link BindToRegistry} and {@link org.apache.camel.Converter} (and
-     * the Spring and Quarkus equivalents camel-jbang registers) work in Groovy sources as well. On a recompile (live
-     * reload) the bean is created and bound again, replacing the previous one.
+     * Runs the {@link CompilePostProcessor}s on a compiled class, as the Java DSL loader does for {@code .java}
+     * sources, so annotations such as {@link BindToRegistry} and {@link org.apache.camel.Converter} work in Groovy
+     * sources as well. The processors in the registry are used when there are any (camel-jbang registers processors
+     * that also handle the Spring and Quarkus annotations); otherwise the built-in processors for the Camel annotations
+     * are used, so a Groovy source works the same in every runtime. On a recompile (live reload) the bean is created
+     * and bound again, replacing the previous one.
      */
     private void postCompile(Class<?> clazz, byte[] byteCode) throws Exception {
-        Set<CompilePostProcessor> posts = camelContext.getRegistry().findByType(CompilePostProcessor.class);
-        if (posts == null || posts.isEmpty()) {
-            return;
-        }
         // only annotated classes are instantiated: a plain groovy class or script is a DTO or a
         // function library, and creating it here would only run its constructor for nothing
         if (clazz.getAnnotations().length == 0 || Script.class.isAssignableFrom(clazz)) {
             return;
+        }
+        Collection<CompilePostProcessor> posts = camelContext.getRegistry().findByType(CompilePostProcessor.class);
+        if (posts == null || posts.isEmpty()) {
+            if (defaultPostProcessors == null) {
+                defaultPostProcessors = List.of(
+                        new TypeConverterCompilePostProcessor(),
+                        new EventNotifierCompilePostProcessor(),
+                        new BindToRegistryCompilePostProcessor());
+            }
+            posts = defaultPostProcessors;
         }
         Object instance = null;
         BindToRegistry bir = clazz.getAnnotation(BindToRegistry.class);
