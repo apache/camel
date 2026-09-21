@@ -218,10 +218,10 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_run",
-                "Starts an integration with camel run in a separate process, in dev mode by default (files reload when written). Returns the pid and log file; camel_get_log, camel_get_errors and camel_control follow it.")
+                "Starts an integration with camel run in a separate process, in dev mode by default: the directory is watched, a changed or added file (a route, a bean file, a Java class) is reloaded. Returns the pid and log file; camel_get_log, camel_get_errors and camel_control follow it.")
                 .param("directory", "string", "Project directory to run in", true)
-                .param("files", "string", "Source files to run, comma-separated (default: every route file in the"
-                                          + " directory)",
+                .param("files", "string", "Source files to run, comma-separated (default: the whole directory as one"
+                                          + " app; name files when the directory holds several apps)",
                         false)
                 .param("name", "string", "Integration name (default: from the first file)", false)
                 .param("dev", "boolean", "Dev mode with reload on file change (default true)", false)
@@ -247,9 +247,12 @@ public final class AuthoringTools {
 
         registry.accept(tool("camel_control",
                 "Controls a running integration: stop (graceful), kill, restart (picks up edited files without dev "
-                                              + "mode), stop-routes, start-routes, reset-stats (clears statistics, routes "
-                                              + "untouched). Never stop, kill or restart unless the user asked for it.")
-                .param("action", "string", "stop, kill, restart, stop-routes, start-routes or reset-stats", true)
+                                              + "mode), reload (loads the routes again from their files without a restart: "
+                                              + "a changed stylesheet or a dropped data file takes effect, a file consumed "
+                                              + "once is read again), stop-routes, start-routes, reset-stats (clears "
+                                              + "statistics, routes untouched). Never stop, kill or restart unless the "
+                                              + "user asked for it.")
+                .param("action", "string", "stop, kill, restart, reload, stop-routes, start-routes or reset-stats", true)
                 .param("name", "string", NAME_DESC, false)
                 .readOnly(false)
                 .destructive(true)

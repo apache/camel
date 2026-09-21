@@ -56,8 +56,12 @@ public final class IntegrationLauncher {
      */
     public static JsonObject run(Path directory, List<String> files, String name, boolean dev, List<String> extraArgs) {
         List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
-        List<String> sources = files == null || files.isEmpty() ? sourceFiles(directory) : files;
-        cmd.addAll(runArguments(sources, name, dev, extraArgs));
+        // no files given: the whole directory is the app (camel run --source-dir), so a file the agent adds later,
+        // a bean file, a Java class under src/main/java, is part of it and reloaded in dev mode (CAMEL-24861);
+        // with files given only those run, for a directory that holds several apps
+        boolean sourceDir = files == null || files.isEmpty();
+        List<String> sources = sourceDir ? sourceFiles(directory) : files;
+        cmd.addAll(sourceDir ? sourceDirArguments(name, dev, extraArgs) : runArguments(sources, name, dev, extraArgs));
         JsonObject result = new JsonObject();
         if (sources.isEmpty()) {
             result.put("directory", directory.toString());
@@ -105,9 +109,13 @@ public final class IntegrationLauncher {
                 result.put("name", started);
                 result.put("log", LogFileReader.logFile(pid, info.name()).toString());
                 result.put("devMode", dev);
+                result.put("sourceDir", sourceDir);
                 result.put("message", "Started " + started + " (pid " + pid + ")"
                                       + (dev
-                                              ? "; dev mode reloads the routes when a source file changes"
+                                              ? sourceDir
+                                                      ? "; dev mode watches the directory: a changed or added file is"
+                                                        + " reloaded"
+                                                      : "; dev mode reloads the routes when a source file changes"
                                               : "; restart it after changing a source file")
                                       + ". camel_get_log reads its log, camel_get_errors its failed exchanges.");
                 return result;
@@ -165,6 +173,24 @@ public final class IntegrationLauncher {
      * @param  extraArgs further {@code camel run} arguments
      * @return           the arguments after the camel command itself
      */
+    /** The {@code camel run --source-dir=.} arguments: the directory the process starts in is the app. */
+    static List<String> sourceDirArguments(String name, boolean dev, List<String> extraArgs) {
+        List<String> cmd = new ArrayList<>();
+        cmd.add("run");
+        cmd.add("--source-dir=.");
+        if (dev) {
+            cmd.add("--dev");
+        }
+        if (name != null && !name.isBlank()) {
+            cmd.add("--name=" + name);
+        }
+        cmd.add("--logging-color=false");
+        if (extraArgs != null) {
+            cmd.addAll(extraArgs);
+        }
+        return cmd;
+    }
+
     static List<String> runArguments(List<String> files, String name, boolean dev, List<String> extraArgs) {
         List<String> cmd = new ArrayList<>();
         cmd.add("run");
@@ -204,7 +230,7 @@ public final class IntegrationLauncher {
      * Controls a running integration.
      *
      * @param  ctx    the context with the selected process
-     * @param  action stop (graceful), kill, restart, stop-routes, start-routes or reset-stats
+     * @param  action stop (graceful), kill, restart, reload, stop-routes, start-routes or reset-stats
      * @return        what was done
      */
     public static String control(ToolContext ctx, String action) {
@@ -233,8 +259,15 @@ public final class IntegrationLauncher {
                 ctx.executeAction("reset-stats", null);
                 yield "Statistics reset for pid " + pid;
             }
+            case "reload" -> {
+                // what camel cmd reload does: the routes are loaded again from their files without a restart, so
+                // a changed stylesheet or a dropped data file takes effect, and a file consumed once is read again
+                ctx.executeAction("reload", null);
+                yield "Reload triggered for pid " + pid + "; camel_get_log shows the routes reloaded summary";
+            }
             default -> throw new ToolExecutionException(
-                    "Unknown action: " + action + ". Use stop, kill, restart, stop-routes, start-routes or reset-stats");
+                    "Unknown action: " + action + ". Use stop, kill, restart, reload, stop-routes, start-routes or"
+                                                        + " reset-stats");
         };
     }
 

@@ -339,11 +339,14 @@ project `directory` as an argument, the runtime tools take the integration `name
   `read-only` access level of the security layer hides the tool altogether.
 
 | `camel_run`
-| Starts an integration from a project directory with `camel run` in a separate process, in dev mode by
-  default so route files reload when written. Returns the pid, name and log file once the integration is up.
+| Starts an integration from a project directory with `camel run --source-dir` in a separate process, in dev
+  mode by default: the directory is watched, so a changed or added file (a route, a bean file, a Java class) is
+  reloaded. Name files to run only those, for a directory that holds several apps. Returns the pid, name and
+  log file once the integration is up.
 
 | `camel_control`
 | Controls a running integration: `stop`, `kill`, `restart` (picks up edited files without dev mode),
+  `reload` (loads the routes again from their files without a restart, as `camel cmd reload` does),
   `stop-routes`, `start-routes`, `reset-stats`.
 
 | `camel_get_log`

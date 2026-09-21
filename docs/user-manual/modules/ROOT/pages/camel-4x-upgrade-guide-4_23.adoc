@@ -819,6 +819,11 @@ same `camel_` names by both MCP servers, `camel mcp` and `camel tui --mcp`: `cam
 `camel_catalog_find`, `camel_validate_source`, `camel_get_files`, `camel_write_file`, `camel_run`,
 `camel_control`, `camel_get_log`, `camel_get_errors`, `camel_eval_expression` and `camel_error_diagnose`.
 
+The `camel_run` tool, when no files are named, starts the project with `camel run --source-dir=.` instead of
+listing the directory's files: the directory is watched, so a file added afterwards (a bean file, a Java class
+under `src/main/java`) is part of the app and reloaded in dev mode, and a `restart` starts the same way. Naming
+files keeps the previous behaviour. The `camel_control` tool gets a `reload` action, what `camel cmd reload` does.
+
 In the TUI MCP server the tools `tui_catalog_doc`, `tui_validate_source`, `tui_write_file`, `tui_get_files`,
 `tui_control`, `tui_get_log`, `tui_get_errors` and `tui_eval_expression` were renamed to the `camel_` names
 above; the `tui_` prefix is now reserved for the tools that only make sense in front of the screen. Update
