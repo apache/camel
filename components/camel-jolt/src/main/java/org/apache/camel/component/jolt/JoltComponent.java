@@ -18,7 +18,7 @@ package org.apache.camel.component.jolt;
 
 import java.util.Map;
 
-import com.bazaarvoice.jolt.Transform;
+import io.joltcommunity.jolt.Transform;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;

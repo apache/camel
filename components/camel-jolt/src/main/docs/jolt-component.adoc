@@ -13,7 +13,7 @@
 *{component-header}*
 
 The Jolt component allows you to process a JSON messages using a
-https://github.com/bazaarvoice/jolt[JOLT] specification. This can be
+https://github.com/jolt-community/jolt-community[JOLT] specification. This can be
 ideal when doing JSON to JSON transformation.
 
 Maven users will need to add the following dependency to
