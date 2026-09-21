@@ -663,6 +663,10 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
 
+=== camel-debezium-oracle (breaking change)
+
+The parameters `logMiningBufferEhcacheRollbacksConfig`, `logMiningBufferInfinispanCacheRollbacks` have been removed due to the upgrade of Debezium to 3.6.3.Final.
+
 === camel-docling
 
 A `String` message body is no longer interpreted as a location by default. Previously the producer

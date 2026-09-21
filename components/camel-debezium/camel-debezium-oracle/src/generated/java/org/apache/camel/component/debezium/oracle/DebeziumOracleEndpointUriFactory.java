@@ -24,7 +24,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(163);
+        Set<String> props = new HashSet<>(161);
         props.add("additionalProperties");
         props.add("archiveDestinationName");
         props.add("archiveLogHours");
@@ -78,13 +78,11 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("logMiningBufferEhcacheEventsConfig");
         props.add("logMiningBufferEhcacheGlobalConfig");
         props.add("logMiningBufferEhcacheProcessedtransactionsConfig");
-        props.add("logMiningBufferEhcacheRollbacksConfig");
         props.add("logMiningBufferEhcacheSchemachangesConfig");
         props.add("logMiningBufferEhcacheTransactionsConfig");
         props.add("logMiningBufferInfinispanCacheEvents");
         props.add("logMiningBufferInfinispanCacheGlobal");
         props.add("logMiningBufferInfinispanCacheProcessedTransactions");
-        props.add("logMiningBufferInfinispanCacheRollbacks");
         props.add("logMiningBufferInfinispanCacheSchemaChanges");
         props.add("logMiningBufferInfinispanCacheTransactions");
         props.add("logMiningBufferMemoryLegacyTransactionStart");
