@@ -237,6 +237,7 @@ final class EndpointChecks {
                 checkDynamicDirectory(errors, fullUri, i, eipName);
                 checkSimplePlaceholders(errors, fullUri, i, optionLineMap, eipName);
                 checkRequiredPathOptions(errors, fullUri, catalog, i, eipName);
+                checkSqlNamedParameters(errors, fullUri, line, i, optionLineMap);
             } catch (Exception e) {
                 // ignore validation errors
             }
@@ -389,6 +390,70 @@ final class EndpointChecks {
                    + " says 'Dynamic expressions with ${ } placeholders is not allowed. Use the fileName option'):"
                    + " keep the directory fixed and put the dynamic part in fileName (" + scheme + ":" + fixed
                    + "?fileName=${...}), or use toD: with the whole uri, which evaluates it per message");
+    }
+
+    /**
+     * A :name in a sql query that is not a camel-sql named parameter: camel-sql has :#name (a header, or a key of a Map
+     * body) and :#${simple}; a bare :name (the Spring or JPA form) goes to the JDBC driver as written and fails at
+     * runtime with a syntax error, after the consumer retried it (CAMEL-24869). ::type casts, :?name stored procedure
+     * parameters and times such as 10:30 are left alone.
+     */
+    private static final Pattern BARE_NAMED_PARAMETER = Pattern.compile("(?<![\\w:#?$'\"]):([A-Za-z_][\\w.\\[\\]]*)");
+
+    static void checkSqlNamedParameters(
+            List<String> errors, String fullUri, String rawLine, int uriLineIdx, Map<String, Integer> optionLineMap) {
+        int colon = fullUri.indexOf(':');
+        int q = fullUri.indexOf('?');
+        String scheme = colon < 0 ? (q < 0 ? fullUri : fullUri.substring(0, q)) : fullUri.substring(0, colon);
+        if (q >= 0 && colon > q) {
+            scheme = fullUri.substring(0, q);
+        }
+        if (!"sql".equals(scheme)) {
+            return;
+        }
+        // the query is the path (sql:SELECT ...) or the query option (uri: sql with parameters: query: ...)
+        String query = null;
+        int line = uriLineIdx;
+        if (colon >= 0 && (q < 0 || colon < q)) {
+            // the uri pattern stops at the first space, so take the statement from the line itself
+            int at = rawLine.indexOf("sql:");
+            String path = at >= 0 ? rawLine.substring(at + 4).trim() : fullUri.substring(colon + 1);
+            if (path.endsWith("\"") || path.endsWith("'")) {
+                path = path.substring(0, path.length() - 1);
+            }
+            Matcher options = Pattern.compile("\\?\\w+=").matcher(path);
+            query = options.find() ? path.substring(0, options.start()) : path;
+        }
+        if ((query == null || query.isBlank()) && q >= 0) {
+            for (String option : fullUri.substring(q + 1).split("&")) {
+                if (option.startsWith("query=")) {
+                    query = option.substring("query=".length());
+                    line = optionLineMap.getOrDefault("query", uriLineIdx);
+                }
+            }
+        }
+        if (query == null || query.isBlank()) {
+            return;
+        }
+        Matcher m = BARE_NAMED_PARAMETER.matcher(query);
+        List<String> bare = new ArrayList<>();
+        while (m.find()) {
+            String name = m.group(1);
+            if (!bare.contains(name)) {
+                bare.add(name);
+            }
+        }
+        if (bare.isEmpty()) {
+            return;
+        }
+        String first = bare.get(0);
+        // :customer -> :#customer (a header or a Map body key); :body[customer] -> :#${body[customer]} (a Simple expression)
+        String fix = first.matches("\\w+")
+                ? ":#" + first + " for a header or a key of a Map body, or :#${body[" + first + "]} with a Simple expression"
+                : ":#${" + first + "} (a Simple expression) or :#name for a header or a key of a Map body";
+        errors.add(linePrefix(line) + "sql: :" + first + " is not a camel-sql named parameter (the JDBC driver gets it as"
+                   + " written and fails with a syntax error): write " + fix
+                   + (bare.size() > 1 ? " (also :" + String.join(", :", bare.subList(1, bare.size())) + ")" : ""));
     }
 
     /** The EIPs whose uri is a Simple expression evaluated per message: ${...} is right there. */
