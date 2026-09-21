@@ -263,7 +263,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // to the last working set
             previousSources.forEach(rs -> {
                 // remember all the sources of the current routes (except the updated)
-                if (rs != null && !equalResourceLocation(resources, rs)) {
+                if (rs != null && !equalResourceLocation(resources, rs) && !equalResourceLocation(sources, rs)) {
                     sources.add(rs);
                 }
             });
@@ -273,9 +273,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             // should all existing routes be stopped and removed first?
             if (removeAllRoutes) {
                 // remember all the sources of the current routes (except the updated)
+                // (a file with several routes is one source: adding it once per route would load it several
+                // times and fail on a duplicate route id, CAMEL-24866)
                 getCamelContext().getRoutes().forEach(r -> {
                     Resource rs = r.getSourceResource();
-                    if (rs != null && !equalResourceLocation(resources, rs)) {
+                    if (rs != null && !equalResourceLocation(resources, rs) && !equalResourceLocation(sources, rs)) {
                         sources.add(rs);
                     }
                 });
@@ -288,7 +290,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
             if (resources != null) {
                 for (Resource resource : resources) {
-                    if (Files.exists(Paths.get(resource.getURI()))) {
+                    if (Files.exists(Paths.get(resource.getURI())) && !equalResourceLocation(sources, resource)) {
                         sources.add(resource);
                     }
                 }

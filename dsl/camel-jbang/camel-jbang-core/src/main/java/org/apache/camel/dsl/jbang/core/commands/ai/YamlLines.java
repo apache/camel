@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.StringHelper;
@@ -110,6 +112,40 @@ final class YamlLines {
             return null;
         }
         return unquote(trimmed.substring(trimmed.indexOf(':') + 1).trim());
+    }
+
+    /** The roots of a Simple expression: ${body...}, ${header.x}, ${date:...}: a value evaluated as Simple is fine. */
+    private static final Set<String> SIMPLE_ROOTS = Set.of("body", "bodyAs", "mandatoryBodyAs",
+            "originalBody", "header", "headers", "headerAs", "exchangeProperty", "exchangeProperties", "exchangePropertyAs",
+            "variable", "variables", "variableAs", "exchange", "camelContext", "camelId", "routeId", "routeGroup", "stepId",
+            "id", "messageId", "exchangeId", "messageTimestamp", "messageHistory", "threadName", "threadId", "hostname",
+            "null", "date", "bean", "random", "file", "env", "sys", "sysenv", "ref", "type", "uuid", "empty", "collate",
+            "exception", "in", "out",
+            "skip", "jsonpath", "xpath", "jq", "iif", "join", "replace", "substring", "pretty", "hash", "messageAs",
+            "properties", "propertiesExist");
+
+    private static final Pattern DOTTED_KEY = Pattern.compile("^\\$\\{([A-Za-z_][\\w-]*)(?:[.-][\\w-]+)+\\}$");
+
+    /**
+     * Whether a ${...} value is a property key wearing Simple's syntax (${welcome.period}, ${properties:x}) rather than
+     * a Simple expression (${body.id}, ${date:now:yyyy}): the first segment is not a Simple root (CAMEL-24857).
+     */
+    static boolean isPropertyKeyInSimpleSyntax(String value) {
+        if (value == null) {
+            return false;
+        }
+        if (value.startsWith("${properties:") && value.endsWith("}")) {
+            return true;
+        }
+        Matcher m = DOTTED_KEY.matcher(value);
+        return m.find() && !SIMPLE_ROOTS.contains(m.group(1));
+    }
+
+    /** The key of such a value: welcome.period for ${welcome.period} or ${properties:welcome.period}. */
+    static String propertyKeyOf(String value) {
+        return value.startsWith("${properties:")
+                ? value.substring("${properties:".length(), value.length() - 1)
+                : value.substring(2, value.length() - 1);
     }
 
     static String extractEipFromLine(String trimmed) {

@@ -481,6 +481,15 @@ file, and a WARN says so. Before, the previous routes stayed stopped until the n
 in one file left the application without routes. The failed file loads again on its next save. The
 `CamelContextReloadFailure` event and the reload error log line are unchanged.
 
+=== camel-core - the recursive file watcher watches directories created while it runs
+
+The file watcher reload strategy (`camel run --dev`, the route watcher reload strategy with a recursive directory)
+registered the directory tree once at start: a directory created afterwards, such as `src/main/java/com/acme` for a
+Java class added to a running project, was never watched and its files never reloaded. A directory created under a
+watched one is now registered as it appears, with the files already in it reloaded. The watcher also ignores the
+compile work directory (`camel.main.compileWorkDir`, `.camel-jbang/compile` for the CLI), where the runtime writes the
+class files it compiles, so a compiled source no longer triggers a reload of its own.
+
 === camel-core, camel-resilience4j - a failure the circuit breaker's fallback recovered from is recorded as handled
 
 The error registry (`camel get errors`, the error dev console) recorded a call that failed inside a
@@ -836,6 +845,11 @@ The Camel authoring tools for AI agents are now defined once, in `camel-jbang-co
 same `camel_` names by both MCP servers, `camel mcp` and `camel tui --mcp`: `camel_catalog_doc`,
 `camel_catalog_find`, `camel_validate_source`, `camel_get_files`, `camel_write_file`, `camel_run`,
 `camel_control`, `camel_get_log`, `camel_get_errors`, `camel_eval_expression` and `camel_error_diagnose`.
+
+The `camel_write_file` tool, when an integration of the project is selected and runs in dev mode, waits up to
+eight seconds for the reload of the written file and answers with its outcome (`reload.status` reloaded, failed
+with the cause and the validator's report, properties, or unknown), so an agent does not go on with a route that
+did not load. A write with no selected integration answers as before.
 
 In the TUI MCP server the tools `tui_catalog_doc`, `tui_validate_source`, `tui_write_file`, `tui_get_files`,
 `tui_control`, `tui_get_log`, `tui_get_errors` and `tui_eval_expression` were renamed to the `camel_` names
@@ -1510,6 +1524,25 @@ cannot serve one origin's response to another.
 
 Deployments that relied on credentialed cross-origin requests must list the permitted origins in
 `camel.server.cors.origins`.
+
+=== camel-platform-http-vertx - response write failures are no longer silent
+
+A streaming response body (any `InputStream` payload) was written to the client with the deprecated
+Vert.x `Pump`, which discards the result of every `write()`. Failures were therefore invisible: the
+response write was always reported as successful, even when nothing reached the client. Writing now
+uses `pipe()`, which propagates those failures.
+
+This is a bug fix (CAMEL-24864). A client that disconnects part way through a streaming response is
+now noticed, so the body stream is closed and the exchange completes. Previously neither happened,
+which leaked an exchange per aborted response — and, for a stream that only ends on an explicit
+marker, such as the Server-Sent Events stream produced by `camel-a2a`, also leaked the subscriber
+that the stream's `close()` was responsible for removing.
+
+A lost client connection is logged at DEBUG and is not reported through the consumer's
+`ExceptionHandler`, since a client going away is not a route failure. A failure raised while
+*producing* the body is still reported as before. Routes using `handleWriteResponseError=true` now
+see an exception on the exchange when a response write fails, including when the cause is the client
+disconnecting; routes that need to distinguish the two can inspect the exception cause.
 
 === camel-tika
 
