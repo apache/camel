@@ -158,6 +158,60 @@ final class BeanRefChecks {
         return names;
     }
 
+    /** A bean property line: key: value, under properties: of a bean. */
+    private static final Pattern PROPERTY_LINE = Pattern.compile("^\\s*([A-Za-z_][\\w.-]*):\\s*(.+?)\\s*$");
+
+    /**
+     * properties: {start: ${order.first-number}} on a bean: a Simple expression, which a bean property is not; the
+     * placeholder is {{order.first-number}}. The runtime fails to bind the property ("Error binding property
+     * (start=${order.first-number})"), and camel validate said nothing (CAMEL-24857).
+     */
+    static List<String> validateBeanPropertyPlaceholders(String content) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        int blockIndent = -1;
+        int propsIndent = -1;
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.isBlank() || line.trim().startsWith("#")) {
+                continue;
+            }
+            String trimmed = line.trim();
+            int indent = countLeadingSpaces(line);
+            if (blockIndent >= 0 && indent <= blockIndent) {
+                blockIndent = -1;
+                propsIndent = -1;
+            }
+            if (blockIndent < 0) {
+                if (trimmed.equals("- beans:") || trimmed.equals("beans:")) {
+                    blockIndent = indent;
+                }
+                continue;
+            }
+            if (propsIndent >= 0 && indent <= propsIndent) {
+                propsIndent = -1;
+            }
+            if (trimmed.equals("properties:")) {
+                propsIndent = indent;
+                continue;
+            }
+            if (propsIndent < 0) {
+                continue;
+            }
+            Matcher m = PROPERTY_LINE.matcher(line);
+            if (m.find()) {
+                String value = unquote(m.group(2));
+                if (YamlLines.isPropertyKeyInSimpleSyntax(value)) {
+                    String key = YamlLines.propertyKeyOf(value);
+                    msgs.add("Line " + (i + 1) + ": " + m.group(1) + ": " + value + " is a Simple expression, which a bean"
+                             + " property is not evaluated as: a property placeholder is written {{key}}, so "
+                             + m.group(1) + ": \"{{" + key + "}}\"");
+                }
+            }
+        }
+        return msgs;
+    }
+
     /**
      * Bean references in the YAML that nothing declares, each with how to declare it. A reference that is a
      * {@code #class:}, {@code #type:} or {@code #bean:} value, a property placeholder, or a class name is left alone.
@@ -169,6 +223,7 @@ final class BeanRefChecks {
         if (content == null) {
             return msgs;
         }
+        msgs.addAll(validateBeanPropertyPlaceholders(content));
         Set<String> declared = new HashSet<>(declaredBeans(content));
         if (external != null) {
             declared.addAll(external.names());
