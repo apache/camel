@@ -114,7 +114,7 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .marshal(df).to("mock:encrypted")
-                        .log("Body: + ${body}")
+                        .log("Body: ${body}")
                         .unmarshal(df).to("mock:decrypted");
             }
         });
@@ -141,7 +141,7 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .marshal(df).to("mock:encrypted")
-                        .log("Body: + ${body}")
+                        .log("Body: ${body}")
                         .unmarshal(df).to("mock:decrypted");
             }
         });
@@ -181,7 +181,7 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .marshal(sendingDataFormat).to("mock:encrypted")
-                        .log("Body: + ${body}")
+                        .log("Body: ${body}")
                         .unmarshal(receivingDataFormat).to("mock:decrypted");
             }
         });
@@ -224,7 +224,7 @@ class XmlSecurityConstantNameTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start")
                         .marshal(sendingDataFormat).to("mock:encrypted")
-                        .log("Body: + ${body}")
+                        .log("Body: ${body}")
                         .unmarshal(receivingDataFormat).to("mock:decrypted");
             }
         });
