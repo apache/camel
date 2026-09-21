@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws.common;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -64,11 +63,20 @@ class AwsRuntimeCredentialsResolverTest {
     }
 
     @Test
-    void detectsProfileFromFile() {
+    void detectsProfileFromCredentialsFile() {
+        FakeEnvironment env = new FakeEnvironment()
+                .home("/home/tester")
+                .file("/home/tester/.aws/credentials");
+        assertThat(AwsRuntimeCredentialsResolver.detect(env)).isEqualTo(Source.PROFILE);
+    }
+
+    @Test
+    void bareConfigFileIsNotAProfileSignal() {
+        // ~/.aws/config often exists with only a region set - it must not be read as "profile credentials detected".
         FakeEnvironment env = new FakeEnvironment()
                 .home("/home/tester")
                 .file("/home/tester/.aws/config");
-        assertThat(AwsRuntimeCredentialsResolver.detect(env)).isEqualTo(Source.PROFILE);
+        assertThat(AwsRuntimeCredentialsResolver.detect(env)).isEqualTo(Source.UNKNOWN);
     }
 
     @Test
@@ -79,15 +87,8 @@ class AwsRuntimeCredentialsResolverTest {
     }
 
     @Test
-    void detectsEc2InstanceWhenImdsReachable() {
-        FakeEnvironment env = new FakeEnvironment().imds(true);
-        assertThat(AwsRuntimeCredentialsResolver.detect(env)).isEqualTo(Source.EC2_INSTANCE);
-    }
-
-    @Test
     void unknownWhenNothingDetected() {
-        FakeEnvironment env = new FakeEnvironment().imds(false);
-        assertThat(AwsRuntimeCredentialsResolver.detect(env)).isEqualTo(Source.UNKNOWN);
+        assertThat(AwsRuntimeCredentialsResolver.detect(new FakeEnvironment())).isEqualTo(Source.UNKNOWN);
     }
 
     @Test
@@ -126,19 +127,17 @@ class AwsRuntimeCredentialsResolverTest {
 
     @Test
     void resolveReturnsNullWhenUnknown() {
-        FakeEnvironment env = new FakeEnvironment().imds(false);
-        assertThat(AwsRuntimeCredentialsResolver.resolve(env)).isNull();
+        assertThat(AwsRuntimeCredentialsResolver.resolve(new FakeEnvironment())).isNull();
     }
 
     /**
-     * Deterministic in-memory {@link RuntimeEnvironment} for the detection tests - no real env vars, files or sockets.
+     * Deterministic in-memory {@link RuntimeEnvironment} for the detection tests - no real env vars or files.
      */
     private static final class FakeEnvironment implements RuntimeEnvironment {
         private final Map<String, String> env = new HashMap<>();
         private final Map<String, String> props = new HashMap<>();
         private final Set<String> files = new HashSet<>();
         private String home = "/home/tester";
-        private boolean imdsReachable;
 
         FakeEnvironment env(String name, String value) {
             env.put(name, value);
@@ -160,11 +159,6 @@ class AwsRuntimeCredentialsResolverTest {
             return this;
         }
 
-        FakeEnvironment imds(boolean reachable) {
-            this.imdsReachable = reachable;
-            return this;
-        }
-
         @Override
         public String getenv(String name) {
             return env.get(name);
@@ -183,11 +177,6 @@ class AwsRuntimeCredentialsResolverTest {
         @Override
         public boolean fileExists(String path) {
             return files.contains(path);
-        }
-
-        @Override
-        public boolean isImdsReachable(Duration timeout) {
-            return imdsReachable;
         }
     }
 }

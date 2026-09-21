@@ -51,22 +51,20 @@ the https://aws.amazon.com/s3[Amazon's S3].
 
 == Usage
 
-=== Auto-detecting AWS credentials from the runtime
+=== Reporting the AWS credentials source
 
-Instead of configuring credentials explicitly, you can set `useAutoDetectCredentialsProvider=true` to let the
-component detect the environment it runs in and select the matching AWS credentials provider:
+Set `useAutoDetectCredentialsProvider=true` to have the component detect which credentials source applies to the
+runtime, select the matching AWS credentials provider, and log the detected source at INFO:
 
 * environment variables (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`)
 * web identity / IRSA (`AWS_WEB_IDENTITY_TOKEN_FILE`) - requires `software.amazon.awssdk:sts` on the classpath
-* shared profile (`AWS_PROFILE` or `~/.aws`)
+* shared profile (`AWS_PROFILE` or `~/.aws/credentials`)
 * ECS task role or EKS Pod Identity container credentials
-* EC2 instance metadata (IMDS)
 
 The detection order mirrors the AWS SDK default credentials provider chain, so the selected source never differs
-from the SDK; the environment is probed explicitly (with a short-timeout IMDS check) so that off-EC2 workloads
-holding real credentials do not wait on the SDK's IMDS lookup, and the detected source is logged at INFO. This
-option is opt-in and takes precedence over the other credential options; when no environment can be recognised it
-falls back to the SDK default credentials provider chain.
+from the SDK - the value it adds is making the resolved source visible in the logs. When no source is recognised
+(including a plain EC2 instance, whose metadata is deliberately not probed here) it falls back to the SDK default
+credentials provider chain. The option is opt-in and takes precedence over the other credential options.
 
 === Batch Consumer
 

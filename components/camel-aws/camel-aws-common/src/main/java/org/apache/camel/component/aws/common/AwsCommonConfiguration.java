@@ -68,10 +68,11 @@ public interface AwsCommonConfiguration {
     String getProfileCredentialsName();
 
     /**
-     * Set whether the client should auto-detect the runtime environment (JVM system properties, environment variables,
-     * web identity / IRSA, shared profile, ECS / EKS Pod Identity container, or EC2 instance metadata) and select the
-     * matching AWS credentials provider. This is opt-in and takes precedence over the other credential options; when
-     * the environment cannot be recognised it falls back to the SDK default credentials provider chain.
+     * Set whether the client should auto-detect the runtime credentials source (JVM system properties, environment
+     * variables, web identity / IRSA, shared profile, or ECS / EKS Pod Identity container credentials), select the
+     * matching AWS credentials provider, and log the detected source. This is opt-in and takes precedence over the
+     * other credential options; when the source cannot be recognised (including a plain EC2 instance) it falls back to
+     * the SDK default credentials provider chain.
      *
      * @return whether runtime credentials auto-detection is enabled (defaults to {@code false})
      */

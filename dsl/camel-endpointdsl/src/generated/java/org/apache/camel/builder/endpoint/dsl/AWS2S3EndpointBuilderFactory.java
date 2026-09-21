@@ -1292,12 +1292,13 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should auto-detect the runtime environment
-         * (environment variables, web identity / IRSA, shared profile, ECS /
-         * EKS Pod Identity container, or EC2 instance metadata) and select the
-         * matching AWS credentials provider. Opt-in; it takes precedence over
-         * the other credential options and falls back to the SDK default
-         * credentials provider chain when the environment cannot be recognised.
+         * Set whether the S3 client should auto-detect the runtime credentials
+         * source (environment variables, web identity / IRSA, shared profile,
+         * or ECS / EKS Pod Identity container credentials), select the matching
+         * AWS credentials provider, and log the detected source. Opt-in; it
+         * takes precedence over the other credential options and falls back to
+         * the SDK default credentials provider chain (which also covers EC2)
+         * when the source cannot be recognised.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1312,12 +1313,13 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should auto-detect the runtime environment
-         * (environment variables, web identity / IRSA, shared profile, ECS /
-         * EKS Pod Identity container, or EC2 instance metadata) and select the
-         * matching AWS credentials provider. Opt-in; it takes precedence over
-         * the other credential options and falls back to the SDK default
-         * credentials provider chain when the environment cannot be recognised.
+         * Set whether the S3 client should auto-detect the runtime credentials
+         * source (environment variables, web identity / IRSA, shared profile,
+         * or ECS / EKS Pod Identity container credentials), select the matching
+         * AWS credentials provider, and log the detected source. Opt-in; it
+         * takes precedence over the other credential options and falls back to
+         * the SDK default credentials provider chain (which also covers EC2)
+         * when the source cannot be recognised.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2663,12 +2665,13 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should auto-detect the runtime environment
-         * (environment variables, web identity / IRSA, shared profile, ECS /
-         * EKS Pod Identity container, or EC2 instance metadata) and select the
-         * matching AWS credentials provider. Opt-in; it takes precedence over
-         * the other credential options and falls back to the SDK default
-         * credentials provider chain when the environment cannot be recognised.
+         * Set whether the S3 client should auto-detect the runtime credentials
+         * source (environment variables, web identity / IRSA, shared profile,
+         * or ECS / EKS Pod Identity container credentials), select the matching
+         * AWS credentials provider, and log the detected source. Opt-in; it
+         * takes precedence over the other credential options and falls back to
+         * the SDK default credentials provider chain (which also covers EC2)
+         * when the source cannot be recognised.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2683,12 +2686,13 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should auto-detect the runtime environment
-         * (environment variables, web identity / IRSA, shared profile, ECS /
-         * EKS Pod Identity container, or EC2 instance metadata) and select the
-         * matching AWS credentials provider. Opt-in; it takes precedence over
-         * the other credential options and falls back to the SDK default
-         * credentials provider chain when the environment cannot be recognised.
+         * Set whether the S3 client should auto-detect the runtime credentials
+         * source (environment variables, web identity / IRSA, shared profile,
+         * or ECS / EKS Pod Identity container credentials), select the matching
+         * AWS credentials provider, and log the detected source. Opt-in; it
+         * takes precedence over the other credential options and falls back to
+         * the SDK default credentials provider chain (which also covers EC2)
+         * when the source cannot be recognised.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3519,12 +3523,13 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should auto-detect the runtime environment
-         * (environment variables, web identity / IRSA, shared profile, ECS /
-         * EKS Pod Identity container, or EC2 instance metadata) and select the
-         * matching AWS credentials provider. Opt-in; it takes precedence over
-         * the other credential options and falls back to the SDK default
-         * credentials provider chain when the environment cannot be recognised.
+         * Set whether the S3 client should auto-detect the runtime credentials
+         * source (environment variables, web identity / IRSA, shared profile,
+         * or ECS / EKS Pod Identity container credentials), select the matching
+         * AWS credentials provider, and log the detected source. Opt-in; it
+         * takes precedence over the other credential options and falls back to
+         * the SDK default credentials provider chain (which also covers EC2)
+         * when the source cannot be recognised.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3539,12 +3544,13 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should auto-detect the runtime environment
-         * (environment variables, web identity / IRSA, shared profile, ECS /
-         * EKS Pod Identity container, or EC2 instance metadata) and select the
-         * matching AWS credentials provider. Opt-in; it takes precedence over
-         * the other credential options and falls back to the SDK default
-         * credentials provider chain when the environment cannot be recognised.
+         * Set whether the S3 client should auto-detect the runtime credentials
+         * source (environment variables, web identity / IRSA, shared profile,
+         * or ECS / EKS Pod Identity container credentials), select the matching
+         * AWS credentials provider, and log the detected source. Opt-in; it
+         * takes precedence over the other credential options and falls back to
+         * the SDK default credentials provider chain (which also covers EC2)
+         * when the source cannot be recognised.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
