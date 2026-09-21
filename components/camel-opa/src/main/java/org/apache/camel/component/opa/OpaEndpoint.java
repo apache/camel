@@ -139,28 +139,11 @@ public class OpaEndpoint extends DefaultEndpoint {
     }
 
     private OpaPolicyEvaluator createWasmEvaluator() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getPolicyBundle())) {
-            throw new IllegalArgumentException(
-                    "policyBundle is required when evaluationMode=wasm; build one with"
-                                               + " opa build -t wasm -e <entrypoint> <policy.rego>");
-        }
-        if (configuration.getPoolSize() < 1) {
-            // OpaPolicyPool.create rejects this too, but as "maxSize must be positive" - naming its own parameter
-            // rather than the option the operator set, on a component where poolSize is the only pool they see
-            throw new IllegalArgumentException(
-                    "poolSize must be at least 1 when evaluationMode=wasm, was " + configuration.getPoolSize());
-        }
-        // the entrypoint is fixed at build time and is not the same thing as a data path, but opa build names it
-        // after the rule, so the policy path is the right default
-        String entrypoint = ObjectHelper.isNotEmpty(configuration.getEntrypoint())
-                ? configuration.getEntrypoint() : policyPath;
-        OpaWasmEvaluator.Bundle bundle
-                = OpaWasmEvaluator.loadPolicy(getCamelContext(), configuration.getPolicyBundle());
-        return new OpaWasmEvaluator(
-                bundle.wasm(), bundle.data(), entrypoint, configuration.getPoolSize(),
-                configuration.getBorrowTimeout(), policyPath, configuration.getAllowKey(),
-                configuration.getIncludeHeaders(), configuration.getIncludeProperties(),
-                configuration.isIncludeBody(), configuration.isFailOpen());
+        return OpaWasmEvaluator.create(
+                getCamelContext(), configuration.getPolicyBundle(), configuration.getEntrypoint(),
+                configuration.getPoolSize(), configuration.getBorrowTimeout(), policyPath, configuration.getAllowKey(),
+                configuration.getIncludeHeaders(), configuration.getIncludeProperties(), configuration.isIncludeBody(),
+                configuration.isFailOpen());
     }
 
     @Override
