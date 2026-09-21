@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
