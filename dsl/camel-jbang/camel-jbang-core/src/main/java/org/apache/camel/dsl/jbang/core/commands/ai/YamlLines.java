@@ -113,7 +113,7 @@ final class YamlLines {
     }
 
     /** The roots of a Simple expression: ${body...}, ${header.x}, ${date:...}: a value evaluated as Simple is fine. */
-    private static final java.util.Set<String> SIMPLE_ROOTS = java.util.Set.of("body", "bodyAs", "mandatoryBodyAs",
+    private static final Set<String> SIMPLE_ROOTS = Set.of("body", "bodyAs", "mandatoryBodyAs",
             "originalBody", "header", "headers", "headerAs", "exchangeProperty", "exchangeProperties", "exchangePropertyAs",
             "variable", "variables", "variableAs", "exchange", "camelContext", "camelId", "routeId", "routeGroup", "stepId",
             "id", "messageId", "exchangeId", "messageTimestamp", "messageHistory", "threadName", "threadId", "hostname",
