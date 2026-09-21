@@ -27,6 +27,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.opensearch.core.IndexRequest;
+import org.opensearch.client.opensearch.core.UpdateRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -68,5 +69,18 @@ public class OpensearchActionRequestConverterTest {
                 = OpensearchActionRequestConverter.toIndexRequestBuilder(preBuiltIndexBuilder(), exchange);
 
         assertEquals("fromHeader", result.build().id());
+    }
+
+    @Test
+    void preBuiltUpdateBuilderKeepsItsIdWhenHeaderAbsent() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        UpdateRequest.Builder<Object, Object> preBuilt
+                = new UpdateRequest.Builder<>().index("idx").id("original").doc(Map.of("k", "v"));
+
+        UpdateRequest.Builder<?, ?> result
+                = OpensearchActionRequestConverter.toUpdateRequestBuilder(preBuilt, exchange);
+
+        // no CamelOpensearchIndexId header -> the caller's id must be preserved, not overwritten with null
+        assertEquals("original", result.build().id());
     }
 }

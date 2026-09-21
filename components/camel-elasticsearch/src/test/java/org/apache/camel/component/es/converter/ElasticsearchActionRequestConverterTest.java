@@ -19,6 +19,7 @@ package org.apache.camel.component.es.converter;
 import java.util.Map;
 
 import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.es.ElasticsearchConstants;
@@ -68,5 +69,18 @@ public class ElasticsearchActionRequestConverterTest {
                 = ElasticsearchActionRequestConverter.toIndexRequestBuilder(preBuiltIndexBuilder(), exchange);
 
         assertEquals("fromHeader", result.build().id());
+    }
+
+    @Test
+    void preBuiltUpdateBuilderKeepsItsIdWhenHeaderAbsent() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        UpdateRequest.Builder<Object, Object> preBuilt
+                = new UpdateRequest.Builder<>().index("idx").id("original").doc(Map.of("k", "v"));
+
+        UpdateRequest.Builder<?, ?> result
+                = ElasticsearchActionRequestConverter.toUpdateRequestBuilder(preBuilt, exchange);
+
+        // no CamelIndexId header -> the caller's id must be preserved, not overwritten with null
+        assertEquals("original", result.build().id());
     }
 }
