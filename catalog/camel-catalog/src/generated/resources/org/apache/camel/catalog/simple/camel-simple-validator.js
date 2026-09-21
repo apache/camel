@@ -192,7 +192,9 @@ const OPERATORS = {
   '? :': { kind: 'ternary', description: 'Ternary conditional operator. Evaluates the predicate and returns trueValue if true, falseValue if false. Requires spaces around both ? and : tokens.' },
   '~>': { kind: 'chain', description: 'Pipes the result of the left expression as input body to the right expression. Use $param in the right expression to reference the piped value explicitly.' },
   '?~>': { kind: 'chain', description: 'Null-safe chain operator. Same as ~> but stops chaining and returns null if the left expression evaluates to null.' },
-  '?:': { kind: 'other', description: 'Elvis operator (null-coalescing). Returns the left operand if it is not null/empty, otherwise returns the right operand as a fallback value.' }
+  '?:': { kind: 'other', description: 'Elvis operator (null-coalescing). Returns the left operand if it is not null/empty, otherwise returns the right operand as a fallback value.' },
+  ':=': { kind: 'init', description: 'Assigns a local variable in the init block at the top of an expression ($init{ ... }init$), computed once and used in the expression as ${name}. Each statement ends with a semicolon and a new line.' },
+  '~:=': { kind: 'init', description: 'Declares a local custom function in the init block at the top of an expression ($init{ ... }init$), usually as a chain of functions on the input, called as ${name()} (the message body as input), ${name(exp)} (an explicit input) or from another function as ${function(name)}. Each statement ends with a semicolon and a new line.' }
 };
 
 

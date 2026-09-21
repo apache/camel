@@ -177,6 +177,21 @@ class CatalogDocsTest {
         assertTrue(binary.getInteger("matchedOperators") > 5);
         JsonObject eq = (JsonObject) binary.getCollection("operators").iterator().next();
         assertEquals("LHS == RHS", eq.getString("syntax"));
+
+        // CAMEL-24874: the init block operators are in the catalog, so a model asking about a local function or the
+        // init block gets the syntax and a complete example instead of the whole advanced page
+        JsonObject init = catalogDoc(Map.of("name", "simple", "kind", "language", "optionsFilter", "init"));
+        assertEquals("init", init.getString("operatorKind"));
+        assertEquals(2, init.getInteger("matchedOperators"));
+        JsonObject function = init.getCollection("operators").stream()
+                .map(JsonObject.class::cast)
+                .filter(op -> "~:=".equals(op.getString("name")))
+                .findFirst().orElseThrow();
+        assertEquals("$name ~:= expr ~> expr;", function.getString("syntax"));
+        String example = (String) function.getCollection("examples").iterator().next();
+        assertTrue(example.startsWith("$init{\n") && example.contains("}init$\n"), example);
+        JsonObject summary = catalogDoc(Map.of("name", "simple", "kind", "language"));
+        assertTrue(summary.getCollection("operatorSyntax").contains("$name := expr;"));
     }
 
     @Test
