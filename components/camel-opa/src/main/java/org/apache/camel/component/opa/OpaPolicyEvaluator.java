@@ -276,7 +276,8 @@ public abstract class OpaPolicyEvaluator {
     private static boolean isDecisionHeader(String name) {
         return OpaConstants.DECISION_ALLOW.equalsIgnoreCase(name)
                 || OpaConstants.DECISION.equalsIgnoreCase(name)
-                || OpaConstants.POLICY_PATH.equalsIgnoreCase(name);
+                || OpaConstants.POLICY_PATH.equalsIgnoreCase(name)
+                || OpaConstants.DECISION_FAILED_OPEN.equalsIgnoreCase(name);
     }
 
     /**

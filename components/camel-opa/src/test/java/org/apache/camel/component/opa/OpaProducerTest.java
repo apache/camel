@@ -213,6 +213,8 @@ class OpaProducerTest extends CamelTestSupport {
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class)
                 .hasMessageContaining(PATH);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        // the marker is for the deliberate failOpen path only, not for any exception the evaluator happens to hit
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
     }
 
     @Test
