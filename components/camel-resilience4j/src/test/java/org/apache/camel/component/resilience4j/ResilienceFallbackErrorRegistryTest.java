@@ -53,7 +53,8 @@ public class ResilienceFallbackErrorRegistryTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         Collection<BacklogErrorEventMessage> entries = context.getErrorRegistry().browse();
-        assertEquals(2, entries.size(), "one entry per failed call, the copy's and the original's are the same one");
+        assertEquals(2, entries.size(),
+                "one registry entry per call: the copy's ExchangeFailedEvent and the original's ExchangeFailureHandledEvent merge into the same slot");
         for (BacklogErrorEventMessage e : entries) {
             assertTrue(e.isHandled(), "the fallback handled the failure: " + e);
             assertEquals("java.lang.IllegalStateException", e.getExceptionType());
