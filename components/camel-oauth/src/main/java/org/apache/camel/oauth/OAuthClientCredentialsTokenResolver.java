@@ -16,6 +16,10 @@
  */
 package org.apache.camel.oauth;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -27,8 +31,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Resolves OAuth 2.0 bearer tokens using the client_credentials grant with thread-safe caching.
  * <p/>
- * Tokens are cached per (tokenEndpoint, clientId) pair using {@link UserProfile} for expiry tracking. This class
- * contains no Processor or Exchange dependencies — it is a pure token resolver.
+ * Tokens are cached per token endpoint, client credentials and requested scope using {@link UserProfile} for expiry
+ * tracking. This class contains no Processor or Exchange dependencies — it is a pure token resolver.
  */
 public class OAuthClientCredentialsTokenResolver {
 
@@ -46,7 +50,11 @@ public class OAuthClientCredentialsTokenResolver {
         UserProfile profile;
 
         if (config.isCacheTokens()) {
-            TokenCacheKey cacheKey = new TokenCacheKey(config.getTokenEndpoint(), config.getClientId());
+            String scope = config.getScope();
+            // Null and blank scopes are both omitted from the token request.
+            TokenCacheKey cacheKey = new TokenCacheKey(
+                    config.getTokenEndpoint(), config.getClientId(),
+                    secretFingerprint(config.getClientSecret()), scope == null || scope.isBlank() ? null : scope);
             long margin = config.getCachedTokensExpirationMarginSeconds();
             profile = TOKEN_CACHE.compute(cacheKey, (key, existing) -> {
                 if (existing != null && existing.ttl() > margin) {
@@ -74,6 +82,19 @@ public class OAuthClientCredentialsTokenResolver {
         return profile;
     }
 
-    record TokenCacheKey(String tokenEndpoint, String clientId) {
+    private static String secretFingerprint(String clientSecret) {
+        if (clientSecret == null) {
+            return null;
+        }
+        try {
+            // Distinguish credentials without retaining the raw secret in the static cache.
+            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(clientSecret.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is unavailable", e);
+        }
+    }
+
+    record TokenCacheKey(String tokenEndpoint, String clientId, String clientSecretFingerprint, String scope) {
     }
 }
