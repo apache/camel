@@ -993,3 +993,14 @@ which demonstrate creating Camel Routes with YAML.
 
 Another way to find examples of YAML DSL is to look in https://github.com/apache/camel-kamelets[Camel Kamelets]
 where each Kamelet is defined using YAML.
+
+
+== Deprecated: Pipe (kind: Pipe) support
+
+The YAML DSL can load Camel K `kind: Pipe` resources (formerly `KameletBinding`), typically from a
+`.pipe.yaml` file, converting the source, steps and sink into a regular route when the file is loaded.
+
+This is deprecated and will be removed in a future release. Loading a Pipe file now logs a deprecation
+warning. Write a plain Camel route instead, which is more expressive (any EIP, multiple routes per file,
+error handling and route configuration) and is what the tooling, catalog and validator work on. See the
+xref:manual::camel-4x-upgrade-guide-4_23.adoc[Camel 4.23 upgrade guide] for an example of the equivalent route.

@@ -1003,4 +1003,4 @@ The YAML DSL can load Camel K `kind: Pipe` resources (formerly `KameletBinding`)
 This is deprecated and will be removed in a future release. Loading a Pipe file now logs a deprecation
 warning. Write a plain Camel route instead, which is more expressive (any EIP, multiple routes per file,
 error handling and route configuration) and is what the tooling, catalog and validator work on. See the
-Camel 4.23 upgrade guide for an example of the equivalent route.
+xref:manual::camel-4x-upgrade-guide-4_23.adoc[Camel 4.23 upgrade guide] for an example of the equivalent route.

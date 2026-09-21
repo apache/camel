@@ -368,9 +368,11 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     anyTupleMatches(mn.getValue(), "kind", "Pipe");
             if (pipe) {
                 if (!preParse) {
+                    String loc = ctx.getResource() != null ? ctx.getResource().getLocation() : "";
                     LOG.warn(
                             "Loading Pipe (kind: Pipe) resources with the YAML DSL is deprecated and will be removed in a future release. "
-                             + "Use a plain Camel route instead.");
+                                    + "Use a plain Camel route instead: {}",
+                            loc);
                 }
                 target = preConfigurePipe(root, ctx, target, preParse);
             }
