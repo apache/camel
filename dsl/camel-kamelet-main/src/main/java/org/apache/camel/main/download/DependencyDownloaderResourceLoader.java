@@ -63,8 +63,9 @@ public class DependencyDownloaderResourceLoader extends DefaultResourceLoader {
             }
         }
         Resource answer = super.resolveResource(uri);
-        boolean exists = answer != null && answer.exists();
-        if (!exists && ("classpath".equals(scheme) || "file".equals(scheme))) {
+        // the scheme is checked before exists(): only a classpath: or file: resource is looked up next to the
+        // routes, and on an http: resource exists() is a GET (rest-openapi read its specification twice)
+        if (("classpath".equals(scheme) || "file".equals(scheme)) && (answer == null || !answer.exists())) {
             String path = StringHelper.after(uri, ":");
             // strip leading double slash
             if (path.startsWith("//")) {
