@@ -2488,3 +2488,4 @@ See https://github.com/jolt-community/jolt-community[JOLT (Community Edition)].
 Due to the package rename from `com.bazaarvoice.jolt` to `io.joltcommunity.jolt`, users who plug custom `Transform` or
 `ContextualTransform` classes into a Chainr spec need to update their imports to `io.joltcommunity.jolt.Transform` and
 `io.joltcommunity.jolt.ContextualTransform`.
+Users referencing `Removr` directly also need to update their import to `io.joltcommunity.jolt.removr.Removr`.
