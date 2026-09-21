@@ -58,6 +58,7 @@ final class SimpleChecks {
 
             String simpleText = null;
             int lineNum = i + 1;
+            int textLine = i;
             int lineIndent = countLeadingSpaces(line);
             boolean isLogMessage = false;
 
@@ -78,6 +79,7 @@ final class SimpleChecks {
                     if (next.startsWith("expression:")) {
                         simpleText = extractYamlValue(next, "expression");
                         lineNum = j + 1;
+                        textLine = j;
                     }
                     break;
                 }
@@ -91,6 +93,11 @@ final class SimpleChecks {
                 }
             }
 
+            // a block scalar (simple: | ...) holds its text on the following lines (CAMEL-24883)
+            if (YamlLines.isBlockIndicator(simpleText)) {
+                simpleText = YamlLines.blockScalar(lines, textLine, simpleText);
+                lineNum = textLine + 1;
+            }
             if (simpleText == null || simpleText.isEmpty()) {
                 continue;
             }
