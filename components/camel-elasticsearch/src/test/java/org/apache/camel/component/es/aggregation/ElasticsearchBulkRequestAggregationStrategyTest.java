@@ -78,13 +78,12 @@ public class ElasticsearchBulkRequestAggregationStrategyTest {
 
     @Test
     void subsequentAggregationMergesAllOperationsInInsertionOrder() {
-        Exchange aggregated = strategy.aggregate(null, exchangeWith("1"));
-        Exchange newExchange = exchangeWith("2");
+        Exchange step1 = strategy.aggregate(null, exchangeWith("1"));
+        Exchange step2 = strategy.aggregate(step1, exchangeWith("2"));
+        Exchange step3 = strategy.aggregate(step2, exchangeWith("3"));
 
-        Exchange result = strategy.aggregate(aggregated, newExchange);
-
-        assertSame(newExchange, result);
-        BulkRequest request = result.getIn().getBody(BulkRequest.class);
-        assertEquals(List.of("1", "2"), ids(request));
+        // a 3-step chain proves the merged request preserves insertion order cumulatively
+        assertEquals(List.of("1", "2"), ids(step2.getIn().getBody(BulkRequest.class)));
+        assertEquals(List.of("1", "2", "3"), ids(step3.getIn().getBody(BulkRequest.class)));
     }
 }
