@@ -77,6 +77,25 @@ public class DiagnoseData {
     static {
         Map<String, ExceptionInfo> exceptions = new LinkedHashMap<>();
 
+        exceptions.put("JsonParseException", new ExceptionInfo(
+                "The body could not be parsed as JSON (Jackson): it is text that is not JSON where a JSON data format"
+                                                               + " or a JSON path expected a document.",
+                List.of(
+                        "A script returned the text 'resource:file:x' as the body: the resource: prefix is resolved on"
+                        + " an expression's text, never on a value it returns (the"
+                        + " message says Unrecognized token 'resource')",
+                        "The body is the raw content of a file, a CSV or XML, not JSON",
+                        "The body was already unmarshalled into a Map or a POJO and is unmarshalled again",
+                        "The JSON itself is broken: a trailing comma, single quotes, an unquoted key"),
+                List.of(
+                        "For a script that names a file: add resolveResource: true under the language key so the"
+                        + " resource the result names is loaded, or set the body with"
+                        + " constant: \"resource:file:x\" (simple: \"resource:file:${...}\""
+                        + " for a name chosen per message)",
+                        "Log ${body} before the unmarshal step to see the text the data format received",
+                        "Unmarshal once, right after the step that reads the document"),
+                List.of("https://camel.apache.org/components/latest/dataformats/json-jackson-dataformat.html")));
+
         exceptions.put("NoSuchEndpointException", new ExceptionInfo(
                 "The specified endpoint URI could not be resolved to any known Camel component.",
                 List.of(

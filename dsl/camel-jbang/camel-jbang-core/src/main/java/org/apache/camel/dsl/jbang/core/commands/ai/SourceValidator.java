@@ -231,6 +231,7 @@ public final class SourceValidator {
         msgs.addAll(StructureChecks.validateTopLevelOrder(content));
         msgs.addAll(validateYamlEndpoints(content, catalog));
         msgs.addAll(validateYamlSimple(content, catalog));
+        msgs.addAll(BeanRefChecks.validateReturnedResourceLiterals(content));
         msgs.addAll(JsonPathChecks.validateYamlJsonPath(content, catalog));
         msgs.addAll(validateKnownHeaders(content, catalog));
         msgs.addAll(validateBeanTypes(content));
