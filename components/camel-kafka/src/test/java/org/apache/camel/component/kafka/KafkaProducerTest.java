@@ -42,6 +42,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.kafka.clients.producer.Callback;
@@ -59,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -187,6 +189,36 @@ public class KafkaProducerTest {
         Callback kafkaCallback = callBackCaptor.getValue();
         kafkaCallback.onCompletion(new RecordMetadata(null, 0, 0, 0, 0, 0), null);
         assertRecordMetadataExists();
+    }
+
+    @Test
+    public void processAsyncCompletesCallbackWhenBeginTransactionFails() throws Exception {
+        // CAMEL-24780: a failure to begin the transaction must set the exception and complete the async
+        // callback rather than escaping process(), and it must not leave the unit of work flagged as
+        // transacted without a synchronization to commit or roll it back.
+        // Exercise the real init path: doStart() derives transactionId from transactionalId and calls
+        // initTransactions() on the mock (a no-op), so no reflection on the private field is needed.
+        endpoint.getConfiguration().setTransactionalId("test-tx");
+        endpoint.getConfiguration().setTopic("sometopic");
+        producer.doStart();
+
+        Producer kp = producer.getKafkaProducer();
+        Mockito.doThrow(new ApiException("cannot begin")).when(kp).beginTransaction();
+
+        UnitOfWork uow = Mockito.mock(UnitOfWork.class);
+        Mockito.when(uow.isTransactedBy(any())).thenReturn(false);
+        Mockito.when(exchange.getUnitOfWork()).thenReturn(uow);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getMessage()).thenReturn(in);
+
+        boolean sync = producer.process(exchange, callback);
+
+        assertTrue(sync);
+        Mockito.verify(exchange).setException(isA(ApiException.class));
+        Mockito.verify(callback).done(eq(true));
+        // begin failed, so the unit of work must be left untouched (no dangling transacted flag)
+        Mockito.verify(uow, Mockito.never()).beginTransactedBy(any());
+        Mockito.verify(uow, Mockito.never()).addSynchronization(any());
     }
 
     @Test
