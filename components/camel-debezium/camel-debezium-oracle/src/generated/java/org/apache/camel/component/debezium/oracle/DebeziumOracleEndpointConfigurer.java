@@ -128,8 +128,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferEhcacheGlobalConfig": target.getConfiguration().setLogMiningBufferEhcacheGlobalConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferehcacheprocessedtransactionsconfig":
         case "logMiningBufferEhcacheProcessedtransactionsConfig": target.getConfiguration().setLogMiningBufferEhcacheProcessedtransactionsConfig(property(camelContext, java.lang.String.class, value)); return true;
-        case "logminingbufferehcacherollbacksconfig":
-        case "logMiningBufferEhcacheRollbacksConfig": target.getConfiguration().setLogMiningBufferEhcacheRollbacksConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferehcacheschemachangesconfig":
         case "logMiningBufferEhcacheSchemachangesConfig": target.getConfiguration().setLogMiningBufferEhcacheSchemachangesConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferehcachetransactionsconfig":
@@ -140,8 +138,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheGlobal": target.getConfiguration().setLogMiningBufferInfinispanCacheGlobal(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancacheprocessedtransactions":
         case "logMiningBufferInfinispanCacheProcessedTransactions": target.getConfiguration().setLogMiningBufferInfinispanCacheProcessedTransactions(property(camelContext, java.lang.String.class, value)); return true;
-        case "logminingbufferinfinispancacherollbacks":
-        case "logMiningBufferInfinispanCacheRollbacks": target.getConfiguration().setLogMiningBufferInfinispanCacheRollbacks(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancacheschemachanges":
         case "logMiningBufferInfinispanCacheSchemaChanges": target.getConfiguration().setLogMiningBufferInfinispanCacheSchemaChanges(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancachetransactions":
@@ -458,8 +454,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferEhcacheGlobalConfig": return java.lang.String.class;
         case "logminingbufferehcacheprocessedtransactionsconfig":
         case "logMiningBufferEhcacheProcessedtransactionsConfig": return java.lang.String.class;
-        case "logminingbufferehcacherollbacksconfig":
-        case "logMiningBufferEhcacheRollbacksConfig": return java.lang.String.class;
         case "logminingbufferehcacheschemachangesconfig":
         case "logMiningBufferEhcacheSchemachangesConfig": return java.lang.String.class;
         case "logminingbufferehcachetransactionsconfig":
@@ -470,8 +464,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheGlobal": return java.lang.String.class;
         case "logminingbufferinfinispancacheprocessedtransactions":
         case "logMiningBufferInfinispanCacheProcessedTransactions": return java.lang.String.class;
-        case "logminingbufferinfinispancacherollbacks":
-        case "logMiningBufferInfinispanCacheRollbacks": return java.lang.String.class;
         case "logminingbufferinfinispancacheschemachanges":
         case "logMiningBufferInfinispanCacheSchemaChanges": return java.lang.String.class;
         case "logminingbufferinfinispancachetransactions":
@@ -789,8 +781,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferEhcacheGlobalConfig": return target.getConfiguration().getLogMiningBufferEhcacheGlobalConfig();
         case "logminingbufferehcacheprocessedtransactionsconfig":
         case "logMiningBufferEhcacheProcessedtransactionsConfig": return target.getConfiguration().getLogMiningBufferEhcacheProcessedtransactionsConfig();
-        case "logminingbufferehcacherollbacksconfig":
-        case "logMiningBufferEhcacheRollbacksConfig": return target.getConfiguration().getLogMiningBufferEhcacheRollbacksConfig();
         case "logminingbufferehcacheschemachangesconfig":
         case "logMiningBufferEhcacheSchemachangesConfig": return target.getConfiguration().getLogMiningBufferEhcacheSchemachangesConfig();
         case "logminingbufferehcachetransactionsconfig":
@@ -801,8 +791,6 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheGlobal": return target.getConfiguration().getLogMiningBufferInfinispanCacheGlobal();
         case "logminingbufferinfinispancacheprocessedtransactions":
         case "logMiningBufferInfinispanCacheProcessedTransactions": return target.getConfiguration().getLogMiningBufferInfinispanCacheProcessedTransactions();
-        case "logminingbufferinfinispancacherollbacks":
-        case "logMiningBufferInfinispanCacheRollbacks": return target.getConfiguration().getLogMiningBufferInfinispanCacheRollbacks();
         case "logminingbufferinfinispancacheschemachanges":
         case "logMiningBufferInfinispanCacheSchemaChanges": return target.getConfiguration().getLogMiningBufferInfinispanCacheSchemaChanges();
         case "logminingbufferinfinispancachetransactions":
