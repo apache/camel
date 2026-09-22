@@ -50,6 +50,13 @@ class SourceValidatorPlaceholderTest {
         List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
         assertThat(errors).anyMatch(e -> e.contains("rest-openapi: Unknown option 'path'")
                 && e.contains("comes from a header of the same name: add setHeader: {name: sku"));
+        // the sibling spellings say the same
+        for (String option : List.of("pathParameters", "queryParameters")) {
+            List<String> more
+                    = SourceValidator.validateYamlEndpoints(yaml.replace("path: \"sku=", option + ": \"sku="), catalog);
+            assertThat(more).anyMatch(e -> e.contains("rest-openapi: Unknown option '" + option + "'")
+                    && e.contains("comes from a header of the same name: add setHeader: {name: "));
+        }
     }
 
     @Test

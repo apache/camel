@@ -290,8 +290,8 @@ final class EndpointChecks {
                     "a path parameter of the operation comes from a header of the same name: add setHeader: {name: sku,"
                                                      + " ...} before the call"),
             Map.entry("rest-openapi:queryParameters",
-                    "a query parameter of the operation comes from a header of the same name: add setHeader before the"
-                                                      + " call"),
+                    "a query parameter of the operation comes from a header of the same name: add setHeader: {name: page,"
+                                                      + " ...} before the call"),
             Map.entry("file:mkdir", "directories are created by default (autoCreate=true); remove the option"),
             Map.entry("file:createDirectory", "directories are created by default (autoCreate=true); remove the option"),
             Map.entry("file:overwrite", "an existing file is overridden by default (fileExist=Override); remove the option"),
