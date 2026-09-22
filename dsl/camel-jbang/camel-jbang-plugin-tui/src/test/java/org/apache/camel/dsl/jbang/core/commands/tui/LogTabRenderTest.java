@@ -24,6 +24,7 @@ import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -45,6 +46,25 @@ class LogTabRenderTest {
         AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
         ctx = new MonitorContext(data, infraData);
         ctx.selectedPid = "1234";
+    }
+
+    @Test
+    void foldsAStormOfTheSameLineIntoOneEntry() {
+        List<LogEntry> entries = new ArrayList<>();
+        LogTab.addFolded(entries, LogTab.parseLogLine(
+                "2026-09-22 10:00:00.001  INFO 42 --- [           main] route1 : Started"));
+        for (int i = 0; i < 100; i++) {
+            LogTab.addFolded(entries, LogTab.parseLogLine(
+                    "2026-09-22 10:01:" + String.format("%02d", i % 60)
+                                                          + ".000 ERROR 42 --- [ timer://tick] route1 : Failed to call the API"));
+        }
+        LogTab.addFolded(entries, LogTab.parseLogLine(
+                "2026-09-22 10:02:00.001  INFO 42 --- [           main] route1 : Done"));
+
+        assertEquals(3, entries.size(), "the storm is one entry between the two others");
+        assertEquals(100, entries.get(1).repeat);
+        assertEquals("10:01:39.000", entries.get(1).time, "the entry keeps the newest timestamp");
+        assertEquals(1, entries.get(0).repeat, "a line that happened once is not a repeat");
     }
 
     @Test
