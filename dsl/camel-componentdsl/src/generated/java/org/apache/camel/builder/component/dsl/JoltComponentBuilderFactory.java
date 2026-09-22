@@ -140,14 +140,14 @@ public interface JoltComponentBuilderFactory {
          * specified by the transformDsl will be created.
          * 
          * The option is a:
-         * &lt;code&gt;com.bazaarvoice.jolt.Transform&lt;/code&gt; type.
+         * &lt;code&gt;io.joltcommunity.jolt.Transform&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param transform the value to set
          * @return the dsl builder
          */
-        default JoltComponentBuilder transform(com.bazaarvoice.jolt.Transform transform) {
+        default JoltComponentBuilder transform(io.joltcommunity.jolt.Transform transform) {
             doSetProperty("transform", transform);
             return this;
         }
@@ -170,7 +170,7 @@ public interface JoltComponentBuilderFactory {
             case "contentCache": ((JoltComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((JoltComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((JoltComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "transform": ((JoltComponent) component).setTransform((com.bazaarvoice.jolt.Transform) value); return true;
+            case "transform": ((JoltComponent) component).setTransform((io.joltcommunity.jolt.Transform) value); return true;
             default: return false;
             }
         }
