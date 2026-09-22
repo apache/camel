@@ -24,7 +24,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String customMetricTags;
     @UriParam(label = LABEL_NAME)
     private String mongodbConnectionString;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     @Metadata(required = true)
     private String mongodbPassword;
     @UriParam(label = LABEL_NAME)

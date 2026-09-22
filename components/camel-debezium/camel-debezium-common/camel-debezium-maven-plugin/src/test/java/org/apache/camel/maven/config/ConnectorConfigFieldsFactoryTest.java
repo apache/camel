@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.debezium.config.Field;
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +59,36 @@ public class ConnectorConfigFieldsFactoryTest {
         final ConnectorConfigField connectorConfigField2 = connectorConfigToField.get("test.field.2");
         assertFalse(connectorConfigField2.isRequired());
         assertTrue(connectorConfigField2.isDeprecated());
+    }
+
+    @Test
+    void testIfDetectsDeprecatedFieldsDeclaredAsStringConstants() {
+        final ConfigDef configDef = new ConfigDef()
+                .define("test.field.1", ConfigDef.Type.STRING, ConfigDef.Importance.MEDIUM, "docs1")
+                .define("test.field.2", ConfigDef.Type.STRING, ConfigDef.Importance.MEDIUM, "docs2");
+
+        final Map<String, ConnectorConfigField> connectorConfigToField
+                = ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(
+                        configDef, TestConnectorConfig.class, Collections.emptySet(), Collections.emptyMap());
+
+        assertFalse(connectorConfigToField.get("test.field.1").isDeprecated());
+        assertTrue(connectorConfigToField.get("test.field.2").isDeprecated(),
+                "a deprecated option declared as a String constant should be detected as well");
+    }
+
+    /**
+     * A connector configuration class shaped like the real ones: a deprecated option can be declared either as a
+     * {@link Field} or, when it only survives as an alias, as a plain String constant.
+     */
+    public static final class TestConnectorConfig {
+
+        public static final Field FIELD_1 = Field.create("test.field.1");
+
+        @Deprecated
+        public static final String DEPRECATED_FIELD_2 = "test.field.2";
+
+        private TestConnectorConfig() {
+        }
     }
 
 }

@@ -24,7 +24,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(161);
+        Set<String> props = new HashSet<>(160);
         props.add("additionalProperties");
         props.add("archiveDestinationName");
         props.add("archiveLogHours");
@@ -41,7 +41,6 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("databaseConnectionAdapter");
         props.add("databaseDbname");
         props.add("databaseHostname");
-        props.add("databaseOutServerName");
         props.add("databasePassword");
         props.add("databasePdbName");
         props.add("databasePort");
@@ -187,7 +186,9 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("unavailableValuePlaceholder");
         props.add("xstreamOutServerName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("databasePassword");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);
         prefixes.put("additionalProperties", "additionalProperties.");

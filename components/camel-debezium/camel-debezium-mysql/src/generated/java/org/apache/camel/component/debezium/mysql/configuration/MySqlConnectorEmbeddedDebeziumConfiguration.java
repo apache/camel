@@ -176,7 +176,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String incrementalSnapshotWatermarkingStrategy = "INSERT_INSERT";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     private String databaseSslTruststorePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotOnSchemaError = false;
@@ -192,7 +192,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String inconsistentSchemaHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "-1")
     private int errorsMaxRetries = -1;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     @Metadata(required = true)
     private String databasePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "t")
@@ -242,7 +242,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int databasePort = 3306;
     @UriParam(label = LABEL_NAME)
     private String databaseSslTruststore;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     private String databaseSslKeystorePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.storage.kafka.history.KafkaSchemaHistory")
     private String schemaHistoryInternal = "io.debezium.storage.kafka.history.KafkaSchemaHistory";
