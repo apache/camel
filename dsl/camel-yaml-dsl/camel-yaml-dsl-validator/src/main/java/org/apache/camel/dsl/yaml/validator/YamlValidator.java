@@ -196,13 +196,19 @@ public class YamlValidator {
                 Matcher q = Pattern.compile(":\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'[^']*')\\s*\\S").matcher(t);
                 if (q.find()) {
                     String key = t.trim().contains(":") ? t.trim().substring(0, t.trim().indexOf(':')) : "the value";
+                    String tail = t.substring(t.indexOf(q.group(1)) + q.group(1).length()).strip();
+                    // the value was corrected twice: it ends with two quotes, not with a concatenation (CAMEL-24906)
+                    String message = "\"".equals(tail)
+                            ? "line " + last + ": the value of " + key + " ends with two double quotes; remove the"
+                              + " extra one and write the line as " + t.strip().substring(0, t.strip().length() - 1)
+                            : "line " + last + ": the value of " + key + " continues after its closing quote"
+                              + " (\"...\" + ...): a YAML value is one string, there is no concatenation; a"
+                              + " log message is a simple expression, write it as one quoted text such as"
+                              + " \">>> ${body}\"";
                     return Error.builder()
                             .messageKey("parser")
                             .format(new MessageFormat("{0}"))
-                            .arguments("line " + last + ": the value of " + key + " continues after its closing quote"
-                                       + " (\"...\" + ...): a YAML value is one string, there is no concatenation; a"
-                                       + " log message is a simple expression, write it as one quoted text such as"
-                                       + " \">>> ${body}\"")
+                            .arguments(message)
                             .build();
                 }
             }
@@ -280,8 +286,12 @@ public class YamlValidator {
         String value = colon >= 0 ? line.substring(colon + 1).trim() : line.trim();
         long quotes = value.chars().filter(c -> c == '"').count() - value.split("\\\\\"", -1).length + 1;
         if (value.startsWith("\"") && quotes % 2 == 1) {
-            return hint("line " + start.line() + ": the value opens a double quote and never closes it: end it with"
-                        + " a \" after the last character (" + value + "\")");
+            // the line to write, not a description of the edit: a model copies the line (CAMEL-24906)
+            String indent = line.substring(0, line.length() - line.stripLeading().length());
+            String key = colon >= 0 ? line.stripLeading().substring(0, line.stripLeading().indexOf(':') + 1) : "";
+            return hint("line " + start.line() + ": the value opens a double quote and never closes it; write the line"
+                        + " as " + (indent + key + " " + value + "\"").strip()
+                        + " (a single quote inside a double-quoted value needs no escape)");
         }
         return null;
     }
