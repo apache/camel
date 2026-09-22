@@ -386,7 +386,8 @@ public interface DebeziumOracleEndpointBuilderFactory {
          * Oracle'primary' (the default) captures changes from the primary,
          * specified by database. configurations, 'physical_standby' captures
          * changes from a read-only physical standby, specified by secondary.
-         * configurations.
+         * configurations, 'downstream' captures changes from a downstream
+         * real-time mining database, specified by secondary. configurations.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -576,20 +577,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder databaseHostname(String databaseHostname) {
             doSetProperty("databaseHostname", databaseHostname);
-            return this;
-        }
-        /**
-         * Name of the XStream Outbound server to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: oracle
-         * 
-         * @param databaseOutServerName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder databaseOutServerName(String databaseOutServerName) {
-            doSetProperty("databaseOutServerName", databaseOutServerName);
             return this;
         }
         /**
@@ -1438,22 +1425,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the inner body the Ehcache tag for the rollbacks cache, but
-         * should not include the nor the attributes as these are managed by
-         * Debezium.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: oracle
-         * 
-         * @param logMiningBufferEhcacheRollbacksConfig the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningBufferEhcacheRollbacksConfig(String logMiningBufferEhcacheRollbacksConfig) {
-            doSetProperty("logMiningBufferEhcacheRollbacksConfig", logMiningBufferEhcacheRollbacksConfig);
-            return this;
-        }
-        /**
          * Specifies the inner body the Ehcache tag for the schema changes
          * cache, but should not include the nor the attributes as these are
          * managed by Debezium.
@@ -1528,20 +1499,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder logMiningBufferInfinispanCacheProcessedTransactions(String logMiningBufferInfinispanCacheProcessedTransactions) {
             doSetProperty("logMiningBufferInfinispanCacheProcessedTransactions", logMiningBufferInfinispanCacheProcessedTransactions);
-            return this;
-        }
-        /**
-         * Specifies the XML configuration for the Infinispan 'rollbacks' cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: oracle
-         * 
-         * @param logMiningBufferInfinispanCacheRollbacks the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder logMiningBufferInfinispanCacheRollbacks(String logMiningBufferInfinispanCacheRollbacks) {
-            doSetProperty("logMiningBufferInfinispanCacheRollbacks", logMiningBufferInfinispanCacheRollbacks);
             return this;
         }
         /**

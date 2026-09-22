@@ -26,8 +26,10 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class OpaConfiguration implements Cloneable {
 
+    static final String DEFAULT_SERVER_URL = "http://localhost:8181";
+
     @UriParam(defaultValue = "http://localhost:8181")
-    private String serverUrl = "http://localhost:8181";
+    private String serverUrl = DEFAULT_SERVER_URL;
 
     @UriParam(defaultValue = "allow")
     private String allowKey = "allow";

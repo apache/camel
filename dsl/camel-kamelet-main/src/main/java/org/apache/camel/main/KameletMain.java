@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
@@ -116,6 +117,7 @@ import org.apache.camel.support.RouteOnDemandReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.FileUtil;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
@@ -165,6 +167,8 @@ public class KameletMain extends MainCommandLineSupport {
         configureInitialProperties(locations);
     }
 
+    private Consumer<Exception> startFailureListener;
+
     public static void main(String... args) throws Exception {
         KameletMain main = new KameletMain();
         int code = main.run(args);
@@ -173,8 +177,24 @@ public class KameletMain extends MainCommandLineSupport {
         System.exit(code);
     }
 
+    /**
+     * Called with the exception when Camel fails to start, before the error is logged: the CLI uses it to report what
+     * the schema validator says about a YAML route file that did not load (CAMEL-24851).
+     */
+    public void setStartFailureListener(Consumer<Exception> startFailureListener) {
+        this.startFailureListener = startFailureListener;
+    }
+
     @Override
     protected void doFail(Exception e) {
+        if (startFailureListener != null) {
+            try {
+                startFailureListener.accept(e);
+            } catch (Exception listenerFailure) {
+                // the listener must not hide the failure
+                LOG.debug("Start failure listener failed: {}", listenerFailure.getMessage(), listenerFailure);
+            }
+        }
         // ensure any unhandled fatal errors are also logged before terminating process
         LOG.error("Error starting Camel: {}", e, e);
         super.doFail(e);
@@ -715,7 +735,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
                     new DependencyDownloaderUriFactoryResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
-                    new DependencyDownloaderResourceLoader(answer, sourceDir));
+                    new DependencyDownloaderResourceLoader(answer, sourceDir, routeDirectories()));
             answer.getCamelContextExtension().addContextPlugin(OptimisedComponentResolver.class,
                     new KameletOptimisedComponentResolver(answer));
 
@@ -866,6 +886,29 @@ public class KameletMain extends MainCommandLineSupport {
     @Override
     protected LifecycleStrategy createLifecycleStrategy(CamelContext camelContext) {
         return new KameletAutowiredLifecycleStrategy(camelContext, stubPattern, silent);
+    }
+
+    /**
+     * The directories of the route files (from camel.main.routesIncludePattern), the working directory first: where a
+     * classpath: or file: resource that is not found is looked up, so a script next to the route is found by name
+     * (CAMEL-24852).
+     */
+    List<String> routeDirectories() {
+        List<String> dirs = new ArrayList<>();
+        dirs.add(".");
+        String routes = getInitialProperties().getProperty("camel.main.routesIncludePattern");
+        if (routes != null) {
+            for (String route : routes.split(",")) {
+                route = route.trim();
+                if (route.startsWith("file:")) {
+                    String dir = FileUtil.onlyPath(route.substring(5));
+                    if (dir != null && !dir.isEmpty() && !dirs.contains(dir)) {
+                        dirs.add(dir);
+                    }
+                }
+            }
+        }
+        return dirs;
     }
 
     protected ClassLoader createApplicationContextClassLoader(CamelContext camelContext) {

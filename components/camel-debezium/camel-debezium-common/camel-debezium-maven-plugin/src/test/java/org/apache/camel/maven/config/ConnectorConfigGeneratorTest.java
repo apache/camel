@@ -62,6 +62,19 @@ public class ConnectorConfigGeneratorTest {
     }
 
     @Test
+    void testIfPasswordFieldsAreMarkedAsSecret() {
+        final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(
+                new MySqlConnector(), MySqlConnectorConfig.class, null, Collections.emptySet(), Collections.emptyMap());
+
+        final String connectorFieldsAsString = connectorConfigGenerator.printClassAsString();
+
+        assertTrue(declarationOf(connectorFieldsAsString, "databasePassword").contains("secret = true"),
+                "a password option should be generated as a secret");
+        assertFalse(declarationOf(connectorFieldsAsString, "databaseUser").contains("secret = true"),
+                "an ordinary option should not be generated as a secret");
+    }
+
+    @Test
     void testIfItHandlesWrongClassInput() {
         final MySqlConnector connector = new MySqlConnector();
         final Map<String, Object> overridenDefaultValues = Collections.emptyMap();
@@ -71,6 +84,13 @@ public class ConnectorConfigGeneratorTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> ConnectorConfigGenerator.create(connector, clazz, null, requiredFields, overridenDefaultValues));
+    }
+
+    private String declarationOf(final String generatedClass, final String fieldName) {
+        final int index = generatedClass.indexOf("private String " + fieldName + ";");
+        assertTrue(index > 0, "the generated class should declare " + fieldName);
+        // the annotations sit right above the field declaration
+        return generatedClass.substring(Math.max(0, index - 200), index);
     }
 
     private void testIfCorrectlyGeneratedFile(

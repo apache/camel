@@ -23,6 +23,20 @@ import org.apache.camel.spi.Metadata;
  */
 public final class OpenAIConstants {
 
+    // Webhook consumer headers
+    @Metadata(label = "consumer", description = "The type of the webhook event, such as response.completed or batch.completed",
+              javaType = "String")
+    public static final String WEBHOOK_EVENT_TYPE = "CamelOpenAIWebhookEventType";
+    @Metadata(label = "consumer", description = "The id of the webhook event", javaType = "String")
+    public static final String WEBHOOK_EVENT_ID = "CamelOpenAIWebhookEventId";
+    @Metadata(label = "consumer",
+              description = "The id of the object the event is about, such as the response id of response.completed, "
+                            + "which the responses-retrieve operation takes",
+              javaType = "String")
+    public static final String WEBHOOK_OBJECT_ID = "CamelOpenAIWebhookObjectId";
+    @Metadata(label = "consumer", description = "When the event was created, in seconds since the epoch", javaType = "Long")
+    public static final String WEBHOOK_CREATED_AT = "CamelOpenAIWebhookCreatedAt";
+
     // Input Headers
     @Metadata(description = "The user message to send to the OpenAI chat completion API", javaType = "String")
     public static final String USER_MESSAGE = "CamelOpenAIUserMessage";
@@ -134,6 +148,52 @@ public final class OpenAIConstants {
               javaType = "com.openai.models.audio.translations.TranslationCreateResponse")
     public static final String AUDIO_TRANSLATION_RESPONSE = "CamelOpenAIAudioTranslationResponse";
 
+    // Batch Input Headers
+    @Metadata(description = "The id of the batch to act on. Set by the batch operation, and read by "
+                            + "batch-retrieve, batch-cancel and batch-results",
+              javaType = "String")
+    public static final String BATCH_ID = "CamelOpenAIBatchId";
+    @Metadata(description = "The endpoint every request in the batch calls, such as /v1/chat/completions. Overrides "
+                            + "the batchEndpoint option",
+              javaType = "String")
+    public static final String BATCH_ENDPOINT = "CamelOpenAIBatchEndpoint";
+    @Metadata(description = "Metadata to attach to the batch. Overrides the batchMetadata option",
+              javaType = "java.util.Map<String, String>")
+    public static final String BATCH_METADATA = "CamelOpenAIBatchMetadata";
+    @Metadata(description = "The custom_id of the request that OpenAIBatchAggregationStrategy builds from this "
+                            + "message. Defaults to the message id",
+              javaType = "String")
+    public static final String BATCH_CUSTOM_ID = "CamelOpenAIBatchCustomId";
+    @Metadata(description = "Which result file the batch-results operation downloads: 'output' or 'error'. "
+                            + "Overrides the batchResultsFile option",
+              javaType = "String")
+    public static final String BATCH_RESULTS_FILE = "CamelOpenAIBatchResultsFile";
+
+    // Batch Output Headers
+    @Metadata(description = "The status of the batch: validating, failed, in_progress, finalizing, completed, "
+                            + "expired, cancelling or cancelled",
+              javaType = "String")
+    public static final String BATCH_STATUS = "CamelOpenAIBatchStatus";
+    @Metadata(description = "The id of the uploaded input file of the batch", javaType = "String")
+    public static final String BATCH_INPUT_FILE_ID = "CamelOpenAIBatchInputFileId";
+    @Metadata(description = "The id of the file holding the results of the successful requests", javaType = "String")
+    public static final String BATCH_OUTPUT_FILE_ID = "CamelOpenAIBatchOutputFileId";
+    @Metadata(description = "The id of the file holding the results of the failed requests", javaType = "String")
+    public static final String BATCH_ERROR_FILE_ID = "CamelOpenAIBatchErrorFileId";
+    @Metadata(description = "Total number of requests in the batch", javaType = "Long")
+    public static final String BATCH_REQUEST_COUNT_TOTAL = "CamelOpenAIBatchRequestCountTotal";
+    @Metadata(description = "Number of requests in the batch that completed successfully", javaType = "Long")
+    public static final String BATCH_REQUEST_COUNT_COMPLETED = "CamelOpenAIBatchRequestCountCompleted";
+    @Metadata(description = "Number of requests in the batch that failed", javaType = "Long")
+    public static final String BATCH_REQUEST_COUNT_FAILED = "CamelOpenAIBatchRequestCountFailed";
+    @Metadata(description = "The errors that made the batch fail validation, each a map of the code, message, param "
+                            + "and line fields of the API",
+              javaType = "java.util.List<java.util.Map<String, Object>>")
+    public static final String BATCH_ERRORS = "CamelOpenAIBatchErrors";
+
+    @Metadata(description = "The complete OpenAI batch object", javaType = "com.openai.models.batches.Batch")
+    public static final String BATCH_RESPONSE = "CamelOpenAIBatchResponse";
+
     // Embeddings Input Headers
     @Metadata(description = "The model to use for embeddings", javaType = "String")
     public static final String EMBEDDING_MODEL = "CamelOpenAIEmbeddingModel";
@@ -198,7 +258,7 @@ public final class OpenAIConstants {
     public static final String AUDIO_MODEL = "CamelOpenAIAudioModel";
     @Metadata(description = "The language of the input audio (ISO-639-1)", javaType = "String")
     public static final String AUDIO_LANGUAGE = "CamelOpenAIAudioLanguage";
-    @Metadata(description = "The response format for audio transcription (json, text, srt, verbose_json, vtt)",
+    @Metadata(description = "The response format for audio transcription (json, text, srt, verbose_json, vtt, diarized_json)",
               javaType = "String")
     public static final String AUDIO_RESPONSE_FORMAT = "CamelOpenAIAudioResponseFormat";
     @Metadata(description = "Sampling temperature for audio transcription (0.0 to 1.0)", javaType = "Double")
@@ -209,10 +269,25 @@ public final class OpenAIConstants {
     @Metadata(description = "Comma-separated timestamp granularities: word, segment, or word,segment (verbose_json only)",
               javaType = "String")
     public static final String AUDIO_TIMESTAMP_GRANULARITIES = "CamelOpenAIAudioTimestampGranularities";
+    @Metadata(description = "Chunking strategy for diarized transcription models: auto or vad", javaType = "String")
+    public static final String AUDIO_CHUNKING_STRATEGY = "CamelOpenAIAudioChunkingStrategy";
+    @Metadata(description = "Comma-separated known speaker names for diarized transcription", javaType = "String")
+    public static final String AUDIO_KNOWN_SPEAKER_NAMES = "CamelOpenAIAudioKnownSpeakerNames";
+    @Metadata(description = "Comma-separated known speaker reference audio file ids for diarized transcription",
+              javaType = "String")
+    public static final String AUDIO_KNOWN_SPEAKER_REFERENCES = "CamelOpenAIAudioKnownSpeakerReferences";
+    @Metadata(description = "Comma-separated keywords to improve transcription accuracy", javaType = "String")
+    public static final String AUDIO_KEYWORDS = "CamelOpenAIAudioKeywords";
+    @Metadata(description = "Comma-separated input audio languages (ISO-639-1 or ISO-639-3)", javaType = "String")
+    public static final String AUDIO_LANGUAGES = "CamelOpenAIAudioLanguages";
+    @Metadata(description = "Comma-separated extra response fields to include (e.g. logprobs)", javaType = "String")
+    public static final String AUDIO_INCLUDE = "CamelOpenAIAudioInclude";
 
     // Audio Transcription/Translation Output Headers
-    @Metadata(description = "Duration of the audio in seconds (verbose_json only)", javaType = "Double")
+    @Metadata(description = "Duration of the audio in seconds (verbose_json or diarized_json)", javaType = "Double")
     public static final String AUDIO_DURATION = "CamelOpenAIAudioDuration";
+    @Metadata(description = "Speaker-labelled segments from diarized_json transcription", javaType = "java.util.List")
+    public static final String AUDIO_DIARIZED_SEGMENTS = "CamelOpenAIAudioDiarizedSegments";
     @Metadata(description = "Language detected in the audio (verbose_json only)", javaType = "String")
     public static final String AUDIO_DETECTED_LANGUAGE = "CamelOpenAIAudioDetectedLanguage";
 

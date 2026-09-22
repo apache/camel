@@ -84,6 +84,10 @@ public final class SensitiveUtils {
                     "connectionstring",
                     "consumerkey",
                     "consumersecret",
+                    "databasepassword",
+                    "databasesslkeystorepassword",
+                    "databasesslpassword",
+                    "databasessltruststorepassword",
                     "emailaddress",
                     "functionkey",
                     "hostkey",
@@ -95,6 +99,7 @@ public final class SensitiveUtils {
                     "knownhosts",
                     "knownhostsfile",
                     "knownhostsuri",
+                    "mongodbpassword",
                     "oauthclientid",
                     "oauthclientsecret",
                     "oauthtoken",
@@ -185,6 +190,10 @@ public final class SensitiveUtils {
                                                     + "|\\Qconnectionstring\\E"
                                                     + "|\\Qconsumerkey\\E"
                                                     + "|\\Qconsumersecret\\E"
+                                                    + "|\\Qdatabasepassword\\E"
+                                                    + "|\\Qdatabasesslkeystorepassword\\E"
+                                                    + "|\\Qdatabasesslpassword\\E"
+                                                    + "|\\Qdatabasessltruststorepassword\\E"
                                                     + "|\\Qemailaddress\\E"
                                                     + "|\\Qfunctionkey\\E"
                                                     + "|\\Qhostkey\\E"
@@ -196,6 +205,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qknownhosts\\E"
                                                     + "|\\Qknownhostsfile\\E"
                                                     + "|\\Qknownhostsuri\\E"
+                                                    + "|\\Qmongodbpassword\\E"
                                                     + "|\\Qoauthclientid\\E"
                                                     + "|\\Qoauthclientsecret\\E"
                                                     + "|\\Qoauthtoken\\E"

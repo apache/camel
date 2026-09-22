@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -189,5 +191,38 @@ class ToolRegistryTest {
                 () -> ToolRegistry.execute("get_eip_stats", ctx, Map.of()));
         assertThrows(ToolExecutionException.class,
                 () -> ToolRegistry.execute("detect_config_drift", ctx, Map.of()));
+    }
+
+    @Test
+    void historySummaryKeepsTheStepsAndTheBodyTypeAndSize() {
+        // CAMEL-24844: the compact form of get_history a small model can read
+        JsonObject body = new JsonObject();
+        body.put("type", "java.util.LinkedHashMap");
+        body.put("size", 3);
+        body.put("value", "{orderId=ORD-1001}");
+        JsonObject message = new JsonObject();
+        message.put("body", body);
+        message.put("headers", new JsonArray());
+        JsonObject trace = new JsonObject();
+        trace.put("routeId", "route1");
+        trace.put("nodeId", "unmarshal1");
+        trace.put("nodeShortName", "unmarshal");
+        trace.put("elapsed", 2);
+        trace.put("message", message);
+        JsonArray traces = new JsonArray();
+        traces.add(trace);
+        JsonObject history = new JsonObject();
+        history.put("name", "shop");
+        history.put("traces", traces);
+
+        JsonObject summary = ToolRegistry.historySummary(history);
+        assertEquals("shop", summary.get("name"));
+        JsonArray steps = summary.getCollection("steps");
+        assertEquals(1, steps.size());
+        JsonObject step = (JsonObject) steps.get(0);
+        assertEquals("unmarshal1", step.get("nodeId"));
+        assertEquals("java.util.LinkedHashMap", step.get("bodyType"));
+        assertEquals(3, step.get("bodySize"));
+        assertNull(step.get("message"), "no bodies, headers or properties in the summary");
     }
 }

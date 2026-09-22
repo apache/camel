@@ -524,10 +524,11 @@ class TemplateHelperTest {
     void testInitKameletTemplatesAreCanonical(String name) throws Exception {
         String content = loadInitTemplate(name).replace("[=Name]", "my-kamelet");
 
-        // the Kamelet CR wraps the route in spec.template as its from
+        // the Kamelet CR wraps the route in spec.template as its from (the Kamelet spec's shape); validated as the
+        // route it is, since a top-level from: is the compact notation of a route file (CAMEL-24745)
         Map<String, Object> cr = new Yaml().load(content);
         Map<String, Object> spec = (Map<String, Object>) cr.get("spec");
-        assertCanonical(name, new Yaml().dump(List.of(spec.get("template"))));
+        assertCanonical(name, new Yaml().dump(List.of(Map.of("route", spec.get("template")))));
     }
 
     private static void assertCanonical(String name, String yaml) throws Exception {

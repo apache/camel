@@ -372,7 +372,8 @@ public interface DebeziumOracleComponentBuilderFactory {
          * Oracle'primary' (the default) captures changes from the primary,
          * specified by database. configurations, 'physical_standby' captures
          * changes from a read-only physical standby, specified by secondary.
-         * configurations.
+         * configurations, 'downstream' captures changes from a downstream
+         * real-time mining database, specified by secondary. configurations.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -559,21 +560,6 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder databaseHostname(java.lang.String databaseHostname) {
             doSetProperty("databaseHostname", databaseHostname);
-            return this;
-        }
-    
-        /**
-         * Name of the XStream Outbound server to connect to.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param databaseOutServerName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseOutServerName(java.lang.String databaseOutServerName) {
-            doSetProperty("databaseOutServerName", databaseOutServerName);
             return this;
         }
     
@@ -1179,23 +1165,6 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
-         * Specifies the inner body the Ehcache tag for the rollbacks cache, but
-         * should not include the nor the attributes as these are managed by
-         * Debezium.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param logMiningBufferEhcacheRollbacksConfig the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder logMiningBufferEhcacheRollbacksConfig(java.lang.String logMiningBufferEhcacheRollbacksConfig) {
-            doSetProperty("logMiningBufferEhcacheRollbacksConfig", logMiningBufferEhcacheRollbacksConfig);
-            return this;
-        }
-    
-        /**
          * Specifies the inner body the Ehcache tag for the schema changes
          * cache, but should not include the nor the attributes as these are
          * managed by Debezium.
@@ -1274,21 +1243,6 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder logMiningBufferInfinispanCacheProcessedTransactions(java.lang.String logMiningBufferInfinispanCacheProcessedTransactions) {
             doSetProperty("logMiningBufferInfinispanCacheProcessedTransactions", logMiningBufferInfinispanCacheProcessedTransactions);
-            return this;
-        }
-    
-        /**
-         * Specifies the XML configuration for the Infinispan 'rollbacks' cache.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param logMiningBufferInfinispanCacheRollbacks the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder logMiningBufferInfinispanCacheRollbacks(java.lang.String logMiningBufferInfinispanCacheRollbacks) {
-            doSetProperty("logMiningBufferInfinispanCacheRollbacks", logMiningBufferInfinispanCacheRollbacks);
             return this;
         }
     
@@ -3101,7 +3055,6 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "databaseConnectionAdapter": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseConnectionAdapter((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseDbname((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHostname((java.lang.String) value); return true;
-            case "databaseOutServerName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseOutServerName((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePdbName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePdbName((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePort((int) value); return true;
@@ -3134,13 +3087,11 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningBufferEhcacheEventsConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheEventsConfig((java.lang.String) value); return true;
             case "logMiningBufferEhcacheGlobalConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheGlobalConfig((java.lang.String) value); return true;
             case "logMiningBufferEhcacheProcessedtransactionsConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheProcessedtransactionsConfig((java.lang.String) value); return true;
-            case "logMiningBufferEhcacheRollbacksConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheRollbacksConfig((java.lang.String) value); return true;
             case "logMiningBufferEhcacheSchemachangesConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheSchemachangesConfig((java.lang.String) value); return true;
             case "logMiningBufferEhcacheTransactionsConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheTransactionsConfig((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheEvents": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheEvents((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheGlobal": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheGlobal((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheProcessedTransactions": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheProcessedTransactions((java.lang.String) value); return true;
-            case "logMiningBufferInfinispanCacheRollbacks": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheRollbacks((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheSchemaChanges": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheSchemaChanges((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheTransactions": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheTransactions((java.lang.String) value); return true;
             case "logMiningBufferMemoryLegacyTransactionStart": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferMemoryLegacyTransactionStart((boolean) value); return true;

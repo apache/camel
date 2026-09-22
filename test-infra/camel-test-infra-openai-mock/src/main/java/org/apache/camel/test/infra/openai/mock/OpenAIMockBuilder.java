@@ -41,6 +41,7 @@ public class OpenAIMockBuilder {
     private final List<ModerationExpectation> moderationExpectations;
     private final List<ImageExpectation> imageGenerationExpectations;
     private final List<ImageExpectation> imageEditExpectations;
+    private final List<BatchExpectation> batchExpectations;
     private MockExpectation currentExpectation;
     private EmbeddingExpectation currentEmbeddingExpectation;
     private AudioTranscriptionExpectation currentAudioTranscriptionExpectation;
@@ -49,6 +50,7 @@ public class OpenAIMockBuilder {
     private ModerationExpectation currentModerationExpectation;
     private ImageExpectation currentImageGenerationExpectation;
     private ImageExpectation currentImageEditExpectation;
+    private BatchExpectation currentBatchExpectation;
 
     public OpenAIMockBuilder(OpenAIMock mock, List<MockExpectation> expectations,
                              List<EmbeddingExpectation> embeddingExpectations,
@@ -57,7 +59,8 @@ public class OpenAIMockBuilder {
                              List<SpeechExpectation> speechExpectations,
                              List<ModerationExpectation> moderationExpectations,
                              List<ImageExpectation> imageGenerationExpectations,
-                             List<ImageExpectation> imageEditExpectations) {
+                             List<ImageExpectation> imageEditExpectations,
+                             List<BatchExpectation> batchExpectations) {
         this.mock = mock;
         this.expectations = expectations;
         this.embeddingExpectations = embeddingExpectations;
@@ -67,6 +70,55 @@ public class OpenAIMockBuilder {
         this.moderationExpectations = moderationExpectations;
         this.imageGenerationExpectations = imageGenerationExpectations;
         this.imageEditExpectations = imageEditExpectations;
+        this.batchExpectations = batchExpectations;
+    }
+
+    /**
+     * Expects the batch input line with the given {@code custom_id}. The reply set with
+     * {@link #replyWithBatchResponse(String)} or {@link #replyWithBatchError(int, String, String)} is written to the
+     * output or error file of the batch.
+     */
+    public OpenAIMockBuilder whenBatchRequest(String customId) {
+        log.debug("Setting up batch expectation for custom_id: {}", customId);
+        currentBatchExpectation = new BatchExpectation(customId);
+        return this;
+    }
+
+    /**
+     * Replies to this batch request line with the given response body, the JSON the endpoint of the batch would return
+     * for a single request.
+     */
+    public OpenAIMockBuilder replyWithBatchResponse(String responseBody) {
+        validateCurrentBatchExpectation("replyWithBatchResponse()");
+        currentBatchExpectation.setResponseBody(responseBody);
+        return this;
+    }
+
+    /**
+     * Replies to this batch request line with a chat completion holding the given content.
+     */
+    public OpenAIMockBuilder replyWithBatchContent(String content) {
+        validateCurrentBatchExpectation("replyWithBatchContent()");
+        currentBatchExpectation.setResponseBody(
+                "{\"id\":\"chatcmpl-mock\",\"object\":\"chat.completion\",\"model\":\"openai-mock\","
+                                                + "\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\""
+                                                + content + "\"},\"finish_reason\":\"stop\"}]}");
+        return this;
+    }
+
+    /**
+     * Fails this batch request line, so it is written to the error file of the batch instead of its output file.
+     */
+    public OpenAIMockBuilder replyWithBatchError(int statusCode, String type, String message) {
+        validateCurrentBatchExpectation("replyWithBatchError()");
+        currentBatchExpectation.setError(statusCode, type, message);
+        return this;
+    }
+
+    private void validateCurrentBatchExpectation(String method) {
+        if (currentBatchExpectation == null) {
+            throw new IllegalStateException("Call whenBatchRequest() before " + method);
+        }
     }
 
     public OpenAIMockBuilder when(String expectedInput) {
@@ -356,6 +408,14 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    public OpenAIMockBuilder replyWithDiarizedTranscription(String text) {
+        validateCurrentAudioTranscriptionExpectation("replyWithDiarizedTranscription()");
+        log.debug("Setting diarized transcription text: {}", text);
+        currentAudioTranscriptionExpectation.setTranscriptionText(text);
+        currentAudioTranscriptionExpectation.setDiarized(true);
+        return this;
+    }
+
     // Audio Translation API methods
 
     public OpenAIMockBuilder whenTranslation() {
@@ -521,11 +581,15 @@ public class OpenAIMockBuilder {
             log.debug("Finalizing image edit expectation");
             imageEditExpectations.add(currentImageEditExpectation);
             currentImageEditExpectation = null;
+        } else if (currentBatchExpectation != null) {
+            log.debug("Finalizing batch expectation for custom_id: {}", currentBatchExpectation.getCustomId());
+            batchExpectations.add(currentBatchExpectation);
+            currentBatchExpectation = null;
         } else {
             throw new IllegalStateException(
                     "Call when(), whenEmbedding(), whenTranscription(), whenTranslation(), whenSpeech(), "
-                                            + "whenModeration(), whenImageGeneration(), or whenImageEdit() "
-                                            + "before end()");
+                                            + "whenModeration(), whenImageGeneration(), whenImageEdit(), or "
+                                            + "whenBatchRequest() before end()");
         }
         return this;
     }
@@ -571,11 +635,16 @@ public class OpenAIMockBuilder {
             imageEditExpectations.add(currentImageEditExpectation);
             currentImageEditExpectation = null;
         }
+        if (currentBatchExpectation != null) {
+            log.debug("Auto-finalizing current batch expectation during build");
+            batchExpectations.add(currentBatchExpectation);
+            currentBatchExpectation = null;
+        }
         log.info("Built OpenAIMock with {} chat, {} embedding, {} transcription, {} translation, "
-                 + "{} speech, {} moderation, {} image generation, and {} image edit expectations",
+                 + "{} speech, {} moderation, {} image generation, {} image edit, and {} batch expectations",
                 expectations.size(), embeddingExpectations.size(), audioTranscriptionExpectations.size(),
                 audioTranslationExpectations.size(), speechExpectations.size(), moderationExpectations.size(),
-                imageGenerationExpectations.size(), imageEditExpectations.size());
+                imageGenerationExpectations.size(), imageEditExpectations.size(), batchExpectations.size());
         return mock;
     }
 

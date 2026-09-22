@@ -478,6 +478,9 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                             .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
                             .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
                             .append(" elapsed=\"").append(elapsed).append("\"")
+                            .append(history.getBodyType() != null
+                                    ? " bodyType=\"" + StringHelper.xmlEncode(history.getBodyType()) + "\"" : "")
+                            .append(history.getBodySize() >= 0 ? " bodySize=\"" + history.getBodySize() + "\"" : "")
                             .append("/>\n");
                 }
             }

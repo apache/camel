@@ -28,6 +28,8 @@ import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleTokenType;
+import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -259,7 +261,8 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     /**
-     * Parse a value as an expression. Handles quoted literals, functions, ternary expressions, and null.
+     * Parse a value as an expression. Handles quoted literals, numbers, booleans, functions, ternary expressions, and
+     * null.
      */
     private Expression parseValueExpression(CamelContext camelContext, String text) {
         // Handle quoted strings
@@ -291,6 +294,16 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                     return "null";
                 }
             };
+        }
+
+        // Handle a number or boolean: a value on its own, not a function, so it must not be
+        // wrapped in ${} further below (CAMEL-24826)
+        if (NumericExpression.isNumericValue(text)) {
+            return new NumericExpression(getToken(), text).createExpression(camelContext, text);
+        }
+        if ("true".equals(text) || "false".equals(text)) {
+            SimpleToken value = new SimpleToken(new SimpleTokenType(TokenType.booleanValue, text), getToken().getIndex());
+            return new BooleanExpression(value).createExpression(camelContext, text);
         }
 
         // Check if this is a nested ternary expression (contains ? and :)

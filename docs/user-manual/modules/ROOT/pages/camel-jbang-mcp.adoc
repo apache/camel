@@ -333,17 +333,20 @@ project `directory` as an argument, the runtime tools take the integration `name
 
 | `camel_write_file`
 | Writes the complete content of a file in the project directory. YAML and `.properties` content is validated
-  first; invalid content is not written and the errors are returned (`validate=false` writes anyway). Only a
+  first; invalid content is not written and the errors are returned. Only a
   plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
 
 | `camel_run`
-| Starts an integration from a project directory with `camel run` in a separate process, in dev mode by
-  default so route files reload when written. Returns the pid, name and log file once the integration is up.
+| Starts an integration from a project directory with `camel run --source-dir` in a separate process, in dev
+  mode by default: the directory is watched, so a changed or added file (a route, a bean file, a Java class) is
+  reloaded. Name files to run only those, for a directory that holds several apps. Returns the pid, name and
+  log file once the integration is up.
 
 | `camel_control`
 | Controls a running integration: `stop`, `kill`, `restart` (picks up edited files without dev mode),
+  `reload` (loads the routes again from their files without a restart, as `camel cmd reload` does),
   `stop-routes`, `start-routes`, `reset-stats`.
 
 | `camel_get_log`
@@ -688,6 +691,46 @@ process is running).
 
 | `camel_runtime_thread_dump`
 | Get a JVM thread dump showing thread names, states, and stack traces.
+|===
+
+==== Data, Resilience and Analysis
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_runtime_sql`
+| Execute a SQL statement against a DataSource of the running application: columns and rows for a SELECT,
+  the update count otherwise. Lets the model look at the data a route reads or writes, or try a statement
+  before putting it in a route.
+
+| `camel_runtime_datasources`
+| Datasource connection pool status: active, idle and total connections, max pool size and waiting threads.
+
+| `camel_runtime_sql_trace`
+| Traced SQL executions of the camel-sql and camel-jdbc components with timing, row counts, route ID and
+  failure status.
+
+| `camel_runtime_circuit_breakers`
+| Circuit breaker state (CLOSED/OPEN/HALF_OPEN), call counts, failure rates and not-permitted calls.
+
+| `camel_runtime_metrics`
+| Micrometer metrics: counters, gauges, timers and distributions (requires `--observe` or camel-micrometer).
+
+| `camel_runtime_eip_stats`
+| EIP usage across all routes with processor counts and performance figures.
+
+| `camel_runtime_spans`
+| OpenTelemetry spans with trace IDs, durations, route IDs and status (requires `--observe`).
+
+| `camel_runtime_startup_steps`
+| Startup recorder steps with duration, level and type (requires `camel.main.startup-recorder=true`).
+
+| `camel_runtime_route_analysis`
+| Anti-pattern and structure analysis per route: error handling, complexity, component usage.
+
+| `camel_runtime_config_drift`
+| Compares the running route definitions with the source files to detect configuration drift.
 |===
 
 ==== Configuration and Registry

@@ -29,6 +29,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +48,7 @@ import com.networknt.schema.path.NodePath;
 import com.networknt.schema.path.PathType;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.yaml.common.DataFormatKeyHints;
 import org.apache.camel.tooling.model.EipModel;
 
 /**
@@ -74,7 +77,7 @@ public class YamlValidator {
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     private final boolean canonical;
     private final String schemaJson;
-    private final CamelCatalog catalog;
+    private CamelCatalog catalog;
     private Schema schema;
     private Map<String, OneOfGroup> oneOfGroups;
 
@@ -146,8 +149,7 @@ public class YamlValidator {
         }
     }
 
-    private static final java.util.regex.Pattern LINE_COLUMN
-            = java.util.regex.Pattern.compile("line:? (\\d+), column:? (\\d+)");
+    private static final Pattern LINE_COLUMN = Pattern.compile("line:? (\\d+), column:? (\\d+)");
 
     /**
      * A YAML parse error whose line is a line of text at column 1 after the routes (an explanation appended to the
@@ -159,12 +161,17 @@ public class YamlValidator {
         if (msg == null || content == null) {
             return plain;
         }
+        String[] lines = content.split("\n", -1);
+        // a tab in the indentation points at column 1, which the scan below would read as a line of prose
+        Error tab = tabIndentation(msg);
+        if (tab != null) {
+            return tab;
+        }
         // the message names several positions (the collection being parsed, then the token that broke it); the
         // problem is at the last one
-        String[] lines = content.split("\n", -1);
         int line = -1;
         String text = null;
-        java.util.regex.Matcher m = LINE_COLUMN.matcher(msg);
+        Matcher m = LINE_COLUMN.matcher(msg);
         while (m.find()) {
             int l = Integer.parseInt(m.group(1));
             if (!"1".equals(m.group(2)) || l < 2 || l > lines.length) {
@@ -179,15 +186,14 @@ public class YamlValidator {
         }
         if (text == null) {
             // a value that continues after its closing quote: message: ">>> " + exchange.getIn().getBody()
-            java.util.regex.Matcher any = LINE_COLUMN.matcher(msg);
+            Matcher any = LINE_COLUMN.matcher(msg);
             int last = -1;
             while (any.find()) {
                 last = Integer.parseInt(any.group(1));
             }
             if (last >= 1 && last <= lines.length) {
                 String t = lines[last - 1];
-                java.util.regex.Matcher q
-                        = java.util.regex.Pattern.compile(":\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'[^']*')\\s*\\S").matcher(t);
+                Matcher q = Pattern.compile(":\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'[^']*')\\s*\\S").matcher(t);
                 if (q.find()) {
                     String key = t.trim().contains(":") ? t.trim().substring(0, t.trim().indexOf(':')) : "the value";
                     return Error.builder()
@@ -200,7 +206,16 @@ public class YamlValidator {
                             .build();
                 }
             }
-            return plain;
+            // a double-quoted value that never closes: the parser swallows the next lines and gives up further down
+            // (CAMEL-24888); the line that opened the quote is within the few lines above the reported one
+            for (int l = last; l >= 1 && l > last - 8; l--) {
+                Error unclosed = unclosedQuote(new Mark(l, 1), lines);
+                if (unclosed != null) {
+                    return unclosed;
+                }
+            }
+            Error marked = indentationError(msg, lines);
+            return marked != null ? marked : plain;
         }
         String cleaned = msg.replace("\n", " ").replaceAll("\\s+", " ").trim();
         int cut = cleaned.indexOf("in 'reader'");
@@ -211,6 +226,238 @@ public class YamlValidator {
                 .arguments("line " + line + " is not YAML (\"" + (text.length() > 40 ? text.substring(0, 40) + "..." : text)
                            + "\"): a route file holds only the YAML, put explanations in a # comment or leave them out"
                            + " (" + head + ")")
+                .build();
+    }
+
+    private static final Pattern SNAKE_MARK = Pattern.compile("in 'reader', line (\\d+), column (\\d+):");
+    private static final Pattern ESCAPE_CHAR = Pattern.compile("found unknown escape character (.)\\(");
+    private static final Pattern KEY_LINE = Pattern.compile("^\\s*[^-\\s#][^:]*:(\\s|$)");
+
+    /** A position the parser reported: the line and the column it points at, both 1-based. */
+    private record Mark(int line, int column) {
+    }
+
+    /**
+     * CAMEL-24837: the snakeyaml messages that only say where the parser gave up, said in YAML words. Returns null for
+     * the messages this does not know, so the raw one is still reported.
+     */
+    static Error indentationError(String msg, String[] lines) {
+        List<Mark> marks = marks(msg, lines);
+        if (marks.isEmpty()) {
+            return null;
+        }
+        Mark problem = marks.get(marks.size() - 1);
+        // the stray item is named '-', or '<block sequence start>' when the list it broke uses bare dashes
+        if (msg.contains("expected <block end>, but found '-'")
+                || msg.contains("expected <block end>, but found '<block sequence start>'")) {
+            return listItemColumn(problem, lines);
+        }
+        if (msg.contains("expected <block end>, but found '<block mapping start>'")) {
+            return marks.size() > 1 ? mappingKeyColumn(marks.get(0), problem, lines) : null;
+        }
+        if (msg.contains("mapping values are not allowed here")) {
+            return mappingValue(problem, lines);
+        }
+        if (msg.contains("found unknown escape character")) {
+            return unknownEscape(msg, problem, lines);
+        }
+        if (msg.contains("expected <block end>, but found '<scalar>'") && !marks.isEmpty()) {
+            return unclosedQuote(marks.get(0), lines);
+        }
+        return null;
+    }
+
+    /**
+     * CAMEL-24888: {@code expression: "$[?(@.sku == '${header.sku}')]} with no closing quote: the parser swallows the
+     * following lines into the value and gives up at the next key. Says which line opened the quote.
+     */
+    static Error unclosedQuote(Mark start, String[] lines) {
+        if (start.line() < 1 || start.line() > lines.length) {
+            return null;
+        }
+        String line = lines[start.line() - 1];
+        int colon = line.indexOf(':');
+        String value = colon >= 0 ? line.substring(colon + 1).trim() : line.trim();
+        long quotes = value.chars().filter(c -> c == '"').count() - value.split("\\\\\"", -1).length + 1;
+        if (value.startsWith("\"") && quotes % 2 == 1) {
+            return hint("line " + start.line() + ": the value opens a double quote and never closes it: end it with"
+                        + " a \" after the last character (" + value + "\")");
+        }
+        return null;
+    }
+
+    /** {@code Do not use (TAB) for indentation}: the line is indented with a tab. */
+    static Error tabIndentation(String msg) {
+        if (!msg.contains("(TAB) for indentation")) {
+            return null;
+        }
+        Matcher m = SNAKE_MARK.matcher(msg);
+        int line = -1;
+        while (m.find()) {
+            line = Integer.parseInt(m.group(1));
+        }
+        return line < 1
+                ? null
+                : hint("line " + line + ": the indentation uses a tab; YAML indents with spaces only, replace the"
+                       + " tab with spaces");
+    }
+
+    /**
+     * A list item in a column of its own: the parser only says that it expected the end of what it was reading. Name
+     * the list the item belongs to, which is the shallowest list still open below the item's column, or the deepest one
+     * above it when the item is the over-indented one.
+     */
+    private static Error listItemColumn(Mark problem, String[] lines) {
+        Mark deeper = null;
+        Mark shallower = null;
+        for (Mark open : openLists(problem, lines)) {
+            if (open.column() > problem.column() && (deeper == null || open.column() < deeper.column())) {
+                deeper = open;
+            } else if (open.column() < problem.column() && (shallower == null || open.column() > shallower.column())) {
+                shallower = open;
+            }
+        }
+        Mark list = deeper != null ? deeper : shallower;
+        String belongs = list == null
+                ? "" : ", but the list that starts at line " + list.line() + " has its items in column " + list.column();
+        return hint("line " + problem.line() + ": this list item starts in column " + problem.column() + belongs
+                    + "; every item of a list must start in the same column");
+    }
+
+    /**
+     * The lists still open above the problem, each as the line and column of its first item. A list at column c is open
+     * while every line below it is indented to at least c.
+     */
+    private static List<Mark> openLists(Mark problem, String[] lines) {
+        Map<Integer, Integer> firstItem = new LinkedHashMap<>();
+        int deepest = Integer.MAX_VALUE;
+        for (int i = problem.line() - 2; i >= 0; i--) {
+            String stripped = lines[i].stripLeading();
+            if (stripped.isEmpty() || stripped.startsWith("#")) {
+                continue;
+            }
+            int indent = lines[i].length() - stripped.length();
+            if (listItem(stripped) && indent <= deepest) {
+                firstItem.put(indent + 1, i + 1);
+            }
+            deepest = Math.min(deepest, indent);
+        }
+        List<Mark> open = new ArrayList<>();
+        firstItem.forEach((column, line) -> open.add(new Mark(line, column)));
+        return open;
+    }
+
+    /** A list item: the indicator followed by its value, or alone on its line with the value below it. */
+    private static boolean listItem(String stripped) {
+        return stripped.startsWith("-")
+                && (stripped.length() == 1 || Character.isWhitespace(stripped.charAt(1)));
+    }
+
+    /** A key in a column of its own, where the parser names the mapping it was reading. */
+    private static Error mappingKeyColumn(Mark mapping, Mark problem, String[] lines) {
+        return hint("line " + problem.line() + ": " + keyName(lines[problem.line() - 1]) + " starts in column "
+                    + problem.column() + ", but the keys of the mapping that starts at line " + mapping.line()
+                    + " are in column " + mapping.column() + "; every key of a mapping must start in the same column");
+    }
+
+    /**
+     * "mapping values are not allowed here" has two causes: a key indented deeper than the keys around it, and a colon
+     * inside a value that is not quoted. The parser points at the colon, so the key's own colon is the first.
+     */
+    private static Error mappingValue(Mark problem, String[] lines) {
+        String text = lines[problem.line() - 1];
+        int colon = problem.column() - 1;
+        if (colon < 0 || colon >= text.length() || text.charAt(colon) != ':') {
+            return null;
+        }
+        if (colon == text.indexOf(':')) {
+            String stripped = text.stripLeading();
+            int indent = text.length() - stripped.length();
+            Mark mapping = enclosingMapping(problem.line(), indent, lines);
+            return mapping == null
+                    ? null
+                    : hint("line " + problem.line() + ": " + keyName(text) + " starts in column " + (indent + 1)
+                           + ", but the keys of the mapping that starts at line " + mapping.line() + " are in column "
+                           + mapping.column() + "; every key of a mapping must start in the same column");
+        }
+        String value = text.substring(text.indexOf(':') + 1).trim();
+        String quoted = value.contains("\"") ? "'" + value + "'" : "\"" + value + "\"";
+        return hint("line " + problem.line() + ": the value of " + keyName(text) + " holds a colon (" + quoted
+                    + "): a colon followed by a space starts a new key, so the value must be quoted");
+    }
+
+    /** The mapping an over-indented key was meant to join: the first key of the nearest shallower run of keys. */
+    private static Mark enclosingMapping(int line, int indent, String[] lines) {
+        for (int i = line - 2; i >= 0; i--) {
+            String stripped = lines[i].stripLeading();
+            if (stripped.isEmpty() || stripped.startsWith("#")) {
+                continue;
+            }
+            int other = lines[i].length() - stripped.length();
+            if (other >= indent || !KEY_LINE.matcher(lines[i]).find()) {
+                continue;
+            }
+            int first = i;
+            for (int j = i - 1; j >= 0; j--) {
+                String above = lines[j].stripLeading();
+                int aboveIndent = lines[j].length() - above.length();
+                if (above.isEmpty() || above.startsWith("#") || aboveIndent > other) {
+                    continue;
+                }
+                if (aboveIndent < other || !KEY_LINE.matcher(lines[j]).find()) {
+                    break;
+                }
+                first = j;
+            }
+            return new Mark(first + 1, other + 1);
+        }
+        return null;
+    }
+
+    /** A backslash inside a double-quoted value: YAML reads it as an escape, so the value belongs in single quotes. */
+    private static Error unknownEscape(String msg, Mark problem, String[] lines) {
+        Matcher m = ESCAPE_CHAR.matcher(msg);
+        if (!m.find()) {
+            return null;
+        }
+        String escaped = m.group(1);
+        String text = lines[problem.line() - 1];
+        int open = text.indexOf('"');
+        int close = text.lastIndexOf('"');
+        String rewrite = "";
+        if (open >= 0 && close > open) {
+            String value = text.substring(open + 1, close);
+            rewrite = value.contains("'") ? "" : ": '" + value + "'";
+        }
+        return hint("line " + problem.line() + ": \\" + escaped + " inside double quotes is an escape character and "
+                    + escaped + " is not one; write the value in single quotes" + rewrite);
+    }
+
+    /** The positions the parser reported, in the order it reported them, keeping only those the file has. */
+    private static List<Mark> marks(String msg, String[] lines) {
+        List<Mark> marks = new ArrayList<>();
+        Matcher m = SNAKE_MARK.matcher(msg);
+        while (m.find()) {
+            int line = Integer.parseInt(m.group(1));
+            if (line >= 1 && line <= lines.length) {
+                marks.add(new Mark(line, Integer.parseInt(m.group(2))));
+            }
+        }
+        return marks;
+    }
+
+    /** The name of the key a line declares, or "the value" when the line has none. */
+    private static String keyName(String line) {
+        String stripped = line.strip();
+        int colon = stripped.indexOf(':');
+        return colon > 0 ? stripped.substring(0, colon) : "the value";
+    }
+
+    private static Error hint(String message) {
+        return Error.builder()
+                .messageKey("parser")
+                .format(new MessageFormat("{0}"))
+                .arguments(message)
                 .build();
     }
 
@@ -319,6 +566,11 @@ public class YamlValidator {
         }
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
+            // unmarshal: {jackson: {}}: the unknown key already got its hint; the list of every data format that
+            // "found none" adds at the same location only buries it
+            errors.removeIf(e -> "oneOf".equals(e.getKeyword())
+                    && hinted.contains(String.valueOf(e.getInstanceLocation()))
+                    && String.valueOf(e.getMessage()).endsWith("but found none"));
         }
         return errors;
     }
@@ -679,7 +931,7 @@ public class YamlValidator {
      */
     private Map<String, OneOfGroup> loadOneOfGroups() {
         Map<String, OneOfGroup> groups = new HashMap<>();
-        CamelCatalog catalog = this.catalog != null ? this.catalog : new DefaultCamelCatalog();
+        CamelCatalog catalog = catalog();
         for (String name : catalog.findModelNames()) {
             EipModel model = catalog.eipModel(name);
             if (model == null) {
@@ -781,6 +1033,43 @@ public class YamlValidator {
         }
         collectProperties(model.at(pointer), answer, 0);
         return answer;
+    }
+
+    /**
+     * The hint for a marshal/unmarshal key that is not a data format key: the key spelled as the schema has it
+     * (jackson-xml: jacksonXml), the data format named as its artifact or catalog entry (jackson, json-jackson: json
+     * with library Jackson), the catalog's suggestions for a word of a name (xml: jacksonXml, fhirXml, groovyXml), the
+     * closest key for a typo (jsn: json), and failing all that, what the key is.
+     */
+    String dataFormatHint(String unknown, String eip, String schemaLocation) {
+        Set<String> keys = knownProperties(schemaLocation);
+        String hint = DataFormatKeyHints.hint(unknown, keys);
+        if (hint != null) {
+            return hint;
+        }
+        List<String> names = catalog().suggestDataFormatNames(unknown, 3);
+        List<String> forms = names.stream().map(DataFormatKeyHints::form).distinct().toList();
+        if (forms.size() == 1) {
+            hint = DataFormatKeyHints.hint(names.get(0), keys);
+            return hint != null ? hint : "did you mean '" + forms.get(0) + "'?";
+        }
+        if (forms.size() > 1) {
+            return "did you mean " + String.join(", ", forms.subList(0, forms.size() - 1)) + " or "
+                   + forms.get(forms.size() - 1) + "?";
+        }
+        String closest = closest(unknown, keys);
+        if (closest != null) {
+            return "did you mean '" + closest + "'?";
+        }
+        return "the key of " + eip + " is the data format: json, jacksonXml, csv, yaml, jaxb, avro, protobuf...;"
+               + " camel catalog dataformat lists them";
+    }
+
+    private CamelCatalog catalog() {
+        if (catalog == null) {
+            catalog = new DefaultCamelCatalog();
+        }
+        return catalog;
     }
 
     private void collectProperties(JsonNode node, Set<String> answer, int depth) {

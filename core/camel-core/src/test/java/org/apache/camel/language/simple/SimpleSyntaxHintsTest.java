@@ -90,6 +90,44 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testColonArgumentOnAParenthesisFunction() {
+        // CAMEL-24845: jsonpath, jq, xpath and simpleJsonpath take their argument in parentheses. The suggestion
+        // must say so, not echo back the text that was just rejected, or the reader writes it again
+        assertThat(expressionError("${jsonpath:$.status}"))
+                .contains("Unknown function: jsonpath:$.status")
+                .contains("the argument goes in parentheses: did you mean ${jsonpath($.status)}?");
+        assertThat(expressionError("${jq:.name}"))
+                .contains("the argument goes in parentheses: did you mean ${jq(.name)}?");
+        assertThat(expressionError("${xpath:/order/@id}"))
+                .contains("the argument goes in parentheses: did you mean ${xpath(/order/@id)}?");
+        assertThat(expressionError("${simpleJsonpath:$.status}"))
+                .contains("the argument goes in parentheses: did you mean ${simpleJsonpath($.status)}?");
+        // the json alias resolves to jsonpath, so its argument has to move into parentheses as well
+        assertThat(expressionError("${json:$.status}"))
+                .contains("the argument goes in parentheses: did you mean ${jsonpath($.status)}?");
+    }
+
+    @Test
+    public void testBareQueryFunctionIsNotCalledANestedLanguage() {
+        // CAMEL-24845: QueryLanguageFunctionFactory made these real simple functions, so the message must point at
+        // the parenthesis form instead of claiming another language cannot be nested inside ${...}
+        assertThat(expressionError("${jsonpath}"))
+                .contains("the argument goes in parentheses: did you mean ${jsonpath(exp)}?")
+                .doesNotContain("is a language");
+        assertThat(expressionError("${jq}"))
+                .contains("the argument goes in parentheses: did you mean ${jq(exp)}?");
+    }
+
+    @Test
+    public void testASuggestionNeverRepeatsTheRejectedText() {
+        // CAMEL-24845: bean and date do take a colon, so there is no parenthesis form to suggest for them, and the
+        // did-you-mean must not degenerate into the input
+        assertThat(SimpleSyntaxHints.unknownFunction("bean:myBean")).doesNotContain("${bean:myBean}");
+        assertThat(SimpleSyntaxHints.unknownFunction("date:now:HH:mm")).doesNotContain("${date:now:HH:mm}");
+        assertThat(SimpleSyntaxHints.unknownFunction("jsonpath:$.status")).doesNotContain("${jsonpath:$.status}");
+    }
+
+    @Test
     public void testOperatorAfterOgnlMethod() {
         assertThat(predicateError("${body.length() > 3}")).contains("Operators go outside the function: ${body.length()} > 3");
     }

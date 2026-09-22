@@ -65,6 +65,7 @@ public class DefaultMessageHistoryFactory extends ServiceSupport implements Mess
 
         DefaultMessageHistory answer = new DefaultMessageHistory(routeId, node, msg);
         answer.setAcceptDebugger(node.acceptDebugger(exchange));
+        answer.captureBody(exchange);
         return answer;
     }
 

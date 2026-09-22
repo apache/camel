@@ -107,8 +107,10 @@ public final class SourceValidator {
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator);
             if (directory != null && msgs.isEmpty()) {
                 msgs = new ArrayList<>(msgs);
-                msgs.addAll(validateYamlBeanRefs(content, BeanDeclarations.scan(directory, fileName), catalog));
+                BeanDeclarations declarations = BeanDeclarations.scan(directory, fileName);
+                msgs.addAll(validateYamlBeanRefs(content, declarations, catalog));
                 msgs.addAll(validateResourceRefs(content, directory));
+                msgs.addAll(GroovyImportChecks.validateYamlGroovyImports(content, null, declarations.javaClasses()));
             }
             return msgs;
         }
@@ -226,8 +228,11 @@ public final class SourceValidator {
         if (content == null || content.isBlank()) {
             return msgs;
         }
+        msgs.addAll(StructureChecks.validateTopLevelOrder(content));
         msgs.addAll(validateYamlEndpoints(content, catalog));
         msgs.addAll(validateYamlSimple(content, catalog));
+        msgs.addAll(BeanRefChecks.validateReturnedResourceLiterals(content));
+        msgs.addAll(JsonPathChecks.validateYamlJsonPath(content, catalog));
         msgs.addAll(validateKnownHeaders(content, catalog));
         msgs.addAll(validateBeanTypes(content));
         return msgs;

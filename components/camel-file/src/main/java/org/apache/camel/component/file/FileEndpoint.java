@@ -101,6 +101,16 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         ObjectHelper.notNull(operations, PARAM_OPERATIONS);
         ObjectHelper.notNull(file, "file");
 
+        if (file.isFile()) {
+            // file:order.json: the file component reads the files of a directory; a regular file as the directory
+            // polled nothing and said nothing (CAMEL-24839)
+            String parent = file.getParent() != null ? file.getParent() : ".";
+            throw new IllegalArgumentException(
+                    file + " is a file, not a directory: the file component reads the files of a directory."
+                                               + " To read this one file use file:" + parent + "?fileName=" + file.getName()
+                                               + " (as from:, or with pollEnrich)");
+        }
+
         FileConsumer result = newFileConsumer(processor, operations);
 
         if (isDelete() && getMove() != null) {

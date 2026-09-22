@@ -80,7 +80,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private int errorsMaxRetries = -1;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     @Metadata(required = true)
     private String databasePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")

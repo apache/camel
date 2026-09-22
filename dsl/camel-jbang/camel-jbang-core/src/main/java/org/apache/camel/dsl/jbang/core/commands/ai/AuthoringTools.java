@@ -82,7 +82,9 @@ public final class AuthoringTools {
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
                 "Catalog documentation of a component, data format, language, EIP, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
-                .param("name", "string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange", false)
+                .param("name", "string",
+                        "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
+                        false)
                 .param("endpoint", "string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092", false)
                 .param("kind", "string",
                         "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
@@ -206,22 +208,20 @@ public final class AuthoringTools {
                 .param("directory", "string", DIRECTORY_DESC, false)
                 .param("file", "string", FILE_PATH_DESC + " (subdirectories are created)", true)
                 .param("content", "string", "The complete new content", true)
-                .param("validate", "boolean", "Validate before writing (default true)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .readOnly(false)
                 .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     Path dir = ctx.resolveDirectory(args.get("directory"));
-                    return writeFile(ctx, dir, required(args, "file"), required(args, "content"),
-                            bool(args, "validate", true)).toJson();
+                    // always validated: a model given a switch turns it off (CAMEL-24897)
+                    return writeFile(ctx, dir, required(args, "file"), required(args, "content"), true).toJson();
                 }));
 
         registry.accept(tool("camel_run",
-                "Starts an integration with camel run in a separate process, in dev mode by default (files reload when written). Returns the pid and log file; camel_get_log, camel_get_errors and camel_control follow it.")
+                "Starts an integration with camel run in a separate process, in dev mode by default (a changed or added file is reloaded). Returns the pid and log file; camel_get_log and camel_control follow it.")
                 .param("directory", "string", "Project directory to run in", true)
-                .param("files", "string", "Source files to run, comma-separated (default: every route file in the"
-                                          + " directory)",
+                .param("files", "string", "Source files to run, comma-separated (default: the whole directory)",
                         false)
                 .param("name", "string", "Integration name (default: from the first file)", false)
                 .param("dev", "boolean", "Dev mode with reload on file change (default true)", false)
@@ -247,9 +247,11 @@ public final class AuthoringTools {
 
         registry.accept(tool("camel_control",
                 "Controls a running integration: stop (graceful), kill, restart (picks up edited files without dev "
-                                              + "mode), stop-routes, start-routes, reset-stats (clears statistics, routes "
-                                              + "untouched). Never stop, kill or restart unless the user asked for it.")
-                .param("action", "string", "stop, kill, restart, stop-routes, start-routes or reset-stats", true)
+                                              + "mode), reload (loads the routes again without a restart, e.g. after a changed "
+                                              + "stylesheet), stop-routes, start-routes, reset-stats (clears statistics). "
+                                              + "Never stop, kill or restart unless the "
+                                              + "user asked for it.")
+                .param("action", "string", "stop, kill, restart, reload, stop-routes, start-routes or reset-stats", true)
                 .param("name", "string", NAME_DESC, false)
                 .readOnly(false)
                 .destructive(true)
@@ -359,6 +361,9 @@ public final class AuthoringTools {
         return result;
     }
 
+    /** How long a write waits for the running integration's reload record before answering without it. */
+    static final long RELOAD_WAIT_MILLIS = 8000;
+
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
@@ -374,9 +379,19 @@ public final class AuthoringTools {
                 result.put("file", file);
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call camel_write_file again (validate=false writes it anyway).");
+                                      + " call camel_write_file again.");
                 return result;
             }
+        }
+        // the reload of a running integration is reported in the answer (CAMEL-24859): the reload records newer
+        // than the ones before the write
+        String processName = null;
+        String sinceKey = null;
+        boolean watch = ctx.hasProcess() && SourceValidator.isValidatableFile(file);
+        if (watch) {
+            RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(Long.toString(ctx.pid()));
+            processName = p != null ? p.name() : null;
+            sinceKey = ReloadOutcome.latestReloadKey(ReloadOutcome.records(ctx.pid(), processName));
         }
         try {
             Files.createDirectories(path.getParent());
@@ -390,8 +405,21 @@ public final class AuthoringTools {
         result.put("directory", dir.toString());
         result.put("lines", content.isEmpty() ? 0 : (int) content.lines().count());
         result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
-        result.put("message", "An integration running the file in dev mode reloads it now; otherwise restart the"
-                              + " integration for the change to take effect.");
+        if (watch) {
+            JsonObject reload = ReloadOutcome.await(ctx.pid(), processName, sinceKey, RELOAD_WAIT_MILLIS);
+            result.put("reload", reload);
+            String status = reload.getString("status");
+            result.put("message", switch (status) {
+                case "reloaded" -> "The running integration reloaded the file.";
+                case "properties" -> "The running integration reloaded the properties.";
+                case "failed" -> "The running integration FAILED to reload the file, the route is not running; fix the"
+                                 + " content and write again (see reload.message).";
+                default -> "Written; " + reload.getString("message");
+            });
+        } else {
+            result.put("message", "An integration running the file in dev mode reloads it now; otherwise restart the"
+                                  + " integration for the change to take effect.");
+        }
         return result;
     }
 

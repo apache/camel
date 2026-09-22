@@ -76,6 +76,8 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     private volatile OpaSecurityPolicyHealthCheck healthCheck;
     private volatile boolean ownsClient;
     private volatile SSLContext sslContext;
+    private volatile CamelContext camelContext;
+    private int activeProcessors;
 
     public OpaSecurityPolicy() {
     }
@@ -87,6 +89,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
 
     @Override
     public void beforeWrap(Route route, NamedNode definition) {
+        this.camelContext = route.getCamelContext();
         if (evaluator == null) {
             StringHelper.notEmpty(policyPath, "policyPath", this);
             OpaHttpClient transport = null;
@@ -109,9 +112,9 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
                 throw new RuntimeCamelException("Could not register the evaluator for policy " + policyPath, e);
             }
         }
-        // after validation, so a policy that is missing its policyPath fails without leaving a ".../null" check
-        // behind in the registry
-        registerHealthCheck(route);
+        // The health check is registered and unregistered from the wrapped processors' lifecycle
+        // (onProcessorStart/onProcessorStop), not here: beforeWrap does not run again when a route is merely
+        // restarted, so a check registered here would be left behind when the guarded routes stop (CAMEL-24751).
     }
 
     /**
@@ -122,16 +125,49 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      * may never talk to - hence {@code ownsClient} rather than a null check on {@code opaClient}, which by the time
      * this runs is set either way.
      */
-    private void registerHealthCheck(Route route) {
-        if (!healthCheckEnabled || healthCheck != null || !ownsClient || ObjectHelper.isEmpty(serverUrl)) {
+    private synchronized void registerHealthCheck() {
+        if (!healthCheckEnabled || healthCheck != null || !ownsClient || ObjectHelper.isEmpty(serverUrl)
+                || camelContext == null) {
             return;
         }
-        HealthCheckRegistry registry = HealthCheckRegistry.get(route.getCamelContext());
+        HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
         if (registry == null) {
             return;
         }
         healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath, sslContext);
         registry.register(healthCheck);
+    }
+
+    private synchronized void unregisterHealthCheck() {
+        if (healthCheck == null || camelContext == null) {
+            return;
+        }
+        HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
+        if (registry != null) {
+            registry.unregister(healthCheck);
+        }
+        healthCheck = null;
+    }
+
+    /**
+     * Called by {@link OpaSecurityProcessor} when a route this policy guards starts. The readiness check is registered
+     * on the first start and, after a stop/restart cycle, restored here - {@link #beforeWrap} does not run again when a
+     * route is merely restarted.
+     */
+    synchronized void onProcessorStart() {
+        activeProcessors++;
+        registerHealthCheck();
+    }
+
+    /**
+     * Called by {@link OpaSecurityProcessor} when a route this policy guards stops. The check is unregistered once the
+     * last guarded route has gone, so a policy shared by several routes keeps its check until all of them stop, and a
+     * route reload does not leave a check behind reporting on a policy that no longer enforces anything (CAMEL-24751).
+     */
+    synchronized void onProcessorStop() {
+        if (activeProcessors > 0 && --activeProcessors == 0) {
+            unregisterHealthCheck();
+        }
     }
 
     @Override

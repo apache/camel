@@ -80,11 +80,9 @@ public final class ConnectorConfigFieldsFactory {
             if (object instanceof Field field) {
                 return field.name();
             } else if (object instanceof String fieldString) {
-                String removedDotAndCapitalize = Stream
-                        .of(fieldString.split("."))
-                        .map(field -> StringUtils.capitalize(field))
-                        .collect(Collectors.joining(""));
-                return StringUtils.uncapitalize(removedDotAndCapitalize);
+                // a deprecated option can also be declared as a plain String constant, and it then already
+                // holds the raw option name the config keys are keyed by
+                return fieldString;
             } else {
                 throw new IllegalArgumentException(
                         "Error occurred in field : " + reflectionField.getName() + " retrieved value is " + object);

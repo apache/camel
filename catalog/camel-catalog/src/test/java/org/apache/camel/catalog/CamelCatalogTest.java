@@ -147,6 +147,19 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testJevUsesGenericLanguageModel() {
+        assertTrue(catalog.findLanguageNames().contains("jev"));
+        LanguageModel model = catalog.languageModel("jev");
+        assertNotNull(model);
+        assertEquals("camel-jev", model.getArtifactId());
+        assertEquals("language", model.getModelName());
+        assertEquals("org.apache.camel.model.language.LanguageExpression", model.getModelJavaType());
+        assertTrue(catalog.validateLanguageExpression(null, "jev", "Refund requested?").isSuccess());
+        assertTrue(catalog.validateLanguagePredicate(null, "jev", "Refund requested?").isSuccess());
+        assertFalse(catalog.validateLanguagePredicate(null, "jev", " ").isSuccess());
+    }
+
+    @Test
     public void testFindTransformerNames() {
         List<String> names = catalog.findTransformerNames();
 

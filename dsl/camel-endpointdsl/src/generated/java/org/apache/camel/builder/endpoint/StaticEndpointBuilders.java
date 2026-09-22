@@ -9047,6 +9047,46 @@ public class StaticEndpointBuilders {
         return JettyHttp12EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Jev (camel-jev)
+     * Evaluate text and structured state with the TypeSafe AI Jev decision API.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-jev
+     * 
+     * Syntax: <code>jev:name</code>
+     * 
+     * Path parameter: name (required)
+     * A logical name for the evaluation endpoint.
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static JevEndpointBuilderFactory.JevEndpointBuilder jev(String path) {
+        return jev("jev", path);
+    }
+    /**
+     * Jev (camel-jev)
+     * Evaluate text and structured state with the TypeSafe AI Jev decision API.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-jev
+     * 
+     * Syntax: <code>jev:name</code>
+     * 
+     * Path parameter: name (required)
+     * A logical name for the evaluation endpoint.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static JevEndpointBuilderFactory.JevEndpointBuilder jev(String componentName, String path) {
+        return JevEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
      * 
@@ -12768,13 +12808,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses',
-     * 'responses-retrieve', 'responses-cancel', 'embeddings', 'tool-execution',
+     * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
+     * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
-     * 'image-generation', or 'image-edit'
-     * There are 12 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, embeddings,
-     * tool-execution, audio-transcription, audio-translation, audio-speech,
-     * moderation, image-generation, image-edit
+     * 'image-generation', 'image-edit', or 'webhook' (a consumer)
+     * There are 17 enums and the value can be one of: chat-completion,
+     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
+     * batch-cancel, batch-results, embeddings, tool-execution,
+     * audio-transcription, audio-translation, audio-speech, moderation,
+     * image-generation, image-edit, webhook
      * 
      * @param path operation
      * @return the dsl builder
@@ -12796,13 +12838,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses',
-     * 'responses-retrieve', 'responses-cancel', 'embeddings', 'tool-execution',
+     * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
+     * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
-     * 'image-generation', or 'image-edit'
-     * There are 12 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, embeddings,
-     * tool-execution, audio-transcription, audio-translation, audio-speech,
-     * moderation, image-generation, image-edit
+     * 'image-generation', 'image-edit', or 'webhook' (a consumer)
+     * There are 17 enums and the value can be one of: chat-completion,
+     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
+     * batch-cancel, batch-results, embeddings, tool-execution,
+     * audio-transcription, audio-translation, audio-speech, moderation,
+     * image-generation, image-edit, webhook
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

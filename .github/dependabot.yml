@@ -55,6 +55,8 @@ updates:
         patterns: ["com.google.cloud:*"]
       Avro:
         patterns: ["org.apache.avro:*"]
+      Kamelet:
+        patterns: ["org.apache.camel.kamelets:*"]
     open-pull-requests-limit: 20
   - package-ecosystem: "npm"
     directory: "docs"

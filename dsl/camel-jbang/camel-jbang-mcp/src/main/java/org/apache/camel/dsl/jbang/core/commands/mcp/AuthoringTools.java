@@ -57,7 +57,7 @@ public class AuthoringTools {
                         + "includeHeaders=true adds the message headers of a component, includeDoc=true the AsciiDoc "
                         + "page.")
     public JsonObject camel_catalog_doc(
-            @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange",
+            @ToolArg(description = "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                      required = false) String name,
             @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
                      required = false) String endpoint,
@@ -148,10 +148,9 @@ public class AuthoringTools {
             @ToolArg(description = "File path relative to the directory (subdirectories are created)",
                      required = true) String file,
             @ToolArg(description = "The complete new content", required = true) String content,
-            @ToolArg(description = "Validate before writing (default true)", required = false) Boolean validate,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
-                "validate", validate, "camelVersion", camelVersion));
+                "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = true),

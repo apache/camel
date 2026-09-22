@@ -49,6 +49,20 @@ public class ErrorRegistryDeduplicateTest extends ContextTestSupport {
         assertEquals(true, entries.iterator().next().isHandled());
     }
 
+    /**
+     * CAMEL-24863: a copy fails first (recorded as not handled, it names the node), then the original reports the
+     * failure as handled (a doCatch around a multicast): the copy's entry stays and is marked handled.
+     */
+    @Test
+    public void testCopyEntryIsMarkedHandledWhenTheOriginalRecovers() throws Exception {
+        getMockEndpoint("mock:caught").expectedMessageCount(1);
+        template.sendBody("direct:copies", "Hello");
+        assertMockEndpointsSatisfied();
+        Collection<BacklogErrorEventMessage> entries = context.getErrorRegistry().browse();
+        assertEquals(1, entries.size(), entries.toString());
+        assertEquals(true, entries.iterator().next().isHandled(), "the doCatch handled the copy's failure");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -65,6 +79,17 @@ public class ErrorRegistryDeduplicateTest extends ContextTestSupport {
                 from("direct:sub").routeId("sub")
                         .errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(0))
                         .throwException(new IllegalArgumentException("Forced error"));
+                // a multicast copy fails (its own unit of work reports the failure first), the doTry on the
+                // original catches it
+                from("direct:copies").routeId("copies")
+                        .doTry()
+                            .multicast().to("direct:boom", "log:other").end()
+                        .endDoTry().doCatch(Exception.class)
+                            .to("mock:caught")
+                        .end();
+                from("direct:boom").routeId("boom")
+                        .errorHandler(noErrorHandler())
+                        .throwException(new IllegalStateException("boom"));
             }
         };
     }

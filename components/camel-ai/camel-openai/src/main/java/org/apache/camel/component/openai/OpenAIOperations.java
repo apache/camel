@@ -22,6 +22,10 @@ public enum OpenAIOperations {
     responses("responses"),
     responsesRetrieve("responses-retrieve"),
     responsesCancel("responses-cancel"),
+    batch("batch"),
+    batchRetrieve("batch-retrieve"),
+    batchCancel("batch-cancel"),
+    batchResults("batch-results"),
     embeddings("embeddings"),
     toolExecution("tool-execution"),
     audioTranscription("audio-transcription"),
@@ -29,7 +33,8 @@ public enum OpenAIOperations {
     audioSpeech("audio-speech"),
     moderation("moderation"),
     imageGeneration("image-generation"),
-    imageEdit("image-edit");
+    imageEdit("image-edit"),
+    webhook("webhook");
 
     private final String value;
 
@@ -46,9 +51,10 @@ public enum OpenAIOperations {
         throw new IllegalArgumentException(
                 "Unknown operation: " + value
                                            + ". Supported: chat-completion, responses, responses-retrieve, "
-                                           + "responses-cancel, embeddings, tool-execution, "
+                                           + "responses-cancel, batch, batch-retrieve, batch-cancel, batch-results, "
+                                           + "embeddings, tool-execution, "
                                            + "audio-transcription, audio-translation, audio-speech, moderation, "
-                                           + "image-generation, image-edit");
+                                           + "image-generation, image-edit, webhook");
     }
 
     public String getValue() {

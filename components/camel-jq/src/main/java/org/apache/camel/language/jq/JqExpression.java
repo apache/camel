@@ -198,8 +198,22 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
         // if body is stream cached then reset, so we can re-read it again
         MessageHelper.resetStreamCache(exchange.getMessage());
         if (payload == null) {
+            // tell apart a source that is null from one that is set but holds no JSON
+            if (source.evaluate(exchange, Object.class) == null) {
+                throw new InvalidPayloadException(exchange, JsonNode.class, exchange.getIn(), nullSourceHint());
+            }
             throw new InvalidPayloadException(exchange, JsonNode.class);
         }
         return payload;
+    }
+
+    private String nullSourceHint() {
+        if ("body".equals(source.toString())) {
+            // a timer alone, or a jq step placed before the file was read: nothing to evaluate
+            return "the jq expression got no message body to evaluate, the body is null: read the JSON before the step"
+                   + " with poll: file:..., pollEnrich or a from: consumer, or set it with setBody";
+        }
+        return "the jq expression got no input from " + source + " to evaluate, it is null: set it before the step,"
+               + " or leave source unset to use the message body";
     }
 }

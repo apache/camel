@@ -243,6 +243,10 @@ public final class ConnectorConfigGenerator {
                     annotation.setLiteralValue("javaType", "\"java.time.Duration\"");
                 }
 
+                if (fieldConfig.isSecret()) {
+                    annotation.setLiteralValue("secret", "true");
+                }
+
                 if (fieldConfig.isRequired()) {
                     field.addAnnotation(Metadata.class)
                             .setLiteralValue("required", "true");

@@ -115,6 +115,8 @@ The following other operators can be used:
 |`?:` | The elvis operator returns the left-hand side if it has an effective Boolean value of true, otherwise it returns the right-hand side. This is useful for providing fallback values when an expression may evaluate to a value with an effective Boolean value of false (such as `null`, `false`, `0`, empty/blank string).
 |`~>` | The chain operator is used in the situations where multiple nested functions need to be applied to a value, while making it easy to read. The value on the left-hand-side is evaluated, and set as the new message body before evaluating the right-hand-side function. This concept is similar to the xref:eips:pipeline-eip.adoc[Pipeline EIP].
 |`?~>` | The null-safe chain operator, where the chain will not continue when a function returned `null`.
+|`:=` | Assigns a local variable in the init block at the top of an expression (`$init{ $minAge := 18; }init$`), see xref:simple-advanced.adoc#_init_blocks[Init Blocks].
+|`~:=` | Declares a local custom function in the init block, usually as a chain (`$init{ $clean ~:= ${trim()} ~> ${uppercase()}; }init$`), called as `${clean()}`, see xref:simple-advanced.adoc#_init_blocks_with_custom_functions[Init Blocks with custom functions].
 |====
 
 ==== Ternary Operator
@@ -123,14 +125,33 @@ The syntax for the ternary operator is:
 
 [source,text]
 ----
-${leftValue} OP rightValue ? trueValue : falseValue
+${leftValue OP rightValue ? trueValue : falseValue}
 ----
+
+The whole ternary must be inside a single `${ }`. Outside `${ }` a Simple expression is a template,
+so a `?` and a `:` there are literal text and the operator is not evaluated. For example:
+
+[source,text]
+----
+${body.size()} == 0 ? ${null} : ${body[0]}
+----
+
+is not a ternary: it returns the text `1 == 0 ?  : ...`, because only the two functions are
+evaluated and the rest is copied as-is.
 
 For example the following ternary operator will return `positive` if header `foo` is greater than 0, otherwise `negative`:
 
 [source,java]
 ----
 simple("${header.foo > 0 ? 'positive' : 'negative'}");
+----
+
+The two values can be a quoted literal, a number, `true`, `false`, `null`, or a nested function:
+
+[source,java]
+----
+simple("${header.foo > 0 ? 1 : 0}");
+simple("${header.foo > 0 ? ${header.foo} : null}");
 ----
 
 Ternary operators can also be nested to handle multiple conditions:

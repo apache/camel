@@ -71,6 +71,14 @@ public class ExpressionDefinition
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
               description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.")
     private String trim;
+    @XmlAttribute
+    @Metadata(label = "advanced", defaultValue = "false", javaType = "java.lang.Boolean",
+              description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource"
+                            + " and its content becomes the result, e.g. a script that returns resource:file:order.json or"
+                            + " resource:classpath:templates/order.json (a name without a scheme is a classpath resource)."
+                            + " Off by default; the resource: prefix on the expression text itself is always resolved."
+                            + " Applies to the expression used as a value, not as a predicate.")
+    private String resolveResource;
 
     public ExpressionDefinition() {
     }
@@ -82,6 +90,7 @@ public class ExpressionDefinition
         this.id = source.id;
         this.expression = source.expression;
         this.trim = source.trim;
+        this.resolveResource = source.resolveResource;
     }
 
     public ExpressionDefinition(String expression) {
@@ -100,6 +109,7 @@ public class ExpressionDefinition
         this.id = builder.id;
         this.expression = builder.expression;
         this.trim = builder.trim;
+        this.resolveResource = builder.resolveResource;
         this.predicate = builder.predicate;
     }
 
@@ -185,6 +195,14 @@ public class ExpressionDefinition
 
     public void setTrim(String trim) {
         this.trim = trim;
+    }
+
+    public String getResolveResource() {
+        return resolveResource;
+    }
+
+    public void setResolveResource(String resolveResource) {
+        this.resolveResource = resolveResource;
     }
 
     public String getLabel() {
@@ -278,6 +296,7 @@ public class ExpressionDefinition
         private String id;
         private String expression;
         private String trim;
+        private String resolveResource;
         private Predicate predicate;
 
         /**
@@ -307,6 +326,28 @@ public class ExpressionDefinition
          */
         public T trim(boolean trim) {
             this.trim = Boolean.toString(trim);
+            return (T) this;
+        }
+
+        /**
+         * Whether a result of the expression that is a String starting with <tt>resource:</tt> is loaded as a resource
+         * and its content becomes the result, such as a script that returns <tt>resource:file:order.json</tt> or
+         * <tt>resource:classpath:templates/order.json</tt> (a name without a scheme is a classpath resource). Off by
+         * default; the <tt>resource:</tt> prefix on the expression text itself is always resolved.
+         */
+        public T resolveResource(String resolveResource) {
+            this.resolveResource = resolveResource;
+            return (T) this;
+        }
+
+        /**
+         * Whether a result of the expression that is a String starting with <tt>resource:</tt> is loaded as a resource
+         * and its content becomes the result, such as a script that returns <tt>resource:file:order.json</tt> or
+         * <tt>resource:classpath:templates/order.json</tt> (a name without a scheme is a classpath resource). Off by
+         * default; the <tt>resource:</tt> prefix on the expression text itself is always resolved.
+         */
+        public T resolveResource(boolean resolveResource) {
+            this.resolveResource = Boolean.toString(resolveResource);
             return (T) this;
         }
 

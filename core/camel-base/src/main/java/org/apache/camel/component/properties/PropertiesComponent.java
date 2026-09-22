@@ -877,6 +877,7 @@ public class PropertiesComponent extends ServiceSupport
                 }
                 result.append('\\');
             } else {
+                result.append('\\');
                 break;
             }
         } while ((index = input.indexOf('\\', start)) != -1);

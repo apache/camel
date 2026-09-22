@@ -32,8 +32,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String signalEnabledChannels = "source";
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean includeSchemaChanges = true;
-    @UriParam(label = LABEL_NAME)
-    private String logMiningBufferInfinispanCacheRollbacks;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean logMiningIncludeRedoSql = false;
     @UriParam(label = LABEL_NAME)
@@ -115,13 +113,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String xstreamOutServerName;
     @UriParam(label = LABEL_NAME)
-    private String databaseOutServerName;
-    @UriParam(label = LABEL_NAME)
     private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long archiveLogHours = 0;
-    @UriParam(label = LABEL_NAME)
-    private String logMiningBufferEhcacheRollbacksConfig;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean logMiningBufferDeferredTransactionStart = false;
     @UriParam(label = LABEL_NAME)
@@ -236,7 +230,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String logMiningBufferInfinispanCacheProcessedTransactions;
     @UriParam(label = LABEL_NAME, defaultValue = "-1")
     private int errorsMaxRetries = -1;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     @Metadata(required = true)
     private String databasePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -429,18 +423,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public boolean isIncludeSchemaChanges() {
         return includeSchemaChanges;
-    }
-
-    /**
-     * Specifies the XML configuration for the Infinispan 'rollbacks' cache
-     */
-    public void setLogMiningBufferInfinispanCacheRollbacks(
-            String logMiningBufferInfinispanCacheRollbacks) {
-        this.logMiningBufferInfinispanCacheRollbacks = logMiningBufferInfinispanCacheRollbacks;
-    }
-
-    public String getLogMiningBufferInfinispanCacheRollbacks() {
-        return logMiningBufferInfinispanCacheRollbacks;
     }
 
     /**
@@ -859,7 +841,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
      * Oracle'primary' (the default) captures changes from the primary,
      * specified by database.* configurations, 'physical_standby' captures
      * changes from a read-only physical standby, specified by secondary.*
-     * configurations.
+     * configurations, 'downstream' captures changes from a downstream real-time
+     * mining database, specified by secondary.* configurations.
      */
     public void setCaptureMode(String captureMode) {
         this.captureMode = captureMode;
@@ -1011,17 +994,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Name of the XStream Outbound server to connect to.
-     */
-    public void setDatabaseOutServerName(String databaseOutServerName) {
-        this.databaseOutServerName = databaseOutServerName;
-    }
-
-    public String getDatabaseOutServerName() {
-        return databaseOutServerName;
-    }
-
-    /**
      * The Kafka bootstrap server address used as input/output namespace/
      */
     public void setOpenlineageIntegrationDatasetKafkaBootstrapServers(
@@ -1043,20 +1015,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public long getArchiveLogHours() {
         return archiveLogHours;
-    }
-
-    /**
-     * Specifies the inner body the Ehcache <cache/> tag for the rollbacks
-     * cache, but should not include the <key-type/> nor the <value-type/>
-     * attributes as these are managed by Debezium.
-     */
-    public void setLogMiningBufferEhcacheRollbacksConfig(
-            String logMiningBufferEhcacheRollbacksConfig) {
-        this.logMiningBufferEhcacheRollbacksConfig = logMiningBufferEhcacheRollbacksConfig;
-    }
-
-    public String getLogMiningBufferEhcacheRollbacksConfig() {
-        return logMiningBufferEhcacheRollbacksConfig;
     }
 
     /**
@@ -2340,7 +2298,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlogreplicator.host", openlogreplicatorHost);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
-        addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.rollbacks", logMiningBufferInfinispanCacheRollbacks);
         addPropertyIfNotNull(configBuilder, "log.mining.include.redo.sql", logMiningIncludeRedoSql);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "log.mining.readonly.hostname", logMiningReadonlyHostname);
@@ -2381,10 +2338,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "xstream.out.server.name", xstreamOutServerName);
-        addPropertyIfNotNull(configBuilder, "database.out.server.name", databaseOutServerName);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "archive.log.hours", archiveLogHours);
-        addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.rollbacks.config", logMiningBufferEhcacheRollbacksConfig);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.deferred.transaction.start", logMiningBufferDeferredTransactionStart);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);

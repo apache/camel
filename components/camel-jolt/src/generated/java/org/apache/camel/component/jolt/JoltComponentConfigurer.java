@@ -31,7 +31,7 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "transform": target.setTransform(property(camelContext, com.bazaarvoice.jolt.Transform.class, value)); return true;
+        case "transform": target.setTransform(property(camelContext, io.joltcommunity.jolt.Transform.class, value)); return true;
         default: return false;
         }
     }
@@ -47,7 +47,7 @@ public class JoltComponentConfigurer extends PropertyConfigurerSupport implement
         case "contentCache": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "transform": return com.bazaarvoice.jolt.Transform.class;
+        case "transform": return io.joltcommunity.jolt.Transform.class;
         default: return null;
         }
     }

@@ -532,7 +532,7 @@ class ErrorsTab extends AbstractTableTab {
             HistoryTab.addKvLines(lines, " Headers:", ei.headers, ei.headerTypes, false, null);
         }
         if (showBody) {
-            HistoryTab.addBodyLines(lines, ei.body, ei.bodyType, false);
+            HistoryTab.addBodyLines(lines, ei.body, ei.bodyType, ei.bodySize, false);
         }
 
         int[] scroll = { detailScroll };

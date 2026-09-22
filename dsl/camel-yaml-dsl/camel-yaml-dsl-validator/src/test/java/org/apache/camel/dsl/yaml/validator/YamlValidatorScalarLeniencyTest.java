@@ -108,24 +108,26 @@ public class YamlValidatorScalarLeniencyTest {
     public void testStepsAsMapStillRejected() {
         // a map where the schema expects a list is what the runtime rejects with "Node type map is invalid, expected array"
         assertRejectedYaml("""
-                - from:
-                    uri: timer:tick
-                    steps:
-                      log: "hi"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        log: "hi"
                 """, "array expected");
     }
 
     @Test
     public void testWhenAsMapStillRejected() {
         assertRejectedYaml("""
-                - from:
-                    uri: timer:tick
-                    steps:
-                      - choice:
-                          when:
-                            simple: "${body} == 1"
-                            steps:
-                              - log: "one"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                              simple: "${body} == 1"
+                              steps:
+                                - log: "one"
                 """, "array expected");
     }
 
@@ -136,19 +138,21 @@ public class YamlValidatorScalarLeniencyTest {
                     get:
                       path: /hello
                       to: direct:hello
-                - from:
-                    uri: direct:hello
-                    steps:
-                      - log: "hi"
+                - route:
+                    from:
+                      uri: direct:hello
+                      steps:
+                        - log: "hi"
                 """, "array expected");
     }
 
     @Test
     public void testScalarWhereStepsExpectedStillRejected() {
         assertRejectedYaml("""
-                - from:
-                    uri: timer:tick
-                    steps: "log:hi"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps: "log:hi"
                 """, "array expected");
     }
 

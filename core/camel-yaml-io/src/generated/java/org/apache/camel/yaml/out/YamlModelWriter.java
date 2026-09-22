@@ -2915,6 +2915,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected void doWriteExpressionDefinitionAttributes(JsonObject jo, ExpressionDefinition def) {
         doWriteAttribute(jo, "id", def.getId(), null);
         doWriteAttribute(jo, "trim", def.getTrim(), "true");
+        doWriteAttribute(jo, "resolveResource", def.getResolveResource(), "false");
     }
     protected JsonObject doWriteExpressionDefinition(ExpressionDefinition def) {
         JsonObject jo = new JsonObject();

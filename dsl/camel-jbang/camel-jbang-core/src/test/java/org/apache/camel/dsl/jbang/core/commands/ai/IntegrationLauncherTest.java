@@ -45,6 +45,15 @@ class IntegrationLauncherTest {
         assertThat(IntegrationLauncher.sourceFiles(dir.resolve("nope"))).isEmpty();
     }
 
+    /** CAMEL-24861: with no files given the directory is the app, so files added later are part of it. */
+    @Test
+    void noFilesRunsTheDirectoryAsTheApp() {
+        assertThat(IntegrationLauncher.sourceDirArguments(null, true, null))
+                .containsExactly("run", "--source-dir=.", "--dev", "--logging-color=false");
+        assertThat(IntegrationLauncher.sourceDirArguments("demo", false, List.of("--port=9000")))
+                .containsExactly("run", "--source-dir=.", "--name=demo", "--logging-color=false", "--port=9000");
+    }
+
     @Test
     void filesNameAndExtraArgumentsArePassedThrough() {
         assertThat(IntegrationLauncher.runArguments(List.of("a.camel.yaml", "application.properties"), "demo", true,

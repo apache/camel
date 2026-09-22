@@ -83,10 +83,14 @@ requests, this named component needs to be present in the Camel context
 and implement the required _RestProducerFactory_ interface -- as do the
 components listed at the top.
 
-If you do not specify the _componentName_ at either component or 
-endpoint level, `_CLASSPATH_` is searched for a suitable delegate. There
-should be only one component present on the `_CLASSPATH_` that implements
-the `RestProducerFactory` interface for this to work.
+If you do not specify the _componentName_ at either component or
+endpoint level, a suitable delegate is looked up: a component already
+in the Camel context that implements `RestProducerFactory`, then the
+registry, then the default components in this order: `http`,
+`vertx-http`, `undertow`, `netty-http`. So with both camel-http and
+camel-vertx-http on the classpath, camel-http is used unless you name
+the other. The Camel CLI (`camel run`) adds camel-http for a
+rest-openapi producer.
 
 This component's endpoint URI is lenient which means that in addition
 to message headers you can specify REST operation's parameters as

@@ -160,7 +160,10 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("unavailableValuePlaceholder");
         props.add("xminFetchIntervalMs");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("databasePassword");
+        secretProps.add("databaseSslpassword");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);
         prefixes.put("additionalProperties", "additionalProperties.");

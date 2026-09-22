@@ -107,7 +107,8 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
     }
 
     /**
-     * A list to contains grouped {@link Exchange}s.
+     * A list to contains grouped {@link Exchange}s, or the values a subclass takes from them (the bodies with
+     * {@link GroupedBodyAggregationStrategy}).
      */
     private static final class GroupedExchangeList<E> extends ArrayList<E> {
 
@@ -115,8 +116,12 @@ public abstract class AbstractListAggregationStrategy<V> implements AggregationS
 
         @Override
         public String toString() {
-            // override toString, so we don't write data for all the Exchanges by default
-            return "List<Exchange>(" + size() + " elements)";
+            // a list of exchanges is not written in full by default; a list of bodies is what the user
+            // aggregated and is printed as any list (CAMEL-24880)
+            if (!isEmpty() && get(0) instanceof Exchange) {
+                return "List<Exchange>(" + size() + " elements)";
+            }
+            return super.toString();
         }
     }
 

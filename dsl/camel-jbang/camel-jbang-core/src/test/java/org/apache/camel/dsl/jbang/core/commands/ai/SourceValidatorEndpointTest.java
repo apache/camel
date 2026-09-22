@@ -50,6 +50,42 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void queryOptionsInTheUriAndAParametersBlock() {
+        // CAMEL-24842: the runtime refuses options in both places; the schema does not see it
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: file://inbox?fileExist=Override
+                            parameters:
+                              fileName: invoice-2001.json
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).startsWith("Line 6: ")
+                .contains("query options (fileExist=Override)")
+                .contains("parameters: (fileExist: Override)")
+                .contains("Uri should not contains query parameters");
+    }
+
+    @Test
+    void queryOptionsInTheUriAndAParametersBlockOnFrom() {
+        String yaml = """
+                - from:
+                    uri: "timer:t?period=1000"
+                    parameters:
+                      repeatCount: 1
+                    steps:
+                      - log: "hello"
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).startsWith("Line 2: ").contains("(period: 1000)");
+    }
+
+    @Test
     void expandedFormUnknownOption() {
         String yaml = """
                 - from:
@@ -119,6 +155,7 @@ class SourceValidatorEndpointTest {
 
     @Test
     void expandedUriWithQueryParamsAndParametersBlock() {
+        // the options are valid, but the runtime refuses them in both places (CAMEL-24842)
         String yaml = """
                 - from:
                     uri: timer:tick?period=1000
@@ -128,7 +165,8 @@ class SourceValidatorEndpointTest {
                     - log: "${body}"
                 """;
         List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
-        assertThat(errors).isEmpty();
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0)).startsWith("Line 2: ").contains("query options (period=1000)");
     }
 
     @Test
@@ -142,8 +180,10 @@ class SourceValidatorEndpointTest {
                     - log: "${body}"
                 """;
         List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
-        assertThat(errors).isNotEmpty();
-        assertThat(errors.get(0)).contains("timer:");
+        // the mix is reported, and the unknown option still is
+        assertThat(errors).hasSize(2);
+        assertThat(errors.get(0)).contains("query options (period=1000)");
+        assertThat(errors.get(1)).contains("timer:").containsIgnoringCase("unknown");
     }
 
     @Test
@@ -519,5 +559,68 @@ class SourceValidatorEndpointTest {
                 """, catalog);
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("mock is a producer-only component: it cannot be a from:").contains("direct:name");
+    }
+
+    /** CAMEL-24852: the directory of a file endpoint on a to: cannot be dynamic; toD: evaluates the uri first. */
+    @Test
+    void aDynamicDirectoryOnAFileEndpointSaysToUseFileNameOrToD() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: "file://archived/${header.monthDir}?fileName=${header.CamelFileName}"
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors)
+                .anyMatch(e -> e.startsWith("Line 6: file: the directory archived/${header.monthDir} cannot be dynamic")
+                        && e.contains("fileName (file:archived?fileName=${...})") && e.contains("use toD:"));
+
+        List<String> dynamic = SourceValidator.validateYamlEndpoints(yaml.replace("- to:", "- toD:"), catalog);
+        assertThat(dynamic).noneMatch(e -> e.contains("cannot be dynamic"));
+
+        // a from: with a dynamic directory fails at startup the same way
+        String fromYaml = """
+                - route:
+                    from:
+                      uri: "file://archived/${header.monthDir}"
+                      steps:
+                        - to:
+                            uri: log:done
+                """;
+        assertThat(SourceValidator.validateYamlEndpoints(fromYaml, catalog))
+                .anyMatch(e -> e.startsWith("Line 3: file: the directory archived/${header.monthDir} cannot be dynamic"));
+    }
+
+    /** CAMEL-24854: a doubled backslash in an include regex (kept as is inside single quotes) matches no file. */
+    @Test
+    void aDoubledBackslashInAnIncludeRegexIsReported() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:orders
+                      parameters:
+                        include: '.*\\\\.json$'
+                      steps:
+                        - to:
+                            uri: log:done
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors)
+                .anyMatch(e -> e.startsWith("Line 5: file: include=.*\\\\.json$ matches a literal backslash in the file name")
+                        && e.endsWith("write include='.*\\.json$'"));
+
+        List<String> ok = SourceValidator.validateYamlEndpoints(yaml.replace("\\\\.json", "\\.json"), catalog);
+        assertThat(ok).noneMatch(e -> e.contains("backslash"));
+
+        // in double quotes YAML reads \\ as one backslash: ".*\\.json$" is the regex .*\.json$, nothing to report
+        List<String> doubleQuoted
+                = SourceValidator.validateYamlEndpoints(yaml.replace("'.*\\\\.json$'", "\".*\\\\.json$\""), catalog);
+        assertThat(doubleQuoted).noneMatch(e -> e.contains("backslash"));
+
+        // \\myfile is a backslash on purpose: \myfile is not a regex escape, so there is nothing else it can mean
+        List<String> literal = SourceValidator.validateYamlEndpoints(yaml.replace(".*\\\\.json$", ".*\\\\myfile.*"), catalog);
+        assertThat(literal).noneMatch(e -> e.contains("backslash"));
     }
 }

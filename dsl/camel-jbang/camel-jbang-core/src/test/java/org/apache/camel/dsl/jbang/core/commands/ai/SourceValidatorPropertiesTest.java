@@ -44,6 +44,25 @@ public class SourceValidatorPropertiesTest {
         assertThat(msgs.get(1)).startsWith("Line 3: jacksn    Unknown dataformat").contains("did you mean jackson");
     }
 
+    /**
+     * CAMEL-24856: a nested segment under an option group is not a property; the options are global or in the route.
+     */
+    @Test
+    void aNestedKeyUnderAnOptionGroupIsReported() {
+        List<String> msgs = SourceValidator.validateProperties("""
+                camel.resilience4j.circuitbreaker.supplierCircuitBreaker.slidingWindowSize=4
+                camel.resilience4j.slidingWindowSize=4
+                camel.faulttolerance.bulkhead.myPool.enabled=true
+                """, catalog, null);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0))
+                .startsWith("Line 1: circuitbreaker    Unknown option (camel.resilience4j has no nested settings")
+                .contains("camel.resilience4j.slidingWindowSize=...")
+                .contains("circuitBreaker: {resilience4jConfiguration: {slidingWindowSize: ...}}");
+        assertThat(msgs.get(1)).startsWith("Line 3: bulkhead    Unknown option (camel.faulttolerance has no nested settings")
+                .contains("the options are");
+    }
+
     @Test
     void wrongMainKeyGetsTheClosestOption() {
         List<String> msgs = SourceValidator.validateProperties("""

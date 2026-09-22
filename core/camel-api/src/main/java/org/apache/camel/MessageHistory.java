@@ -77,6 +77,27 @@ public interface MessageHistory {
     Message getMessage();
 
     /**
+     * The class of the message body when this node was reached (the type the body arrived with, before the node
+     * processed it): the canonical class name, the string {@code "null"} when the body was null, or null when not
+     * captured. Cheap to capture: the class, no conversion, no copy.
+     *
+     * @since 4.23
+     */
+    default @Nullable String getBodyType() {
+        return null;
+    }
+
+    /**
+     * The size in bytes of the message body when this node was reached, computed by the
+     * {@link org.apache.camel.spi.MessageSizeStrategy} when it is enabled: -1 when not captured or unknown.
+     *
+     * @since 4.23
+     */
+    default long getBodySize() {
+        return -1;
+    }
+
+    /**
      * Used specially during debugging where some EIP nodes are not accepted for debugging and are essentially skipped.
      * This allows tooling to avoid dumping message history for nodes that did not take part in the debugger.
      */

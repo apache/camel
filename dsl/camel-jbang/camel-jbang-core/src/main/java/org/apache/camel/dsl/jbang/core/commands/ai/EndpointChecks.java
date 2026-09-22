@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +151,20 @@ final class EndpointChecks {
                 }
                 String nextTrimmed = next.trim();
                 if (nextIndent == lineIndent && nextTrimmed.startsWith("parameters:")) {
+                    if (hasParams) {
+                        // to: {uri: "file:inbox?fileExist=Override", parameters: {fileName: x}}: the YAML DSL refuses
+                        // options in both places at startup ("Uri should not contains query parameters"), the schema
+                        // does not see it (CAMEL-24842); say it here, with what to write
+                        String query = uri.substring(uri.indexOf('?') + 1);
+                        String first = query.contains("&") ? query.substring(0, query.indexOf('&')) : query;
+                        String asYaml = first.contains("=")
+                                ? first.substring(0, first.indexOf('=')) + ": " + first.substring(first.indexOf('=') + 1)
+                                : first;
+                        errors.add(linePrefix(i) + "the uri has query options (" + query + ") and the step also has"
+                                   + " parameters: put every option under parameters: (" + asYaml + ") or all of them"
+                                   + " in the uri, not both (the runtime refuses the mix with 'Uri should not contains"
+                                   + " query parameters')");
+                    }
                     int paramBlockIndent = nextIndent;
                     int blockScalarIndent = -1;
                     String mapKey = null;
@@ -219,6 +234,10 @@ final class EndpointChecks {
                     collectEndpointErrors(errors, result, scheme, i, optionLineMap);
                 }
                 checkRegexOptions(errors, fullUri, i, optionLineMap);
+                checkDynamicDirectory(errors, fullUri, i, eipName);
+                checkSimplePlaceholders(errors, fullUri, i, optionLineMap, eipName);
+                checkRequiredPathOptions(errors, fullUri, catalog, i, eipName);
+                checkSqlNamedParameters(errors, fullUri, line, i, optionLineMap);
             } catch (Exception e) {
                 // ignore validation errors
             }
@@ -263,6 +282,16 @@ final class EndpointChecks {
 
     /** Options models write that the component does not have, and what the component does instead. */
     static final Map<String, String> INVENTED_OPTIONS = Map.ofEntries(
+            // CAMEL-24888: the path parameters of an OpenAPI operation are headers of the same name
+            Map.entry("rest-openapi:path",
+                    "a path parameter of the operation, {sku} in /stock/{sku}, comes from a header of the same name: add"
+                                           + " setHeader: {name: sku, ...} before the call, the operation's path is in the contract"),
+            Map.entry("rest-openapi:pathParameters",
+                    "a path parameter of the operation comes from a header of the same name: add setHeader: {name: sku,"
+                                                     + " ...} before the call"),
+            Map.entry("rest-openapi:queryParameters",
+                    "a query parameter of the operation comes from a header of the same name: add setHeader: {name: page,"
+                                                      + " ...} before the call"),
             Map.entry("file:mkdir", "directories are created by default (autoCreate=true); remove the option"),
             Map.entry("file:createDirectory", "directories are created by default (autoCreate=true); remove the option"),
             Map.entry("file:overwrite", "an existing file is overridden by default (fileExist=Override); remove the option"),
@@ -292,6 +321,13 @@ final class EndpointChecks {
     static final Set<String> FILE_SCHEMES = Set.of("file", "ftp", "ftps", "sftp", "file-watch", "smb");
 
     /**
+     * A doubled backslash before a character that a single backslash would escape in a regex (\\. \\d \\( ...): the
+     * user meant the escape. A doubled backslash before any other character (\\myfile) is left alone: \myfile is not a
+     * regex escape, so a literal backslash is the only thing it can mean.
+     */
+    static final Pattern DOUBLED_BACKSLASH_ESCAPE = Pattern.compile("\\\\\\\\[.dswDSWbB()\\[\\]{}+*?|^$]");
+
+    /**
      * include and exclude on the file components are regular expressions: include=*.txt fails at startup with a
      * PatternSyntaxException wrapped in a binding error. Says to write .*\\.txt or use antInclude.
      */
@@ -311,6 +347,15 @@ final class EndpointChecks {
             if (!name.equals("include") && !name.equals("exclude") || value.startsWith("{{")) {
                 continue;
             }
+            if (DOUBLED_BACKSLASH_ESCAPE.matcher(value).find()) {
+                // '.*\\.json$' in single quotes: YAML keeps both backslashes, and in a regex \\ is one literal
+                // backslash, so the pattern matches a file name with a backslash in it: no file matches and the route
+                // runs in silence (CAMEL-24854)
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + fullUri.substring(0, colon) + ": "
+                           + name + "=" + value + " matches a literal backslash in the file name (in a regex \\\\ is one"
+                           + " backslash and \\. is a dot): write " + name + "='" + value.replace("\\\\", "\\") + "'");
+                continue;
+            }
             try {
                 Pattern.compile(value);
             } catch (java.util.regex.PatternSyntaxException e) {
@@ -320,6 +365,185 @@ final class EndpointChecks {
                            + " is a regex, write " + name + "=" + toRegex(value) + ", or use the wildcard option " + ant
                            + "=" + value);
             }
+        }
+    }
+
+    /**
+     * file:archived/${header.monthDir} on a to: fails at startup: the directory of a file endpoint cannot be dynamic
+     * (the runtime says "Dynamic expressions with ${ } placeholders is not allowed. Use the fileName option"). Says to
+     * keep the directory fixed and put the dynamic part in fileName, or to use toD: (which evaluates the uri first).
+     * toD, wireTap, enrich and pollEnrich evaluate the expression before the endpoint is created and are left alone.
+     */
+    static void checkDynamicDirectory(List<String> errors, String fullUri, int uriLineIdx, String eipName) {
+        int colon = fullUri.indexOf(':');
+        if (colon < 0 || !FILE_SCHEMES.contains(fullUri.substring(0, colon))) {
+            return;
+        }
+        if (eipName == null || !eipName.equals("to") && !eipName.equals("from")) {
+            // an unresolved parent may be a toD: or wireTap:, which evaluate the uri first: leave it alone
+            return;
+        }
+        int q = fullUri.indexOf('?');
+        String dir = q >= 0 ? fullUri.substring(colon + 1, q) : fullUri.substring(colon + 1);
+        if (dir.startsWith("//")) {
+            dir = dir.substring(2);
+        }
+        if (!dir.contains("${")) {
+            return;
+        }
+        String scheme = fullUri.substring(0, colon);
+        String fixed = dir.substring(0, dir.indexOf("${"));
+        if (fixed.endsWith("/")) {
+            fixed = fixed.substring(0, fixed.length() - 1);
+        }
+        errors.add(linePrefix(uriLineIdx) + scheme + ": the directory " + dir + " cannot be dynamic (the runtime"
+                   + " says 'Dynamic expressions with ${ } placeholders is not allowed. Use the fileName option'):"
+                   + " keep the directory fixed and put the dynamic part in fileName (" + scheme + ":" + fixed
+                   + "?fileName=${...}), or use toD: with the whole uri, which evaluates it per message");
+    }
+
+    /**
+     * A :name in a sql query that is not a camel-sql named parameter: camel-sql has :#name (a header, or a key of a Map
+     * body) and :#${simple}; a bare :name (the Spring or JPA form) goes to the JDBC driver as written and fails at
+     * runtime with a syntax error, after the consumer retried it (CAMEL-24869). ::type casts, :?name stored procedure
+     * parameters and times such as 10:30 are left alone.
+     */
+    private static final Pattern BARE_NAMED_PARAMETER = Pattern.compile("(?<![\\w:#?$'\"]):([A-Za-z_][\\w.\\[\\]]*)");
+
+    static void checkSqlNamedParameters(
+            List<String> errors, String fullUri, String rawLine, int uriLineIdx, Map<String, Integer> optionLineMap) {
+        int colon = fullUri.indexOf(':');
+        int q = fullUri.indexOf('?');
+        String scheme = colon < 0 ? (q < 0 ? fullUri : fullUri.substring(0, q)) : fullUri.substring(0, colon);
+        if (q >= 0 && colon > q) {
+            scheme = fullUri.substring(0, q);
+        }
+        if (!"sql".equals(scheme)) {
+            return;
+        }
+        // the query is the path (sql:SELECT ...) or the query option (uri: sql with parameters: query: ...)
+        String query = null;
+        int line = uriLineIdx;
+        if (colon >= 0 && (q < 0 || colon < q)) {
+            // the uri pattern stops at the first space, so take the statement from the line itself
+            int at = rawLine.indexOf("sql:");
+            String path = at >= 0 ? rawLine.substring(at + 4).trim() : fullUri.substring(colon + 1);
+            if (path.endsWith("\"") || path.endsWith("'")) {
+                path = path.substring(0, path.length() - 1);
+            }
+            Matcher options = Pattern.compile("\\?\\w+=").matcher(path);
+            query = options.find() ? path.substring(0, options.start()) : path;
+        }
+        if ((query == null || query.isBlank()) && q >= 0) {
+            for (String option : fullUri.substring(q + 1).split("&")) {
+                if (option.startsWith("query=")) {
+                    query = option.substring("query=".length());
+                    line = optionLineMap.getOrDefault("query", uriLineIdx);
+                }
+            }
+        }
+        if (query == null || query.isBlank()) {
+            return;
+        }
+        Matcher m = BARE_NAMED_PARAMETER.matcher(query);
+        List<String> bare = new ArrayList<>();
+        while (m.find()) {
+            String name = m.group(1);
+            if (!bare.contains(name)) {
+                bare.add(name);
+            }
+        }
+        if (bare.isEmpty()) {
+            return;
+        }
+        String first = bare.get(0);
+        // :customer -> :#customer (a header or a Map body key); :body[customer] -> :#${body[customer]} (a Simple expression)
+        String fix = first.matches("\\w+")
+                ? ":#" + first + " for a header or a key of a Map body, or :#${body[" + first + "]} with a Simple expression"
+                : ":#${" + first + "} (a Simple expression) or :#name for a header or a key of a Map body";
+        errors.add(linePrefix(line) + "sql: :" + first + " is not a camel-sql named parameter (the JDBC driver gets it as"
+                   + " written and fails with a syntax error): write " + fix
+                   + (bare.size() > 1 ? " (also :" + String.join(", :", bare.subList(1, bare.size())) + ")" : ""));
+    }
+
+    /** The EIPs whose uri is a Simple expression evaluated per message: ${...} is right there. */
+    private static final Set<String> DYNAMIC_URI_EIPS = Set.of("toD", "to-d", "wireTap", "wire-tap", "enrich", "pollEnrich",
+            "poll-enrich", "recipientList", "recipient-list", "routingSlip", "routing-slip", "dynamicRouter", "dynamic-router");
+
+    /**
+     * period=${welcome.period} or period=${properties:welcome.period} on a to: or from:: a Simple expression, which an
+     * endpoint option is not; the property placeholder is {{welcome.period}}. The runtime fails to bind the option at
+     * startup or on the reload, and camel validate said nothing (CAMEL-24857). toD and the other dynamic EIPs evaluate
+     * the uri as Simple first and are left alone.
+     */
+    static void checkSimplePlaceholders(
+            List<String> errors, String fullUri, int uriLineIdx, Map<String, Integer> optionLineMap, String eipName) {
+        if (eipName != null && DYNAMIC_URI_EIPS.contains(eipName)) {
+            return;
+        }
+        int q = fullUri.indexOf('?');
+        if (q < 0) {
+            return;
+        }
+        String scheme = fullUri.substring(0, Math.max(0, fullUri.indexOf(':')));
+        for (String pair : fullUri.substring(q + 1).split("&")) {
+            int eq = pair.indexOf('=');
+            if (eq < 0) {
+                continue;
+            }
+            String name = pair.substring(0, eq);
+            String value = pair.substring(eq + 1);
+            if (!YamlLines.isPropertyKeyInSimpleSyntax(value)) {
+                continue;
+            }
+            String key = YamlLines.propertyKeyOf(value);
+            errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + scheme + ": " + name + "=" + value
+                       + " is a Simple expression, which an endpoint option is not evaluated as: a property placeholder"
+                       + " is written {{key}}, so " + name + ": \"{{" + key + "}}\"");
+        }
+    }
+
+    /**
+     * uri: cron with only a schedule under parameters: the required path option name is neither in the uri nor among
+     * the parameters; camel run fails with "Option name is required when creating endpoint uri with syntax cron:name"
+     * (CAMEL-24858). Says both places it can go.
+     */
+    static void checkRequiredPathOptions(
+            List<String> errors, String fullUri, CamelCatalog catalog, int uriLineIdx, String eipName) {
+        int colon = fullUri.indexOf(':');
+        if (colon < 0 || fullUri.contains("{{") || !"from".equals(eipName) && !"to".equals(eipName)) {
+            return; // only an endpoint that is created: an intercept pattern such as jms* names no destination
+        }
+        String scheme = fullUri.substring(0, colon);
+        int q = fullUri.indexOf('?');
+        String path = q >= 0 ? fullUri.substring(colon + 1, q) : fullUri.substring(colon + 1);
+        if (path.startsWith("//") || !path.isEmpty()) {
+            // a path is given: which path option it fills is the component's business; an explicit empty authority
+            // (infinispan:// with a custom listener) is a choice, a bare scheme with the options under parameters is
+            // the slip this catches
+            return;
+        }
+        Set<String> given = new HashSet<>();
+        if (q >= 0) {
+            for (String pair : fullUri.substring(q + 1).split("&")) {
+                given.add(pair.contains("=") ? pair.substring(0, pair.indexOf('=')) : pair);
+            }
+        }
+        try {
+            var model = catalog.componentModel(scheme);
+            if (model == null) {
+                return;
+            }
+            for (var option : model.getEndpointOptions()) {
+                if (option.isRequired() && "path".equals(option.getKind()) && !given.contains(option.getName())) {
+                    errors.add(linePrefix(uriLineIdx) + scheme + ": the required option '" + option.getName()
+                               + "' is missing (the runtime says 'Option " + option.getName() + " is required'): write"
+                               + " it in the uri, uri: " + scheme + ":<" + option.getName() + ">, or under parameters"
+                               + " as " + option.getName() + ": <value>");
+                }
+            }
+        } catch (Exception e) {
+            // ignore: a component the catalog does not know is reported elsewhere
         }
     }
 

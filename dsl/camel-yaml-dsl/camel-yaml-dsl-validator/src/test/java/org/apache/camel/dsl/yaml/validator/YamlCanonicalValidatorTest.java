@@ -165,6 +165,24 @@ public class YamlCanonicalValidatorTest {
 
     // CAMEL-24723: the compact notation is reported as such, one message per occurrence, with the canonical form
     @Test
+    public void testTopLevelFromIsReportedWithTheRouteForm() throws Exception {
+        // CAMEL-24745: a top-level from: is the compact notation of a route; the classic schema accepts it, the
+        // canonical schema requires route:, as XML requires <route>
+        var route = """
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to:
+                          uri: "mock:a"
+                """;
+        assertThat(classicValidator.validate(route)).isEmpty();
+        assertThat(canonicalValidator.validate(route)).extracting(e -> e.getInstanceLocation() + ": " + e.getMessage())
+                .containsExactly("/0: a top-level from: is the deprecated compact notation: a route is written under"
+                                 + " route: (- route: {from: {uri: \"...\", steps: [...]}});"
+                                 + " camel validate normalize rewrites a file in the canonical format");
+    }
+
+    @Test
     public void testCompactNotationIsReportedWithTheCanonicalForm() throws Exception {
         var route = """
                 - route:

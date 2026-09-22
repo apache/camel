@@ -88,7 +88,7 @@ public class SqlServerConnectorEmbeddedDebeziumConfiguration
     private int streamingFetchSize = 0;
     @UriParam(label = LABEL_NAME)
     private String tableExcludeList;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     @Metadata(required = true)
     private String databasePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")

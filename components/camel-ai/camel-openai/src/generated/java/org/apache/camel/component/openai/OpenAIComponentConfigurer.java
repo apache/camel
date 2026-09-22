@@ -31,6 +31,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "embeddingmodel":
         case "embeddingModel": target.setEmbeddingModel(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -53,6 +55,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "embeddingmodel":
         case "embeddingModel": return java.lang.String.class;
         case "lazystartproducer":
@@ -76,6 +80,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseurl":
         case "baseUrl": return target.getBaseUrl();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "embeddingmodel":
         case "embeddingModel": return target.getEmbeddingModel();
         case "lazystartproducer":

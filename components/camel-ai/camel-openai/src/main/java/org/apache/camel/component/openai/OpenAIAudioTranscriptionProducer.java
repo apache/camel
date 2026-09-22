@@ -18,20 +18,31 @@ package org.apache.camel.component.openai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
+import com.openai.core.ObjectMappers;
 import com.openai.models.audio.AudioResponseFormat;
 import com.openai.models.audio.transcriptions.TranscriptionCreateParams;
 import com.openai.models.audio.transcriptions.TranscriptionCreateResponse;
+import com.openai.models.audio.transcriptions.TranscriptionDiarized;
+import com.openai.models.audio.transcriptions.TranscriptionInclude;
 import com.openai.models.audio.transcriptions.TranscriptionVerbose;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OpenAI producer for audio transcription.
  */
 public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpenAIAudioTranscriptionProducer.class);
 
     public OpenAIAudioTranscriptionProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -54,6 +65,23 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
                     "Audio model must be specified via audioModel parameter or CamelOpenAIAudioModel header");
         }
 
+        TranscriptionCreateParams params = buildParams(in, config, model);
+        GenAiObservation observation = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.TRANSCRIPTION, model);
+        TranscriptionCreateResponse response;
+        try {
+            response = getEndpoint().getClient().audio().transcriptions().create(params);
+            OpenAIGenAiProducerSupport.recordSuccess(observation, GenAiUsage.of((Long) null, null, null, model));
+        } catch (Exception e) {
+            OpenAIGenAiProducerSupport.recordFailure(exchange, observation, e);
+            throw e;
+        } finally {
+            observation.close();
+        }
+
+        populateOutput(exchange, config, response);
+    }
+
+    private static TranscriptionCreateParams buildParams(Message in, OpenAIConfiguration config, String model) {
         String language = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_LANGUAGE,
                 config.getAudioLanguage(), String.class);
         String responseFormat = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_RESPONSE_FORMAT,
@@ -64,6 +92,18 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
                 String.class);
         String timestampGranularities = OpenAIAudioSupport.resolveParameter(in,
                 OpenAIConstants.AUDIO_TIMESTAMP_GRANULARITIES, config.getAudioTimestampGranularities(), String.class);
+        String chunkingStrategy = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_CHUNKING_STRATEGY,
+                config.getAudioChunkingStrategy(), String.class);
+        String knownSpeakerNames = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_KNOWN_SPEAKER_NAMES,
+                config.getAudioKnownSpeakerNames(), String.class);
+        String knownSpeakerReferences = OpenAIAudioSupport.resolveParameter(in,
+                OpenAIConstants.AUDIO_KNOWN_SPEAKER_REFERENCES, config.getAudioKnownSpeakerReferences(), String.class);
+        String keywords = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_KEYWORDS,
+                config.getAudioKeywords(), String.class);
+        String languages = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_LANGUAGES,
+                config.getAudioLanguages(), String.class);
+        String include = OpenAIAudioSupport.resolveParameter(in, OpenAIConstants.AUDIO_INCLUDE,
+                config.getAudioInclude(), String.class);
 
         TranscriptionCreateParams.Builder paramsBuilder = TranscriptionCreateParams.builder()
                 .model(model);
@@ -94,26 +134,95 @@ public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
                 paramsBuilder.timestampGranularities(granularities);
             }
         }
+        applyChunkingStrategy(paramsBuilder, chunkingStrategy);
+        applyCommaSeparatedList(knownSpeakerNames, paramsBuilder::addKnownSpeakerName);
+        applyCommaSeparatedList(knownSpeakerReferences, paramsBuilder::addKnownSpeakerReference);
+        applyCommaSeparatedList(keywords, paramsBuilder::addKeyword);
+        applyCommaSeparatedList(languages, paramsBuilder::addLanguage);
+        applyIncludeList(include, paramsBuilder);
 
-        TranscriptionCreateParams params = paramsBuilder.build();
-        TranscriptionCreateResponse response = getEndpoint().getClient()
-                .audio().transcriptions().create(params);
+        return paramsBuilder.build();
+    }
 
+    private static void applyChunkingStrategy(TranscriptionCreateParams.Builder paramsBuilder, String chunkingStrategy) {
+        if (ObjectHelper.isEmpty(chunkingStrategy)) {
+            return;
+        }
+        if ("auto".equalsIgnoreCase(chunkingStrategy)) {
+            paramsBuilder.chunkingStrategyAuto();
+            return;
+        }
+        if ("vad".equalsIgnoreCase(chunkingStrategy)) {
+            paramsBuilder.chunkingStrategy(TranscriptionCreateParams.ChunkingStrategy.VadConfig.builder()
+                    .type(TranscriptionCreateParams.ChunkingStrategy.VadConfig.Type.SERVER_VAD)
+                    .build());
+            return;
+        }
+        throw new IllegalArgumentException(
+                "Unsupported audio chunking strategy: " + chunkingStrategy + ". Supported values are auto and vad.");
+    }
+
+    private static void applyCommaSeparatedList(String value, Consumer<String> consumer) {
+        for (String item : OpenAIAudioSupport.parseCommaSeparatedValues(value)) {
+            consumer.accept(item);
+        }
+    }
+
+    private static void applyIncludeList(String include, TranscriptionCreateParams.Builder paramsBuilder) {
+        for (String item : OpenAIAudioSupport.parseCommaSeparatedValues(include)) {
+            paramsBuilder.addInclude(TranscriptionInclude.of(item));
+        }
+    }
+
+    private static void populateOutput(Exchange exchange, OpenAIConfiguration config, TranscriptionCreateResponse response) {
         Message out = exchange.getMessage();
+        TranscriptionCreateResponse storedResponse = response;
 
         if (response.isVerbose()) {
             TranscriptionVerbose verbose = response.asVerbose();
             out.setBody(verbose.text());
             out.setHeader(OpenAIConstants.AUDIO_DURATION, verbose.duration());
             out.setHeader(OpenAIConstants.AUDIO_DETECTED_LANGUAGE, verbose.language());
+        } else if (response.isDiarized()) {
+            applyDiarizedOutput(out, response.asDiarized());
         } else if (response.isTranscription()) {
-            out.setBody(response.asTranscription().text());
+            String text = response.asTranscription().text();
+            TranscriptionCreateResponse reparsed = tryParseStructuredTranscription(text);
+            if (reparsed != null && reparsed.isDiarized()) {
+                storedResponse = reparsed;
+                applyDiarizedOutput(out, reparsed.asDiarized());
+            } else {
+                out.setBody(text);
+            }
         } else {
             out.setBody(response.toString());
         }
 
         if (config.isStoreFullResponse()) {
-            exchange.setProperty(OpenAIConstants.AUDIO_TRANSCRIPTION_RESPONSE, response);
+            exchange.setProperty(OpenAIConstants.AUDIO_TRANSCRIPTION_RESPONSE, storedResponse);
+        }
+    }
+
+    private static void applyDiarizedOutput(Message out, TranscriptionDiarized diarized) {
+        out.setBody(diarized.text());
+        out.setHeader(OpenAIConstants.AUDIO_DURATION, diarized.duration());
+        out.setHeader(OpenAIConstants.AUDIO_DIARIZED_SEGMENTS, diarized.segments());
+    }
+
+    /**
+     * The OpenAI Java SDK delivers {@code diarized_json} responses through the plain-text handler, so the JSON payload
+     * arrives as {@link com.openai.models.audio.transcriptions.Transcription#text()}. Re-parse it when possible.
+     */
+    private static TranscriptionCreateResponse tryParseStructuredTranscription(String text) {
+        if (ObjectHelper.isEmpty(text) || !text.startsWith("{")) {
+            return null;
+        }
+        try {
+            return ObjectMappers.jsonMapper().readValue(text, TranscriptionCreateResponse.class);
+        } catch (Exception e) {
+            LOG.warn("Failed to re-parse diarized_json transcription response; returning raw text. Error: {}",
+                    e.getMessage());
+            return null;
         }
     }
 }

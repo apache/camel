@@ -125,11 +125,14 @@ public class ElasticsearchScrollRequestIterator<TDocument> implements Iterator<H
     public void close() {
         if (!closed) {
             try {
-                ClearScrollRequest clearScrollRequest = new ClearScrollRequest.Builder()
-                        .scrollId(List.of(scrollId))
-                        .build();
+                // scrollId can be null if the initial search returned no scroll id; List.of(null) would NPE
+                if (scrollId != null) {
+                    ClearScrollRequest clearScrollRequest = new ClearScrollRequest.Builder()
+                            .scrollId(List.of(scrollId))
+                            .build();
 
-                esClient.clearScroll(clearScrollRequest);
+                    esClient.clearScroll(clearScrollRequest);
+                }
                 closed = true;
                 exchange.setProperty(ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT, requestCount);
             } catch (IOException e) {

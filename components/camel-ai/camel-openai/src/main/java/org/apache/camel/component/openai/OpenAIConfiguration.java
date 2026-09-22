@@ -30,6 +30,27 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class OpenAIConfiguration implements Cloneable {
 
+    @UriParam(label = "consumer", security = "secret")
+    @Metadata(description = "The webhook signing secret of the OpenAI dashboard (it starts with whsec_), used to verify "
+                            + "the signature of the events. Required by the webhook operation.",
+              security = "secret")
+    private String webhookSecret;
+
+    @UriParam(label = "consumer", defaultValue = "/openai/webhook")
+    @Metadata(description = "The HTTP path the webhook operation listens on.")
+    private String webhookPath = "/openai/webhook";
+
+    @UriParam(label = "consumer")
+    @Metadata(description = "The component, or the bean, that serves the HTTP endpoint of the webhook operation. It "
+                            + "must implement RestConsumerFactory, for example platform-http, which is used when it is "
+                            + "on the classpath. Also read from the rest configuration when not set.")
+    private String httpServerComponent;
+
+    @UriParam(label = "consumer", defaultValue = "1048576")
+    @Metadata(description = "The largest webhook request body that is read, in bytes. A bigger request is answered "
+                            + "with 413 and is not verified.")
+    private int webhookMaxPayloadSize = 1048576;
+
     @UriParam(security = "secret")
     @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", security = "secret")
     private String apiKey;
@@ -198,6 +219,22 @@ public class OpenAIConfiguration implements Cloneable {
                             + "The thinking content is stored in the CamelOpenAIThinkingContent header.")
     private boolean stripThinking = false;
 
+    @UriParam(enums = "/v1/responses,/v1/chat/completions,/v1/embeddings,/v1/completions,/v1/moderations,"
+                      + "/v1/images/generations,/v1/images/edits,/v1/videos")
+    @Metadata(description = "The endpoint every request in a batch calls. Required by the batch operation, which "
+                            + "validates it against the endpoints the Batch API supports.")
+    private String batchEndpoint;
+
+    @UriParam(prefix = "batchMetadata.", multiValue = true)
+    @Metadata(description = "Metadata to attach to a batch, used to find it again later "
+                            + "(e.g. batchMetadata.job=nightly-enrichment)")
+    private Map<String, Object> batchMetadata;
+
+    @UriParam(defaultValue = "output", enums = "output,error")
+    @Metadata(description = "Which result file the batch-results operation downloads: the output file holding the "
+                            + "results of the successful requests, or the error file holding the failed ones.")
+    private String batchResultsFile = "output";
+
     @UriParam(prefix = "additionalBodyProperty.", multiValue = true)
     @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
     private Map<String, Object> additionalBodyProperty;
@@ -323,7 +360,7 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Optional text to guide the model's style or continue a previous audio segment")
     private String audioPrompt;
 
-    @UriParam(enums = "json,text,srt,verbose_json,vtt", defaultValue = "json")
+    @UriParam(enums = "json,text,srt,verbose_json,vtt,diarized_json", defaultValue = "json")
     @Metadata(description = "The format of the transcription output")
     private String audioResponseFormat = "json";
 
@@ -335,6 +372,30 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Comma-separated timestamp granularities: 'word', 'segment', or 'word,segment'. "
                             + "Only applicable with verbose_json response format.")
     private String audioTimestampGranularities;
+
+    @UriParam(enums = "auto,vad")
+    @Metadata(description = "Chunking strategy for diarized transcription models such as gpt-4o-transcribe-diarize")
+    private String audioChunkingStrategy;
+
+    @UriParam
+    @Metadata(description = "Comma-separated known speaker names for diarized transcription")
+    private String audioKnownSpeakerNames;
+
+    @UriParam
+    @Metadata(description = "Comma-separated known speaker reference audio file ids for diarized transcription")
+    private String audioKnownSpeakerReferences;
+
+    @UriParam
+    @Metadata(description = "Comma-separated keywords to improve transcription accuracy")
+    private String audioKeywords;
+
+    @UriParam
+    @Metadata(description = "Comma-separated input audio languages (ISO-639-1 or ISO-639-3)")
+    private String audioLanguages;
+
+    @UriParam
+    @Metadata(description = "Comma-separated extra response fields to include (e.g. logprobs)")
+    private String audioInclude;
 
     // ========== MODERATION CONFIGURATION ==========
 
@@ -488,6 +549,38 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The endpoint identification algorithm to validate the server hostname using the server certificate. "
                             + "Set to an empty string or 'none' to disable hostname verification")
     private String sslEndpointAlgorithm = "https";
+
+    public String getWebhookSecret() {
+        return webhookSecret;
+    }
+
+    public void setWebhookSecret(String webhookSecret) {
+        this.webhookSecret = webhookSecret;
+    }
+
+    public String getWebhookPath() {
+        return webhookPath;
+    }
+
+    public void setWebhookPath(String webhookPath) {
+        this.webhookPath = webhookPath;
+    }
+
+    public String getHttpServerComponent() {
+        return httpServerComponent;
+    }
+
+    public void setHttpServerComponent(String httpServerComponent) {
+        this.httpServerComponent = httpServerComponent;
+    }
+
+    public int getWebhookMaxPayloadSize() {
+        return webhookMaxPayloadSize;
+    }
+
+    public void setWebhookMaxPayloadSize(int webhookMaxPayloadSize) {
+        this.webhookMaxPayloadSize = webhookMaxPayloadSize;
+    }
 
     public String getApiKey() {
         return apiKey;
@@ -737,6 +830,30 @@ public class OpenAIConfiguration implements Cloneable {
         this.stripThinking = stripThinking;
     }
 
+    public String getBatchEndpoint() {
+        return batchEndpoint;
+    }
+
+    public void setBatchEndpoint(String batchEndpoint) {
+        this.batchEndpoint = batchEndpoint;
+    }
+
+    public Map<String, Object> getBatchMetadata() {
+        return batchMetadata;
+    }
+
+    public void setBatchMetadata(Map<String, Object> batchMetadata) {
+        this.batchMetadata = batchMetadata;
+    }
+
+    public String getBatchResultsFile() {
+        return batchResultsFile;
+    }
+
+    public void setBatchResultsFile(String batchResultsFile) {
+        this.batchResultsFile = batchResultsFile;
+    }
+
     public Map<String, Object> getAdditionalBodyProperty() {
         return additionalBodyProperty;
     }
@@ -823,6 +940,54 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAudioTimestampGranularities(String audioTimestampGranularities) {
         this.audioTimestampGranularities = audioTimestampGranularities;
+    }
+
+    public String getAudioChunkingStrategy() {
+        return audioChunkingStrategy;
+    }
+
+    public void setAudioChunkingStrategy(String audioChunkingStrategy) {
+        this.audioChunkingStrategy = audioChunkingStrategy;
+    }
+
+    public String getAudioKnownSpeakerNames() {
+        return audioKnownSpeakerNames;
+    }
+
+    public void setAudioKnownSpeakerNames(String audioKnownSpeakerNames) {
+        this.audioKnownSpeakerNames = audioKnownSpeakerNames;
+    }
+
+    public String getAudioKnownSpeakerReferences() {
+        return audioKnownSpeakerReferences;
+    }
+
+    public void setAudioKnownSpeakerReferences(String audioKnownSpeakerReferences) {
+        this.audioKnownSpeakerReferences = audioKnownSpeakerReferences;
+    }
+
+    public String getAudioKeywords() {
+        return audioKeywords;
+    }
+
+    public void setAudioKeywords(String audioKeywords) {
+        this.audioKeywords = audioKeywords;
+    }
+
+    public String getAudioLanguages() {
+        return audioLanguages;
+    }
+
+    public void setAudioLanguages(String audioLanguages) {
+        this.audioLanguages = audioLanguages;
+    }
+
+    public String getAudioInclude() {
+        return audioInclude;
+    }
+
+    public void setAudioInclude(String audioInclude) {
+        this.audioInclude = audioInclude;
     }
 
     public String getModerationModel() {

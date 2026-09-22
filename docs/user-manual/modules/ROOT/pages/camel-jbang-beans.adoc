@@ -40,6 +40,50 @@ These Jakarta/MicroProfile annotations work in Camel standalone (no Quarkus cont
 - `@ConfigProperty` on a field — injects a property placeholder
 - `@Produces` on a method — creates a bean (`@Named` specifies the bean id)
 
+== Using Groovy source files
+
+A bean can be a Groovy source file instead of a Java one. The CLI adds `camel-groovy` and compiles the
+`.groovy` files given to `camel run`, and the class-level annotations above (`@BindToRegistry`,
+`@Converter`, and the Spring and Quarkus equivalents) work the same as in a Java file:
+
+[source,groovy]
+----
+import org.apache.camel.BindToRegistry
+import org.apache.camel.Exchange
+import org.apache.camel.spi.SimpleFunction
+
+@BindToRegistry("mask-email-function")
+class MaskEmailFunction implements SimpleFunction {
+
+    String getName() { 'maskEmail' }
+
+    Object apply(Exchange exchange, Object input) {
+        def email = input.toString().trim()
+        int at = email.indexOf('@')
+        if (at <= 0 || at == email.length() - 1) return '***'
+        return email[0] + '***' + email.substring(at)
+    }
+}
+----
+
+[source,bash]
+----
+camel run route.camel.yaml MaskEmailFunction.groovy --dev
+----
+
+In dev mode a saved `.groovy` file is recompiled and its beans are bound again, so the change takes effect
+without a restart. See xref:components:languages:simple-advanced.adoc[Simple Advanced Features] for using this as a
+custom simple function.
+
+NOTE: A `.groovy` file is compiled after the beans of the YAML and XML files have been created, so a
+`- beans:` entry cannot refer to a Groovy class by its `type`; use `@BindToRegistry` on the class instead, or
+create the bean with an inline Groovy `script` in the `- beans:` entry.
+
+NOTE: The Camel annotations (`@BindToRegistry`, `@Configuration`, `@Converter`) on a `.groovy` file keep working in
+a project created with `camel export`, as the Groovy compiler in camel-groovy handles them itself in every runtime;
+the Spring and Quarkus annotations are handled by the Camel CLI only. The bean lives in Camel's registry, not in the
+Spring or CDI container.
+
 == Defining beans in XML DSL
 
 When using xref:components:others:java-xml-io-dsl.adoc[XML DSL], you can declare beans

@@ -13,6 +13,10 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== camel-oauth
+
+OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens instead of reusing the same cached token. Applications using such profiles may make additional token requests after upgrading.
+
 === Circuit Breaker EIP
 
 The exchange property `CamelCircuitBreakerResponseRejected` is now also set inside the `onFallback`,
@@ -139,6 +143,24 @@ Groovy scripts now have a `message` variable for the current message (`exchange.
 script languages and the Camel 4 API use; `request` and `in` stay as its older names. A `GroovyShellFactory` that
 provided its own global variable named `message` is now hidden by the exchange variable, like the other exchange
 variable names.
+
+The Groovy script compiler now runs the `org.apache.camel.spi.CompilePostProcessor`s on a compiled class that has
+class-level annotations, with a new instance of the class, as the Java DSL loader does for `.java` sources. The
+processors in the registry are used when there are any (the Camel CLI registers processors that also handle the
+Spring and Quarkus annotations); otherwise built-in processors for the Camel annotations are used. So in every runtime
+(camel-main, Spring Boot, Quarkus) a `@BindToRegistry` or `@Configuration` class from a `.groovy` file is bound in
+Camel's registry, a `@Converter` class is registered as type converters, and an `EventNotifier` class is added to
+the management strategy; in the Camel CLI the bean is bound again on a reload in dev mode. A Groovy class without
+annotations, and a Groovy script, is not instantiated, as before.
+
+The Camel-annotation compile post-processors that camel-kamelet-main used internally are now public classes in
+camel-support: `org.apache.camel.support.compile.BindToRegistryCompilePostProcessor`,
+`TypeConverterCompilePostProcessor` and `EventNotifierCompilePostProcessor`.
+
+A lazy `@BindToRegistry` class from a compiled `.java` or `.groovy` source (`lazy = true`, or `camel run --lazy-bean`
+in the Camel CLI) is now bound with the name from the annotation, or else the simple class name, the same as an eager
+`@BindToRegistry` class. Before, the bean was bound with the fully qualified class name and the annotation value was
+ignored, so a class in a package, or with a name in the annotation, was not found by the expected name.
 
 === camel-djl (Breaking change)
 
@@ -473,6 +495,37 @@ set here, because that would reject input that parses today. Routes that genuine
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
 
+=== camel-core - a failed route reload restores the previous routes
+
+When a route file is reloaded in dev mode (`camel run --dev`, or the route watcher reload strategy in general) and
+the new content fails to load, the routes that ran before are restored right away, without the routes of the failed
+file, and a WARN says so. Before, the previous routes stayed stopped until the next successful reload, so a mistake
+in one file left the application without routes. The failed file loads again on its next save. The
+`CamelContextReloadFailure` event and the reload error log line are unchanged.
+
+A project whose routes are all in one file is covered too: the content that last loaded is kept in memory, so the
+broken save goes back to the version that was running, and the log says how many routes came from it. The file on
+disk is untouched; its next save is loaded as usual.
+
+=== camel-core - the recursive file watcher watches directories created while it runs
+
+The file watcher reload strategy (`camel run --dev`, the route watcher reload strategy with a recursive directory)
+registered the directory tree once at start: a directory created afterwards, such as `src/main/java/com/acme` for a
+Java class added to a running project, was never watched and its files never reloaded. A directory created under a
+watched one is now registered as it appears, with the files already in it reloaded. The watcher also ignores the
+compile work directory (`camel.main.compileWorkDir`, `.camel-jbang/compile` for the CLI), where the runtime writes the
+class files it compiles, so a compiled source no longer triggers a reload of its own.
+
+=== camel-core, camel-resilience4j - a failure the circuit breaker's fallback recovered from is recorded as handled
+
+The error registry (`camel get errors`, the error dev console) recorded a call that failed inside a
+`circuitBreaker` and was answered by its `onFallback` as an error that was not handled, one per call, since the
+breaker runs the call on a copy of the exchange whose failure is reported before the fallback runs, and the breaker
+did not report the recovery. The breaker now emits the failure-handling and failure-handled events around the
+fallback, as `doCatch` does, and the registry marks the copy's entry as handled when the original reports the
+failure as handled, keeping the entry that names the node that failed. `camel get errors --handled=false` no longer
+lists such calls. The `handled` field of the entries is unchanged in shape.
+
 === camel-core - the type of a bean created by a script or a builder is optional
 
 The `type` (class name) of a bean definition — `bean` under `beans`, `templateBean` of a route
@@ -647,6 +700,10 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
 
+=== camel-debezium-oracle (breaking change)
+
+The parameters `logMiningBufferEhcacheRollbacksConfig`, `logMiningBufferInfinispanCacheRollbacks` have been removed due to the upgrade of Debezium to 3.6.3.Final.
+
 === camel-docling
 
 A `String` message body is no longer interpreted as a location by default. Previously the producer
@@ -776,6 +833,16 @@ polyglot `Value` itself needs to work with these types instead.
 
 `JavaScriptHelper.newContext()` is deprecated: contexts are created by the language from its shared engine.
 
+=== camel-rest, camel-rest-openapi, camel-jbang - camel-http is the default REST client
+
+When a REST producer (`rest:` in producer mode, or `rest-openapi` calling an operation of a contract) has no
+`componentName` (`producerComponentName`) and no `RestProducerFactory` component exists in the context or the
+registry yet, the default components are tried in the order `http`, `vertx-http`, `undertow`, `netty-http`;
+before, `vertx-http` came first. An application with both camel-http and camel-vertx-http on the classpath now calls
+through camel-http; set `componentName=vertx-http` to keep the Vert.x client. An application with only one of them
+is not affected. The Camel CLI (`camel run`) now adds camel-http, not camel-vertx-http, for a rest-openapi producer
+without `componentName`.
+
 === camel-jbang
 
 The `--runtime` option of `camel run` has a new default value `jbang`, which is the existing in-process
@@ -791,6 +858,11 @@ Running an existing Maven project (`camel run pom.xml`) is unchanged, and still 
 from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
 `camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
 
+The file watcher reload strategy (camel-support) now emits the `CamelContextReloadFailure` event when a single
+file fails to reload, with the file name as the event's action; before, only a failed reload of the whole context
+emitted it. A listener of that event fires for these failures too. `camel run` uses it to print the report of
+`camel validate yaml` when a YAML route file does not load, at start and on a reload in `--dev` mode.
+
 The YAML that `camel init` writes (`camel init foo.yaml`, and the Integration and Kamelet templates), the
 bundled examples (`camel init --example`) and the routes the `camel_ai_pipeline_scaffold` and
 `camel_openapi_scaffold` MCP tools generate are now written in the canonical YAML DSL format, with an
@@ -801,12 +873,40 @@ The compact notation they used to be written in (`setBody: {simple: "..."}`, `lo
 rewrites a file in the canonical format. Existing files keep working; only the generated starting point
 changed. Scripts that post-process the generated YAML by matching the old text need to be updated.
 
+`camel export` keeps a Groovy script that a route references as a resource (`resource:classpath:mapping.groovy`
+or `resource:file:mapping.groovy`, a mapping script used as the body of an expression) at the resources root, where
+the reference resolves in the exported project. Other Groovy files go to `src/main/resources/camel-groovy` as before,
+where they are compiled as scripts at startup.
+
+`camel run` now looks up a `classpath:` or `file:` resource that is not found in the directories of the route
+files (the working directory first), the way it already did under `--source-dir`. A script next to the route is
+found as `resource:classpath:mapping.groovy`, the reference that also works in the project `camel export` writes,
+where before only `resource:file:mapping.groovy` worked in the CLI. A resource that exists nowhere fails as before,
+named as written.
+
+`camel run` adds `camel-groovy` as a dependency when a `.groovy` file is given, so the file is compiled without
+`--dep=camel-groovy`; before, the file was silently ignored unless the dependency was added. The dependency is
+also written to the run settings, so `camel export` includes it.
+
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the
 same `camel_` names by both MCP servers, `camel mcp` and `camel tui --mcp`: `camel_catalog_doc`,
 `camel_catalog_find`, `camel_validate_source`, `camel_get_files`, `camel_write_file`, `camel_run`,
 `camel_control`, `camel_get_log`, `camel_get_errors`, `camel_eval_expression` and `camel_error_diagnose`.
+
+The `camel_write_file` tool, when an integration of the project is selected and runs in dev mode, waits up to
+eight seconds for the reload of the written file and answers with its outcome (`reload.status` reloaded, failed
+with the cause and the validator's report, properties, or unknown), so an agent does not go on with a route that
+did not load. A write with no selected integration answers as before.
+
+The `validate` argument of `camel_write_file` is gone: the write always validates the content and refuses an
+invalid file. A model given the switch turned it off on its own, and the file then failed to load.
+
+The `camel_run` tool, when no files are named, starts the project with `camel run --source-dir=.` instead of
+listing the directory's files: the directory is watched, so a file added afterwards (a bean file, a Java class
+under `src/main/java`) is part of the app and reloaded in dev mode, and a `restart` starts the same way. Naming
+files keeps the previous behaviour. The `camel_control` tool gets a `reload` action, what `camel cmd reload` does.
 
 In the TUI MCP server the tools `tui_catalog_doc`, `tui_validate_source`, `tui_write_file`, `tui_get_files`,
 `tui_control`, `tui_get_log`, `tui_get_errors` and `tui_eval_expression` were renamed to the `camel_` names
@@ -874,6 +974,56 @@ its conversation history for a local provider once the prompt Ollama measured pa
 to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
 file as the local session. Previously the combination was accepted, but recording never produced any
 output, so run the two modes in separate processes instead.
+
+=== camel-yaml-dsl - the canonical schema requires route:
+
+A top-level `- from:` without `- route:` is the compact notation of a route, and the canonical schema
+(`camelYamlDsl-canonical.json`) no longer lists `from` among its top-level entries: a route is written under
+`route:`, as an XML route is always a `<route>`, and as Kaoto and Karavan write it. `camel validate yaml --canonical`
+now reports a top-level `from:` with the form to write, the way it reports the other compact shapes, and
+`camel validate normalize` rewrites it. The Integration template of `camel init` writes its flows in the `- route:`
+form as well; a Kamelet's `template:` keeps its `from:`, which is the Kamelet spec's shape. The classic schema and `camel run` are unchanged: the file keeps working,
+with the compact notation warning `camel run` already logged for it.
+
+=== camel-yaml-dsl - Pipe (kind: Pipe) support is deprecated
+
+Loading Camel K `kind: Pipe` resources (formerly `KameletBinding`), typically from a `.pipe.yaml` file, is
+deprecated in the YAML DSL and will be removed in a future release. Loading such a file now logs a deprecation
+warning.
+
+Write a plain Camel route instead, which is more expressive (any EIP, multiple routes per file, error handling
+and route configuration) and is what the tooling, catalog and validator work on. For example, a Pipe with a
+source, a step and a sink:
+
+[source,yaml]
+----
+apiVersion: camel.apache.org/v1
+kind: Pipe
+metadata:
+  name: my-pipe
+spec:
+  source:
+    uri: timer:tick
+  steps:
+    - uri: "https://my-service/api"
+  sink:
+    uri: log:result
+----
+
+becomes:
+
+[source,yaml]
+----
+- route:
+    id: my-pipe
+    from:
+      uri: timer:tick
+      steps:
+        - to:
+            uri: "https://my-service/api"
+        - to:
+            uri: log:result
+----
 
 === camel-mail
 
@@ -1471,6 +1621,25 @@ cannot serve one origin's response to another.
 
 Deployments that relied on credentialed cross-origin requests must list the permitted origins in
 `camel.server.cors.origins`.
+
+=== camel-platform-http-vertx - response write failures are no longer silent
+
+A streaming response body (any `InputStream` payload) was written to the client with the deprecated
+Vert.x `Pump`, which discards the result of every `write()`. Failures were therefore invisible: the
+response write was always reported as successful, even when nothing reached the client. Writing now
+uses `pipe()`, which propagates those failures.
+
+This is a bug fix (CAMEL-24864). A client that disconnects part way through a streaming response is
+now noticed, so the body stream is closed and the exchange completes. Previously neither happened,
+which leaked an exchange per aborted response — and, for a stream that only ends on an explicit
+marker, such as the Server-Sent Events stream produced by `camel-a2a`, also leaked the subscriber
+that the stream's `close()` was responsible for removing.
+
+A lost client connection is logged at DEBUG and is not reported through the consumer's
+`ExceptionHandler`, since a client going away is not a route failure. A failure raised while
+*producing* the body is still reported as before. Routes using `handleWriteResponseError=true` now
+see an exception on the exchange when a response write fails, including when the cause is the client
+disconnecting; routes that need to distinguish the two can inspect the exception cause.
 
 === camel-tika
 
@@ -2157,6 +2326,25 @@ To restore the previous behaviour and allow external entity resolution, set the 
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
 
+=== camel-core - resolveResource option on expressions
+
+Every expression has a new option `resolveResource` (default `false`). When `true` and the expression's result is a
+String starting with `resource:`, the named resource is loaded and its content is the result, so a script can choose
+a file or a template per message and hand its content on:
+
+[source,yaml]
+----
+- setBody:
+    expression:
+      groovy:
+        expression: "counter == 1 ? 'resource:file:order.json' : 'resource:file:order-bad-email.json'"
+        resolveResource: true
+----
+
+A name without a scheme, `resource:orderTemplate.json`, is a classpath resource. The loaded content is the final
+value and is not evaluated again. Nothing changes without the option: the `resource:` prefix on the expression
+text itself is resolved as before, and a returned value that happens to start with `resource:` stays as it is.
+
 === camel-core - the required attribute on rest param and route template parameter is now a String
 
 `ParamDefinition.required` (the rest DSL `param`) and `RouteTemplateParameterDefinition.required`
@@ -2223,6 +2411,13 @@ stored-procedure template text and no longer resolves it through `SqlHelper.reso
 as a resource, consistent with how `camel-sql` already treats the body under `useMessageBodyForSql=true`. A route
 that relied on the body being a resource location must resolve it to the template text before the `sql-stored`
 endpoint.
+
+Observability follows the gate. The `db.statement` span tag set by the `sql` span decorator (camel-telemetry and
+the deprecated camel-tracing) is now taken from the `CamelSqlQuery` header only when the endpoint sets
+`allowQueryFromHeader=true`; otherwise the tag is omitted rather than reporting a statement that was never
+executed. A route that reads `db.statement` from a `sql:` span and relies on the header value must set
+`allowQueryFromHeader=true`.
+
 === camel-core - the inheritErrorHandler attribute on circuitBreaker and failoverLoadBalancer is now a String
 
 `CircuitBreakerDefinition.inheritErrorHandler` and `FailoverLoadBalancerDefinition.inheritErrorHandler` are now
@@ -2287,3 +2482,43 @@ The `maxRetryTimeout` endpoint and component option is deprecated in both `camel
 it had no effect. The option is kept for backward compatibility of existing endpoint URIs but is marked
 deprecated and will be removed in a future release. Routes that set `maxRetryTimeout` can simply drop it;
 behaviour is unchanged.
+
+=== camel-saxon - external XML entity resolution disabled by default in XQuery
+
+The XQuery language and the `xquery` component now build their default Saxon `Configuration` with a
+hardened XML parser that does not accept a `DOCTYPE` declaration and does not resolve external
+general or parameter entities or external DTDs. This aligns XQuery with the parser configuration
+already applied to the `String`, `byte[]` and `InputStream` body paths through Camel's
+`XmlConverter`, and with `camel-xslt-saxon` (which already defaults `secureProcessing` to `true`).
+
+Previously, when a message body reached XQuery as an already-built `javax.xml.transform.Source` (for
+example after a `convertBodyTo(Source.class)`), it was parsed with the Saxon parser defaults, which
+resolved external entities. A body carrying a `DOCTYPE` declaration on that path is now rejected with
+a parse error. Bodies without a `DOCTYPE` are unaffected.
+
+A deployment that genuinely needs to parse documents with a `DOCTYPE` or external entities can supply
+its own pre-configured Saxon `Configuration` through the `configuration` option of the `xquery`
+endpoint or language (or `XQueryBuilder.setConfiguration(...)`); a user-supplied `Configuration` is
+used as-is and is not modified.
+
+=== camel-debezium-oracle - the databaseOutServerName option is removed
+
+`databaseOutServerName` is gone from the `debezium-oracle` endpoint and component options. It mapped to
+Debezium's `database.out.server.name`, which Debezium deprecated in favour of `xstream.out.server.name`.
+
+Camel already drops the options that Debezium deprecates, but the filter only recognised the ones the
+connector declares as a `Field`, so this one - declared as a plain `String` constant - slipped through and
+was published as a second, undocumented spelling of the same setting. Routes that set
+`databaseOutServerName` should use `xstreamOutServerName` instead; it configures the same XStream outbound
+server and is unchanged.
+
+=== camel-jolt - switch from unmaintained bazaarvoice jolt to the jolt-community fork
+
+The JOLT library dependency has been migrated from `com.bazaarvoice.jolt:jolt-core` to
+`io.github.jolt-community.jolt:jolt-community-core`.
+See https://github.com/jolt-community/jolt-community[JOLT (Community Edition)].
+
+Due to the package rename from `com.bazaarvoice.jolt` to `io.joltcommunity.jolt`, users who plug custom `Transform` or
+`ContextualTransform` classes into a Chainr spec need to update their imports to `io.joltcommunity.jolt.Transform` and
+`io.joltcommunity.jolt.ContextualTransform`.
+Users referencing `Removr` directly also need to update their import to `io.joltcommunity.jolt.removr.Removr`.

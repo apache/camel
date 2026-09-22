@@ -38,6 +38,217 @@ public class YamlValidatorPropertyHintTest {
         validator.init();
     }
 
+    /** CAMEL-24850: the three shapes get the form to write, in both schema modes. */
+    private static List<YamlValidator> bothModes() throws Exception {
+        YamlValidator canonical = new YamlValidator(true);
+        canonical.init();
+        return List.of(validator, canonical);
+    }
+
+    /** CAMEL-24881: the route-level error handler is errorHandler: with the kind as its key. */
+    @Test
+    public void testRouteErrorHandlerShapesGetTheForm() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        id: a
+                        noErrorHandler: true
+                        from:
+                          uri: direct:a
+                          steps:
+                            - log: "a"
+                    - route:
+                        id: b
+                        errorHandlerType: none
+                        from:
+                          uri: direct:b
+                          steps:
+                            - log: "b"
+                    - route:
+                        id: c
+                        errorHandler:
+                          noErrorHandler: true
+                        from:
+                          uri: direct:c
+                          steps:
+                            - log: "c"
+                    - route:
+                        id: d
+                        errorHandler:
+                          type: noErrorHandler
+                        from:
+                          uri: direct:d
+                          steps:
+                            - log: "d"
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("noErrorHandler") && m.contains("errorHandler: {noErrorHandler: {}}")
+                            && m.contains("kind as its key"))
+                    .anyMatch(m -> m.contains("errorHandlerType") && m.contains("errorHandler: {noErrorHandler: {}}"))
+                    .anyMatch(m -> m.contains("noErrorHandler takes no options: write noErrorHandler: {}"))
+                    .anyMatch(m -> m.contains("errorHandler: has the kind of handler as its key, not a type property"));
+        }
+    }
+
+    /** CAMEL-24888: the shapes the local model wrote on the HTTP rungs, each with the form to write. */
+    @Test
+    public void testHttpRungShapesGetTheForm() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: file:orders
+                          steps:
+                            - setExchangeProperty:
+                                name: orderId
+                                expression:
+                                  simple:
+                                    expression: "${body[orderId]}"
+                            - setBody:
+                                expression:
+                                  constant: null
+                            - marshal:
+                                json:
+                                  library: jackson
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("setExchangeProperty") && m.contains("the EIP is setProperty"))
+                    .anyMatch(m -> m.contains("constant is a text") && m.contains("simple: {expression: \"${null}\"}"))
+                    .anyMatch(m -> m.contains("the library name is case sensitive: write library: Jackson"));
+            // the name comes from the data format's own enumeration, not from json's
+            errors = v.validate("""
+                    - route:
+                        from:
+                          uri: file:orders
+                          steps:
+                            - marshal:
+                                avro:
+                                  library: apacheavro
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("the library name is case sensitive: write library: ApacheAvro")
+                            && !m.contains("Gson"));
+            errors = v.validate("""
+                    - route:
+                        from:
+                          uri: file:orders
+                          steps:
+                            - toD:
+                                uri: "http://localhost:8080/stock/${exchangeProperty.sku}"
+                                options:
+                                  throwExceptionOnFailure: false
+                            - setBody:
+                                expression:
+                                  jsonpath:
+                                    jsonPath: "$[?(@.sku == 'X')]"
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("toD takes its options like to: under parameters:"))
+                    .anyMatch(m -> m.contains("the JSONPath text goes under expression:"));
+        }
+    }
+
+    /** CAMEL-24888: a double-quoted value that is never closed is named, instead of the parser's block-end message. */
+    @Test
+    public void testAnUnclosedQuoteIsNamed() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:a
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.sku == '${header.sku}')]
+                                resultType: java.util.List
+                        - log: "done"
+                """);
+        assertThat(errors).extracting(Error::getMessage)
+                .anyMatch(m -> m.startsWith("line 8: the value opens a double quote and never closes it"));
+    }
+
+    @Test
+    public void testPollEnrichWithAUriSaysItIsAnExpression() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: timer:tick
+                          steps:
+                            - pollEnrich:
+                                uri: file:./order.json
+                            - enrich:
+                                resourceUri: direct:prices
+                    """);
+            assertThat(errors).hasSize(2);
+            assertThat(errors.get(0).getMessage())
+                    .contains("the endpoint of pollEnrich is an expression: write pollEnrich: {expression: {constant:"
+                              + " {expression: \"file:./order.json\"}}}");
+            assertThat(errors.get(1).getMessage())
+                    .contains("the endpoint of enrich is an expression: write enrich: {expression: {constant:"
+                              + " {expression: \"direct:prices\"}}}");
+        }
+    }
+
+    @Test
+    public void testStepsAsAGroupItemSaysThereIsNoGroup() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: timer:tick
+                          steps:
+                            - steps:
+                                - setHeader:
+                                    name: a
+                                    expression:
+                                      constant:
+                                        expression: "1"
+                            - to:
+                                uri: mock:a
+                                steps:
+                                  - log:
+                                      message: hi
+                    """);
+            assertThat(errors).hasSize(2);
+            for (Error e : errors) {
+                assertThat(e.getMessage())
+                        .contains("steps: is the list of a route or of an EIP that owns a pipeline")
+                        .contains("step: {id: ..., steps: [...]} for a named group")
+                        .doesNotContain("did you mean");
+            }
+        }
+    }
+
+    @Test
+    public void testEipsDirectlyUnderStepGetOneMessageWithTheShape() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: timer:tick
+                          steps:
+                            - step:
+                                setHeader:
+                                  name: a
+                                  expression:
+                                    constant:
+                                      expression: "1"
+                                split:
+                                  expression:
+                                    simple:
+                                      expression: "${body}"
+                                  steps:
+                                    - log:
+                                        message: hi
+                    """);
+            assertThat(errors).hasSize(1);
+            assertThat(errors.get(0).getMessage())
+                    .isEqualTo("step is the Step EIP, a named group: its EIPs go in its steps: list"
+                               + " (step: {id: ..., steps: [- setHeader: ...]})");
+        }
+    }
+
     @Test
     public void testMisspelledOptionGetsTheClosestName() throws Exception {
         List<Error> errors = validator.validate("""
@@ -540,6 +751,20 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testRestConfigurationPropertyListItemSaysKeyAndValue() throws Exception {
+        // CAMEL-24840: the map form already says "write it as a list"; the list item written as a map said nothing
+        List<Error> errors = validator.validate("""
+                - restConfiguration:
+                    component: platform-http
+                    bindingMode: json
+                    dataFormatProperty:
+                      - prettyPrint: "true"
+                """);
+        assertThat(errors).anySatisfy(e -> assertThat(e.getMessage()).contains("property 'prettyPrint' is not defined")
+                .contains("an item of dataFormatProperty is a key and a value: - key: prettyPrint followed by value:"));
+    }
+
+    @Test
     public void testLogMessageAsAnExpressionMapSaysPlainString() throws Exception {
         List<Error> errors = validator.validate("""
                 - from:
@@ -631,6 +856,85 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors.get(0).getMessage()).contains("no YAML").contains("- route:");
     }
 
+    // CAMEL-24847: a data format named as its artifact or catalog entry says which YAML key and option to write
+
+    private static String unmarshalError(YamlValidator v, String key) throws Exception {
+        List<Error> errors = v.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - unmarshal:
+                          %s: {}
+                """.formatted(key));
+        assertThat(errors).as(key).hasSize(1);
+        return errors.get(0).getMessage();
+    }
+
+    @Test
+    public void testDataFormatLibraryNameSaysTheKeyAndTheLibrary() throws Exception {
+        assertThat(unmarshalError(validator, "jackson"))
+                .contains("property 'jackson' is not defined")
+                .contains("the data format is json, Jackson is its library: write json: {library: Jackson}");
+        assertThat(unmarshalError(validator, "gson")).contains("write json: {library: Gson}");
+        assertThat(unmarshalError(validator, "json-b")).contains("write json: {library: Jsonb}");
+        assertThat(unmarshalError(validator, "protobuf-jackson")).contains("write protobuf: {library: Jackson}");
+        assertThat(unmarshalError(validator, "jackson-avro")).contains("write avro: {library: Jackson}");
+        assertThat(unmarshalError(validator, "bindy-csv"))
+                .contains("the data format is bindy, Csv is its type: write bindy: {type: Csv}");
+        assertThat(unmarshalError(validator, "snake-yaml")).contains("the data format is yaml: write yaml: {...}");
+    }
+
+    @Test
+    public void testDataFormatArtifactNameSaysTheKeyAndTheLibrary() throws Exception {
+        // json-jackson is the artifact, not a data format name: the catalog's suggestion is jackson
+        assertThat(unmarshalError(validator, "json-jackson"))
+                .contains("the data format is json, Jackson is its library: write json: {library: Jackson}");
+    }
+
+    @Test
+    public void testDataFormatKeySpelledDifferentlyGetsTheKey() throws Exception {
+        assertThat(unmarshalError(validator, "jackson-xml")).contains("did you mean 'jacksonXml'?");
+        assertThat(unmarshalError(validator, "JSON")).contains("did you mean 'json'?");
+        assertThat(unmarshalError(validator, "base-64")).contains("did you mean 'base64'?");
+    }
+
+    @Test
+    public void testDataFormatWordListsTheCatalogMatches() throws Exception {
+        assertThat(unmarshalError(validator, "xml")).contains("did you mean fhirXml, groovyXml or jacksonXml?");
+        assertThat(unmarshalError(validator, "zip")).contains("did you mean zipDeflater, zipFile or gzipDeflater?");
+        assertThat(unmarshalError(validator, "gzip")).contains("did you mean 'gzipDeflater'?");
+    }
+
+    @Test
+    public void testDataFormatTypoGetsTheClosestKey() throws Exception {
+        assertThat(unmarshalError(validator, "jsn")).contains("did you mean 'json'?");
+        assertThat(unmarshalError(validator, "yml")).contains("did you mean 'yaml'?");
+    }
+
+    @Test
+    public void testUnknownDataFormatSaysWhatTheKeyIs() throws Exception {
+        assertThat(unmarshalError(validator, "xstream"))
+                .contains("the key of unmarshal is the data format: json, jacksonXml, csv, yaml")
+                .contains("camel catalog dataformat");
+    }
+
+    @Test
+    public void testCanonicalDataFormatHintIsNotFollowedByTheListOfEveryDataFormat() throws Exception {
+        YamlValidator canonical = new YamlValidator(true);
+        List<Error> errors = canonical.validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - marshal:
+                            json-jackson: {}
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .contains("write json: {library: Jackson}")
+                .doesNotContain("must have exactly one of");
+    }
+
     @Test
     public void testDistance() {
         assertThat(YamlValidator.distance("loggername", "logname")).isEqualTo(3);
@@ -657,5 +961,208 @@ public class YamlValidatorPropertyHintTest {
         List<Error> errors = new YamlValidator().validate(new java.io.File("no-such-file.camel.yaml"));
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage()).contains("no-such-file.camel.yaml");
+    }
+
+    /**
+     * CAMEL-24837: a list item indented differently from the first item of its list gets the raw snakeyaml "expected
+     * <block end>, but found '-'"; say which list it belongs to and that the items share one column.
+     */
+    @Test
+    void aListItemInAnotherColumnNamesTheListItBelongsTo() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} > 1"
+                                steps:
+                                  - log:
+                                      message: big
+                            - simple: "${body} > 2"
+                              steps:
+                                - log:
+                                    message: bigger
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 11: this list item starts in column 13")
+                .contains("the list that starts at line 7 has its items in column 15")
+                .contains("every item of a list must start in the same column")
+                .doesNotContain("block end");
+    }
+
+    /** CAMEL-24837: the item is over-indented, so the list it belongs to is the shallower one above it. */
+    @Test
+    void anOverIndentedListItemNamesTheListAboveIt() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: a
+                          - log:
+                              message: b
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 7: this list item starts in column 11")
+                .contains("the list that starts at line 5 has its items in column 9");
+    }
+
+    /**
+     * CAMEL-24837: a key indented differently from its siblings gets "expected <block end>, but found '&lt;block
+     * mapping start&gt;'"; name the key and the column its siblings are in.
+     */
+    @Test
+    void aKeyInAnotherColumnNamesTheMappingItBelongsTo() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: hi
+                     id: foo
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 7: id starts in column 6")
+                .contains("the keys of the mapping that starts at line 2 are in column 5")
+                .contains("every key of a mapping must start in the same column")
+                .doesNotContain("block mapping start");
+    }
+
+    /**
+     * CAMEL-24837: a key indented deeper than its siblings gets "mapping values are not allowed here", the same message
+     * as a colon inside a value; the marker is on the key's own colon, so it is the indentation.
+     */
+    @Test
+    void anOverIndentedKeySaysItIsTheIndentation() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                       steps:
+                        - log:
+                            message: hi
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 4: steps starts in column 8")
+                .contains("the keys of the mapping that starts at line 3 are in column 7")
+                .doesNotContain("mapping values are not allowed here");
+    }
+
+    /**
+     * CAMEL-24837: the other cause of "mapping values are not allowed here" is a colon inside an unquoted value; the
+     * marker is on a later colon of the line, not on the key's own.
+     */
+    @Test
+    void aColonInsideAnUnquotedValueSaysToQuoteIt() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: hello: world
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 6: the value of message holds a colon")
+                .contains("\"hello: world\"")
+                .doesNotContain("mapping values are not allowed here");
+    }
+
+    /**
+     * CAMEL-24837: a backslash inside double quotes is an escape character; the value is meant literally, so it goes in
+     * single quotes.
+     */
+    @Test
+    void aBackslashInDoubleQuotesSaysToUseSingleQuotes() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: "file:orders?include=.*\\.json"
+                      steps:
+                        - log:
+                            message: hi
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 3: \\. inside double quotes is an escape character")
+                .contains("'file:orders?include=.*\\.json'")
+                .doesNotContain("unknown escape character");
+    }
+
+    /** CAMEL-24837: a tab used for indentation, said in YAML words instead of "cannot start any token". */
+    @Test
+    void aTabUsedForIndentationIsNamed() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                \t      uri: timer:tick
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 3: the indentation uses a tab")
+                .contains("YAML indents with spaces")
+                .doesNotContain("cannot start any token");
+    }
+
+    /**
+     * CAMEL-24837: a list whose items start with a bare "-" on its own line is still the list the stray item belongs
+     * to; naming the nested list instead would point at the wrong place.
+     */
+    @Test
+    void aListWrittenWithBareDashesIsStillTheListThatIsNamed() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                              -
+                                simple: "${body} > 1"
+                                steps:
+                                  - log:
+                                      message: big
+                            - simple: "${body} > 2"
+                              steps:
+                                - log:
+                                    message: bigger
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 12: this list item starts in column 13")
+                .contains("the list that starts at line 7 has its items in column 15");
+    }
+
+    /**
+     * CAMEL-24837: the parser names the stray item "&lt;block sequence start&gt;" instead of "-" when the list it broke
+     * uses bare dashes; it is the same mistake and gets the same message.
+     */
+    @Test
+    void aStrayItemReportedAsABlockSequenceStartIsNamedToo() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        -
+                          log:
+                            message: hi
+                         - log:
+                             message: there
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 8: this list item starts in column 10")
+                .contains("the list that starts at line 5 has its items in column 9")
+                .doesNotContain("block sequence start");
     }
 }

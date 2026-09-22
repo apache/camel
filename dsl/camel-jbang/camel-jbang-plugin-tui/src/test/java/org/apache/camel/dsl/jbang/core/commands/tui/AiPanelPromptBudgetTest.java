@@ -48,7 +48,9 @@ class AiPanelPromptBudgetTest {
     // and from 8500 when camel_catalog_doc gained the api kind (CAMEL-24708): its kind argument names the core
     // classes and script languages the API reference covers, which is what makes a model ask for them
     // raised with the core budget (CAMEL-24760)
-    static final int FULL_BUDGET_TOKENS = 9_200;
+    // raised from 9200 when camel_control gained the reload action (CAMEL-24861): main was ~9180 already; the
+    // camel_run and camel_control descriptions were shortened in the same change
+    static final int FULL_BUDGET_TOKENS = 9_300;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 

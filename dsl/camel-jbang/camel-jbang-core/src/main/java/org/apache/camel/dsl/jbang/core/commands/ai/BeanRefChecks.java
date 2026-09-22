@@ -158,6 +158,60 @@ final class BeanRefChecks {
         return names;
     }
 
+    /** A bean property line: key: value, under properties: of a bean. */
+    private static final Pattern PROPERTY_LINE = Pattern.compile("^\\s*([A-Za-z_][\\w.-]*):\\s*(.+?)\\s*$");
+
+    /**
+     * properties: {start: ${order.first-number}} on a bean: a Simple expression, which a bean property is not; the
+     * placeholder is {{order.first-number}}. The runtime fails to bind the property ("Error binding property
+     * (start=${order.first-number})"), and camel validate said nothing (CAMEL-24857).
+     */
+    static List<String> validateBeanPropertyPlaceholders(String content) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        int blockIndent = -1;
+        int propsIndent = -1;
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.isBlank() || line.trim().startsWith("#")) {
+                continue;
+            }
+            String trimmed = line.trim();
+            int indent = countLeadingSpaces(line);
+            if (blockIndent >= 0 && indent <= blockIndent) {
+                blockIndent = -1;
+                propsIndent = -1;
+            }
+            if (blockIndent < 0) {
+                if (trimmed.equals("- beans:") || trimmed.equals("beans:")) {
+                    blockIndent = indent;
+                }
+                continue;
+            }
+            if (propsIndent >= 0 && indent <= propsIndent) {
+                propsIndent = -1;
+            }
+            if (trimmed.equals("properties:")) {
+                propsIndent = indent;
+                continue;
+            }
+            if (propsIndent < 0) {
+                continue;
+            }
+            Matcher m = PROPERTY_LINE.matcher(line);
+            if (m.find()) {
+                String value = unquote(m.group(2));
+                if (YamlLines.isPropertyKeyInSimpleSyntax(value)) {
+                    String key = YamlLines.propertyKeyOf(value);
+                    msgs.add("Line " + (i + 1) + ": " + m.group(1) + ": " + value + " is a Simple expression, which a bean"
+                             + " property is not evaluated as: a property placeholder is written {{key}}, so "
+                             + m.group(1) + ": \"{{" + key + "}}\"");
+                }
+            }
+        }
+        return msgs;
+    }
+
     /**
      * Bean references in the YAML that nothing declares, each with how to declare it. A reference that is a
      * {@code #class:}, {@code #type:} or {@code #bean:} value, a property placeholder, or a class name is left alone.
@@ -169,6 +223,7 @@ final class BeanRefChecks {
         if (content == null) {
             return msgs;
         }
+        msgs.addAll(validateBeanPropertyPlaceholders(content));
         Set<String> declared = new HashSet<>(declaredBeans(content));
         if (external != null) {
             declared.addAll(external.names());
@@ -553,7 +608,125 @@ final class BeanRefChecks {
             errors.add("Line " + (i + 1) + ": " + scheme + ": the file " + path + " does not exist in the directory"
                        + hint);
         }
+        validateExpressionResourceRefs(lines, directory, errors);
         return errors;
+    }
+
+    /** The languages whose text is a script that returns a value (a returned 'resource:...' string stays text). */
+    private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "jq", "js", "javascript", "python", "mvel",
+            "ognl", "java", "spel", "jactl", "quickjs", "datasonnet", "wasm");
+    /** A quoted resource:... literal inside a script: the script returns that text. */
+    private static final Pattern QUOTED_RESOURCE_LITERAL
+            = Pattern.compile("['\"](resource:(?:classpath:|file:|ref:|bean:)?[^'\"\\\\\\s]+)['\"]");
+
+    /**
+     * A script (groovy, jq, ...) that returns 'resource:file:x' returns that text: the resource: prefix is resolved on
+     * the expression text, never on a returned value, so the next step gets 24 characters instead of the file
+     * (CAMEL-24882). Says to add resolveResource: true (CAMEL-24884) or to use constant/simple. Skipped when the
+     * expression already has resolveResource: true.
+     */
+    static List<String> validateReturnedResourceLiterals(String content) {
+        List<String> errors = new ArrayList<>();
+        if (content == null) {
+            return errors;
+        }
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            String trimmed = lines[i].trim();
+            if (trimmed.startsWith("#")) {
+                continue;
+            }
+            int colon = trimmed.indexOf(':');
+            if (colon <= 0) {
+                continue;
+            }
+            String key = trimmed.substring(0, colon).replaceFirst("^- ", "");
+            if (!SCRIPT_LANGUAGES.contains(key)) {
+                continue;
+            }
+            int indent = YamlLines.countLeadingSpaces(lines[i]);
+            // the expression block: the inline value, and the lines indented under the language key
+            StringBuilder block = new StringBuilder(stripYamlQuotes(trimmed.substring(colon + 1).trim())).append('\n');
+            boolean resolves = false;
+            int end = i;
+            for (int j = i + 1; j < lines.length; j++) {
+                if (lines[j].isBlank()) {
+                    continue;
+                }
+                if (YamlLines.countLeadingSpaces(lines[j]) <= indent) {
+                    break;
+                }
+                end = j;
+                String t = lines[j].trim();
+                if (t.startsWith("resolveResource:") && t.substring(16).trim().startsWith("true")) {
+                    resolves = true;
+                }
+                block.append(t.startsWith("expression:") ? stripYamlQuotes(t.substring(11).trim()) : t).append('\n');
+            }
+            if (resolves) {
+                i = end;
+                continue;
+            }
+            Matcher m = QUOTED_RESOURCE_LITERAL.matcher(block);
+            if (m.find()) {
+                String literal = m.group(1);
+                errors.add("Line " + (i + 1) + ": " + key + ": the script returns the text '" + literal + "', not the"
+                           + " file: the resource: prefix is resolved on an expression's text, never on a value it"
+                           + " returns. Add resolveResource: true under " + key + ": to load the resource the result"
+                           + " names, or set the body with constant: \"" + literal + "\" (simple: \"resource:file:${...}\""
+                           + " for a name chosen per message)");
+            }
+            i = end;
+        }
+        return errors;
+    }
+
+    private static String stripYamlQuotes(String value) {
+        if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+            // a double-quoted YAML scalar: \" is a quote of the script
+            return value.substring(1, value.length() - 1).replace("\\\"", "\"");
+        }
+        if (value.length() >= 2 && value.startsWith("'") && value.endsWith("'")) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
+    }
+
+    /** resource:classpath:x or resource:file:x as the value of an expression (groovy, xslt, ...) or an option. */
+    private static final Pattern RESOURCE_REF_PATTERN = Pattern.compile("resource:(classpath|file):([^\"'\\s?&,]+)");
+
+    /**
+     * A resource:classpath:x or resource:file:x in an expression whose file is not in the directory fails when the
+     * route starts (camel run looks a resource up next to the route files, CAMEL-24852). Says what is missing and, when
+     * a file of that name is elsewhere in the directory, the reference to write.
+     */
+    static void validateExpressionResourceRefs(String[] lines, Path directory, List<String> errors) {
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.trim().startsWith("#")) {
+                continue;
+            }
+            Matcher m = RESOURCE_REF_PATTERN.matcher(line);
+            while (m.find()) {
+                String scheme = m.group(1);
+                String path = m.group(2);
+                if (path.startsWith("//")) {
+                    path = path.substring(2);
+                }
+                if (path.startsWith("{{") || path.contains("${")) {
+                    continue; // a placeholder
+                }
+                String base = path.substring(path.lastIndexOf('/') + 1);
+                boolean exists = Files.exists(directory.resolve(path));
+                if (!exists && !path.startsWith("/")) {
+                    String hint = !base.isEmpty() && !base.equals(path) && Files.exists(directory.resolve(base))
+                            ? " (the directory has " + base + ": write resource:" + scheme + ":" + base + ")"
+                            : " (add the file next to the route files)";
+                    errors.add("Line " + (i + 1) + ": resource:" + scheme + ":" + path
+                               + ": the file does not exist in the directory" + hint);
+                }
+            }
+        }
     }
 
 }

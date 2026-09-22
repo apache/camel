@@ -57,6 +57,22 @@ public class InvalidPayloadException extends CamelExchangeException {
      * @param exchange the exchange that caused the error
      * @param type     the expected body type
      * @param message  the message with the invalid or missing payload
+     * @param hint     what to do about it, appended to the message
+     * @since          4.23
+     */
+    public InvalidPayloadException(Exchange exchange, Class<?> type, Message message, @Nullable String hint) {
+        super("No body available of type: " + Objects.requireNonNull(type, "type").getCanonicalName()
+              + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())
+              + " on: " + message
+              + (hint != null && !hint.isBlank() ? " (" + hint + ")" : ""),
+              Objects.requireNonNull(exchange, "exchange"));
+        this.type = type;
+    }
+
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     * @param message  the message with the invalid or missing payload
      * @param cause    the cause of the failure
      */
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message, Throwable cause) {

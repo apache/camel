@@ -350,6 +350,12 @@ public class DebugDevConsole extends AbstractDevConsole {
                 jo.put("routeId", h.getRouteId());
             }
             jo.put("elapsed", h.getElapsed());
+            if (h.getBodyType() != null) {
+                jo.put("bodyType", h.getBodyType());
+            }
+            if (h.getBodySize() >= 0) {
+                jo.put("bodySize", h.getBodySize());
+            }
             jo.put("acceptDebugger", h.isAcceptDebugger());
             jo.put("skipOver", h.isDebugSkipOver());
             if (h.getNode() != null) {
