@@ -137,6 +137,56 @@ class RouteReloadRollbackTest extends YamlTestSupport {
             solo.toFile().deleteDir()
     }
 
+    def 'everything removed forgets the remembered content, a deleted file is not put back'() {
+        setup:
+            def gone = Files.createTempDirectory("camel-reload-gone")
+            def file = gone.resolve("gone.camel.yaml")
+            Files.writeString(file, """
+                - route:
+                    id: gone
+                    from:
+                      uri: direct:gone
+                      steps:
+                        - to:
+                            uri: mock:gone
+                """)
+            def ctx = new org.apache.camel.impl.DefaultCamelContext()
+            ctx.start()
+            def strategy = new RouteWatcherReloadStrategy(gone.toString())
+            strategy.setCamelContext(ctx)
+            strategy.setPattern("*.yaml")
+            strategy.doStart()
+            strategy.getResourceReload().onReload(file.toString(), ResourceHelper.resolveResource(ctx, "file:" + file))
+            assert ctx.getRouteController().getRouteStatus("gone") == ServiceStatus.Started
+        when: 'every route file is removed (the on-demand strategy asks for that when the directory is empty)'
+            strategy.onRouteReload(null, true)
+        then: 'no routes run'
+            ctx.routes.isEmpty()
+        when: 'the file comes back with a mistake (pollEnrich takes an expression, not a uri)'
+            Files.writeString(file, """
+                - route:
+                    id: gone
+                    from:
+                      uri: direct:gone
+                      steps:
+                        - pollEnrich:
+                            uri: file:./order.json
+                """)
+            def failure = null
+            try {
+                strategy.getResourceReload().onReload(file.toString(), ResourceHelper.resolveResource(ctx, "file:" + file))
+            } catch (Exception e) {
+                failure = e
+            }
+        then: 'the reload fails and the removed route is not put back from memory'
+            failure != null
+            ctx.routes.isEmpty()
+        cleanup:
+            strategy.doStop()
+            ctx.stop()
+            gone.toFile().deleteDir()
+    }
+
     def 'a failed reload restores the previous routes'() {
         setup:
             def strategy = new RouteWatcherReloadStrategy(dir.toString())

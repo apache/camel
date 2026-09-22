@@ -327,7 +327,13 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
             // update okay, so clear as we do not need to remember those anymore
             previousSources.clear();
-            rememberContent(sources);
+            if (removeEverything) {
+                // the route files are gone and nothing runs: the remembered content goes with them, so a later
+                // failed reload cannot put a deleted file back (CAMEL-24899)
+                lastGoodContent.clear();
+            } else {
+                rememberContent(sources);
+            }
 
             if (!ids.isEmpty()) {
                 List<String> lines = new ArrayList<>();
@@ -403,7 +409,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     /**
      * Remembers the content of the sources that loaded, so a later failed reload of one of them can go back to the
-     * version that ran (the file on disk is then the broken one). Only the sources of the current set are kept.
+     * version that ran (the file on disk is then the broken one). Only the sources of the current set are kept; the
+     * caller drops the lot when everything is removed.
      */
     private void rememberContent(Collection<Resource> sources) {
         if (!removeAllRoutes || sources == null) {
