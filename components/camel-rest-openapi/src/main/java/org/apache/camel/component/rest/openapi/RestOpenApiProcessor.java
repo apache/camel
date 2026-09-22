@@ -320,6 +320,7 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
             try {
                 PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
                 if (phc != null) {
+                if (phc != null && platformHttpConsumer != null) {
                     phc.removeHttpEndpoint(unmatchedRequestCatchAllPath,
                             platformHttpConsumer.getPlatformHttpConsumer());
                 }
