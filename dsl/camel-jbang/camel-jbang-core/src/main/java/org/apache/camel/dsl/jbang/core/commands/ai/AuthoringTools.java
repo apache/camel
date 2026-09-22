@@ -383,7 +383,6 @@ public final class AuthoringTools {
     /** How long a write waits for the running integration's reload record before answering without it. */
     static final long RELOAD_WAIT_MILLIS = 8000;
 
-    /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     /**
      * Replaces one snippet of a file and writes the result through {@link #writeFile}, so a change to an existing file
      * does not rewrite every line of it: a model that re-emits a whole file corrupts the lines it did not mean to touch
@@ -445,6 +444,7 @@ public final class AuthoringTools {
         return n;
     }
 
+    /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
         boolean exists = Files.exists(path);
