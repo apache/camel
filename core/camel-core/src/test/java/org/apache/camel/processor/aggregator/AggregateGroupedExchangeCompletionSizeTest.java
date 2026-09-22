@@ -22,6 +22,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Unit test for aggregate grouped exchanges.
  */
@@ -40,6 +42,10 @@ public class AggregateGroupedExchangeCompletionSizeTest extends ContextTestSuppo
         template.sendBody("direct:start", "F");
 
         assertMockEndpointsSatisfied();
+
+        // the list of exchanges keeps its short form (CAMEL-24880 changed only the list of bodies)
+        Object body = result.getExchanges().get(0).getMessage().getBody();
+        assertEquals("List<Exchange>(3 elements)", body.toString());
     }
 
     @Override
