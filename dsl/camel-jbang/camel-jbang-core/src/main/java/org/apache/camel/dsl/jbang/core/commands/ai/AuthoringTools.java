@@ -208,15 +208,14 @@ public final class AuthoringTools {
                 .param("directory", "string", DIRECTORY_DESC, false)
                 .param("file", "string", FILE_PATH_DESC + " (subdirectories are created)", true)
                 .param("content", "string", "The complete new content", true)
-                .param("validate", "boolean", "Validate before writing (default true)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .readOnly(false)
                 .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     Path dir = ctx.resolveDirectory(args.get("directory"));
-                    return writeFile(ctx, dir, required(args, "file"), required(args, "content"),
-                            bool(args, "validate", true)).toJson();
+                    // always validated: a model given a switch turns it off (CAMEL-24897)
+                    return writeFile(ctx, dir, required(args, "file"), required(args, "content"), true).toJson();
                 }));
 
         registry.accept(tool("camel_run",
@@ -380,7 +379,7 @@ public final class AuthoringTools {
                 result.put("file", file);
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call camel_write_file again (validate=false writes it anyway).");
+                                      + " call camel_write_file again.");
                 return result;
             }
         }

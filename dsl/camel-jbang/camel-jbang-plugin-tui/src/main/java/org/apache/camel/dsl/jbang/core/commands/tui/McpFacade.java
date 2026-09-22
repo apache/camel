@@ -1082,18 +1082,11 @@ class McpFacade {
 
     /**
      * Writes (creates or replaces) a file in the integration's source directory, after the user confirmed it in the TUI
-     * unless {@code confirm} is false. The file is a path relative to that directory.
+     * unless {@code confirm} is false. The file is a path relative to that directory. A YAML route or .properties file
+     * is always validated first (the editor's checks) and not written when it has errors, so a model fixes them instead
+     * of the user finding them in the log after the reload (CAMEL-24897).
      */
     JsonObject writeFile(String name, String file, String content, boolean confirm) {
-        return writeFile(name, file, content, confirm, true);
-    }
-
-    /**
-     * As {@link #writeFile(String, String, String, boolean)}; with {@code validate} a YAML route or .properties file is
-     * validated first (the editor's checks) and not written when it has errors, so a model fixes them instead of the
-     * user finding them in the log after the reload.
-     */
-    JsonObject writeFile(String name, String file, String content, boolean confirm, boolean validate) {
         IntegrationInfo target = findIntegration(name);
         if (target == null) {
             return writeError(name != null && !name.isEmpty()
@@ -1119,7 +1112,7 @@ class McpFacade {
         if (exists && !Files.isRegularFile(filePath)) {
             return writeError(file + " is not a regular file");
         }
-        if (validate && sourceValidator != null && SourceValidator.isValidatableFile(file)) {
+        if (sourceValidator != null && SourceValidator.isValidatableFile(file)) {
             List<String> errors = sourceValidator.apply(file, content);
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
@@ -1129,7 +1122,7 @@ class McpFacade {
                 arr.addAll(errors);
                 result.put("errors", arr);
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call camel_write_file again (validate=false writes it anyway).");
+                                      + " call camel_write_file again.");
                 return result;
             }
         }

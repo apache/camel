@@ -186,7 +186,7 @@ class McpFacadeWriteFileTest {
     }
 
     @Test
-    void invalidContentIsNotWrittenUnlessValidationIsOff(@TempDir Path dir) throws IOException {
+    void invalidContentIsNeverWritten(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
         ConfirmingBridge bridge = new ConfirmingBridge(true);
         McpFacade facade = facade(dir, true, bridge);
@@ -211,17 +211,15 @@ class McpFacadeWriteFileTest {
         assertEquals("invalid", facade.writeFile("demo", "application.properties", "camel.main.nme=x", true)
                 .getString("status"));
         assertEquals("created", facade.writeFile("demo", "notes.txt", "logLevel", true).getString("status"));
-        // and validation can be switched off (the bridge confirms)
-        assertEquals("overwritten",
-                facade.writeFile("demo", "demo.camel.yaml", "- log:\n    logLevel: WARN\n", true, false)
-                        .getString("status"));
+        // validation cannot be switched off: there is no overload that skips it (CAMEL-24897)
+        assertEquals("- route: {}\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
 
         // the standalone validation reports the same errors, for content and for a file in the directory
         JsonObject check = facade.validateSource("demo", "new.camel.yaml", "- log:\n    logLevel: WARN\n");
         assertFalse(check.getBoolean("valid"));
         assertEquals(1, check.getCollection("errors").size());
         JsonObject fileCheck = facade.validateSource("demo", "demo.camel.yaml", null);
-        assertFalse(fileCheck.getBoolean("valid"), "the file now contains the invalid content");
+        assertTrue(fileCheck.getBoolean("valid"), "the file still holds the content it had before the refused write");
         assertEquals("demo.camel.yaml", fileCheck.getString("file"));
         assertTrue(facade.validateSource("demo", null, "- route: {}").getBoolean("valid"), "content alone is YAML");
         assertEquals("error", facade.validateSource("demo", "missing.yaml", null).getString("status"));
