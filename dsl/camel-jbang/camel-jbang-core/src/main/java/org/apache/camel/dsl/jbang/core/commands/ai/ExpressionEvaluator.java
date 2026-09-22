@@ -126,6 +126,10 @@ public final class ExpressionEvaluator {
             // the languages of this process (simple, constant, header, ...) need no class loader of their own
             ClassLoader known = gav != null ? DOWNLOADED.get(gav) : null;
             if (evaluateWith(known, lang, expression, body, predicate, result)) {
+                if (known != null) {
+                    // downloaded by an earlier call: say so again, so the answers of two calls read the same
+                    result.put("downloaded", gav);
+                }
                 syntaxCheck(ctx, known, lang, expression, predicate, result);
                 return;
             }
