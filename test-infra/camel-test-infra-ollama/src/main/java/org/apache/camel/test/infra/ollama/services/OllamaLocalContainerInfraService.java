@@ -166,27 +166,30 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
         LOG.info("Trying to start the Ollama container");
         container.start();
 
-        pullModel(getModel());
+        pullModel("model", getModel());
 
         String embeddingModel = embeddingModelName();
         if (embeddingModel != null && !embeddingModel.isEmpty()) {
-            pullModel(embeddingModel);
+            pullModel("embedding model", embeddingModel);
         }
 
         registerProperties();
         LOG.info("Ollama instance running at {}", getEndpoint());
     }
 
-    private void pullModel(String model) {
-        LOG.info("Pulling the model {}", model);
+    /**
+     * @param kind what the model is pulled as, since both pulls may name the same model
+     */
+    private void pullModel(String kind, String model) {
+        LOG.info("Pulling the {} {}", kind, model);
         try {
             Container.ExecResult result = container.execInContainer("ollama", "pull", model);
             requireSuccessfulPull(model, result.getExitCode(), result.getStderr());
         } catch (IOException e) {
-            throw new RuntimeException("Pulling the model " + model + " failed", e);
+            throw new RuntimeException("Pulling the " + kind + " " + model + " failed", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Interrupted while pulling the model " + model, e);
+            throw new RuntimeException("Interrupted while pulling the " + kind + " " + model, e);
         }
     }
 
