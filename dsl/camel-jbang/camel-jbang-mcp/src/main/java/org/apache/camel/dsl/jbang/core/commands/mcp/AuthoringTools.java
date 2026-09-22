@@ -153,6 +153,21 @@ public class AuthoringTools {
                 "camelVersion", camelVersion));
     }
 
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = "Changes a file by replacing one snippet: the exact text to find (it must occur once) and "
+                        + "what to put there. Validated and reloaded as a write is. Use it to change an existing file, "
+                        + "camel_write_file for a new one.")
+    public JsonObject camel_edit_file(
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = "File path relative to the directory", required = true) String file,
+            @ToolArg(description = "The text to replace, exactly as it stands in the file, indentation included",
+                     required = true) String find,
+            @ToolArg(description = "The text to put there; empty removes it", required = true) String replace,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
+                "camelVersion", camelVersion));
+    }
+
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = true),
           description = "Starts an integration with camel run in a separate process, in dev mode by default (files reload when written). Returns the pid and log file; camel_get_log, camel_get_errors and camel_control follow it.")
     public JsonObject camel_run(

@@ -218,6 +218,25 @@ public final class AuthoringTools {
                     return writeFile(ctx, dir, required(args, "file"), required(args, "content"), true).toJson();
                 }));
 
+        registry.accept(tool("camel_edit_file",
+                "Changes a file by replacing one snippet: the exact text to find (it must occur once) and what to "
+                                                + "put there. Validated and reloaded as a write is. Use it to change an existing file, "
+                                                + "camel_write_file for a new one.")
+                .param("directory", "string", DIRECTORY_DESC, false)
+                .param("file", "string", FILE_PATH_DESC, true)
+                .param("find", "string", "The text to replace, exactly as it stands in the file, indentation included",
+                        true)
+                .param("replace", "string", "The text to put there; empty removes it", true)
+                .param("camelVersion", "string", VERSION_DESC, false)
+                .readOnly(false)
+                .core(true)
+                .executor((ctx, args) -> {
+                    applyVersion(ctx, args);
+                    Path dir = ctx.resolveDirectory(args.get("directory"));
+                    return editFile(ctx, dir, required(args, "file"), required(args, "find"),
+                            args.get("replace") == null ? "" : args.get("replace")).toJson();
+                }));
+
         registry.accept(tool("camel_run",
                 "Starts an integration with camel run in a separate process, in dev mode by default (a changed or added file is reloaded). Returns the pid and log file; camel_get_log and camel_control follow it.")
                 .param("directory", "string", "Project directory to run in", true)
@@ -365,6 +384,67 @@ public final class AuthoringTools {
     static final long RELOAD_WAIT_MILLIS = 8000;
 
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
+    /**
+     * Replaces one snippet of a file and writes the result through {@link #writeFile}, so a change to an existing file
+     * does not rewrite every line of it: a model that re-emits a whole file corrupts the lines it did not mean to touch
+     * (CAMEL-24909). The snippet must occur exactly once; the answer says what was replaced.
+     */
+    public static JsonObject editFile(ToolContext ctx, Path dir, String file, String find, String replace) {
+        Path path = resolveFile(dir, file);
+        if (!Files.isRegularFile(path)) {
+            throw new ToolExecutionException(file + " does not exist: write the whole file with camel_write_file");
+        }
+        String content;
+        try {
+            content = Files.readString(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new ToolExecutionException("Failed to read " + path + ": " + e.getMessage());
+        }
+        if (find.isEmpty()) {
+            throw new ToolExecutionException("find is required: the text to replace, as it stands in the file");
+        }
+        int first = content.indexOf(find);
+        if (first < 0) {
+            JsonObject result = new JsonObject();
+            result.put("status", "not-found");
+            result.put("file", file);
+            result.put("message", "The text to find is not in the file as given; read it with camel_get_files and copy"
+                                  + " the lines exactly, indentation included");
+            return result;
+        }
+        int second = content.indexOf(find, first + find.length());
+        if (second >= 0) {
+            JsonObject result = new JsonObject();
+            result.put("status", "ambiguous");
+            result.put("file", file);
+            result.put("occurrences", count(content, find));
+            result.put("message", "The text to find occurs more than once: include the lines around it so it names one"
+                                  + " place, or write the whole file with camel_write_file");
+            return result;
+        }
+        int line = (int) content.substring(0, first).lines().count() + (first > 0 && content.charAt(first - 1) == '\n' ? 1 : 0);
+        JsonObject result = writeFile(ctx, dir, file, content.substring(0, first) + replace
+                                                      + content.substring(first + find.length()),
+                true);
+        if (!"invalid".equals(result.getString("status"))) {
+            result.put("status", "edited");
+            result.put("editedAtLine", Math.max(1, line));
+            result.put("replacedLines", find.isEmpty() ? 0 : (int) find.lines().count());
+        } else {
+            result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
+                                  + " camel_edit_file again.");
+        }
+        return result;
+    }
+
+    private static int count(String content, String find) {
+        int n = 0;
+        for (int i = content.indexOf(find); i >= 0; i = content.indexOf(find, i + find.length())) {
+            n++;
+        }
+        return n;
+    }
+
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
         boolean exists = Files.exists(path);
