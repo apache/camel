@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -157,6 +159,46 @@ final class YamlLines {
             return trimmed.substring(0, colon).trim();
         }
         return null;
+    }
+
+    /**
+     * Whether a scalar value is a YAML block indicator: |, |-, |+, >, >- or >+ (the text follows on the next lines).
+     */
+    static boolean isBlockIndicator(String value) {
+        return value != null && (value.equals("|") || value.equals("|-") || value.equals("|+")
+                || value.equals(">") || value.equals(">-") || value.equals(">+"));
+    }
+
+    /**
+     * The text of a block scalar whose indicator is on line {@code lineIdx}: the following lines indented deeper than
+     * that line, with their common indentation removed, joined by newlines for | and by spaces for > (CAMEL-24883).
+     */
+    static String blockScalar(String[] lines, int lineIdx, String indicator) {
+        int indent = countLeadingSpaces(lines[lineIdx]);
+        List<String> block = new ArrayList<>();
+        int common = Integer.MAX_VALUE;
+        for (int j = lineIdx + 1; j < lines.length; j++) {
+            if (lines[j].isBlank()) {
+                block.add("");
+                continue;
+            }
+            int n = countLeadingSpaces(lines[j]);
+            if (n <= indent) {
+                break;
+            }
+            common = Math.min(common, n);
+            block.add(lines[j]);
+        }
+        while (!block.isEmpty() && block.get(block.size() - 1).isEmpty()) {
+            block.remove(block.size() - 1);
+        }
+        if (block.isEmpty()) {
+            return "";
+        }
+        final int strip = common;
+        String sep = indicator.startsWith(">") ? " " : "\n";
+        return block.stream().map(l -> l.isEmpty() ? "" : l.substring(Math.min(strip, l.length())))
+                .collect(java.util.stream.Collectors.joining(sep)).trim();
     }
 
     static String extractYamlValue(String trimmed, String key) {

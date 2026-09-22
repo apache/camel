@@ -332,6 +332,33 @@ class SourceValidatorSimpleTest {
         assertThat(msgs.get(1)).startsWith("Line 14:").contains("Unexpected token body");
     }
 
+    /** CAMEL-24883: the same expression as a block scalar gets the same hint; a > scalar is joined by spaces. */
+    @Test
+    void aBlockScalarExpressionIsCheckedToo() {
+        List<String> msgs = SourceValidator.validateYamlSimple(
+                """
+                        - from:
+                            uri: timer:tick
+                            steps:
+                              - setBody:
+                                  expression:
+                                    simple: |
+                                      ${exchangeProperty.CamelTimerCounter} == 0 ? 'resource:file:order.json' : 'resource:file:other.json'
+                              - setBody:
+                                  simple:
+                                    expression: >-
+                                      ${body.size()} == 0
+                                      ? ${null} : ${body[0]}
+                              - log:
+                                  message: |
+                                    all fine: ${body}
+                        """,
+                catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 6:").contains("Simple has no top-level ternary");
+        assertThat(msgs.get(1)).startsWith("Line 10:").contains("Simple has no top-level ternary");
+    }
+
     @Test
     void aTopLevelTernaryInAnExpressionIsReported() {
         // the ? and : are outside ${...} so they are literal text: the route silently sets the body to
