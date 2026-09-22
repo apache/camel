@@ -66,6 +66,70 @@ class RouteReloadRollbackTest extends YamlTestSupport {
         dir.toFile().deleteDir()
     }
 
+    def 'the only route file keeps its previous version when the save is broken'() {
+        setup:
+            def solo = Files.createTempDirectory("camel-reload-solo")
+            def only = solo.resolve("only.camel.yaml")
+            Files.writeString(only, """
+                - route:
+                    id: only
+                    from:
+                      uri: direct:only
+                      steps:
+                        - to:
+                            uri: mock:only
+                """)
+            def context2 = new org.apache.camel.impl.DefaultCamelContext()
+            context2.start()
+            org.apache.camel.support.PluginHelper.getRoutesLoader(context2)
+                    .loadRoutes(ResourceHelper.resolveResource(context2, "file:" + only))
+            def strategy = new RouteWatcherReloadStrategy(solo.toString())
+            strategy.setCamelContext(context2)
+            strategy.setPattern("*.yaml")
+            strategy.doStart()
+            // one successful reload, so the content that runs is remembered
+            strategy.getResourceReload().onReload(only.toString(), ResourceHelper.resolveResource(context2, "file:" + only))
+            assert context2.getRouteController().getRouteStatus("only") == ServiceStatus.Started
+        when: 'the only route file is saved with a mistake'
+            Files.writeString(only, """
+                - route:
+                    id: only
+                    from:
+                      uri: direct:only
+                      steps:
+                        - pollEnrich:
+                            uri: file:./order.json
+                """)
+            def failure = null
+            try {
+                strategy.getResourceReload().onReload(only.toString(), ResourceHelper.resolveResource(context2, "file:" + only))
+            } catch (Exception e) {
+                failure = e
+            }
+        then: 'the reload fails and the version that ran before is still running'
+            failure != null
+            context2.getRouteController().getRouteStatus("only") == ServiceStatus.Started
+        when: 'the file is fixed'
+            Files.writeString(only, """
+                - route:
+                    id: only
+                    from:
+                      uri: direct:only
+                      steps:
+                        - to:
+                            uri: mock:fixed
+                """)
+            strategy.getResourceReload().onReload(only.toString(), ResourceHelper.resolveResource(context2, "file:" + only))
+        then: 'the fixed version runs, not the remembered one'
+            context2.getRouteController().getRouteStatus("only") == ServiceStatus.Started
+            context2.getRoute("only").getEndpoint().getEndpointUri().startsWith("direct://only")
+            context2.getRoutes().size() == 1
+        cleanup:
+            strategy.doStop()
+            context2.stop()
+            solo.toFile().deleteDir()
+    }
+
     def 'a failed reload restores the previous routes'() {
         setup:
             def strategy = new RouteWatcherReloadStrategy(dir.toString())

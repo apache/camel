@@ -503,6 +503,10 @@ file, and a WARN says so. Before, the previous routes stayed stopped until the n
 in one file left the application without routes. The failed file loads again on its next save. The
 `CamelContextReloadFailure` event and the reload error log line are unchanged.
 
+A project whose routes are all in one file is covered too: the content that last loaded is kept in memory, so the
+broken save goes back to the version that was running, and the log says how many routes came from it. The file on
+disk is untouched; its next save is loaded as usual.
+
 === camel-core - the recursive file watcher watches directories created while it runs
 
 The file watcher reload strategy (`camel run --dev`, the route watcher reload strategy with a recursive directory)
