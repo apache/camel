@@ -282,6 +282,16 @@ final class EndpointChecks {
 
     /** Options models write that the component does not have, and what the component does instead. */
     static final Map<String, String> INVENTED_OPTIONS = Map.ofEntries(
+            // CAMEL-24888: the path parameters of an OpenAPI operation are headers of the same name
+            Map.entry("rest-openapi:path",
+                    "a path parameter of the operation, {sku} in /stock/{sku}, comes from a header of the same name: add"
+                                           + " setHeader: {name: sku, ...} before the call, the operation's path is in the contract"),
+            Map.entry("rest-openapi:pathParameters",
+                    "a path parameter of the operation comes from a header of the same name: add setHeader: {name: sku,"
+                                                     + " ...} before the call"),
+            Map.entry("rest-openapi:queryParameters",
+                    "a query parameter of the operation comes from a header of the same name: add setHeader before the"
+                                                      + " call"),
             Map.entry("file:mkdir", "directories are created by default (autoCreate=true); remove the option"),
             Map.entry("file:createDirectory", "directories are created by default (autoCreate=true); remove the option"),
             Map.entry("file:overwrite", "an existing file is overridden by default (fileExist=Override); remove the option"),

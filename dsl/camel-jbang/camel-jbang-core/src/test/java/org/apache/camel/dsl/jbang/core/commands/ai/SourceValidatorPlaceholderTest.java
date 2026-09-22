@@ -32,6 +32,26 @@ class SourceValidatorPlaceholderTest {
 
     private static final CamelCatalog catalog = new DefaultCamelCatalog();
 
+    /** CAMEL-24888: a path parameter of an OpenAPI operation is a header, not an endpoint option. */
+    @Test
+    void aRestOpenApiPathOptionSaysTheParameterIsAHeader() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: rest-openapi
+                            parameters:
+                              specificationUri: stock-api.json
+                              operationId: reserveStock
+                              path: "sku=${exchangeProperty.sku}"
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(errors).anyMatch(e -> e.contains("rest-openapi: Unknown option 'path'")
+                && e.contains("comes from a header of the same name: add setHeader: {name: sku"));
+    }
+
     @Test
     void aSimplePlaceholderInAnEndpointOptionSaysToWriteAPropertyPlaceholder() {
         String yaml = """

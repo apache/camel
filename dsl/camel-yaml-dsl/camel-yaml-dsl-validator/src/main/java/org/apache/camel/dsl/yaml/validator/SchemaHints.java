@@ -116,6 +116,12 @@ final class SchemaHints {
 
     private static final Predicate<Match> ANY = m -> true;
 
+    /** The EIP names a model writes for the exchange properties, and the ones Camel has. */
+    private static final Map<String, String> EXCHANGE_PROPERTY_EIPS = Map.of(
+            "setExchangeProperty", "setProperty", "setExchangeProperties", "setProperties",
+            "removeExchangeProperty", "removeProperty", "removeExchangeProperties", "removeProperties",
+            "setExchangeVariable", "setVariable", "setExchangeVariables", "setVariables");
+
     private static final Set<String> ROUTE_ERROR_HANDLER_KINDS
             = Set.of("noErrorHandler", "deadLetterChannel", "defaultErrorHandler", "springTransactionErrorHandler",
                     "jtaTransactionErrorHandler", "refErrorHandler");
@@ -230,6 +236,13 @@ final class SchemaHints {
                         return eip + " holds its EIPs under steps: " + eip + ": {steps: [- log: \"...\"]}"
                                + (eip.equals("doCatch") ? ", each - doCatch: item with exception: and steps:" : "");
                     }),
+            // setBody: {constant: null} to clear the body before a GET: constant is a text (CAMEL-24888)
+            append("type", ".*/constant(/expression)?", m -> m.message().contains("null found"),
+                    m -> "constant is a text; to set an empty body (a GET sends none) write setBody: {simple:"
+                         + " {expression: \"${null}\"}}"),
+            // library: jackson: the enumeration is case sensitive
+            append("enum", ".*/library", ANY,
+                    m -> "the library name is case sensitive: write library: Jackson (or Gson, Fastjson, Jsonb)"),
             append("type", "/?", m -> m.message().contains("array expected"),
                     m -> "a Camel YAML file is a list of entries, each starting with \"- \": - route:, - from:, - beans:,"
                          + " - rest:, - onException:"),
@@ -384,6 +397,17 @@ final class SchemaHints {
                     m -> "step is the Step EIP, a named group: its EIPs go in its steps: list (step: {id: ..., steps: [-"
                          + " setHeader: ...]})",
                     "additionalProperties", "additionalProperties"),
+            // CAMEL-24888 (the HTTP rungs of the examples ladder): the shapes a model writes for the EIPs of a REST app
+            unknownProperty(null, m -> EXCHANGE_PROPERTY_EIPS.containsKey(m.unknown()),
+                    m -> "the EIP is " + EXCHANGE_PROPERTY_EIPS.get(m.unknown()) + ": write - "
+                         + EXCHANGE_PROPERTY_EIPS.get(m.unknown()) + ": {name: ..., expression: {simple: {expression:"
+                         + " \"...\"}}} (an exchange property is read back as ${exchangeProperty.name})"),
+            unknownProperty(".*/toD", m -> m.unknown().equals("options") || m.unknown().equals("params"),
+                    m -> "toD takes its options like to: under parameters: (toD: {uri: \"http://...\", parameters:"
+                         + " {throwExceptionOnFailure: false}}), or in the uri after ?"),
+            unknownProperty(".*/jsonpath", m -> m.unknown().equalsIgnoreCase("jsonPath") || m.unknown().equals("path"),
+                    m -> "the JSONPath text goes under expression: (jsonpath: {expression: \"$[?(@.sku == 'X')]\","
+                         + " resultType: java.util.List})"),
             unknownProperty(null,
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) != null,
                     m -> "did you mean '"
