@@ -19,7 +19,6 @@ package org.apache.camel.maven.packaging;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.apache.camel.maven.packaging.endpoint.SomeAliasEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByField;
@@ -192,19 +191,6 @@ class EndpointSchemaGeneratorMojoTest {
                 String.format("%s#SOME_VALUE@%s", endpoint.headersClass().getName(),
                         endpoint.headersNameProvider() + (clazz.getName().contains("Method") ? "()" : "")),
                 header.getConstantName());
-    }
-
-    @Test
-    void shouldAttachDeprecatedSchemesOnlyToPrimarySchemeEntry() {
-        UriEndpoint endpoint = SomeAliasEndpoint.class.getAnnotation(UriEndpoint.class);
-
-        ComponentModel primary = new ComponentModel();
-        EndpointSchemaGeneratorMojo.applyDeprecatedSchemes(primary, endpoint, "llm");
-        ComponentModel alias = new ComponentModel();
-        EndpointSchemaGeneratorMojo.applyDeprecatedSchemes(alias, endpoint, "openai");
-
-        assertEquals("openai", primary.getDeprecatedSchemes());
-        assertNull(alias.getDeprecatedSchemes());
     }
 
     @Test

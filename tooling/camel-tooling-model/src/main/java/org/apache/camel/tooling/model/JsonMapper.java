@@ -195,7 +195,6 @@ public final class JsonMapper {
         model.setScheme(mobj.getString("scheme"));
         model.setExtendsScheme(mobj.getString("extendsScheme"));
         model.setAlternativeSchemes(mobj.getString("alternativeSchemes"));
-        model.setDeprecatedSchemes(mobj.getString("deprecatedSchemes"));
         model.setSyntax(mobj.getString("syntax"));
         model.setAlternativeSyntax(mobj.getString("alternativeSyntax"));
         model.setAsync(mobj.getBooleanOrDefault("async", false));
@@ -227,9 +226,6 @@ public final class JsonMapper {
         obj.put("scheme", model.getScheme());
         obj.put("extendsScheme", model.getExtendsScheme());
         obj.put("alternativeSchemes", model.getAlternativeSchemes());
-        if (model.getDeprecatedSchemes() != null && !model.getDeprecatedSchemes().isEmpty()) {
-            obj.put("deprecatedSchemes", model.getDeprecatedSchemes());
-        }
         obj.put("syntax", model.getSyntax());
         obj.put("alternativeSyntax", model.getAlternativeSyntax());
         obj.put("async", model.isAsync());

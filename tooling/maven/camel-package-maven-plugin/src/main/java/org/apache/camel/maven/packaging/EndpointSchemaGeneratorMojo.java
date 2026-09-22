@@ -832,7 +832,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         if (schemes != null && schemes.length > 1) {
             model.setAlternativeSchemes(String.join(",", schemes));
         }
-        applyDeprecatedSchemes(model, uriEndpoint, scheme);
         // if the scheme is an alias then replace the scheme name from the
         // syntax with the alias
         String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
@@ -2031,14 +2030,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             defaultValue = "";
         }
         return defaultValue;
-    }
-
-    static void applyDeprecatedSchemes(ComponentModel model, UriEndpoint uriEndpoint, String scheme) {
-        // Only attach deprecatedSchemes to the primary (non-deprecated) scheme entry
-        if (!Strings.isNullOrEmpty(uriEndpoint.deprecatedSchemes())
-                && !Arrays.asList(uriEndpoint.deprecatedSchemes().split(",")).contains(scheme)) {
-            model.setDeprecatedSchemes(uriEndpoint.deprecatedSchemes());
-        }
     }
 
 }

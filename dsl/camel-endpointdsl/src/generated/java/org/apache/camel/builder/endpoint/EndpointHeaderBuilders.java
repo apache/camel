@@ -2659,21 +2659,6 @@ public class EndpointHeaderBuilders {
         return LanguageEndpointBuilderFactory.LanguageHeaderNameBuilder.INSTANCE;
     }
     /**
-     * LLM (camel-openai)
-     * LLM endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech using
-     * OpenAI-compatible APIs. The openai scheme is a supported alias.
-     * 
-     * Category: ai
-     * Since: 4.17
-     * Maven coordinates: org.apache.camel:camel-openai
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    public static OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder llm() {
-        return OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * Printer (camel-printer)
      * Send print jobs to printers.
      * 
@@ -3018,12 +3003,10 @@ public class EndpointHeaderBuilders {
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-openai
      * 
-     * @deprecated use {@link #llm()} instead.
      * @return the dsl builder for the headers' name.
      */
-    @Deprecated
     public static OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder openai() {
-        return llm();
+        return OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder.INSTANCE;
     }
     /**
      * OpenSearch (camel-opensearch)

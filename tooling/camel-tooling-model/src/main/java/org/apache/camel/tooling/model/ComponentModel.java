@@ -27,7 +27,6 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected String scheme;
     protected String extendsScheme;
     protected String alternativeSchemes;
-    protected String deprecatedSchemes;
     protected String syntax;
     protected String alternativeSyntax;
     protected boolean async;
@@ -74,14 +73,6 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public void setAlternativeSchemes(String alternativeSchemes) {
         this.alternativeSchemes = alternativeSchemes;
-    }
-
-    public String getDeprecatedSchemes() {
-        return deprecatedSchemes;
-    }
-
-    public void setDeprecatedSchemes(String deprecatedSchemes) {
-        this.deprecatedSchemes = deprecatedSchemes;
     }
 
     public String getSyntax() {

@@ -260,20 +260,6 @@ public interface ${builderName}Factory {
         default ${componentName}HeaderNameBuilder ${mojo.camelCaseLower($model.scheme)}() {
             return ${componentName}HeaderNameBuilder.INSTANCE;
         }
-        #if( $aliases.size() > 1 )
-            #foreach( $componentModel in $aliases )
-                #if( $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
-        #set( $javadoc = $mojo.getMainDescription($model, false) + $newline + $newline
-                            + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}()} instead." + $newline
-                            + "@return the dsl builder for the headers' name." + $newline )
-        ${mojo.javadoc("        ", $javadoc)}
-        @Deprecated
-        default ${componentName}HeaderNameBuilder ${mojo.camelCaseLower($componentModel.scheme)}() {
-            return ${mojo.camelCaseLower($model.scheme)}();
-        }
-                #end
-            #end
-        #end
     #end
     #if( $aliases.size() == 1 )
         #set( $javadoc = $mojo.getMainDescription($model, true) + $newline + $newline
@@ -300,29 +286,16 @@ public interface ${builderName}Factory {
     #else
         #set( $firstAlias = true )
         #foreach( $componentModel in $aliases )
-            #if( $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
-        #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
-                            + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}(String)} instead." + $newline
+            #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
                             + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
                             + "@return the dsl builder" + $newline )
-            #else
-        #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
-                            + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
-                            + "@return the dsl builder" + $newline )
-            #end
         ${mojo.javadoc("        ", $javadoc)}
-            #if( $componentModel.deprecated || $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
+            #if( $componentModel.deprecated )
         @Deprecated
             #end
-            #if( $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
-        default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String path) {
-            return ${mojo.camelCaseLower($model.scheme)}("${componentModel.scheme}", path);
-        }
-            #else
         default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String path) {
             return ${builderName}Factory.endpointBuilder("${componentModel.scheme}", path);
         }
-            #end
             #if( $firstAlias )
                 #set( $firstAlias = false )
                 #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
@@ -338,20 +311,6 @@ public interface ${builderName}Factory {
         }
             #end
         #end
-            #foreach( $componentModel in $aliases )
-                #if( $mojo.isDeprecatedSchemeAlias($model, $componentModel) )
-        #set( $javadoc = $mojo.getMainDescription($componentModel, true) + $newline + $newline
-                            + "@deprecated use {@link #${mojo.camelCaseLower($model.scheme)}(String, String)} instead." + $newline
-                            + "@param componentName to use a custom component name for the endpoint instead of the default name" + $newline
-                            + "@param path " + $mojo.pathParameterJavaDoc($componentModel) + $newline
-                            + "@return the dsl builder" + $newline )
-        ${mojo.javadoc("        ", $javadoc)}
-        @Deprecated
-        default ${builderName} ${mojo.camelCaseLower($componentModel.scheme)}(String componentName, String path) {
-            return ${mojo.camelCaseLower($model.scheme)}(componentName, path);
-        }
-                #end
-            #end
     #end
 
     }

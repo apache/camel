@@ -77,10 +77,9 @@ import org.slf4j.LoggerFactory;
  * text-to-speech using OpenAI-compatible APIs. The {@code openai} scheme is a supported alias.
  */
 @UriEndpoint(firstVersion = "4.17.0",
-             scheme = "llm,openai",
-             deprecatedSchemes = "openai",
+             scheme = "openai,llm",
              title = "LLM,OpenAI",
-             syntax = "llm:operation",
+             syntax = "openai:operation",
              category = { Category.AI },
              producerOnly = true,
              headersClass = OpenAIConstants.class)

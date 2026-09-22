@@ -624,8 +624,8 @@ xref:next@components:others:ai-observability.adoc[AI Observability] for metric n
 
 === camel-openai (LLM scheme alias)
 
-The `camel-openai` component now registers the primary URI scheme `llm` alongside the existing
-`openai` alias. Both schemes use the same component implementation and Maven artifact
+The `camel-openai` component now registers the `llm` URI scheme alongside the existing
+`openai` scheme. Both schemes use the same component implementation and Maven artifact
 (`camel-openai`).
 
 * New routes should prefer `llm:chat-completion` (and other `llm:` operations) for discoverability.
@@ -635,18 +635,7 @@ The `camel-openai` component now registers the primary URI scheme `llm` alongsid
 
 Java packages, exchange headers (`CamelOpenAI*`), and the Maven artifact id are unchanged.
 
-When using the Java Endpoint DSL, the primary scheme name changes generated helper methods:
-`EndpointHeaderBuilders.openai()` is deprecated in favour of `llm()`. Use `llm(path)` or `openai(path)`
-(both delegate to the same component). The Component DSL still exposes both
-`Components.llm()` and `Components.openai()`.
-
-If you migrate routes from `openai:` to `llm:` URIs, copy any `camel.component.openai.*`
-properties to `camel.component.llm.*` — the two schemes use independent component instances.
-
-`Component.getDefaultName()` returns the first scheme declared in `@Component("llm,openai")`
-(`"llm"`) for both `llm` and `openai` component instances.
-
-See xref:components:openai-component.adoc[LLM Component] for details.
+See xref:components::openai-component.adoc[LLM Component] for details.
 
 === camel-archetypes
 

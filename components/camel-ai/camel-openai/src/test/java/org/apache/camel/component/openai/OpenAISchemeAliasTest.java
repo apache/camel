@@ -97,9 +97,8 @@ public class OpenAISchemeAliasTest extends CamelTestSupport {
 
         assertThat(llmEndpoint.getOperation()).isEqualTo(OpenAIOperations.chatCompletion);
         assertThat(openaiEndpoint.getOperation()).isEqualTo(OpenAIOperations.chatCompletion);
-        // getDefaultName() returns the first scheme in @Component("llm,openai"), not the URI scheme used
-        assertThat(llmEndpoint.getComponent().getDefaultName()).isEqualTo("llm");
-        assertThat(openaiEndpoint.getComponent().getDefaultName()).isEqualTo("llm");
+        assertThat(llmEndpoint.getComponent().getDefaultName()).isEqualTo("openai");
+        assertThat(openaiEndpoint.getComponent().getDefaultName()).isEqualTo("openai");
     }
 
     @Override
