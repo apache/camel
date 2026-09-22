@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "4.17.0",
              scheme = "openai,llm",
-             title = "LLM,OpenAI",
+             title = "LLM",
              syntax = "openai:operation",
              category = { Category.AI },
              headersClass = OpenAIConstants.class)

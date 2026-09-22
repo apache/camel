@@ -11273,7 +11273,7 @@ public class StaticEndpointBuilders {
         return LdifEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * OpenAI (camel-openai)
+     * LLM (camel-openai)
      * LLM endpoint for chat completion, Responses API, embeddings, audio
      * transcription, audio translation, and text-to-speech using
      * OpenAI-compatible APIs. The openai scheme is a supported alias.
@@ -11286,13 +11286,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses',
-     * 'responses-retrieve', 'responses-cancel', 'embeddings', 'tool-execution',
+     * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
+     * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
-     * 'image-generation', or 'image-edit'
-     * There are 12 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, embeddings,
-     * tool-execution, audio-transcription, audio-translation, audio-speech,
-     * moderation, image-generation, image-edit
+     * 'image-generation', 'image-edit', or 'webhook' (a consumer)
+     * There are 17 enums and the value can be one of: chat-completion,
+     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
+     * batch-cancel, batch-results, embeddings, tool-execution,
+     * audio-transcription, audio-translation, audio-speech, moderation,
+     * image-generation, image-edit, webhook
      * 
      * @param path operation
      * @return the dsl builder
