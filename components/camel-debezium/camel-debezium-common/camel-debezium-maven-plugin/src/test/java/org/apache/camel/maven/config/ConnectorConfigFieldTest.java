@@ -49,6 +49,20 @@ class ConnectorConfigFieldTest {
         assertFalse(connectorConfigField.isDeprecated());
         assertTrue(connectorConfigField.isRequired());
         assertFalse(connectorConfigField.isTimeField());
+        assertFalse(connectorConfigField.isSecret());
+    }
+
+    @Test
+    void testIfPasswordFieldsAreSecret() {
+        final ConfigDef.ConfigKey configKey = new ConfigDef.ConfigKey(
+                "database.password", ConfigDef.Type.PASSWORD, null,
+                null, ConfigDef.Importance.HIGH, "testing", "testGroup", 1, ConfigDef.Width.MEDIUM, "displayName",
+                Collections.emptyList(),
+                null, false);
+
+        final ConnectorConfigField connectorConfigField = new ConnectorConfigField(configKey, false, true, null);
+
+        assertTrue(connectorConfigField.isSecret());
     }
 
     @Test

@@ -102,6 +102,14 @@ public class ConnectorConfigField {
         return isRequired;
     }
 
+    /**
+     * Whether the connector declares this option as a password, which is how the generated option is marked as a secret
+     * so that tooling and the catalog do not show it in clear text.
+     */
+    public boolean isSecret() {
+        return fieldDef.type() == ConfigDef.Type.PASSWORD;
+    }
+
     public String getDescription() {
         if (fieldDef.documentation != null) {
             return removeNonAsciiChars(fieldDef.documentation);
