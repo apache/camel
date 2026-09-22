@@ -23,8 +23,10 @@ import io.debezium.engine.ChangeEvent;
 import io.debezium.engine.DebeziumEngine;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.URISupport;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,8 @@ public class DebeziumConsumer extends DefaultConsumer {
 
     private ExecutorService executorService;
     private DebeziumEngine<ChangeEvent<SourceRecord, SourceRecord>> dbzEngine;
+    private volatile Throwable engineFailure;
+    private volatile boolean engineStopped;
 
     public DebeziumConsumer(DebeziumEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -46,8 +50,19 @@ public class DebeziumConsumer extends DefaultConsumer {
     }
 
     @Override
+    protected void doBuild() throws Exception {
+        if (getHealthCheck() == null) {
+            setHealthCheck(new DebeziumConsumerHealthCheck(this, "consumer:" + getRouteId()));
+        }
+        super.doBuild();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        engineFailure = null;
+        engineStopped = false;
 
         // start a single threaded pool to monitor events
         executorService = endpoint.createExecutor(this);
@@ -61,15 +76,23 @@ public class DebeziumConsumer extends DefaultConsumer {
                     try {
                         dbzEngine.run();
                     } catch (Throwable e) {
-                        LOG.error("Debezium engine has failed: {}", e.getMessage(), e);
+                        // the engine reports its own failures through the completion callback and is not
+                        // expected to throw, so this is only a safety net
+                        onEngineCompleted(false, e.getMessage(), e);
                     }
                 });
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (dbzEngine != null) {
-            dbzEngine.close();
+        if (dbzEngine != null && !engineStopped) {
+            try {
+                dbzEngine.close();
+            } catch (IllegalStateException e) {
+                // the engine refuses to be closed once it has stopped on its own, which happens when it
+                // failed between the check above and this call, and then there is nothing left to close
+                LOG.debug("Debezium engine was already stopped: {}", e.getMessage());
+            }
         }
 
         // shutdown the thread pool gracefully
@@ -79,11 +102,42 @@ public class DebeziumConsumer extends DefaultConsumer {
         super.doStop();
     }
 
+    /**
+     * The failure that stopped the embedded engine, or <tt>null</tt> while the engine is starting, running, or was
+     * stopped on request. Used by {@link DebeziumConsumerHealthCheck}.
+     */
+    Throwable getEngineFailure() {
+        return engineFailure;
+    }
+
     private DebeziumEngine<ChangeEvent<SourceRecord, SourceRecord>> createDbzEngine() {
         return DebeziumEngine.create(Connect.class)
                 .using(configuration.createDebeziumConfiguration().asProperties())
+                .using(this::onEngineCompleted)
                 .notifying(this::onEventListener)
                 .build();
+    }
+
+    /**
+     * Called by the embedded engine once it has stopped, either because it was closed or because it failed. The engine
+     * does not restart itself, so a failure means this consumer is permanently dead while the route still reports as
+     * started, hence the failure is reported to the exception handler and kept for the health check.
+     */
+    private void onEngineCompleted(boolean success, String message, Throwable error) {
+        engineStopped = true;
+
+        if (success) {
+            LOG.debug("Debezium engine stopped: {}", message);
+            return;
+        }
+
+        final Throwable cause = error != null ? error : new RuntimeCamelException(message);
+        engineFailure = cause;
+
+        getExceptionHandler().handleException(
+                "Debezium engine has failed and stopped, no more change events are consumed from "
+                                              + URISupport.sanitizeUri(endpoint.getEndpointUri()),
+                cause);
     }
 
     private void onEventListener(final ChangeEvent<SourceRecord, SourceRecord> event) {
