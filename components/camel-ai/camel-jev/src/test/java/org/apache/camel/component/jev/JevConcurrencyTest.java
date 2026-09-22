@@ -25,7 +25,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.component.jev.JevCancellationTest.Cancellation;
+import org.apache.camel.language.jev.JevLanguage;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -47,7 +49,7 @@ class JevConcurrencyTest extends JevTestSupport {
     @Test
     void sharesLimitBetweenProducersAndPredicatesAndKeepsEndpointsIndependent() throws Exception {
         String uri = "jev:limited?maxConcurrentRequests=2";
-        JevPredicate predicate = new JevPredicate(uri, body(), "Refund?", 0.8);
+        Predicate predicate = predicate(uri, body(), "Refund?", 0.8);
         predicate.init(context);
         holdHeaders = true;
         var first = template.asyncSend(uri, e -> e.getMessage().setBody(request("first")));
@@ -60,9 +62,9 @@ class JevConcurrencyTest extends JevTestSupport {
                     .hasMessageContaining("maxConcurrentRequests");
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody("refund");
-            exchange.setProperty(JevPredicate.RESULT, "previous result");
+            exchange.setProperty(JevLanguage.RESULT, "previous result");
             assertThatThrownBy(() -> predicate.matches(exchange)).hasCauseInstanceOf(RejectedExecutionException.class);
-            assertThat(exchange.getProperty(JevPredicate.RESULT)).isNull();
+            assertThat(exchange.getProperty(JevLanguage.RESULT)).isNull();
             assertThat(requests).hasSize(2);
 
             // Leave the first two responses blocked while a different endpoint submits its request.

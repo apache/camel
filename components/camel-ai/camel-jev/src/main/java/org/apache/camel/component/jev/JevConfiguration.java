@@ -18,6 +18,7 @@ package org.apache.camel.component.jev;
 
 import java.net.URI;
 
+import org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -44,6 +45,40 @@ public class JevConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String resultProperty;
 
+    @UriParam(label = "advanced", defaultValue = "0.5")
+    private double threshold = 0.5;
+    @UriParam(label = "advanced", defaultValue = "0")
+    private double uncertainty;
+    @UriParam(label = "advanced", defaultValue = "NonMatch")
+    private UncertaintyPolicy uncertaintyPolicy = UncertaintyPolicy.NonMatch;
+
+    public double getThreshold() {
+        return threshold;
+    }
+
+    /** Default inclusive probability threshold for the Jev language. Must be within [0,1]. */
+    public void setThreshold(double threshold) {
+        this.threshold = threshold;
+    }
+
+    public double getUncertainty() {
+        return uncertainty;
+    }
+
+    /** Default half-width of the inclusive uncertainty band for the Jev language. Zero disables the band. */
+    public void setUncertainty(double uncertainty) {
+        this.uncertainty = uncertainty;
+    }
+
+    public UncertaintyPolicy getUncertaintyPolicy() {
+        return uncertaintyPolicy;
+    }
+
+    /** Default action for the Jev language within the uncertainty band: NonMatch or Fail. */
+    public void setUncertaintyPolicy(UncertaintyPolicy uncertaintyPolicy) {
+        this.uncertaintyPolicy = uncertaintyPolicy;
+    }
+
     public String getQuestions() {
         return questions;
     }
@@ -60,7 +95,10 @@ public class JevConfiguration implements Cloneable {
         return state;
     }
 
-    /** The Simple expression selecting state for configured questions. If not set, the message body is used. */
+    /**
+     * The Simple expression selecting state for configured producer questions and the Jev language. If not set, the
+     * message body is used.
+     */
     public void setState(String state) {
         this.state = state;
     }

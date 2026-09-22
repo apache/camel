@@ -31,6 +31,8 @@ import java.util.function.Function;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.json.JsonObject;
@@ -123,16 +125,17 @@ abstract class JevTestSupport {
         return Map.of("type", "noul", "instructions", instructions);
     }
 
-    static Map<String, Object> noulQuestion(Object instructions, Object yes, Object no) {
-        return Map.of("type", "noul", "instructions", instructions, "criteria", Map.of("true", yes, "false", no));
-    }
-
     static Map<String, Object> request(Object state) {
         return Map.of("state", state, "questions", Map.of("predicate", noulQuestion("Is a refund requested?")));
     }
 
     static Map<String, Object> mixedRequest(Object state) {
         return Map.of("state", state, "questions", mixedQuestions());
+    }
+
+    Predicate predicate(String endpoint, Expression state, String question, double threshold) {
+        return context.resolveLanguage("jev").createPredicate(question,
+                new Object[] { endpoint, threshold, null, null, state });
     }
 
     static String noulResponse(double probability) {

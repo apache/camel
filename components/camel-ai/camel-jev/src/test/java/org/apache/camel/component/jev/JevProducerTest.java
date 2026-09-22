@@ -17,7 +17,6 @@
 package org.apache.camel.component.jev;
 
 import java.io.IOException;
-import java.net.http.HttpTimeoutException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -120,7 +119,7 @@ class JevProducerTest extends JevTestSupport {
         holdHeaders = !afterHeaders;
         long started = System.nanoTime();
         Exchange exchange = template.request("jev:decisions?requestTimeout=300", e -> e.getMessage().setBody(request("hello")));
-        assertThat(exchange.getException()).isInstanceOfAny(TimeoutException.class, HttpTimeoutException.class);
+        assertThat(exchange.getException()).isInstanceOf(TimeoutException.class);
         assertThat(Duration.ofNanos(System.nanoTime() - started)).isLessThan(Duration.ofSeconds(5));
     }
 

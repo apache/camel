@@ -157,8 +157,8 @@ public interface JevComponentBuilderFactory {
         }
     
         /**
-         * The Simple expression selecting state for configured questions. If
-         * not set, the message body is used.
+         * The Simple expression selecting state for configured producer
+         * questions and the Jev language. If not set, the message body is used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -235,6 +235,59 @@ public interface JevComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Default inclusive probability threshold for the Jev language. Must be
+         * within 0,1.
+         * 
+         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
+         * 
+         * Default: 0.5
+         * Group: advanced
+         * 
+         * @param threshold the value to set
+         * @return the dsl builder
+         */
+        default JevComponentBuilder threshold(double threshold) {
+            doSetProperty("threshold", threshold);
+            return this;
+        }
+    
+        /**
+         * Default half-width of the inclusive uncertainty band for the Jev
+         * language. Zero disables the band.
+         * 
+         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param uncertainty the value to set
+         * @return the dsl builder
+         */
+        default JevComponentBuilder uncertainty(double uncertainty) {
+            doSetProperty("uncertainty", uncertainty);
+            return this;
+        }
+    
+        
+        /**
+         * Default action for the Jev language within the uncertainty band:
+         * NonMatch or Fail.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy&lt;/code&gt; type.
+         * 
+         * Default: NonMatch
+         * Group: advanced
+         * 
+         * @param uncertaintyPolicy the value to set
+         * @return the dsl builder
+         */
+        default JevComponentBuilder uncertaintyPolicy(org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy uncertaintyPolicy) {
+            doSetProperty("uncertaintyPolicy", uncertaintyPolicy);
+            return this;
+        }
+    
         /**
          * The API key used for Bearer authentication.
          * 
@@ -280,6 +333,9 @@ public interface JevComponentBuilderFactory {
             case "lazyStartProducer": ((JevComponent) component).setLazyStartProducer((boolean) value); return true;
             case "resultProperty": getOrCreateConfiguration((JevComponent) component).setResultProperty((java.lang.String) value); return true;
             case "autowiredEnabled": ((JevComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "threshold": getOrCreateConfiguration((JevComponent) component).setThreshold((double) value); return true;
+            case "uncertainty": getOrCreateConfiguration((JevComponent) component).setUncertainty((double) value); return true;
+            case "uncertaintyPolicy": getOrCreateConfiguration((JevComponent) component).setUncertaintyPolicy((org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy) value); return true;
             case "apiKey": getOrCreateConfiguration((JevComponent) component).setApiKey((java.lang.String) value); return true;
             default: return false;
             }

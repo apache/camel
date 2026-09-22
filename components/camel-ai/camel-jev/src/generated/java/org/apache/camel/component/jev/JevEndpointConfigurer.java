@@ -38,6 +38,10 @@ public class JevEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "resultproperty":
         case "resultProperty": target.getConfiguration().setResultProperty(property(camelContext, java.lang.String.class, value)); return true;
         case "state": target.getConfiguration().setState(property(camelContext, java.lang.String.class, value)); return true;
+        case "threshold": target.getConfiguration().setThreshold(property(camelContext, double.class, value)); return true;
+        case "uncertainty": target.getConfiguration().setUncertainty(property(camelContext, double.class, value)); return true;
+        case "uncertaintypolicy":
+        case "uncertaintyPolicy": target.getConfiguration().setUncertaintyPolicy(property(camelContext, org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy.class, value)); return true;
         default: return false;
         }
     }
@@ -60,6 +64,10 @@ public class JevEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "resultproperty":
         case "resultProperty": return java.lang.String.class;
         case "state": return java.lang.String.class;
+        case "threshold": return double.class;
+        case "uncertainty": return double.class;
+        case "uncertaintypolicy":
+        case "uncertaintyPolicy": return org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy.class;
         default: return null;
         }
     }
@@ -83,6 +91,10 @@ public class JevEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "resultproperty":
         case "resultProperty": return target.getConfiguration().getResultProperty();
         case "state": return target.getConfiguration().getState();
+        case "threshold": return target.getConfiguration().getThreshold();
+        case "uncertainty": return target.getConfiguration().getUncertainty();
+        case "uncertaintypolicy":
+        case "uncertaintyPolicy": return target.getConfiguration().getUncertaintyPolicy();
         default: return null;
         }
     }

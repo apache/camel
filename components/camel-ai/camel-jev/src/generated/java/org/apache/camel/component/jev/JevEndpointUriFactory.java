@@ -24,7 +24,7 @@ public class JevEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(10);
+        Set<String> props = new HashSet<>(13);
         props.add("apiKey");
         props.add("baseUrl");
         props.add("lazyStartProducer");
@@ -35,6 +35,9 @@ public class JevEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("requestTimeout");
         props.add("resultProperty");
         props.add("state");
+        props.add("threshold");
+        props.add("uncertainty");
+        props.add("uncertaintyPolicy");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(1);
         secretProps.add("apiKey");

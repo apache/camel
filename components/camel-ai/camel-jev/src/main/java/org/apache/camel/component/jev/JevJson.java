@@ -64,17 +64,6 @@ final class JevJson {
         jsonValue(questions);
     }
 
-    static JsonObject noulQuestion(Map<String, Object> question) {
-        question(question);
-        require("noul".equals(question.get("type")), "A Jev predicate requires a Noul question");
-        jsonValue(question);
-        try {
-            return parse(Jsoner.serialize(question));
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Invalid Noul question", e);
-        }
-    }
-
     private static void question(Map<?, ?> question) {
         if (question.get("instructions") != null) {
             content(question.get("instructions"));

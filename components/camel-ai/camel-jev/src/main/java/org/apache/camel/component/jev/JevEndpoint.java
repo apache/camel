@@ -109,7 +109,8 @@ public class JevEndpoint extends DefaultEndpoint {
         return expression;
     }
 
-    JsonObject evaluate(Map<String, Object> request) throws Exception {
+    /** Evaluate a request using this endpoint's managed transport, concurrency limit and timeout. */
+    public JsonObject evaluate(Map<String, Object> request) throws Exception {
         JevClient current = client;
         if (current == null) {
             throw new IllegalStateException("Jev endpoint is not started");

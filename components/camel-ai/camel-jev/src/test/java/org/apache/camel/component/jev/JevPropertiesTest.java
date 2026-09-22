@@ -23,6 +23,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 import org.apache.camel.support.DefaultExchange;
@@ -108,7 +109,7 @@ class JevPropertiesTest extends JevTestSupport {
             Exchange invalid = producer.request("direct:validate", e -> e.getMessage().setHeader("selected", "hello"));
             assertThat(invalid.getException()).isNotNull();
             assertThat(requests).hasSize(10).allSatisfy(request -> assertThat(request.toJson()).doesNotContain("PRIVATE BODY"));
-            assertThat(main.getCamelContext().getRegistry().findByType(JevPredicate.class)).isEmpty();
+            assertThat(main.getCamelContext().getRegistry().findByType(Predicate.class)).isEmpty();
             producer.stop();
         } finally {
             main.stop();
@@ -202,7 +203,7 @@ class JevPropertiesTest extends JevTestSupport {
         JevComponent component = context.getComponent("jev", JevComponent.class);
         component.getConfiguration().setQuestions("{\"q\":{\"type\":\"noul\"}}");
         JevEndpoint endpoint = context.getEndpoint("jev:null-state", JevEndpoint.class);
-        JevPredicate predicate = new JevPredicate("jev:null-state", body(), Map.of("type", "noul"), 0.8);
+        Predicate predicate = predicate("jev:null-state", body(), "Refund?", 0.8);
         predicate.init(context);
 
         assertThatThrownBy(() -> new JevProducer(endpoint).process(new DefaultExchange(context)))

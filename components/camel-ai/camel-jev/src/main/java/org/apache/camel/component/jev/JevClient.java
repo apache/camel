@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashSet;
@@ -107,6 +108,11 @@ final class JevClient implements AutoCloseable {
             future.cancel(true);
             throw e;
         } catch (ExecutionException e) {
+            if (e.getCause() instanceof HttpTimeoutException cause) {
+                TimeoutException timeoutException = new TimeoutException("Jev request timed out");
+                timeoutException.initCause(cause);
+                throw timeoutException;
+            }
             if (e.getCause() instanceof Exception cause) {
                 throw cause;
             }

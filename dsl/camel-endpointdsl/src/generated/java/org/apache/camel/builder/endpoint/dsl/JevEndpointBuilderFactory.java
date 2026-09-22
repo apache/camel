@@ -160,8 +160,8 @@ public interface JevEndpointBuilderFactory {
             return this;
         }
         /**
-         * The Simple expression selecting state for configured questions. If
-         * not set, the message body is used.
+         * The Simple expression selecting state for configured producer
+         * questions and the Jev language. If not set, the message body is used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -260,6 +260,104 @@ public interface JevEndpointBuilderFactory {
          */
         default AdvancedJevEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Default inclusive probability threshold for the Jev language. Must be
+         * within 0,1.
+         * 
+         * The option is a: <code>double</code> type.
+         * 
+         * Default: 0.5
+         * Group: advanced
+         * 
+         * @param threshold the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJevEndpointBuilder threshold(double threshold) {
+            doSetProperty("threshold", threshold);
+            return this;
+        }
+        /**
+         * Default inclusive probability threshold for the Jev language. Must be
+         * within 0,1.
+         * 
+         * The option will be converted to a <code>double</code> type.
+         * 
+         * Default: 0.5
+         * Group: advanced
+         * 
+         * @param threshold the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJevEndpointBuilder threshold(String threshold) {
+            doSetProperty("threshold", threshold);
+            return this;
+        }
+        /**
+         * Default half-width of the inclusive uncertainty band for the Jev
+         * language. Zero disables the band.
+         * 
+         * The option is a: <code>double</code> type.
+         * 
+         * Default: 0.0
+         * Group: advanced
+         * 
+         * @param uncertainty the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJevEndpointBuilder uncertainty(double uncertainty) {
+            doSetProperty("uncertainty", uncertainty);
+            return this;
+        }
+        /**
+         * Default half-width of the inclusive uncertainty band for the Jev
+         * language. Zero disables the band.
+         * 
+         * The option will be converted to a <code>double</code> type.
+         * 
+         * Default: 0.0
+         * Group: advanced
+         * 
+         * @param uncertainty the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJevEndpointBuilder uncertainty(String uncertainty) {
+            doSetProperty("uncertainty", uncertainty);
+            return this;
+        }
+        /**
+         * Default action for the Jev language within the uncertainty band:
+         * NonMatch or Fail.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy</code> type.
+         * 
+         * Default: NonMatch
+         * Group: advanced
+         * 
+         * @param uncertaintyPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJevEndpointBuilder uncertaintyPolicy(org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy uncertaintyPolicy) {
+            doSetProperty("uncertaintyPolicy", uncertaintyPolicy);
+            return this;
+        }
+        /**
+         * Default action for the Jev language within the uncertainty band:
+         * NonMatch or Fail.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.language.jev.JevLanguage.UncertaintyPolicy</code> type.
+         * 
+         * Default: NonMatch
+         * Group: advanced
+         * 
+         * @param uncertaintyPolicy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJevEndpointBuilder uncertaintyPolicy(String uncertaintyPolicy) {
+            doSetProperty("uncertaintyPolicy", uncertaintyPolicy);
             return this;
         }
     }
