@@ -511,8 +511,8 @@ public final class AuthoringTools {
                 bestAt = i;
             }
         }
-        if (bestAt < 0 || bestScore * 2 < size) {
-            return null; // less than half the lines match: naming a place would mislead
+        if (bestAt < 0 || bestScore * 4 < size) {
+            return null; // hardly anything matches: naming a place would mislead
         }
         StringBuilder sb = new StringBuilder();
         for (int j = 0; j < size; j++) {
