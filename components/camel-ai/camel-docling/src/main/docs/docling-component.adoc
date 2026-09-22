@@ -164,9 +164,9 @@ keeps working without `allowFilePathSource`. It is still subject to `inputBaseDi
 Typed bodies - `File`, `byte[]`, `InputStream`, and the explicit path collections used by the batch
 operations - are unambiguous and are likewise unaffected.
 
-The `CamelDoclingOutputFilePath` header, which selects the CLI `--output` directory, is normalized the same way
-and is confined to `outputBaseDirectory` when one is set. Leaving `outputBaseDirectory` unset keeps the previous
-behavior, where the header value is used as given after normalization.
+The `CamelDoclingOutputFilePath` header, which selects the CLI `--output` directory, is normalized lexically
+and, when `outputBaseDirectory` is set, confined to that directory. The normalization applies unconditionally;
+with `outputBaseDirectory` unset, a header value without traversal segments is otherwise used as given.
 
 [source,java]
 ----

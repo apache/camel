@@ -715,11 +715,11 @@ Additionally, a local input path that does not exist is now reported as a `File 
 before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
 the failure surfaced later, from the Docling process or API call.
 
-The `CamelDoclingOutputFilePath` header, which selects the CLI output directory, is now normalized before it
-is passed to Docling, and a new `outputBaseDirectory` option confines it the same way `inputBaseDirectory`
-confines input paths. Both are unset by default, which keeps the previous behaviour of using the header value
-as given. When `outputBaseDirectory` is set, an output path that resolves outside it - including an absolute
-path - is rejected with an `IOException`.
+The `CamelDoclingOutputFilePath` header, which selects the CLI output directory, is now normalized lexically
+(redundant separators and `.`/`..` segments are resolved) before it is passed to Docling; a header value
+without such segments is still used as given. A new `outputBaseDirectory` option additionally confines the
+header the same way `inputBaseDirectory` confines input paths - when set, an output path that resolves outside
+it, including an absolute path, is rejected with an `IOException`. `outputBaseDirectory` is unset by default.
 
 === camel-azure-eventgrid
 
