@@ -461,7 +461,9 @@ public final class AuthoringTools {
                    + (first > 0 && content.charAt(first - 1) == '\n' ? 1 : 0);
         result.put("content", content.substring(0, first) + replace + content.substring(first + length));
         result.put("editedAtLine", Math.max(1, line));
-        result.put("replacedLines", (int) find.lines().count());
+        // the lines actually replaced: with the trimmed match that is the window in the file, which can be shorter
+        // than find when it ends in blank lines (CAMEL-24909)
+        result.put("replacedLines", (int) content.substring(first, first + length).lines().count());
         return result;
     }
 

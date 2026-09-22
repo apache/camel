@@ -103,6 +103,18 @@ class AuthoringToolsEditTest {
                 .contains("expression: \"$[?(@.sku == '${header.sku}')]\"");
     }
 
+    /** CAMEL-24909: replacedLines counts the lines of the file that went, not the lines of a find with blanks. */
+    @Test
+    void replacedLinesCountsTheLinesOfTheFile(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        JsonObject result = edit(dir, "- log:\n    message: \"two\"\n\n", "                    - log:\n"
+                                                                          + "                        message: \"two!\"\n");
+
+        assertThat(result.getString("status")).isEqualTo("edited");
+        assertThat(result.getInteger("replacedLines")).isEqualTo(2);
+    }
+
     /** CAMEL-24909: a miss shows the lines the file has there, so the next attempt copies them. */
     @Test
     void aMissShowsTheLinesTheFileHasThere(@TempDir Path dir) throws IOException {
