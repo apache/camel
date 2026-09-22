@@ -13,6 +13,25 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== http and https resources are now resolved with a timeout
+
+Loading a resource from an `http:` or `https:` location - a Groovy script, an XSLT stylesheet, a Velocity template,
+or anything else resolved through `ResourceHelper` - previously used the JDK defaults, which are to wait indefinitely
+for both the connection and every read. A server that accepted the connection and then stopped answering would stall
+`CamelContext` startup with no way to bound the wait.
+
+Such a resource is now read with a 10 second connect timeout and a 30 second read timeout, and fails with a
+`java.net.SocketTimeoutException` instead of hanging. The read timeout applies per read rather than to the transfer as
+a whole, so a large resource arriving slowly is unaffected as long as data keeps coming.
+
+Both values can be changed, in milliseconds, and `0` restores the previous wait-forever behaviour:
+
+[source,properties]
+----
+camel.resource.http.connect-timeout = 10000
+camel.resource.http.read-timeout = 30000
+----
+
 === camel-oauth
 
 OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens instead of reusing the same cached token. Applications using such profiles may make additional token requests after upgrading.
