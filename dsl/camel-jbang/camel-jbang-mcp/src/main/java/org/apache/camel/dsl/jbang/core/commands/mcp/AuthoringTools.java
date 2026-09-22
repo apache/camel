@@ -57,7 +57,7 @@ public class AuthoringTools {
                         + "includeHeaders=true adds the message headers of a component, includeDoc=true the AsciiDoc "
                         + "page.")
     public JsonObject camel_catalog_doc(
-            @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange",
+            @ToolArg(description = "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                      required = false) String name,
             @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
                      required = false) String endpoint,

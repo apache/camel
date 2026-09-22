@@ -64,6 +64,22 @@ class CatalogDocsTest {
         assertNull(schema.get("required"), "name or endpoint, neither alone is required");
     }
 
+    /** CAMEL-24898: the YAML names of the data formats are answered, with the YAML shape. */
+    @Test
+    void theYamlNameOfADataFormatIsAnsweredWithItsShape() throws Exception {
+        for (String name : List.of("json", "json-jackson", "jackson")) {
+            JsonObject json = catalogDoc(Map.of("name", name));
+            assertEquals("jackson", json.getString("name"), name);
+            assertEquals("dataformat", json.getString("kind"), name);
+            assertTrue(json.getString("yaml").startsWith("marshal: {json: {library: Jackson}}"), name);
+        }
+        JsonObject yaml = catalogDoc(Map.of("name", "yaml", "kind", "dataformat"));
+        assertEquals("snakeYaml", yaml.getString("name"));
+        assertTrue(yaml.getString("yaml").contains("yaml: {library: SnakeYAML}"));
+        JsonObject xml = catalogDoc(Map.of("name", "xml"));
+        assertEquals("jacksonXml", xml.getString("name"));
+    }
+
     @Test
     void simpleLanguageListsItsFunctionsAndOperatorsCompactly() throws Exception {
         JsonObject result = catalogDoc(Map.of("name", "simple", "kind", "language"));
