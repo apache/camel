@@ -389,6 +389,9 @@ public final class AuthoringTools {
      * does not rewrite every line of it: a model that re-emits a whole file corrupts the lines it did not mean to touch
      * (CAMEL-24909). The snippet must occur exactly once; the answer says what was replaced.
      */
+    /** How long a file may be to be handed back when an edit misses, in lines. */
+    private static final int MAX_EDIT_ECHO_LINES = 400;
+
     public static JsonObject editFile(ToolContext ctx, Path dir, String file, String find, String replace) {
         JsonObject edit = editedContent(dir, file, find, replace);
         String content = edit.getString("content");
@@ -426,45 +429,139 @@ public final class AuthoringTools {
         if (find == null || find.isEmpty()) {
             throw new ToolExecutionException("find is required: the text to replace, as it stands in the file");
         }
-        int first = content.indexOf(find);
-        int length = find.length();
+        String wanted = find;
+        String put = replace;
+        boolean trimmedMatch = false;
+        int first = content.indexOf(wanted);
+        int length = wanted.length();
         if (first < 0) {
             // the same lines with different indentation or trailing spaces: a model composes the snippet from the
             // shape it has in mind rather than from the file (CAMEL-24909), so match on the trimmed lines when that
             // names exactly one place
-            int[] window = uniqueTrimmedWindow(content, find);
+            int[] window = uniqueTrimmedWindow(content, wanted);
             if (window != null) {
                 first = window[0];
                 length = window[1] - window[0];
+                trimmedMatch = true;
+            }
+        }
+        if (first < 0 && hasLiteralEscapes(wanted)) {
+            // the snippet was built as a JSON string and its escapes were left in it, so the text holds a literal
+            // \n where the file has a newline: read it the way it was meant (CAMEL-24909)
+            String unescaped = unescapeLiterals(wanted);
+            int retry = content.indexOf(unescaped);
+            int retryLength = unescaped.length();
+            if (retry < 0) {
+                int[] window = uniqueTrimmedWindow(content, unescaped);
+                if (window != null) {
+                    retry = window[0];
+                    retryLength = window[1] - window[0];
+                    trimmedMatch = true;
+                }
+            }
+            if (retry >= 0) {
+                first = retry;
+                length = retryLength;
+                wanted = unescaped;
+                put = unescapeLiterals(put);
             }
         }
         JsonObject result = new JsonObject();
         result.put("file", file);
         if (first < 0) {
             result.put("status", "not-found");
-            String nearest = nearestBlock(content, find);
-            result.put("message", "The text to find is not in the file as given; copy the lines from the file"
-                                  + (nearest != null ? ", which has there:\n" + nearest : " (camel_get_files reads it)"));
+            String nearest = nearestBlock(content, wanted);
+            String message = "The text to find is not in the file as given; copy the lines from the file"
+                             + (nearest != null ? ", which has there:\n" + nearest : "");
             if (nearest != null) {
                 result.put("nearest", nearest);
             }
+            // a model that misses twice is writing the snippet from memory, so hand it the file it is editing
+            // instead of sending it back to camel_get_files (CAMEL-24909)
+            if (content.lines().count() <= MAX_EDIT_ECHO_LINES) {
+                result.put("fileContent", content);
+                message += nearest != null
+                        ? ". The whole file is in fileContent: copy the text to find from there"
+                        : ". The file as it stands is in fileContent: copy the text to find from there";
+            } else if (nearest == null) {
+                message += " (camel_get_files reads it)";
+            }
+            result.put("message", message);
             return result;
         }
-        if (content.indexOf(find, first + find.length()) >= 0) {
+        if (content.indexOf(wanted, first + wanted.length()) >= 0) {
             result.put("status", "ambiguous");
-            result.put("occurrences", count(content, find));
+            result.put("occurrences", count(content, wanted));
             result.put("message", "The text to find occurs more than once: include the lines around it so it names one"
                                   + " place, or write the whole file with camel_write_file");
             return result;
         }
+        if (trimmedMatch) {
+            // the snippet was written at another indentation than the file has: put the replacement in at the
+            // file's indentation, or the result is valid text at the wrong depth (CAMEL-24909)
+            put = reindent(put, indentOf(wanted), indentOf(content.substring(first)));
+        }
         int line = (int) content.substring(0, first).lines().count()
                    + (first > 0 && content.charAt(first - 1) == '\n' ? 1 : 0);
-        result.put("content", content.substring(0, first) + replace + content.substring(first + length));
+        result.put("content", content.substring(0, first) + put + content.substring(first + length));
         result.put("editedAtLine", Math.max(1, line));
         // the lines actually replaced: with the trimmed match that is the window in the file, which can be shorter
         // than find when it ends in blank lines (CAMEL-24909)
         result.put("replacedLines", (int) content.substring(first, first + length).lines().count());
         return result;
+    }
+
+    /** The leading whitespace of the first line of the text that has something on it. */
+    private static String indentOf(String text) {
+        for (String line : text.split("\n", -1)) {
+            if (!line.isBlank()) {
+                int i = 0;
+                while (i < line.length() && Character.isWhitespace(line.charAt(i))) {
+                    i++;
+                }
+                return line.substring(0, i);
+            }
+        }
+        return "";
+    }
+
+    /** Moves the text from the indentation it was written at to the one the file has at that place. */
+    private static String reindent(String text, String from, String to) {
+        int delta = to.length() - from.length();
+        if (delta == 0 || text.isEmpty()) {
+            return text;
+        }
+        StringBuilder sb = new StringBuilder(text.length() + Math.abs(delta) * 8);
+        String[] lines = text.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (!line.isBlank()) {
+                if (delta > 0) {
+                    line = " ".repeat(delta) + line;
+                } else {
+                    int strip = 0;
+                    while (strip < -delta && strip < line.length() && line.charAt(strip) == ' ') {
+                        strip++;
+                    }
+                    line = line.substring(strip);
+                }
+            }
+            sb.append(line);
+            if (i < lines.length - 1) {
+                sb.append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /** Whether the text carries JSON escapes that were never turned back into the characters they stand for. */
+    private static boolean hasLiteralEscapes(String text) {
+        return text != null && (text.contains("\\n") || text.contains("\\r\\n") || text.contains("\\t"));
+    }
+
+    /** Reads {@code \n}, {@code \r\n} and {@code \t} as the characters they stand for. */
+    private static String unescapeLiterals(String text) {
+        return text == null ? null : text.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\t", "\t");
     }
 
     /**

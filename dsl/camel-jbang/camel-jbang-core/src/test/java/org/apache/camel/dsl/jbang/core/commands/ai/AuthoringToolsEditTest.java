@@ -75,6 +75,45 @@ class AuthoringToolsEditTest {
     }
 
     @Test
+    void escapesLeftInTheSnippetAreReadAsTheNewlinesTheyStandFor(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        // the model built the snippet as a JSON string and left its escapes in it
+        JsonObject result = edit(dir,
+                "- log:\\n                        message: \"two\"",
+                "- log:\\n                        message: \"two and a half\"");
+
+        assertThat(result.getString("status")).isEqualTo("edited");
+        String after = Files.readString(dir.resolve("demo.camel.yaml"));
+        assertThat(after).contains("message: \"two and a half\"").doesNotContain("\\n");
+        assertThat(after.lines().count()).isEqualTo(ROUTE.lines().count());
+    }
+
+    @Test
+    void aSnippetWrittenAtAnotherIndentationIsPutInAtTheFileOwn(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        // the model wrote both the snippet and its replacement flat against the left margin
+        JsonObject result = edit(dir, "- log:\n    message: \"two\"", "- log:\n    message: \"two\"\n- to:\n    uri: mock:end");
+
+        assertThat(result.getString("status")).isEqualTo("edited");
+        String after = Files.readString(dir.resolve("demo.camel.yaml"));
+        assertThat(after).contains("        - log:\n            message: \"two\"\n"
+                                   + "        - to:\n            uri: mock:end");
+    }
+
+    @Test
+    void aMissHandsBackTheFileToCopyTheTextFrom(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        JsonObject missing = edit(dir, "uri: direct:nowhere", "x");
+
+        assertThat(missing.getString("status")).isEqualTo("not-found");
+        assertThat(missing.getString("fileContent")).isEqualTo(ROUTE);
+        assertThat(missing.getString("message")).contains("fileContent");
+    }
+
+    @Test
     void textThatIsNotThereOrOccursTwiceIsRefusedWithWhatToDo(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
 
