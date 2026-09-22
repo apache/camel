@@ -536,9 +536,8 @@ public interface ImapsComponentBuilderFactory {
         
         /**
          * Whether message headers From and Sender override the sender
-         * pre-configured in the endpoint URI. Defaults to true. Set to false to
-         * always use the endpoint URI sender, ignoring any From or Sender
-         * headers from the message.
+         * pre-configured in the endpoint URI. Defaults to false. Set to true to
+         * let message headers From and Sender override the endpoint URI sender.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -556,9 +555,8 @@ public interface ImapsComponentBuilderFactory {
         
         /**
          * Whether message headers To, CC, and BCC override the recipients
-         * pre-configured in the endpoint URI. Defaults to true. Set to false to
-         * always use the endpoint URI recipients, ignoring any recipient
-         * headers from the message.
+         * pre-configured in the endpoint URI. Defaults to false. Set to true to
+         * let message headers override the endpoint URI recipients.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -576,8 +574,8 @@ public interface ImapsComponentBuilderFactory {
         
         /**
          * Whether message header Reply-To overrides the replyTo pre-configured
-         * in the endpoint URI. Defaults to true. Set to false to always use the
-         * endpoint URI replyTo, ignoring any Reply-To header from the message.
+         * in the endpoint URI. Defaults to false. Set to true to let the
+         * message Reply-To header override the endpoint URI replyTo.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -595,8 +593,8 @@ public interface ImapsComponentBuilderFactory {
         
         /**
          * Whether message header Subject overrides the subject pre-configured
-         * in the endpoint URI. Defaults to true. Set to false to always use the
-         * endpoint URI subject, ignoring any Subject header from the message.
+         * in the endpoint URI. Defaults to false. Set to true to let the
+         * message Subject header override the endpoint URI subject.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
