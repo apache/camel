@@ -57,7 +57,7 @@ public interface OpenaiComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param apiKey the value to set
          * @return the dsl builder
@@ -72,7 +72,7 @@ public interface OpenaiComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioModel the value to set
          * @return the dsl builder
@@ -89,7 +89,7 @@ public interface OpenaiComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://api.openai.com/v1
-         * Group: producer
+         * Group: common
          * 
          * @param baseUrl the value to set
          * @return the dsl builder
@@ -104,13 +104,56 @@ public interface OpenaiComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param embeddingModel the value to set
          * @return the dsl builder
          */
         default OpenaiComponentBuilder embeddingModel(java.lang.String embeddingModel) {
             doSetProperty("embeddingModel", embeddingModel);
+            return this;
+        }
+    
+        /**
+         * Default model for chat completion endpoints.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param model the value to set
+         * @return the dsl builder
+         */
+        default OpenaiComponentBuilder model(java.lang.String model) {
+            doSetProperty("model", model);
+            return this;
+        }
+    
+        
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default OpenaiComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     
@@ -136,21 +179,6 @@ public interface OpenaiComponentBuilderFactory {
          */
         default OpenaiComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-    
-        /**
-         * Default model for chat completion endpoints.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param model the value to set
-         * @return the dsl builder
-         */
-        default OpenaiComponentBuilder model(java.lang.String model) {
-            doSetProperty("model", model);
             return this;
         }
     
@@ -211,8 +239,9 @@ public interface OpenaiComponentBuilderFactory {
             case "audioModel": ((OpenAIComponent) component).setAudioModel((java.lang.String) value); return true;
             case "baseUrl": ((OpenAIComponent) component).setBaseUrl((java.lang.String) value); return true;
             case "embeddingModel": ((OpenAIComponent) component).setEmbeddingModel((java.lang.String) value); return true;
-            case "lazyStartProducer": ((OpenAIComponent) component).setLazyStartProducer((boolean) value); return true;
             case "model": ((OpenAIComponent) component).setModel((java.lang.String) value); return true;
+            case "bridgeErrorHandler": ((OpenAIComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "lazyStartProducer": ((OpenAIComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((OpenAIComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "useGlobalSslContextParameters": ((OpenAIComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;

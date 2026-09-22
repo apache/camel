@@ -36,11 +36,4723 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface OpenAIEndpointBuilderFactory {
 
     /**
+     * Builder for endpoint consumers for the OpenAI component.
+     */
+    public interface OpenAIEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default AdvancedOpenAIEndpointConsumerBuilder advanced() {
+            return (AdvancedOpenAIEndpointConsumerBuilder) this;
+        }
+        /**
+         * Additional JSON properties to include in the request body (e.g.
+         * additionalBodyProperty.traceId=123). This is a multi-value option
+         * with prefix: additionalBodyProperty.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalBodyProperty(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder additionalBodyProperty(String key, Object value) {
+            doSetMultiValueProperty("additionalBodyProperty", "additionalBodyProperty." + key, value);
+            return this;
+        }
+        /**
+         * Additional JSON properties to include in the request body (e.g.
+         * additionalBodyProperty.traceId=123). This is a multi-value option
+         * with prefix: additionalBodyProperty.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalBodyProperty(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder additionalBodyProperty(Map values) {
+            doSetMultiValueProperties("additionalBodyProperty", "additionalBodyProperty.", values);
+            return this;
+        }
+        /**
+         * Additional HTTP request headers to send with every API call (e.g.
+         * additionalHeader.OpenAI-Organization=my-org or
+         * additionalHeader.api-key=secret). Values may contain secrets. This is
+         * a multi-value option with prefix: additionalHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalHeader(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder additionalHeader(String key, Object value) {
+            doSetMultiValueProperty("additionalHeader", "additionalHeader." + key, value);
+            return this;
+        }
+        /**
+         * Additional HTTP request headers to send with every API call (e.g.
+         * additionalHeader.OpenAI-Organization=my-org or
+         * additionalHeader.api-key=secret). Values may contain secrets. This is
+         * a multi-value option with prefix: additionalHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalHeader(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder additionalHeader(Map values) {
+            doSetMultiValueProperties("additionalHeader", "additionalHeader.", values);
+            return this;
+        }
+        /**
+         * Map additional fields from the response message to Camel headers. The
+         * key is the field name in the API response, the value is the Camel
+         * header name (e.g.
+         * additionalResponseHeader.reasoning_content=MyReasoningHeader). This
+         * is a multi-value option with prefix: additionalResponseHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalResponseHeader(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder additionalResponseHeader(String key, Object value) {
+            doSetMultiValueProperty("additionalResponseHeader", "additionalResponseHeader." + key, value);
+            return this;
+        }
+        /**
+         * Map additional fields from the response message to Camel headers. The
+         * key is the field name in the API response, the value is the Camel
+         * header name (e.g.
+         * additionalResponseHeader.reasoning_content=MyReasoningHeader). This
+         * is a multi-value option with prefix: additionalResponseHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalResponseHeader(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder additionalResponseHeader(Map values) {
+            doSetMultiValueProperties("additionalResponseHeader", "additionalResponseHeader.", values);
+            return this;
+        }
+        /**
+         * OpenAI API key. Can also be set via OPENAI_API_KEY environment
+         * variable.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder apiKey(String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+        /**
+         * Chunking strategy for diarized transcription models such as
+         * gpt-4o-transcribe-diarize.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioChunkingStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioChunkingStrategy(String audioChunkingStrategy) {
+            doSetProperty("audioChunkingStrategy", audioChunkingStrategy);
+            return this;
+        }
+        /**
+         * Comma-separated extra response fields to include (e.g. logprobs).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioInclude the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioInclude(String audioInclude) {
+            doSetProperty("audioInclude", audioInclude);
+            return this;
+        }
+        /**
+         * Comma-separated keywords to improve transcription accuracy.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioKeywords the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioKeywords(String audioKeywords) {
+            doSetProperty("audioKeywords", audioKeywords);
+            return this;
+        }
+        /**
+         * Comma-separated known speaker names for diarized transcription.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioKnownSpeakerNames the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioKnownSpeakerNames(String audioKnownSpeakerNames) {
+            doSetProperty("audioKnownSpeakerNames", audioKnownSpeakerNames);
+            return this;
+        }
+        /**
+         * Comma-separated known speaker reference audio file ids for diarized
+         * transcription.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioKnownSpeakerReferences the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioKnownSpeakerReferences(String audioKnownSpeakerReferences) {
+            doSetProperty("audioKnownSpeakerReferences", audioKnownSpeakerReferences);
+            return this;
+        }
+        /**
+         * The language of the input audio in ISO-639-1 format (e.g., 'en').
+         * Improves accuracy and latency.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioLanguage the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioLanguage(String audioLanguage) {
+            doSetProperty("audioLanguage", audioLanguage);
+            return this;
+        }
+        /**
+         * Comma-separated input audio languages (ISO-639-1 or ISO-639-3).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioLanguages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioLanguages(String audioLanguages) {
+            doSetProperty("audioLanguages", audioLanguages);
+            return this;
+        }
+        /**
+         * The model to use for audio transcription (e.g., whisper-1,
+         * gpt-4o-transcribe).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioModel(String audioModel) {
+            doSetProperty("audioModel", audioModel);
+            return this;
+        }
+        /**
+         * Optional text to guide the model's style or continue a previous audio
+         * segment.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioPrompt the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioPrompt(String audioPrompt) {
+            doSetProperty("audioPrompt", audioPrompt);
+            return this;
+        }
+        /**
+         * The format of the transcription output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: json
+         * Group: common
+         * 
+         * @param audioResponseFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioResponseFormat(String audioResponseFormat) {
+            doSetProperty("audioResponseFormat", audioResponseFormat);
+            return this;
+        }
+        /**
+         * Sampling temperature for transcription (0.0 to 1.0).
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioTemperature the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioTemperature(Double audioTemperature) {
+            doSetProperty("audioTemperature", audioTemperature);
+            return this;
+        }
+        /**
+         * Sampling temperature for transcription (0.0 to 1.0).
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioTemperature the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioTemperature(String audioTemperature) {
+            doSetProperty("audioTemperature", audioTemperature);
+            return this;
+        }
+        /**
+         * Comma-separated timestamp granularities: 'word', 'segment', or
+         * 'word,segment'. Only applicable with verbose_json response format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioTimestampGranularities the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder audioTimestampGranularities(String audioTimestampGranularities) {
+            doSetProperty("audioTimestampGranularities", audioTimestampGranularities);
+            return this;
+        }
+        /**
+         * When true and MCP servers are configured, automatically execute tool
+         * calls and loop back to the model. When false, tool calls are returned
+         * as the message body for manual handling.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param autoToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder autoToolExecution(boolean autoToolExecution) {
+            doSetProperty("autoToolExecution", autoToolExecution);
+            return this;
+        }
+        /**
+         * When true and MCP servers are configured, automatically execute tool
+         * calls and loop back to the model. When false, tool calls are returned
+         * as the message body for manual handling.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param autoToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder autoToolExecution(String autoToolExecution) {
+            doSetProperty("autoToolExecution", autoToolExecution);
+            return this;
+        }
+        /**
+         * Run the model response in the background (Responses API only). The
+         * exchange completes as soon as the response is queued, with an empty
+         * body and the CamelOpenAIResponseStatus header, and the response is
+         * stored so that it can be retrieved later. Cannot be combined with
+         * automatic tool execution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param background the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder background(boolean background) {
+            doSetProperty("background", background);
+            return this;
+        }
+        /**
+         * Run the model response in the background (Responses API only). The
+         * exchange completes as soon as the response is queued, with an empty
+         * body and the CamelOpenAIResponseStatus header, and the response is
+         * stored so that it can be retrieved later. Cannot be combined with
+         * automatic tool execution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param background the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder background(String background) {
+            doSetProperty("background", background);
+            return this;
+        }
+        /**
+         * Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can
+         * be used for local or third-party providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: https://api.openai.com/v1
+         * Group: common
+         * 
+         * @param baseUrl the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder baseUrl(String baseUrl) {
+            doSetProperty("baseUrl", baseUrl);
+            return this;
+        }
+        /**
+         * The endpoint every request in a batch calls. Required by the batch
+         * operation, which validates it against the endpoints the Batch API
+         * supports.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param batchEndpoint the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder batchEndpoint(String batchEndpoint) {
+            doSetProperty("batchEndpoint", batchEndpoint);
+            return this;
+        }
+        /**
+         * Metadata to attach to a batch, used to find it again later (e.g.
+         * batchMetadata.job=nightly-enrichment). This is a multi-value option
+         * with prefix: batchMetadata.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the batchMetadata(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder batchMetadata(String key, Object value) {
+            doSetMultiValueProperty("batchMetadata", "batchMetadata." + key, value);
+            return this;
+        }
+        /**
+         * Metadata to attach to a batch, used to find it again later (e.g.
+         * batchMetadata.job=nightly-enrichment). This is a multi-value option
+         * with prefix: batchMetadata.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the batchMetadata(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder batchMetadata(Map values) {
+            doSetMultiValueProperties("batchMetadata", "batchMetadata.", values);
+            return this;
+        }
+        /**
+         * Which result file the batch-results operation downloads: the output
+         * file holding the results of the successful requests, or the error
+         * file holding the failed ones.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: output
+         * Group: common
+         * 
+         * @param batchResultsFile the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder batchResultsFile(String batchResultsFile) {
+            doSetProperty("batchResultsFile", batchResultsFile);
+            return this;
+        }
+        /**
+         * Comma-separated hosted tools for the Responses API: web_search,
+         * file_search, code_interpreter.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param builtinTools the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder builtinTools(String builtinTools) {
+            doSetProperty("builtinTools", builtinTools);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for establishing the TCP connection to the
+         * API. A connect timeout means the endpoint was unreachable, so the
+         * request never ran and is safe to retry. When 0 or negative, the SDK
+         * default (1 minute) is used.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder connectTimeout(long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for establishing the TCP connection to the
+         * API. A connect timeout means the endpoint was unreachable, so the
+         * request never ran and is safe to retry. When 0 or negative, the SDK
+         * default (1 minute) is used.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Exchange property name for storing conversation history.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: CamelOpenAIConversationHistory
+         * Group: common
+         * 
+         * @param conversationHistoryProperty the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder conversationHistoryProperty(String conversationHistoryProperty) {
+            doSetProperty("conversationHistoryProperty", conversationHistoryProperty);
+            return this;
+        }
+        /**
+         * Id of a conversation created with the OpenAI Conversations API to run
+         * the request in. The conversation keeps its items across exchanges.
+         * Cannot be combined with previousResponseId (Responses API only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param conversationId the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder conversationId(String conversationId) {
+            doSetProperty("conversationId", conversationId);
+            return this;
+        }
+        /**
+         * Enable conversation memory per Exchange. The chat-completion
+         * operation keeps the message history in the
+         * conversationHistoryProperty exchange property. The responses
+         * operation keeps the conversation on the server, stores the last
+         * response id in that property and sends it as previous_response_id,
+         * which requires a server that stores responses.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param conversationMemory the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder conversationMemory(boolean conversationMemory) {
+            doSetProperty("conversationMemory", conversationMemory);
+            return this;
+        }
+        /**
+         * Enable conversation memory per Exchange. The chat-completion
+         * operation keeps the message history in the
+         * conversationHistoryProperty exchange property. The responses
+         * operation keeps the conversation on the server, stores the last
+         * response id in that property and sends it as previous_response_id,
+         * which requires a server that stores responses.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param conversationMemory the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder conversationMemory(String conversationMemory) {
+            doSetProperty("conversationMemory", conversationMemory);
+            return this;
+        }
+        /**
+         * Developer message to prepend before user messages.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param developerMessage the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder developerMessage(String developerMessage) {
+            doSetProperty("developerMessage", developerMessage);
+            return this;
+        }
+        /**
+         * Number of dimensions for the embedding output. Only supported by
+         * text-embedding-3 models. Reducing dimensions can lower costs and
+         * improve performance without significant quality loss.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param dimensions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder dimensions(Integer dimensions) {
+            doSetProperty("dimensions", dimensions);
+            return this;
+        }
+        /**
+         * Number of dimensions for the embedding output. Only supported by
+         * text-embedding-3 models. Reducing dimensions can lower costs and
+         * improve performance without significant quality loss.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param dimensions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder dimensions(String dimensions) {
+            doSetProperty("dimensions", dimensions);
+            return this;
+        }
+        /**
+         * The model to use for embeddings.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param embeddingModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder embeddingModel(String embeddingModel) {
+            doSetProperty("embeddingModel", embeddingModel);
+            return this;
+        }
+        /**
+         * The format for embedding output: 'float' for list of floats, 'base64'
+         * for compressed format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: base64
+         * Group: common
+         * 
+         * @param encodingFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder encodingFormat(String encodingFormat) {
+            doSetProperty("encodingFormat", encodingFormat);
+            return this;
+        }
+        /**
+         * Comma-separated vector store ids required when builtinTools includes
+         * file_search.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param fileSearchVectorStoreIds the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder fileSearchVectorStoreIds(String fileSearchVectorStoreIds) {
+            doSetProperty("fileSearchVectorStoreIds", fileSearchVectorStoreIds);
+            return this;
+        }
+        /**
+         * Strategy for handling tool names hallucinated by the model (tool not
+         * found in any MCP server). 'failExchange' (default) throws an
+         * IllegalStateException, failing the exchange immediately.
+         * 'repromptModel' sends a corrective tool result listing the available
+         * tools so the model can self-correct and retry. The maxToolIterations
+         * option bounds retries.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openai.HallucinatedToolNameStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: common
+         * 
+         * @param hallucinatedToolNameStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder hallucinatedToolNameStrategy(org.apache.camel.component.openai.HallucinatedToolNameStrategy hallucinatedToolNameStrategy) {
+            doSetProperty("hallucinatedToolNameStrategy", hallucinatedToolNameStrategy);
+            return this;
+        }
+        /**
+         * Strategy for handling tool names hallucinated by the model (tool not
+         * found in any MCP server). 'failExchange' (default) throws an
+         * IllegalStateException, failing the exchange immediately.
+         * 'repromptModel' sends a corrective tool result listing the available
+         * tools so the model can self-correct and retry. The maxToolIterations
+         * option bounds retries.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openai.HallucinatedToolNameStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: common
+         * 
+         * @param hallucinatedToolNameStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder hallucinatedToolNameStrategy(String hallucinatedToolNameStrategy) {
+            doSetProperty("hallucinatedToolNameStrategy", hallucinatedToolNameStrategy);
+            return this;
+        }
+        /**
+         * JSON array of hosted MCP tool definitions passed to the Responses API
+         * as OpenAI mcp tools. Every field of the API is sent, such as
+         * server_label, server_url, require_approval, allowed_tools, headers
+         * and authorization. Marked secret because it can carry credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param hostedMcpTools the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder hostedMcpTools(String hostedMcpTools) {
+            doSetProperty("hostedMcpTools", hostedMcpTools);
+            return this;
+        }
+        /**
+         * The background of the generated image. Only supported by the GPT
+         * image models, and a transparent background requires the png or webp
+         * output format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageBackground the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageBackground(String imageBackground) {
+            doSetProperty("imageBackground", imageBackground);
+            return this;
+        }
+        /**
+         * The number of images to generate, between 1 and 10. dall-e-3 only
+         * supports 1.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageCount the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageCount(Integer imageCount) {
+            doSetProperty("imageCount", imageCount);
+            return this;
+        }
+        /**
+         * The number of images to generate, between 1 and 10. dall-e-3 only
+         * supports 1.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param imageCount the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageCount(String imageCount) {
+            doSetProperty("imageCount", imageCount);
+            return this;
+        }
+        /**
+         * How closely the edit must match the style and features of the input
+         * image. Only supported by the image-edit operation on gpt-image-1 and
+         * gpt-image-1.5.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageInputFidelity the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageInputFidelity(String imageInputFidelity) {
+            doSetProperty("imageInputFidelity", imageInputFidelity);
+            return this;
+        }
+        /**
+         * The model to use for image generation or editing (e.g., gpt-image-1,
+         * gpt-image-1-mini, gpt-image-1.5, gpt-image-2). Required for the
+         * image-generation and image-edit operations, because the model
+         * determines which of the other image options are accepted. The DALL-E
+         * models are no longer offered by OpenAI, but remain valid values for
+         * OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageModel(String imageModel) {
+            doSetProperty("imageModel", imageModel);
+            return this;
+        }
+        /**
+         * The content moderation level applied to image generation. Only
+         * supported by the GPT image models.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageModeration the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageModeration(String imageModeration) {
+            doSetProperty("imageModeration", imageModeration);
+            return this;
+        }
+        /**
+         * The compression level from 0 to 100 for the webp and jpeg output
+         * formats. Only supported by the GPT image models.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageOutputCompression the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageOutputCompression(Integer imageOutputCompression) {
+            doSetProperty("imageOutputCompression", imageOutputCompression);
+            return this;
+        }
+        /**
+         * The compression level from 0 to 100 for the webp and jpeg output
+         * formats. Only supported by the GPT image models.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param imageOutputCompression the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageOutputCompression(String imageOutputCompression) {
+            doSetProperty("imageOutputCompression", imageOutputCompression);
+            return this;
+        }
+        /**
+         * The output format of the generated image. Only supported by the GPT
+         * image models, which default to png.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageOutputFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageOutputFormat(String imageOutputFormat) {
+            doSetProperty("imageOutputFormat", imageOutputFormat);
+            return this;
+        }
+        /**
+         * The prompt describing the image to generate, or the edit to apply.
+         * For image-generation the message body is used when this is not set;
+         * for image-edit the body carries the input image, so the prompt must
+         * come from this option or from the CamelOpenAIImagePrompt header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imagePrompt the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imagePrompt(String imagePrompt) {
+            doSetProperty("imagePrompt", imagePrompt);
+            return this;
+        }
+        /**
+         * The quality of the generated image. GPT image models accept auto,
+         * high, medium and low; hd and standard are DALL-E values kept for
+         * OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageQuality the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageQuality(String imageQuality) {
+            doSetProperty("imageQuality", imageQuality);
+            return this;
+        }
+        /**
+         * The response format of the generated image. The OpenAI images
+         * endpoint rejects this option: the GPT image models always return
+         * base64, and the DALL-E models that used to accept it are no longer
+         * offered. It is only sent when explicitly set, and is kept for
+         * OpenAI-compatible providers that still implement the older images
+         * API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageResponseFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageResponseFormat(String imageResponseFormat) {
+            doSetProperty("imageResponseFormat", imageResponseFormat);
+            return this;
+        }
+        /**
+         * The size of the generated image (e.g., 1024x1024, 1536x1024,
+         * 1024x1536, auto). The accepted values depend on the model.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageSize the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageSize(String imageSize) {
+            doSetProperty("imageSize", imageSize);
+            return this;
+        }
+        /**
+         * The style of the generated image. A dall-e-3 option, so only useful
+         * with OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageStyle the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder imageStyle(String imageStyle) {
+            doSetProperty("imageStyle", imageStyle);
+            return this;
+        }
+        /**
+         * JSON schema for structured output validation.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param jsonSchema the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder jsonSchema(String jsonSchema) {
+            doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Maximum cumulative prompt plus completion tokens allowed across the
+         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * Enforcement runs after each API call that requests further tool
+         * execution, so actual spend may exceed the configured budget by up to
+         * one call (typically the largest, as the prompt grows each iteration).
+         * A final text response is returned even when cumulative usage exceeds
+         * the budget.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxAgenticTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxAgenticTokens(long maxAgenticTokens) {
+            doSetProperty("maxAgenticTokens", maxAgenticTokens);
+            return this;
+        }
+        /**
+         * Maximum cumulative prompt plus completion tokens allowed across the
+         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * Enforcement runs after each API call that requests further tool
+         * execution, so actual spend may exceed the configured budget by up to
+         * one call (typically the largest, as the prompt grows each iteration).
+         * A final text response is returned even when cumulative usage exceeds
+         * the budget.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxAgenticTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxAgenticTokens(String maxAgenticTokens) {
+            doSetProperty("maxAgenticTokens", maxAgenticTokens);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, retain at most this many messages
+         * in the exchange conversation history. System and developer messages
+         * are prepended separately and are not stored in history. Assistant
+         * tool-call blocks are kept intact and may retain slightly more than
+         * this limit to preserve tool result pairing. When 0, no message limit
+         * is applied.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxHistoryMessages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxHistoryMessages(int maxHistoryMessages) {
+            doSetProperty("maxHistoryMessages", maxHistoryMessages);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, retain at most this many messages
+         * in the exchange conversation history. System and developer messages
+         * are prepended separately and are not stored in history. Assistant
+         * tool-call blocks are kept intact and may retain slightly more than
+         * this limit to preserve tool result pairing. When 0, no message limit
+         * is applied.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxHistoryMessages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxHistoryMessages(String maxHistoryMessages) {
+            doSetProperty("maxHistoryMessages", maxHistoryMessages);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, trim conversation history using a
+         * token estimate (character count / 4, including image payload size for
+         * multi-modal user messages). Oldest segments are dropped first until
+         * the estimated tokens are within this limit. Assistant tool-call
+         * blocks are removed as a unit with their tool results. The most recent
+         * segment is always retained, even when it alone exceeds this limit.
+         * When 0, no token limit is applied.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxHistoryTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxHistoryTokens(int maxHistoryTokens) {
+            doSetProperty("maxHistoryTokens", maxHistoryTokens);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, trim conversation history using a
+         * token estimate (character count / 4, including image payload size for
+         * multi-modal user messages). Oldest segments are dropped first until
+         * the estimated tokens are within this limit. Assistant tool-call
+         * blocks are removed as a unit with their tool results. The most recent
+         * segment is always retained, even when it alone exceeds this limit.
+         * When 0, no token limit is applied.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxHistoryTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxHistoryTokens(String maxHistoryTokens) {
+            doSetProperty("maxHistoryTokens", maxHistoryTokens);
+            return this;
+        }
+        /**
+         * Maximum number of times the OpenAI SDK client retries failed
+         * requests. The SDK retry is rate-limit aware (honors Retry-After on
+         * 429).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: common
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxRetries(int maxRetries) {
+            doSetProperty("maxRetries", maxRetries);
+            return this;
+        }
+        /**
+         * Maximum number of times the OpenAI SDK client retries failed
+         * requests. The SDK retry is rate-limit aware (honors Retry-After on
+         * 429).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: common
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxRetries(String maxRetries) {
+            doSetProperty("maxRetries", maxRetries);
+            return this;
+        }
+        /**
+         * Maximum number of tokens to generate.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param maxTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxTokens(Integer maxTokens) {
+            doSetProperty("maxTokens", maxTokens);
+            return this;
+        }
+        /**
+         * Maximum number of tokens to generate.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param maxTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxTokens(String maxTokens) {
+            doSetProperty("maxTokens", maxTokens);
+            return this;
+        }
+        /**
+         * Maximum number of tool call loop iterations to prevent infinite
+         * loops.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: common
+         * 
+         * @param maxToolIterations the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxToolIterations(int maxToolIterations) {
+            doSetProperty("maxToolIterations", maxToolIterations);
+            return this;
+        }
+        /**
+         * Maximum number of tool call loop iterations to prevent infinite
+         * loops.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: common
+         * 
+         * @param maxToolIterations the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder maxToolIterations(String maxToolIterations) {
+            doSetProperty("maxToolIterations", maxToolIterations);
+            return this;
+        }
+        /**
+         * Comma-separated list of MCP protocol versions to advertise when
+         * connecting to MCP servers using Streamable HTTP transport. When not
+         * set, the SDK default is used. Example:
+         * 2024-11-05,2025-03-26,2025-06-18.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param mcpProtocolVersions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpProtocolVersions(String mcpProtocolVersions) {
+            doSetProperty("mcpProtocolVersions", mcpProtocolVersions);
+            return this;
+        }
+        /**
+         * Automatically reconnect to MCP servers when a tool call fails due to
+         * a transport error, and retry the call once.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param mcpReconnect the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpReconnect(boolean mcpReconnect) {
+            doSetProperty("mcpReconnect", mcpReconnect);
+            return this;
+        }
+        /**
+         * Automatically reconnect to MCP servers when a tool call fails due to
+         * a transport error, and retry the call once.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param mcpReconnect the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpReconnect(String mcpReconnect) {
+            doSetProperty("mcpReconnect", mcpReconnect);
+            return this;
+        }
+        /**
+         * MCP (Model Context Protocol) server configurations. Define servers
+         * using prefix notation:
+         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
+         * (optional include list to restrict which tools are registered from
+         * this server). This is a multi-value option with prefix: mcpServer.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the mcpServer(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpServer(String key, Object value) {
+            doSetMultiValueProperty("mcpServer", "mcpServer." + key, value);
+            return this;
+        }
+        /**
+         * MCP (Model Context Protocol) server configurations. Define servers
+         * using prefix notation:
+         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
+         * (optional include list to restrict which tools are registered from
+         * this server). This is a multi-value option with prefix: mcpServer.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the mcpServer(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpServer(Map values) {
+            doSetMultiValueProperties("mcpServer", "mcpServer.", values);
+            return this;
+        }
+        /**
+         * Timeout in seconds for MCP tool call requests. Applies to all MCP
+         * operations including tool execution and initialization.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: common
+         * 
+         * @param mcpTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpTimeout(int mcpTimeout) {
+            doSetProperty("mcpTimeout", mcpTimeout);
+            return this;
+        }
+        /**
+         * Timeout in seconds for MCP tool call requests. Applies to all MCP
+         * operations including tool execution and initialization.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: common
+         * 
+         * @param mcpTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpTimeout(String mcpTimeout) {
+            doSetProperty("mcpTimeout", mcpTimeout);
+            return this;
+        }
+        /**
+         * Refresh the advertised tool list when an MCP server notifies that its
+         * tools changed. Set to false to keep the tool list fixed to what was
+         * listed when the endpoint started, for deployments that require a
+         * deterministic set of tools.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param mcpToolRefresh the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpToolRefresh(boolean mcpToolRefresh) {
+            doSetProperty("mcpToolRefresh", mcpToolRefresh);
+            return this;
+        }
+        /**
+         * Refresh the advertised tool list when an MCP server notifies that its
+         * tools changed. Set to false to keep the tool list fixed to what was
+         * listed when the endpoint started, for deployments that require a
+         * deterministic set of tools.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param mcpToolRefresh the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder mcpToolRefresh(String mcpToolRefresh) {
+            doSetProperty("mcpToolRefresh", mcpToolRefresh);
+            return this;
+        }
+        /**
+         * The model to use for chat completion.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param model the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder model(String model) {
+            doSetProperty("model", model);
+            return this;
+        }
+        /**
+         * The model to use for moderation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: omni-moderation-latest
+         * Group: common
+         * 
+         * @param moderationModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder moderationModel(String moderationModel) {
+            doSetProperty("moderationModel", moderationModel);
+            return this;
+        }
+        /**
+         * Fully qualified class name for structured output using response
+         * format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param outputClass the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder outputClass(String outputClass) {
+            doSetProperty("outputClass", outputClass);
+            return this;
+        }
+        /**
+         * Execute the tool calls returned by the model in a single response
+         * concurrently instead of sequentially. Tool calls in the same batch
+         * are independent by design, so this reduces the latency of a batch to
+         * that of its slowest tool. Results are always fed back to the model in
+         * the original tool call order. Note that with
+         * toolExecutionErrorStrategy=failExchange the sibling tool calls
+         * already dispatched complete before the exchange fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param parallelToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder parallelToolExecution(boolean parallelToolExecution) {
+            doSetProperty("parallelToolExecution", parallelToolExecution);
+            return this;
+        }
+        /**
+         * Execute the tool calls returned by the model in a single response
+         * concurrently instead of sequentially. Tool calls in the same batch
+         * are independent by design, so this reduces the latency of a batch to
+         * that of its slowest tool. Results are always fed back to the model in
+         * the original tool call order. Note that with
+         * toolExecutionErrorStrategy=failExchange the sibling tool calls
+         * already dispatched complete before the exchange fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param parallelToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder parallelToolExecution(String parallelToolExecution) {
+            doSetProperty("parallelToolExecution", parallelToolExecution);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for a batch of parallel tool calls, so that
+         * one slow tool cannot block the whole batch. The timeout applies to
+         * the batch as a whole, not per tool call. A tool call that exceeds it
+         * is cancelled and handled according to toolExecutionErrorStrategy. The
+         * default of 0 disables the batch timeout and relies on mcpTimeout,
+         * which already bounds each individual MCP request. Only used when
+         * parallelToolExecution=true.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param parallelToolTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder parallelToolTimeout(long parallelToolTimeout) {
+            doSetProperty("parallelToolTimeout", parallelToolTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for a batch of parallel tool calls, so that
+         * one slow tool cannot block the whole batch. The timeout applies to
+         * the batch as a whole, not per tool call. A tool call that exceeds it
+         * is cancelled and handled according to toolExecutionErrorStrategy. The
+         * default of 0 disables the batch timeout and relies on mcpTimeout,
+         * which already bounds each individual MCP request. Only used when
+         * parallelToolExecution=true.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param parallelToolTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder parallelToolTimeout(String parallelToolTimeout) {
+            doSetProperty("parallelToolTimeout", parallelToolTimeout);
+            return this;
+        }
+        /**
+         * Previous response id for OpenAI server-side conversation state
+         * (Responses API only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param previousResponseId the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder previousResponseId(String previousResponseId) {
+            doSetProperty("previousResponseId", previousResponseId);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for reading the response. A read timeout
+         * means the model was slow mid-generation, so the request may have been
+         * processed. When 0 or negative, requestTimeout applies.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder readTimeout(long readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for reading the response. A read timeout
+         * means the model was slow mid-generation, so the request may have been
+         * processed. When 0 or negative, requestTimeout applies.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Overall HTTP request timeout in milliseconds for the OpenAI SDK
+         * client. When 0 or negative, the SDK default (10 minutes) is used.
+         * Acts as the fallback for readTimeout and writeTimeout when those are
+         * not set.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * Overall HTTP request timeout in milliseconds for the OpenAI SDK
+         * client. When 0 or negative, the SDK default (10 minutes) is used.
+         * Acts as the fallback for readTimeout and writeTimeout when those are
+         * not set.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * Optional instructions to control the voice of the generated audio.
+         * Does not work with tts-1 or tts-1-hd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param speechInstructions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder speechInstructions(String speechInstructions) {
+            doSetProperty("speechInstructions", speechInstructions);
+            return this;
+        }
+        /**
+         * The model to use for text-to-speech (e.g., gpt-4o-mini-tts, tts-1,
+         * tts-1-hd).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param speechModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder speechModel(String speechModel) {
+            doSetProperty("speechModel", speechModel);
+            return this;
+        }
+        /**
+         * The audio format for text-to-speech output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: mp3
+         * Group: common
+         * 
+         * @param speechResponseFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder speechResponseFormat(String speechResponseFormat) {
+            doSetProperty("speechResponseFormat", speechResponseFormat);
+            return this;
+        }
+        /**
+         * The speed of the generated audio, from 0.25 to 4.0 where 1.0 is
+         * normal speed.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param speechSpeed the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder speechSpeed(Double speechSpeed) {
+            doSetProperty("speechSpeed", speechSpeed);
+            return this;
+        }
+        /**
+         * The speed of the generated audio, from 0.25 to 4.0 where 1.0 is
+         * normal speed.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param speechSpeed the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder speechSpeed(String speechSpeed) {
+            doSetProperty("speechSpeed", speechSpeed);
+            return this;
+        }
+        /**
+         * The voice to use for text-to-speech (e.g., alloy, echo, fable, onyx,
+         * nova, shimmer). See the OpenAI documentation for the full list of
+         * supported voices.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: alloy
+         * Group: common
+         * 
+         * @param speechVoice the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder speechVoice(String speechVoice) {
+            doSetProperty("speechVoice", speechVoice);
+            return this;
+        }
+        /**
+         * Store the full SDK response in non-streaming mode: chat-completion
+         * uses exchange property 'CamelOpenAIResponse'; responses uses
+         * 'CamelOpenAIResponsesResponse'; moderation uses
+         * 'CamelOpenAIModerationResponse'; image-generation and image-edit use
+         * 'CamelOpenAIImageResponse'; embeddings uses
+         * 'CamelOpenAIEmbeddingsResponse'; audio transcription uses
+         * 'CamelOpenAIAudioTranscriptionResponse'; audio translation uses
+         * 'CamelOpenAIAudioTranslationResponse'.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param storeFullResponse the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder storeFullResponse(boolean storeFullResponse) {
+            doSetProperty("storeFullResponse", storeFullResponse);
+            return this;
+        }
+        /**
+         * Store the full SDK response in non-streaming mode: chat-completion
+         * uses exchange property 'CamelOpenAIResponse'; responses uses
+         * 'CamelOpenAIResponsesResponse'; moderation uses
+         * 'CamelOpenAIModerationResponse'; image-generation and image-edit use
+         * 'CamelOpenAIImageResponse'; embeddings uses
+         * 'CamelOpenAIEmbeddingsResponse'; audio transcription uses
+         * 'CamelOpenAIAudioTranscriptionResponse'; audio translation uses
+         * 'CamelOpenAIAudioTranslationResponse'.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param storeFullResponse the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder storeFullResponse(String storeFullResponse) {
+            doSetProperty("storeFullResponse", storeFullResponse);
+            return this;
+        }
+        /**
+         * Enable streaming responses.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streaming the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder streaming(boolean streaming) {
+            doSetProperty("streaming", streaming);
+            return this;
+        }
+        /**
+         * Enable streaming responses.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streaming the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder streaming(String streaming) {
+            doSetProperty("streaming", streaming);
+            return this;
+        }
+        /**
+         * Strip ... blocks from model responses (used by reasoning models like
+         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * CamelOpenAIThinkingContent header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param stripThinking the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder stripThinking(boolean stripThinking) {
+            doSetProperty("stripThinking", stripThinking);
+            return this;
+        }
+        /**
+         * Strip ... blocks from model responses (used by reasoning models like
+         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * CamelOpenAIThinkingContent header.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param stripThinking the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder stripThinking(String stripThinking) {
+            doSetProperty("stripThinking", stripThinking);
+            return this;
+        }
+        /**
+         * System message to prepend. When set and conversationMemory is
+         * enabled, the conversation history is reset.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param systemMessage the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder systemMessage(String systemMessage) {
+            doSetProperty("systemMessage", systemMessage);
+            return this;
+        }
+        /**
+         * Comma-separated tags for discovering route-based tools registered via
+         * the ai-tool component. When set, matching tools from the shared
+         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder tags(String tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * Temperature for response generation (0.0 to 2.0).
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param temperature the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder temperature(Double temperature) {
+            doSetProperty("temperature", temperature);
+            return this;
+        }
+        /**
+         * Temperature for response generation (0.0 to 2.0).
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param temperature the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder temperature(String temperature) {
+            doSetProperty("temperature", temperature);
+            return this;
+        }
+        /**
+         * Strategy for handling exceptions thrown during MCP tool execution.
+         * 'failExchange' (default) propagates the exception to the Camel
+         * exchange so that standard Camel error handling (onException,
+         * dead-letter channel) can process it. This is the safer default
+         * because 'repromptModel' sends raw exception messages (which may
+         * contain connection strings, hostnames, or internal paths) to a
+         * third-party LLM provider. 'repromptModel' catches the error and sends
+         * it back to the model as a tool result so the model can attempt to
+         * recover.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: common
+         * 
+         * @param toolExecutionErrorStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolExecutionErrorStrategy(org.apache.camel.component.openai.ToolExecutionErrorStrategy toolExecutionErrorStrategy) {
+            doSetProperty("toolExecutionErrorStrategy", toolExecutionErrorStrategy);
+            return this;
+        }
+        /**
+         * Strategy for handling exceptions thrown during MCP tool execution.
+         * 'failExchange' (default) propagates the exception to the Camel
+         * exchange so that standard Camel error handling (onException,
+         * dead-letter channel) can process it. This is the safer default
+         * because 'repromptModel' sends raw exception messages (which may
+         * contain connection strings, hostnames, or internal paths) to a
+         * third-party LLM provider. 'repromptModel' catches the error and sends
+         * it back to the model as a tool result so the model can attempt to
+         * recover.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: common
+         * 
+         * @param toolExecutionErrorStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder toolExecutionErrorStrategy(String toolExecutionErrorStrategy) {
+            doSetProperty("toolExecutionErrorStrategy", toolExecutionErrorStrategy);
+            return this;
+        }
+        /**
+         * Top P for response generation (0.0 to 1.0).
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param topP the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder topP(Double topP) {
+            doSetProperty("topP", topP);
+            return this;
+        }
+        /**
+         * Top P for response generation (0.0 to 1.0).
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param topP the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder topP(String topP) {
+            doSetProperty("topP", topP);
+            return this;
+        }
+        /**
+         * Default user message text to use when no prompt is provided.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param userMessage the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder userMessage(String userMessage) {
+            doSetProperty("userMessage", userMessage);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for writing the request body, which matters
+         * for large payloads such as audio and image uploads. When 0 or
+         * negative, requestTimeout applies.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder writeTimeout(long writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for writing the request body, which matters
+         * for large payloads such as audio and image uploads. When 0 or
+         * negative, requestTimeout applies.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * The component, or the bean, that serves the HTTP endpoint of the
+         * webhook operation. It must implement RestConsumerFactory, for example
+         * platform-http, which is used when it is on the classpath. Also read
+         * from the rest configuration when not set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param httpServerComponent the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder httpServerComponent(String httpServerComponent) {
+            doSetProperty("httpServerComponent", httpServerComponent);
+            return this;
+        }
+        /**
+         * The largest webhook request body that is read, in bytes. A bigger
+         * request is answered with 413 and is not verified.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1048576
+         * Group: consumer
+         * 
+         * @param webhookMaxPayloadSize the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder webhookMaxPayloadSize(int webhookMaxPayloadSize) {
+            doSetProperty("webhookMaxPayloadSize", webhookMaxPayloadSize);
+            return this;
+        }
+        /**
+         * The largest webhook request body that is read, in bytes. A bigger
+         * request is answered with 413 and is not verified.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1048576
+         * Group: consumer
+         * 
+         * @param webhookMaxPayloadSize the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder webhookMaxPayloadSize(String webhookMaxPayloadSize) {
+            doSetProperty("webhookMaxPayloadSize", webhookMaxPayloadSize);
+            return this;
+        }
+        /**
+         * The HTTP path the webhook operation listens on.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: /openai/webhook
+         * Group: consumer
+         * 
+         * @param webhookPath the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder webhookPath(String webhookPath) {
+            doSetProperty("webhookPath", webhookPath);
+            return this;
+        }
+        /**
+         * The webhook signing secret of the OpenAI dashboard (it starts with
+         * whsec_), used to verify the signature of the events. Required by the
+         * webhook operation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param webhookSecret the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder webhookSecret(String webhookSecret) {
+            doSetProperty("webhookSecret", webhookSecret);
+            return this;
+        }
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used instead of apiKey. Requires
+         * camel-oauth on the classpath. The profile properties are resolved
+         * from camel.oauth..client-id, camel.oauth..client-secret, and
+         * camel.oauth..token-endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
+        /**
+         * SSLContextParameters to use for configuring SSL/TLS. When set, takes
+         * precedence over the individual sslTruststore, sslKeystore, and
+         * sslProtocol options.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSLContextParameters to use for configuring SSL/TLS. When set, takes
+         * precedence over the individual sslTruststore, sslKeystore, and
+         * sslProtocol options.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * The endpoint identification algorithm to validate the server hostname
+         * using the server certificate. Set to an empty string or 'none' to
+         * disable hostname verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: https
+         * Group: security
+         * 
+         * @param sslEndpointAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslEndpointAlgorithm(String sslEndpointAlgorithm) {
+            doSetProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used by the key manager factory for SSL connections.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: SunX509
+         * Group: security
+         * 
+         * @param sslKeymanagerAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslKeymanagerAlgorithm(String sslKeymanagerAlgorithm) {
+            doSetProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
+            return this;
+        }
+        /**
+         * The password of the private key in the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslKeyPassword(String sslKeyPassword) {
+            doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * The location of the key store file. This is optional and can be used
+         * for two-way authentication for the OpenAI API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreLocation the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslKeystoreLocation(String sslKeystoreLocation) {
+            doSetProperty("sslKeystoreLocation", sslKeystoreLocation);
+            return this;
+        }
+        /**
+         * The store password for the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystorePassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslKeystorePassword(String sslKeystorePassword) {
+            doSetProperty("sslKeystorePassword", sslKeystorePassword);
+            return this;
+        }
+        /**
+         * The file format of the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: JKS
+         * Group: security
+         * 
+         * @param sslKeystoreType the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslKeystoreType(String sslKeystoreType) {
+            doSetProperty("sslKeystoreType", sslKeystoreType);
+            return this;
+        }
+        /**
+         * The SSL protocol used to generate the SSLContext.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: TLSv1.3
+         * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslProtocol(String sslProtocol) {
+            doSetProperty("sslProtocol", sslProtocol);
+            return this;
+        }
+        /**
+         * The algorithm used by the trust manager factory for SSL connections.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: PKIX
+         * Group: security
+         * 
+         * @param sslTrustmanagerAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslTrustmanagerAlgorithm(String sslTrustmanagerAlgorithm) {
+            doSetProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+            return this;
+        }
+        /**
+         * The location of the trust store file, used to validate the server's
+         * certificate.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreLocation the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslTruststoreLocation(String sslTruststoreLocation) {
+            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
+            return this;
+        }
+        /**
+         * The password for the trust store file. If a password is not set, the
+         * configured trust store can still be used, but integrity checking is
+         * disabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststorePassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslTruststorePassword(String sslTruststorePassword) {
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
+            return this;
+        }
+        /**
+         * The file format of the trust store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: JKS
+         * Group: security
+         * 
+         * @param sslTruststoreType the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointConsumerBuilder sslTruststoreType(String sslTruststoreType) {
+            doSetProperty("sslTruststoreType", sslTruststoreType);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint consumers for the OpenAI component.
+     */
+    public interface AdvancedOpenAIEndpointConsumerBuilder
+            extends
+                EndpointConsumerBuilder {
+        default OpenAIEndpointConsumerBuilder basic() {
+            return (OpenAIEndpointConsumerBuilder) this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenAIEndpointConsumerBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions (if possible) occurred while the Camel
+         * consumer is trying to pickup incoming messages, or the likes, will
+         * now be processed as a message and handled by the routing Error
+         * Handler. Important: This is only possible if the 3rd party component
+         * allows Camel to be alerted if an exception was thrown. Some
+         * components handle this internally only, and therefore
+         * bridgeErrorHandler is not possible. In other situations we may
+         * improve the Camel component to hook into the 3rd party component and
+         * make this possible for future releases. By default the consumer will
+         * use the org.apache.camel.spi.ExceptionHandler to deal with
+         * exceptions, that will be logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenAIEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenAIEndpointConsumerBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenAIEndpointConsumerBuilder exceptionHandler(String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenAIEndpointConsumerBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenAIEndpointConsumerBuilder exchangePattern(String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+    }
+
+    /**
+     * Builder for endpoint producers for the OpenAI component.
+     */
+    public interface OpenAIEndpointProducerBuilder
+            extends
+                EndpointProducerBuilder {
+        default AdvancedOpenAIEndpointProducerBuilder advanced() {
+            return (AdvancedOpenAIEndpointProducerBuilder) this;
+        }
+
+        /**
+         * Additional JSON properties to include in the request body (e.g.
+         * additionalBodyProperty.traceId=123). This is a multi-value option
+         * with prefix: additionalBodyProperty.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalBodyProperty(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder additionalBodyProperty(String key, Object value) {
+            doSetMultiValueProperty("additionalBodyProperty", "additionalBodyProperty." + key, value);
+            return this;
+        }
+        /**
+         * Additional JSON properties to include in the request body (e.g.
+         * additionalBodyProperty.traceId=123). This is a multi-value option
+         * with prefix: additionalBodyProperty.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalBodyProperty(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder additionalBodyProperty(Map values) {
+            doSetMultiValueProperties("additionalBodyProperty", "additionalBodyProperty.", values);
+            return this;
+        }
+        /**
+         * Additional HTTP request headers to send with every API call (e.g.
+         * additionalHeader.OpenAI-Organization=my-org or
+         * additionalHeader.api-key=secret). Values may contain secrets. This is
+         * a multi-value option with prefix: additionalHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalHeader(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder additionalHeader(String key, Object value) {
+            doSetMultiValueProperty("additionalHeader", "additionalHeader." + key, value);
+            return this;
+        }
+        /**
+         * Additional HTTP request headers to send with every API call (e.g.
+         * additionalHeader.OpenAI-Organization=my-org or
+         * additionalHeader.api-key=secret). Values may contain secrets. This is
+         * a multi-value option with prefix: additionalHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalHeader(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder additionalHeader(Map values) {
+            doSetMultiValueProperties("additionalHeader", "additionalHeader.", values);
+            return this;
+        }
+        /**
+         * Map additional fields from the response message to Camel headers. The
+         * key is the field name in the API response, the value is the Camel
+         * header name (e.g.
+         * additionalResponseHeader.reasoning_content=MyReasoningHeader). This
+         * is a multi-value option with prefix: additionalResponseHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalResponseHeader(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder additionalResponseHeader(String key, Object value) {
+            doSetMultiValueProperty("additionalResponseHeader", "additionalResponseHeader." + key, value);
+            return this;
+        }
+        /**
+         * Map additional fields from the response message to Camel headers. The
+         * key is the field name in the API response, the value is the Camel
+         * header name (e.g.
+         * additionalResponseHeader.reasoning_content=MyReasoningHeader). This
+         * is a multi-value option with prefix: additionalResponseHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalResponseHeader(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder additionalResponseHeader(Map values) {
+            doSetMultiValueProperties("additionalResponseHeader", "additionalResponseHeader.", values);
+            return this;
+        }
+        /**
+         * OpenAI API key. Can also be set via OPENAI_API_KEY environment
+         * variable.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder apiKey(String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+        /**
+         * Chunking strategy for diarized transcription models such as
+         * gpt-4o-transcribe-diarize.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioChunkingStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioChunkingStrategy(String audioChunkingStrategy) {
+            doSetProperty("audioChunkingStrategy", audioChunkingStrategy);
+            return this;
+        }
+        /**
+         * Comma-separated extra response fields to include (e.g. logprobs).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioInclude the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioInclude(String audioInclude) {
+            doSetProperty("audioInclude", audioInclude);
+            return this;
+        }
+        /**
+         * Comma-separated keywords to improve transcription accuracy.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioKeywords the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioKeywords(String audioKeywords) {
+            doSetProperty("audioKeywords", audioKeywords);
+            return this;
+        }
+        /**
+         * Comma-separated known speaker names for diarized transcription.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioKnownSpeakerNames the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioKnownSpeakerNames(String audioKnownSpeakerNames) {
+            doSetProperty("audioKnownSpeakerNames", audioKnownSpeakerNames);
+            return this;
+        }
+        /**
+         * Comma-separated known speaker reference audio file ids for diarized
+         * transcription.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioKnownSpeakerReferences the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioKnownSpeakerReferences(String audioKnownSpeakerReferences) {
+            doSetProperty("audioKnownSpeakerReferences", audioKnownSpeakerReferences);
+            return this;
+        }
+        /**
+         * The language of the input audio in ISO-639-1 format (e.g., 'en').
+         * Improves accuracy and latency.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioLanguage the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioLanguage(String audioLanguage) {
+            doSetProperty("audioLanguage", audioLanguage);
+            return this;
+        }
+        /**
+         * Comma-separated input audio languages (ISO-639-1 or ISO-639-3).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioLanguages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioLanguages(String audioLanguages) {
+            doSetProperty("audioLanguages", audioLanguages);
+            return this;
+        }
+        /**
+         * The model to use for audio transcription (e.g., whisper-1,
+         * gpt-4o-transcribe).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioModel(String audioModel) {
+            doSetProperty("audioModel", audioModel);
+            return this;
+        }
+        /**
+         * Optional text to guide the model's style or continue a previous audio
+         * segment.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioPrompt the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioPrompt(String audioPrompt) {
+            doSetProperty("audioPrompt", audioPrompt);
+            return this;
+        }
+        /**
+         * The format of the transcription output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: json
+         * Group: common
+         * 
+         * @param audioResponseFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioResponseFormat(String audioResponseFormat) {
+            doSetProperty("audioResponseFormat", audioResponseFormat);
+            return this;
+        }
+        /**
+         * Sampling temperature for transcription (0.0 to 1.0).
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioTemperature the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioTemperature(Double audioTemperature) {
+            doSetProperty("audioTemperature", audioTemperature);
+            return this;
+        }
+        /**
+         * Sampling temperature for transcription (0.0 to 1.0).
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioTemperature the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioTemperature(String audioTemperature) {
+            doSetProperty("audioTemperature", audioTemperature);
+            return this;
+        }
+        /**
+         * Comma-separated timestamp granularities: 'word', 'segment', or
+         * 'word,segment'. Only applicable with verbose_json response format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param audioTimestampGranularities the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder audioTimestampGranularities(String audioTimestampGranularities) {
+            doSetProperty("audioTimestampGranularities", audioTimestampGranularities);
+            return this;
+        }
+        /**
+         * When true and MCP servers are configured, automatically execute tool
+         * calls and loop back to the model. When false, tool calls are returned
+         * as the message body for manual handling.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param autoToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder autoToolExecution(boolean autoToolExecution) {
+            doSetProperty("autoToolExecution", autoToolExecution);
+            return this;
+        }
+        /**
+         * When true and MCP servers are configured, automatically execute tool
+         * calls and loop back to the model. When false, tool calls are returned
+         * as the message body for manual handling.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param autoToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder autoToolExecution(String autoToolExecution) {
+            doSetProperty("autoToolExecution", autoToolExecution);
+            return this;
+        }
+        /**
+         * Run the model response in the background (Responses API only). The
+         * exchange completes as soon as the response is queued, with an empty
+         * body and the CamelOpenAIResponseStatus header, and the response is
+         * stored so that it can be retrieved later. Cannot be combined with
+         * automatic tool execution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param background the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder background(boolean background) {
+            doSetProperty("background", background);
+            return this;
+        }
+        /**
+         * Run the model response in the background (Responses API only). The
+         * exchange completes as soon as the response is queued, with an empty
+         * body and the CamelOpenAIResponseStatus header, and the response is
+         * stored so that it can be retrieved later. Cannot be combined with
+         * automatic tool execution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param background the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder background(String background) {
+            doSetProperty("background", background);
+            return this;
+        }
+        /**
+         * Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can
+         * be used for local or third-party providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: https://api.openai.com/v1
+         * Group: common
+         * 
+         * @param baseUrl the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder baseUrl(String baseUrl) {
+            doSetProperty("baseUrl", baseUrl);
+            return this;
+        }
+        /**
+         * The endpoint every request in a batch calls. Required by the batch
+         * operation, which validates it against the endpoints the Batch API
+         * supports.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param batchEndpoint the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder batchEndpoint(String batchEndpoint) {
+            doSetProperty("batchEndpoint", batchEndpoint);
+            return this;
+        }
+        /**
+         * Metadata to attach to a batch, used to find it again later (e.g.
+         * batchMetadata.job=nightly-enrichment). This is a multi-value option
+         * with prefix: batchMetadata.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the batchMetadata(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder batchMetadata(String key, Object value) {
+            doSetMultiValueProperty("batchMetadata", "batchMetadata." + key, value);
+            return this;
+        }
+        /**
+         * Metadata to attach to a batch, used to find it again later (e.g.
+         * batchMetadata.job=nightly-enrichment). This is a multi-value option
+         * with prefix: batchMetadata.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the batchMetadata(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder batchMetadata(Map values) {
+            doSetMultiValueProperties("batchMetadata", "batchMetadata.", values);
+            return this;
+        }
+        /**
+         * Which result file the batch-results operation downloads: the output
+         * file holding the results of the successful requests, or the error
+         * file holding the failed ones.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: output
+         * Group: common
+         * 
+         * @param batchResultsFile the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder batchResultsFile(String batchResultsFile) {
+            doSetProperty("batchResultsFile", batchResultsFile);
+            return this;
+        }
+        /**
+         * Comma-separated hosted tools for the Responses API: web_search,
+         * file_search, code_interpreter.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param builtinTools the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder builtinTools(String builtinTools) {
+            doSetProperty("builtinTools", builtinTools);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for establishing the TCP connection to the
+         * API. A connect timeout means the endpoint was unreachable, so the
+         * request never ran and is safe to retry. When 0 or negative, the SDK
+         * default (1 minute) is used.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder connectTimeout(long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for establishing the TCP connection to the
+         * API. A connect timeout means the endpoint was unreachable, so the
+         * request never ran and is safe to retry. When 0 or negative, the SDK
+         * default (1 minute) is used.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Exchange property name for storing conversation history.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: CamelOpenAIConversationHistory
+         * Group: common
+         * 
+         * @param conversationHistoryProperty the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder conversationHistoryProperty(String conversationHistoryProperty) {
+            doSetProperty("conversationHistoryProperty", conversationHistoryProperty);
+            return this;
+        }
+        /**
+         * Id of a conversation created with the OpenAI Conversations API to run
+         * the request in. The conversation keeps its items across exchanges.
+         * Cannot be combined with previousResponseId (Responses API only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param conversationId the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder conversationId(String conversationId) {
+            doSetProperty("conversationId", conversationId);
+            return this;
+        }
+        /**
+         * Enable conversation memory per Exchange. The chat-completion
+         * operation keeps the message history in the
+         * conversationHistoryProperty exchange property. The responses
+         * operation keeps the conversation on the server, stores the last
+         * response id in that property and sends it as previous_response_id,
+         * which requires a server that stores responses.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param conversationMemory the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder conversationMemory(boolean conversationMemory) {
+            doSetProperty("conversationMemory", conversationMemory);
+            return this;
+        }
+        /**
+         * Enable conversation memory per Exchange. The chat-completion
+         * operation keeps the message history in the
+         * conversationHistoryProperty exchange property. The responses
+         * operation keeps the conversation on the server, stores the last
+         * response id in that property and sends it as previous_response_id,
+         * which requires a server that stores responses.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param conversationMemory the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder conversationMemory(String conversationMemory) {
+            doSetProperty("conversationMemory", conversationMemory);
+            return this;
+        }
+        /**
+         * Developer message to prepend before user messages.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param developerMessage the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder developerMessage(String developerMessage) {
+            doSetProperty("developerMessage", developerMessage);
+            return this;
+        }
+        /**
+         * Number of dimensions for the embedding output. Only supported by
+         * text-embedding-3 models. Reducing dimensions can lower costs and
+         * improve performance without significant quality loss.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param dimensions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder dimensions(Integer dimensions) {
+            doSetProperty("dimensions", dimensions);
+            return this;
+        }
+        /**
+         * Number of dimensions for the embedding output. Only supported by
+         * text-embedding-3 models. Reducing dimensions can lower costs and
+         * improve performance without significant quality loss.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param dimensions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder dimensions(String dimensions) {
+            doSetProperty("dimensions", dimensions);
+            return this;
+        }
+        /**
+         * The model to use for embeddings.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param embeddingModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder embeddingModel(String embeddingModel) {
+            doSetProperty("embeddingModel", embeddingModel);
+            return this;
+        }
+        /**
+         * The format for embedding output: 'float' for list of floats, 'base64'
+         * for compressed format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: base64
+         * Group: common
+         * 
+         * @param encodingFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder encodingFormat(String encodingFormat) {
+            doSetProperty("encodingFormat", encodingFormat);
+            return this;
+        }
+        /**
+         * Comma-separated vector store ids required when builtinTools includes
+         * file_search.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param fileSearchVectorStoreIds the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder fileSearchVectorStoreIds(String fileSearchVectorStoreIds) {
+            doSetProperty("fileSearchVectorStoreIds", fileSearchVectorStoreIds);
+            return this;
+        }
+        /**
+         * Strategy for handling tool names hallucinated by the model (tool not
+         * found in any MCP server). 'failExchange' (default) throws an
+         * IllegalStateException, failing the exchange immediately.
+         * 'repromptModel' sends a corrective tool result listing the available
+         * tools so the model can self-correct and retry. The maxToolIterations
+         * option bounds retries.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openai.HallucinatedToolNameStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: common
+         * 
+         * @param hallucinatedToolNameStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder hallucinatedToolNameStrategy(org.apache.camel.component.openai.HallucinatedToolNameStrategy hallucinatedToolNameStrategy) {
+            doSetProperty("hallucinatedToolNameStrategy", hallucinatedToolNameStrategy);
+            return this;
+        }
+        /**
+         * Strategy for handling tool names hallucinated by the model (tool not
+         * found in any MCP server). 'failExchange' (default) throws an
+         * IllegalStateException, failing the exchange immediately.
+         * 'repromptModel' sends a corrective tool result listing the available
+         * tools so the model can self-correct and retry. The maxToolIterations
+         * option bounds retries.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openai.HallucinatedToolNameStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: common
+         * 
+         * @param hallucinatedToolNameStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder hallucinatedToolNameStrategy(String hallucinatedToolNameStrategy) {
+            doSetProperty("hallucinatedToolNameStrategy", hallucinatedToolNameStrategy);
+            return this;
+        }
+        /**
+         * JSON array of hosted MCP tool definitions passed to the Responses API
+         * as OpenAI mcp tools. Every field of the API is sent, such as
+         * server_label, server_url, require_approval, allowed_tools, headers
+         * and authorization. Marked secret because it can carry credentials.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param hostedMcpTools the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder hostedMcpTools(String hostedMcpTools) {
+            doSetProperty("hostedMcpTools", hostedMcpTools);
+            return this;
+        }
+        /**
+         * The background of the generated image. Only supported by the GPT
+         * image models, and a transparent background requires the png or webp
+         * output format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageBackground the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageBackground(String imageBackground) {
+            doSetProperty("imageBackground", imageBackground);
+            return this;
+        }
+        /**
+         * The number of images to generate, between 1 and 10. dall-e-3 only
+         * supports 1.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageCount the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageCount(Integer imageCount) {
+            doSetProperty("imageCount", imageCount);
+            return this;
+        }
+        /**
+         * The number of images to generate, between 1 and 10. dall-e-3 only
+         * supports 1.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param imageCount the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageCount(String imageCount) {
+            doSetProperty("imageCount", imageCount);
+            return this;
+        }
+        /**
+         * How closely the edit must match the style and features of the input
+         * image. Only supported by the image-edit operation on gpt-image-1 and
+         * gpt-image-1.5.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageInputFidelity the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageInputFidelity(String imageInputFidelity) {
+            doSetProperty("imageInputFidelity", imageInputFidelity);
+            return this;
+        }
+        /**
+         * The model to use for image generation or editing (e.g., gpt-image-1,
+         * gpt-image-1-mini, gpt-image-1.5, gpt-image-2). Required for the
+         * image-generation and image-edit operations, because the model
+         * determines which of the other image options are accepted. The DALL-E
+         * models are no longer offered by OpenAI, but remain valid values for
+         * OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageModel(String imageModel) {
+            doSetProperty("imageModel", imageModel);
+            return this;
+        }
+        /**
+         * The content moderation level applied to image generation. Only
+         * supported by the GPT image models.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageModeration the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageModeration(String imageModeration) {
+            doSetProperty("imageModeration", imageModeration);
+            return this;
+        }
+        /**
+         * The compression level from 0 to 100 for the webp and jpeg output
+         * formats. Only supported by the GPT image models.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageOutputCompression the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageOutputCompression(Integer imageOutputCompression) {
+            doSetProperty("imageOutputCompression", imageOutputCompression);
+            return this;
+        }
+        /**
+         * The compression level from 0 to 100 for the webp and jpeg output
+         * formats. Only supported by the GPT image models.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param imageOutputCompression the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageOutputCompression(String imageOutputCompression) {
+            doSetProperty("imageOutputCompression", imageOutputCompression);
+            return this;
+        }
+        /**
+         * The output format of the generated image. Only supported by the GPT
+         * image models, which default to png.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageOutputFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageOutputFormat(String imageOutputFormat) {
+            doSetProperty("imageOutputFormat", imageOutputFormat);
+            return this;
+        }
+        /**
+         * The prompt describing the image to generate, or the edit to apply.
+         * For image-generation the message body is used when this is not set;
+         * for image-edit the body carries the input image, so the prompt must
+         * come from this option or from the CamelOpenAIImagePrompt header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imagePrompt the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imagePrompt(String imagePrompt) {
+            doSetProperty("imagePrompt", imagePrompt);
+            return this;
+        }
+        /**
+         * The quality of the generated image. GPT image models accept auto,
+         * high, medium and low; hd and standard are DALL-E values kept for
+         * OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageQuality the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageQuality(String imageQuality) {
+            doSetProperty("imageQuality", imageQuality);
+            return this;
+        }
+        /**
+         * The response format of the generated image. The OpenAI images
+         * endpoint rejects this option: the GPT image models always return
+         * base64, and the DALL-E models that used to accept it are no longer
+         * offered. It is only sent when explicitly set, and is kept for
+         * OpenAI-compatible providers that still implement the older images
+         * API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageResponseFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageResponseFormat(String imageResponseFormat) {
+            doSetProperty("imageResponseFormat", imageResponseFormat);
+            return this;
+        }
+        /**
+         * The size of the generated image (e.g., 1024x1024, 1536x1024,
+         * 1024x1536, auto). The accepted values depend on the model.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageSize the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageSize(String imageSize) {
+            doSetProperty("imageSize", imageSize);
+            return this;
+        }
+        /**
+         * The style of the generated image. A dall-e-3 option, so only useful
+         * with OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param imageStyle the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder imageStyle(String imageStyle) {
+            doSetProperty("imageStyle", imageStyle);
+            return this;
+        }
+        /**
+         * JSON schema for structured output validation.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param jsonSchema the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder jsonSchema(String jsonSchema) {
+            doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Maximum cumulative prompt plus completion tokens allowed across the
+         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * Enforcement runs after each API call that requests further tool
+         * execution, so actual spend may exceed the configured budget by up to
+         * one call (typically the largest, as the prompt grows each iteration).
+         * A final text response is returned even when cumulative usage exceeds
+         * the budget.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxAgenticTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxAgenticTokens(long maxAgenticTokens) {
+            doSetProperty("maxAgenticTokens", maxAgenticTokens);
+            return this;
+        }
+        /**
+         * Maximum cumulative prompt plus completion tokens allowed across the
+         * MCP agentic loop. When 0 or negative, no token budget is enforced.
+         * Enforcement runs after each API call that requests further tool
+         * execution, so actual spend may exceed the configured budget by up to
+         * one call (typically the largest, as the prompt grows each iteration).
+         * A final text response is returned even when cumulative usage exceeds
+         * the budget.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxAgenticTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxAgenticTokens(String maxAgenticTokens) {
+            doSetProperty("maxAgenticTokens", maxAgenticTokens);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, retain at most this many messages
+         * in the exchange conversation history. System and developer messages
+         * are prepended separately and are not stored in history. Assistant
+         * tool-call blocks are kept intact and may retain slightly more than
+         * this limit to preserve tool result pairing. When 0, no message limit
+         * is applied.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxHistoryMessages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxHistoryMessages(int maxHistoryMessages) {
+            doSetProperty("maxHistoryMessages", maxHistoryMessages);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, retain at most this many messages
+         * in the exchange conversation history. System and developer messages
+         * are prepended separately and are not stored in history. Assistant
+         * tool-call blocks are kept intact and may retain slightly more than
+         * this limit to preserve tool result pairing. When 0, no message limit
+         * is applied.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxHistoryMessages the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxHistoryMessages(String maxHistoryMessages) {
+            doSetProperty("maxHistoryMessages", maxHistoryMessages);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, trim conversation history using a
+         * token estimate (character count / 4, including image payload size for
+         * multi-modal user messages). Oldest segments are dropped first until
+         * the estimated tokens are within this limit. Assistant tool-call
+         * blocks are removed as a unit with their tool results. The most recent
+         * segment is always retained, even when it alone exceeds this limit.
+         * When 0, no token limit is applied.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxHistoryTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxHistoryTokens(int maxHistoryTokens) {
+            doSetProperty("maxHistoryTokens", maxHistoryTokens);
+            return this;
+        }
+        /**
+         * When conversationMemory is enabled, trim conversation history using a
+         * token estimate (character count / 4, including image payload size for
+         * multi-modal user messages). Oldest segments are dropped first until
+         * the estimated tokens are within this limit. Assistant tool-call
+         * blocks are removed as a unit with their tool results. The most recent
+         * segment is always retained, even when it alone exceeds this limit.
+         * When 0, no token limit is applied.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param maxHistoryTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxHistoryTokens(String maxHistoryTokens) {
+            doSetProperty("maxHistoryTokens", maxHistoryTokens);
+            return this;
+        }
+        /**
+         * Maximum number of times the OpenAI SDK client retries failed
+         * requests. The SDK retry is rate-limit aware (honors Retry-After on
+         * 429).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: common
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxRetries(int maxRetries) {
+            doSetProperty("maxRetries", maxRetries);
+            return this;
+        }
+        /**
+         * Maximum number of times the OpenAI SDK client retries failed
+         * requests. The SDK retry is rate-limit aware (honors Retry-After on
+         * 429).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: common
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxRetries(String maxRetries) {
+            doSetProperty("maxRetries", maxRetries);
+            return this;
+        }
+        /**
+         * Maximum number of tokens to generate.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         * 
+         * @param maxTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxTokens(Integer maxTokens) {
+            doSetProperty("maxTokens", maxTokens);
+            return this;
+        }
+        /**
+         * Maximum number of tokens to generate.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param maxTokens the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxTokens(String maxTokens) {
+            doSetProperty("maxTokens", maxTokens);
+            return this;
+        }
+        /**
+         * Maximum number of tool call loop iterations to prevent infinite
+         * loops.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: common
+         * 
+         * @param maxToolIterations the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxToolIterations(int maxToolIterations) {
+            doSetProperty("maxToolIterations", maxToolIterations);
+            return this;
+        }
+        /**
+         * Maximum number of tool call loop iterations to prevent infinite
+         * loops.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: common
+         * 
+         * @param maxToolIterations the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder maxToolIterations(String maxToolIterations) {
+            doSetProperty("maxToolIterations", maxToolIterations);
+            return this;
+        }
+        /**
+         * Comma-separated list of MCP protocol versions to advertise when
+         * connecting to MCP servers using Streamable HTTP transport. When not
+         * set, the SDK default is used. Example:
+         * 2024-11-05,2025-03-26,2025-06-18.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param mcpProtocolVersions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpProtocolVersions(String mcpProtocolVersions) {
+            doSetProperty("mcpProtocolVersions", mcpProtocolVersions);
+            return this;
+        }
+        /**
+         * Automatically reconnect to MCP servers when a tool call fails due to
+         * a transport error, and retry the call once.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param mcpReconnect the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpReconnect(boolean mcpReconnect) {
+            doSetProperty("mcpReconnect", mcpReconnect);
+            return this;
+        }
+        /**
+         * Automatically reconnect to MCP servers when a tool call fails due to
+         * a transport error, and retry the call once.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param mcpReconnect the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpReconnect(String mcpReconnect) {
+            doSetProperty("mcpReconnect", mcpReconnect);
+            return this;
+        }
+        /**
+         * MCP (Model Context Protocol) server configurations. Define servers
+         * using prefix notation:
+         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
+         * (optional include list to restrict which tools are registered from
+         * this server). This is a multi-value option with prefix: mcpServer.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the mcpServer(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpServer(String key, Object value) {
+            doSetMultiValueProperty("mcpServer", "mcpServer." + key, value);
+            return this;
+        }
+        /**
+         * MCP (Model Context Protocol) server configurations. Define servers
+         * using prefix notation:
+         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
+         * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
+         * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
+         * (optional include list to restrict which tools are registered from
+         * this server). This is a multi-value option with prefix: mcpServer.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the mcpServer(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpServer(Map values) {
+            doSetMultiValueProperties("mcpServer", "mcpServer.", values);
+            return this;
+        }
+        /**
+         * Timeout in seconds for MCP tool call requests. Applies to all MCP
+         * operations including tool execution and initialization.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: common
+         * 
+         * @param mcpTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpTimeout(int mcpTimeout) {
+            doSetProperty("mcpTimeout", mcpTimeout);
+            return this;
+        }
+        /**
+         * Timeout in seconds for MCP tool call requests. Applies to all MCP
+         * operations including tool execution and initialization.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: common
+         * 
+         * @param mcpTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpTimeout(String mcpTimeout) {
+            doSetProperty("mcpTimeout", mcpTimeout);
+            return this;
+        }
+        /**
+         * Refresh the advertised tool list when an MCP server notifies that its
+         * tools changed. Set to false to keep the tool list fixed to what was
+         * listed when the endpoint started, for deployments that require a
+         * deterministic set of tools.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param mcpToolRefresh the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpToolRefresh(boolean mcpToolRefresh) {
+            doSetProperty("mcpToolRefresh", mcpToolRefresh);
+            return this;
+        }
+        /**
+         * Refresh the advertised tool list when an MCP server notifies that its
+         * tools changed. Set to false to keep the tool list fixed to what was
+         * listed when the endpoint started, for deployments that require a
+         * deterministic set of tools.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param mcpToolRefresh the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder mcpToolRefresh(String mcpToolRefresh) {
+            doSetProperty("mcpToolRefresh", mcpToolRefresh);
+            return this;
+        }
+        /**
+         * The model to use for chat completion.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param model the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder model(String model) {
+            doSetProperty("model", model);
+            return this;
+        }
+        /**
+         * The model to use for moderation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: omni-moderation-latest
+         * Group: common
+         * 
+         * @param moderationModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder moderationModel(String moderationModel) {
+            doSetProperty("moderationModel", moderationModel);
+            return this;
+        }
+        /**
+         * Fully qualified class name for structured output using response
+         * format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param outputClass the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder outputClass(String outputClass) {
+            doSetProperty("outputClass", outputClass);
+            return this;
+        }
+        /**
+         * Execute the tool calls returned by the model in a single response
+         * concurrently instead of sequentially. Tool calls in the same batch
+         * are independent by design, so this reduces the latency of a batch to
+         * that of its slowest tool. Results are always fed back to the model in
+         * the original tool call order. Note that with
+         * toolExecutionErrorStrategy=failExchange the sibling tool calls
+         * already dispatched complete before the exchange fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param parallelToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder parallelToolExecution(boolean parallelToolExecution) {
+            doSetProperty("parallelToolExecution", parallelToolExecution);
+            return this;
+        }
+        /**
+         * Execute the tool calls returned by the model in a single response
+         * concurrently instead of sequentially. Tool calls in the same batch
+         * are independent by design, so this reduces the latency of a batch to
+         * that of its slowest tool. Results are always fed back to the model in
+         * the original tool call order. Note that with
+         * toolExecutionErrorStrategy=failExchange the sibling tool calls
+         * already dispatched complete before the exchange fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param parallelToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder parallelToolExecution(String parallelToolExecution) {
+            doSetProperty("parallelToolExecution", parallelToolExecution);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for a batch of parallel tool calls, so that
+         * one slow tool cannot block the whole batch. The timeout applies to
+         * the batch as a whole, not per tool call. A tool call that exceeds it
+         * is cancelled and handled according to toolExecutionErrorStrategy. The
+         * default of 0 disables the batch timeout and relies on mcpTimeout,
+         * which already bounds each individual MCP request. Only used when
+         * parallelToolExecution=true.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param parallelToolTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder parallelToolTimeout(long parallelToolTimeout) {
+            doSetProperty("parallelToolTimeout", parallelToolTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for a batch of parallel tool calls, so that
+         * one slow tool cannot block the whole batch. The timeout applies to
+         * the batch as a whole, not per tool call. A tool call that exceeds it
+         * is cancelled and handled according to toolExecutionErrorStrategy. The
+         * default of 0 disables the batch timeout and relies on mcpTimeout,
+         * which already bounds each individual MCP request. Only used when
+         * parallelToolExecution=true.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param parallelToolTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder parallelToolTimeout(String parallelToolTimeout) {
+            doSetProperty("parallelToolTimeout", parallelToolTimeout);
+            return this;
+        }
+        /**
+         * Previous response id for OpenAI server-side conversation state
+         * (Responses API only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param previousResponseId the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder previousResponseId(String previousResponseId) {
+            doSetProperty("previousResponseId", previousResponseId);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for reading the response. A read timeout
+         * means the model was slow mid-generation, so the request may have been
+         * processed. When 0 or negative, requestTimeout applies.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder readTimeout(long readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for reading the response. A read timeout
+         * means the model was slow mid-generation, so the request may have been
+         * processed. When 0 or negative, requestTimeout applies.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Overall HTTP request timeout in milliseconds for the OpenAI SDK
+         * client. When 0 or negative, the SDK default (10 minutes) is used.
+         * Acts as the fallback for readTimeout and writeTimeout when those are
+         * not set.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * Overall HTTP request timeout in milliseconds for the OpenAI SDK
+         * client. When 0 or negative, the SDK default (10 minutes) is used.
+         * Acts as the fallback for readTimeout and writeTimeout when those are
+         * not set.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * Optional instructions to control the voice of the generated audio.
+         * Does not work with tts-1 or tts-1-hd.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param speechInstructions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder speechInstructions(String speechInstructions) {
+            doSetProperty("speechInstructions", speechInstructions);
+            return this;
+        }
+        /**
+         * The model to use for text-to-speech (e.g., gpt-4o-mini-tts, tts-1,
+         * tts-1-hd).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param speechModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder speechModel(String speechModel) {
+            doSetProperty("speechModel", speechModel);
+            return this;
+        }
+        /**
+         * The audio format for text-to-speech output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: mp3
+         * Group: common
+         * 
+         * @param speechResponseFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder speechResponseFormat(String speechResponseFormat) {
+            doSetProperty("speechResponseFormat", speechResponseFormat);
+            return this;
+        }
+        /**
+         * The speed of the generated audio, from 0.25 to 4.0 where 1.0 is
+         * normal speed.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param speechSpeed the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder speechSpeed(Double speechSpeed) {
+            doSetProperty("speechSpeed", speechSpeed);
+            return this;
+        }
+        /**
+         * The speed of the generated audio, from 0.25 to 4.0 where 1.0 is
+         * normal speed.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param speechSpeed the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder speechSpeed(String speechSpeed) {
+            doSetProperty("speechSpeed", speechSpeed);
+            return this;
+        }
+        /**
+         * The voice to use for text-to-speech (e.g., alloy, echo, fable, onyx,
+         * nova, shimmer). See the OpenAI documentation for the full list of
+         * supported voices.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: alloy
+         * Group: common
+         * 
+         * @param speechVoice the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder speechVoice(String speechVoice) {
+            doSetProperty("speechVoice", speechVoice);
+            return this;
+        }
+        /**
+         * Store the full SDK response in non-streaming mode: chat-completion
+         * uses exchange property 'CamelOpenAIResponse'; responses uses
+         * 'CamelOpenAIResponsesResponse'; moderation uses
+         * 'CamelOpenAIModerationResponse'; image-generation and image-edit use
+         * 'CamelOpenAIImageResponse'; embeddings uses
+         * 'CamelOpenAIEmbeddingsResponse'; audio transcription uses
+         * 'CamelOpenAIAudioTranscriptionResponse'; audio translation uses
+         * 'CamelOpenAIAudioTranslationResponse'.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param storeFullResponse the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder storeFullResponse(boolean storeFullResponse) {
+            doSetProperty("storeFullResponse", storeFullResponse);
+            return this;
+        }
+        /**
+         * Store the full SDK response in non-streaming mode: chat-completion
+         * uses exchange property 'CamelOpenAIResponse'; responses uses
+         * 'CamelOpenAIResponsesResponse'; moderation uses
+         * 'CamelOpenAIModerationResponse'; image-generation and image-edit use
+         * 'CamelOpenAIImageResponse'; embeddings uses
+         * 'CamelOpenAIEmbeddingsResponse'; audio transcription uses
+         * 'CamelOpenAIAudioTranscriptionResponse'; audio translation uses
+         * 'CamelOpenAIAudioTranslationResponse'.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param storeFullResponse the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder storeFullResponse(String storeFullResponse) {
+            doSetProperty("storeFullResponse", storeFullResponse);
+            return this;
+        }
+        /**
+         * Enable streaming responses.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streaming the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder streaming(boolean streaming) {
+            doSetProperty("streaming", streaming);
+            return this;
+        }
+        /**
+         * Enable streaming responses.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param streaming the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder streaming(String streaming) {
+            doSetProperty("streaming", streaming);
+            return this;
+        }
+        /**
+         * Strip ... blocks from model responses (used by reasoning models like
+         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * CamelOpenAIThinkingContent header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param stripThinking the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder stripThinking(boolean stripThinking) {
+            doSetProperty("stripThinking", stripThinking);
+            return this;
+        }
+        /**
+         * Strip ... blocks from model responses (used by reasoning models like
+         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * CamelOpenAIThinkingContent header.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param stripThinking the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder stripThinking(String stripThinking) {
+            doSetProperty("stripThinking", stripThinking);
+            return this;
+        }
+        /**
+         * System message to prepend. When set and conversationMemory is
+         * enabled, the conversation history is reset.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param systemMessage the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder systemMessage(String systemMessage) {
+            doSetProperty("systemMessage", systemMessage);
+            return this;
+        }
+        /**
+         * Comma-separated tags for discovering route-based tools registered via
+         * the ai-tool component. When set, matching tools from the shared
+         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder tags(String tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * Temperature for response generation (0.0 to 2.0).
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param temperature the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder temperature(Double temperature) {
+            doSetProperty("temperature", temperature);
+            return this;
+        }
+        /**
+         * Temperature for response generation (0.0 to 2.0).
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param temperature the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder temperature(String temperature) {
+            doSetProperty("temperature", temperature);
+            return this;
+        }
+        /**
+         * Strategy for handling exceptions thrown during MCP tool execution.
+         * 'failExchange' (default) propagates the exception to the Camel
+         * exchange so that standard Camel error handling (onException,
+         * dead-letter channel) can process it. This is the safer default
+         * because 'repromptModel' sends raw exception messages (which may
+         * contain connection strings, hostnames, or internal paths) to a
+         * third-party LLM provider. 'repromptModel' catches the error and sends
+         * it back to the model as a tool result so the model can attempt to
+         * recover.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: common
+         * 
+         * @param toolExecutionErrorStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolExecutionErrorStrategy(org.apache.camel.component.openai.ToolExecutionErrorStrategy toolExecutionErrorStrategy) {
+            doSetProperty("toolExecutionErrorStrategy", toolExecutionErrorStrategy);
+            return this;
+        }
+        /**
+         * Strategy for handling exceptions thrown during MCP tool execution.
+         * 'failExchange' (default) propagates the exception to the Camel
+         * exchange so that standard Camel error handling (onException,
+         * dead-letter channel) can process it. This is the safer default
+         * because 'repromptModel' sends raw exception messages (which may
+         * contain connection strings, hostnames, or internal paths) to a
+         * third-party LLM provider. 'repromptModel' catches the error and sends
+         * it back to the model as a tool result so the model can attempt to
+         * recover.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
+         * 
+         * Default: failExchange
+         * Group: common
+         * 
+         * @param toolExecutionErrorStrategy the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder toolExecutionErrorStrategy(String toolExecutionErrorStrategy) {
+            doSetProperty("toolExecutionErrorStrategy", toolExecutionErrorStrategy);
+            return this;
+        }
+        /**
+         * Top P for response generation (0.0 to 1.0).
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param topP the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder topP(Double topP) {
+            doSetProperty("topP", topP);
+            return this;
+        }
+        /**
+         * Top P for response generation (0.0 to 1.0).
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: common
+         * 
+         * @param topP the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder topP(String topP) {
+            doSetProperty("topP", topP);
+            return this;
+        }
+        /**
+         * Default user message text to use when no prompt is provided.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param userMessage the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder userMessage(String userMessage) {
+            doSetProperty("userMessage", userMessage);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for writing the request body, which matters
+         * for large payloads such as audio and image uploads. When 0 or
+         * negative, requestTimeout applies.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder writeTimeout(long writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for writing the request body, which matters
+         * for large payloads such as audio and image uploads. When 0 or
+         * negative, requestTimeout applies.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used instead of apiKey. Requires
+         * camel-oauth on the classpath. The profile properties are resolved
+         * from camel.oauth..client-id, camel.oauth..client-secret, and
+         * camel.oauth..token-endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
+        /**
+         * SSLContextParameters to use for configuring SSL/TLS. When set, takes
+         * precedence over the individual sslTruststore, sslKeystore, and
+         * sslProtocol options.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSLContextParameters to use for configuring SSL/TLS. When set, takes
+         * precedence over the individual sslTruststore, sslKeystore, and
+         * sslProtocol options.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * The endpoint identification algorithm to validate the server hostname
+         * using the server certificate. Set to an empty string or 'none' to
+         * disable hostname verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: https
+         * Group: security
+         * 
+         * @param sslEndpointAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslEndpointAlgorithm(String sslEndpointAlgorithm) {
+            doSetProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used by the key manager factory for SSL connections.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: SunX509
+         * Group: security
+         * 
+         * @param sslKeymanagerAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslKeymanagerAlgorithm(String sslKeymanagerAlgorithm) {
+            doSetProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
+            return this;
+        }
+        /**
+         * The password of the private key in the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslKeyPassword(String sslKeyPassword) {
+            doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * The location of the key store file. This is optional and can be used
+         * for two-way authentication for the OpenAI API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreLocation the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslKeystoreLocation(String sslKeystoreLocation) {
+            doSetProperty("sslKeystoreLocation", sslKeystoreLocation);
+            return this;
+        }
+        /**
+         * The store password for the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystorePassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslKeystorePassword(String sslKeystorePassword) {
+            doSetProperty("sslKeystorePassword", sslKeystorePassword);
+            return this;
+        }
+        /**
+         * The file format of the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: JKS
+         * Group: security
+         * 
+         * @param sslKeystoreType the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslKeystoreType(String sslKeystoreType) {
+            doSetProperty("sslKeystoreType", sslKeystoreType);
+            return this;
+        }
+        /**
+         * The SSL protocol used to generate the SSLContext.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: TLSv1.3
+         * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslProtocol(String sslProtocol) {
+            doSetProperty("sslProtocol", sslProtocol);
+            return this;
+        }
+        /**
+         * The algorithm used by the trust manager factory for SSL connections.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: PKIX
+         * Group: security
+         * 
+         * @param sslTrustmanagerAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslTrustmanagerAlgorithm(String sslTrustmanagerAlgorithm) {
+            doSetProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+            return this;
+        }
+        /**
+         * The location of the trust store file, used to validate the server's
+         * certificate.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreLocation the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslTruststoreLocation(String sslTruststoreLocation) {
+            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
+            return this;
+        }
+        /**
+         * The password for the trust store file. If a password is not set, the
+         * configured trust store can still be used, but integrity checking is
+         * disabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststorePassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslTruststorePassword(String sslTruststorePassword) {
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
+            return this;
+        }
+        /**
+         * The file format of the trust store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: JKS
+         * Group: security
+         * 
+         * @param sslTruststoreType the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointProducerBuilder sslTruststoreType(String sslTruststoreType) {
+            doSetProperty("sslTruststoreType", sslTruststoreType);
+            return this;
+        }
+    }
+
+    /**
+     * Advanced builder for endpoint producers for the OpenAI component.
+     */
+    public interface AdvancedOpenAIEndpointProducerBuilder extends EndpointProducerBuilder {
+        default OpenAIEndpointProducerBuilder basic() {
+            return (OpenAIEndpointProducerBuilder) this;
+        }
+
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenAIEndpointProducerBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpenAIEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    }
+
+    /**
      * Builder for endpoint for the OpenAI component.
      */
     public interface OpenAIEndpointBuilder
             extends
-                EndpointProducerBuilder {
+                OpenAIEndpointConsumerBuilder,
+                OpenAIEndpointProducerBuilder {
         default AdvancedOpenAIEndpointBuilder advanced() {
             return (AdvancedOpenAIEndpointBuilder) this;
         }
@@ -56,7 +4768,7 @@ public interface OpenAIEndpointBuilderFactory {
          * additionalBodyProperty(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param key the option key
          * @param value the option value
@@ -77,7 +4789,7 @@ public interface OpenAIEndpointBuilderFactory {
          * additionalBodyProperty(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param values the values
          * @return the dsl builder
@@ -98,7 +4810,7 @@ public interface OpenAIEndpointBuilderFactory {
          * additionalHeader(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param key the option key
          * @param value the option value
@@ -120,7 +4832,7 @@ public interface OpenAIEndpointBuilderFactory {
          * additionalHeader(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param values the values
          * @return the dsl builder
@@ -142,7 +4854,7 @@ public interface OpenAIEndpointBuilderFactory {
          * additionalResponseHeader(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param key the option key
          * @param value the option value
@@ -165,7 +4877,7 @@ public interface OpenAIEndpointBuilderFactory {
          * additionalResponseHeader(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param values the values
          * @return the dsl builder
@@ -180,7 +4892,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param apiKey the value to set
          * @return the dsl builder
@@ -195,7 +4907,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioChunkingStrategy the value to set
          * @return the dsl builder
@@ -209,7 +4921,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioInclude the value to set
          * @return the dsl builder
@@ -223,7 +4935,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioKeywords the value to set
          * @return the dsl builder
@@ -237,7 +4949,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioKnownSpeakerNames the value to set
          * @return the dsl builder
@@ -252,7 +4964,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioKnownSpeakerReferences the value to set
          * @return the dsl builder
@@ -267,7 +4979,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioLanguage the value to set
          * @return the dsl builder
@@ -281,7 +4993,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioLanguages the value to set
          * @return the dsl builder
@@ -296,7 +5008,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioModel the value to set
          * @return the dsl builder
@@ -311,7 +5023,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioPrompt the value to set
          * @return the dsl builder
@@ -326,7 +5038,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: json
-         * Group: producer
+         * Group: common
          * 
          * @param audioResponseFormat the value to set
          * @return the dsl builder
@@ -340,7 +5052,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioTemperature the value to set
          * @return the dsl builder
@@ -354,7 +5066,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioTemperature the value to set
          * @return the dsl builder
@@ -369,7 +5081,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param audioTimestampGranularities the value to set
          * @return the dsl builder
@@ -386,7 +5098,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: common
          * 
          * @param autoToolExecution the value to set
          * @return the dsl builder
@@ -403,7 +5115,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: common
          * 
          * @param autoToolExecution the value to set
          * @return the dsl builder
@@ -422,7 +5134,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param background the value to set
          * @return the dsl builder
@@ -441,7 +5153,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param background the value to set
          * @return the dsl builder
@@ -457,7 +5169,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: https://api.openai.com/v1
-         * Group: producer
+         * Group: common
          * 
          * @param baseUrl the value to set
          * @return the dsl builder
@@ -473,7 +5185,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param batchEndpoint the value to set
          * @return the dsl builder
@@ -493,7 +5205,7 @@ public interface OpenAIEndpointBuilderFactory {
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param key the option key
          * @param value the option value
@@ -514,7 +5226,7 @@ public interface OpenAIEndpointBuilderFactory {
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param values the values
          * @return the dsl builder
@@ -531,7 +5243,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: output
-         * Group: producer
+         * Group: common
          * 
          * @param batchResultsFile the value to set
          * @return the dsl builder
@@ -546,7 +5258,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param builtinTools the value to set
          * @return the dsl builder
@@ -564,7 +5276,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param connectTimeout the value to set
          * @return the dsl builder
@@ -582,7 +5294,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param connectTimeout the value to set
          * @return the dsl builder
@@ -597,7 +5309,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: CamelOpenAIConversationHistory
-         * Group: producer
+         * Group: common
          * 
          * @param conversationHistoryProperty the value to set
          * @return the dsl builder
@@ -613,7 +5325,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param conversationId the value to set
          * @return the dsl builder
@@ -633,7 +5345,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param conversationMemory the value to set
          * @return the dsl builder
@@ -653,7 +5365,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param conversationMemory the value to set
          * @return the dsl builder
@@ -667,7 +5379,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param developerMessage the value to set
          * @return the dsl builder
@@ -683,7 +5395,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param dimensions the value to set
          * @return the dsl builder
@@ -700,7 +5412,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param dimensions the value to set
          * @return the dsl builder
@@ -714,7 +5426,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param embeddingModel the value to set
          * @return the dsl builder
@@ -730,7 +5442,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: base64
-         * Group: producer
+         * Group: common
          * 
          * @param encodingFormat the value to set
          * @return the dsl builder
@@ -745,7 +5457,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param fileSearchVectorStoreIds the value to set
          * @return the dsl builder
@@ -766,7 +5478,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.openai.HallucinatedToolNameStrategy</code> type.
          * 
          * Default: failExchange
-         * Group: producer
+         * Group: common
          * 
          * @param hallucinatedToolNameStrategy the value to set
          * @return the dsl builder
@@ -787,7 +5499,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.openai.HallucinatedToolNameStrategy</code> type.
          * 
          * Default: failExchange
-         * Group: producer
+         * Group: common
          * 
          * @param hallucinatedToolNameStrategy the value to set
          * @return the dsl builder
@@ -804,7 +5516,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param hostedMcpTools the value to set
          * @return the dsl builder
@@ -820,7 +5532,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageBackground the value to set
          * @return the dsl builder
@@ -835,7 +5547,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageCount the value to set
          * @return the dsl builder
@@ -851,7 +5563,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageCount the value to set
          * @return the dsl builder
@@ -867,7 +5579,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageInputFidelity the value to set
          * @return the dsl builder
@@ -886,7 +5598,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageModel the value to set
          * @return the dsl builder
@@ -901,7 +5613,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageModeration the value to set
          * @return the dsl builder
@@ -916,7 +5628,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageOutputCompression the value to set
          * @return the dsl builder
@@ -932,7 +5644,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageOutputCompression the value to set
          * @return the dsl builder
@@ -947,7 +5659,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageOutputFormat the value to set
          * @return the dsl builder
@@ -964,7 +5676,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imagePrompt the value to set
          * @return the dsl builder
@@ -980,7 +5692,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageQuality the value to set
          * @return the dsl builder
@@ -999,7 +5711,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageResponseFormat the value to set
          * @return the dsl builder
@@ -1014,7 +5726,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageSize the value to set
          * @return the dsl builder
@@ -1029,7 +5741,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param imageStyle the value to set
          * @return the dsl builder
@@ -1046,7 +5758,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param jsonSchema the value to set
          * @return the dsl builder
@@ -1067,7 +5779,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param maxAgenticTokens the value to set
          * @return the dsl builder
@@ -1088,7 +5800,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param maxAgenticTokens the value to set
          * @return the dsl builder
@@ -1108,7 +5820,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>int</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param maxHistoryMessages the value to set
          * @return the dsl builder
@@ -1128,7 +5840,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param maxHistoryMessages the value to set
          * @return the dsl builder
@@ -1149,7 +5861,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>int</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param maxHistoryTokens the value to set
          * @return the dsl builder
@@ -1170,7 +5882,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param maxHistoryTokens the value to set
          * @return the dsl builder
@@ -1187,7 +5899,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>int</code> type.
          * 
          * Default: 2
-         * Group: producer
+         * Group: common
          * 
          * @param maxRetries the value to set
          * @return the dsl builder
@@ -1204,7 +5916,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * 
          * Default: 2
-         * Group: producer
+         * Group: common
          * 
          * @param maxRetries the value to set
          * @return the dsl builder
@@ -1218,7 +5930,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param maxTokens the value to set
          * @return the dsl builder
@@ -1233,7 +5945,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param maxTokens the value to set
          * @return the dsl builder
@@ -1249,7 +5961,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>int</code> type.
          * 
          * Default: 50
-         * Group: producer
+         * Group: common
          * 
          * @param maxToolIterations the value to set
          * @return the dsl builder
@@ -1265,7 +5977,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * 
          * Default: 50
-         * Group: producer
+         * Group: common
          * 
          * @param maxToolIterations the value to set
          * @return the dsl builder
@@ -1282,7 +5994,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param mcpProtocolVersions the value to set
          * @return the dsl builder
@@ -1298,7 +6010,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: common
          * 
          * @param mcpReconnect the value to set
          * @return the dsl builder
@@ -1314,7 +6026,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: common
          * 
          * @param mcpReconnect the value to set
          * @return the dsl builder
@@ -1339,7 +6051,7 @@ public interface OpenAIEndpointBuilderFactory {
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param key the option key
          * @param value the option value
@@ -1365,7 +6077,7 @@ public interface OpenAIEndpointBuilderFactory {
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param values the values
          * @return the dsl builder
@@ -1381,7 +6093,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>int</code> type.
          * 
          * Default: 20
-         * Group: producer
+         * Group: common
          * 
          * @param mcpTimeout the value to set
          * @return the dsl builder
@@ -1397,7 +6109,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * 
          * Default: 20
-         * Group: producer
+         * Group: common
          * 
          * @param mcpTimeout the value to set
          * @return the dsl builder
@@ -1415,7 +6127,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: common
          * 
          * @param mcpToolRefresh the value to set
          * @return the dsl builder
@@ -1433,7 +6145,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: common
          * 
          * @param mcpToolRefresh the value to set
          * @return the dsl builder
@@ -1447,7 +6159,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param model the value to set
          * @return the dsl builder
@@ -1462,7 +6174,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: omni-moderation-latest
-         * Group: producer
+         * Group: common
          * 
          * @param moderationModel the value to set
          * @return the dsl builder
@@ -1477,7 +6189,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param outputClass the value to set
          * @return the dsl builder
@@ -1498,7 +6210,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param parallelToolExecution the value to set
          * @return the dsl builder
@@ -1519,7 +6231,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param parallelToolExecution the value to set
          * @return the dsl builder
@@ -1540,7 +6252,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param parallelToolTimeout the value to set
          * @return the dsl builder
@@ -1561,7 +6273,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param parallelToolTimeout the value to set
          * @return the dsl builder
@@ -1576,7 +6288,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param previousResponseId the value to set
          * @return the dsl builder
@@ -1593,7 +6305,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param readTimeout the value to set
          * @return the dsl builder
@@ -1610,7 +6322,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param readTimeout the value to set
          * @return the dsl builder
@@ -1628,7 +6340,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param requestTimeout the value to set
          * @return the dsl builder
@@ -1646,7 +6358,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param requestTimeout the value to set
          * @return the dsl builder
@@ -1661,7 +6373,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param speechInstructions the value to set
          * @return the dsl builder
@@ -1676,7 +6388,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param speechModel the value to set
          * @return the dsl builder
@@ -1691,7 +6403,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: mp3
-         * Group: producer
+         * Group: common
          * 
          * @param speechResponseFormat the value to set
          * @return the dsl builder
@@ -1706,7 +6418,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param speechSpeed the value to set
          * @return the dsl builder
@@ -1721,7 +6433,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param speechSpeed the value to set
          * @return the dsl builder
@@ -1738,7 +6450,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default: alloy
-         * Group: producer
+         * Group: common
          * 
          * @param speechVoice the value to set
          * @return the dsl builder
@@ -1760,7 +6472,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param storeFullResponse the value to set
          * @return the dsl builder
@@ -1782,7 +6494,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param storeFullResponse the value to set
          * @return the dsl builder
@@ -1797,7 +6509,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param streaming the value to set
          * @return the dsl builder
@@ -1812,7 +6524,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param streaming the value to set
          * @return the dsl builder
@@ -1829,7 +6541,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param stripThinking the value to set
          * @return the dsl builder
@@ -1846,7 +6558,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: common
          * 
          * @param stripThinking the value to set
          * @return the dsl builder
@@ -1861,7 +6573,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param systemMessage the value to set
          * @return the dsl builder
@@ -1877,7 +6589,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param tags the value to set
          * @return the dsl builder
@@ -1891,7 +6603,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param temperature the value to set
          * @return the dsl builder
@@ -1905,7 +6617,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param temperature the value to set
          * @return the dsl builder
@@ -1929,7 +6641,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
          * 
          * Default: failExchange
-         * Group: producer
+         * Group: common
          * 
          * @param toolExecutionErrorStrategy the value to set
          * @return the dsl builder
@@ -1953,7 +6665,7 @@ public interface OpenAIEndpointBuilderFactory {
          * <code>org.apache.camel.component.openai.ToolExecutionErrorStrategy</code> type.
          * 
          * Default: failExchange
-         * Group: producer
+         * Group: common
          * 
          * @param toolExecutionErrorStrategy the value to set
          * @return the dsl builder
@@ -1967,7 +6679,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param topP the value to set
          * @return the dsl builder
@@ -1981,7 +6693,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param topP the value to set
          * @return the dsl builder
@@ -1995,7 +6707,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @param userMessage the value to set
          * @return the dsl builder
@@ -2012,7 +6724,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param writeTimeout the value to set
          * @return the dsl builder
@@ -2029,7 +6741,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * 
          * Default: 0
-         * Group: producer
+         * Group: common
          * 
          * @param writeTimeout the value to set
          * @return the dsl builder
@@ -2264,57 +6976,12 @@ public interface OpenAIEndpointBuilderFactory {
      */
     public interface AdvancedOpenAIEndpointBuilder
             extends
-                EndpointProducerBuilder {
+                AdvancedOpenAIEndpointConsumerBuilder,
+                AdvancedOpenAIEndpointProducerBuilder {
         default OpenAIEndpointBuilder basic() {
             return (OpenAIEndpointBuilder) this;
         }
 
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedOpenAIEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedOpenAIEndpointBuilder lazyStartProducer(String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
     }
 
     public interface OpenAIBuilders {
@@ -2348,12 +7015,13 @@ public interface OpenAIEndpointBuilderFactory {
          * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
          * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
          * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', or 'image-edit'
-         * There are 16 enums and the value can be one of: chat-completion,
+         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
+         * consumer)
+         * There are 17 enums and the value can be one of: chat-completion,
          * responses, responses-retrieve, responses-cancel, batch,
          * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
-         * moderation, image-generation, image-edit
+         * moderation, image-generation, image-edit, webhook
          * 
          * @param path operation
          * @return the dsl builder
@@ -2377,12 +7045,13 @@ public interface OpenAIEndpointBuilderFactory {
          * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
          * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
          * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', or 'image-edit'
-         * There are 16 enums and the value can be one of: chat-completion,
+         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
+         * consumer)
+         * There are 17 enums and the value can be one of: chat-completion,
          * responses, responses-retrieve, responses-cancel, batch,
          * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
-         * moderation, image-generation, image-edit
+         * moderation, image-generation, image-edit, webhook
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -2405,11 +7074,61 @@ public interface OpenAIEndpointBuilderFactory {
         public static final OpenAIHeaderNameBuilder INSTANCE = new OpenAIHeaderNameBuilder();
 
         /**
+         * The type of the webhook event, such as response.completed or
+         * batch.completed.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code OpenAIWebhookEventType}.
+         */
+        public String openAIWebhookEventType() {
+            return "CamelOpenAIWebhookEventType";
+        }
+        /**
+         * The id of the webhook event.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code OpenAIWebhookEventId}.
+         */
+        public String openAIWebhookEventId() {
+            return "CamelOpenAIWebhookEventId";
+        }
+        /**
+         * The id of the object the event is about, such as the response id of
+         * response.completed, which the responses-retrieve operation takes.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code OpenAIWebhookObjectId}.
+         */
+        public String openAIWebhookObjectId() {
+            return "CamelOpenAIWebhookObjectId";
+        }
+        /**
+         * When the event was created, in seconds since the epoch.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code OpenAIWebhookCreatedAt}.
+         */
+        public String openAIWebhookCreatedAt() {
+            return "CamelOpenAIWebhookCreatedAt";
+        }
+        /**
          * The user message to send to the OpenAI chat completion API.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIUserMessage}.
          */
@@ -2421,7 +7140,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAISystemMessage}.
          */
@@ -2434,7 +7153,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIDeveloperMessage}.
          */
@@ -2446,7 +7165,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIModel}.
          */
@@ -2460,7 +7179,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Double} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAITemperature}.
          */
@@ -2474,7 +7193,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Double} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAITopP}.
          */
@@ -2486,7 +7205,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIMaxTokens}.
          */
@@ -2499,7 +7218,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIPreviousResponseId}.
          */
@@ -2512,7 +7231,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIConversationId}.
          */
@@ -2524,7 +7243,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIStreaming}.
          */
@@ -2536,7 +7255,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIOutputClass}.
          */
@@ -2548,7 +7267,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIJsonSchema}.
          */
@@ -2560,7 +7279,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIStripThinking}.
          */
@@ -2575,7 +7294,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIMediaType}.
          */
@@ -2587,7 +7306,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIThinkingContent}.
          */
@@ -2600,7 +7319,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIReasoningContent}.
          */
@@ -2612,7 +7331,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIResponseModel}.
          */
@@ -2626,7 +7345,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIResponseId}.
          */
@@ -2639,7 +7358,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIFinishReason}.
          */
@@ -2651,7 +7370,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIPromptTokens}.
          */
@@ -2663,7 +7382,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAICompletionTokens}.
          */
@@ -2676,7 +7395,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAITotalTokens}.
          */
@@ -2691,7 +7410,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code java.util.List<java.util.Map<String,
          * Object>>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIResponseAnnotations}.
          */
@@ -2704,7 +7423,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIResponseStatus}.
          */
@@ -2716,7 +7435,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIToolIterations}.
          */
@@ -2728,7 +7447,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code java.util.List<String>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIMcpToolCalls}.
          */
@@ -2741,7 +7460,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIMcpReturnDirect}.
          */
@@ -2753,7 +7472,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAgenticPromptTokens}.
          */
@@ -2766,7 +7485,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAgenticCompletionTokens}.
          */
@@ -2778,7 +7497,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAgenticTotalTokens}.
          */
@@ -2791,7 +7510,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code
          * com.openai.models.chat.completions.ChatCompletion} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIResponse}.
          */
@@ -2803,7 +7522,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code com.openai.models.responses.Response} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIResponsesResponse}.
          */
@@ -2816,7 +7535,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code
          * com.openai.models.moderations.ModerationCreateResponse} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIModerationResponse}.
          */
@@ -2829,7 +7548,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code com.openai.models.images.ImagesResponse}
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageResponse}.
          */
@@ -2842,7 +7561,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code
          * com.openai.models.embeddings.CreateEmbeddingResponse} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIEmbeddingsResponse}.
          */
@@ -2856,7 +7575,7 @@ public interface OpenAIEndpointBuilderFactory {
          * com.openai.models.audio.transcriptions.TranscriptionCreateResponse}
          * type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code
          * OpenAIAudioTranscriptionResponse}.
@@ -2870,7 +7589,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code
          * com.openai.models.audio.translations.TranslationCreateResponse} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code
          * OpenAIAudioTranslationResponse}.
@@ -2884,7 +7603,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchId}.
          */
@@ -2897,7 +7616,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchEndpoint}.
          */
@@ -2909,7 +7628,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code java.util.Map<String, String>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchMetadata}.
          */
@@ -2922,7 +7641,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchCustomId}.
          */
@@ -2935,7 +7654,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchResultsFile}.
          */
@@ -2948,7 +7667,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchStatus}.
          */
@@ -2960,7 +7679,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchInputFileId}.
          */
@@ -2972,7 +7691,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchOutputFileId}.
          */
@@ -2984,7 +7703,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchErrorFileId}.
          */
@@ -2996,7 +7715,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchRequestCountTotal}.
          */
@@ -3008,7 +7727,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code
          * OpenAIBatchRequestCountCompleted}.
@@ -3021,7 +7740,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchRequestCountFailed}.
          */
@@ -3035,7 +7754,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code java.util.List<java.util.Map<String,
          * Object>>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchErrors}.
          */
@@ -3047,7 +7766,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code com.openai.models.batches.Batch} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIBatchResponse}.
          */
@@ -3059,7 +7778,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIEmbeddingModel}.
          */
@@ -3071,7 +7790,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIEmbeddingDimensions}.
          */
@@ -3083,7 +7802,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIEmbeddingResponseModel}.
          */
@@ -3095,7 +7814,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIEmbeddingCount}.
          */
@@ -3107,7 +7826,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIEmbeddingVectorSize}.
          */
@@ -3119,7 +7838,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code List<Float>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIReferenceEmbedding}.
          */
@@ -3131,7 +7850,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Double} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAISimilarityScore}.
          */
@@ -3143,7 +7862,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String or List<String>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIOriginalText}.
          */
@@ -3155,7 +7874,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIModerationModel}.
          */
@@ -3169,7 +7888,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIModerationText}.
          */
@@ -3183,7 +7902,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIModerationFlagged}.
          */
@@ -3200,7 +7919,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code java.util.List<java.util.Map<String,
          * Object>>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIModerationResults}.
          */
@@ -3214,7 +7933,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code java.util.Map<String, Boolean>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIModerationCategories}.
          */
@@ -3228,7 +7947,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code java.util.Map<String, Double>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code
          * OpenAIModerationCategoryScores}.
@@ -3241,7 +7960,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIModerationResponseModel}.
          */
@@ -3253,7 +7972,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioModel}.
          */
@@ -3265,7 +7984,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioLanguage}.
          */
@@ -3278,7 +7997,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioResponseFormat}.
          */
@@ -3290,7 +8009,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Double} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioTemperature}.
          */
@@ -3303,7 +8022,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioPrompt}.
          */
@@ -3316,7 +8035,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code
          * OpenAIAudioTimestampGranularities}.
@@ -3329,7 +8048,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioChunkingStrategy}.
          */
@@ -3341,7 +8060,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioKnownSpeakerNames}.
          */
@@ -3354,7 +8073,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code
          * OpenAIAudioKnownSpeakerReferences}.
@@ -3367,7 +8086,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioKeywords}.
          */
@@ -3379,7 +8098,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioLanguages}.
          */
@@ -3391,7 +8110,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioInclude}.
          */
@@ -3403,7 +8122,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Double} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioDuration}.
          */
@@ -3415,7 +8134,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code java.util.List} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioDiarizedSegments}.
          */
@@ -3427,7 +8146,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIAudioDetectedLanguage}.
          */
@@ -3440,7 +8159,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAISpeechModel}.
          */
@@ -3453,7 +8172,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAISpeechVoice}.
          */
@@ -3466,7 +8185,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAISpeechResponseFormat}.
          */
@@ -3479,7 +8198,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Double} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAISpeechSpeed}.
          */
@@ -3492,7 +8211,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAISpeechInstructions}.
          */
@@ -3505,7 +8224,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageModel}.
          */
@@ -3519,7 +8238,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImagePrompt}.
          */
@@ -3531,7 +8250,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageSize}.
          */
@@ -3544,7 +8263,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageQuality}.
          */
@@ -3558,7 +8277,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageResponseFormat}.
          */
@@ -3570,7 +8289,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageCount}.
          */
@@ -3583,7 +8302,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageBackground}.
          */
@@ -3596,7 +8315,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageOutputFormat}.
          */
@@ -3609,7 +8328,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageOutputCompression}.
          */
@@ -3622,7 +8341,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageStyle}.
          */
@@ -3635,7 +8354,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageModeration}.
          */
@@ -3649,7 +8368,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageInputFidelity}.
          */
@@ -3663,7 +8382,7 @@ public interface OpenAIEndpointBuilderFactory {
          * The option is a: {@code byte[], java.io.File, java.nio.file.Path or
          * java.io.InputStream} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageMask}.
          */
@@ -3675,7 +8394,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageResultCount}.
          */
@@ -3688,7 +8407,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageRevisedPrompt}.
          */
@@ -3701,7 +8420,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code java.util.List<String>} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageRevisedPrompts}.
          */
@@ -3714,7 +8433,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageInputTokens}.
          */
@@ -3727,7 +8446,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageOutputTokens}.
          */
@@ -3740,7 +8459,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Long} type.
          * 
-         * Group: producer
+         * Group: common
          * 
          * @return the name of the header {@code OpenAIImageTotalTokens}.
          */

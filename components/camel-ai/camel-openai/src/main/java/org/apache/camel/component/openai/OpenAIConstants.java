@@ -23,6 +23,20 @@ import org.apache.camel.spi.Metadata;
  */
 public final class OpenAIConstants {
 
+    // Webhook consumer headers
+    @Metadata(label = "consumer", description = "The type of the webhook event, such as response.completed or batch.completed",
+              javaType = "String")
+    public static final String WEBHOOK_EVENT_TYPE = "CamelOpenAIWebhookEventType";
+    @Metadata(label = "consumer", description = "The id of the webhook event", javaType = "String")
+    public static final String WEBHOOK_EVENT_ID = "CamelOpenAIWebhookEventId";
+    @Metadata(label = "consumer",
+              description = "The id of the object the event is about, such as the response id of response.completed, "
+                            + "which the responses-retrieve operation takes",
+              javaType = "String")
+    public static final String WEBHOOK_OBJECT_ID = "CamelOpenAIWebhookObjectId";
+    @Metadata(label = "consumer", description = "When the event was created, in seconds since the epoch", javaType = "Long")
+    public static final String WEBHOOK_CREATED_AT = "CamelOpenAIWebhookCreatedAt";
+
     // Input Headers
     @Metadata(description = "The user message to send to the OpenAI chat completion API", javaType = "String")
     public static final String USER_MESSAGE = "CamelOpenAIUserMessage";

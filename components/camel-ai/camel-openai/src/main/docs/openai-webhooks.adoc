@@ -1,0 +1,161 @@
+= OpenAI - Webhook Events
+:tabs-sync-option:
+
+xref:ROOT:openai-component.adoc[Back to OpenAI Component]
+
+OpenAI calls a webhook endpoint when something it runs for you finishes: a background response, a batch, a fine-tuning
+job, an eval run. The `webhook` operation receives those events, so a route reacts to them instead of polling.
+
+It is the only operation of camel-openai that is consumed from. The endpoint is served by the HTTP server of the
+runtime through its REST consumer factory, which is `camel-platform-http` unless another component is configured, and
+every request is verified against the signing secret before the route runs.
+
+== Route
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("openai:webhook?webhookSecret={{openai.webhook.secret}}")
+    .choice()
+        .when(header(OpenAIConstants.WEBHOOK_EVENT_TYPE).isEqualTo("response.completed"))
+            .to("direct:response-completed")
+        .when(header(OpenAIConstants.WEBHOOK_EVENT_TYPE).isEqualTo("batch.completed"))
+            .to("direct:batch-completed")
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="openai:webhook?webhookSecret={{openai.webhook.secret}}"/>
+  <choice>
+    <when>
+      <simple>${header.CamelOpenAIWebhookEventType} == 'response.completed'</simple>
+      <to uri="direct:response-completed"/>
+    </when>
+    <when>
+      <simple>${header.CamelOpenAIWebhookEventType} == 'batch.completed'</simple>
+      <to uri="direct:batch-completed"/>
+    </when>
+  </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: openai:webhook
+      parameters:
+        webhookSecret: "{{openai.webhook.secret}}"
+      steps:
+        - choice:
+            when:
+              - simple: "${header.CamelOpenAIWebhookEventType} == 'response.completed'"
+                steps:
+                  - to:
+                      uri: direct:response-completed
+              - simple: "${header.CamelOpenAIWebhookEventType} == 'batch.completed'"
+                steps:
+                  - to:
+                      uri: direct:batch-completed
+----
+====
+
+The `response.completed` event carries the id of the response, not the response itself: read it with the
+`responses-retrieve` operation, which takes that id.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("openai:webhook?webhookSecret={{openai.webhook.secret}}")
+    .filter(header(OpenAIConstants.WEBHOOK_EVENT_TYPE).isEqualTo("response.completed"))
+        .setHeader(OpenAIConstants.RESPONSE_ID, header(OpenAIConstants.WEBHOOK_OBJECT_ID))
+        .to("openai:responses-retrieve")
+        .to("direct:answer");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: openai:webhook
+      parameters:
+        webhookSecret: "{{openai.webhook.secret}}"
+      steps:
+        - filter:
+            simple: "${header.CamelOpenAIWebhookEventType} == 'response.completed'"
+            steps:
+              - setHeader:
+                  name: CamelOpenAIResponseId
+                  simple: "${header.CamelOpenAIWebhookObjectId}"
+              - to:
+                  uri: openai:responses-retrieve
+              - to:
+                  uri: direct:answer
+----
+====
+
+== Configuration
+
+[width="100%",cols="2,5",options="header"]
+|===
+| Option | Description
+| `webhookSecret` | The signing secret of the endpoint in the OpenAI dashboard, which starts with `whsec_`. Required.
+| `webhookPath` | The HTTP path to listen on, `/openai/webhook` by default.
+| `httpServerComponent` | The component, or the bean, that serves the endpoint. It must implement `RestConsumerFactory`; `platform-http` is used when it is on the classpath.
+| `webhookMaxPayloadSize` | The largest request body that is read, 1 MiB by default. A bigger request is answered with 413 and is not verified.
+|===
+
+Configure the same path in the OpenAI dashboard, on a URL that OpenAI can reach, and put the secret it shows there in
+`webhookSecret`. A route that only receives events needs no API key; one that calls the API afterwards, such as the
+`responses-retrieve` example above, needs one as usual.
+
+== Message
+
+The body is the parsed event, an `UnwrapWebhookEvent` of the OpenAI SDK, with the type of the event to read it from:
+
+[source,java]
+----
+UnwrapWebhookEvent event = exchange.getMessage().getBody(UnwrapWebhookEvent.class);
+if (event.isResponseCompleted()) {
+    String responseId = event.asResponseCompleted().data().id();
+}
+----
+
+The headers describe the event without unwrapping it, and an event type the SDK does not know yet is described the
+same way:
+
+[width="100%",cols="2,5",options="header"]
+|===
+| Header | Description
+| `CamelOpenAIWebhookEventType` | The type of the event, such as `response.completed` or `batch.completed`
+| `CamelOpenAIWebhookEventId` | The id of the event
+| `CamelOpenAIWebhookObjectId` | The id of the object the event is about, such as the response id
+| `CamelOpenAIWebhookCreatedAt` | When the event was created, in seconds since the epoch
+|===
+
+The request itself does not reach the route: the exchange carries only the event and these headers.
+
+== What OpenAI gets back
+
+* `200` when the route handled the event.
+* `400` when the signature does not match, a signature header is missing, or the event is older than the tolerance of
+  the SDK (5 minutes). The route does not run.
+* `413` when the body is larger than `webhookMaxPayloadSize`. The body is not verified.
+* `500` when the route failed. OpenAI retries the event, so make the route idempotent, or handle the error inside it.
+
+A route that takes long should hand the event over (a `seda` or `direct` route, a queue) and let the webhook answer
+quickly, as it does for any HTTP endpoint.
