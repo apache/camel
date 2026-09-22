@@ -390,6 +390,29 @@ public final class AuthoringTools {
      * (CAMEL-24909). The snippet must occur exactly once; the answer says what was replaced.
      */
     public static JsonObject editFile(ToolContext ctx, Path dir, String file, String find, String replace) {
+        JsonObject edit = editedContent(dir, file, find, replace);
+        String content = edit.getString("content");
+        if (content == null) {
+            return edit; // not-found or ambiguous: the answer says what to do instead
+        }
+        JsonObject result = writeFile(ctx, dir, file, content, true);
+        if (!"invalid".equals(result.getString("status"))) {
+            result.put("status", "edited");
+            result.put("editedAtLine", edit.getInteger("editedAtLine"));
+            result.put("replacedLines", edit.getInteger("replacedLines"));
+        } else {
+            result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
+                                  + " camel_edit_file again.");
+        }
+        return result;
+    }
+
+    /**
+     * The content of the file with the snippet replaced, in {@code content}, with the line it changed and how many
+     * lines it replaced; or the answer of a miss (not-found, with the nearest lines) or of an ambiguous snippet. The
+     * TUI writes that content itself, so an edit is confirmed and replayed in the editor like a write.
+     */
+    public static JsonObject editedContent(Path dir, String file, String find, String replace) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
             throw new ToolExecutionException(file + " does not exist: write the whole file with camel_write_file");
@@ -400,7 +423,7 @@ public final class AuthoringTools {
         } catch (IOException e) {
             throw new ToolExecutionException("Failed to read " + path + ": " + e.getMessage());
         }
-        if (find.isEmpty()) {
+        if (find == null || find.isEmpty()) {
             throw new ToolExecutionException("find is required: the text to replace, as it stands in the file");
         }
         int first = content.indexOf(find);
@@ -415,10 +438,10 @@ public final class AuthoringTools {
                 length = window[1] - window[0];
             }
         }
+        JsonObject result = new JsonObject();
+        result.put("file", file);
         if (first < 0) {
-            JsonObject result = new JsonObject();
             result.put("status", "not-found");
-            result.put("file", file);
             String nearest = nearestBlock(content, find);
             result.put("message", "The text to find is not in the file as given; copy the lines from the file"
                                   + (nearest != null ? ", which has there:\n" + nearest : " (camel_get_files reads it)"));
@@ -427,28 +450,18 @@ public final class AuthoringTools {
             }
             return result;
         }
-        int second = content.indexOf(find, first + find.length());
-        if (second >= 0) {
-            JsonObject result = new JsonObject();
+        if (content.indexOf(find, first + find.length()) >= 0) {
             result.put("status", "ambiguous");
-            result.put("file", file);
             result.put("occurrences", count(content, find));
             result.put("message", "The text to find occurs more than once: include the lines around it so it names one"
                                   + " place, or write the whole file with camel_write_file");
             return result;
         }
-        int line = (int) content.substring(0, first).lines().count() + (first > 0 && content.charAt(first - 1) == '\n' ? 1 : 0);
-        JsonObject result = writeFile(ctx, dir, file, content.substring(0, first) + replace
-                                                      + content.substring(first + length),
-                true);
-        if (!"invalid".equals(result.getString("status"))) {
-            result.put("status", "edited");
-            result.put("editedAtLine", Math.max(1, line));
-            result.put("replacedLines", (int) find.lines().count());
-        } else {
-            result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
-                                  + " camel_edit_file again.");
-        }
+        int line = (int) content.substring(0, first).lines().count()
+                   + (first > 0 && content.charAt(first - 1) == '\n' ? 1 : 0);
+        result.put("content", content.substring(0, first) + replace + content.substring(first + length));
+        result.put("editedAtLine", Math.max(1, line));
+        result.put("replacedLines", (int) find.lines().count());
         return result;
     }
 
