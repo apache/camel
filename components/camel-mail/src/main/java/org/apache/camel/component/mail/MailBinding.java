@@ -74,7 +74,7 @@ public class MailBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailBinding.class);
 
-    private static final int MAX_MULTIPART_DEPTH = 20;
+    private int maxMultipartDepth = MailConstants.MAIL_DEFAULT_MAX_MULTIPART_DEPTH;
     private final HeaderFilterStrategy headerFilterStrategy;
     private ContentTypeResolver contentTypeResolver;
     private boolean decodeFilename;
@@ -126,6 +126,14 @@ public class MailBinding {
 
     public void setFailOnDuplicateAttachment(boolean failOnDuplicateAttachment) {
         this.failOnDuplicateAttachment = failOnDuplicateAttachment;
+    }
+
+    public int getMaxMultipartDepth() {
+        return maxMultipartDepth;
+    }
+
+    public void setMaxMultipartDepth(int maxMultipartDepth) {
+        this.maxMultipartDepth = maxMultipartDepth;
     }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
@@ -371,12 +379,12 @@ public class MailBinding {
     private void extractAttachmentsFromMultipart(Multipart mp, Map<String, Attachment> map, int depth)
             throws MessagingException, IOException {
 
-        if (depth > MAX_MULTIPART_DEPTH) {
+        if (depth > maxMultipartDepth) {
             // A single message must not be able to exhaust the stack: without a bound, a deeply nested
             // multipart throws StackOverflowError before the message is processed, and the poll aborts
             // on every subsequent attempt until the message is removed out of band.
             LOG.warn("Ignoring multipart nested deeper than {} levels while extracting attachments",
-                    MAX_MULTIPART_DEPTH);
+                    maxMultipartDepth);
             return;
         }
 

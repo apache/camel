@@ -864,6 +864,27 @@ public interface Pop3ComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default Pop3ComponentBuilder maxMultipartDepth(int maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+    
         /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
@@ -1107,6 +1128,7 @@ public interface Pop3ComponentBuilderFactory {
             case "ignoreUnsupportedCharset": getOrCreateConfiguration((MailComponent) component).setIgnoreUnsupportedCharset((boolean) value); return true;
             case "ignoreUriScheme": getOrCreateConfiguration((MailComponent) component).setIgnoreUriScheme((boolean) value); return true;
             case "javaMailProperties": getOrCreateConfiguration((MailComponent) component).setJavaMailProperties((java.util.Properties) value); return true;
+            case "maxMultipartDepth": getOrCreateConfiguration((MailComponent) component).setMaxMultipartDepth((int) value); return true;
             case "session": getOrCreateConfiguration((MailComponent) component).setSession((jakarta.mail.Session) value); return true;
             case "useInlineAttachments": getOrCreateConfiguration((MailComponent) component).setUseInlineAttachments((boolean) value); return true;
             case "headerFilterStrategy": ((MailComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;

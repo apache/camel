@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import jakarta.mail.Address;
 import jakarta.mail.Message;
@@ -38,6 +39,7 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 /**
@@ -83,9 +85,41 @@ class MailPoisonMessageTest {
     }
 
     @Test
+    void respectsAConfiguredMultipartDepthBound() throws Exception {
+        // an attachment nested three multipart levels deep
+        MimeBodyPart leaf = new MimeBodyPart();
+        leaf.setText("payload");
+        leaf.setFileName("deep.txt");
+        MimeMultipart nested = new MimeMultipart();
+        nested.addBodyPart(leaf);
+        for (int i = 0; i < 3; i++) {
+            MimeBodyPart wrapper = new MimeBodyPart();
+            wrapper.setContent(nested);
+            wrapper.setHeader("Content-Type", nested.getContentType());
+            MimeMultipart outer = new MimeMultipart();
+            outer.addBodyPart(wrapper);
+            nested = outer;
+        }
+
+        // a bound below the nesting depth stops before the attachment, so it is not extracted
+        MailBinding shallow = new MailBinding();
+        shallow.setMaxMultipartDepth(2);
+        Map<String, Attachment> shallowMap = new HashMap<>();
+        shallow.extractAttachmentsFromMultipart(nested, shallowMap);
+        assertTrue(shallowMap.isEmpty(), "a bound below the nesting depth must skip the deep attachment");
+
+        // a bound above the nesting depth reaches the attachment
+        MailBinding deep = new MailBinding();
+        deep.setMaxMultipartDepth(10);
+        Map<String, Attachment> deepMap = new HashMap<>();
+        deep.extractAttachmentsFromMultipart(nested, deepMap);
+        assertTrue(deepMap.containsKey("deep.txt"), "a bound above the nesting depth must reach the attachment");
+    }
+
+    @Test
     void emptyMultipartDoesNotSpinForever() {
         assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
-            MimeMessage message = new MimeMessage(Session.getDefaultInstance(new java.util.Properties()));
+            MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()));
             message.setContent(new MimeMultipart());
 
             assertNull(MailConverters.toString(message));
