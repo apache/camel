@@ -90,6 +90,83 @@ public class YamlValidatorPropertyHintTest {
         }
     }
 
+    /** CAMEL-24888: the shapes the local model wrote on the HTTP rungs, each with the form to write. */
+    @Test
+    public void testHttpRungShapesGetTheForm() throws Exception {
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: file:orders
+                          steps:
+                            - setExchangeProperty:
+                                name: orderId
+                                expression:
+                                  simple:
+                                    expression: "${body[orderId]}"
+                            - setBody:
+                                expression:
+                                  constant: null
+                            - marshal:
+                                json:
+                                  library: jackson
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("setExchangeProperty") && m.contains("the EIP is setProperty"))
+                    .anyMatch(m -> m.contains("constant is a text") && m.contains("simple: {expression: \"${null}\"}"))
+                    .anyMatch(m -> m.contains("the library name is case sensitive: write library: Jackson"));
+            // the name comes from the data format's own enumeration, not from json's
+            errors = v.validate("""
+                    - route:
+                        from:
+                          uri: file:orders
+                          steps:
+                            - marshal:
+                                avro:
+                                  library: apacheavro
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("the library name is case sensitive: write library: ApacheAvro")
+                            && !m.contains("Gson"));
+            errors = v.validate("""
+                    - route:
+                        from:
+                          uri: file:orders
+                          steps:
+                            - toD:
+                                uri: "http://localhost:8080/stock/${exchangeProperty.sku}"
+                                options:
+                                  throwExceptionOnFailure: false
+                            - setBody:
+                                expression:
+                                  jsonpath:
+                                    jsonPath: "$[?(@.sku == 'X')]"
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("toD takes its options like to: under parameters:"))
+                    .anyMatch(m -> m.contains("the JSONPath text goes under expression:"));
+        }
+    }
+
+    /** CAMEL-24888: a double-quoted value that is never closed is named, instead of the parser's block-end message. */
+    @Test
+    public void testAnUnclosedQuoteIsNamed() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:a
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.sku == '${header.sku}')]
+                                resultType: java.util.List
+                        - log: "done"
+                """);
+        assertThat(errors).extracting(Error::getMessage)
+                .anyMatch(m -> m.startsWith("line 8: the value opens a double quote and never closes it"));
+    }
+
     @Test
     public void testPollEnrichWithAUriSaysItIsAnExpression() throws Exception {
         for (YamlValidator v : bothModes()) {

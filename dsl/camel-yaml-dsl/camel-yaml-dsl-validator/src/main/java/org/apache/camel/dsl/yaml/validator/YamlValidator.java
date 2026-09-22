@@ -206,6 +206,14 @@ public class YamlValidator {
                             .build();
                 }
             }
+            // a double-quoted value that never closes: the parser swallows the next lines and gives up further down
+            // (CAMEL-24888); the line that opened the quote is within the few lines above the reported one
+            for (int l = last; l >= 1 && l > last - 8; l--) {
+                Error unclosed = unclosedQuote(new Mark(l, 1), lines);
+                if (unclosed != null) {
+                    return unclosed;
+                }
+            }
             Error marked = indentationError(msg, lines);
             return marked != null ? marked : plain;
         }
@@ -252,6 +260,28 @@ public class YamlValidator {
         }
         if (msg.contains("found unknown escape character")) {
             return unknownEscape(msg, problem, lines);
+        }
+        if (msg.contains("expected <block end>, but found '<scalar>'") && !marks.isEmpty()) {
+            return unclosedQuote(marks.get(0), lines);
+        }
+        return null;
+    }
+
+    /**
+     * CAMEL-24888: {@code expression: "$[?(@.sku == '${header.sku}')]} with no closing quote: the parser swallows the
+     * following lines into the value and gives up at the next key. Says which line opened the quote.
+     */
+    static Error unclosedQuote(Mark start, String[] lines) {
+        if (start.line() < 1 || start.line() > lines.length) {
+            return null;
+        }
+        String line = lines[start.line() - 1];
+        int colon = line.indexOf(':');
+        String value = colon >= 0 ? line.substring(colon + 1).trim() : line.trim();
+        long quotes = value.chars().filter(c -> c == '"').count() - value.split("\\\\\"", -1).length + 1;
+        if (value.startsWith("\"") && quotes % 2 == 1) {
+            return hint("line " + start.line() + ": the value opens a double quote and never closes it: end it with"
+                        + " a \" after the last character (" + value + "\")");
         }
         return null;
     }
