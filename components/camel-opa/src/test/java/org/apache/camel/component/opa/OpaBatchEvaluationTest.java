@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.styra.opa.OPAClient;
+import com.styra.opa.OPAException;
 import com.styra.opa.OPAResult;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -30,8 +31,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -71,6 +75,9 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class))
                 .containsExactly(true, false, true);
+        // batch mode must set the policy-path header too, so observability tooling reads the same
+        // CamelOpaPolicyPath as it does after a single evaluation
+        assertThat(out.getMessage().getHeader(OpaConstants.POLICY_PATH, String.class)).isEqualTo(PATH);
     }
 
     @Test
@@ -122,5 +129,48 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
                 "opa:" + PATH + "?evaluationMode=wasm&policyBundle=classpath:authz.wasm&batch=true").start())
                 .isInstanceOf(Exception.class)
                 .hasMessageContaining("batch");
+    }
+
+    @Test
+    void reportsAnEmptyVerdictListForAnEmptyBatch() throws Exception {
+        // an empty list is answered without calling the SDK: an empty batch input is undefined there, so the
+        // short-circuit makes it a deterministic empty verdict list. The policy-path header is still set.
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true",
+                e -> e.getMessage().setBody(List.of()));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class)).isEmpty();
+        assertThat(out.getMessage().getHeader(OpaConstants.POLICY_PATH, String.class)).isEqualTo(PATH);
+        verify(client, never()).evaluateBatch(anyString(), anyMap());
+    }
+
+    @Test
+    void failsClosedWhenTheWholeBatchCannotBeEvaluated() throws Exception {
+        // the batch call itself fails - the server could not be reached at all - so nothing was decided. With
+        // failOpen off, every element is denied by failing the exchange, not by returning a verdict list.
+        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(new OPAException("connection refused"));
+
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true",
+                e -> e.getMessage().setBody(List.of("a", "b")));
+
+        assertThat(out.getException())
+                .isInstanceOf(OpaPolicyEvaluationException.class)
+                .hasMessageContaining("in batch");
+        // fail-closed leaves no verdict on the exchange, mirroring the single-evaluation failure path
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION)).isNull();
+    }
+
+    @Test
+    void allowsEveryElementUnderFailOpenWhenTheWholeBatchFails() throws Exception {
+        // failOpen turns a whole-batch failure into an allow for every element, parallel to the single-evaluation
+        // failOpen path
+        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(new OPAException("connection refused"));
+
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true&failOpen=true",
+                e -> e.getMessage().setBody(List.of("a", "b", "c")));
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION, List.class))
+                .containsExactly(true, true, true);
     }
 }

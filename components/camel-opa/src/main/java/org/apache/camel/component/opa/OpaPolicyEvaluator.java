@@ -149,6 +149,14 @@ public abstract class OpaPolicyEvaluator {
      */
     public List<Boolean> evaluateBatch(Exchange exchange, List<?> elements) throws OpaPolicyEvaluationException {
         clearDecisionHeaders(exchange);
+        // an empty list has nothing to authorize. Short-circuit before the engine call: an empty batch is a case the
+        // OPA SDK does not define, and letting it reach the server could turn "nothing to decide" into a whole-batch
+        // failure - and so, fail-closed, into an error thrown for an empty list. Answer it deterministically instead.
+        if (elements.isEmpty()) {
+            List<Boolean> verdicts = List.of();
+            setBatchDecisionHeaders(exchange, verdicts);
+            return verdicts;
+        }
         Map<String, Map<String, Object>> inputs = new LinkedHashMap<>();
         for (int i = 0; i < elements.size(); i++) {
             inputs.put(Integer.toString(i), buildInput(exchange, elements.get(i), true));
@@ -178,7 +186,7 @@ public abstract class OpaPolicyEvaluator {
             }
         }
 
-        exchange.getMessage().setHeader(OpaConstants.BATCH_DECISION, verdicts);
+        setBatchDecisionHeaders(exchange, verdicts);
         return verdicts;
     }
 
@@ -348,6 +356,17 @@ public abstract class OpaPolicyEvaluator {
         // set unconditionally so that a verdict claimed by an inbound message is always replaced
         exchange.getMessage().setHeader(OpaConstants.DECISION_ALLOW, allowed);
         exchange.getMessage().setHeader(OpaConstants.DECISION, decision);
+        exchange.getMessage().setHeader(OpaConstants.POLICY_PATH, policyPath);
+    }
+
+    /**
+     * Records the batch outcome on the exchange: the per-element verdict list, and the policy path, so that tooling
+     * reading {@link OpaConstants#POLICY_PATH} sees the same value in batch mode as it does after a single evaluation.
+     * As in {@link #evaluate}, a fail-closed batch failure never reaches here, leaving the exchange carrying no
+     * verdict.
+     */
+    private void setBatchDecisionHeaders(Exchange exchange, List<Boolean> verdicts) {
+        exchange.getMessage().setHeader(OpaConstants.BATCH_DECISION, verdicts);
         exchange.getMessage().setHeader(OpaConstants.POLICY_PATH, policyPath);
     }
 
