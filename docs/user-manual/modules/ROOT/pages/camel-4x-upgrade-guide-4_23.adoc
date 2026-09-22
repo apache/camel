@@ -144,11 +144,23 @@ script languages and the Camel 4 API use; `request` and `in` stay as its older n
 provided its own global variable named `message` is now hidden by the exchange variable, like the other exchange
 variable names.
 
-The Groovy script compiler now runs the registered `org.apache.camel.spi.CompilePostProcessor`s on a compiled
-class that has class-level annotations, with a new instance of the class, as the Java DSL loader does for `.java`
-sources. In the Camel CLI this binds a `@BindToRegistry` class and registers a `@Converter` class (and handles the
-Spring and Quarkus annotations) from a `.groovy` file, and binds it again on a reload in dev mode. A Groovy class
-without annotations, and a Groovy script, is not instantiated, as before.
+The Groovy script compiler now runs the `org.apache.camel.spi.CompilePostProcessor`s on a compiled class that has
+class-level annotations, with a new instance of the class, as the Java DSL loader does for `.java` sources. The
+processors in the registry are used when there are any (the Camel CLI registers processors that also handle the
+Spring and Quarkus annotations); otherwise built-in processors for the Camel annotations are used. So in every runtime
+(camel-main, Spring Boot, Quarkus) a `@BindToRegistry` or `@Configuration` class from a `.groovy` file is bound in
+Camel's registry, a `@Converter` class is registered as type converters, and an `EventNotifier` class is added to
+the management strategy; in the Camel CLI the bean is bound again on a reload in dev mode. A Groovy class without
+annotations, and a Groovy script, is not instantiated, as before.
+
+The Camel-annotation compile post-processors that camel-kamelet-main used internally are now public classes in
+camel-support: `org.apache.camel.support.compile.BindToRegistryCompilePostProcessor`,
+`TypeConverterCompilePostProcessor` and `EventNotifierCompilePostProcessor`.
+
+A lazy `@BindToRegistry` class from a compiled `.java` or `.groovy` source (`lazy = true`, or `camel run --lazy-bean`
+in the Camel CLI) is now bound with the name from the annotation, or else the simple class name, the same as an eager
+`@BindToRegistry` class. Before, the bean was bound with the fully qualified class name and the annotation value was
+ignored, so a class in a package, or with a name in the annotation, was not found by the expected name.
 
 === camel-djl (Breaking change)
 

@@ -192,11 +192,13 @@ with Camel features that would support this such as in the route DSL and elsewhe
 
 However, there may be some features in Camel where this may not work (yet).
 
-A compiled class with class-level annotations is handed to the registered `org.apache.camel.spi.CompilePostProcessor`s
-with a new instance, as the Java DSL does for `.java` sources. With Camel CLI (`camel run`) that binds a
-`@BindToRegistry` class in the Registry and registers a `@Converter` class as type converters (the Spring
-and Quarkus annotations are supported as well), so a Groovy source can provide a bean such as a custom
-xref:languages:simple-advanced.adoc[simple function]. Plain classes without annotations are not instantiated.
+A compiled class with class-level annotations is handed to the `org.apache.camel.spi.CompilePostProcessor`s with a
+new instance, as the Java DSL does for `.java` sources. The processors in the Registry are used when there are any
+(Camel CLI registers processors that also handle the Spring and Quarkus annotations); otherwise the built-in
+processors for the Camel annotations are used. So in every runtime a `@BindToRegistry` class is bound in the
+Registry, a `@Converter` class is registered as type converters, and an `EventNotifier` class is added, and a Groovy
+source can provide a bean such as a custom xref:languages:simple-advanced.adoc[simple function]. Plain classes
+without annotations are not instantiated.
 
 IMPORTANT: This feature is only intended to include smaller groovy sources as small functions, DTOs
 that makes it easier to use together with Camel for low-code integrations. It is not

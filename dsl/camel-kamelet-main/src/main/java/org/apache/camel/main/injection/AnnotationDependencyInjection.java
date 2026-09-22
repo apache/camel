@@ -18,28 +18,20 @@ package org.apache.camel.main.injection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Configuration;
-import org.apache.camel.Converter;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverterExists;
 import org.apache.camel.impl.engine.CamelPostProcessorHelper;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.spi.CompilePostProcessor;
-import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.compile.BindToRegistryCompilePostProcessor;
+import org.apache.camel.support.compile.EventNotifierCompilePostProcessor;
+import org.apache.camel.support.compile.TypeConverterCompilePostProcessor;
 import org.apache.camel.util.AnnotationHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
@@ -79,120 +71,13 @@ public final class AnnotationDependencyInjection {
         // camel / common
         registry.bind("CamelTypeConverterCompilePostProcessor", new TypeConverterCompilePostProcessor());
         registry.bind("CamelEventNotifierCompilePostProcessor", new EventNotifierCompilePostProcessor());
-        registry.bind("CamelBindToRegistryCompilePostProcessor", new BindToRegistryCompilePostProcessor());
+        registry.bind("CamelBindToRegistryCompilePostProcessor", new BindToRegistryCompilePostProcessor(lazyBean));
         // spring
         registry.bind("SpringAnnotationCompilePostProcessor", new SpringAnnotationCompilePostProcessor());
         cbbp.addCamelBeanPostProjectInjector(new SpringBeanPostProcessorInjector(context));
         // quarkus
         registry.bind("QuarkusAnnotationCompilePostProcessor", new QuarkusAnnotationCompilePostProcessor());
         cbbp.addCamelBeanPostProjectInjector(new QuarkusBeanPostProcessorInjector(context));
-    }
-
-    private static class TypeConverterCompilePostProcessor implements CompilePostProcessor {
-
-        @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
-                throws Exception {
-            if (clazz.isAnnotationPresent(Converter.class)) {
-                TypeConverterRegistry tcr = camelContext.getTypeConverterRegistry();
-                TypeConverterExists exists = tcr.getTypeConverterExists();
-                LoggingLevel level = tcr.getTypeConverterExistsLoggingLevel();
-                // force type converter to override as we could be re-loading
-                tcr.setTypeConverterExists(TypeConverterExists.Override);
-                tcr.setTypeConverterExistsLoggingLevel(LoggingLevel.OFF);
-                try {
-                    tcr.addTypeConverters(clazz);
-                } finally {
-                    tcr.setTypeConverterExists(exists);
-                    tcr.setTypeConverterExistsLoggingLevel(level);
-                }
-            }
-        }
-    }
-
-    private static class EventNotifierCompilePostProcessor implements CompilePostProcessor {
-
-        private final Map<String, EventNotifier> notifiers = new HashMap<>();
-
-        @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
-                throws Exception {
-            if (instance == null) {
-                return;
-            }
-
-            if (instance instanceof EventNotifier) {
-                ManagementStrategy ms = camelContext.getManagementStrategy();
-                if (ms != null) {
-                    notifiers.compute(name, (key, old) -> {
-                        // remove previous instance
-                        if (old != null) {
-                            ms.removeEventNotifier(old);
-                        }
-                        // and new notifier
-                        EventNotifier en = (EventNotifier) instance;
-                        ms.addEventNotifier(en);
-                        return en;
-                    });
-                }
-            }
-        }
-    }
-
-    private class BindToRegistryCompilePostProcessor implements CompilePostProcessor {
-
-        @Override
-        public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
-                throws Exception {
-
-            BindToRegistry bir = clazz.getAnnotation(BindToRegistry.class);
-            Configuration cfg = clazz.getAnnotation(Configuration.class);
-
-            // special for lazy beans which we must create on-demand
-            if (instance == null && bir != null && (lazyBean || bir.lazy())) {
-                final String beanName = bir.value();
-                instance = (Supplier<Object>) () -> {
-                    Object answer = camelContext.getInjector().newInstance(clazz);
-                    CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(camelContext);
-                    try {
-                        bpp.postProcessBeforeInitialization(answer, beanName);
-                        bpp.postProcessAfterInitialization(answer, beanName);
-                    } catch (Exception e) {
-                        throw RuntimeCamelException.wrapRuntimeException(e);
-                    }
-                    return answer;
-                };
-                // unbind old bean and register lazy bean
-                camelContext.getRegistry().unbind(beanName);
-                // use dependency injection factory to perform the task of binding the bean to registry
-                Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                        .createBindToRegistryFactory(name, instance, clazz, beanName, false, bir.initMethod(),
-                                bir.destroyMethod());
-                task.run();
-            } else {
-                if (bir != null || cfg != null || instance instanceof CamelConfiguration) {
-                    CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(camelContext);
-                    if (bir != null && ObjectHelper.isNotEmpty(bir.value())) {
-                        name = bir.value();
-                    } else if (cfg != null && ObjectHelper.isNotEmpty(cfg.value())) {
-                        name = cfg.value();
-                    }
-                    // to support hot reloading of beans then we need to enable unbind mode in bean post processor
-                    bpp.setUnbindEnabled(true);
-                    try {
-                        // this class uses camels own annotations so the bind to registry happens
-                        // automatic by the bean post processor
-                        bpp.postProcessBeforeInitialization(instance, name);
-                        bpp.postProcessAfterInitialization(instance, name);
-                    } finally {
-                        bpp.setUnbindEnabled(false);
-                    }
-                    if (instance instanceof CamelConfiguration) {
-                        ((CamelConfiguration) instance).configure(camelContext);
-                    }
-                }
-            }
-        }
     }
 
     private class SpringAnnotationCompilePostProcessor implements CompilePostProcessor {
