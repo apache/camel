@@ -2500,3 +2500,33 @@ Due to the package rename from `com.bazaarvoice.jolt` to `io.joltcommunity.jolt`
 `ContextualTransform` classes into a Chainr spec need to update their imports to `io.joltcommunity.jolt.Transform` and
 `io.joltcommunity.jolt.ContextualTransform`.
 Users referencing `Removr` directly also need to update their import to `io.joltcommunity.jolt.removr.Removr`.
+
+=== camel-mustache, camel-chunk - potential breaking change
+
+The Exchange header constants in `MustacheConstants` and `ChunkConstants` have been renamed to
+follow the Camel naming convention used across the rest of the component catalog (so that they are
+handled consistently by `DefaultHeaderFilterStrategy`, like the other template components). The Java
+field names are unchanged; only the header string values have changed.
+
+`MustacheConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `MustacheConstants.MUSTACHE_RESOURCE_URI` | `MustacheResourceUri` | `CamelMustacheResourceUri`
+| `MustacheConstants.MUSTACHE_TEMPLATE` | `MustacheTemplate` | `CamelMustacheTemplate`
+|===
+
+`ChunkConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ChunkConstants.CHUNK_RESOURCE_URI` | `ChunkResourceUri` | `CamelChunkResourceUri`
+| `ChunkConstants.CHUNK_TEMPLATE` | `ChunkTemplate` | `CamelChunkTemplate`
+|===
+
+Routes that reference the constants (for example `setHeader(MustacheConstants.MUSTACHE_TEMPLATE, ...)`)
+are unaffected. Routes that set the header by its literal string name, or that use
+`allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
+names.
