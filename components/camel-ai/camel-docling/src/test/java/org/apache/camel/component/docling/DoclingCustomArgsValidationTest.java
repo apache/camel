@@ -19,6 +19,7 @@ package org.apache.camel.component.docling;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
