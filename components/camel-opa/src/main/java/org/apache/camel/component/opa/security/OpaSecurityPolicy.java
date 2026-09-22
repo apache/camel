@@ -60,8 +60,9 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
 
     private static final String WASM_MODE = "wasm";
     private static final String REST_MODE = "rest";
+    private static final String DEFAULT_SERVER_URL = "http://localhost:8181";
 
-    private String serverUrl = "http://localhost:8181";
+    private String serverUrl = DEFAULT_SERVER_URL;
     private String policyPath;
     private String allowKey = "allow";
     private String includeHeaders = "*";
@@ -125,6 +126,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      */
     private OpaPolicyEvaluator buildEvaluator(CamelContext camelContext) {
         if (WASM_MODE.equalsIgnoreCase(evaluationMode)) {
+            warnIgnoredServerOptions();
             try {
                 return OpaWasmEvaluator.create(camelContext, policyBundle, entrypoint, poolSize, borrowTimeout,
                         policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
@@ -149,6 +151,24 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         }
         return new OpaRestEvaluator(
                 opaClient, transport, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+    }
+
+    /**
+     * Warns at startup when options that only make sense for the REST engine are set in {@code wasm} mode, matching
+     * {@code OpaEndpoint.warnAboutIgnoredServerOptions} so both entry points behave alike. {@code failOpen} is not
+     * among them - it still governs a {@code wasm} evaluation failure. {@code serverUrl}, {@code bearerToken} and an
+     * injected {@code opaClient} address, authenticate to or replace a server there is none of in {@code wasm} mode.
+     */
+    private void warnIgnoredServerOptions() {
+        if (opaClient != null) {
+            LOG.warn("opaClient is ignored when evaluationMode=wasm: the policy is evaluated in-process");
+        }
+        if (ObjectHelper.isNotEmpty(bearerToken)) {
+            LOG.warn("bearerToken is ignored when evaluationMode=wasm: there is no server to authenticate to");
+        }
+        if (ObjectHelper.isNotEmpty(serverUrl) && !DEFAULT_SERVER_URL.equals(serverUrl)) {
+            LOG.warn("serverUrl '{}' is ignored when evaluationMode=wasm: the policy is evaluated in-process", serverUrl);
+        }
     }
 
     /**
