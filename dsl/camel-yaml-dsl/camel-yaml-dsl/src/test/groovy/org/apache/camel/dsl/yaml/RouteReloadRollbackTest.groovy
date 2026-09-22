@@ -27,7 +27,14 @@ import java.nio.file.Path
 
 /**
  * CAMEL-24860: a reload that fails (a route file saved with a mistake) restores the routes that ran before, instead
- * of leaving the application without routes until the next successful save.
+ * of leaving the application without routes until the next successful save. CAMEL-24899: a project whose routes are
+ * all in one file goes back to the content that last loaded, which is kept in memory.
+ * <p>
+ * The mistake the tests save is always the same one, and it is a real one (CAMEL-24850): the endpoint of pollEnrich
+ * is an expression, so {@code pollEnrich: {uri: "file:./order.json"}} has no uri property to bind and the loader
+ * rejects the file with "pollEnrich: unsupported field: uri". It is the right kind of mistake here because it fails
+ * while the routes are built, not while the YAML is parsed, which is what a reload has to survive. The form that
+ * works is {@code pollEnrich: {expression: {constant: {expression: "file:./order.json"}}}}.
  */
 class RouteReloadRollbackTest extends YamlTestSupport {
 
@@ -90,7 +97,7 @@ class RouteReloadRollbackTest extends YamlTestSupport {
             // one successful reload, so the content that runs is remembered
             strategy.getResourceReload().onReload(only.toString(), ResourceHelper.resolveResource(context2, "file:" + only))
             assert context2.getRouteController().getRouteStatus("only") == ServiceStatus.Started
-        when: 'the only route file is saved with a mistake'
+        when: 'the only route file is saved with a mistake (pollEnrich takes an expression, not a uri)'
             Files.writeString(only, """
                 - route:
                     id: only
@@ -139,7 +146,7 @@ class RouteReloadRollbackTest extends YamlTestSupport {
             strategy.doStart()
             assert context.getRouteController().getRouteStatus("good") == ServiceStatus.Started
             assert context.getRouteController().getRouteStatus("bad") == ServiceStatus.Started
-        when: 'the second file is saved with a mistake'
+        when: 'the second file is saved with a mistake (pollEnrich takes an expression, not a uri)'
             Files.writeString(bad, '''
                 - route:
                     id: bad
