@@ -255,6 +255,17 @@ public class KeycloakTokenIntrospector {
         }
 
         /**
+         * Returns whether the token has passed its expiry ({@code exp}) time. A result that carries no {@code exp}
+         * claim is treated as not expired, leaving expiry enforcement to the introspection endpoint.
+         *
+         * @return true if the {@code exp} claim is present and lies in the past, false otherwise
+         */
+        public boolean isExpired() {
+            Long exp = getExpiration();
+            return exp != null && exp * 1000L <= System.currentTimeMillis();
+        }
+
+        /**
          * Returns the subject (user ID) of the token.
          *
          * @return the subject

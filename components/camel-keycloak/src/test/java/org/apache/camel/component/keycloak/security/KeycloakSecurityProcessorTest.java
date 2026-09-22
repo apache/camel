@@ -518,4 +518,25 @@ class KeycloakSecurityProcessorTest {
         assertFalse(routeReached.get(),
                 "Route body must not be reached when the token has the required permission but the wrong authorized party");
     }
+
+    @Test
+    void testActiveButExpiredIntrospectionResultRejected() throws Exception {
+        // Simulates a cached introspection result that was active when stored but whose token exp has since passed:
+        // the introspection path must reject it, consistent with expiry enforcement on the local JWT path, instead of
+        // admitting the request until the cache TTL elapses.
+        long expiredSecondsAgo = System.currentTimeMillis() / 1000 - 60;
+        KeycloakTokenIntrospector introspector
+                = introspectorReturning(Map.of("active", true, "exp", expiredSecondsAgo));
+
+        KeycloakSecurityPolicy policy = introspectionPolicy(introspector);
+        policy.setValidateIssuer(false);
+
+        AtomicBoolean routeReached = new AtomicBoolean(false);
+        KeycloakSecurityProcessor processor = new KeycloakSecurityProcessor(e -> routeReached.set(true), policy);
+
+        CamelAuthorizationException e
+                = assertThrows(CamelAuthorizationException.class, () -> processor.process(bearer("x")));
+        assertTrue(e.getMessage().contains("expired"), "unexpected message: " + e.getMessage());
+        assertFalse(routeReached.get(), "Route body must not be reached for an expired token");
+    }
 }

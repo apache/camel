@@ -172,4 +172,35 @@ class ConcurrentMapTokenCacheTest {
 
         assertEquals(threadCount, cache.size());
     }
+
+    @Test
+    void testExpiredResultNotServed() {
+        // A result whose token has already expired must not be served, even while the configured TTL has not elapsed.
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("active", true);
+        claims.put("sub", "test-user");
+        claims.put("exp", System.currentTimeMillis() / 1000 - 60); // expired 60 seconds ago
+        KeycloakTokenIntrospector.IntrospectionResult expired
+                = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+
+        cache.put("expired-token", expired);
+
+        assertNull(cache.get("expired-token"));
+    }
+
+    @Test
+    void testResultWithFutureExpirationServed() {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("active", true);
+        claims.put("sub", "test-user");
+        claims.put("exp", System.currentTimeMillis() / 1000 + 300); // valid for 5 more minutes
+        KeycloakTokenIntrospector.IntrospectionResult valid
+                = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+
+        cache.put("valid-token", valid);
+
+        KeycloakTokenIntrospector.IntrospectionResult retrieved = cache.get("valid-token");
+        assertNotNull(retrieved);
+        assertTrue(retrieved.isActive());
+    }
 }

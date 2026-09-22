@@ -108,6 +108,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
             }
 
+            ensureTokenNotExpired(introspectionResult, exchange);
+
             if (policy.isValidateIssuer()) {
                 validateIssuerFromIntrospection(introspectionResult, exchange);
             }
@@ -125,6 +127,19 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             }
         } else {
             parseAndVerifyToken(accessToken, exchange);
+        }
+    }
+
+    /**
+     * Enforces token expiry on the introspection path. The introspection endpoint reports an expired token as inactive,
+     * but a cached result can outlive the token's own {@code exp}; this check ensures an expired token is rejected on a
+     * cache hit, consistent with the expiry enforcement performed on the local JWT verification path.
+     */
+    private void ensureTokenNotExpired(
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult, Exchange exchange)
+            throws CamelAuthorizationException {
+        if (introspectionResult.isExpired()) {
+            throw new CamelAuthorizationException("Token has expired", exchange);
         }
     }
 
@@ -281,6 +296,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 if (!introspectionResult.isActive()) {
                     throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
                 }
+
+                ensureTokenNotExpired(introspectionResult, exchange);
 
                 // Validate issuer from introspection result if enabled
                 if (policy.isValidateIssuer()) {
@@ -506,6 +523,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 if (!introspectionResult.isActive()) {
                     throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
                 }
+
+                ensureTokenNotExpired(introspectionResult, exchange);
 
                 // Validate issuer from introspection result if enabled
                 if (policy.isValidateIssuer()) {
