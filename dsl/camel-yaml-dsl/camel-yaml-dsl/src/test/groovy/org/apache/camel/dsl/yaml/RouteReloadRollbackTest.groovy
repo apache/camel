@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.ServiceStatus
+import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.ResourceHelper
@@ -27,7 +28,14 @@ import java.nio.file.Path
 
 /**
  * CAMEL-24860: a reload that fails (a route file saved with a mistake) restores the routes that ran before, instead
- * of leaving the application without routes until the next successful save.
+ * of leaving the application without routes until the next successful save. CAMEL-24899: a project whose routes are
+ * all in one file goes back to the content that last loaded, which is kept in memory.
+ * <p>
+ * The mistake the tests save is always the same one, and it is a real one (CAMEL-24850): the endpoint of pollEnrich
+ * is an expression, so {@code pollEnrich: {uri: "file:./order.json"}} has no uri property to bind and the loader
+ * rejects the file with "pollEnrich: unsupported field: uri". It is the right kind of mistake here because it fails
+ * while the routes are built, not while the YAML is parsed, which is what a reload has to survive. The form that
+ * works is {@code pollEnrich: {expression: {constant: {expression: "file:./order.json"}}}}.
  */
 class RouteReloadRollbackTest extends YamlTestSupport {
 
@@ -66,6 +74,125 @@ class RouteReloadRollbackTest extends YamlTestSupport {
         dir.toFile().deleteDir()
     }
 
+    def 'the only route file keeps its previous version when the save is broken'() {
+        setup:
+            def solo = Files.createTempDirectory("camel-reload-solo")
+            def only = solo.resolve("only.camel.yaml")
+            Files.writeString(only, """
+                - route:
+                    id: only
+                    from:
+                      uri: direct:only
+                      steps:
+                        - to:
+                            uri: mock:only
+                """)
+            def context2 = new org.apache.camel.impl.DefaultCamelContext()
+            context2.start()
+            org.apache.camel.support.PluginHelper.getRoutesLoader(context2)
+                    .loadRoutes(ResourceHelper.resolveResource(context2, "file:" + only))
+            def strategy = new RouteWatcherReloadStrategy(solo.toString())
+            strategy.setCamelContext(context2)
+            strategy.setPattern("*.yaml")
+            strategy.doStart()
+            // one successful reload, so the content that runs is remembered
+            strategy.getResourceReload().onReload(only.toString(), ResourceHelper.resolveResource(context2, "file:" + only))
+            assert context2.getRouteController().getRouteStatus("only") == ServiceStatus.Started
+        when: 'the only route file is saved with a mistake (pollEnrich takes an expression, not a uri)'
+            Files.writeString(only, """
+                - route:
+                    id: only
+                    from:
+                      uri: direct:only
+                      steps:
+                        - pollEnrich:
+                            uri: file:./order.json
+                """)
+            def failure = null
+            try {
+                strategy.getResourceReload().onReload(only.toString(), ResourceHelper.resolveResource(context2, "file:" + only))
+            } catch (Exception e) {
+                failure = e
+            }
+        then: 'the reload fails and the version that ran before is still running'
+            failure != null
+            context2.getRouteController().getRouteStatus("only") == ServiceStatus.Started
+        when: 'the file is fixed'
+            Files.writeString(only, """
+                - route:
+                    id: only
+                    from:
+                      uri: direct:only
+                      steps:
+                        - to:
+                            uri: mock:fixed
+                """)
+            strategy.getResourceReload().onReload(only.toString(), ResourceHelper.resolveResource(context2, "file:" + only))
+        then: 'the fixed version runs, not the remembered one: the message lands in mock:fixed'
+            context2.getRouteController().getRouteStatus("only") == ServiceStatus.Started
+            context2.getRoutes().size() == 1
+            def fixed = context2.getEndpoint("mock:fixed", MockEndpoint)
+            fixed.expectedMessageCount(1)
+            def stale = context2.getEndpoint("mock:only", MockEndpoint)
+            stale.expectedMessageCount(0)
+            context2.createProducerTemplate().sendBody("direct:only", "x")
+            MockEndpoint.assertIsSatisfied(context2)
+        cleanup:
+            strategy.doStop()
+            context2.stop()
+            solo.toFile().deleteDir()
+    }
+
+    def 'everything removed forgets the remembered content, a deleted file is not put back'() {
+        setup:
+            def gone = Files.createTempDirectory("camel-reload-gone")
+            def file = gone.resolve("gone.camel.yaml")
+            Files.writeString(file, """
+                - route:
+                    id: gone
+                    from:
+                      uri: direct:gone
+                      steps:
+                        - to:
+                            uri: mock:gone
+                """)
+            def ctx = new org.apache.camel.impl.DefaultCamelContext()
+            ctx.start()
+            def strategy = new RouteWatcherReloadStrategy(gone.toString())
+            strategy.setCamelContext(ctx)
+            strategy.setPattern("*.yaml")
+            strategy.doStart()
+            strategy.getResourceReload().onReload(file.toString(), ResourceHelper.resolveResource(ctx, "file:" + file))
+            assert ctx.getRouteController().getRouteStatus("gone") == ServiceStatus.Started
+        when: 'every route file is removed (the on-demand strategy asks for that when the directory is empty)'
+            strategy.onRouteReload(null, true)
+        then: 'no routes run'
+            ctx.routes.isEmpty()
+        when: 'the file comes back with a mistake (pollEnrich takes an expression, not a uri)'
+            Files.writeString(file, """
+                - route:
+                    id: gone
+                    from:
+                      uri: direct:gone
+                      steps:
+                        - pollEnrich:
+                            uri: file:./order.json
+                """)
+            def failure = null
+            try {
+                strategy.getResourceReload().onReload(file.toString(), ResourceHelper.resolveResource(ctx, "file:" + file))
+            } catch (Exception e) {
+                failure = e
+            }
+        then: 'the reload fails and the removed route is not put back from memory'
+            failure != null
+            ctx.routes.isEmpty()
+        cleanup:
+            strategy.doStop()
+            ctx.stop()
+            gone.toFile().deleteDir()
+    }
+
     def 'a failed reload restores the previous routes'() {
         setup:
             def strategy = new RouteWatcherReloadStrategy(dir.toString())
@@ -75,7 +202,7 @@ class RouteReloadRollbackTest extends YamlTestSupport {
             strategy.doStart()
             assert context.getRouteController().getRouteStatus("good") == ServiceStatus.Started
             assert context.getRouteController().getRouteStatus("bad") == ServiceStatus.Started
-        when: 'the second file is saved with a mistake'
+        when: 'the second file is saved with a mistake (pollEnrich takes an expression, not a uri)'
             Files.writeString(bad, '''
                 - route:
                     id: bad
