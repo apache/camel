@@ -88,9 +88,9 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
     }
 
     /**
-     * The maximum number of error entries of the same kind (same route, node, exception type and message) to keep, so a
-     * storm of one failure does not evict all the other errors. The counter of that kind keeps rising even when its
-     * older entries are evicted.
+     * The maximum number of error entries of the same kind (same route, node and exception type) to keep, so a storm of
+     * one failure does not evict all the other errors. The counter of that kind keeps rising even when its older
+     * entries are evicted.
      */
     public void setMaximumEntriesPerKind(int maximumEntriesPerKind) {
         this.maximumEntriesPerKind = maximumEntriesPerKind;
@@ -186,8 +186,8 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
     }
 
     /**
-     * The maximum number of error entries of the same kind (same route, node, exception type and message) to keep, so a
-     * storm of one failure does not evict all the other errors.
+     * The maximum number of error entries of the same kind (same route, node and exception type) to keep, so a storm of
+     * one failure does not evict all the other errors.
      */
     public ErrorRegistryConfigurationProperties withMaximumEntriesPerKind(int maximumEntriesPerKind) {
         this.maximumEntriesPerKind = maximumEntriesPerKind;

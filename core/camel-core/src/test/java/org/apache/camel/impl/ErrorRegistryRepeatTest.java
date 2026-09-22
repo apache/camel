@@ -68,6 +68,26 @@ public class ErrorRegistryRepeatTest extends ContextTestSupport {
         assertEquals(newest.getTimestamp(), newest.getRepeatLastTimestamp());
     }
 
+    @Test
+    public void testAStormWhoseMessagesDifferIsStillOneKind() throws Exception {
+        template.sendBody("direct:other", "Hello");
+
+        // a real storm carries the failing payload in its message, so no two messages are the same
+        for (int i = 0; i < 20; i++) {
+            template.sendBody("direct:payload", "sku-" + i);
+        }
+
+        Collection<BacklogErrorEventMessage> entries = context.getErrorRegistry().browse();
+        List<BacklogErrorEventMessage> storm
+                = entries.stream().filter(e -> "payload".equals(e.getRouteId())).toList();
+
+        assertEquals(3, storm.size(), "the kind is the route, node and exception type, not the message: " + entries);
+        assertEquals(20, storm.get(0).getRepeatCount());
+        assertEquals("unknown sku sku-19", storm.get(0).getExceptionMessage(), "the messages are still readable");
+        assertEquals(1, entries.stream().filter(e -> "other".equals(e.getRouteId())).count(),
+                "the other error must survive the storm: " + entries);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -77,6 +97,11 @@ public class ErrorRegistryRepeatTest extends ContextTestSupport {
 
                 from("direct:storm").routeId("storm")
                         .throwException(new IllegalArgumentException("Forced error"));
+
+                from("direct:payload").routeId("payload")
+                        .process(e -> {
+                            throw new IllegalArgumentException("unknown sku " + e.getMessage().getBody(String.class));
+                        });
 
                 from("direct:other").routeId("other")
                         .throwException(new IllegalStateException("Something else"));

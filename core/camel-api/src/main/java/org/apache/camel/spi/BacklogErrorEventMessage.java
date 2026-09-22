@@ -86,9 +86,9 @@ public interface BacklogErrorEventMessage extends BacklogEventMessage {
     void markHandled();
 
     /**
-     * How many errors of this kind (same route, node, exception type and message) have been captured so far. The count
-     * keeps rising for as long as the same error keeps happening, also after older entries of that kind have been
-     * evicted, so a storm of the same failure shows as a growing number instead of filling up the registry.
+     * How many errors of this kind (same route, node and exception type) have been captured so far. The count keeps
+     * rising for as long as the same error keeps happening, also after older entries of that kind have been evicted, so
+     * a storm of the same failure shows as a growing number instead of filling up the registry.
      * <p/>
      * Is 1 when the error only happened once.
      *

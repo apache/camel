@@ -55,7 +55,6 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     private volatile int maximumEntries = 100;
     /** How many exchanges of the same kind of error are kept, so one storm does not push out the other errors. */
     private volatile int maximumEntriesPerKind = 3;
-    private volatile int maximumKinds = 100;
     private volatile Duration timeToLive = Duration.ZERO;
     private volatile int bodyMaxChars = 32 * 1024;
     private volatile boolean bodyIncludeStreams;
@@ -223,10 +222,14 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         evict();
     }
 
-    /** What makes two errors the same kind: the route, the node that failed, and the exception with its message. */
+    /**
+     * What makes two errors the same kind: the route, the node that failed, and the type of the exception. The
+     * exception message is deliberately left out, because a real storm usually carries the failing payload in its
+     * message (an order id, a url), which would make every entry its own kind and let the storm flood the registry
+     * again. The messages are still there to read on the entries that are kept.
+     */
     private static String kindOf(BacklogErrorEventMessage entry) {
-        return entry.getRouteId() + "|" + entry.getToNode() + "|" + entry.getExceptionType() + "|"
-               + entry.getExceptionMessage();
+        return entry.getRouteId() + "|" + entry.getToNode() + "|" + entry.getExceptionType();
     }
 
     /** Keeps at most {@link #maximumEntriesPerKind} entries of one kind, the newest ones. */
@@ -242,7 +245,8 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                 }
             }
         }
-        while (repeats.size() > maximumKinds) {
+        // a counter costs little, but do not keep more of them than the registry keeps entries
+        while (repeats.size() > maximumEntries) {
             String oldest = null;
             long oldestTime = Long.MAX_VALUE;
             for (Map.Entry<String, Repeat> en : repeats.entrySet()) {
