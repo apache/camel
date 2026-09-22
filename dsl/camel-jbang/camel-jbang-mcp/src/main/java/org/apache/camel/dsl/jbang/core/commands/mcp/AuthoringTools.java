@@ -196,8 +196,9 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Evaluates an expression: in the running integration when there is one, else locally. "
-                        + "Returns the value (true/false for a predicate) or the syntax error, so check simple before "
+          description = "Evaluates an expression: in the running integration when there is one, else locally, in any "
+                        + "language (jsonpath, jq, xpath, groovy: its component is downloaded when needed). Returns "
+                        + "the value (true/false for a predicate) or the syntax error, so check an expression before "
                         + "answering or writing it.")
     public JsonObject camel_eval_expression(
             @ToolArg(description = "e.g. ${random(1,10)} or ${body} ?: 'none'", required = true) String expression,

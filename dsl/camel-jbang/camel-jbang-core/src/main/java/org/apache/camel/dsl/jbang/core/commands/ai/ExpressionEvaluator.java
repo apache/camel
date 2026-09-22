@@ -16,14 +16,20 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.main.download.DependencyDownloaderClassLoader;
+import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -75,7 +81,7 @@ public final class ExpressionEvaluator {
             evaluateInProcess(ctx, lang, expression, body, predicate, result);
         } else {
             result.put("evaluatedIn", "a local scratch context (no integration selected)");
-            evaluateLocally(lang, expression, body, predicate, result);
+            evaluateLocally(ctx, lang, expression, body, predicate, result);
         }
         return result;
     }
@@ -113,16 +119,52 @@ public final class ExpressionEvaluator {
     }
 
     private static void evaluateLocally(
-            String lang, String expression, String body, boolean predicate, JsonObject result) {
+            ToolContext ctx, String lang, String expression, String body, boolean predicate, JsonObject result) {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            String gav = languageArtifact(ctx, lang);
+            // the languages of this process (simple, constant, header, ...) need no class loader of their own
+            ClassLoader known = gav != null ? DOWNLOADED.get(gav) : null;
+            if (evaluateWith(known, lang, expression, body, predicate, result)) {
+                syntaxCheck(ctx, known, lang, expression, predicate, result);
+                return;
+            }
+            // the language is not on this process's classpath: download its component as camel run does, so a
+            // jsonpath, jq or xpath expression can be tried before it is written (CAMEL-24907)
+            ClassLoader downloaded = download(gav);
+            if (downloaded == null || !evaluateWith(downloaded, lang, expression, body, predicate, result)) {
+                result.put("status", "error");
+                result.put("error", "The language '" + lang + "' is not on the classpath of this process"
+                                    + (gav != null ? " and " + gav + " could not be downloaded" : "")
+                                    + "; select a running integration that has it (camel_run, then its name) and the"
+                                    + " expression is evaluated there");
+                return;
+            }
+            result.put("downloaded", gav);
+            syntaxCheck(ctx, downloaded, lang, expression, predicate, result);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+        }
+    }
+
+    /**
+     * Evaluates with the given class loader (null for this process's own), and answers whether the language was found;
+     * the result of the evaluation, or its error, is put in {@code result}.
+     */
+    private static boolean evaluateWith(
+            ClassLoader loader, String lang, String expression, String body, boolean predicate, JsonObject result) {
         try (DefaultCamelContext context = new DefaultCamelContext(false)) {
+            if (loader != null) {
+                // before the start: the language resolver reads the class loader as the context comes up
+                context.setApplicationContextClassLoader(loader);
+                Thread.currentThread().setContextClassLoader(loader);
+            }
             context.start();
             Language language;
             try {
                 language = context.resolveLanguage(lang);
             } catch (Exception e) {
-                result.put("status", "error");
-                result.put("error", "Unknown language '" + lang + "': " + e.getMessage());
-                return;
+                return false;
             }
             Exchange exchange = new DefaultExchange(context);
             exchange.getMessage().setBody(body != null ? body : "");
@@ -140,12 +182,87 @@ public final class ExpressionEvaluator {
             result.put("result", value != null ? value.toString() : null);
         } catch (Exception e) {
             result.put("status", "error");
-            Throwable cause = e;
-            while (cause.getCause() != null && cause.getCause() != cause) {
-                cause = cause.getCause();
+            result.put("error", rootCause(e));
+        }
+        return true;
+    }
+
+    /**
+     * The catalog's own check of the text, which names where the syntax breaks (its index), so an error says more than
+     * the evaluation's exception; only added when it finds something the evaluation did not.
+     */
+    private static void syntaxCheck(
+            ToolContext ctx, ClassLoader loader, String lang, String expression, boolean predicate, JsonObject result) {
+        if ("ok".equals(result.getString("status"))) {
+            return;
+        }
+        try {
+            LanguageValidationResult check = predicate
+                    ? ctx.catalog().validateLanguagePredicate(loader, lang, expression)
+                    : ctx.catalog().validateLanguageExpression(loader, lang, expression);
+            if (!check.isSuccess()) {
+                String error = check.getShortError() != null ? check.getShortError() : check.getError();
+                if (error != null) {
+                    result.put("syntaxError", error);
+                    if (check.getIndex() >= 0) {
+                        result.put("syntaxErrorAt", check.getIndex());
+                    }
+                }
             }
-            String message = cause.getMessage();
-            result.put("error", message != null ? message : cause.toString());
+        } catch (Exception e) {
+            // the catalog cannot check this language here; the evaluation's own error stands
         }
     }
+
+    private static String rootCause(Throwable e) {
+        Throwable cause = e;
+        while (cause.getCause() != null && cause.getCause() != cause) {
+            cause = cause.getCause();
+        }
+        return cause.getMessage() != null ? cause.getMessage() : cause.toString();
+    }
+
+    /** The groupId:artifactId:version of a language, from the catalog, or null when the catalog does not know it. */
+    private static String languageArtifact(ToolContext ctx, String lang) {
+        try {
+            LanguageModel model = ctx.catalog().languageModel(lang);
+            if (model != null && model.getArtifactId() != null) {
+                return model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion();
+            }
+        } catch (Exception e) {
+            // the catalog does not know it
+        }
+        return null;
+    }
+
+    /**
+     * Downloads the component of a language and keeps its class loader, so the next call does not download again.
+     * Returns null when there is nothing to download (an unknown name) or the download fails (no network).
+     */
+    private static ClassLoader download(String gav) {
+        if (gav == null) {
+            return null;
+        }
+        ClassLoader cached = DOWNLOADED.get(gav);
+        if (cached != null) {
+            return cached;
+        }
+        String[] parts = gav.split(":");
+        try {
+            DependencyDownloaderClassLoader cl
+                    = new DependencyDownloaderClassLoader(ExpressionEvaluator.class.getClassLoader());
+            try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+                downloader.setClassLoader(cl);
+                downloader.start();
+                downloader.downloadDependency(parts[0], parts[1], parts[2]);
+            }
+            DOWNLOADED.put(gav, cl);
+            return cl;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** The class loaders of the languages downloaded so far, so the next call does not download again. */
+    private static final Map<String, ClassLoader> DOWNLOADED = new ConcurrentHashMap<>();
 }
