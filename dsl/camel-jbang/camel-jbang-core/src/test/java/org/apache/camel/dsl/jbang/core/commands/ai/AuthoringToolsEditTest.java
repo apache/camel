@@ -80,13 +80,39 @@ class AuthoringToolsEditTest {
 
         JsonObject missing = edit(dir, "uri: direct:nowhere", "x");
         assertThat(missing.getString("status")).isEqualTo("not-found");
-        assertThat(missing.getString("message")).contains("copy the lines exactly");
+        assertThat(missing.getString("message")).contains("copy the lines from the file");
 
         JsonObject twice = edit(dir, "- log:", "- log2:");
         assertThat(twice.getString("status")).isEqualTo("ambiguous");
         assertThat(twice.getInteger("occurrences")).isEqualTo(2);
         assertThat(twice.getString("message")).contains("occurs more than once");
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"))).isEqualTo(ROUTE);
+    }
+
+    /** CAMEL-24909: the same lines with other indentation still name the place, when they name only one. */
+    @Test
+    void theIndentationOfTheSnippetMayDiffer(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        // the snippet as a model composes it: the right lines, its own indentation
+        JsonObject result = edit(dir, "- log:\n    message: \"two\"", "                    - log:\n"
+                                                                      + "                        message: \"two and a half\"");
+
+        assertThat(result.getString("status")).isEqualTo("edited");
+        assertThat(Files.readString(dir.resolve("demo.camel.yaml"))).contains("message: \"two and a half\"")
+                .contains("expression: \"$[?(@.sku == '${header.sku}')]\"");
+    }
+
+    /** CAMEL-24909: a miss shows the lines the file has there, so the next attempt copies them. */
+    @Test
+    void aMissShowsTheLinesTheFileHasThere(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        JsonObject result = edit(dir, "- log:\n    message: \"one\"\n    id: nope", "x");
+
+        assertThat(result.getString("status")).isEqualTo("not-found");
+        assertThat(result.getString("nearest")).contains("message: \"one\"");
+        assertThat(result.getString("message")).contains("which has there");
     }
 
     @Test

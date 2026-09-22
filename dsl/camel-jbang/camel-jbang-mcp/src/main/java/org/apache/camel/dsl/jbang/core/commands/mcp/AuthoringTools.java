@@ -160,7 +160,8 @@ public class AuthoringTools {
     public JsonObject camel_edit_file(
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = "File path relative to the directory", required = true) String file,
-            @ToolArg(description = "The text to replace, exactly as it stands in the file, indentation included",
+            @ToolArg(description = "The lines to replace as they stand in the file; other indentation is fine when "
+                                   + "the lines name one place",
                      required = true) String find,
             @ToolArg(description = "The text to put there; empty removes it", required = true) String replace,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {

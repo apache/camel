@@ -224,7 +224,8 @@ public final class AuthoringTools {
                                                 + "camel_write_file for a new one.")
                 .param("directory", "string", DIRECTORY_DESC, false)
                 .param("file", "string", FILE_PATH_DESC, true)
-                .param("find", "string", "The text to replace, exactly as it stands in the file, indentation included",
+                .param("find", "string", "The lines to replace as they stand in the file; other indentation is fine "
+                                         + "when the lines name one place",
                         true)
                 .param("replace", "string", "The text to put there; empty removes it", true)
                 .param("camelVersion", "string", VERSION_DESC, false)
@@ -403,12 +404,27 @@ public final class AuthoringTools {
             throw new ToolExecutionException("find is required: the text to replace, as it stands in the file");
         }
         int first = content.indexOf(find);
+        int length = find.length();
+        if (first < 0) {
+            // the same lines with different indentation or trailing spaces: a model composes the snippet from the
+            // shape it has in mind rather than from the file (CAMEL-24909), so match on the trimmed lines when that
+            // names exactly one place
+            int[] window = uniqueTrimmedWindow(content, find);
+            if (window != null) {
+                first = window[0];
+                length = window[1] - window[0];
+            }
+        }
         if (first < 0) {
             JsonObject result = new JsonObject();
             result.put("status", "not-found");
             result.put("file", file);
-            result.put("message", "The text to find is not in the file as given; read it with camel_get_files and copy"
-                                  + " the lines exactly, indentation included");
+            String nearest = nearestBlock(content, find);
+            result.put("message", "The text to find is not in the file as given; copy the lines from the file"
+                                  + (nearest != null ? ", which has there:\n" + nearest : " (camel_get_files reads it)"));
+            if (nearest != null) {
+                result.put("nearest", nearest);
+            }
             return result;
         }
         int second = content.indexOf(find, first + find.length());
@@ -423,7 +439,7 @@ public final class AuthoringTools {
         }
         int line = (int) content.substring(0, first).lines().count() + (first > 0 && content.charAt(first - 1) == '\n' ? 1 : 0);
         JsonObject result = writeFile(ctx, dir, file, content.substring(0, first) + replace
-                                                      + content.substring(first + find.length()),
+                                                      + content.substring(first + length),
                 true);
         if (!"invalid".equals(result.getString("status"))) {
             result.put("status", "edited");
@@ -434,6 +450,86 @@ public final class AuthoringTools {
                                   + " camel_edit_file again.");
         }
         return result;
+    }
+
+    /**
+     * The one place where the file's lines match the wanted lines once their leading and trailing whitespace is
+     * removed, as start and end offset in the content, or null when there is no such place or more than one.
+     */
+    private static int[] uniqueTrimmedWindow(String content, String find) {
+        List<String> wanted = find.lines().map(String::strip).toList();
+        while (!wanted.isEmpty() && wanted.get(wanted.size() - 1).isEmpty()) {
+            wanted = wanted.subList(0, wanted.size() - 1);
+        }
+        if (wanted.isEmpty()) {
+            return null;
+        }
+        String[] lines = content.split("\n", -1);
+        int[] offsets = lineOffsets(content, lines);
+        int[] found = null;
+        for (int i = 0; i + wanted.size() <= lines.length; i++) {
+            boolean match = true;
+            for (int j = 0; j < wanted.size(); j++) {
+                if (!lines[i + j].strip().equals(wanted.get(j))) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                if (found != null) {
+                    return null; // more than one place: the caller must name one
+                }
+                int end = offsets[i + wanted.size() - 1] + lines[i + wanted.size() - 1].length();
+                found = new int[] { offsets[i], Math.min(end + 1, content.length()) };
+            }
+        }
+        return found;
+    }
+
+    /**
+     * The lines of the file that come closest to the wanted ones, so the answer of a miss shows what is there (the next
+     * attempt then copies it). Null when nothing matches at all.
+     */
+    private static String nearestBlock(String content, String find) {
+        List<String> wanted = find.lines().map(String::strip).filter(l -> !l.isEmpty()).toList();
+        if (wanted.isEmpty()) {
+            return null;
+        }
+        String[] lines = content.split("\n", -1);
+        int size = Math.min(wanted.size(), lines.length);
+        int bestAt = -1;
+        int bestScore = 0;
+        for (int i = 0; i + size <= lines.length; i++) {
+            int score = 0;
+            for (int j = 0; j < size; j++) {
+                if (lines[i + j].strip().equals(wanted.get(j))) {
+                    score++;
+                }
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                bestAt = i;
+            }
+        }
+        if (bestAt < 0 || bestScore * 2 < size) {
+            return null; // less than half the lines match: naming a place would mislead
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int j = 0; j < size; j++) {
+            sb.append(lines[bestAt + j]).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /** The offset of each line in the content. */
+    private static int[] lineOffsets(String content, String[] lines) {
+        int[] offsets = new int[lines.length];
+        int at = 0;
+        for (int i = 0; i < lines.length; i++) {
+            offsets[i] = at;
+            at += lines[i].length() + 1;
+        }
+        return offsets;
     }
 
     private static int count(String content, String find) {

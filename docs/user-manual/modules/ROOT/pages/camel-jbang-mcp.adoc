@@ -339,7 +339,8 @@ project `directory` as an argument, the runtime tools take the integration `name
   `read-only` access level of the security layer hides the tool altogether.
 
 | `camel_edit_file`
-| Changes a file by replacing one snippet: the exact text to find (it must occur once) and what to put there.
+| Changes a file by replacing one snippet: the lines to find (they must name one place; other indentation is fine)
+  and what to put there.
   Validated and reloaded as a write is, and the answer says at which line it changed. A model that rewrites a whole
   file to add one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing
   file; `camel_write_file` writes a new one.
