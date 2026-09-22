@@ -17,6 +17,8 @@
 package org.apache.camel.component.openai;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -216,6 +218,26 @@ class OpenAIWebhookConsumerTest extends CamelTestSupport {
         } finally {
             webhookEndpoint().getConfiguration().setWebhookMaxPayloadSize(1048576);
         }
+    }
+
+    @Test
+    void aBodyThatBreaksWhileItIsReadIsAnsweredWith500() throws Exception {
+        MockEndpoint events = getMockEndpoint("mock:events");
+        events.expectedMessageCount(0);
+
+        String payload = "{\"data\":\"x\"}";
+        Exchange request = request(payload, signedHeaders("evt_broken", payload, now()));
+        request.getMessage().setBody(new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("Connection reset by peer");
+            }
+        });
+
+        factory.dispatch(request);
+
+        events.assertIsSatisfied();
+        assertThat(request.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(500);
     }
 
     private OpenAIEndpoint webhookEndpoint() {

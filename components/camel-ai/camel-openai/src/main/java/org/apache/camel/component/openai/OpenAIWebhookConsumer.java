@@ -125,9 +125,14 @@ public class OpenAIWebhookConsumer extends DefaultConsumer {
         byte[] payload;
         try {
             payload = readPayload(httpExchange);
-        } catch (IOException e) {
+        } catch (PayloadTooLargeException e) {
             LOG.debug("Rejected an OpenAI webhook request: {}", e.getMessage());
             respond(httpExchange, 413, "Webhook request too large");
+            return;
+        } catch (IOException e) {
+            // a request that broke while it was read, such as a client that went away, is worth retrying
+            LOG.debug("Could not read an OpenAI webhook request: {}", e.getMessage());
+            respond(httpExchange, 500, "Could not read the webhook request");
             return;
         }
 
@@ -222,9 +227,17 @@ public class OpenAIWebhookConsumer extends DefaultConsumer {
             }
         }
         if (payload.length > max) {
-            throw new IOException("The request body is larger than webhookMaxPayloadSize (" + max + " bytes)");
+            throw new PayloadTooLargeException(max);
         }
         return payload;
+    }
+
+    /** Separates the request that is too large from the one that could not be read, which answer differently. */
+    private static final class PayloadTooLargeException extends IOException {
+
+        PayloadTooLargeException(int max) {
+            super("The request body is larger than webhookMaxPayloadSize (" + max + " bytes)");
+        }
     }
 
     /**
