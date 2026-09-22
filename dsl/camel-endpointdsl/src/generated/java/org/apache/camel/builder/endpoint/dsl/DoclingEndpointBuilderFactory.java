@@ -807,6 +807,23 @@ public interface DoclingEndpointBuilderFactory {
             doSetProperty("oauthProfile", oauthProfile);
             return this;
         }
+        /**
+         * When set, the output directory passed to the docling CLI must resolve
+         * inside this directory once normalized. Applies to the
+         * CamelDoclingOutputFilePath header. When empty, no directory
+         * restriction is applied and the header value is only normalized.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param outputBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder outputBaseDirectory(String outputBaseDirectory) {
+            doSetProperty("outputBaseDirectory", outputBaseDirectory);
+            return this;
+        }
     }
 
     /**

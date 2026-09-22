@@ -149,6 +149,11 @@ directory-or-file `String` body accepted by the batch operations.
 | _(none)_
 | When set, every local input path must resolve inside this directory once normalized. Applies to the
 `CamelDoclingInputFilePath` header, to file path bodies, and to the paths used by the batch operations.
+
+| `outputBaseDirectory`
+| _(none)_
+| When set, the output directory passed to the docling CLI must resolve inside this directory once normalized.
+Applies to the `CamelDoclingOutputFilePath` header.
 |===
 
 With both options left at their defaults, a body that is neither a URL nor a path is written to a temporary
@@ -158,6 +163,10 @@ The `CamelDoclingInputFilePath` header is an explicit "the document lives here" 
 keeps working without `allowFilePathSource`. It is still subject to `inputBaseDirectory` when one is set.
 Typed bodies - `File`, `byte[]`, `InputStream`, and the explicit path collections used by the batch
 operations - are unambiguous and are likewise unaffected.
+
+The `CamelDoclingOutputFilePath` header, which selects the CLI `--output` directory, is normalized the same way
+and is confined to `outputBaseDirectory` when one is set. Leaving `outputBaseDirectory` unset keeps the previous
+behavior, where the header value is used as given after normalization.
 
 [source,java]
 ----
@@ -482,7 +491,8 @@ Only the following flags are permitted:
 |===
 
 The `--output` (`-o`) flag is **not permitted** because the output directory is managed by the producer.
-Use the `CamelDoclingOutputFilePath` header or endpoint configuration instead.
+Use the `CamelDoclingOutputFilePath` header or endpoint configuration instead. That header is normalized and,
+when `outputBaseDirectory` is set, confined to that directory (see the security options above).
 
 Additionally, the following are rejected:
 
