@@ -265,6 +265,36 @@ class DoclingCustomArgsValidationTest extends CamelTestSupport {
                 ex.getCause().getMessage().contains("traversal after normalization"));
     }
 
+    @Test
+    void customArgsWithAbsolutePathAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        // An absolute path contains no relative traversal sequence and no ".." component after
+        // normalization, so it must be rejected by the explicit absolute-path check.
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--artifacts-path", "/etc/cron.d")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("absolute path"));
+    }
+
+    @Test
+    void customArgsWithAbsolutePathEqualsFormAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--artifacts-path=/var/www/html/uploads")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("absolute path"));
+    }
+
     private Path createInputFile() throws Exception {
         Path file = tempDir.resolve("test-input.txt");
         Files.writeString(file, "test content");
