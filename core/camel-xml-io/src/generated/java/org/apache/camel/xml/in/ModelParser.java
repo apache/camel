@@ -240,6 +240,7 @@ public class ModelParser extends BaseParser {
     protected <T extends ExpressionDefinition> AttributeHandler<T> expressionDefinitionAttributeHandler() {
         return (def, key, val) -> switch (key) {
             case "id": def.setId(val); yield true;
+            case "resolveResource": def.setResolveResource(val); yield true;
             case "trim": def.setTrim(val); yield true;
             default: yield false;
         };

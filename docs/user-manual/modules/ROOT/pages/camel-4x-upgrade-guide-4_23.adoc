@@ -2292,6 +2292,25 @@ To restore the previous behaviour and allow external entity resolution, set the 
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
 
+=== camel-core - resolveResource option on expressions
+
+Every expression has a new option `resolveResource` (default `false`). When `true` and the expression's result is a
+String starting with `resource:`, the named resource is loaded and its content is the result, so a script can choose
+a file or a template per message and hand its content on:
+
+[source,yaml]
+----
+- setBody:
+    expression:
+      groovy:
+        expression: "counter == 1 ? 'resource:file:order.json' : 'resource:file:order-bad-email.json'"
+        resolveResource: true
+----
+
+A name without a scheme, `resource:orderTemplate.json`, is a classpath resource. The loaded content is the final
+value and is not evaluated again. Nothing changes without the option: the `resource:` prefix on the expression
+text itself is resolved as before, and a returned value that happens to start with `resource:` stays as it is.
+
 === camel-core - the required attribute on rest param and route template parameter is now a String
 
 `ParamDefinition.required` (the rest DSL `param`) and `RouteTemplateParameterDefinition.required`

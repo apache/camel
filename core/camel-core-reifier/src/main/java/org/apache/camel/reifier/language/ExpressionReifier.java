@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
@@ -45,7 +46,9 @@ import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -173,12 +176,48 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 configureLanguage(language);
                 expression = createExpression(language, exp);
                 configureExpression(expression);
+                if (parseBoolean(definition.getResolveResource(), false)) {
+                    expression = resolveResourceResult(expression);
+                }
             }
         }
         // inject CamelContext if its aware
         CamelContextAware.trySetCamelContext(expression, camelContext);
         expression.init(camelContext);
         return expression;
+    }
+
+    /**
+     * Wraps the expression so a result that is a String starting with <tt>resource:</tt> is loaded and its content is
+     * the result (resolveResource=true, CAMEL-24884). A name without a scheme is a classpath resource. Applies to
+     * expressions only: a predicate answers true or false, there is no resource to load in its result.
+     */
+    private Expression resolveResourceResult(Expression delegate) {
+        return new ExpressionAdapter() {
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                delegate.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object answer = delegate.evaluate(exchange, Object.class);
+                if (answer instanceof String text && text.startsWith("resource:")) {
+                    String name = text.substring(9);
+                    if (!ResourceHelper.hasScheme(name) && !name.startsWith("ref:") && !name.startsWith("bean:")) {
+                        name = "classpath:" + name;
+                    }
+                    return ScriptHelper.resolveOptionalExternalScript(exchange.getContext(), exchange, "resource:" + name);
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return delegate.toString();
+            }
+        };
     }
 
     public Predicate createPredicate() {

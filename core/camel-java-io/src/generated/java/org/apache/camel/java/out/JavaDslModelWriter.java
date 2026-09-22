@@ -3485,6 +3485,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteExpressionDefinitionAttributes(StringBuilder sb, ExpressionDefinition def) {
         doWriteAttribute(sb, "id", def.getId(), null);
         doWriteAttribute(sb, "trim", def.getTrim(), "true");
+        doWriteAttribute(sb, "resolveResource", def.getResolveResource(), "false");
     }
     protected void doWriteExpressionDefinition(StringBuilder sb, ExpressionDefinition def) {
         doWriteExpressionDefinitionAttributes(sb, def);

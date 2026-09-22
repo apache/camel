@@ -2917,6 +2917,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteExpressionDefinitionAttributes(ExpressionDefinition def) throws IOException {
         doWriteAttribute("id", def.getId(), null);
         doWriteAttribute("trim", def.getTrim(), "true");
+        doWriteAttribute("resolveResource", def.getResolveResource(), "false");
     }
     protected void doWriteExpressionDefinition(String name, ExpressionDefinition def) throws IOException {
         startElement(name);
