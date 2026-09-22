@@ -580,20 +580,6 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the XStream Outbound server to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: oracle
-         * 
-         * @param databaseOutServerName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleEndpointBuilder databaseOutServerName(String databaseOutServerName) {
-            doSetProperty("databaseOutServerName", databaseOutServerName);
-            return this;
-        }
-        /**
          * Password of the database user to be used when connecting to the
          * database.
          * 

@@ -58,7 +58,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String snapshotTablesOrderByRowCount = "disabled";
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     private String databaseSslpassword;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean slotFailover = false;
@@ -190,7 +190,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String columnPropagateSourceType;
     @UriParam(label = LABEL_NAME, defaultValue = "-1")
     private int errorsMaxRetries = -1;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     @Metadata(required = true)
     private String databasePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "t")

@@ -113,8 +113,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME)
     private String xstreamOutServerName;
     @UriParam(label = LABEL_NAME)
-    private String databaseOutServerName;
-    @UriParam(label = LABEL_NAME)
     private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long archiveLogHours = 0;
@@ -232,7 +230,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private String logMiningBufferInfinispanCacheProcessedTransactions;
     @UriParam(label = LABEL_NAME, defaultValue = "-1")
     private int errorsMaxRetries = -1;
-    @UriParam(label = LABEL_NAME)
+    @UriParam(label = LABEL_NAME, secret = true)
     @Metadata(required = true)
     private String databasePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -993,17 +991,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     public String getXstreamOutServerName() {
         return xstreamOutServerName;
-    }
-
-    /**
-     * Name of the XStream Outbound server to connect to.
-     */
-    public void setDatabaseOutServerName(String databaseOutServerName) {
-        this.databaseOutServerName = databaseOutServerName;
-    }
-
-    public String getDatabaseOutServerName() {
-        return databaseOutServerName;
     }
 
     /**
@@ -2351,7 +2338,6 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "xstream.out.server.name", xstreamOutServerName);
-        addPropertyIfNotNull(configBuilder, "database.out.server.name", databaseOutServerName);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "archive.log.hours", archiveLogHours);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.deferred.transaction.start", logMiningBufferDeferredTransactionStart);

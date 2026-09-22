@@ -564,21 +564,6 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
-         * Name of the XStream Outbound server to connect to.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param databaseOutServerName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseOutServerName(java.lang.String databaseOutServerName) {
-            doSetProperty("databaseOutServerName", databaseOutServerName);
-            return this;
-        }
-    
-        /**
          * Password of the database user to be used when connecting to the
          * database.
          * 
@@ -3070,7 +3055,6 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "databaseConnectionAdapter": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseConnectionAdapter((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseDbname((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHostname((java.lang.String) value); return true;
-            case "databaseOutServerName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseOutServerName((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePdbName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePdbName((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePort((int) value); return true;

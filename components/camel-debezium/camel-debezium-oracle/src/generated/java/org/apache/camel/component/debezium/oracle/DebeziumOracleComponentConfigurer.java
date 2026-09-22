@@ -64,8 +64,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databaseDbname": getOrCreateConfiguration(target).setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseoutservername":
-        case "databaseOutServerName": getOrCreateConfiguration(target).setDatabaseOutServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
         case "databasePassword": getOrCreateConfiguration(target).setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepdbname":
@@ -389,8 +387,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databaseDbname": return java.lang.String.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
-        case "databaseoutservername":
-        case "databaseOutServerName": return java.lang.String.class;
         case "databasepassword":
         case "databasePassword": return java.lang.String.class;
         case "databasepdbname":
@@ -715,8 +711,6 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "databaseDbname": return getOrCreateConfiguration(target).getDatabaseDbname();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
-        case "databaseoutservername":
-        case "databaseOutServerName": return getOrCreateConfiguration(target).getDatabaseOutServerName();
         case "databasepassword":
         case "databasePassword": return getOrCreateConfiguration(target).getDatabasePassword();
         case "databasepdbname":
