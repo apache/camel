@@ -103,6 +103,30 @@ class AuthoringToolsEditTest {
     }
 
     @Test
+    void aTrimmedMatchInTheMiddleOfTheFileKeepsTheLineAfterItOnItsOwnLine(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        // the first route, so there are lines after the window; the snippet is written flat (a trimmed match)
+        JsonObject result = edit(dir, "- log:\n    message: \"one\"", "- log:\n    message: \"ONE\"");
+
+        assertThat(result.getString("status")).isEqualTo("edited");
+        String after = Files.readString(dir.resolve("demo.camel.yaml"));
+        assertThat(after).contains("            message: \"ONE\"\n\n- route:");
+        assertThat(after.lines().count()).isEqualTo(ROUTE.lines().count());
+    }
+
+    @Test
+    void removingABlockWithATrimmedMatchLeavesNoEmptyLine(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
+
+        JsonObject result = edit(dir, "- log:\n    message: \"one\"", "");
+
+        assertThat(result.getString("status")).isEqualTo("edited");
+        String after = Files.readString(dir.resolve("demo.camel.yaml"));
+        assertThat(after.lines().count()).isEqualTo(ROUTE.lines().count() - 2);
+    }
+
+    @Test
     void aMissHandsBackTheFileToCopyTheTextFrom(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
 

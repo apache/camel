@@ -500,6 +500,12 @@ public final class AuthoringTools {
             // the snippet was written at another indentation than the file has: put the replacement in at the
             // file's indentation, or the result is valid text at the wrong depth (CAMEL-24909)
             put = reindent(put, indentOf(wanted), indentOf(content.substring(first)));
+            // the window of a trimmed match ends after the newline of its last line, so that removing a block
+            // removes its lines whole; a replacement that does not end in a newline must bring that one back, or
+            // the line after the window is glued onto it
+            if (!put.isEmpty() && !put.endsWith("\n") && content.charAt(first + length - 1) == '\n') {
+                put = put + "\n";
+            }
         }
         int line = (int) content.substring(0, first).lines().count()
                    + (first > 0 && content.charAt(first - 1) == '\n' ? 1 : 0);
