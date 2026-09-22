@@ -31,6 +31,7 @@ import org.apache.camel.test.infra.ollama.commons.OllamaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.Container;
 import org.testcontainers.ollama.OllamaContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -165,25 +166,45 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
         LOG.info("Trying to start the Ollama container");
         container.start();
 
-        LOG.info("Pulling the model {}", getModel());
-        try {
-            container.execInContainer("ollama", "pull", getModel());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        pullModel("model", getModel());
 
         String embeddingModel = embeddingModelName();
         if (embeddingModel != null && !embeddingModel.isEmpty()) {
-            LOG.info("Pulling the embedding model {}", embeddingModel);
-            try {
-                container.execInContainer("ollama", "pull", embeddingModel);
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            pullModel("embedding model", embeddingModel);
         }
 
         registerProperties();
         LOG.info("Ollama instance running at {}", getEndpoint());
+    }
+
+    /**
+     * @param kind what the model is pulled as, since both pulls may name the same model
+     */
+    private void pullModel(String kind, String model) {
+        LOG.info("Pulling the {} {}", kind, model);
+        try {
+            Container.ExecResult result = container.execInContainer("ollama", "pull", model);
+            requireSuccessfulPull(model, result.getExitCode(), result.getStderr());
+        } catch (IOException e) {
+            throw new RuntimeException("Pulling the " + kind + " " + model + " failed", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Interrupted while pulling the " + kind + " " + model, e);
+        }
+    }
+
+    /**
+     * The container is ready as soon as it accepts a connection on its port, and a pull that fails leaves it running
+     * without the model, so the service would otherwise report an instance that answers every request with "model not
+     * found".
+     */
+    static void requireSuccessfulPull(String model, int exitCode, String stderr) {
+        if (exitCode == 0) {
+            return;
+        }
+        String reason = stderr == null || stderr.isBlank() ? "no error output" : stderr.strip();
+        throw new IllegalStateException(
+                "Pulling the model %s failed with exit code %d: %s".formatted(model, exitCode, reason));
     }
 
     @Override
