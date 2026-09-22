@@ -193,7 +193,7 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
 
     @Test
     void testCustomHandlerFromFactoryFinderIsCalled() throws Exception {
-        // Since we want to be ablet to test both a bean regitered directly into
+        // Since we want to be able to test both a bean registered directly into
         // the registry and the factory finder we can not just put the factory
         // file into src/test/resources/META-INF/services that breaks other tests
         ClassResolver classResolver = mock(ClassResolver.class);
