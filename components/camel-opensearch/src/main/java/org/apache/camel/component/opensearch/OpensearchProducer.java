@@ -480,11 +480,14 @@ class OpensearchProducer extends DefaultAsyncProducer {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
-                .setConnectTimeout(Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout()))));
+                .setConnectTimeout(Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout())))
+                // apply the socket/read timeout for both plain-HTTP and SSL connections, not only when SSL is enabled
+                .setResponseTimeout(Timeout.of(Duration.ofMillis(configuration.getSocketTimeout()))));
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
             if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
                 final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(new AuthScope(configuration.getHostAddressesList().get(0)),
+                // match-all AuthScope so basic auth is sent to every node, not only the first configured host
+                credentialsProvider.setCredentials(new AuthScope(null, null, -1, null, null),
                         new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword().toCharArray()));
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
