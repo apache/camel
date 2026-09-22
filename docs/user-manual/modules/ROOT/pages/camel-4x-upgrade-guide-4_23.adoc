@@ -157,6 +157,11 @@ The Camel-annotation compile post-processors that camel-kamelet-main used intern
 camel-support: `org.apache.camel.support.compile.BindToRegistryCompilePostProcessor`,
 `TypeConverterCompilePostProcessor` and `EventNotifierCompilePostProcessor`.
 
+A lazy `@BindToRegistry` class from a compiled `.java` or `.groovy` source (`lazy = true`, or `camel run --lazy-bean`
+in the Camel CLI) is now bound with the name from the annotation, or else the simple class name, the same as an eager
+`@BindToRegistry` class. Before, the bean was bound with the fully qualified class name and the annotation value was
+ignored, so a class in a package, or with a name in the annotation, was not found by the expected name.
+
 === camel-djl (Breaking change)
 
 DJL library dependency has been upgraded to 0.37+

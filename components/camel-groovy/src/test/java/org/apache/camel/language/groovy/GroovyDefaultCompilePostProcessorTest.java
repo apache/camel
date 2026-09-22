@@ -16,16 +16,21 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CompilePostProcessor;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.SimpleFunction;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -59,6 +64,16 @@ public class GroovyDefaultCompilePostProcessorTest extends CamelTestSupport {
                         .convertBodyTo(Order.class)
                         .setBody().simple("${body.id}")
                         .to("mock:result");
+
+                // the Groovy sources are compiled when the compiler service starts, after the routes are created,
+                // so the beans are resolved at runtime
+                from("direct:namedLazy")
+                        .toD("bean:named-lazy?method=hello")
+                        .to("mock:result");
+
+                from("direct:unnamedLazy")
+                        .toD("bean:UnnamedLazyBean?method=hello")
+                        .to("mock:result");
             }
         };
     }
@@ -79,6 +94,35 @@ public class GroovyDefaultCompilePostProcessorTest extends CamelTestSupport {
 
         getMockEndpoint("mock:result").expectedBodiesReceived("123");
         template.sendBody("direct:order", " 123 ");
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testEventNotifierWithoutRegisteredPostProcessor() throws Exception {
+        Object bean = context.getRegistry().lookupByName("OrderEventNotifier");
+        assertInstanceOf(EventNotifier.class, bean);
+        assertTrue(context.getManagementStrategy().getEventNotifiers().contains(bean),
+                "EventNotifier from the Groovy source should be added to the management strategy");
+
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        template.sendBody("direct:order", "123");
+        MockEndpoint.assertIsSatisfied(context);
+
+        // the notifier counts completed exchanges (the event is fired before sendBody returns)
+        AtomicInteger completed = (AtomicInteger) bean.getClass().getMethod("getCompleted").invoke(bean);
+        assertEquals(1, completed.get());
+    }
+
+    @Test
+    public void testLazyBeanWithoutRegisteredPostProcessor() throws Exception {
+        // a lazy bean is bound by the annotation value, else by the simple class name, as an eager bean is
+        assertNotNull(context.getRegistry().lookupByName("named-lazy"));
+        assertNull(context.getRegistry().lookupByName("NamedLazyBean"));
+        assertNotNull(context.getRegistry().lookupByName("UnnamedLazyBean"));
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("named", "unnamed");
+        template.sendBody("direct:namedLazy", "");
+        template.sendBody("direct:unnamedLazy", "");
         MockEndpoint.assertIsSatisfied(context);
     }
 

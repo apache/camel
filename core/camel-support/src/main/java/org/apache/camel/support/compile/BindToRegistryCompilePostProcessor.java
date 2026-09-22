@@ -59,7 +59,9 @@ public class BindToRegistryCompilePostProcessor implements CompilePostProcessor 
 
         // special for lazy beans which we must create on-demand
         if (instance == null && bir != null && (lazyBean || bir.lazy())) {
-            final String beanName = bir.value();
+            // the bean id is the annotation value, else the simple class name (as for an eager bean)
+            final String id = ObjectHelper.isNotEmpty(bir.value()) ? bir.value() : clazz.getSimpleName();
+            final String beanName = name;
             instance = (Supplier<Object>) () -> {
                 Object answer = camelContext.getInjector().newInstance(clazz);
                 CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(camelContext);
@@ -72,10 +74,10 @@ public class BindToRegistryCompilePostProcessor implements CompilePostProcessor 
                 return answer;
             };
             // unbind old bean and register lazy bean
-            camelContext.getRegistry().unbind(beanName);
+            camelContext.getRegistry().unbind(id);
             // use dependency injection factory to perform the task of binding the bean to registry
             Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(camelContext)
-                    .createBindToRegistryFactory(name, instance, clazz, beanName, false, bir.initMethod(),
+                    .createBindToRegistryFactory(id, instance, clazz, beanName, false, bir.initMethod(),
                             bir.destroyMethod());
             task.run();
         } else {
