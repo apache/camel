@@ -2159,7 +2159,7 @@ public class DoclingProducer extends DefaultProducer {
 
     /**
      * Validates custom CLI arguments using an allowlist approach. Only recognized docling CLI flags are permitted.
-     * Producer-managed flags, shell metacharacters, and path traversal sequences are rejected.
+     * Producer-managed flags, shell metacharacters, absolute paths, and path traversal sequences are rejected.
      */
     private void validateCustomArguments(List<String> customArgs) {
         for (int i = 0; i < customArgs.size(); i++) {
@@ -2242,9 +2242,14 @@ public class DoclingProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Custom argument at index " + index + " contains a relative path traversal sequence");
         }
-        // Normalize path-like values to detect traversal via redundant separators
+        // Normalize path-like values to detect absolute paths or traversal via redundant separators
         if (value.contains("/") || value.contains("\\")) {
-            Path normalized = Paths.get(value).normalize();
+            Path path = Paths.get(value);
+            if (path.isAbsolute()) {
+                throw new IllegalArgumentException(
+                        "Custom argument at index " + index + " must not be an absolute path");
+            }
+            Path normalized = path.normalize();
             for (Path component : normalized) {
                 if ("..".equals(component.toString())) {
                     throw new IllegalArgumentException(
