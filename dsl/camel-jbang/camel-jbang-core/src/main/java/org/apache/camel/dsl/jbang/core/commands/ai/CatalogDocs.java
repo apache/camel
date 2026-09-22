@@ -66,6 +66,24 @@ public final class CatalogDocs {
     private CatalogDocs() {
     }
 
+    /** The names the YAML DSL and its users give a data format, and the catalog artifact each is (CAMEL-24898). */
+    static final Map<String, String> YAML_DATAFORMAT_NAMES = Map.ofEntries(
+            Map.entry("json", "jackson"), Map.entry("json-jackson", "jackson"), Map.entry("jsonjackson", "jackson"),
+            Map.entry("json-gson", "gson"), Map.entry("json-fastjson", "fastjson"), Map.entry("json-jsonb", "jsonb"),
+            Map.entry("yaml", "snakeYaml"), Map.entry("snakeyaml", "snakeYaml"), Map.entry("yaml-snakeyaml", "snakeYaml"),
+            Map.entry("avro-jackson", "avroJackson"), Map.entry("avrojackson", "avroJackson"),
+            Map.entry("protobuf-jackson", "protobufJackson"), Map.entry("protobufjackson", "protobufJackson"),
+            Map.entry("xml", "jacksonXml"), Map.entry("jackson-xml", "jacksonXml"), Map.entry("jacksonxml", "jacksonXml"));
+
+    /** The YAML DSL shape of the data formats whose key is not the artifact name. */
+    static final Map<String, String> YAML_DATAFORMAT_SHAPES = Map.ofEntries(
+            Map.entry("jackson", "json: {library: Jackson}"), Map.entry("gson", "json: {library: Gson}"),
+            Map.entry("fastjson", "json: {library: Fastjson}"), Map.entry("jsonb", "json: {library: Jsonb}"),
+            Map.entry("snakeYaml", "yaml: {library: SnakeYAML}"),
+            Map.entry("avroJackson", "avro: {library: Jackson}"), Map.entry("avro", "avro: {library: ApacheAvro}"),
+            Map.entry("protobufJackson", "protobuf: {library: Jackson}"),
+            Map.entry("protobuf", "protobuf: {library: GoogleProtobuf}"));
+
     /**
      * The documentation of a catalog artifact, or the check of an endpoint URI when {@code endpoint} is given.
      *
@@ -115,10 +133,19 @@ public final class CatalogDocs {
             }
         }
         if (kind == null || "dataformat".equals(kind)) {
-            DataFormatModel dm = catalog.dataFormatModel(name);
+            // the YAML DSL names a data format by its key and library (json + Jackson), the catalog by artifact
+            // (jackson): both are answered, with the YAML shape in the answer (CAMEL-24898)
+            String artifact = YAML_DATAFORMAT_NAMES.getOrDefault(name.toLowerCase(), name);
+            DataFormatModel dm = catalog.dataFormatModel(artifact);
             if (dm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-dataformat") : null;
-                return dataFormatDoc(dm, lowerFilter, scope, doc);
+                String doc = includeDoc ? catalog.asciiDoc(artifact + "-dataformat") : null;
+                JsonObject result = dataFormatDoc(dm, lowerFilter, scope, doc);
+                String shape = YAML_DATAFORMAT_SHAPES.get(artifact);
+                if (shape != null) {
+                    result.put("yaml", "marshal: {" + shape + "} or unmarshal: {" + shape + "}"
+                                       + " (the YAML DSL key with its library, not the artifact name " + artifact + ")");
+                }
+                return result;
             }
             if (kind != null) {
                 return notFound("Data format", name, catalog.suggestDataFormatNames(name, 5));
