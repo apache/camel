@@ -612,6 +612,86 @@ final class BeanRefChecks {
         return errors;
     }
 
+    /** The languages whose text is a script that returns a value (a returned 'resource:...' string stays text). */
+    private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "jq", "js", "javascript", "python", "mvel",
+            "ognl", "java", "spel", "jactl", "quickjs", "datasonnet", "wasm");
+    /** A quoted resource:... literal inside a script: the script returns that text. */
+    private static final Pattern QUOTED_RESOURCE_LITERAL
+            = Pattern.compile("['\"](resource:(?:classpath:|file:|ref:|bean:)?[^'\"\\\\\\s]+)['\"]");
+
+    /**
+     * A script (groovy, jq, ...) that returns 'resource:file:x' returns that text: the resource: prefix is resolved on
+     * the expression text, never on a returned value, so the next step gets 24 characters instead of the file
+     * (CAMEL-24882). Says to add resolveResource: true (CAMEL-24884) or to use constant/simple. Skipped when the
+     * expression already has resolveResource: true.
+     */
+    static List<String> validateReturnedResourceLiterals(String content) {
+        List<String> errors = new ArrayList<>();
+        if (content == null) {
+            return errors;
+        }
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            String trimmed = lines[i].trim();
+            if (trimmed.startsWith("#")) {
+                continue;
+            }
+            int colon = trimmed.indexOf(':');
+            if (colon <= 0) {
+                continue;
+            }
+            String key = trimmed.substring(0, colon).replaceFirst("^- ", "");
+            if (!SCRIPT_LANGUAGES.contains(key)) {
+                continue;
+            }
+            int indent = YamlLines.countLeadingSpaces(lines[i]);
+            // the expression block: the inline value, and the lines indented under the language key
+            StringBuilder block = new StringBuilder(stripYamlQuotes(trimmed.substring(colon + 1).trim())).append('\n');
+            boolean resolves = false;
+            int end = i;
+            for (int j = i + 1; j < lines.length; j++) {
+                if (lines[j].isBlank()) {
+                    continue;
+                }
+                if (YamlLines.countLeadingSpaces(lines[j]) <= indent) {
+                    break;
+                }
+                end = j;
+                String t = lines[j].trim();
+                if (t.startsWith("resolveResource:") && t.substring(16).trim().startsWith("true")) {
+                    resolves = true;
+                }
+                block.append(t.startsWith("expression:") ? stripYamlQuotes(t.substring(11).trim()) : t).append('\n');
+            }
+            if (resolves) {
+                i = end;
+                continue;
+            }
+            Matcher m = QUOTED_RESOURCE_LITERAL.matcher(block);
+            if (m.find()) {
+                String literal = m.group(1);
+                errors.add("Line " + (i + 1) + ": " + key + ": the script returns the text '" + literal + "', not the"
+                           + " file: the resource: prefix is resolved on an expression's text, never on a value it"
+                           + " returns. Add resolveResource: true under " + key + ": to load the resource the result"
+                           + " names, or set the body with constant: \"" + literal + "\" (simple: \"resource:file:${...}\""
+                           + " for a name chosen per message)");
+            }
+            i = end;
+        }
+        return errors;
+    }
+
+    private static String stripYamlQuotes(String value) {
+        if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+            // a double-quoted YAML scalar: \" is a quote of the script
+            return value.substring(1, value.length() - 1).replace("\\\"", "\"");
+        }
+        if (value.length() >= 2 && value.startsWith("'") && value.endsWith("'")) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
+    }
+
     /** resource:classpath:x or resource:file:x as the value of an expression (groovy, xslt, ...) or an option. */
     private static final Pattern RESOURCE_REF_PATTERN = Pattern.compile("resource:(classpath|file):([^\"'\\s?&,]+)");
 
