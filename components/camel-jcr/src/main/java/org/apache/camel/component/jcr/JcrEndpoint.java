@@ -28,11 +28,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -42,7 +45,7 @@ import org.apache.camel.util.StringHelper;
 @UriEndpoint(firstVersion = "1.3.0", scheme = "jcr", title = "JCR", syntax = "jcr:host/base",
              alternativeSyntax = "jcr:username:password@host/base",
              category = { Category.DATABASE, Category.CMS }, headersClass = JcrConstants.class)
-public class JcrEndpoint extends DefaultEndpoint {
+public class JcrEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private Credentials credentials;
     private Repository repository;
@@ -72,6 +75,9 @@ public class JcrEndpoint extends DefaultEndpoint {
     private long sessionLiveCheckInterval = 60000L;
     @UriParam
     private String workspaceName;
+    @UriParam(label = "filter",
+              description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     protected JcrEndpoint(String endpointUri, JcrComponent component) {
         super(endpointUri, component);
@@ -290,6 +296,22 @@ public class JcrEndpoint extends DefaultEndpoint {
 
     public void setWorkspaceName(String workspaceName) {
         this.workspaceName = workspaceName;
+    }
+
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new DefaultHeaderFilterStrategy();
+        }
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     /**

@@ -2500,3 +2500,17 @@ Due to the package rename from `com.bazaarvoice.jolt` to `io.joltcommunity.jolt`
 `ContextualTransform` classes into a Chainr spec need to update their imports to `io.joltcommunity.jolt.Transform` and
 `io.joltcommunity.jolt.ContextualTransform`.
 Users referencing `Removr` directly also need to update their import to `io.joltcommunity.jolt.removr.Removr`.
+
+=== camel-jcr - internal Camel headers are now filtered when mapping node properties
+
+The `jcr` producer now applies a `HeaderFilterStrategy` when converting between JCR node properties and
+Camel message headers. With the default strategy, header names starting with `Camel` or `camel`
+(case-insensitively) are no longer copied in either direction:
+
+* the `CamelJcrGetById` operation no longer maps a node property whose name is a Camel internal header
+(for example `CamelHttpUri`) onto the message;
+* the insert operation no longer persists Camel internal headers carried on the message as node properties.
+
+Ordinary document properties are unaffected and continue to be mapped as before. A route that relies on the
+previous behaviour can supply a custom `headerFilterStrategy` on the `jcr` endpoint to opt out of, or narrow,
+the filtering.

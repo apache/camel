@@ -267,6 +267,38 @@ public interface JcrEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointConsumerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointConsumerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Password for login.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -644,6 +676,38 @@ public interface JcrEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointProducerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointProducerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * Password for login.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -947,6 +1011,38 @@ public interface JcrEndpointBuilderFactory {
          */
         default JcrEndpointBuilder workspaceName(String workspaceName) {
             doSetProperty("workspaceName", workspaceName);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default JcrEndpointBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
