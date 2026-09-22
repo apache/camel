@@ -105,9 +105,9 @@ class AuthoringToolsTest {
         assertEquals("object", schema.getString("type"));
         JsonObject properties = schema.getMap("properties");
         JsonObject file = properties.getMap("file");
-        JsonObject validate = properties.getMap("validate");
         assertEquals("string", file.getString("type"));
-        assertEquals("boolean", validate.getString("type"));
+        // no validate switch: the write always validates (CAMEL-24897)
+        assertEquals(null, properties.get("validate"));
         assertEquals(List.of("file", "content"), List.copyOf(schema.getCollection("required")));
         JsonObject logProperties = ToolRegistry.findTool("camel_get_log").inputSchema().getMap("properties");
         JsonObject limit = logProperties.getMap("limit");
@@ -162,10 +162,10 @@ class AuthoringToolsTest {
         JsonObject created = call("camel_write_file", new ToolContext(),
                 Map.of("directory", dir.toString(), "file", "notes.txt", "content", "logLevel"));
         assertEquals("created", created.getString("status"), "other file types are not validated");
-        // validation can be switched off, and a properties file is validated too
+        // a properties file is validated too, and validation cannot be switched off (CAMEL-24897)
         assertEquals("invalid", call("camel_write_file", new ToolContext(), Map.of("directory", dir.toString(),
                 "file", "application.properties", "content", "camel.main.nme=x")).getString("status"));
-        assertEquals("created", call("camel_write_file", new ToolContext(), Map.of("directory", dir.toString(),
+        assertEquals("invalid", call("camel_write_file", new ToolContext(), Map.of("directory", dir.toString(),
                 "file", "application.properties", "content", "camel.main.nme=x", "validate", false))
                 .getString("status"));
     }

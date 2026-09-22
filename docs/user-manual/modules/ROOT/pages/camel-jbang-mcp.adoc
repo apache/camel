@@ -333,7 +333,7 @@ project `directory` as an argument, the runtime tools take the integration `name
 
 | `camel_write_file`
 | Writes the complete content of a file in the project directory. YAML and `.properties` content is validated
-  first; invalid content is not written and the errors are returned (`validate=false` writes anyway). Only a
+  first; invalid content is not written and the errors are returned. Only a
   plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
