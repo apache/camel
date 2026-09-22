@@ -1,5 +1,5 @@
-= LLM Component
-:doctitle: LLM
+= OpenAI Component
+:doctitle: OpenAI
 :shortname: openai
 :artifactid: camel-openai
 :description: LLM endpoint for chat completion, Responses API, embeddings, audio transcription, audio translation, and text-to-speech using OpenAI-compatible APIs. The openai scheme is a supported alias.

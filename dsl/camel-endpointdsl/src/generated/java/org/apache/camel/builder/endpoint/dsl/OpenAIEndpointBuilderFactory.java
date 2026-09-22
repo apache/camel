@@ -37,7 +37,7 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface OpenAIEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint consumers for the LLM component.
+     * Builder for endpoint consumers for the OpenAI component.
      */
     public interface OpenAIEndpointConsumerBuilder
             extends
@@ -2340,7 +2340,7 @@ public interface OpenAIEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint consumers for the LLM component.
+     * Advanced builder for endpoint consumers for the OpenAI component.
      */
     public interface AdvancedOpenAIEndpointConsumerBuilder
             extends
@@ -2468,7 +2468,7 @@ public interface OpenAIEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint producers for the LLM component.
+     * Builder for endpoint producers for the OpenAI component.
      */
     public interface OpenAIEndpointProducerBuilder
             extends
@@ -4692,7 +4692,7 @@ public interface OpenAIEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint producers for the LLM component.
+     * Advanced builder for endpoint producers for the OpenAI component.
      */
     public interface AdvancedOpenAIEndpointProducerBuilder extends EndpointProducerBuilder {
         default OpenAIEndpointProducerBuilder basic() {
@@ -4748,7 +4748,7 @@ public interface OpenAIEndpointBuilderFactory {
     }
 
     /**
-     * Builder for endpoint for the LLM component.
+     * Builder for endpoint for the OpenAI component.
      */
     public interface OpenAIEndpointBuilder
             extends
@@ -6973,7 +6973,7 @@ public interface OpenAIEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the LLM component.
+     * Advanced builder for endpoint for the OpenAI component.
      */
     public interface AdvancedOpenAIEndpointBuilder
             extends
@@ -6987,7 +6987,7 @@ public interface OpenAIEndpointBuilderFactory {
 
     public interface OpenAIBuilders {
         /**
-         * LLM (camel-openai)
+         * OpenAI (camel-openai)
          * LLM endpoint for chat completion, Responses API, embeddings, audio
          * transcription, audio translation, and text-to-speech using
          * OpenAI-compatible APIs. The openai scheme is a supported alias.
@@ -7002,7 +7002,7 @@ public interface OpenAIEndpointBuilderFactory {
             return OpenAIHeaderNameBuilder.INSTANCE;
         }
         /**
-         * LLM (camel-openai)
+         * OpenAI (camel-openai)
          * LLM endpoint for chat completion, Responses API, embeddings, audio
          * transcription, audio translation, and text-to-speech using
          * OpenAI-compatible APIs. The openai scheme is a supported alias.
@@ -7033,7 +7033,7 @@ public interface OpenAIEndpointBuilderFactory {
             return OpenAIEndpointBuilderFactory.endpointBuilder("openai", path);
         }
         /**
-         * LLM (camel-openai)
+         * OpenAI (camel-openai)
          * LLM endpoint for chat completion, Responses API, embeddings, audio
          * transcription, audio translation, and text-to-speech using
          * OpenAI-compatible APIs. The openai scheme is a supported alias.
@@ -7096,10 +7096,43 @@ public interface OpenAIEndpointBuilderFactory {
         default OpenAIEndpointBuilder llm(String path) {
             return OpenAIEndpointBuilderFactory.endpointBuilder("llm", path);
         }
+        /**
+         * LLM (camel-openai)
+         * LLM endpoint for chat completion, Responses API, embeddings, audio
+         * transcription, audio translation, and text-to-speech using
+         * OpenAI-compatible APIs. The openai scheme is a supported alias.
+         * 
+         * Category: ai
+         * Since: 4.17
+         * Maven coordinates: org.apache.camel:camel-openai
+         * 
+         * Syntax: <code>llm:operation</code>
+         * 
+         * Path parameter: operation (required)
+         * The operation to perform: 'chat-completion', 'responses',
+         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
+         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
+         * 'audio-transcription', 'audio-translation', 'audio-speech',
+         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
+         * consumer)
+         * There are 17 enums and the value can be one of: chat-completion,
+         * responses, responses-retrieve, responses-cancel, batch,
+         * batch-retrieve, batch-cancel, batch-results, embeddings,
+         * tool-execution, audio-transcription, audio-translation, audio-speech,
+         * moderation, image-generation, image-edit, webhook
+         * 
+         * @param componentName to use a custom component name for the endpoint
+         * instead of the default name
+         * @param path operation
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder llm(String componentName, String path) {
+            return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+        }
 
     }
     /**
-     * The builder of headers' name for the LLM component.
+     * The builder of headers' name for the OpenAI component.
      */
     public static class OpenAIHeaderNameBuilder {
         /**
