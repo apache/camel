@@ -240,9 +240,23 @@ final class SchemaHints {
             append("type", ".*/constant(/expression)?", m -> m.message().contains("null found"),
                     m -> "constant is a text; to set an empty body (a GET sends none) write setBody: {simple:"
                          + " {expression: \"${null}\"}}"),
-            // library: jackson: the enumeration is case sensitive
+            // library: jackson: the enumeration is case sensitive; the name to write is the entry of this data
+            // format's enumeration (json, avro, protobuf, yaml each have their own) that matches ignoring case
             append("enum", ".*/library", ANY,
-                    m -> "the library name is case sensitive: write library: Jackson (or Gson, Fastjson, Jsonb)"),
+                    m -> {
+                        JsonNode instance = m.error().getInstanceNode();
+                        String written = instance != null && instance.isValueNode() ? instance.asText() : "";
+                        String list = between(m.message(), "[", "]");
+                        String match = null;
+                        for (String entry : (list == null ? "" : list).split(",")) {
+                            String name = entry.trim().replace("\"", "");
+                            if (!name.isEmpty() && name.equalsIgnoreCase(written)) {
+                                match = name;
+                            }
+                        }
+                        return "the library name is case sensitive"
+                               + (match != null ? ": write library: " + match : ", write it as listed");
+                    }),
             append("type", "/?", m -> m.message().contains("array expected"),
                     m -> "a Camel YAML file is a list of entries, each starting with \"- \": - route:, - from:, - beans:,"
                          + " - rest:, - onException:"),

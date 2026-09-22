@@ -115,6 +115,19 @@ public class YamlValidatorPropertyHintTest {
                     .anyMatch(m -> m.contains("setExchangeProperty") && m.contains("the EIP is setProperty"))
                     .anyMatch(m -> m.contains("constant is a text") && m.contains("simple: {expression: \"${null}\"}"))
                     .anyMatch(m -> m.contains("the library name is case sensitive: write library: Jackson"));
+            // the name comes from the data format's own enumeration, not from json's
+            errors = v.validate("""
+                    - route:
+                        from:
+                          uri: file:orders
+                          steps:
+                            - marshal:
+                                avro:
+                                  library: apacheavro
+                    """);
+            assertThat(errors).extracting(Error::getMessage)
+                    .anyMatch(m -> m.contains("the library name is case sensitive: write library: ApacheAvro")
+                            && !m.contains("Gson"));
             errors = v.validate("""
                     - route:
                         from:
