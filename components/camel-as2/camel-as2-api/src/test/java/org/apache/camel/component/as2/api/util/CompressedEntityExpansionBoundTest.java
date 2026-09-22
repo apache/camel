@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.as2.api.util;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
@@ -46,8 +48,7 @@ class CompressedEntityExpansionBoundTest {
     void expansionBeyondTheBoundIsRefused() throws Exception {
         ApplicationPkcs7MimeCompressedDataEntity compressed = compressedEntity();
 
-        // the failure must come from the bound itself, not from anything downstream, so assert the type
-        // the failure must come from the expander refusing, not from anything downstream
+        // the failure must come from the expander refusing, not from anything downstream, so assert the type
         HttpException thrown = assertThrows(HttpException.class,
                 () -> HttpMessageUtils.extractEdiPayloadFromCompressedEntity(compressed, NO_SECURITY, false, 1024L),
                 "expanding well past the bound must fail rather than allocate");
@@ -66,7 +67,7 @@ class CompressedEntityExpansionBoundTest {
 
     private static ApplicationPkcs7MimeCompressedDataEntity compressedEntity() throws Exception {
         ApplicationEDIFACTEntity ediEntity = new ApplicationEDIFACTEntity(
-                PAYLOAD.getBytes(java.nio.charset.StandardCharsets.US_ASCII), "US-ASCII", "7bit", false, null);
+                PAYLOAD.getBytes(StandardCharsets.US_ASCII), "US-ASCII", "7bit", false, null);
         CMSCompressedDataGenerator generator = new CMSCompressedDataGenerator();
         OutputCompressor compressor = new ZlibCompressor();
         return new ApplicationPkcs7MimeCompressedDataEntity(ediEntity, generator, compressor, "base64", false);
