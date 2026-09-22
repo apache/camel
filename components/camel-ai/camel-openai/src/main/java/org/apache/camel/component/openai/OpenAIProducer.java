@@ -381,7 +381,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
                 ChatCompletion response = createChatCompletion(exchange, paramsBuilder.build());
                 tokenTracker.addUsage(response);
-                setAgenticTokenHeaders(exchange.getMessage(), tokenTracker);
+                tokenTracker.setHeaders(exchange.getMessage());
 
                 long iterationPromptTokens = tokenTracker.promptTokensSince(tokensBefore);
                 long iterationCompletionTokens = tokenTracker.completionTokensSince(tokensBefore);
@@ -412,7 +412,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                     return;
                 }
 
-                if (tokenBudgetExceeded(config, tokenTracker)) {
+                if (tokenTracker.exceedsBudget(config.getMaxAgenticTokens())) {
                     observability.recordFinalIteration(
                             modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
                     stopReason = "token_budget_exceeded";
@@ -495,17 +495,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         } finally {
             observability.finalizeObservability(tokenTracker, iteration, stopReason);
         }
-    }
-
-    private void setAgenticTokenHeaders(Message message, OpenAIAgenticTokenTracker tokenTracker) {
-        message.setHeader(OpenAIConstants.AGENTIC_PROMPT_TOKENS, tokenTracker.getPromptTokens());
-        message.setHeader(OpenAIConstants.AGENTIC_COMPLETION_TOKENS, tokenTracker.getCompletionTokens());
-        message.setHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, tokenTracker.getTotalTokens());
-    }
-
-    private static boolean tokenBudgetExceeded(OpenAIConfiguration config, OpenAIAgenticTokenTracker tokenTracker) {
-        long maxAgenticTokens = config.getMaxAgenticTokens();
-        return maxAgenticTokens > 0 && tokenTracker.getTotalTokens() > maxAgenticTokens;
     }
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {

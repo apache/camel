@@ -18,9 +18,12 @@ package org.apache.camel.component.openai;
 
 import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.completions.CompletionUsage;
+import com.openai.models.responses.Response;
+import com.openai.models.responses.ResponseUsage;
+import org.apache.camel.Message;
 
 /**
- * Tracks cumulative token usage across the MCP agentic loop.
+ * Tracks cumulative token usage across the agentic loop of the chat-completion and responses operations.
  */
 final class OpenAIAgenticTokenTracker {
 
@@ -52,6 +55,29 @@ final class OpenAIAgenticTokenTracker {
     void addUsage(CompletionUsage usage) {
         promptTokens += usage.promptTokens();
         completionTokens += usage.completionTokens();
+    }
+
+    void addUsage(Response response) {
+        if (response == null) {
+            return;
+        }
+        response.usage().ifPresent(this::addUsage);
+    }
+
+    /** The Responses API counts the same tokens under the input and output names. */
+    void addUsage(ResponseUsage usage) {
+        promptTokens += usage.inputTokens();
+        completionTokens += usage.outputTokens();
+    }
+
+    void setHeaders(Message message) {
+        message.setHeader(OpenAIConstants.AGENTIC_PROMPT_TOKENS, promptTokens);
+        message.setHeader(OpenAIConstants.AGENTIC_COMPLETION_TOKENS, completionTokens);
+        message.setHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, getTotalTokens());
+    }
+
+    boolean exceedsBudget(long maxAgenticTokens) {
+        return maxAgenticTokens > 0 && getTotalTokens() > maxAgenticTokens;
     }
 
     long getPromptTokens() {
