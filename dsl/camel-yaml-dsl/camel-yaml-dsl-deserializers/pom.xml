@@ -34,12 +34,6 @@
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
-        <sourcecheckExcludes>
-            **/*.groovy
-        </sourcecheckExcludes>
-        <sourcecheckExcludesComma>
-            ${sourcecheckExcludes},
-        </sourcecheckExcludesComma>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
 
@@ -58,36 +52,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
-            <version>${spock-version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.groovy</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.junit.platform</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-test-junit5</artifactId>
-            <version>${groovy-version}</version>
             <scope>test</scope>
         </dependency>
 
