@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.ServiceStatus
+import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.ResourceHelper
@@ -127,10 +128,15 @@ class RouteReloadRollbackTest extends YamlTestSupport {
                             uri: mock:fixed
                 """)
             strategy.getResourceReload().onReload(only.toString(), ResourceHelper.resolveResource(context2, "file:" + only))
-        then: 'the fixed version runs, not the remembered one'
+        then: 'the fixed version runs, not the remembered one: the message lands in mock:fixed'
             context2.getRouteController().getRouteStatus("only") == ServiceStatus.Started
-            context2.getRoute("only").getEndpoint().getEndpointUri().startsWith("direct://only")
             context2.getRoutes().size() == 1
+            def fixed = context2.getEndpoint("mock:fixed", MockEndpoint)
+            fixed.expectedMessageCount(1)
+            def stale = context2.getEndpoint("mock:only", MockEndpoint)
+            stale.expectedMessageCount(0)
+            context2.createProducerTemplate().sendBody("direct:only", "x")
+            MockEndpoint.assertIsSatisfied(context2)
         cleanup:
             strategy.doStop()
             context2.stop()
