@@ -36,12 +36,6 @@
         <firstVersion>3.9.0</firstVersion>
         <title>YAML DSL</title>
         <label>dsl</label>
-        <sourcecheckExcludes>
-            **/*.groovy
-        </sourcecheckExcludes>
-        <sourcecheckExcludesComma>
-            ${sourcecheckExcludes},
-        </sourcecheckExcludesComma>
         <annotations>
             routes.language=yaml
         </annotations>
@@ -73,23 +67,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
-            <version>${spock-version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.groovy</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.junit.platform</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
@@ -203,19 +180,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws2-s3</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-test-junit5</artifactId>
-            <version>${groovy-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -334,22 +298,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>addTestSources</goal>
-                            <goal>compileTests</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <invokeDynamic>true</invokeDynamic>
-                </configuration>
             </plugin>
         </plugins>
     </build>
