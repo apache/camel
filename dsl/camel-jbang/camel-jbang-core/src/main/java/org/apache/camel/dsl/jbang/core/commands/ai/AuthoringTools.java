@@ -428,7 +428,7 @@ public final class AuthoringTools {
         if (!"invalid".equals(result.getString("status"))) {
             result.put("status", "edited");
             result.put("editedAtLine", Math.max(1, line));
-            result.put("replacedLines", find.isEmpty() ? 0 : (int) find.lines().count());
+            result.put("replacedLines", (int) find.lines().count());
         } else {
             result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
                                   + " camel_edit_file again.");
