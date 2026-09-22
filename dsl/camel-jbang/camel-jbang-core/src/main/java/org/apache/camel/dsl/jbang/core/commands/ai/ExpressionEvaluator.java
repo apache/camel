@@ -131,11 +131,13 @@ public final class ExpressionEvaluator {
             }
             // the language is not on this process's classpath: download its component as camel run does, so a
             // jsonpath, jq or xpath expression can be tried before it is written (CAMEL-24907)
-            ClassLoader downloaded = download(gav);
+            StringBuilder failure = new StringBuilder();
+            ClassLoader downloaded = download(gav, failure);
             if (downloaded == null || !evaluateWith(downloaded, lang, expression, body, predicate, result)) {
                 result.put("status", "error");
                 result.put("error", "The language '" + lang + "' is not on the classpath of this process"
                                     + (gav != null ? " and " + gav + " could not be downloaded" : "")
+                                    + (failure.isEmpty() ? "" : " (" + failure + ")")
                                     + "; select a running integration that has it (camel_run, then its name) and the"
                                     + " expression is evaluated there");
                 return;
@@ -237,30 +239,32 @@ public final class ExpressionEvaluator {
 
     /**
      * Downloads the component of a language and keeps its class loader, so the next call does not download again.
-     * Returns null when there is nothing to download (an unknown name) or the download fails (no network).
+     * Returns null when there is nothing to download (an unknown name) or the download fails, appending the reason to
+     * {@code failure}.
      */
-    private static ClassLoader download(String gav) {
+    private static ClassLoader download(String gav, StringBuilder failure) {
         if (gav == null) {
             return null;
         }
-        ClassLoader cached = DOWNLOADED.get(gav);
-        if (cached != null) {
-            return cached;
-        }
         String[] parts = gav.split(":");
-        try {
-            DependencyDownloaderClassLoader cl
-                    = new DependencyDownloaderClassLoader(ExpressionEvaluator.class.getClassLoader());
-            try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
-                downloader.setClassLoader(cl);
-                downloader.start();
-                downloader.downloadDependency(parts[0], parts[1], parts[2]);
+        // computeIfAbsent so two evaluations of the same language do not download it twice and leak a class loader;
+        // a failed download stores nothing, so the next call tries again
+        return DOWNLOADED.computeIfAbsent(gav, k -> {
+            try {
+                DependencyDownloaderClassLoader cl
+                        = new DependencyDownloaderClassLoader(ExpressionEvaluator.class.getClassLoader());
+                try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+                    downloader.setClassLoader(cl);
+                    downloader.start();
+                    downloader.downloadDependency(parts[0], parts[1], parts[2]);
+                }
+                return cl;
+            } catch (Exception e) {
+                // say why, so the answer names the cause (offline, wrong repository, unknown artifact)
+                failure.append(e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+                return null;
             }
-            DOWNLOADED.put(gav, cl);
-            return cl;
-        } catch (Exception e) {
-            return null;
-        }
+        });
     }
 
     /** The class loaders of the languages downloaded so far, so the next call does not download again. */
