@@ -150,6 +150,16 @@ public class AWS2S3UtilsTest extends CamelTestSupport {
     }
 
     @Test
+    void bucketOverrideHeaderTakesPrecedenceOverConfiguration() {
+        Exchange exchange = createExchangeWithBody("body");
+        exchange.getIn().setHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, "header-bucket");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setBucketName("configured-bucket");
+
+        assertEquals("header-bucket", AWS2S3Utils.determineBucketName(exchange, config));
+    }
+
+    @Test
     void bucketMissingFromHeaderAndConfigurationThrows() {
         Exchange exchange = createExchangeWithBody("body");
         AWS2S3Configuration config = new AWS2S3Configuration();
