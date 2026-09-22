@@ -2479,6 +2479,17 @@ its own pre-configured Saxon `Configuration` through the `configuration` option 
 endpoint or language (or `XQueryBuilder.setConfiguration(...)`); a user-supplied `Configuration` is
 used as-is and is not modified.
 
+=== camel-debezium-oracle - the databaseOutServerName option is removed
+
+`databaseOutServerName` is gone from the `debezium-oracle` endpoint and component options. It mapped to
+Debezium's `database.out.server.name`, which Debezium deprecated in favour of `xstream.out.server.name`.
+
+Camel already drops the options that Debezium deprecates, but the filter only recognised the ones the
+connector declares as a `Field`, so this one - declared as a plain `String` constant - slipped through and
+was published as a second, undocumented spelling of the same setting. Routes that set
+`databaseOutServerName` should use `xstreamOutServerName` instead; it configures the same XStream outbound
+server and is unchanged.
+
 === camel-jolt - switch from unmaintained bazaarvoice jolt to the jolt-community fork
 
 The JOLT library dependency has been migrated from `com.bazaarvoice.jolt:jolt-core` to
