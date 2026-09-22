@@ -1392,8 +1392,8 @@ class TuiToolRegistry {
         String file = args.get("file") instanceof String s ? s : null;
         String content = args.get("content") instanceof String s ? s : null;
         boolean confirm = !Boolean.FALSE.equals(args.get("confirm"));
-        // always validated: the tool has no switch, a model given one turns it off (CAMEL-24897)
-        return Jsoner.serialize(facade.writeFile(name, file, content, confirm, true));
+        // the write always validates: the tool has no switch, a model given one turns it off (CAMEL-24897)
+        return Jsoner.serialize(facade.writeFile(name, file, content, confirm));
     }
 
     private String callValidateSource(Map<String, Object> args) {
