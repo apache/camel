@@ -234,7 +234,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jev</artifactId>
+            <artifactId>camel-typesafe</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -9047,46 +9047,6 @@ public class StaticEndpointBuilders {
         return JettyHttp12EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Jev (camel-jev)
-     * Evaluate text and structured state with the TypeSafe AI Jev decision API.
-     * 
-     * Category: ai
-     * Since: 4.23
-     * Maven coordinates: org.apache.camel:camel-jev
-     * 
-     * Syntax: <code>jev:name</code>
-     * 
-     * Path parameter: name (required)
-     * A logical name for the evaluation endpoint.
-     * 
-     * @param path name
-     * @return the dsl builder
-     */
-    public static JevEndpointBuilderFactory.JevEndpointBuilder jev(String path) {
-        return jev("jev", path);
-    }
-    /**
-     * Jev (camel-jev)
-     * Evaluate text and structured state with the TypeSafe AI Jev decision API.
-     * 
-     * Category: ai
-     * Since: 4.23
-     * Maven coordinates: org.apache.camel:camel-jev
-     * 
-     * Syntax: <code>jev:name</code>
-     * 
-     * Path parameter: name (required)
-     * A logical name for the evaluation endpoint.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path name
-     * @return the dsl builder
-     */
-    public static JevEndpointBuilderFactory.JevEndpointBuilder jev(String componentName, String path) {
-        return JevEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
      * 
@@ -17190,6 +17150,46 @@ public class StaticEndpointBuilders {
      */
     public static TwitterTimelineEndpointBuilderFactory.TwitterTimelineEndpointBuilder twitterTimeline(String componentName, String path) {
         return TwitterTimelineEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * TypeSafe (camel-typesafe)
+     * Evaluate text and structured state with the TypeSafe AI decision API.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-typesafe
+     * 
+     * Syntax: <code>typesafe:name</code>
+     * 
+     * Path parameter: name (required)
+     * A logical name for the evaluation endpoint.
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static TypeSafeEndpointBuilderFactory.TypeSafeEndpointBuilder typesafe(String path) {
+        return typesafe("typesafe", path);
+    }
+    /**
+     * TypeSafe (camel-typesafe)
+     * Evaluate text and structured state with the TypeSafe AI decision API.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-typesafe
+     * 
+     * Syntax: <code>typesafe:name</code>
+     * 
+     * Path parameter: name (required)
+     * A logical name for the evaluation endpoint.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static TypeSafeEndpointBuilderFactory.TypeSafeEndpointBuilder typesafe(String componentName, String path) {
+        return TypeSafeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Undertow (camel-undertow)

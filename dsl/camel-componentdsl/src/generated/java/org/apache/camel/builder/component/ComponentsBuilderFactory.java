@@ -2812,19 +2812,6 @@ public interface ComponentsBuilderFactory {
         return JettyComponentBuilderFactory.jetty();
     }
     /**
-     * Jev (camel-jev)
-     * Evaluate text and structured state with the TypeSafe AI Jev decision API.
-     * 
-     * Category: ai
-     * Since: 4.23
-     * Maven coordinates: org.apache.camel:camel-jev
-     * 
-     * @return the dsl builder
-     */
-    static JevComponentBuilderFactory.JevComponentBuilder jev() {
-        return JevComponentBuilderFactory.jev();
-    }
-    /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
      * 
@@ -5122,6 +5109,19 @@ public interface ComponentsBuilderFactory {
      */
     static TwitterTimelineComponentBuilderFactory.TwitterTimelineComponentBuilder twitterTimeline() {
         return TwitterTimelineComponentBuilderFactory.twitterTimeline();
+    }
+    /**
+     * TypeSafe (camel-typesafe)
+     * Evaluate text and structured state with the TypeSafe AI decision API.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-typesafe
+     * 
+     * @return the dsl builder
+     */
+    static TypesafeComponentBuilderFactory.TypesafeComponentBuilder typesafe() {
+        return TypesafeComponentBuilderFactory.typesafe();
     }
     /**
      * Undertow (camel-undertow)

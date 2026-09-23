@@ -1224,11 +1224,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jev</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-jfr</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -2265,6 +2260,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-twitter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-typesafe</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
