@@ -74,6 +74,7 @@ jobs:
         !components/camel-debezium/camel-debezium-common/camel-debezium-maven-plugin,
         !tooling/maven/sync-properties-maven-plugin,
         !dsl/camel-yaml-dsl/camel-yaml-dsl-maven-plugin,
+        !dsl/camel-yaml-dsl/camel-yaml-dsl-validator-maven-plugin,
         !dsl/camel-endpointdsl-support
     steps:
       - name: Checkout
@@ -117,8 +118,11 @@ jobs:
           # sync-properties-maven-plugin is a SNAPSHOT reactor artifact used by camel-dependencies
           # at generate-resources phase. Same root cause as camel-debezium-maven-plugin — installed
           # here and excluded via EXCLUDED_MODULES so Maven uses the .m2 version.
+          # camel-yaml-dsl-validator-maven-plugin is a SNAPSHOT reactor artifact used as a build
+          # plugin by camel-jbang-core at generate-resources phase. Same root cause — installed here
+          # and excluded via EXCLUDED_MODULES so Maven uses the .m2 version.
           mvn install \
-            -pl tooling/maven/camel-package-maven-plugin,tooling/maven/camel-api-component-maven-plugin,components/camel-debezium/camel-debezium-common/camel-debezium-maven-plugin,tooling/maven/sync-properties-maven-plugin,dsl/camel-yaml-dsl/camel-yaml-dsl-maven-plugin \
+            -pl tooling/maven/camel-package-maven-plugin,tooling/maven/camel-api-component-maven-plugin,components/camel-debezium/camel-debezium-common/camel-debezium-maven-plugin,tooling/maven/sync-properties-maven-plugin,dsl/camel-yaml-dsl/camel-yaml-dsl-maven-plugin,dsl/camel-yaml-dsl/camel-yaml-dsl-validator-maven-plugin \
             --also-make \
             -DskipTests -Dlicense.skip -Dquickly \
             --no-transfer-progress --batch-mode -q
@@ -271,6 +275,11 @@ jobs:
           # the camel-yaml-dsl-maven-plugin executions to phase=none (the mojos read jandex.idx,
           # which is not available in a clean CI checkout). The generated sources/resources are
           # pre-committed, so skipping regeneration is safe.
+          # camel-yaml-dsl-validator-maven-plugin is excluded for the same reason: it is a SNAPSHOT
+          # reactor plugin used by camel-jbang-core at generate-resources phase. Pre-installing it
+          # and excluding it via EXCLUDED_MODULES lets Maven use the .m2 version.
+          # camel-jbang-core has a dep-check profile that binds its generate-doc-samples execution
+          # to phase=none. The generated eip-samples.json is pre-committed, so skipping it is safe.
           # camel-endpointdsl: its main build disables default-compile (phase:none); there is no
           # dep-check profile to re-enable it (unlike camel-endpointdsl-support). This means the
           # compile step is a no-op for this module (same as camel-componentdsl). The reason we
