@@ -889,6 +889,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "precondition", def.getPrecondition(), "false");
+        doWriteChildElement(jo, "selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
         doWriteChildList(jo, "when", "when", def.getWhenClauses(), this::doWriteWhenDefinition);
         doWriteChildElement(jo, "otherwise", def.getOtherwise(), this::doWriteOtherwiseDefinition);
         return jo;
@@ -2035,6 +2036,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "disabled", def.getDisabled(), null);
+        doWriteAttribute(jo, "value", def.getValue(), null);
         doWriteBasicOutputExpressionNodeElements(jo, def);
         return jo;
     }

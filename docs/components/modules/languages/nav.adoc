@@ -21,6 +21,7 @@
 ** xref:python3-language.adoc[Python 3]
 ** xref:quickjs-language.adoc[QuickJS]
 ** xref:ref-language.adoc[Ref]
+** xref:semantic-language.adoc[Semantic]
 ** xref:simple-language.adoc[Simple]
 ** xref:simple-advanced.adoc[Simple - Advanced Features]
 ** xref:simple-functions.adoc[Simple - Built-in Functions]

@@ -271,6 +271,7 @@ public class ModelParser extends BaseParser {
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, (def, key) -> switch (key) {
                 case "otherwise": def.setOtherwise(doParseOtherwiseDefinition()); yield true;
+                case "selector": def.setSelector(doParseExpressionSubElementDefinition()); yield true;
                 case "when": doAdd(doParseWhenDefinition(), def.getWhenClauses(), def::setWhenClauses); yield true;
                 default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
@@ -278,6 +279,7 @@ public class ModelParser extends BaseParser {
     protected WhenDefinition doParseWhenDefinition() throws IOException, XmlPullParserException {
         return doParse(new WhenDefinition(), (def, key, val) -> switch (key) {
                 case "disabled": def.setDisabled(val); yield true;
+                case "value": def.setValue(val); yield true;
                 default: yield optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
             }, basicOutputExpressionNodeElementHandler(), noValueHandler());
     }
