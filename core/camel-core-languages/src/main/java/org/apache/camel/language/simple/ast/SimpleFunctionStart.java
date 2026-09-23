@@ -333,6 +333,47 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
             return conditionText;
         }
 
+        // the condition may be several comparisons joined by a logical operator, and each of them needs its
+        // functions wrapped, not only the first (CAMEL-24920)
+        StringBuilder answer = new StringBuilder();
+        int from = 0;
+        for (int at = logicalOperator(conditionText, 0); at >= 0; at = logicalOperator(conditionText, from)) {
+            // the operator matched with its trailing space, so the next space is at most two characters away
+            int end = conditionText.indexOf(' ', at + 1);
+            answer.append(wrapComparison(conditionText.substring(from, at).trim()));
+            answer.append(' ').append(conditionText, at, end).append(' ');
+            from = end + 1;
+        }
+        answer.append(wrapComparison(conditionText.substring(from).trim()));
+        return answer.toString();
+    }
+
+    /**
+     * The index of the next logical operator ({@code &&} or {@code ||}) outside quotes, or -1. Simple has no word
+     * forms: {@code and} and {@code or} are refused by the parser with a message that says so.
+     */
+    private static int logicalOperator(String text, int from) {
+        boolean single = false;
+        boolean dubble = false;
+        for (int i = from; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && c == ' ') {
+                for (String op : new String[] { "&& ", "|| " }) {
+                    if (text.startsWith(op, i + 1)) {
+                        return i + 1;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /** Wraps the left hand side of one comparison with ${} when it is a function reference. */
+    private String wrapComparison(String conditionText) {
         // Find the operator in the condition
         String[] operators = {
                 " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",

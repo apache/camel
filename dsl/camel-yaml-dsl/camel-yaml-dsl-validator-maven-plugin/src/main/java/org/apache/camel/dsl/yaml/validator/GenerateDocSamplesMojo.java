@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.networknt.schema.Error;
@@ -60,9 +59,6 @@ import org.apache.maven.project.MavenProject;
  */
 @Mojo(name = "generate-doc-samples", threadSafe = true)
 public class GenerateDocSamplesMojo extends AbstractMojo {
-
-    static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\s*\\n----\\n(.*?)\\n----", Pattern.DOTALL);
-    private static final Pattern CALLOUT = Pattern.compile("[ \\t]*#[ \\t]*<\\d+>[ \\t]*$", Pattern.MULTILINE);
 
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
@@ -267,16 +263,7 @@ public class GenerateDocSamplesMojo extends AbstractMojo {
 
     /** The route examples of the page: the YAML blocks that start with a top-level list entry, without callouts. */
     static List<String> examples(File page) throws IOException {
-        List<String> answer = new ArrayList<>();
-        String doc = Files.readString(page.toPath(), StandardCharsets.UTF_8);
-        Matcher m = YAML_BLOCK.matcher(doc);
-        while (m.find()) {
-            String yaml = CALLOUT.matcher(m.group(1)).replaceAll("").stripTrailing() + "\n";
-            if (yaml.stripLeading().startsWith("- ") && !DocBlocks.markedToSkip(doc, m.start())) {
-                answer.add(yaml);
-            }
-        }
-        return answer;
+        return DocBlocks.examples(Files.readString(page.toPath(), StandardCharsets.UTF_8));
     }
 
     private static boolean validate(YamlValidator validator, File page, String yaml, List<String> failures)

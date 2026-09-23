@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
@@ -46,8 +44,6 @@ class EipDocExamplesTest {
             "message-history", "message-router", "message-translator", "messaging-bridge", "normalizer",
             "point-to-point-channel", "publish-subscribe-channel", "return-address", "scatter-gather",
             "selective-consumer", "service-activator", "transactional-client");
-
-    private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4}\\n(.*?)\\n-{4}", Pattern.DOTALL);
 
     /**
      * Examples that show YAML the schema cannot know, by page and a text found in the example: the yaml-dsl page shows
@@ -128,15 +124,9 @@ class EipDocExamplesTest {
             if (doc == null) {
                 continue;
             }
-            int n = 0;
-            Matcher m = YAML_BLOCK.matcher(doc);
-            while (m.find()) {
-                String yaml = m.group(1).stripTrailing() + "\n";
-                if (!yaml.stripLeading().startsWith("- ")) {
-                    // a fragment (an option list, a snippet), not a route file
-                    continue;
-                }
-                n++;
+            List<String> blocks = DocBlocks.examples(doc);
+            for (int n = 0; n < blocks.size(); n++) {
+                String yaml = blocks.get(n);
                 String skipped = EXAMPLES_SKIPPED.get(page);
                 if (skipped != null && yaml.contains(skipped)) {
                     continue;
@@ -147,7 +137,7 @@ class EipDocExamplesTest {
                 examples++;
                 List<Error> errors = validator.validate(yaml);
                 if (!errors.isEmpty()) {
-                    failures.add(page + " example " + n + ": " + errors.get(0).getMessage());
+                    failures.add(page + " example " + (n + 1) + ": " + errors.get(0).getMessage());
                 }
             }
         }

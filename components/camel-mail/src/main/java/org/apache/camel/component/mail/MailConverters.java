@@ -61,12 +61,15 @@ public final class MailConverters {
     @Converter
     public static String toString(Message message) throws MessagingException, IOException {
         Object content = message.getContent();
-        while (content instanceof MimeMultipart) {
-            MimeMultipart multipart = (MimeMultipart) content;
-            if (multipart.getCount() > 0) {
-                BodyPart part = multipart.getBodyPart(0);
-                content = part.getContent();
+        while (content instanceof MimeMultipart multipart) {
+            if (multipart.getCount() == 0) {
+                // Nothing to descend into. Without this the loop never reassigns content and spins
+                // forever, pinning the thread on a message an mail.mime.multipart.allowempty
+                // deployment accepts as valid.
+                return null;
             }
+            BodyPart part = multipart.getBodyPart(0);
+            content = part.getContent();
         }
         if (content != null) {
             return content.toString();

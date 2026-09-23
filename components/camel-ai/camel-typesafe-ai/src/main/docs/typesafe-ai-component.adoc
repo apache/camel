@@ -1,0 +1,197 @@
+= TypeSafe AI Component
+:doctitle: TypeSafe AI
+:shortname: typesafe-ai
+:artifactid: camel-typesafe-ai
+:description: Evaluate text and structured state with the TypeSafe AI decision API.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The TypeSafe AI component evaluates explicit state against Noul (yes/no), Choice (one category),
+and Score (ordered rubric) questions using https://docs.typesafe.ai/api[TypeSafe AI's HTTP API].
+Jev is the default model; the `model` option can select another model supported by the API.
+It calls the service directly using the JDK HTTP client and Camel JSON utilities.
+For semantic conditions in Java, XML and YAML, use the xref:languages:typesafe-ai-language.adoc[TypeSafe AI language] supplied by this component.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-typesafe-ai</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+== URI format
+
+[source,text]
+----
+typesafe-ai:name[?options]
+----
+
+`name` identifies an endpoint; it is not sent to the model.
+Producers and predicates using the same URI share its client and configuration.
+Each endpoint owns one HTTP client, connection pool, and default executor. Reuse the same
+endpoint URI when its configuration is shared. Camel manages its lifecycle and cancels
+in-flight requests on stop. Java 21 and later also close the HTTP client explicitly;
+on Java 17, the JDK reclaims its remaining resources after it becomes unreachable.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Configuration
+
+Configure credentials through property placeholders or a supported vault:
+
+[source,properties]
+----
+camel.component.typesafe-ai.api-key={{env:TYPESAFE_API_KEY}}
+camel.component.typesafe-ai.model=jev-1.13.0
+camel.component.typesafe-ai.request-timeout=30000
+camel.component.typesafe-ai.max-concurrent-requests=64
+----
+
+`apiKey` is a secret option. `baseUrl` defaults to `https://api.typesafe.ai`; the client
+appends `/v1/systemone`. A base path can address a proxy. HTTP redirects are not followed.
+Use HTTPS for the service; HTTP is useful for local testing.
+
+`model` defaults to `jev-latest`. Pin a version when tuning thresholds; aliases can change
+behavior without a route change. The request map may explicitly override the endpoint's
+model for that request. The response's `model` identifies the model that answered.
+See https://docs.typesafe.ai/models[available models].
+
+=== Concurrent requests
+
+`maxConcurrentRequests` limits concurrent evaluations to 64 per endpoint by default and must
+be positive. Producers and predicates using the same endpoint share this limit. A component
+property sets the default for each endpoint; an endpoint URI can override it, for example
+`typesafe-ai:refund?maxConcurrentRequests=8`. Different endpoints have independent limits.
+
+When the limit is reached, the evaluation fails immediately with
+`java.util.concurrent.RejectedExecutionException` before request validation, serialization,
+or HTTP submission. No request is queued. The slot is released when the evaluation finishes,
+including on failure, timeout, interruption, or cancellation. Camel's error handler can handle
+the rejection through `onException(RejectedExecutionException.class)`.
+
+== Questions from properties
+
+For a fixed set of questions, select state and retain the business message using properties:
+
+[source,properties]
+----
+camel.component.typesafe-ai.questions={"refund":{"type":"noul","instructions":"Is a refund requested?"}}
+camel.component.typesafe-ai.state=${body}
+camel.component.typesafe-ai.result-property=evaluation
+----
+
+[source,java]
+----
+from("direct:route")
+    .to("typesafe-ai:refund")
+    .choice()
+        .when(simple("${exchangeProperty.evaluation[answers][refund][noul]} >= 0.8"))
+            .to("direct:refund-handler")
+        .otherwise().to("direct:general-handler");
+----
+
+No manually registered beans are needed. `state` is a Simple expression, defaulting to
+`$\{body}`. For an `InputStream`, use `${bodyAs(String)}`. Only the selected state is sent.
+Without `resultProperty`, the response replaces the message body.
+
+== Producer request and response
+
+Without configured `questions`, the input body must be a `Map<String, Object>` with `state` and a nonempty `questions` map.
+An optional `model` overrides the endpoint default. Each named question is a map with `type`
+(`noul`, `choice`, or `score`), optional `instructions`, and the applicable `criteria`.
+Instructions may be omitted or null. Noul criteria and either yes/no description may also
+be omitted or null, matching the official Python SDK and OpenAPI schema.
+State, instructions, and descriptions can be text or structured maps/lists. Nested content
+supports strings, finite numbers, booleans, nulls, lists, and maps with string keys.
+Convert other objects explicitly before submitting them. The component does not collect
+exchange headers or properties automatically. Do not send an entire exchange as state.
+
+The output is an `org.apache.camel.util.json.JsonObject`, which implements `Map<String, Object>`.
+It preserves the API's JSON structure, including additional fields. Nested objects are maps,
+arrays are lists, and numeric values implement `Number`; use `doubleValue()` or `longValue()`
+rather than assuming a specific numeric class.
+
+Missing or mismatched answers, invalid numeric ranges, unknown choices, and incomplete
+probability maps fail the exchange. The selected Choice must have maximal probability;
+ties are allowed. Probabilities and scores are preserved as returned. Like the official
+Python SDK, the component does not enforce a probability-sum tolerance or recompute a Score
+from its returned probabilities, which may have been rounded independently.
+
+Token counts may be missing or null. Missing values remain absent and null values remain
+null; neither is replaced with zero. Present counts must be nonnegative integers.
+
+[source,java]
+----
+Map<String, Object> request = Map.of(
+    "state", "Please refund the duplicate payment",
+    "questions", Map.of(
+        "refund", Map.of("type", "noul", "instructions", "Is a refund requested?",
+            "criteria", Map.of("true", "An explicit request for money back", "false", "No refund requested")),
+        "team", Map.of("type", "choice", "instructions", "Which team should handle this?",
+            "criteria", Map.of("billing", "Payments and refunds", "technical", "Product failures",
+                "other", "Neither team applies")),
+        "urgency", Map.of("type", "score", "instructions", "How urgent is this?",
+            "criteria", List.of("Routine", "Urgent", "Critical"))));
+
+JsonObject response = template.requestBody("typesafe-ai:decisions", request, JsonObject.class);
+JsonObject answers = response.getJsonObject("answers");
+boolean requested = answers.getJsonObject("refund").getDouble("noul") >= 0.8;
+String category = answers.getJsonObject("team").getString("choice");
+double score = answers.getJsonObject("urgency").getDouble("score");
+----
+
+This mixed batch makes one HTTP request, with the same state for every question.
+There is no implicit batching across producer calls or predicates.
+
+[cols="1,3"]
+|===
+| Answer | Mapping
+| Noul | `noul` is the probability of yes, in [0,1]. There is no separate confidence value.
+| Choice | `choice`, `probabilities` and `confidence`. Exactly one supplied category is selected. Criteria may contain up to 255 options; an option's description may be null.
+| Score | `score` is a possibly fractional position in 1 to 10 ordered levels. `legend` and `probabilities` are maps keyed by string indices starting at `"0"`; legend descriptions may be strings, objects, or arrays. `confidence` describes uncertainty.
+| Response | `model`, `answers`, and `usage`. The `input_tokens` and `output_tokens` counts may be absent or null.
+|===
+
+With `resultProperty=evaluation`, the producer stores the response in that exchange property
+and preserves the input body. It clears the property before each evaluation so failures
+cannot leave a stale result. The input request map is not mutated.
+
+For category routing, submit one Choice question and route on its `choice` field. Independent
+Noul conditions instead preserve Camel Choice's first-matching-branch semantics.
+
+== Timeouts and errors
+
+Producer and language evaluations are synchronous. Each evaluation blocks the calling thread
+for a remote round trip and may incur token charges. There is no response cache or automatic
+retry. Loops and Camel redelivery can evaluate again; bound them and account for repeated calls.
+
+`requestTimeout` bounds the HTTP request and complete response body. Connection, request and
+overall deadline failures all surface as `java.util.concurrent.TimeoutException`; an underlying
+JDK HTTP timeout is retained as the cause. Interruption and timeout cancel the HTTP future,
+including stalled response bodies. Cancellation cannot guarantee the service stopped processing
+or consumed no tokens.
+
+An unsuccessful HTTP status raises `TypeSafeAiHttpException` with status code, request ID and
+`Retry-After` where available. Error bodies are omitted because they may contain submitted state.
+Invalid responses and network failures propagate. Language evaluations preserve the exception
+in Camel's cause chain, so ordinary `onException` clauses can handle it. Failures never silently
+become a non-match. Endpoint stop cancels in-flight calls and rejects new evaluations until restart.
+
+Only submit data permitted for the configured service. Test model decisions and thresholds
+against your application; structured output does not establish correctness.
+
+include::spring-boot:partial$starter.adoc[]

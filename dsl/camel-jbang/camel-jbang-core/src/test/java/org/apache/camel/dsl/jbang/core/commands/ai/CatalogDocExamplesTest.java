@@ -19,8 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -36,8 +34,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * the catalog. The schema itself is guarded by EipDocExamplesTest in camel-yaml-dsl-validator.
  */
 class CatalogDocExamplesTest {
-
-    private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4}\\n(.*?)\\n-{4}", Pattern.DOTALL);
 
     /**
      * Pages whose examples are right for the runtime but fail the catalog because the component metadata cannot
@@ -94,15 +90,9 @@ class CatalogDocExamplesTest {
             if (doc == null) {
                 continue;
             }
-            int n = 0;
-            Matcher m = YAML_BLOCK.matcher(doc);
-            while (m.find()) {
-                String yaml = m.group(1).stripTrailing() + "\n";
-                if (!yaml.stripLeading().startsWith("- ")) {
-                    // a fragment (an option list, a snippet), not a route file
-                    continue;
-                }
-                n++;
+            List<String> blocks = DocBlocks.examples(doc);
+            for (int n = 0; n < blocks.size(); n++) {
+                String yaml = blocks.get(n);
                 String skipped = EXAMPLES_SKIPPED.get(page);
                 if (skipped != null && yaml.contains(skipped)) {
                     continue;
@@ -113,7 +103,7 @@ class CatalogDocExamplesTest {
                 }
                 examples++;
                 for (String msg : SourceValidator.validateCamelYaml(yaml, catalog)) {
-                    failures.add(page + " example " + n + ": " + msg);
+                    failures.add(page + " example " + (n + 1) + ": " + msg);
                 }
             }
         }

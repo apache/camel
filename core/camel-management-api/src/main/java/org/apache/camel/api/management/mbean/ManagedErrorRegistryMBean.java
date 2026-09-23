@@ -38,6 +38,12 @@ public interface ManagedErrorRegistryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Maximum number of error entries to keep")
     void setMaximumEntries(int maximumEntries);
 
+    @ManagedAttribute(description = "Maximum number of error entries of the same kind to keep")
+    int getMaximumEntriesPerKind();
+
+    @ManagedAttribute(description = "Maximum number of error entries of the same kind to keep")
+    void setMaximumEntriesPerKind(int maximumEntriesPerKind);
+
     @ManagedAttribute(description = "Time-to-live in seconds for error entries")
     long getTimeToLiveSeconds();
 
