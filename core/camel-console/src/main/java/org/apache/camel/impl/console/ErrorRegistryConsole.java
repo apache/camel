@@ -87,6 +87,10 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
                     entry.getExceptionType(), entry.getExceptionMessage()));
             sb.append(String.format("%n      Timestamp: %s, Thread: %s",
                     entry.getTimestamp(), entry.getProcessingThreadName()));
+            if (entry.getRepeatCount() > 1) {
+                sb.append(String.format("%n      Repeated: %s times (first: %s, last: %s)",
+                        entry.getRepeatCount(), entry.getRepeatFirstTimestamp(), entry.getRepeatLastTimestamp()));
+            }
             if (entry.getMessageHistory() != null) {
                 sb.append(String.format("%n      Message History:"));
                 for (String step : entry.getMessageHistory()) {

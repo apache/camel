@@ -2619,6 +2619,7 @@ public abstract class BaseMainSupport extends BaseService {
         ErrorRegistry registry = camelContext.getErrorRegistry();
         registry.setEnabled(config.isEnabled());
         registry.setMaximumEntries(config.getMaximumEntries());
+        registry.setMaximumEntriesPerKind(config.getMaximumEntriesPerKind());
         registry.setTimeToLive(Duration.ofSeconds(config.getTimeToLiveSeconds()));
         registry.setBodyMaxChars(config.getBodyMaxChars());
         registry.setBodyIncludeStreams(config.isBodyIncludeStreams());

@@ -108,6 +108,7 @@ class TuiToolRegistry {
             case LOG_TOOL -> facade != null ? callGetLog(args) : executeShared(name, args);
             case FILES_TOOL -> !hasDirectory && facadeSelection ? callGetFiles(args) : executeShared(name, args);
             case WRITE_TOOL -> !hasDirectory && facadeSelection ? callWriteFile(args) : executeShared(name, args);
+            case EDIT_TOOL -> !hasDirectory && facadeSelection ? callEditFile(args) : executeShared(name, args);
             case VALIDATE_TOOL -> !hasDirectory && facadeSelection && args.get("content") == null
                     ? callValidateSource(args) : executeShared(name, args);
             default -> executeShared(name, args);
@@ -164,6 +165,7 @@ class TuiToolRegistry {
     static final String LOG_TOOL = "camel_get_log";
     static final String FILES_TOOL = "camel_get_files";
     static final String WRITE_TOOL = "camel_write_file";
+    static final String EDIT_TOOL = "camel_edit_file";
     static final String VALIDATE_TOOL = "camel_validate_source";
 
     /** The TUI's own tools in the core subset; the shared tools add those flagged core in the registry. */
@@ -1394,6 +1396,16 @@ class TuiToolRegistry {
         boolean confirm = !Boolean.FALSE.equals(args.get("confirm"));
         // the write always validates: the tool has no switch, a model given one turns it off (CAMEL-24897)
         return Jsoner.serialize(facade.writeFile(name, file, content, confirm));
+    }
+
+    private String callEditFile(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        String file = args.get("file") instanceof String s ? s : null;
+        String find = args.get("find") instanceof String s ? s : null;
+        String replace = args.get("replace") instanceof String s ? s : "";
+        boolean confirm = !Boolean.FALSE.equals(args.get("confirm"));
+        // an edit is confirmed and replayed in the editor like a write (CAMEL-24909)
+        return Jsoner.serialize(facade.editFile(name, file, find, replace, confirm));
     }
 
     private String callValidateSource(Map<String, Object> args) {

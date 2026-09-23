@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -47,9 +48,13 @@ import org.apache.camel.util.json.Jsoner;
 public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorRegistry {
 
     private final ConcurrentLinkedDeque<BacklogErrorEventMessage> entries = new ConcurrentLinkedDeque<>();
+    /** How often each kind of error happened, so a storm is counted while only a few of its exchanges are kept. */
+    private final Map<String, Repeat> repeats = new ConcurrentHashMap<>();
     private final AtomicLong uidCounter = new AtomicLong();
     private volatile boolean enabled;
     private volatile int maximumEntries = 100;
+    /** How many exchanges of the same kind of error are kept, so one storm does not push out the other errors. */
+    private volatile int maximumEntriesPerKind = 3;
     private volatile Duration timeToLive = Duration.ZERO;
     private volatile int bodyMaxChars = 32 * 1024;
     private volatile boolean bodyIncludeStreams;
@@ -206,8 +211,80 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                 }
             }
         }
+        // count this kind of error and keep only a few of its exchanges, so a storm of one failure neither hides
+        // the count nor evicts everything else (CAMEL-24911)
+        String kind = kindOf(entry);
+        Repeat repeat = repeats.computeIfAbsent(kind, k -> new Repeat(timestamp));
+        long count = repeat.record(timestamp);
+        entry.setRepeat(count, repeat.first(), timestamp);
         entries.addFirst(entry);
+        evictKind(kind);
         evict();
+    }
+
+    /**
+     * What makes two errors the same kind: the route, the node that failed, and the type of the exception. The
+     * exception message is deliberately left out, because a real storm usually carries the failing payload in its
+     * message (an order id, a url), which would make every entry its own kind and let the storm flood the registry
+     * again. The messages are still there to read on the entries that are kept.
+     */
+    private static String kindOf(BacklogErrorEventMessage entry) {
+        return entry.getRouteId() + "|" + entry.getToNode() + "|" + entry.getExceptionType();
+    }
+
+    /** Keeps at most {@link #maximumEntriesPerKind} entries of one kind, the newest ones. */
+    private void evictKind(String kind) {
+        int seen = 0;
+        var it = entries.iterator();
+        while (it.hasNext()) {
+            BacklogErrorEventMessage e = it.next();
+            if (kind.equals(kindOf(e))) {
+                seen++;
+                if (seen > maximumEntriesPerKind) {
+                    it.remove();
+                }
+            }
+        }
+        // a counter costs little, but do not keep more of them than the registry keeps entries
+        while (repeats.size() > maximumEntries) {
+            String oldest = null;
+            long oldestTime = Long.MAX_VALUE;
+            for (Map.Entry<String, Repeat> en : repeats.entrySet()) {
+                if (en.getValue().last() < oldestTime) {
+                    oldestTime = en.getValue().last();
+                    oldest = en.getKey();
+                }
+            }
+            if (oldest == null) {
+                break;
+            }
+            repeats.remove(oldest);
+        }
+    }
+
+    /** How often one kind of error happened, and when it first and last did. */
+    private static final class Repeat {
+        private final AtomicLong count = new AtomicLong();
+        private final long first;
+        private volatile long last;
+
+        private Repeat(long first) {
+            this.first = first;
+            this.last = first;
+        }
+
+        private long record(long timestamp) {
+            this.last = timestamp;
+            return count.incrementAndGet();
+        }
+
+        private long first() {
+            return first;
+        }
+
+        private long last() {
+            return last;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -289,6 +366,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     @Override
     public void clear() {
         entries.clear();
+        repeats.clear();
     }
 
     // -- Scoped view --
@@ -323,6 +401,16 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     @Override
     public void setMaximumEntries(int maximumEntries) {
         this.maximumEntries = maximumEntries;
+    }
+
+    @Override
+    public int getMaximumEntriesPerKind() {
+        return maximumEntriesPerKind;
+    }
+
+    @Override
+    public void setMaximumEntriesPerKind(int maximumEntriesPerKind) {
+        this.maximumEntriesPerKind = maximumEntriesPerKind;
     }
 
     @Override
@@ -456,6 +544,9 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         private final JsonObject data;
         private final Throwable exception;
         private volatile boolean handled;
+        private volatile long repeatCount = 1;
+        private volatile long repeatFirstTimestamp;
+        private volatile long repeatLastTimestamp;
         private final String[] messageHistory;
 
         private volatile String dataAsJson;
@@ -595,6 +686,28 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         }
 
         @Override
+        public long getRepeatCount() {
+            return repeatCount;
+        }
+
+        @Override
+        public long getRepeatFirstTimestamp() {
+            return repeatFirstTimestamp;
+        }
+
+        @Override
+        public long getRepeatLastTimestamp() {
+            return repeatLastTimestamp;
+        }
+
+        /** How often this kind of error happened so far, and when it first and last did (CAMEL-24911). */
+        void setRepeat(long count, long firstTimestamp, long lastTimestamp) {
+            this.repeatCount = count;
+            this.repeatFirstTimestamp = firstTimestamp;
+            this.repeatLastTimestamp = lastTimestamp;
+        }
+
+        @Override
         public String getExceptionType() {
             return exception.getClass().getName();
         }
@@ -655,6 +768,11 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             jo.put("elapsed", elapsed);
             jo.put("threadName", threadName);
             jo.put("handled", handled);
+            if (repeatCount > 1) {
+                jo.put("repeatCount", repeatCount);
+                jo.put("repeatFirstTimestamp", repeatFirstTimestamp);
+                jo.put("repeatLastTimestamp", repeatLastTimestamp);
+            }
             // message data (body, headers)
             Map<String, Object> msg = data.getMap("message");
             jo.put("message", msg);

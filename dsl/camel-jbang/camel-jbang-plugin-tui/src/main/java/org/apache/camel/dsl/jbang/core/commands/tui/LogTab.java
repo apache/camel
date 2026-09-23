@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -348,11 +349,12 @@ class LogTab extends AbstractTab {
                 if (!wordWrap) {
                     maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
                 }
-                if (raw.indexOf('\u001B') >= 0) {
-                    built.add(TuiHelper.ansiToLine(raw, hSkip));
-                } else {
-                    built.add(colorizePlainLog(raw, entry));
+                Line line = raw.indexOf('\u001B') >= 0
+                        ? TuiHelper.ansiToLine(raw, hSkip) : colorizePlainLog(raw, entry);
+                if (entry.repeat > 1) {
+                    line = line.append(Span.styled("  (x" + entry.repeat + ")", Theme.warning().bold()));
                 }
+                built.add(line);
             }
             cachedLogMaxWidth = maxW;
             cachedLogLines = built;
@@ -507,7 +509,7 @@ class LogTab extends AbstractTab {
                 changed = true;
                 List<LogEntry> olderEntries = new ArrayList<>();
                 for (String line : olderLines) {
-                    olderEntries.add(parseLogLine(line));
+                    addFolded(olderEntries, parseLogLine(line));
                 }
                 mutableFilteredEntries.addAll(0, olderEntries);
                 logTotalLinesRead += olderLines.size();
@@ -520,7 +522,7 @@ class LogTab extends AbstractTab {
         if (changed) {
             logTotalLinesRead += newRawLines.size();
             for (String line : newRawLines) {
-                mutableFilteredEntries.add(parseLogLine(line));
+                addFolded(mutableFilteredEntries, parseLogLine(line));
             }
             if (mutableFilteredEntries.size() > MAX_LOG_LINES) {
                 mutableFilteredEntries.subList(0, mutableFilteredEntries.size() - MAX_LOG_LINES)
@@ -671,6 +673,24 @@ class LogTab extends AbstractTab {
                 Span.styled(logger, CYAN),
                 Span.styled(" :", DIM),
                 Span.raw(" " + message));
+    }
+
+    /**
+     * Adds a log line, folding it into the one before it when they only differ in their timestamp, so a storm of the
+     * same failure is one line with a count instead of a screen that hides everything else (CAMEL-24911).
+     */
+    static void addFolded(List<LogEntry> entries, LogEntry entry) {
+        LogEntry last = entries.isEmpty() ? null : entries.get(entries.size() - 1);
+        if (last != null && last.level.equals(entry.level)
+                && Objects.equals(last.logger, entry.logger)
+                && last.message.equals(entry.message)
+                && !entry.message.isEmpty()) {
+            // keep the newest line, so its timestamp is the last time this happened
+            entry.repeat = last.repeat + 1;
+            entries.set(entries.size() - 1, entry);
+        } else {
+            entries.add(entry);
+        }
     }
 
     static LogEntry parseLogLine(String line) {

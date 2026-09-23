@@ -128,6 +128,19 @@ simple("${body[foo]}")
 simple("${body[this.is.foo]}")
 ----
 
+A `Map` can also be read with a dot when it has no method of that name, so a
+body unmarshalled from JSON reads the way it looks:
+
+[source,java]
+----
+simple("${body.sku}")     // the same as ${body[sku]} when the map has no sku() method
+----
+
+A method still wins: `${body.size}` on a `Map` calls `size()`, not the key
+`size`, so use `${body[size]}` for the key. A name that is neither a method nor
+a key still fails, so a misspelled field is reported rather than answered with
+null.
+
 Suppose there was no value with the key `foo` then you can use the null
 safe operator to avoid the NPE as shown:
 
