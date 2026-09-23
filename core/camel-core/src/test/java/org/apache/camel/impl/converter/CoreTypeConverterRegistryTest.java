@@ -16,17 +16,25 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.TypeConvertible;
 import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CoreTypeConverterRegistryTest extends ContextTestSupport {
@@ -129,6 +137,38 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
         assertTrue(registry.lookup(Foo.class).isEmpty());
     }
 
+    @Test
+    public void testSuperTypeMatchIsDeterministic() {
+        TypeConverter fromFirst = new NamedConverter("first");
+        TypeConverter fromSecond = new NamedConverter("second");
+        TypeConverter fromBase = new NamedConverter("base");
+        TypeConverter fromObject = new NamedConverter("object");
+
+        // regardless of the order the converters are registered, the nearest super type wins
+        for (boolean reverse : List.of(false, true)) {
+            Map<TypeConvertible<?, ?>, TypeConverter> converters = new LinkedHashMap<>();
+            List<Object[]> entries = new ArrayList<>(
+                    List.of(new Object[] { Object.class, fromObject }, new Object[] { Base.class, fromBase },
+                            new Object[] { SecondIface.class, fromSecond }, new Object[] { FirstIface.class, fromFirst }));
+            if (reverse) {
+                Collections.reverse(entries);
+            }
+            for (Object[] e : entries) {
+                converters.put(new TypeConvertible<>((Class<?>) e[0], Foo.class), (TypeConverter) e[1]);
+            }
+
+            // interfaces are tried in declared order
+            assertSame(fromFirst, TypeResolverHelper.tryMatch(new TypeConvertible<>(TwoIfaces.class, Foo.class), converters));
+            // the super class is nearer than the object converter
+            assertSame(fromBase, TypeResolverHelper.tryMatch(new TypeConvertible<>(Sub.class, Foo.class), converters));
+            // the interface of the super class is nearer than object
+            assertSame(fromSecond,
+                    TypeResolverHelper.tryMatch(new TypeConvertible<>(SubOfSecond.class, Foo.class), converters));
+            // object is the last resort
+            assertSame(fromObject, TypeResolverHelper.tryMatch(new TypeConvertible<>(String.class, Foo.class), converters));
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -174,6 +214,34 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
                 return type.cast(new Foo(s.substring(4)));
             }
             return null;
+        }
+    }
+
+    public interface FirstIface {
+    }
+
+    public interface SecondIface {
+    }
+
+    public static class TwoIfaces implements FirstIface, SecondIface {
+    }
+
+    public static class ImplOfSecond implements SecondIface {
+    }
+
+    public static class SubOfSecond extends ImplOfSecond {
+    }
+
+    private static class NamedConverter extends TypeConverterSupport {
+        private final String name;
+
+        NamedConverter(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+            return type.cast(new Foo(name));
         }
     }
 }
