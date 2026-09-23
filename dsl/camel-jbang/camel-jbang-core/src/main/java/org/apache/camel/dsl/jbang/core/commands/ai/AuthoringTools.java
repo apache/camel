@@ -389,8 +389,8 @@ public final class AuthoringTools {
      * does not rewrite every line of it: a model that re-emits a whole file corrupts the lines it did not mean to touch
      * (CAMEL-24909). The snippet must occur exactly once; the answer says what was replaced.
      */
-    /** How long a file may be to be handed back when an edit misses, in lines. */
-    private static final int MAX_EDIT_ECHO_LINES = 400;
+    /** How many lines of the file are handed back on either side of the place an edit was aiming at. */
+    private static final int EDIT_WINDOW_LINES = 20;
 
     public static JsonObject editFile(ToolContext ctx, Path dir, String file, String find, String replace) {
         JsonObject edit = editedContent(dir, file, find, replace);
@@ -476,16 +476,19 @@ public final class AuthoringTools {
             if (nearest != null) {
                 result.put("nearest", nearest);
             }
-            // a model that misses twice is writing the snippet from memory, so hand it the file it is editing
-            // instead of sending it back to camel_get_files (CAMEL-24909)
-            if (content.lines().count() <= MAX_EDIT_ECHO_LINES) {
-                result.put("fileContent", content);
-                message += nearest != null
-                        ? ". The whole file is in fileContent: copy the text to find from there"
-                        : ". The file as it stands is in fileContent: copy the text to find from there";
-            } else if (nearest == null) {
-                message += " (camel_get_files reads it)";
-            }
+            // a model that misses is writing the snippet from memory, so hand back the part of the file it was
+            // aiming at, rather than sending it to camel_get_files - or, as the runs showed, to a whole-file
+            // rewrite, which is what corrupts the lines it did not mean to touch (CAMEL-24909)
+            int[] window = aroundNearest(content, wanted);
+            String[] lines = content.split("\n", -1);
+            result.put("fileWindow", join(lines, window[0], window[1]));
+            result.put("windowFromLine", window[0] + 1);
+            result.put("windowToLine", window[1]);
+            message += (nearest != null ? ". L" : ". The file's l") + "ines " + (window[0] + 1) + " to " + window[1]
+                       + " are in fileWindow"
+                       + (window[0] == 0 && window[1] >= (int) content.lines().count() ? " (the whole file)" : "")
+                       + ": copy the text to find from there and call camel_edit_file again, rather than writing"
+                       + " the whole file";
             result.put("message", message);
             return result;
         }
@@ -614,6 +617,18 @@ public final class AuthoringTools {
             return null;
         }
         String[] lines = content.split("\n", -1);
+        int bestAt = nearestAt(lines, wanted);
+        if (bestAt < 0) {
+            return null; // hardly anything matches: naming a place would mislead
+        }
+        return join(lines, bestAt, bestAt + Math.min(wanted.size(), lines.length));
+    }
+
+    /** Where the file comes closest to the wanted lines, or -1 when hardly anything of them matches. */
+    private static int nearestAt(String[] lines, List<String> wanted) {
+        if (wanted.isEmpty()) {
+            return -1;
+        }
         int size = Math.min(wanted.size(), lines.length);
         int bestAt = -1;
         int bestScore = 0;
@@ -629,12 +644,33 @@ public final class AuthoringTools {
                 bestAt = i;
             }
         }
-        if (bestAt < 0 || bestScore * 4 < size) {
-            return null; // hardly anything matches: naming a place would mislead
-        }
+        return bestAt >= 0 && bestScore * 4 >= size ? bestAt : -1;
+    }
+
+    /**
+     * The part of the file the edit was aiming at, as the first and last line index (the last exclusive): the block
+     * that comes closest to the wanted lines with {@link #EDIT_WINDOW_LINES} lines of room on either side, or the
+     * beginning of the file when nothing comes close.
+     */
+    private static int[] aroundNearest(String content, String find) {
+        String[] lines = content.split("\n", -1);
+        // the newline that ends the last line is not a line of its own
+        int count = content.endsWith("\n") ? lines.length - 1 : lines.length;
+        List<String> wanted = find.lines().map(String::strip).filter(l -> !l.isEmpty()).toList();
+        int at = nearestAt(lines, wanted);
+        int size = Math.max(1, Math.min(wanted.size(), count));
+        int from = at < 0 ? 0 : Math.max(0, at - EDIT_WINDOW_LINES);
+        int to = at < 0
+                ? Math.min(count, size + 2 * EDIT_WINDOW_LINES)
+                : Math.min(count, at + size + EDIT_WINDOW_LINES);
+        return new int[] { from, to };
+    }
+
+    /** The lines from {@code from} (inclusive) to {@code to} (exclusive), as they stand. */
+    private static String join(String[] lines, int from, int to) {
         StringBuilder sb = new StringBuilder();
-        for (int j = 0; j < size; j++) {
-            sb.append(lines[bestAt + j]).append('\n');
+        for (int i = from; i < to; i++) {
+            sb.append(lines[i]).append('\n');
         }
         return sb.toString();
     }

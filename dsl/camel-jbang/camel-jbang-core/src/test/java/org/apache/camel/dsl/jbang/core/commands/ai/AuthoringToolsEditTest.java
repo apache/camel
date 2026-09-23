@@ -127,14 +127,36 @@ class AuthoringToolsEditTest {
     }
 
     @Test
-    void aMissHandsBackTheFileToCopyTheTextFrom(@TempDir Path dir) throws IOException {
+    void aMissHandsBackThePartOfTheFileItWasAimingAt(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
 
         JsonObject missing = edit(dir, "uri: direct:nowhere", "x");
 
         assertThat(missing.getString("status")).isEqualTo("not-found");
-        assertThat(missing.getString("fileContent")).isEqualTo(ROUTE);
-        assertThat(missing.getString("message")).contains("fileContent");
+        // this file is shorter than the window, so the window is the whole of it
+        assertThat(missing.getString("fileWindow")).isEqualTo(ROUTE);
+        assertThat(missing.getInteger("windowFromLine")).isEqualTo(1);
+        assertThat(missing.getString("message"))
+                .contains("fileWindow")
+                .contains("rather than writing the whole file");
+    }
+
+    @Test
+    void aMissInALongFileHandsBackOnlyTheLinesAroundThePlace(@TempDir Path dir) throws IOException {
+        StringBuilder sb = new StringBuilder("- route:\n    from:\n      uri: direct:long\n      steps:\n");
+        for (int i = 0; i < 200; i++) {
+            sb.append("        - log:\n            message: \"step ").append(i).append("\"\n");
+        }
+        Files.writeString(dir.resolve("demo.camel.yaml"), sb.toString());
+
+        // aimed at a line that is there, with a neighbour that is not
+        JsonObject missing = edit(dir, "message: \"step 150\"\n            message: \"nowhere\"", "x");
+
+        assertThat(missing.getString("status")).isEqualTo("not-found");
+        String window = missing.getString("fileWindow");
+        assertThat(window).contains("step 150").doesNotContain("step 100").doesNotContain("step 199");
+        assertThat(window.lines().count()).isLessThanOrEqualTo(2L * 20 + 4);
+        assertThat(missing.getInteger("windowFromLine")).isGreaterThan(1);
     }
 
     @Test
