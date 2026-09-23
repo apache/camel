@@ -123,9 +123,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                 return (T) parsedBoolean;
             }
         } else if (type.isPrimitive()) {
-            // okay its a wrapper -> primitive then return as-is for some common types
-            Class<?> cls = value.getClass();
-            if (cls == Integer.class || cls == Long.class) {
+            // okay its a wrapper -> primitive then return as-is when the wrapper matches the primitive type
+            if (isWrapperOfPrimitive(type, value)) {
                 return (T) value;
             }
         } else if (type == String.class) {
@@ -223,10 +222,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                 return (T) value;
             }
             if (type == boolean.class) {
-                // primitive boolean which must return a value so throw exception if not possible
-                Object answer = ObjectConverter.toBoolean(value);
-                requireNonNullBoolean(type, value, answer);
-                return (T) answer;
+                // primitive boolean, but as we are only trying then return null if not possible
+                return (T) ObjectConverter.toBoolean(value);
             } else if (type == Boolean.class && value instanceof String str) {
                 // String -> Boolean
                 Boolean parsedBoolean = customParseBoolean(str);
@@ -234,9 +231,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                     return (T) parsedBoolean;
                 }
             } else if (type.isPrimitive()) {
-                // okay its a wrapper -> primitive then return as-is for some common types
-                Class<?> cls = value.getClass();
-                if (cls == Integer.class || cls == Long.class) {
+                // okay its a wrapper -> primitive then return as-is when the wrapper matches the primitive type
+                if (isWrapperOfPrimitive(type, value)) {
                     return (T) value;
                 }
             } else if (type == String.class) {
@@ -266,6 +262,10 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             return null;
         }
         return (T) answer;
+    }
+
+    private static boolean isWrapperOfPrimitive(Class<?> type, Object value) {
+        return value.getClass() == ObjectHelper.convertPrimitiveTypeToWrapperType(type);
     }
 
     private static <T> void requireNonNullBoolean(Class<T> type, Object value, Object answer) {
@@ -405,7 +405,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         }
 
         // This is the last resort: if nothing else works, try to find something that converts from an Object to the target type
-        final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, type));
+        final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, aClass));
         if (objConverter != null) {
             converters.put(typeConvertible, objConverter);
             return objConverter.convertTo(type, exchange, value);
