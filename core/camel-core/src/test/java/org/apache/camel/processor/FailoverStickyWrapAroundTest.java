@@ -67,6 +67,8 @@ public class FailoverStickyWrapAroundTest extends ContextTestSupport {
     public void testFailoverStickyTriesEachEndpointOnceWhenAllDown() throws Exception {
         down.add("a");
         down.add("b");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:c").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
@@ -80,6 +82,41 @@ public class FailoverStickyWrapAroundTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testFailoverStickyWrapAroundRespectsMaximumFailoverAttempts() throws Exception {
+        // a and b are down, so c becomes the last known good endpoint (2 failover attempts)
+        down.add("a");
+        down.add("b");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:d").expectedMessageCount(0);
+        template.sendBody("direct:limited", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        // all down: sticky starts from c, fails over to d, then wraps around to a, which uses up the
+        // 2 failover attempts, so b is not tried
+        resetMocks();
+        down.add("c");
+        down.add("d");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:d").expectedMessageCount(1);
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:limited", "Bye World"));
+        assertMockEndpointsSatisfied();
+
+        // a is up again: reached with the last failover attempt after the wrap around
+        resetMocks();
+        down.remove("a");
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hi World");
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:d").expectedMessageCount(1);
+        template.sendBody("direct:limited", "Hi World");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -89,9 +126,14 @@ public class FailoverStickyWrapAroundTest extends ContextTestSupport {
                         .loadBalance().failover(-1, false, false, true)
                         .to("direct:a", "direct:b", "direct:c");
 
+                from("direct:limited")
+                        .loadBalance().failover(2, false, false, true)
+                        .to("direct:a", "direct:b", "direct:c", "direct:d");
+
                 from("direct:a").to("mock:a").process(e -> failIfDown("a"));
                 from("direct:b").to("mock:b").process(e -> failIfDown("b"));
                 from("direct:c").to("mock:c").process(e -> failIfDown("c"));
+                from("direct:d").to("mock:d").process(e -> failIfDown("d"));
             }
         };
     }
