@@ -46,6 +46,24 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
                     "Loadbalacing with " + getProcessors().size()
                                                + " should match number of distributions " + ratios.size());
         }
+        // a ratio that is negative, or ratios that are all zero or add up to more than an int can hold,
+        // would make the processor selection loop forever or fail on every exchange
+        long sum = 0;
+        for (DistributionRatio ratio : ratios) {
+            int weight = ratio.getDistributionWeight();
+            if (weight < 0) {
+                throw new IllegalArgumentException(
+                        "Distribution ratio must be zero or a positive number, was: " + weight);
+            }
+            sum += weight;
+        }
+        if (sum == 0) {
+            throw new IllegalArgumentException("At least one distribution ratio must be a positive number");
+        }
+        if (sum > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException(
+                    "The sum of the distribution ratios must not be greater than " + Integer.MAX_VALUE + ", was: " + sum);
+        }
     }
 
     protected void decrementSum() {
