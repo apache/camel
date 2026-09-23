@@ -89,9 +89,14 @@ public class DebeziumConsumer extends DefaultConsumer {
             try {
                 dbzEngine.close();
             } catch (IllegalStateException e) {
-                // the engine refuses to be closed once it has stopped on its own, which happens when it
-                // failed between the check above and this call, and then there is nothing left to close
-                LOG.debug("Debezium engine was already stopped: {}", e.getMessage());
+                // close() rejects three states: the engine stopped on its own between the check above and
+                // this call, which leaves nothing to close, but also tasks still starting and a shutdown
+                // already in progress, and those two are worth seeing
+                if (engineStopped) {
+                    LOG.debug("Debezium engine was already stopped: {}", e.getMessage());
+                } else {
+                    LOG.warn("Debezium engine could not be closed: {}", e.getMessage());
+                }
             }
         }
 
