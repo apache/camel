@@ -406,6 +406,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private String getAttachmentKey(BodyPart bp) throws MessagingException, UnsupportedEncodingException {
         // use the filename as key for the map
         String key = bp.getFileName();
+        boolean fromFileName = key != null;
         // if there is no file name we use the Content-ID header
         if (key == null && bp instanceof MimeBodyPart mimeBodyPart) {
             key = mimeBodyPart.getContentID();
@@ -419,11 +420,12 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
             key = UUID.randomUUID() + "@camel.apache.org";
         }
         key = MimeUtility.decodeText(key);
-        // The name is chosen by the sender of the message being unmarshalled, so normalise it the same
-        // way MailBinding.extractAndNormalizeFileName does before it is used to identify the attachment:
-        // strip control characters, then reduce it to a leaf name so it cannot carry path components.
         key = key.replaceAll("[\n\r\t]", "_");
-        return FileUtil.stripPath(key);
+        // Only a file name is sender-chosen path data. Reduce it to a leaf name the same way
+        // MailBinding.extractAndNormalizeFileName does, so it cannot carry path components before it identifies the
+        // attachment. A Content-ID local part may legally contain '/' (RFC 5322 atext) and a generated id never
+        // carries a path, so those are left as-is.
+        return fromFileName ? FileUtil.stripPath(key) : key;
     }
 
     @Override
