@@ -629,7 +629,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         reactiveExecutor.schedule(callback);
 
                         // create log message
-                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                         msg = msg + ". Caught: " + caught;
                         if (isDeadLetterChannel && deadLetterUri != null) {
                             msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
@@ -672,7 +672,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     reactiveExecutor.schedule(callback);
 
                     // create log message
-                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     msg = msg + ". Caught: " + caught;
                     if (processor != null) {
                         if (deadLetterUri != null) {
@@ -898,7 +898,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             if (redeliveryPolicy.isLogExhausted()) {
                 // create log message
-                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 msg = msg + ". Exhausted after delivery attempt: 1 caught: " + exchange.getException();
 
                 // log that we failed delivery as we are exhausted
@@ -916,7 +916,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
-                String msg = "Rollback " + ExchangeHelper.logIds(exchange);
+                String msg = "Rollback " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 Throwable cause = exchange.getException() != null
                         ? exchange.getException() : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
@@ -1257,7 +1257,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
 
             // create log message
-            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
             msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
             msg = msg + ". Handled and continue routing.";
 
@@ -1370,18 +1370,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
             }
 
+            // store the route, node and location where the exception happened, before any failure processor
+            // (onException, dead letter channel, ...) runs and adds its own entries to the message history,
+            // and before the message below is built so that it can say where the failure is (CAMEL-24974)
+            ExchangeHelper.captureFailureOrigin(exchange);
+
             // only log if not failure handled or not an exhausted unit of work
             if (!ExchangeHelper.isFailureHandled(exchange) && !ExchangeHelper.isUnitOfWorkExhausted(exchange)) {
-                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange)
+                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange)
                              + ". On delivery attempt: " + redeliveryCounter + " caught: " + e;
                 logFailedDelivery(true, false, false, false, isDeadLetterChannel(), exchange, msg, e);
             }
 
             redeliveryCounter = incrementRedeliveryCounter(exchange);
-
-            // store the route, node and location where the exception happened, before any failure processor
-            // (onException, dead letter channel, ...) runs and adds its own entries to the message history
-            ExchangeHelper.captureFailureOrigin(exchange);
         }
 
         /**
@@ -1545,7 +1546,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         reactiveExecutor.schedule(callback);
 
                         // create log message
-                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                         msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
                         if (isDeadLetterChannel && deadLetterUri != null) {
                             msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
@@ -1588,7 +1589,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     reactiveExecutor.schedule(callback);
 
                     // create log message
-                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
                     if (processor != null) {
                         if (deadLetterUri != null) {
@@ -1761,7 +1762,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
                 String msg = message;
                 if (msg == null) {
-                    msg = "New exception " + ExchangeHelper.logIds(exchange);
+                    msg = "New exception " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     // special for logging the new exception
                     if (e != null) {
                         msg = msg + " due: " + e.getMessage();
@@ -1774,7 +1775,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     logger.log(msg, newLogLevel);
                 }
             } else if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
-                String msg = "Rollback " + ExchangeHelper.logIds(exchange);
+                String msg = "Rollback " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 Throwable cause = exchange.getException() != null
                         ? exchange.getException() : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
@@ -2022,6 +2023,34 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(deadLetter, output, outputAsync, taskFactory);
+    }
+
+    /**
+     * Where the failure happened, as the route and node the exchange was at and where that node is in the source, such
+     * as {@code  at route1[to3] orders.camel.yaml:18}. Empty when nothing was captured - message history or source
+     * location can be off - so the message keeps its shape (CAMEL-24974).
+     */
+    private static String failureOrigin(Exchange exchange) {
+        String routeId = exchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, String.class);
+        String nodeId = exchange.getProperty(ExchangePropertyKey.FAILURE_NODE_ID, String.class);
+        String location = exchange.getProperty(ExchangePropertyKey.FAILURE_LOCATION, String.class);
+        if (routeId == null && nodeId == null && location == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(64).append(" at ");
+        if (routeId != null) {
+            sb.append(routeId);
+        }
+        if (nodeId != null) {
+            sb.append("[").append(nodeId).append("]");
+        }
+        if (location != null) {
+            if (routeId != null || nodeId != null) {
+                sb.append(" ");
+            }
+            sb.append(location);
+        }
+        return sb.toString();
     }
 
 }
