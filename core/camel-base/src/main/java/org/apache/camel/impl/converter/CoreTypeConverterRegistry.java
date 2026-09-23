@@ -429,7 +429,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
     private Object tryCachedConverters(Class<?> type, Exchange exchange, Object value, TypeConvertible<?, ?> typeConvertible) {
         final TypeConverter typeConverter = converters.get(typeConvertible);
-        if (typeConverter != null) {
+        // a miss may have been recorded concurrently, which must not prevent trying the fallback converters
+        if (typeConverter != null && typeConverter != MISS_CONVERTER) {
             final Object ret = typeConverter.convertTo(type, exchange, value);
             if (ret != null) {
                 return ret;
