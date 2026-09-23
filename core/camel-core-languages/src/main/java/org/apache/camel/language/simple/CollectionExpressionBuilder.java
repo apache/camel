@@ -35,8 +35,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Expression builder for collection and list functions used by the simple language.
@@ -69,7 +69,7 @@ public final class CollectionExpressionBuilder {
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
-                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    Iterable<?> it = ObjectHelper.createIterable(o);
                     for (Object i : it) {
                         answer.add(i);
                     }
@@ -107,7 +107,7 @@ public final class CollectionExpressionBuilder {
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
-                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    Iterable<?> it = ObjectHelper.createIterable(o);
                     for (Object i : it) {
                         answer.add(i);
                     }
@@ -146,7 +146,7 @@ public final class CollectionExpressionBuilder {
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
-                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    Iterable<?> it = ObjectHelper.createIterable(o);
                     for (Object i : it) {
                         answer.add(i);
                     }
@@ -319,7 +319,7 @@ public final class CollectionExpressionBuilder {
                 List answer = new ArrayList<>();
                 Object o = exp.evaluate(exchange, Object.class);
                 // this may be an object that we can iterate
-                Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                Iterable<?> it = ObjectHelper.createIterable(o);
                 for (Object i : it) {
                     answer.add(i);
                 }
@@ -359,7 +359,7 @@ public final class CollectionExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 List<Object> answer = new ArrayList<>();
                 Object o = exp1.evaluate(exchange, Object.class);
-                Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                Iterable<?> it = ObjectHelper.createIterable(o);
                 for (Object i : it) {
                     // use a dummy exchange as the input is to be the message body
                     Exchange dummy = ExchangeHelper.createCopy(exchange, true);
@@ -558,7 +558,7 @@ public final class CollectionExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 List<Object> answer = new ArrayList<>();
                 Object o = exp1.evaluate(exchange, Object.class);
-                Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                Iterable<?> it = ObjectHelper.createIterable(o);
                 for (Object i : it) {
                     // use a dummy exchange as the input is to be the message body
                     Exchange dummy = ExchangeHelper.createCopy(exchange, true);

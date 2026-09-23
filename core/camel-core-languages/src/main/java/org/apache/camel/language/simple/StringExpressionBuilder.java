@@ -302,7 +302,10 @@ public final class StringExpressionBuilder {
 
             @Override
             public String toString() {
-                return "pad(" + exp + "," + length + ")";
+                if (separator != null) {
+                    return "pad(" + expression + "," + length + "," + separator + ")";
+                }
+                return "pad(" + expression + "," + length + ")";
             }
         };
     }
@@ -310,16 +313,16 @@ public final class StringExpressionBuilder {
     /**
      * String concats the two expressions.
      */
-    public static Expression concatExpression(final String right, final String left, String separator) {
+    public static Expression concatExpression(final String first, final String second, String separator) {
         return new ExpressionAdapter() {
             private Expression exp1;
             private Expression exp2;
 
             @Override
             public void init(CamelContext context) {
-                exp1 = context.resolveLanguage("simple").createExpression(right);
+                exp1 = context.resolveLanguage("simple").createExpression(first);
                 exp1.init(context);
-                exp2 = context.resolveLanguage("simple").createExpression(left);
+                exp2 = context.resolveLanguage("simple").createExpression(second);
                 exp2.init(context);
             }
 
@@ -336,7 +339,10 @@ public final class StringExpressionBuilder {
 
             @Override
             public String toString() {
-                return "concat(" + right + "," + left + ")";
+                if (separator != null) {
+                    return "concat(" + first + "," + second + "," + separator + ")";
+                }
+                return "concat(" + first + "," + second + ")";
             }
         };
     }
@@ -540,9 +546,6 @@ public final class StringExpressionBuilder {
     }
 
     /**
-     * Normalizes the whitespaces in the given expressions (uses message body if expression is null)
-     */
-    /**
      * Returns an expression that escapes special characters in the given expression (or message body if <tt>null</tt>)
      * according to the escape kind.
      *
@@ -584,6 +587,9 @@ public final class StringExpressionBuilder {
         };
     }
 
+    /**
+     * Normalizes the whitespaces in the given expressions (uses message body if expression is null)
+     */
     public static Expression normalizeWhitespaceExpression(final String expression) {
         return new ExpressionAdapter() {
             private Expression exp;
