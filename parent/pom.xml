@@ -2980,7 +2980,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-typesafe</artifactId>
+                <artifactId>camel-typesafe-ai</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

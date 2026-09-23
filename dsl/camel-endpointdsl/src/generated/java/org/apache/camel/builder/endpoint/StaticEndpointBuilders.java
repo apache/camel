@@ -17152,14 +17152,14 @@ public class StaticEndpointBuilders {
         return TwitterTimelineEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * TypeSafe (camel-typesafe)
+     * TypeSafe AI (camel-typesafe-ai)
      * Evaluate text and structured state with the TypeSafe AI decision API.
      * 
      * Category: ai
      * Since: 4.23
-     * Maven coordinates: org.apache.camel:camel-typesafe
+     * Maven coordinates: org.apache.camel:camel-typesafe-ai
      * 
-     * Syntax: <code>typesafe:name</code>
+     * Syntax: <code>typesafe-ai:name</code>
      * 
      * Path parameter: name (required)
      * A logical name for the evaluation endpoint.
@@ -17167,18 +17167,18 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
-    public static TypeSafeEndpointBuilderFactory.TypeSafeEndpointBuilder typesafe(String path) {
-        return typesafe("typesafe", path);
+    public static TypeSafeAiEndpointBuilderFactory.TypeSafeAiEndpointBuilder typesafeAi(String path) {
+        return typesafeAi("typesafe-ai", path);
     }
     /**
-     * TypeSafe (camel-typesafe)
+     * TypeSafe AI (camel-typesafe-ai)
      * Evaluate text and structured state with the TypeSafe AI decision API.
      * 
      * Category: ai
      * Since: 4.23
-     * Maven coordinates: org.apache.camel:camel-typesafe
+     * Maven coordinates: org.apache.camel:camel-typesafe-ai
      * 
-     * Syntax: <code>typesafe:name</code>
+     * Syntax: <code>typesafe-ai:name</code>
      * 
      * Path parameter: name (required)
      * A logical name for the evaluation endpoint.
@@ -17188,8 +17188,8 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
-    public static TypeSafeEndpointBuilderFactory.TypeSafeEndpointBuilder typesafe(String componentName, String path) {
-        return TypeSafeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    public static TypeSafeAiEndpointBuilderFactory.TypeSafeAiEndpointBuilder typesafeAi(String componentName, String path) {
+        return TypeSafeAiEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Undertow (camel-undertow)

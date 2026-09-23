@@ -31,7 +31,7 @@
 *** xref:spring-ai-image-component.adoc[Spring AI Image]
 *** xref:spring-ai-vector-store-component.adoc[Spring AI Vector Store]
 *** xref:tensorflow-serving-component.adoc[TensorFlow Serving]
-*** xref:typesafe-component.adoc[TypeSafe]
+*** xref:typesafe-ai-component.adoc[TypeSafe AI]
 *** xref:weaviate-component.adoc[weaviate]
 *** xref:alibaba-eventbridge-component.adoc[Alibaba EventBridge]
 *** xref:alibaba-fc-component.adoc[Alibaba Function Compute (FC)]

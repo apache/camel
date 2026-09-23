@@ -146,7 +146,7 @@ public class ConverterTest extends TestSupport {
         int[] intArray = converter.convertTo(int[].class, list);
         assertEquals(2, intArray.length, "int[] length");
 
-        // lets convert the typesafe array to a larger primitive type
+        // lets convert the typesafe-ai array to a larger primitive type
         long[] longArray = converter.convertTo(long[].class, intArray);
         assertEquals(2, longArray.length, "long[] length");
 

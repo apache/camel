@@ -5111,17 +5111,17 @@ public interface ComponentsBuilderFactory {
         return TwitterTimelineComponentBuilderFactory.twitterTimeline();
     }
     /**
-     * TypeSafe (camel-typesafe)
+     * TypeSafe AI (camel-typesafe-ai)
      * Evaluate text and structured state with the TypeSafe AI decision API.
      * 
      * Category: ai
      * Since: 4.23
-     * Maven coordinates: org.apache.camel:camel-typesafe
+     * Maven coordinates: org.apache.camel:camel-typesafe-ai
      * 
      * @return the dsl builder
      */
-    static TypesafeComponentBuilderFactory.TypesafeComponentBuilder typesafe() {
-        return TypesafeComponentBuilderFactory.typesafe();
+    static TypesafeAiComponentBuilderFactory.TypesafeAiComponentBuilder typesafeAi() {
+        return TypesafeAiComponentBuilderFactory.typesafeAi();
     }
     /**
      * Undertow (camel-undertow)

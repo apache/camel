@@ -147,16 +147,16 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testTypeSafeUsesGenericLanguageModel() {
-        assertTrue(catalog.findLanguageNames().contains("typesafe"));
-        LanguageModel model = catalog.languageModel("typesafe");
+    public void testTypeSafeAiUsesGenericLanguageModel() {
+        assertTrue(catalog.findLanguageNames().contains("typesafe-ai"));
+        LanguageModel model = catalog.languageModel("typesafe-ai");
         assertNotNull(model);
-        assertEquals("camel-typesafe", model.getArtifactId());
+        assertEquals("camel-typesafe-ai", model.getArtifactId());
         assertEquals("language", model.getModelName());
         assertEquals("org.apache.camel.model.language.LanguageExpression", model.getModelJavaType());
-        assertTrue(catalog.validateLanguageExpression(null, "typesafe", "Refund requested?").isSuccess());
-        assertTrue(catalog.validateLanguagePredicate(null, "typesafe", "Refund requested?").isSuccess());
-        assertFalse(catalog.validateLanguagePredicate(null, "typesafe", " ").isSuccess());
+        assertTrue(catalog.validateLanguageExpression(null, "typesafe-ai", "Refund requested?").isSuccess());
+        assertTrue(catalog.validateLanguagePredicate(null, "typesafe-ai", "Refund requested?").isSuccess());
+        assertFalse(catalog.validateLanguagePredicate(null, "typesafe-ai", " ").isSuccess());
     }
 
     @Test
