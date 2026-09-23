@@ -30,13 +30,17 @@ import org.apache.camel.util.json.Jsoner;
 
 /** Validates the documented JSON contract without changing the API's response structure. */
 final class TypeSafeAiJson {
+    private static final String MODEL = "model";
+    private static final String CHOICE = "choice";
+    private static final String CRITERIA = "criteria";
+
     private TypeSafeAiJson() {
     }
 
     static JsonObject request(Map<String, Object> input, String model) throws IOException {
         Map<String, Object> request = new LinkedHashMap<>(input);
-        request.putIfAbsent("model", model);
-        text(request.get("model"));
+        request.putIfAbsent(MODEL, model);
+        text(request.get(MODEL));
         content(request.get("state"));
         validateQuestions(request.get("questions"));
         jsonValue(request);
@@ -70,16 +74,16 @@ final class TypeSafeAiJson {
         }
         Object type = question.get("type");
         if ("noul".equals(type)) {
-            if (question.get("criteria") != null) {
-                object(question.get("criteria")).forEach((key, value) -> {
+            if (question.get(CRITERIA) != null) {
+                object(question.get(CRITERIA)).forEach((key, value) -> {
                     require("true".equals(key) || "false".equals(key), "Noul criteria keys must be true or false");
                     if (value != null) {
                         content(value);
                     }
                 });
             }
-        } else if ("choice".equals(type)) {
-            Map<?, ?> criteria = object(question.get("criteria"));
+        } else if (CHOICE.equals(type)) {
+            Map<?, ?> criteria = object(question.get(CRITERIA));
             require(!criteria.isEmpty() && criteria.size() <= 255, "Choice requires 1 to 255 options");
             criteria.forEach((key, value) -> {
                 text(key);
@@ -88,8 +92,8 @@ final class TypeSafeAiJson {
                 }
             });
         } else if ("score".equals(type)) {
-            require(question.get("criteria") instanceof List<?>, "Score criteria must be a list");
-            List<?> criteria = (List<?>) question.get("criteria");
+            require(question.get(CRITERIA) instanceof List<?>, "Score criteria must be a list");
+            List<?> criteria = (List<?>) question.get(CRITERIA);
             require(!criteria.isEmpty() && criteria.size() <= 10, "Score requires 1 to 10 levels");
             criteria.forEach(TypeSafeAiJson::content);
         } else {
@@ -100,7 +104,7 @@ final class TypeSafeAiJson {
     static JsonObject response(String body, JsonObject request) throws IOException {
         try {
             JsonObject response = parse(body);
-            text(response.get("model"));
+            text(response.get(MODEL));
             Map<?, ?> usage = object(response.get("usage"));
             tokens(usage.get("input_tokens"));
             tokens(usage.get("output_tokens"));
@@ -125,15 +129,15 @@ final class TypeSafeAiJson {
         probability(answer.get("confidence"));
         Map<?, ?> probabilities = object(answer.get("probabilities"));
         probabilities.values().forEach(TypeSafeAiJson::probability);
-        if ("choice".equals(type)) {
-            Set<?> options = object(question.get("criteria")).keySet();
-            require(options.contains(answer.get("choice")), "Choice must be one of the requested options");
+        if (CHOICE.equals(type)) {
+            Set<?> options = object(question.get(CRITERIA)).keySet();
+            require(options.contains(answer.get(CHOICE)), "Choice must be one of the requested options");
             require(probabilities.keySet().equals(options), "Choice probabilities must cover the requested options");
-            double selected = number(probabilities.get(answer.get("choice")));
+            double selected = number(probabilities.get(answer.get(CHOICE)));
             require(probabilities.values().stream().allMatch(value -> number(value) <= selected),
                     "Choice must select a highest-probability option");
         } else {
-            List<?> criteria = (List<?>) question.get("criteria");
+            List<?> criteria = (List<?>) question.get(CRITERIA);
             double score = number(answer.get("score"));
             require(score >= 0 && score <= criteria.size() - 1, "Score must be within the requested levels");
             Set<String> levels = IntStream.range(0, criteria.size()).mapToObj(Integer::toString).collect(Collectors.toSet());
