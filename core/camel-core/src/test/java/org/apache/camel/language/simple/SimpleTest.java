@@ -2211,9 +2211,38 @@ public class SimpleTest extends LanguageTestSupport {
         s = expression.evaluate(exchange, String.class);
         assertNotNull(s);
 
+        // empty parentheses and any case of the kind
+        expression = context.resolveLanguage("simple").createExpression("${uuid()}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
+        expression = context.resolveLanguage("simple").createExpression("${uuid(Short)}");
+        s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+
         // custom generator
         context.getRegistry().bind("mygen", (UuidGenerator) () -> "1234");
         assertExpression("${uuid(mygen)}", "1234");
+    }
+
+    @Test
+    public void testCollectionFunctionsOnASingleComma() {
+        exchange.getMessage().setBody(",");
+        assertExpression("${isEmpty()}", true);
+    }
+
+    @Test
+    public void testNullNumberArguments() {
+        Exception e = assertThrows(Exception.class, () -> evaluate("${collate(${header.none})}"));
+        assertTrue(e.getMessage().contains("collate number expression evaluated to null"), e.getMessage());
+        e = assertThrows(Exception.class, () -> evaluate("${range(1,${header.none})}"));
+        assertTrue(e.getMessage().contains("range expression evaluated to null"), e.getMessage());
+        e = assertThrows(Exception.class, () -> evaluate("${random(5,5)}"));
+        assertTrue(e.getMessage().contains("requires max to be greater than min"), e.getMessage());
+    }
+
+    private Object evaluate(String text) {
+        return context.resolveLanguage("simple").createExpression(text).evaluate(exchange, Object.class);
     }
 
     @Test

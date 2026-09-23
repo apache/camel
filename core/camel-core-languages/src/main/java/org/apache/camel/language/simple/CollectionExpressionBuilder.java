@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -272,6 +273,9 @@ public final class CollectionExpressionBuilder {
      * Split the String values from the expression using the given separator
      */
     public static Expression splitStringExpression(final String expression, final String separator) {
+        // the separator is plain text (not a regular expression), such as '.' or '|'
+        final Pattern pattern = Pattern.compile(Pattern.quote(
+                separator.replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t")));
         return new ExpressionAdapter() {
             private Expression exp;
 
@@ -287,7 +291,7 @@ public final class CollectionExpressionBuilder {
                 if (text == null) {
                     return null;
                 }
-                return text.split(separator);
+                return pattern.split(text);
             }
 
             @Override
@@ -667,9 +671,13 @@ public final class CollectionExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                int num1 = exp1.evaluate(exchange, Integer.class);
-                int num2 = exp2.evaluate(exchange, Integer.class);
-                if (num1 >= 0 && num1 <= num2 && num1 != num2) {
+                Integer num1 = exp1.evaluate(exchange, Integer.class);
+                Integer num2 = exp2.evaluate(exchange, Integer.class);
+                if (num1 == null || num2 == null) {
+                    throw new IllegalArgumentException("range expression evaluated to null: " + min + "," + max);
+                }
+                // as Python, the range may start below zero: range(-2,2) is [-2, -1, 0, 1]
+                if (num1 < num2) {
                     List<Integer> answer = new ArrayList<>();
                     for (int i = num1; i < num2; i++) {
                         answer.add(i);

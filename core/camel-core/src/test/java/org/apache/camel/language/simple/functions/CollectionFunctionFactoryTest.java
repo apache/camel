@@ -220,4 +220,47 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
         assertEquals("v2", result.get("k2"));
     }
 
+    // --- CAMEL-24969 ---
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testRangeNegativeStart() {
+        assertEquals(List.of(-2, -1, 0, 1), evaluate("range(-2,2)", List.class));
+    }
+
+    @Test
+    public void testSplitSeparatorIsNotARegex() {
+        exchange.getIn().setBody("a.b.c");
+        assertEquals(List.of("a", "b", "c"), List.of(evaluate("split(${body},'.')", String[].class)));
+        exchange.getIn().setBody("a|b|c");
+        assertEquals(List.of("a", "b", "c"), List.of(evaluate("split(${body},'|')", String[].class)));
+        exchange.getIn().setBody("a b c");
+        assertEquals(List.of("a", "b", "c"), List.of(evaluate("split(${body}, ' ')", String[].class)));
+        exchange.getIn().setBody("a;b");
+        assertEquals(List.of("a", "b"), List.of(evaluate("split(${body}, ;)", String[].class)));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSortOnlyArgumentIsWhatToSort() {
+        exchange.getIn().setBody(new ArrayList<>(List.of("b", "a")));
+        exchange.getIn().setHeader("list", new ArrayList<>(List.of("z", "y")));
+        assertEquals(List.of("y", "z"), evaluate("sort(${header.list})", List.class));
+        assertEquals(List.of("b", "a"), evaluate("sort(true)", List.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSpaceAfterComma() {
+        exchange.getIn().setBody(new ArrayList<>(List.of("a", "b")));
+        assertEquals(List.of("b", "a"), evaluate("sort(${body}, true)", List.class));
+
+        exchange.getIn().setBody(new ArrayList<>(List.of("X")));
+        assertEquals(List.of("X", "Y"), evaluate("listAdd(${body}, 'Y')", List.class));
+
+        exchange.getIn().setBody(new HashMap<>());
+        Map<String, Object> map = evaluate("mapAdd(${body}, 'k', 'v')", Map.class);
+        assertEquals("v", map.get("k"));
+    }
+
 }

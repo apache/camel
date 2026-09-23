@@ -246,6 +246,9 @@ public class StringHelperTest {
         assertEquals("foo", list.get(0));
         assertEquals("bar", list.get(1));
 
+        list = splitOnCharacterAsList(",", ',', 2);
+        assertEquals(0, list.size());
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 100; i++) {
             sb.append(i);
@@ -265,6 +268,9 @@ public class StringHelperTest {
     public void testSplitOnCharacterAsIterator() {
         Iterator<String> it = splitOnCharacterAsIterator("foo", ',', 1);
         assertEquals("foo", it.next());
+        assertFalse(it.hasNext());
+
+        it = splitOnCharacterAsIterator(",", ',', 2);
         assertFalse(it.hasNext());
 
         it = splitOnCharacterAsIterator("foo,bar", ',', 2);

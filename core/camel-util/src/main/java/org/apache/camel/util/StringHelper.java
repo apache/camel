@@ -414,6 +414,10 @@ public final class StringHelper {
     }
 
     public static Iterator<String> splitOnCharacterAsIterator(String value, char needle, int count) {
+        if (value.length() == 1 && value.charAt(0) == needle) {
+            // only the needle, such as a single comma, so there are no values
+            return Collections.emptyIterator();
+        }
         // skip leading and trailing needles
         int end = value.length() - 1;
         boolean skipStart = value.charAt(0) == needle;
@@ -462,6 +466,10 @@ public final class StringHelper {
     }
 
     public static List<String> splitOnCharacterAsList(String value, char needle, int count) {
+        if (value.length() == 1 && value.charAt(0) == needle) {
+            // only the needle, such as a single comma, so there are no values
+            return new ArrayList<>();
+        }
         // skip leading and trailing needles
         int end = value.length() - 1;
         boolean skipStart = value.charAt(0) == needle;
