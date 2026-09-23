@@ -389,19 +389,25 @@ public class SimplePredicateParser extends BaseSimpleParser {
         tokens.removeIf(t -> t.getType().isIgnore());
 
         // white space can be removed if its not part of a quoted text or within function(s)
-        boolean quote = false;
+        // a single quote inside double quotes (and vice versa) is text, such as ${body.replace("'", "")}
+        boolean single = false;
+        boolean dubble = false;
         int functionCount = 0;
 
         Iterator<SimpleToken> it = tokens.iterator();
         while (it.hasNext()) {
             SimpleToken token = it.next();
-            if (token.getType().isSingleQuote()) {
-                quote = !quote;
-            } else if (!quote) {
+            if (token.getType().isSingleQuote() && !dubble) {
+                single = !single;
+            } else if (token.getType().isDoubleQuote() && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble) {
                 if (token.getType().isFunctionStart()) {
                     functionCount++;
                 } else if (token.getType().isFunctionEnd()) {
-                    functionCount--;
+                    if (functionCount > 0) {
+                        functionCount--;
+                    }
                 } else if (token.getType().isWhitespace() && functionCount == 0) {
                     it.remove();
                 }
@@ -702,7 +708,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     literalSupported |= parameterType.isLiteralSupported();
                     literalWithFunctionsSupported |= parameterType.isLiteralWithFunctionSupport();
                     functionSupported |= parameterType.isFunctionSupport();
-                    nullSupported |= parameterType.isNumericValueSupported();
+                    numericSupported |= parameterType.isNumericValueSupported();
                     booleanSupported |= parameterType.isBooleanValueSupported();
                     nullSupported |= parameterType.isNullValueSupported();
                     minusSupported |= parameterType.isMinusValueSupported();
@@ -809,9 +815,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     || booleanValue()
                     || nullValue()) {
                 // then after the right hand side value, there should be a whitespace if there is more tokens
+                // (do not accept more, as the token after the whitespace, such as an operator, is parsed next)
                 nextToken();
                 if (!token.getType().isEol()) {
-                    expectAndAcceptMore(TokenType.whiteSpace);
+                    expect(TokenType.whiteSpace);
                 }
             } else {
                 throw new SimpleParserException(
@@ -870,6 +877,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
     }
 
     protected boolean minusValue() {
+        // note: this skips the current token without checking it is a minus sign, which is lenient on purpose
+        // as routes may compare with unquoted text such as ${header.version} == v2
         nextToken();
         return accept(TokenType.numericValue);
         // no other tokens to check so do not use nextToken

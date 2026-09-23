@@ -291,6 +291,10 @@ public class SimpleTokenizer {
         if (token.isTernary()) {
             return evalTernary(token, text, expression, index);
         }
+        if (token.isChain()) {
+            // like the other infix operators, so text such as A~>B is not a chain
+            return evalSurroundedBySpace(token, text, expression, index);
+        }
 
         return text.startsWith(token.getValue());
     }

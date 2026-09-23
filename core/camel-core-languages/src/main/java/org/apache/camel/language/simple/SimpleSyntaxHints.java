@@ -204,24 +204,57 @@ public final class SimpleSyntaxHints {
 
     /** Wraps the left hand side of one comparison with {@code ${ }} when it is a function reference. */
     private static String wrapComparison(String text) {
+        // the first operator outside quotes, so ${body == 'a > b'} is compared with ==
+        String first = null;
+        int firstAt = -1;
         for (String op : SPACED_OPERATORS) {
-            int at = text.indexOf(op);
-            if (at < 0 && text.endsWith(op.stripTrailing())) {
-                // the operator ends the text: wrap what is there, so the parser says what is missing after it
-                at = text.length() - op.stripTrailing().length();
+            int at = indexOutsideQuotes(text, op);
+            if (at > 0 && (firstAt < 0 || at < firstAt)) {
+                firstAt = at;
+                first = op;
             }
-            if (at > 0) {
-                String left = text.substring(0, at).trim();
-                String right = at + op.length() <= text.length() ? text.substring(at + op.length()).trim() : "";
-                if (!left.startsWith("${") && !left.startsWith("'") && !left.startsWith("\"")
-                        && !isNumeric(left) && !"true".equalsIgnoreCase(left)
-                        && !"false".equalsIgnoreCase(left) && !"null".equalsIgnoreCase(left)) {
-                    left = "${" + left + "}";
+        }
+        if (first != null) {
+            return wrapComparison(text, first, firstAt);
+        }
+        for (String op : SPACED_OPERATORS) {
+            if (text.endsWith(op.stripTrailing())) {
+                // the operator ends the text: wrap what is there, so the parser says what is missing after it
+                int at = text.length() - op.stripTrailing().length();
+                if (at > 0) {
+                    return wrapComparison(text, op, at);
                 }
-                return left + op + right;
             }
         }
         return text;
+    }
+
+    private static String wrapComparison(String text, String op, int at) {
+        String left = text.substring(0, at).trim();
+        String right = at + op.length() <= text.length() ? text.substring(at + op.length()).trim() : "";
+        if (!left.startsWith("${") && !left.startsWith("'") && !left.startsWith("\"")
+                && !isNumeric(left) && !"true".equalsIgnoreCase(left)
+                && !"false".equalsIgnoreCase(left) && !"null".equalsIgnoreCase(left)) {
+            left = "${" + left + "}";
+        }
+        return left + op + right;
+    }
+
+    /** The index of the text outside single and double quotes, or -1. */
+    private static int indexOutsideQuotes(String text, String find) {
+        boolean single = false;
+        boolean dubble = false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && text.startsWith(find, i)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static boolean isNumeric(String text) {
