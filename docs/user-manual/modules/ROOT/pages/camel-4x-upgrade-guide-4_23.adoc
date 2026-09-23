@@ -2580,3 +2580,15 @@ Routes that reference the constants (for example `setHeader(MustacheConstants.MU
 are unaffected. Routes that set the header by its literal string name, or that use
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
+
+=== camel-pqc - FileBasedKeyLifecycleManager restricts keyId to a flat file name
+
+`FileBasedKeyLifecycleManager` now confines every key file to its configured key directory. A `keyId`
+(supplied through the `CamelPQCKeyId` / `CamelPQCNewKeyId` headers) that contains a forward slash, a
+backslash, a null character, or that would otherwise resolve outside the key directory is now rejected
+with an `IllegalArgumentException`.
+
+Previously a `keyId` such as `tenant-a/signing` resolved into a subdirectory of the key directory.
+Deployments that organised keys that way must switch to a flat `keyId` (for example `tenant-a-signing`).
+Only the file-based manager is affected; the in-memory and cloud-backed managers were never file-path
+based.
