@@ -27,6 +27,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.networknt.schema.Error;
 import com.networknt.schema.path.NodePath;
 
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.Route;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.normalize;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.routes;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.sendsTo;
+
 /**
  * Where the body comes from, across the routes of a file.
  * <p/>
@@ -56,22 +63,10 @@ final class BodyTypeFlow {
     /** The REST verbs that carry no body, so a route they send to starts with none. */
     private static final Set<String> VERBS_WITHOUT_BODY = Set.of("get", "delete", "head");
 
-    /** The REST verbs that carry one. */
-    private static final Set<String> VERBS_WITH_BODY = Set.of("post", "put", "patch");
-
     /** The consumers that produce no body of their own, so the message reaching the route has none. */
     private static final Set<String> NO_BODY_CONSUMER = Set.of("timer", "quartz", "scheduler", "cron");
 
-    /** The consumers that hand a route a body of their own. */
-    private static final Set<String> BODY_FROM_OUTSIDE = Set.of("file", "ftp", "ftps", "sftp", "smb", "kafka", "jms",
-            "activemq", "amqp", "sqs", "sns", "aws2-sqs", "aws2-s3", "mail", "imap", "pop3", "stream", "netty",
-            "mllp", "micrometer", "paho", "mqtt", "rabbitmq", "pulsar", "nats", "azure-servicebus", "google-pubsub");
-
     private BodyTypeFlow() {
-    }
-
-    /** One route of the file: where it starts, what it does, and where it sends. */
-    private record Route(String id, String fromUri, JsonNode steps, JsonNode node) {
     }
 
     static void check(JsonNode target, NodePath path, List<Error> errors) {
@@ -79,8 +74,8 @@ final class BodyTypeFlow {
     }
 
     /**
-     * @param known endpoints the caller knows deliver no body, such as {@code direct:getStock} for the GET operation of
-     *              an OpenAPI specification the route binds to (CAMEL-24844 phase B)
+     * @param known the endpoints the caller knows deliver no body, such as {@code direct:getStock} for the GET
+     *              operation of an OpenAPI specification the route binds to (CAMEL-24844 phase B)
      */
     static void check(JsonNode target, NodePath path, List<Error> errors, Set<String> known) {
         List<Route> routes = routes(target);
@@ -308,40 +303,6 @@ final class BodyTypeFlow {
         return null;
     }
 
-    /** The endpoints a route sends to: to, toD and the enrich family. */
-    private static List<String> sendsTo(JsonNode steps) {
-        List<String> answer = new ArrayList<>();
-        collectSendsTo(steps, answer);
-        return answer;
-    }
-
-    private static void collectSendsTo(JsonNode node, List<String> answer) {
-        if (node == null) {
-            return;
-        }
-        if (node.isArray()) {
-            for (JsonNode child : node) {
-                collectSendsTo(child, answer);
-            }
-            return;
-        }
-        if (!node.isObject()) {
-            return;
-        }
-        for (var it = node.fieldNames(); it.hasNext();) {
-            String name = it.next();
-            JsonNode value = node.get(name);
-            if ("to".equals(name) || "toD".equals(name) || "enrich".equals(name) || "pollEnrich".equals(name)
-                    || "wireTap".equals(name)) {
-                String uri = endpointOf(value);
-                if (uri != null) {
-                    answer.add(uri);
-                }
-            }
-            collectSendsTo(value, answer);
-        }
-    }
-
     /** The endpoints a REST verb without a body sends to, such as a get: that routes to direct:getStock. */
     private static Set<String> restEndpointsWithoutABody(JsonNode target) {
         Set<String> answer = new HashSet<>();
@@ -370,79 +331,4 @@ final class BodyTypeFlow {
         return answer;
     }
 
-    /** The routes of the file, in both the canonical and the short form. */
-    private static List<Route> routes(JsonNode target) {
-        List<Route> answer = new ArrayList<>();
-        if (target == null || !target.isArray()) {
-            return answer;
-        }
-        for (JsonNode entry : target) {
-            if (!entry.isObject()) {
-                continue;
-            }
-            JsonNode route = entry.get("route");
-            JsonNode from = route != null ? route.get("from") : entry.get("from");
-            if (from == null) {
-                continue;
-            }
-            String id = route != null && route.has("id") ? route.get("id").asText() : null;
-            String uri = endpointOf(from);
-            JsonNode steps = from.get("steps");
-            if (steps == null && route != null) {
-                steps = route.get("steps");
-            }
-            answer.add(new Route(id, uri, steps, entry));
-        }
-        return answer;
-    }
-
-    /**
-     * The endpoint a node means, whether its path is in the uri or in the parameters: {@code uri: direct} with
-     * {@code parameters: {name: lookup}} is the endpoint {@code direct:lookup}, which is how the YAML DSL lets an
-     * endpoint be written and how a model often writes it.
-     */
-    private static String endpointOf(JsonNode node) {
-        if (node == null) {
-            return null;
-        }
-        if (node.isTextual()) {
-            return node.asText();
-        }
-        if (!node.isObject() || !node.has("uri")) {
-            return null;
-        }
-        String uri = node.get("uri").asText();
-        if (uri.indexOf(':') > 0) {
-            return uri;
-        }
-        JsonNode parameters = node.get("parameters");
-        if (parameters == null || !parameters.isObject()) {
-            return uri;
-        }
-        // the path parameter of the component, by the names the endpoints of a route use
-        for (String key : new String[] { "name", "destinationName", "topic", "queue", "path", "address" }) {
-            if (parameters.has(key) && parameters.get(key).isValueNode()) {
-                return uri + ":" + parameters.get(key).asText();
-            }
-        }
-        return uri;
-    }
-
-    /** direct:lookup and direct with parameters name: lookup are the same endpoint. */
-    private static String normalize(String uri) {
-        if (uri == null) {
-            return "";
-        }
-        String s = uri.trim();
-        int q = s.indexOf('?');
-        return q > 0 ? s.substring(0, q) : s;
-    }
-
-    private static String scheme(String uri) {
-        if (uri == null) {
-            return null;
-        }
-        int colon = uri.indexOf(':');
-        return colon > 0 ? uri.substring(0, colon) : uri;
-    }
 }

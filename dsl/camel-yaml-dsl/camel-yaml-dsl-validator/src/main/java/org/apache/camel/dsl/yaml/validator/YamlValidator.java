@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -130,14 +131,14 @@ public class YamlValidator {
     }
 
     public List<Error> validate(String content) throws Exception {
-        return validate(content, java.util.Set.of());
+        return validate(content, Set.of());
     }
 
     /**
      * @param bodylessEndpoints endpoints the caller knows deliver no body, such as the {@code direct:} endpoint of a
      *                          GET operation of an OpenAPI specification the file binds to (CAMEL-24844)
      */
-    public List<Error> validate(String content, java.util.Set<String> bodylessEndpoints) throws Exception {
+    public List<Error> validate(String content, Set<String> bodylessEndpoints) throws Exception {
         if (schema == null) {
             init();
         }
@@ -552,7 +553,7 @@ public class YamlValidator {
         return null;
     }
 
-    private List<Error> validate(JsonNode target, java.util.Set<String> bodylessEndpoints) {
+    private List<Error> validate(JsonNode target, Set<String> bodylessEndpoints) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
         if (canonical) {
@@ -575,7 +576,7 @@ public class YamlValidator {
         errors.addAll(missing);
         // an unknown property that got a hint (bean: as a language, a header name as the key...) is the cause; the
         // oneOf and required errors the strict schema adds at the same location only repeat it thirty times
-        java.util.Set<String> hinted = new java.util.HashSet<>();
+        Set<String> hinted = new HashSet<>();
         for (Error e : errors) {
             if ("additionalProperties".equals(e.getKeyword())) {
                 hinted.add(String.valueOf(e.getInstanceLocation()));
