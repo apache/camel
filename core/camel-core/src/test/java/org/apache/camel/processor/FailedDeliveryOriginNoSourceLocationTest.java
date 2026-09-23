@@ -40,6 +40,9 @@ public class FailedDeliveryOriginNoSourceLocationTest extends ContextTestSupport
     /** Such as: at foo[throwException1] ContextTestSupport:480 */
     private static final Pattern ORIGIN = Pattern.compile(" at foo\\[\\w+] \\S+:\\d+");
 
+    /** The route and node alone, with nothing after them: node ids are numbered per JVM, so match the shape. */
+    private static final Pattern NODE_ONLY = Pattern.compile(" at foo\\[\\w+]\\.");
+
     private final RecordingLogger logger = new RecordingLogger();
 
     @Override
@@ -58,7 +61,7 @@ public class FailedDeliveryOriginNoSourceLocationTest extends ContextTestSupport
 
         String msg = lastFailure();
         assertTrue(msg.contains("Failed delivery for"), msg);
-        assertTrue(msg.contains(" at foo[throwException1]"), msg);
+        assertTrue(NODE_ONLY.matcher(msg).find(), "Expected the route and node in: " + msg);
         assertFalse(ORIGIN.matcher(msg).find(), "There is no line to name, so none is named: " + msg);
     }
 
