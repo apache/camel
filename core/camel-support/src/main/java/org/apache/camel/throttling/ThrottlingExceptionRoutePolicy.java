@@ -415,6 +415,14 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     public void setKeepOpen(boolean keepOpen) {
         this.keepOpenBool.set(keepOpen);
+        // Immediately act on the new value so callers do not have to send a
+        // trigger message and wait for the next onExchangeDone() callback:
+        //  - keepOpen=true  → open the circuit right away if it is not already open
+        //  - keepOpen=false → the half-open timer will close the circuit on its next tick
+        if (keepOpen && route != null && state.get() != STATE_OPEN) {
+            LOG.debug("Opening circuit (keepOpen set to true)");
+            openCircuit(route);
+        }
     }
 
     public int getFailureThreshold() {
