@@ -64,6 +64,15 @@ The simple catalog (`simple.json`) now spells these functions as they are writte
 `exception.stacktrace` (was `exception.stackTrace`), `throwException(msg,type)` (was `throwException(type,msg)`, the
 order the function has always used), `not(exp)`, and `setAttachment(key,exp)`.
 
+=== camel-core - internal processor advices
+
+When a `CamelInternalProcessorAdvice` fails in its `before` method, then the `after` method is now executed
+for the advices whose `before` was already executed. Previously they were skipped, which could leave the exchange
+counted as inflight and its unit of work not done. The same now happens when the debugger skips over a processor.
+
+An exception thrown from the `after` method of an advice no longer replaces the exception the exchange has already
+failed with. Instead, it is added as a suppressed exception to the existing exception.
+
 === Circuit Breaker EIP
 
 The exchange property `CamelCircuitBreakerResponseRejected` is now also set inside the `onFallback`,
