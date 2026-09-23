@@ -1013,8 +1013,10 @@ public interface DoclingComponentBuilderFactory {
         /**
          * When set, the output directory passed to the docling CLI must resolve
          * inside this directory once normalized. Applies to the
-         * CamelDoclingOutputFilePath header. When empty, no directory
-         * restriction is applied and the header value is only normalized.
+         * CamelDoclingOutputFilePath header. The check is lexical and does not
+         * resolve symbolic links, matching inputBaseDirectory. When empty, no
+         * directory restriction is applied and the header value is only
+         * normalized.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

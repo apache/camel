@@ -17,10 +17,14 @@
 package org.apache.camel.component.docling;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -52,6 +56,19 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
                 .isInstanceOf(CamelExecutionException.class)
                 .cause()
                 .hasMessageNotContaining("outputBaseDirectory");
+    }
+
+    @Test
+    void outputPathIsNormalizedInTheBuiltCommand() throws Exception {
+        // with outputBaseDirectory unset (the default, and the branch most routes hit) the header is still
+        // normalized lexically before it reaches --output: out/./sub/../x collapses to out/x
+        List<String> command = buildDoclingCommandFor("out/./sub/../x");
+
+        int i = command.indexOf("--output");
+        assertThat(i).isGreaterThanOrEqualTo(0);
+        assertThat(command.get(i + 1))
+                .isEqualTo(Paths.get("out", "x").toString())
+                .doesNotContain("..");
     }
 
     // ------------------------------------------------------ outputBaseDirectory jail
@@ -96,10 +113,12 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
 
     @Test
     void traversalOutOfOutputBaseDirectoryIsRejected() throws Exception {
-        String traversal = baseDir().resolve("..").resolve("outside").toString();
+        baseDir();
 
+        // a genuinely relative value, so the baseDir.resolve(..) + normalize() branch is exercised; an absolute
+        // value would instead hit the same branch as absoluteOutputPathOutsideOutputBaseDirectoryIsRejected
         assertThatThrownBy(() -> template.requestBodyAndHeader("direct:jailed", CONTENT,
-                DoclingHeaders.OUTPUT_FILE_PATH, traversal))
+                DoclingHeaders.OUTPUT_FILE_PATH, "../outside"))
                 .isInstanceOf(CamelExecutionException.class)
                 .cause()
                 .isInstanceOf(IOException.class)
@@ -130,6 +149,22 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
 
     private Path baseDir() throws IOException {
         return Files.createDirectories(tempDir.resolve("base"));
+    }
+
+    private List<String> buildDoclingCommandFor(String outputHeader) throws Exception {
+        // outputBaseDirectory is unset on this endpoint, so buildDoclingCommand exercises the no-base branch
+        DoclingEndpoint endpoint
+                = context.getEndpoint("docling:convert?operation=CONVERT_TO_MARKDOWN", DoclingEndpoint.class);
+        DoclingProducer producer = (DoclingProducer) endpoint.createProducer();
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(DoclingHeaders.OUTPUT_FILE_PATH, outputHeader);
+
+        Method m = DoclingProducer.class.getDeclaredMethod(
+                "buildDoclingCommand", String.class, String.class, Exchange.class, String.class);
+        m.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        List<String> command = (List<String>) m.invoke(producer, "input.pdf", "markdown", exchange, "/tmp/managed");
+        return command;
     }
 
     @Override

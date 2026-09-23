@@ -166,7 +166,8 @@ operations - are unambiguous and are likewise unaffected.
 
 The `CamelDoclingOutputFilePath` header, which selects the CLI `--output` directory, is normalized lexically
 and, when `outputBaseDirectory` is set, confined to that directory. The normalization applies unconditionally;
-with `outputBaseDirectory` unset, a header value without traversal segments is otherwise used as given.
+with `outputBaseDirectory` unset, a header value without traversal segments is otherwise used as given. The
+containment is lexical and does not resolve symbolic links (as with `inputBaseDirectory`).
 
 [source,java]
 ----

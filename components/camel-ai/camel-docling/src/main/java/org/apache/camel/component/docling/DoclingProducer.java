@@ -2294,7 +2294,10 @@ public class DoclingProducer extends DefaultProducer {
     /**
      * Normalizes the given output directory and, when {@code outputBaseDirectory} is configured, verifies that it stays
      * inside that directory. Mirrors {@link #resolveWithinInputBaseDirectory(String)} so that the output directory
-     * carried by the {@link DoclingHeaders#OUTPUT_FILE_PATH} header receives the same treatment as input paths.
+     * carried by the {@link DoclingHeaders#OUTPUT_FILE_PATH} header receives the same treatment as input paths. The
+     * containment check is lexical: symbolic links are not resolved, so - like
+     * {@link #resolveWithinInputBaseDirectory(String)} - a symlink inside the base directory that points outside it is
+     * not detected.
      */
     private Path resolveWithinOutputBaseDirectory(String outputPath) throws IOException {
         String base = configuration.getOutputBaseDirectory();

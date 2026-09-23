@@ -93,8 +93,10 @@ public class DoclingConfiguration implements Cloneable {
 
     @UriParam(label = "security")
     @Metadata(description = "When set, the output directory passed to the docling CLI must resolve inside this"
-                            + " directory once normalized. Applies to the CamelDoclingOutputFilePath header. When"
-                            + " empty, no directory restriction is applied and the header value is only normalized.")
+                            + " directory once normalized. Applies to the CamelDoclingOutputFilePath header. The"
+                            + " check is lexical and does not resolve symbolic links, matching inputBaseDirectory."
+                            + " When empty, no directory restriction is applied and the header value is only"
+                            + " normalized.")
     private String outputBaseDirectory;
 
     @UriParam
