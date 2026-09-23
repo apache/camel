@@ -1015,6 +1015,12 @@ The affected sites, all of which resolved a header-derived or endpoint-derived v
 Where the value came from the endpoint rather than a header it was already resolved at build time,
 so removing the per-message resolution does not change those routes.
 
+=== camel-iggy - breaking change
+
+Client dependency has been upgraded to 0.9.0.
+The URI parameter `replicationFactor` has been removed. It was removed from Iggy API. It wasn't used anyway in Iggy code.
+New parameter `iggyHeaderOptions` has been added. Each key is specific to the implementation chosen and there is no API or documentation for them. So providing the possibility to use it but you have to look to the internals of Iggy.
+
 === camel-console - variables dev console JSON response shape
 
 The `variables` dev console (`/q/dev/variables`) no longer returns a JSON object keyed by each

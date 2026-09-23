@@ -17,8 +17,9 @@
 package org.apache.camel.component.iggy;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Category;
@@ -38,6 +39,7 @@ import org.apache.iggy.consumergroup.ConsumerGroupDetails;
 import org.apache.iggy.identifier.ConsumerId;
 import org.apache.iggy.identifier.StreamId;
 import org.apache.iggy.identifier.TopicId;
+import org.apache.iggy.message.HeaderValue;
 import org.apache.iggy.stream.StreamDetails;
 import org.apache.iggy.topic.TopicDetails;
 import org.slf4j.Logger;
@@ -112,13 +114,18 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                     .getTopic(StreamId.of(stream), TopicId.of(topic))
                     .orElseGet(() -> {
                         LOG.debug("Creating topic with name {}", topic);
+                        Map<String, HeaderValue> options = new HashMap<>();
+                        for (Map.Entry<String, String> optionEntry : iggyConfiguration.getIggyHeaderOptions().entrySet()) {
+                            options.put(optionEntry.getKey(), HeaderValue.fromString(optionEntry.getValue()));
+                        }
+
                         TopicDetails topicDetails = client.topics().createTopic(StreamId.of(stream),
                                 iggyConfiguration.getPartitionsCount(),
                                 iggyConfiguration.getCompressionAlgorithm(),
                                 BigInteger.valueOf(iggyConfiguration.getMessageExpiry()),
                                 BigInteger.valueOf(iggyConfiguration.getMaxTopicSize()),
-                                Optional.ofNullable(iggyConfiguration.getReplicationFactor()),
-                                topic);
+                                topic,
+                                options);
 
                         LOG.debug("Topic created or retrieved with details: {}", topicDetails.toString());
 

@@ -37,6 +37,7 @@ public class IggyEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("exchangePattern");
         props.add("headerFilterStrategy");
         props.add("host");
+        props.add("iggyHeaderOptions");
         props.add("lazyStartProducer");
         props.add("maxTopicSize");
         props.add("messageExpiry");
@@ -47,7 +48,6 @@ public class IggyEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("pollBatchSize");
         props.add("pollingStrategy");
         props.add("port");
-        props.add("replicationFactor");
         props.add("shutdownTimeout");
         props.add("sslContextParameters");
         props.add("startingOffset");

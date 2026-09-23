@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.iggy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -53,8 +56,8 @@ public class IggyConfiguration implements Cloneable {
     private Long messageExpiry = 0L;
     @UriParam(defaultValue = "0", description = "Maximum topic size in bytes (0 means unlimited)")
     private Long maxTopicSize = 0L;
-    @UriParam(description = "Replication factor for the topic")
-    private Short replicationFactor;
+    @UriParam(description = "Options provided when creating a topic")
+    private Map<String, String> iggyHeaderOptions = new HashMap<>();
     @UriParam(label = "producer", defaultValue = "balanced", description = "Partitioning strategy for message distribution")
     private Partitioning partitioning = Partitioning.balanced();
     @UriParam(label = "consumer", description = "The name of the consumer group")
@@ -201,14 +204,6 @@ public class IggyConfiguration implements Cloneable {
         this.maxTopicSize = maxTopicSize;
     }
 
-    public Short getReplicationFactor() {
-        return replicationFactor;
-    }
-
-    public void setReplicationFactor(Short replicationFactor) {
-        this.replicationFactor = replicationFactor;
-    }
-
     public Partitioning getPartitioning() {
         return partitioning;
     }
@@ -321,5 +316,13 @@ public class IggyConfiguration implements Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Map<String, String> getIggyHeaderOptions() {
+        return iggyHeaderOptions;
+    }
+
+    public void setIggyHeaderOptions(Map<String, String> iggyHeaderOptions) {
+        this.iggyHeaderOptions = iggyHeaderOptions;
     }
 }
