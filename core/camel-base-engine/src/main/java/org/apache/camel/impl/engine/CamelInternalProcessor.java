@@ -337,7 +337,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     states[j++] = state;
                 }
             } catch (Exception e) {
-                return handleException(exchange, originalCallback, e, afterTask);
+                return handleException(exchange, originalCallback, e, afterTask, i, j);
             }
         }
 
@@ -353,7 +353,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 last.setDebugSkipOver(true);
             }
             // skip because the processor is specially disabled (such as from debugger)
-            originalCallback.done(true);
+            // the before advices have been executed, so the after advices must be executed as well
+            afterTask.done(true);
             return true;
         }
 
@@ -444,9 +445,21 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     private boolean handleException(
-            Exchange exchange, AsyncCallback originalCallback, Exception e, CamelInternalTask afterTask) {
+            Exchange exchange, AsyncCallback originalCallback, Exception e, CamelInternalTask afterTask,
+            int count, int stateCount) {
         // error in before so break out
         exchange.setException(e);
+        try {
+            // the advices whose before was executed must have their after executed as well
+            // (such as to remove from inflight repository, and done the unit of work)
+            AdviceIterator.runAfterTasks(advices, count, afterTask.getStates(), stateCount, exchange);
+        } finally {
+            handleExceptionDone(originalCallback, afterTask);
+        }
+        return true;
+    }
+
+    private void handleExceptionDone(AsyncCallback originalCallback, CamelInternalTask afterTask) {
         try {
             originalCallback.done(true);
         } finally {
@@ -455,7 +468,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 taskFactory.release(afterTask);
             }
         }
-        return true;
     }
 
     @Override
