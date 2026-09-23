@@ -63,6 +63,11 @@ public class GenerateDocSamplesMojo extends AbstractMojo {
 
     static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\s*\\n----\\n(.*?)\\n----", Pattern.DOTALL);
     private static final Pattern CALLOUT = Pattern.compile("[ \\t]*#[ \\t]*<\\d+>[ \\t]*$", Pattern.MULTILINE);
+    /**
+     * An AsciiDoc comment before a block keeps it out of the samples and out of the validation: a page that shows what
+     * to avoid (to-eip shows a to: with an expression in its uri to say why toD exists) must not become a sample.
+     */
+    static final String SKIP_MARKER = "// yaml-validator: skip";
 
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
@@ -272,11 +277,17 @@ public class GenerateDocSamplesMojo extends AbstractMojo {
         Matcher m = YAML_BLOCK.matcher(doc);
         while (m.find()) {
             String yaml = CALLOUT.matcher(m.group(1)).replaceAll("").stripTrailing() + "\n";
-            if (yaml.stripLeading().startsWith("- ")) {
+            if (yaml.stripLeading().startsWith("- ") && !markedToSkip(doc, m.start())) {
                 answer.add(yaml);
             }
         }
         return answer;
+    }
+
+    /** Whether the block at this offset carries {@link #SKIP_MARKER} in the lines before it. */
+    static boolean markedToSkip(String doc, int blockStart) {
+        int from = Math.max(0, blockStart - 200);
+        return doc.substring(from, blockStart).contains(SKIP_MARKER);
     }
 
     private static boolean validate(YamlValidator validator, File page, String yaml, List<String> failures)

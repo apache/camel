@@ -563,6 +563,7 @@ public class YamlValidator {
         }
         if (errors.isEmpty()) {
             checkSimpleSyntaxInScripts(target, new NodePath(PathType.JSON_POINTER), errors);
+            checkDynamicUri(target, new NodePath(PathType.JSON_POINTER), errors);
         }
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
@@ -667,6 +668,87 @@ public class YamlValidator {
             checkSimpleSyntaxInScripts(value, path.append(name), errors);
         }
     }
+
+    /**
+     * to: http://host/stock/${header.sku}: the endpoint of a to: is resolved once when the route starts, so an
+     * expression in its path is never evaluated - it is sent as the text it is, url-encoded. That is what toD: is for
+     * (CAMEL-24917).
+     * <p/>
+     * Only the path is checked, never the options after the {@code ?}: an option such as the file component's
+     * {@code fileName=${date:now:yyyyMMdd}} is evaluated by the producer and is correct on a plain to:.
+     */
+    void checkDynamicUri(JsonNode node, NodePath path, List<Error> errors) {
+        if (node == null) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                checkDynamicUri(node.get(i), path.append(i), errors);
+            }
+            return;
+        }
+        if (!node.isObject()) {
+            return;
+        }
+        var fields = node.fieldNames();
+        while (fields.hasNext()) {
+            String name = fields.next();
+            JsonNode value = node.get(name);
+            if ("to".equals(name)) {
+                String uri = null;
+                NodePath at = path.append(name);
+                if (value.isTextual()) {
+                    uri = value.asText();
+                } else if (value.isObject() && value.has("uri") && value.get("uri").isTextual()) {
+                    uri = value.get("uri").asText();
+                    at = at.append("uri");
+                }
+                String expression = expressionInPath(uri);
+                if (expression != null) {
+                    errors.add(Error.builder()
+                            .keyword("type")
+                            .instanceLocation(at)
+                            .messageKey("type")
+                            .format(new MessageFormat("{0}"))
+                            .arguments("to: the uri holds an expression (" + expression + ") but the endpoint of a to:"
+                                       + " is fixed when the route starts, so it is sent as text: write toD: to build"
+                                       + " the uri for each message")
+                            .build());
+                }
+            }
+            checkDynamicUri(value, path.append(name), errors);
+        }
+    }
+
+    /**
+     * The first simple expression in the path of the uri (what comes before the options), or null when there is none.
+     */
+    private static String expressionInPath(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        int scheme = uri.indexOf(':');
+        if (scheme > 0 && EVALUATED_PATH.contains(uri.substring(0, scheme))) {
+            return null;
+        }
+        String head = uri.indexOf('?') > 0 ? uri.substring(0, uri.indexOf('?')) : uri;
+        int start = head.indexOf("${");
+        if (start < 0) {
+            return null;
+        }
+        if (start >= 2 && head.startsWith(":#", start - 2)) {
+            return null; // :#${...} is a parameter the component binds per message, not part of the address
+        }
+        int end = head.indexOf('}', start);
+        return end > 0 ? head.substring(start, end + 1) : head.substring(start);
+    }
+
+    /**
+     * Components that read their path as a script, a statement or a template name and evaluate it for each message,
+     * where an expression in the path is what the component is for.
+     */
+    private static final Set<String> EVALUATED_PATH = Set.of("language", "sql", "sql-stored", "elsql", "jdbc",
+            "spring-jdbc", "mybatis", "xquery", "xslt");
 
     /** Adds an error for every expression node in the tree that has neither expression: nor a language key. */
     void checkRequiredExpressions(JsonNode node, NodePath path, List<Error> errors) {
