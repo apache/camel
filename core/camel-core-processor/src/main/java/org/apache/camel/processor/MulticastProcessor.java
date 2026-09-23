@@ -420,6 +420,11 @@ public class MulticastProcessor extends BaseProcessorSupport
             } catch (RejectedExecutionException e) {
                 if (runnable instanceof Rejectable rej) {
                     rej.reject();
+                } else {
+                    // a sub-exchange task (submitted via the completion service) is not rejectable,
+                    // so rethrow to let the multicast task fail the exchange instead of silently
+                    // dropping the sub-exchange (which would otherwise never complete)
+                    throw e;
                 }
             }
         } else if (transacted) {
