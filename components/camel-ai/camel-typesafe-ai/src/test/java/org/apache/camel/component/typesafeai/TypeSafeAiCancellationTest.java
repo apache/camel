@@ -37,9 +37,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TypeSafeAiCancellationTest extends TypeSafeAiTestSupport {
     enum Cancellation {
-        Timeout,
-        Interrupt,
-        Stop
+        TIMEOUT,
+        INTERRUPT,
+        STOP
     }
 
     @ParameterizedTest
@@ -75,7 +75,7 @@ class TypeSafeAiCancellationTest extends TypeSafeAiTestSupport {
             });
             TypeSafeAiEndpoint endpoint = context.getEndpoint("typesafe-ai:cancel?baseUrl=http://127.0.0.1:"
                                                               + socketServer.getLocalPort() + "&requestTimeout="
-                                                              + (cancellation == Cancellation.Timeout ? 1500 : 30000),
+                                                              + (cancellation == Cancellation.TIMEOUT ? 1500 : 30000),
                     TypeSafeAiEndpoint.class);
             endpoint.start();
             var outcome = tasks.submit(() -> {
@@ -90,15 +90,15 @@ class TypeSafeAiCancellationTest extends TypeSafeAiTestSupport {
             });
             assertThat(headersSent.await(5, TimeUnit.SECONDS)).isTrue();
             long stopped = System.nanoTime();
-            if (cancellation == Cancellation.Interrupt) {
+            if (cancellation == Cancellation.INTERRUPT) {
                 caller.get().interrupt();
-            } else if (cancellation == Cancellation.Stop) {
+            } else if (cancellation == Cancellation.STOP) {
                 endpoint.stop();
             }
             Exception failure = outcome.get(5, TimeUnit.SECONDS);
-            if (cancellation == Cancellation.Timeout) {
+            if (cancellation == Cancellation.TIMEOUT) {
                 assertThat(failure).isInstanceOf(TimeoutException.class);
-            } else if (cancellation == Cancellation.Interrupt) {
+            } else if (cancellation == Cancellation.INTERRUPT) {
                 assertThat(failure).isInstanceOf(InterruptedException.class);
                 assertThat(interrupted).isTrue();
             } else {

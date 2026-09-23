@@ -51,8 +51,8 @@ public class TypeSafeAiConfiguration implements Cloneable {
     private double threshold = 0.5;
     @UriParam(label = "advanced", defaultValue = "0")
     private double uncertainty;
-    @UriParam(label = "advanced", defaultValue = "NonMatch")
-    private UncertaintyPolicy uncertaintyPolicy = UncertaintyPolicy.NonMatch;
+    @UriParam(label = "advanced", defaultValue = "NON_MATCH")
+    private UncertaintyPolicy uncertaintyPolicy = UncertaintyPolicy.NON_MATCH;
 
     public double getThreshold() {
         return threshold;

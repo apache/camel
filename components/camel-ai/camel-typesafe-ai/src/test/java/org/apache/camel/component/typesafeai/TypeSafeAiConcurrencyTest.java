@@ -40,10 +40,10 @@ import static org.awaitility.Awaitility.await;
 
 class TypeSafeAiConcurrencyTest extends TypeSafeAiTestSupport {
     enum Failure {
-        InvalidRequest,
-        InvalidResponse,
-        Http,
-        Transport
+        INVALID_REQUEST,
+        INVALID_RESPONSE,
+        HTTP,
+        TRANSPORT
     }
 
     @Test
@@ -93,16 +93,16 @@ class TypeSafeAiConcurrencyTest extends TypeSafeAiTestSupport {
         Map<String, Object> input = request("refund");
         Class<? extends Exception> expected = IOException.class;
         switch (failure) {
-            case InvalidRequest -> {
+            case INVALID_REQUEST -> {
                 input = Map.of();
                 expected = IllegalArgumentException.class;
             }
-            case InvalidResponse -> respond = request -> "{}";
-            case Http -> {
+            case INVALID_RESPONSE -> respond = request -> "{}";
+            case HTTP -> {
                 status = 503;
                 expected = TypeSafeAiHttpException.class;
             }
-            case Transport -> respond = request -> {
+            case TRANSPORT -> respond = request -> {
                 throw new IllegalStateException("Close the connection without a response");
             };
         }
@@ -118,7 +118,7 @@ class TypeSafeAiConcurrencyTest extends TypeSafeAiTestSupport {
     @EnumSource(Cancellation.class)
     void releasesCapacityAfterCancellation(Cancellation cancellation) throws Exception {
         TypeSafeAiEndpoint endpoint = context.getEndpoint("typesafe-ai:cancel?maxConcurrentRequests=1&requestTimeout="
-                                                          + (cancellation == Cancellation.Timeout ? 1500 : 30000),
+                                                          + (cancellation == Cancellation.TIMEOUT ? 1500 : 30000),
                 TypeSafeAiEndpoint.class);
         var caller = new AtomicReference<Thread>();
         var tasks = Executors.newSingleThreadExecutor();
@@ -135,12 +135,12 @@ class TypeSafeAiConcurrencyTest extends TypeSafeAiTestSupport {
             });
             await().atMost(5, TimeUnit.SECONDS).until(() -> requests.size() == 1);
             switch (cancellation) {
-                case Timeout -> assertThat(outcome.get(5, TimeUnit.SECONDS)).isInstanceOf(TimeoutException.class);
-                case Interrupt -> {
+                case TIMEOUT -> assertThat(outcome.get(5, TimeUnit.SECONDS)).isInstanceOf(TimeoutException.class);
+                case INTERRUPT -> {
                     caller.get().interrupt();
                     assertThat(outcome.get(5, TimeUnit.SECONDS)).isInstanceOf(InterruptedException.class);
                 }
-                case Stop -> {
+                case STOP -> {
                     endpoint.stop();
                     assertThat(outcome.get(5, TimeUnit.SECONDS)).isInstanceOf(CancellationException.class);
                     assertThatThrownBy(() -> endpoint.evaluate(request("stopped")))

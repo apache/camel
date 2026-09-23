@@ -350,7 +350,7 @@ public interface TypeSafeAiEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.language.typesafeai.TypeSafeAiLanguage.UncertaintyPolicy</code> type.
          * 
-         * Default: NonMatch
+         * Default: NON_MATCH
          * Group: advanced
          * 
          * @param uncertaintyPolicy the value to set
@@ -367,7 +367,7 @@ public interface TypeSafeAiEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.language.typesafeai.TypeSafeAiLanguage.UncertaintyPolicy</code> type.
          * 
-         * Default: NonMatch
+         * Default: NON_MATCH
          * Group: advanced
          * 
          * @param uncertaintyPolicy the value to set

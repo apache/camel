@@ -114,7 +114,7 @@ class TypeSafeAiLanguagePropertiesTest extends TypeSafeAiTestSupport {
                 = context.getComponent("typesafe-ai", TypeSafeAiComponent.class).getConfiguration();
         configuration.setThreshold(0.8);
         configuration.setUncertainty(0.1);
-        configuration.setUncertaintyPolicy(UncertaintyPolicy.NonMatch);
+        configuration.setUncertaintyPolicy(UncertaintyPolicy.NON_MATCH);
         configuration.setState("${header.selected}");
         TypeSafeAiLanguage language = (TypeSafeAiLanguage) context.resolveLanguage("typesafe-ai");
         Exchange exchange = new DefaultExchange(context);
@@ -146,7 +146,7 @@ class TypeSafeAiLanguagePropertiesTest extends TypeSafeAiTestSupport {
         language.setEndpoint("typesafe-ai:errors?requestTimeout=200");
         language.setThreshold(0.5);
         language.setUncertainty(0.125);
-        language.setUncertaintyPolicy(UncertaintyPolicy.Fail);
+        language.setUncertaintyPolicy(UncertaintyPolicy.FAIL);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {

@@ -40,8 +40,8 @@ public class TypeSafeAiLanguage extends LanguageSupport {
     public static final String RESULT = "CamelTypeSafeAiResult";
 
     public enum UncertaintyPolicy {
-        NonMatch,
-        Fail
+        NON_MATCH,
+        FAIL
     }
 
     private String endpoint = "typesafe-ai:default";
@@ -212,7 +212,7 @@ public class TypeSafeAiLanguage extends LanguageSupport {
                 exchange.setProperty(RESULT, result);
                 double probability = result.getJsonObject("answers").getJsonObject("predicate").getDouble("noul");
                 if (uncertainty > 0 && probability >= threshold - uncertainty && probability <= threshold + uncertainty) {
-                    if (uncertaintyPolicy == UncertaintyPolicy.Fail) {
+                    if (uncertaintyPolicy == UncertaintyPolicy.FAIL) {
                         throw new TypeSafeAiUncertainResultException(probability);
                     }
                     return false;

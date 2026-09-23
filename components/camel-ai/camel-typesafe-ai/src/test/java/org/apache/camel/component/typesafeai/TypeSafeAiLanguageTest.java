@@ -76,7 +76,7 @@ class TypeSafeAiLanguageTest extends TypeSafeAiTestSupport {
     void nonMatchUncertaintyBandIncludesBothBoundaries(double probability, boolean expected) {
         respond = request -> noulResponse(probability);
         Predicate predicate = context.resolveLanguage("typesafe-ai").createPredicate("Refund?",
-                new Object[] { "typesafe-ai:semantic", 0.5, 0.125, TypeSafeAiLanguage.UncertaintyPolicy.NonMatch });
+                new Object[] { "typesafe-ai:semantic", 0.5, 0.125, TypeSafeAiLanguage.UncertaintyPolicy.NON_MATCH });
         predicate.init(context);
         assertThat(predicate.matches(exchange("Refund?"))).isEqualTo(expected);
     }
@@ -86,7 +86,7 @@ class TypeSafeAiLanguageTest extends TypeSafeAiTestSupport {
     void uncertainFailureRetainsEvaluation(double probability) {
         respond = request -> noulResponse(probability);
         Predicate predicate = context.resolveLanguage("typesafe-ai").createPredicate("Refund?",
-                new Object[] { "typesafe-ai:semantic", 0.5, 0.125, TypeSafeAiLanguage.UncertaintyPolicy.Fail });
+                new Object[] { "typesafe-ai:semantic", 0.5, 0.125, TypeSafeAiLanguage.UncertaintyPolicy.FAIL });
         predicate.init(context);
         Exchange exchange = exchange("Refund?");
         assertThatThrownBy(() -> predicate.matches(exchange)).hasCauseInstanceOf(TypeSafeAiUncertainResultException.class);

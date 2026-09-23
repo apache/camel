@@ -295,7 +295,7 @@ public interface TypesafeAiComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;org.apache.camel.language.typesafeai.TypeSafeAiLanguage.UncertaintyPolicy&lt;/code&gt; type.
          * 
-         * Default: NonMatch
+         * Default: NON_MATCH
          * Group: advanced
          * 
          * @param uncertaintyPolicy the value to set
