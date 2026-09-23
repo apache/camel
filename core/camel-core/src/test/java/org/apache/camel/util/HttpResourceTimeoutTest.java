@@ -17,9 +17,11 @@
 package org.apache.camel.util;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -63,10 +65,9 @@ public class HttpResourceTimeoutTest {
             while (!stopped) {
                 try (Socket socket = server.accept()) {
                     accepted.countDown();
-                    // hold the connection open and write nothing at all, so the client is left waiting on a read
-                    while (!stopped && !socket.isClosed()) {
-                        Thread.onSpinWait();
-                    }
+                    // hold the connection open and write nothing at all, so the client is left waiting on a read;
+                    // draining the request blocks until the client gives up and closes
+                    socket.getInputStream().transferTo(OutputStream.nullOutputStream());
                 } catch (IOException e) {
                     return;
                 }
@@ -145,6 +146,29 @@ public class HttpResourceTimeoutTest {
 
     @Test
     @Timeout(value = 30, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
+    public void aTimeoutThatIsNotANumberSaysWhichPropertyIsWrong() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        Properties properties = new Properties();
+        properties.setProperty(DefaultResourceResolvers.HTTP_CONNECT_TIMEOUT_PROPERTY, "10s");
+        context.getPropertiesComponent().setInitialProperties(properties);
+        context.start();
+        try {
+            IllegalArgumentException e
+                    = assertThrows(IllegalArgumentException.class, () -> ResourceHelper.resolveResource(context, muteUrl()));
+
+            // the failure happens during startup, so the message has to carry the key; "For input string" alone
+            // leaves an operator grepping their whole configuration
+            assertTrue(e.getMessage().contains(DefaultResourceResolvers.HTTP_CONNECT_TIMEOUT_PROPERTY),
+                    "message should name the property, was: " + e.getMessage());
+            assertTrue(e.getMessage().contains("10s"),
+                    "message should quote the bad value, was: " + e.getMessage());
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    @Timeout(value = 30, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
     public void aResourceThatIsNotThereStillReportsAbsent() throws Exception {
         // guards against the timeouts turning an ordinary 404 into a failure
         CamelContext context = contextWithReadTimeout("5000");
@@ -153,7 +177,7 @@ public class HttpResourceTimeoutTest {
                 try (Socket socket = notFound.accept()) {
                     socket.getOutputStream()
                             .write("HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
-                                    .getBytes("US-ASCII"));
+                                    .getBytes(StandardCharsets.US_ASCII));
                     socket.getOutputStream().flush();
                 } catch (IOException e) {
                     // the assertion below is what reports the failure
