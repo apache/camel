@@ -61,18 +61,20 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
         Expression answer = cacheExpression != null ? cacheExpression.get(function) : null;
         if (answer == null) {
-            answer = createSimpleExpression(camelContext, function, true);
+            answer = createSimpleExpression(camelContext, function);
             if (answer != null) {
                 answer.init(camelContext);
             }
-            if (cacheExpression != null && answer != null) {
+            // a custom function from an init block ($f ~:= ...) is bound to the definition of that block,
+            // so it is not shared with another expression that defines a function with the same name
+            if (cacheExpression != null && answer != null && !function.startsWith("function(")) {
                 cacheExpression.put(function, answer);
             }
         }
         return answer;
     }
 
-    private Expression createSimpleExpression(CamelContext camelContext, String function, boolean strict) {
+    private Expression createSimpleExpression(CamelContext camelContext, String function) {
         Class<?> type = null;
 
         // is it a known result type (make it easy in simple to return the value as you need)
@@ -92,7 +94,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             type = String.class;
             function = function.substring(7);
         }
-        Expression exp = doCreateSimpleExpression(camelContext, function, strict);
+        Expression exp = doCreateSimpleExpression(camelContext, function);
         if (type != null) {
             exp = ExpressionBuilder.convertToExpression(exp, type);
         }
@@ -134,14 +136,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
         };
     }
 
-    private Expression doCreateSimpleExpression(CamelContext camelContext, String function, boolean strict) {
-        if (strict) {
-            // ${body != null && body.size() > 0}: the braces hold a predicate, which is what they hold in EL,
-            // Groovy and a JavaScript template, so read it as one (CAMEL-24921)
-            Expression predicate = createPredicateExpression(camelContext, function);
-            if (predicate != null) {
-                return predicate;
-            }
+    private Expression doCreateSimpleExpression(CamelContext camelContext, String function) {
+        // ${body != null && body.size() > 0}: the braces hold a predicate, which is what they hold in EL,
+        // Groovy and a JavaScript template, so read it as one (CAMEL-24921)
+        Expression predicate = createPredicateExpression(camelContext, function);
+        if (predicate != null) {
+            return predicate;
         }
         // return the function directly if we can create function without analyzing the prefix
         Expression answer = DIRECT_FACTORY.createFunction(camelContext, function, token.getIndex());
@@ -157,7 +157,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 // do not create file expressions but keep the function as-is as a constant value
                 fileExpression = ExpressionBuilder.constantExpression("${" + function + "}");
             } else {
-                fileExpression = createSimpleFileExpression(remainder, strict);
+                fileExpression = createSimpleFileExpression(remainder);
             }
             if (fileExpression != null) {
                 return fileExpression;
@@ -191,17 +191,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
 
-        if (strict) {
-            String hint = SimpleSyntaxHints.unknownFunction(function);
-            throw new SimpleParserException(
-                    "Unknown function: " + function + (hint != null ? " (" + hint + ")" : ""),
-                    token.getIndex());
-        } else {
-            return null;
-        }
+        String hint = SimpleSyntaxHints.unknownFunction(function);
+        throw new SimpleParserException(
+                "Unknown function: " + function + (hint != null ? " (" + hint + ")" : ""),
+                token.getIndex());
     }
 
-    private Expression createSimpleFileExpression(String remainder, boolean strict) {
+    private Expression createSimpleFileExpression(String remainder) {
         if (ObjectHelper.equal(remainder, "name")) {
             return FileExpressionBuilder.fileNameExpression();
         } else if (ObjectHelper.equal(remainder, "name.noext")) {
@@ -231,15 +227,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(remainder, "modified")) {
             return FileExpressionBuilder.fileLastModifiedExpression();
         }
-        if (strict) {
-            throw new SimpleParserException(
-                    "Unknown file language syntax: " + remainder + " (the file: functions describe the file being consumed:"
-                                            + " ${file:name}, ${file:size}, ${file:parent}, ${file:absolute.path};"
-                                            + " they do not read a file. To read a file into the body use the poll"
-                                            + " EIP with a file: endpoint)",
-                    token.getIndex());
-        }
-        return null;
+        throw new SimpleParserException(
+                "Unknown file language syntax: " + remainder + " (the file: functions describe the file being consumed:"
+                                        + " ${file:name}, ${file:size}, ${file:parent}, ${file:absolute.path};"
+                                        + " they do not read a file. To read a file into the body use the poll"
+                                        + " EIP with a file: endpoint)",
+                token.getIndex());
     }
 
     @Deprecated(since = "4.21")

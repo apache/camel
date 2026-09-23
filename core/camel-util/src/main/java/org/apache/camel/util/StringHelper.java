@@ -414,6 +414,10 @@ public final class StringHelper {
     }
 
     public static Iterator<String> splitOnCharacterAsIterator(String value, char needle, int count) {
+        if (value.length() == 1 && value.charAt(0) == needle) {
+            // only the needle, such as a single comma, so there are no values
+            return Collections.emptyIterator();
+        }
         // skip leading and trailing needles
         int end = value.length() - 1;
         boolean skipStart = value.charAt(0) == needle;
@@ -462,6 +466,10 @@ public final class StringHelper {
     }
 
     public static List<String> splitOnCharacterAsList(String value, char needle, int count) {
+        if (value.length() == 1 && value.charAt(0) == needle) {
+            // only the needle, such as a single comma, so there are no values
+            return new ArrayList<>();
+        }
         // skip leading and trailing needles
         int end = value.length() - 1;
         boolean skipStart = value.charAt(0) == needle;
@@ -548,8 +556,8 @@ public final class StringHelper {
     }
 
     private static String doCapitalize(String ret, boolean all) {
-        if (ret == null) {
-            return null;
+        if (ret == null || ret.isEmpty()) {
+            return ret;
         }
 
         final char[] chars = ret.toCharArray();
@@ -558,10 +566,10 @@ public final class StringHelper {
         // for which it does not return the capitalized value should not be used here (this is
         // mostly used to capitalize setters/getters)
         chars[0] = Character.toUpperCase(chars[0]);
-        if (all && chars.length > 2) {
-            for (int i = 2; i < chars.length; i++) {
+        if (all) {
+            for (int i = 1; i < chars.length; i++) {
                 char prev = chars[i - 1];
-                if (prev == ' ') {
+                if (Character.isWhitespace(prev)) {
                     chars[i] = Character.toUpperCase(chars[i]);
                 }
             }

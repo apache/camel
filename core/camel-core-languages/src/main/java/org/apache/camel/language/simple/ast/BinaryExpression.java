@@ -192,7 +192,10 @@ public class BinaryExpression extends BaseSimpleNode {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 // reg ex should use String pattern, so we evaluate the right hand side as a String
-                Predicate predicate = PredicateBuilder.regex(leftExp, rightExp.evaluate(exchange, String.class));
+                String pattern = rightExp.evaluate(exchange, String.class);
+                // no pattern (such as a missing header) matches nothing
+                Predicate predicate = pattern != null
+                        ? PredicateBuilder.regex(leftExp, pattern) : PredicateBuilder.constant(false);
                 if (operator == BinaryOperatorType.NOT_REGEX) {
                     predicate = PredicateBuilder.not(predicate);
                 }
@@ -245,8 +248,11 @@ public class BinaryExpression extends BaseSimpleNode {
                 Predicate predicate;
 
                 String range = rightExp.evaluate(exchange, String.class);
-                Matcher matcher = RANGE_PATTERN.matcher(range);
-                if (matcher.matches()) {
+                Matcher matcher = range != null ? RANGE_PATTERN.matcher(range) : null;
+                if (range == null) {
+                    // no range (such as a missing header) contains nothing
+                    predicate = PredicateBuilder.constant(false);
+                } else if (matcher.matches()) {
                     // wrap as constant expression for the from and to values
                     Expression from = ExpressionBuilder.constantExpression(matcher.group(1));
                     Expression to = ExpressionBuilder.constantExpression(matcher.group(3));

@@ -125,6 +125,11 @@ public class FileUtilTest extends TestSupport {
         assertEquals("foo", FileUtil.stripExt("foo"));
         assertEquals("foo", FileUtil.stripExt("foo.xml"));
         assertEquals("/foo/bar", FileUtil.stripExt("/foo/bar.xml"));
+        // hidden files
+        assertEquals(".bashrc", FileUtil.stripExt(".bashrc"));
+        assertEquals("/home/.bashrc", FileUtil.stripExt("/home/.bashrc"));
+        assertEquals(".route", FileUtil.stripExt(".route.yaml"));
+        assertEquals("/home/.route", FileUtil.stripExt("/home/.route.yaml"));
     }
 
     @Test
@@ -135,6 +140,12 @@ public class FileUtilTest extends TestSupport {
         assertEquals("xml", FileUtil.onlyExt("/foo/bar.xml"));
         assertEquals("tar.gz", FileUtil.onlyExt("/foo/bigfile.tar.gz"));
         assertEquals("tar.gz", FileUtil.onlyExt("/foo.bar/bigfile.tar.gz"));
+        // hidden files
+        assertNull(FileUtil.onlyExt(".bashrc"));
+        assertNull(FileUtil.onlyExt("/home/.bashrc"));
+        assertNull(FileUtil.onlyExt(".bashrc", true));
+        assertEquals("yaml", FileUtil.onlyExt(".route.yaml"));
+        assertEquals("yaml", FileUtil.onlyExt(".route.yaml", true));
     }
 
     @Test

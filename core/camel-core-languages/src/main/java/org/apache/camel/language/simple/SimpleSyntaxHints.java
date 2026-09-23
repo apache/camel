@@ -37,15 +37,21 @@ public final class SimpleSyntaxHints {
     /** Function names a model is likely to write, for the did-you-mean suggestion. */
     static final List<String> FUNCTIONS = List.of("body", "bodyAs", "mandatoryBodyAs", "bodyOneLine", "prettyBody",
             "originalBody", "header", "headerAs", "headers", "exchangeProperty", "exchangePropertyAs",
-            "exchangeProperties", "variable", "variableAs", "variables", "exception", "exchange", "camelContext",
+            "variable", "variableAs", "variables", "exception", "exchange", "camelContext",
             "camelId", "routeId", "routeGroup", "stepId", "id", "messageTimestamp", "threadName", "threadId",
-            "hostname", "date", "date-with-timezone", "random", "skip", "collate", "join", "sum", "avg", "min", "max",
-            "replace", "substring", "substringBefore", "substringAfter", "substringBetween", "contains", "pad",
-            "concat", "val", "length", "empty", "newEmpty", "iif", "hash", "convertTo", "throwException", "assert",
-            "load", "uuid", "env", "sys", "ref", "bean", "properties", "propertiesExist", "type", "messageAs",
-            "messageHistory", "pretty", "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath",
-            "function", "list", "map", "range", "split", "sort", "forEach", "filter", "listAdd", "listRemove",
-            "mapAdd", "mapRemove", "file", "null");
+            "hostname", "date", "date-with-timezone", "random", "skip", "collate", "join", "sum", "average", "min",
+            "max", "abs", "ceil", "floor", "replace", "substring", "substringBefore", "substringAfter",
+            "substringBetween", "contains", "pad", "concat", "val", "length", "size", "empty", "newEmpty", "iif",
+            "hash", "convertTo", "throwException", "assert", "load", "uuid", "env", "sys", "sysenv", "ref", "bean",
+            "properties", "propertiesExist", "type", "messageAs", "messageHistory", "logExchange", "pretty",
+            "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "function", "list", "map",
+            "range", "split", "sort", "distinct", "reverse", "shuffle", "forEach", "filter", "listAdd", "listRemove",
+            "mapAdd", "mapRemove", "setHeader", "setVariable", "uppercase", "lowercase", "trim", "capitalize",
+            "normalizeWhitespace", "quote", "unquote", "safeQuote", "escape", "isEmpty", "isAlpha", "isAlphaNumeric",
+            "isNumeric", "not", "kindOfType", "file", "null");
+
+    /** Functions that are called with parentheses, so a suggestion without arguments adds them. */
+    private static final Set<String> CALLED_WITH_PARENTHESES = Set.of("uppercase", "lowercase", "trim", "size", "average");
 
     /**
      * Functions that delegate to another language, all of them written {@code ${name(exp)}}. Unlike {@code bean:} or
@@ -64,14 +70,15 @@ public final class SimpleSyntaxHints {
             Map.entry("var", "variable"),
             Map.entry("prop", "exchangeProperty"),
             Map.entry("json", "jsonpath"),
-            Map.entry("upper", "bodyAs(String).toUpperCase()"),
-            Map.entry("lower", "bodyAs(String).toLowerCase()"),
-            Map.entry("trim", "bodyAs(String).trim()"),
+            Map.entry("upper", "uppercase"),
+            Map.entry("toUpperCase", "uppercase"),
+            Map.entry("lower", "lowercase"),
+            Map.entry("toLowerCase", "lowercase"),
             Map.entry("padding", "pad"),
             Map.entry("now", "date:now:yyyy-MM-dd'T'HH:mm:ss"),
             Map.entry("timestamp", "messageTimestamp"),
-            Map.entry("size", "length"),
-            Map.entry("count", "length"));
+            Map.entry("avg", "average"),
+            Map.entry("count", "size"));
 
     private static final String[] OPERATOR_WORDS = {
             "==", "!=", ">=", "<=", ">", "<", "=~", "!=~", "~~", "!~~", "contains",
@@ -204,24 +211,57 @@ public final class SimpleSyntaxHints {
 
     /** Wraps the left hand side of one comparison with {@code ${ }} when it is a function reference. */
     private static String wrapComparison(String text) {
+        // the first operator outside quotes, so ${body == 'a > b'} is compared with ==
+        String first = null;
+        int firstAt = -1;
         for (String op : SPACED_OPERATORS) {
-            int at = text.indexOf(op);
-            if (at < 0 && text.endsWith(op.stripTrailing())) {
-                // the operator ends the text: wrap what is there, so the parser says what is missing after it
-                at = text.length() - op.stripTrailing().length();
+            int at = indexOutsideQuotes(text, op);
+            if (at > 0 && (firstAt < 0 || at < firstAt)) {
+                firstAt = at;
+                first = op;
             }
-            if (at > 0) {
-                String left = text.substring(0, at).trim();
-                String right = at + op.length() <= text.length() ? text.substring(at + op.length()).trim() : "";
-                if (!left.startsWith("${") && !left.startsWith("'") && !left.startsWith("\"")
-                        && !isNumeric(left) && !"true".equalsIgnoreCase(left)
-                        && !"false".equalsIgnoreCase(left) && !"null".equalsIgnoreCase(left)) {
-                    left = "${" + left + "}";
+        }
+        if (first != null) {
+            return wrapComparison(text, first, firstAt);
+        }
+        for (String op : SPACED_OPERATORS) {
+            if (text.endsWith(op.stripTrailing())) {
+                // the operator ends the text: wrap what is there, so the parser says what is missing after it
+                int at = text.length() - op.stripTrailing().length();
+                if (at > 0) {
+                    return wrapComparison(text, op, at);
                 }
-                return left + op + right;
             }
         }
         return text;
+    }
+
+    private static String wrapComparison(String text, String op, int at) {
+        String left = text.substring(0, at).trim();
+        String right = at + op.length() <= text.length() ? text.substring(at + op.length()).trim() : "";
+        if (!left.startsWith("${") && !left.startsWith("'") && !left.startsWith("\"")
+                && !isNumeric(left) && !"true".equalsIgnoreCase(left)
+                && !"false".equalsIgnoreCase(left) && !"null".equalsIgnoreCase(left)) {
+            left = "${" + left + "}";
+        }
+        return left + op + right;
+    }
+
+    /** The index of the text outside single and double quotes, or -1. */
+    private static int indexOutsideQuotes(String text, String find) {
+        boolean single = false;
+        boolean dubble = false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && text.startsWith(find, i)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static boolean isNumeric(String text) {
@@ -259,14 +299,20 @@ public final class SimpleSyntaxHints {
         }
         int open = 0;
         for (int i = 0; i < head.length(); i++) {
-            if (head.charAt(i) == '(') {
+            char c = head.charAt(i);
+            if (c == '(' || c == '[') {
                 open++;
-            } else if (head.charAt(i) == ')') {
+            } else if (c == ')' || c == ']') {
                 open--;
             }
         }
         if (open > 0) {
-            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach)
+            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach),
+            // or inside a key such as ${header[order in progress]}
+            return null;
+        }
+        if (head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
+            // the operator word is in the default value: ${properties:msg:value is not set}
             return null;
         }
         return "${" + head + "}" + function.substring(best);
@@ -320,6 +366,9 @@ public final class SimpleSyntaxHints {
             }
         }
         if (alias != null) {
+            if (rest.isEmpty() && CALLED_WITH_PARENTHESES.contains(alias)) {
+                rest = "()";
+            }
             if (rest.startsWith(":") && QUERY_FUNCTIONS.contains(alias)) {
                 // ${json:$.status}: the alias resolves to jsonpath, so the argument moves into parentheses too
                 return parentheses(alias, rest.substring(1));

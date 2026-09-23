@@ -201,13 +201,14 @@ public final class FileUtil {
 
         if (pos > 0) {
             String onlyName = name.substring(pos + 1);
-            int pos2 = singleMode ? onlyName.lastIndexOf('.') : onlyName.indexOf('.');
+            // a leading dot is a hidden file (such as .bashrc), not an extension
+            int pos2 = singleMode ? onlyName.lastIndexOf('.') : onlyName.indexOf('.', 1);
             if (pos2 > 0) {
                 return name.substring(0, pos + pos2 + 1);
             }
         } else {
             // if single ext mode, then only return last extension
-            int pos2 = singleMode ? name.lastIndexOf('.') : name.indexOf('.');
+            int pos2 = singleMode ? name.lastIndexOf('.') : name.indexOf('.', 1);
             if (pos2 > 0) {
                 return name.substring(0, pos2);
             }
@@ -228,8 +229,9 @@ public final class FileUtil {
 
         // extension is the first dot, as a file may have double extension such as .tar.gz
         // if single ext mode, then only return last extension
-        int pos = singleMode ? name.lastIndexOf('.') : name.indexOf('.');
-        if (pos != -1) {
+        // a leading dot is a hidden file (such as .bashrc), not an extension
+        int pos = singleMode ? name.lastIndexOf('.') : name.indexOf('.', 1);
+        if (pos > 0) {
             return name.substring(pos + 1);
         }
         return null;

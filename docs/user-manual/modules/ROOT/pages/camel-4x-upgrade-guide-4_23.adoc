@@ -37,6 +37,33 @@ body when the map has no `sku()` method, the same value `${body[sku]}` gives. A 
 `${body.size}` calls `size()` as before, and a name that is neither a method nor a key still fails. Only expressions
 that used to throw can now return a value.
 
+The `range(max)` function now starts at 0, as documented and as `range` does in Python: `${range(5)}` returns
+`[0, 1, 2, 3, 4]` where it used to return `[1, 2, 3, 4]`. Routes that relied on the range starting at 1 must use
+`${range(1,5)}` instead. The two-argument form `range(min,max)` is unchanged.
+
+A review of the simple language fixed a number of edge cases. These change what an existing expression returns:
+
+* `split` uses the separator as plain text, not as a regular expression: `${split(${body},'.')}` splits on dots
+  (it used to return an empty array), and `${split(${body},'|')}` splits on the bar. A route that relied on a regular
+  expression separator such as `'\s+'` must use `${body.split('\s+')}` instead.
+* The elvis operator `?:` treats any numeric zero as falsy (such as `0L`, `0.0` or `BigDecimal.ZERO`), not only `0` as
+  an `Integer`.
+* `++` and `--` keep decimals: `1.5` becomes `2.5` (it used to be `2.0`).
+* `safeQuote` escapes double quotes, backslashes and control characters in the value, so the result is a valid JSON
+  string. A `BigDecimal` is a number, so it is not quoted.
+* `kindOfType` returns `object` for a `Map` (it used to return `array`).
+* A name glued to a function prefix is an unknown function instead of being read as that function, such as
+  `${headerfoo}` (which returned the header `foo`), `${uuidv7}` or `${exceptionInfo}`. Use `${header.foo}`.
+* A hidden file name has no extension: for `.bashrc` then `${file:name.ext}` is `null` (it used to be `bashrc`), and
+  for `.route.yaml` then `${file:name.noext}` is `.route`. This comes from `FileUtil.onlyExt` and `FileUtil.stripExt`.
+* The chain operator `~>` needs a space on both sides, as the other operators do, so `A~>B` is text.
+* Inside `${ }` the ternary `?` and `:` need whitespace around them, so `${bean:svc?method=at(10:30)}` is not a
+  ternary.
+
+The simple catalog (`simple.json`) now spells these functions as they are written: `hostname` (was `hostName`),
+`exception.stacktrace` (was `exception.stackTrace`), `throwException(msg,type)` (was `throwException(type,msg)`, the
+order the function has always used), `not(exp)`, and `setAttachment(key,exp)`.
+
 === Circuit Breaker EIP
 
 The exchange property `CamelCircuitBreakerResponseRejected` is now also set inside the `onFallback`,
