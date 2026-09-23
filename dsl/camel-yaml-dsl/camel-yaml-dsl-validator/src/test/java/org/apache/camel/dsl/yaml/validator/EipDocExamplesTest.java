@@ -131,9 +131,6 @@ class EipDocExamplesTest {
                 if (skipped != null && yaml.contains(skipped)) {
                     continue;
                 }
-                if (DocBlocks.markedToSkip(doc, m.start())) {
-                    continue;
-                }
                 examples++;
                 List<Error> errors = validator.validate(yaml);
                 if (!errors.isEmpty()) {
