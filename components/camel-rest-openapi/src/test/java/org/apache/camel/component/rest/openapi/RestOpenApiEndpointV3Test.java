@@ -402,7 +402,7 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldFailDescriptivelyWhenServersSectionIsMissing() throws Exception {
+    public void shouldThrowWhenNoAbsoluteServerUrlAndNoHostConfigured() throws Exception {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         final CamelContext camelContext = new DefaultCamelContext();
         component.setCamelContext(camelContext);

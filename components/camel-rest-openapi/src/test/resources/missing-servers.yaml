@@ -24,7 +24,7 @@ info:
 paths:
   /test:
     get:
-      operationId: test
+      operationId: testOperation
       responses:
         '200':
           description: OK
