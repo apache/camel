@@ -23,10 +23,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -68,6 +71,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     private String pattern;
     private boolean removeAllRoutes = true;
     private final List<Resource> previousSources = new ArrayList<>();
+    /** The content of the sources of the last successful reload, by location: what a failed reload goes back to. */
+    private final Map<String, byte[]> lastGoodContent = new ConcurrentHashMap<>();
 
     public RouteWatcherReloadStrategy() {
     }
@@ -322,6 +327,13 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
             // update okay, so clear as we do not need to remember those anymore
             previousSources.clear();
+            if (removeEverything) {
+                // the route files are gone and nothing runs: the remembered content goes with them, so a later
+                // failed reload cannot put a deleted file back (CAMEL-24899)
+                lastGoodContent.clear();
+            } else {
+                rememberContent(sources);
+            }
 
             if (!ids.isEmpty()) {
                 List<String> lines = new ArrayList<>();
@@ -396,10 +408,36 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     /**
-     * Reloads the sources of the routes that ran before a failed reload, without the resources that failed, so a
-     * mistake in one file does not leave the application without routes. After a successful restore the remembered set
-     * is cleared: the running routes are the last working set again, and the next reload collects their sources itself.
-     * The failed file is loaded again on its next save.
+     * Remembers the content of the sources that loaded, so a later failed reload of one of them can go back to the
+     * version that ran (the file on disk is then the broken one). Only the sources of the current set are kept; the
+     * caller drops the lot when everything is removed.
+     */
+    private void rememberContent(Collection<Resource> sources) {
+        if (!removeAllRoutes || sources == null) {
+            return;
+        }
+        Set<String> current = new HashSet<>();
+        for (Resource rs : sources) {
+            if (rs == null || !rs.exists()) {
+                continue;
+            }
+            current.add(rs.getLocation());
+            try (InputStream is = rs.getInputStream()) {
+                lastGoodContent.put(rs.getLocation(), is.readAllBytes());
+            } catch (Exception e) {
+                LOG.debug("Cannot remember the content of {} for a later failed reload: {}", rs.getLocation(),
+                        e.getMessage());
+            }
+        }
+        lastGoodContent.keySet().retainAll(current);
+    }
+
+    /**
+     * Reloads the sources of the routes that ran before a failed reload, so a mistake in one file does not leave the
+     * application without routes: the other files from disk, and the failed file from the content that last loaded,
+     * which is kept in memory for a project whose routes are all in one file (CAMEL-24899). After a successful restore
+     * the remembered set is cleared: the running routes are the last working set again, and the next reload collects
+     * their sources itself. The file on disk is untouched and its next save is loaded as usual.
      */
     protected void restorePreviousRoutes(Collection<Resource> failed, Exception cause) {
         if (!removeAllRoutes || previousSources.isEmpty()) {
@@ -409,6 +447,18 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         for (Resource rs : previousSources) {
             if (rs != null && (failed == null || !equalResourceLocation(failed, rs))) {
                 restore.add(rs);
+            }
+        }
+        // the failed file itself: its last loaded content, kept in memory, because the file on disk is the broken
+        // version (a project with a single route file has nothing else to go back to, CAMEL-24899)
+        int fromMemory = 0;
+        if (failed != null) {
+            for (Resource rs : failed) {
+                byte[] content = rs != null ? lastGoodContent.get(rs.getLocation()) : null;
+                if (content != null && !equalResourceLocation(restore, rs)) {
+                    restore.add(ResourceHelper.fromBytes(rs.getLocation(), content));
+                    fromMemory++;
+                }
             }
         }
         if (restore.isEmpty()) {
@@ -424,9 +474,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             Set<String> ids = PluginHelper.getRoutesLoader(getCamelContext()).updateRoutes(restore);
             // the running routes are the last working set again: the next reload collects their sources itself
             previousSources.clear();
-            LOG.warn("Reload failed due to: {}. The previous routes were restored ({} route(s) running); the changed"
+            LOG.warn("Reload failed due to: {}. The previous routes were restored ({} route(s) running{}); the changed"
                      + " file loads on its next save",
-                    cause.getMessage(), ids.size());
+                    cause.getMessage(), ids.size(),
+                    fromMemory > 0 ? ", " + fromMemory + " from the last loaded content of the changed file" : "");
         } catch (Exception e) {
             LOG.warn("Reload failed and the previous routes could not be restored due to: {}. The application runs"
                      + " without routes until the file is fixed",

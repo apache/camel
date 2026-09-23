@@ -17152,6 +17152,46 @@ public class StaticEndpointBuilders {
         return TwitterTimelineEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * TypeSafe AI (camel-typesafe-ai)
+     * Evaluate text and structured state with the TypeSafe AI decision API.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-typesafe-ai
+     * 
+     * Syntax: <code>typesafe-ai:name</code>
+     * 
+     * Path parameter: name (required)
+     * A logical name for the evaluation endpoint.
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static TypeSafeAiEndpointBuilderFactory.TypeSafeAiEndpointBuilder typesafeAi(String path) {
+        return typesafeAi("typesafe-ai", path);
+    }
+    /**
+     * TypeSafe AI (camel-typesafe-ai)
+     * Evaluate text and structured state with the TypeSafe AI decision API.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-typesafe-ai
+     * 
+     * Syntax: <code>typesafe-ai:name</code>
+     * 
+     * Path parameter: name (required)
+     * A logical name for the evaluation endpoint.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static TypeSafeAiEndpointBuilderFactory.TypeSafeAiEndpointBuilder typesafeAi(String componentName, String path) {
+        return TypeSafeAiEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Undertow (camel-undertow)
      * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
      * servers.

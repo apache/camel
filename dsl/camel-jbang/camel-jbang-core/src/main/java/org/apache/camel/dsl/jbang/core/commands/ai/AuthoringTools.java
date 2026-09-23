@@ -82,7 +82,9 @@ public final class AuthoringTools {
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
                 "Catalog documentation of a component, data format, language, EIP, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
-                .param("name", "string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange", false)
+                .param("name", "string",
+                        "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
+                        false)
                 .param("endpoint", "string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092", false)
                 .param("kind", "string",
                         "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
@@ -206,15 +208,34 @@ public final class AuthoringTools {
                 .param("directory", "string", DIRECTORY_DESC, false)
                 .param("file", "string", FILE_PATH_DESC + " (subdirectories are created)", true)
                 .param("content", "string", "The complete new content", true)
-                .param("validate", "boolean", "Validate before writing (default true)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .readOnly(false)
                 .core(true)
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     Path dir = ctx.resolveDirectory(args.get("directory"));
-                    return writeFile(ctx, dir, required(args, "file"), required(args, "content"),
-                            bool(args, "validate", true)).toJson();
+                    // always validated: a model given a switch turns it off (CAMEL-24897)
+                    return writeFile(ctx, dir, required(args, "file"), required(args, "content"), true).toJson();
+                }));
+
+        registry.accept(tool("camel_edit_file",
+                "Changes a file by replacing one snippet: the exact text to find (it must occur once) and what to "
+                                                + "put there. Validated and reloaded as a write is. Use it to change an existing file, "
+                                                + "camel_write_file for a new one.")
+                .param("directory", "string", DIRECTORY_DESC, false)
+                .param("file", "string", FILE_PATH_DESC, true)
+                .param("find", "string", "The lines to replace as they stand in the file; other indentation is fine "
+                                         + "when the lines name one place",
+                        true)
+                .param("replace", "string", "The text to put there; empty removes it", true)
+                .param("camelVersion", "string", VERSION_DESC, false)
+                .readOnly(false)
+                .core(true)
+                .executor((ctx, args) -> {
+                    applyVersion(ctx, args);
+                    Path dir = ctx.resolveDirectory(args.get("directory"));
+                    return editFile(ctx, dir, required(args, "file"), required(args, "find"),
+                            args.get("replace") == null ? "" : args.get("replace")).toJson();
                 }));
 
         registry.accept(tool("camel_run",
@@ -286,9 +307,10 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_eval_expression",
-                "Evaluates an expression: in the running integration when there is one, else locally. Returns the "
-                                                      + "value (true/false for a predicate) or the syntax error, so check simple "
-                                                      + "before answering or writing it.")
+                "Evaluates an expression: in the running integration when there is one, else locally, in any "
+                                                      + "language (jsonpath, jq, xpath, groovy: its component is downloaded when "
+                                                      + "needed). Returns the value (true/false for a predicate) or the syntax "
+                                                      + "error, so check an expression before answering or writing it.")
                 .param("expression", "string", "e.g. ${random(1,10)} or ${body} ?: 'none'", true)
                 .param("language", "string", "simple (default), jsonpath, xpath, jq", false)
                 .param("body", "string", "Message body", false)
@@ -363,6 +385,316 @@ public final class AuthoringTools {
     /** How long a write waits for the running integration's reload record before answering without it. */
     static final long RELOAD_WAIT_MILLIS = 8000;
 
+    /**
+     * Replaces one snippet of a file and writes the result through {@link #writeFile}, so a change to an existing file
+     * does not rewrite every line of it: a model that re-emits a whole file corrupts the lines it did not mean to touch
+     * (CAMEL-24909). The snippet must occur exactly once; the answer says what was replaced.
+     */
+    /** How many lines of the file are handed back on either side of the place an edit was aiming at. */
+    private static final int EDIT_WINDOW_LINES = 20;
+
+    public static JsonObject editFile(ToolContext ctx, Path dir, String file, String find, String replace) {
+        JsonObject edit = editedContent(dir, file, find, replace);
+        String content = edit.getString("content");
+        if (content == null) {
+            return edit; // not-found or ambiguous: the answer says what to do instead
+        }
+        JsonObject result = writeFile(ctx, dir, file, content, true);
+        if (!"invalid".equals(result.getString("status"))) {
+            result.put("status", "edited");
+            result.put("editedAtLine", edit.getInteger("editedAtLine"));
+            result.put("replacedLines", edit.getInteger("replacedLines"));
+        } else {
+            result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
+                                  + " camel_edit_file again.");
+        }
+        return result;
+    }
+
+    /**
+     * The content of the file with the snippet replaced, in {@code content}, with the line it changed and how many
+     * lines it replaced; or the answer of a miss (not-found, with the nearest lines) or of an ambiguous snippet. The
+     * TUI writes that content itself, so an edit is confirmed and replayed in the editor like a write.
+     */
+    public static JsonObject editedContent(Path dir, String file, String find, String replace) {
+        Path path = resolveFile(dir, file);
+        if (!Files.isRegularFile(path)) {
+            throw new ToolExecutionException(file + " does not exist: write the whole file with camel_write_file");
+        }
+        String content;
+        try {
+            content = Files.readString(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new ToolExecutionException("Failed to read " + path + ": " + e.getMessage());
+        }
+        if (find == null || find.isEmpty()) {
+            throw new ToolExecutionException("find is required: the text to replace, as it stands in the file");
+        }
+        String wanted = find;
+        String put = replace;
+        boolean trimmedMatch = false;
+        int first = content.indexOf(wanted);
+        int length = wanted.length();
+        if (first < 0) {
+            // the same lines with different indentation or trailing spaces: a model composes the snippet from the
+            // shape it has in mind rather than from the file (CAMEL-24909), so match on the trimmed lines when that
+            // names exactly one place
+            int[] window = uniqueTrimmedWindow(content, wanted);
+            if (window != null) {
+                first = window[0];
+                length = window[1] - window[0];
+                trimmedMatch = true;
+            }
+        }
+        if (first < 0 && hasLiteralEscapes(wanted)) {
+            // the snippet was built as a JSON string and its escapes were left in it, so the text holds a literal
+            // \n where the file has a newline: read it the way it was meant (CAMEL-24909)
+            String unescaped = unescapeLiterals(wanted);
+            int retry = content.indexOf(unescaped);
+            int retryLength = unescaped.length();
+            if (retry < 0) {
+                int[] window = uniqueTrimmedWindow(content, unescaped);
+                if (window != null) {
+                    retry = window[0];
+                    retryLength = window[1] - window[0];
+                    trimmedMatch = true;
+                }
+            }
+            if (retry >= 0) {
+                first = retry;
+                length = retryLength;
+                wanted = unescaped;
+                put = unescapeLiterals(put);
+            }
+        }
+        JsonObject result = new JsonObject();
+        result.put("file", file);
+        if (first < 0) {
+            result.put("status", "not-found");
+            String nearest = nearestBlock(content, wanted);
+            String message = "The text to find is not in the file as given; copy the lines from the file"
+                             + (nearest != null ? ", which has there:\n" + nearest : "");
+            if (nearest != null) {
+                result.put("nearest", nearest);
+            }
+            // a model that misses is writing the snippet from memory, so hand back the part of the file it was
+            // aiming at, rather than sending it to camel_get_files - or, as the runs showed, to a whole-file
+            // rewrite, which is what corrupts the lines it did not mean to touch (CAMEL-24909)
+            int[] window = aroundNearest(content, wanted);
+            String[] lines = content.split("\n", -1);
+            result.put("fileWindow", join(lines, window[0], window[1]));
+            result.put("windowFromLine", window[0] + 1);
+            result.put("windowToLine", window[1]);
+            message += (nearest != null ? ". L" : ". The file's l") + "ines " + (window[0] + 1) + " to " + window[1]
+                       + " are in fileWindow"
+                       + (window[0] == 0 && window[1] >= (int) content.lines().count() ? " (the whole file)" : "")
+                       + ": copy the text to find from there and call camel_edit_file again, rather than writing"
+                       + " the whole file";
+            result.put("message", message);
+            return result;
+        }
+        if (content.indexOf(wanted, first + wanted.length()) >= 0) {
+            result.put("status", "ambiguous");
+            result.put("occurrences", count(content, wanted));
+            result.put("message", "The text to find occurs more than once: include the lines around it so it names one"
+                                  + " place, or write the whole file with camel_write_file");
+            return result;
+        }
+        if (trimmedMatch) {
+            // the snippet was written at another indentation than the file has: put the replacement in at the
+            // file's indentation, or the result is valid text at the wrong depth (CAMEL-24909)
+            put = reindent(put, indentOf(wanted), indentOf(content.substring(first)));
+            // the window of a trimmed match ends after the newline of its last line, so that removing a block
+            // removes its lines whole; a replacement that does not end in a newline must bring that one back, or
+            // the line after the window is glued onto it
+            if (!put.isEmpty() && !put.endsWith("\n") && content.charAt(first + length - 1) == '\n') {
+                put = put + "\n";
+            }
+        }
+        int line = (int) content.substring(0, first).lines().count()
+                   + (first > 0 && content.charAt(first - 1) == '\n' ? 1 : 0);
+        result.put("content", content.substring(0, first) + put + content.substring(first + length));
+        result.put("editedAtLine", Math.max(1, line));
+        // the lines actually replaced: with the trimmed match that is the window in the file, which can be shorter
+        // than find when it ends in blank lines (CAMEL-24909)
+        result.put("replacedLines", (int) content.substring(first, first + length).lines().count());
+        return result;
+    }
+
+    /** The leading whitespace of the first line of the text that has something on it. */
+    private static String indentOf(String text) {
+        for (String line : text.split("\n", -1)) {
+            if (!line.isBlank()) {
+                int i = 0;
+                while (i < line.length() && Character.isWhitespace(line.charAt(i))) {
+                    i++;
+                }
+                return line.substring(0, i);
+            }
+        }
+        return "";
+    }
+
+    /** Moves the text from the indentation it was written at to the one the file has at that place. */
+    private static String reindent(String text, String from, String to) {
+        int delta = to.length() - from.length();
+        if (delta == 0 || text.isEmpty()) {
+            return text;
+        }
+        StringBuilder sb = new StringBuilder(text.length() + Math.abs(delta) * 8);
+        String[] lines = text.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (!line.isBlank()) {
+                if (delta > 0) {
+                    line = " ".repeat(delta) + line;
+                } else {
+                    int strip = 0;
+                    while (strip < -delta && strip < line.length() && line.charAt(strip) == ' ') {
+                        strip++;
+                    }
+                    line = line.substring(strip);
+                }
+            }
+            sb.append(line);
+            if (i < lines.length - 1) {
+                sb.append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /** Whether the text carries JSON escapes that were never turned back into the characters they stand for. */
+    private static boolean hasLiteralEscapes(String text) {
+        return text != null && (text.contains("\\n") || text.contains("\\r\\n") || text.contains("\\t"));
+    }
+
+    /** Reads {@code \n}, {@code \r\n} and {@code \t} as the characters they stand for. */
+    private static String unescapeLiterals(String text) {
+        return text == null ? null : text.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\\t", "\t");
+    }
+
+    /**
+     * The one place where the file's lines match the wanted lines once their leading and trailing whitespace is
+     * removed, as start and end offset in the content, or null when there is no such place or more than one.
+     */
+    private static int[] uniqueTrimmedWindow(String content, String find) {
+        List<String> wanted = find.lines().map(String::strip).toList();
+        while (!wanted.isEmpty() && wanted.get(wanted.size() - 1).isEmpty()) {
+            wanted = wanted.subList(0, wanted.size() - 1);
+        }
+        if (wanted.isEmpty()) {
+            return null;
+        }
+        String[] lines = content.split("\n", -1);
+        int[] offsets = lineOffsets(content, lines);
+        int[] found = null;
+        for (int i = 0; i + wanted.size() <= lines.length; i++) {
+            boolean match = true;
+            for (int j = 0; j < wanted.size(); j++) {
+                if (!lines[i + j].strip().equals(wanted.get(j))) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                if (found != null) {
+                    return null; // more than one place: the caller must name one
+                }
+                int end = offsets[i + wanted.size() - 1] + lines[i + wanted.size() - 1].length();
+                found = new int[] { offsets[i], Math.min(end + 1, content.length()) };
+            }
+        }
+        return found;
+    }
+
+    /**
+     * The lines of the file that come closest to the wanted ones, so the answer of a miss shows what is there (the next
+     * attempt then copies it). Null when nothing matches at all.
+     */
+    private static String nearestBlock(String content, String find) {
+        List<String> wanted = find.lines().map(String::strip).filter(l -> !l.isEmpty()).toList();
+        if (wanted.isEmpty()) {
+            return null;
+        }
+        String[] lines = content.split("\n", -1);
+        int bestAt = nearestAt(lines, wanted);
+        if (bestAt < 0) {
+            return null; // hardly anything matches: naming a place would mislead
+        }
+        return join(lines, bestAt, bestAt + Math.min(wanted.size(), lines.length));
+    }
+
+    /** Where the file comes closest to the wanted lines, or -1 when hardly anything of them matches. */
+    private static int nearestAt(String[] lines, List<String> wanted) {
+        if (wanted.isEmpty()) {
+            return -1;
+        }
+        int size = Math.min(wanted.size(), lines.length);
+        int bestAt = -1;
+        int bestScore = 0;
+        for (int i = 0; i + size <= lines.length; i++) {
+            int score = 0;
+            for (int j = 0; j < size; j++) {
+                if (lines[i + j].strip().equals(wanted.get(j))) {
+                    score++;
+                }
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                bestAt = i;
+            }
+        }
+        return bestAt >= 0 && bestScore * 4 >= size ? bestAt : -1;
+    }
+
+    /**
+     * The part of the file the edit was aiming at, as the first and last line index (the last exclusive): the block
+     * that comes closest to the wanted lines with {@link #EDIT_WINDOW_LINES} lines of room on either side, or the
+     * beginning of the file when nothing comes close.
+     */
+    private static int[] aroundNearest(String content, String find) {
+        String[] lines = content.split("\n", -1);
+        // the newline that ends the last line is not a line of its own
+        int count = content.endsWith("\n") ? lines.length - 1 : lines.length;
+        List<String> wanted = find.lines().map(String::strip).filter(l -> !l.isEmpty()).toList();
+        int at = nearestAt(lines, wanted);
+        int size = Math.max(1, Math.min(wanted.size(), count));
+        int from = at < 0 ? 0 : Math.max(0, at - EDIT_WINDOW_LINES);
+        int to = at < 0
+                ? Math.min(count, size + 2 * EDIT_WINDOW_LINES)
+                : Math.min(count, at + size + EDIT_WINDOW_LINES);
+        return new int[] { from, to };
+    }
+
+    /** The lines from {@code from} (inclusive) to {@code to} (exclusive), as they stand. */
+    private static String join(String[] lines, int from, int to) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = from; i < to; i++) {
+            sb.append(lines[i]).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /** The offset of each line in the content. */
+    private static int[] lineOffsets(String content, String[] lines) {
+        int[] offsets = new int[lines.length];
+        int at = 0;
+        for (int i = 0; i < lines.length; i++) {
+            offsets[i] = at;
+            at += lines[i].length() + 1;
+        }
+        return offsets;
+    }
+
+    private static int count(String content, String find) {
+        int n = 0;
+        for (int i = content.indexOf(find); i >= 0; i = content.indexOf(find, i + find.length())) {
+            n++;
+        }
+        return n;
+    }
+
     /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
@@ -378,7 +710,7 @@ public final class AuthoringTools {
                 result.put("file", file);
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call camel_write_file again (validate=false writes it anyway).");
+                                      + " call camel_write_file again.");
                 return result;
             }
         }

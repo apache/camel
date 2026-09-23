@@ -45,21 +45,27 @@ public class OpenTelemetryEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     protected final InstrumentType metricType;
     @UriPath(description = "Name of metric")
-    @Metadata(required = true)
+    @Metadata(required = true, supportSimpleExpression = true)
     protected final String metricName;
     @UriParam(description = "Description of metrics")
+    @Metadata(supportSimpleExpression = true)
     protected String metricsDescription;
     @UriParam(description = "metric attributes", multiValue = true, prefix = "attributes.")
+    @Metadata(supportSimpleExpression = true)
     protected Map<String, String> attributes;
     @UriParam(description = "Action expression when using timer type", enums = "start,stop")
+    @Metadata(supportSimpleExpression = true)
     private String action;
     @UriParam(description = "The time unit when using the timer type", defaultValue = "MILLISECONDS")
     private TimeUnit unit = TimeUnit.MILLISECONDS;
     @UriParam(description = "Value expression when using histogram type")
+    @Metadata(supportSimpleExpression = true)
     private String value;
     @UriParam(description = "Increment value expression when using counter type")
+    @Metadata(supportSimpleExpression = true)
     private String increment;
     @UriParam(description = "Decrement value expression when using counter type")
+    @Metadata(supportSimpleExpression = true)
     private String decrement;
 
     public OpenTelemetryEndpoint(String uri, Component component, Meter meter, InstrumentType metricType,

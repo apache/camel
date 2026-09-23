@@ -19,10 +19,13 @@ package org.apache.camel.language.simple.ast;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.FileExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
+import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.SimpleSyntaxHints;
 import org.apache.camel.language.simple.functions.DirectFunctionFactory;
 import org.apache.camel.language.simple.types.SimpleParserException;
@@ -98,12 +101,46 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     private static final DirectFunctionFactory DIRECT_FACTORY = new DirectFunctionFactory();
 
+    /**
+     * A predicate written inside the braces, as an expression that answers whether it matches; null when the text is
+     * not a predicate but a plain function (CAMEL-24921).
+     * <p/>
+     * An operator counts only when whitespace surrounds it outside quotes, so {@code ${header.Content-Length}} and
+     * {@code ${date:now:yyyy-MM-dd}} are names, not arithmetic.
+     */
+    private Expression createPredicateExpression(CamelContext camelContext, String function) {
+        if (SimpleSyntaxHints.operatorsOutside(function) == null) {
+            return null;
+        }
+        String text = SimpleSyntaxHints.wrapFunctions(function);
+        final Predicate predicate;
+        try {
+            predicate = new SimplePredicateParser(camelContext, text, true, skipFileFunctions, null).parsePredicate();
+        } catch (SimpleParserException e) {
+            // not a predicate after all: say what is wrong with it, at the place it went wrong
+            throw new SimpleParserException(e.getMessage(), token.getIndex());
+        }
+        return new Expression() {
+            @Override
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                boolean matches = predicate.matches(exchange);
+                return exchange.getContext().getTypeConverter().convertTo(type, exchange, matches);
+            }
+
+            @Override
+            public String toString() {
+                return text;
+            }
+        };
+    }
+
     private Expression doCreateSimpleExpression(CamelContext camelContext, String function, boolean strict) {
         if (strict) {
-            // ${body == 'x'}: the operator belongs outside the function (CAMEL-24703)
-            String rewrite = SimpleSyntaxHints.operatorsOutside(function);
-            if (rewrite != null) {
-                throw new SimpleParserException("Operators go outside the function: " + rewrite, token.getIndex());
+            // ${body != null && body.size() > 0}: the braces hold a predicate, which is what they hold in EL,
+            // Groovy and a JavaScript template, so read it as one (CAMEL-24921)
+            Expression predicate = createPredicateExpression(camelContext, function);
+            if (predicate != null) {
+                return predicate;
             }
         }
         // return the function directly if we can create function without analyzing the prefix

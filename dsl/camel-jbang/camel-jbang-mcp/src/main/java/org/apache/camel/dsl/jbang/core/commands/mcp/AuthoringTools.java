@@ -57,7 +57,7 @@ public class AuthoringTools {
                         + "includeHeaders=true adds the message headers of a component, includeDoc=true the AsciiDoc "
                         + "page.")
     public JsonObject camel_catalog_doc(
-            @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split, Exchange",
+            @ToolArg(description = "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                      required = false) String name,
             @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
                      required = false) String endpoint,
@@ -148,10 +148,25 @@ public class AuthoringTools {
             @ToolArg(description = "File path relative to the directory (subdirectories are created)",
                      required = true) String file,
             @ToolArg(description = "The complete new content", required = true) String content,
-            @ToolArg(description = "Validate before writing (default true)", required = false) Boolean validate,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
-                "validate", validate, "camelVersion", camelVersion));
+                "camelVersion", camelVersion));
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = "Changes a file by replacing one snippet: the exact text to find (it must occur once) and "
+                        + "what to put there. Validated and reloaded as a write is. Use it to change an existing file, "
+                        + "camel_write_file for a new one.")
+    public JsonObject camel_edit_file(
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = "File path relative to the directory", required = true) String file,
+            @ToolArg(description = "The lines to replace as they stand in the file; other indentation is fine when "
+                                   + "the lines name one place",
+                     required = true) String find,
+            @ToolArg(description = "The text to put there; empty removes it", required = true) String replace,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
+                "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = true),
@@ -197,8 +212,9 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Evaluates an expression: in the running integration when there is one, else locally. "
-                        + "Returns the value (true/false for a predicate) or the syntax error, so check simple before "
+          description = "Evaluates an expression: in the running integration when there is one, else locally, in any "
+                        + "language (jsonpath, jq, xpath, groovy: its component is downloaded when needed). Returns "
+                        + "the value (true/false for a predicate) or the syntax error, so check an expression before "
                         + "answering or writing it.")
     public JsonObject camel_eval_expression(
             @ToolArg(description = "e.g. ${random(1,10)} or ${body} ?: 'none'", required = true) String expression,

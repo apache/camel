@@ -39,6 +39,14 @@ public final class OpaConstants {
               javaType = "String")
     public static final String POLICY_PATH = HEADER_PREFIX + "PolicyPath";
 
+    @Metadata(label = "producer",
+              description = "Set to true only when the exchange proceeded because failOpen is enabled and the policy"
+                            + " could not be evaluated - nothing authorized it. Absent on every decision an actual"
+                            + " policy made, so a route or an audit trail can tell the two apart rather than seeing"
+                            + " the same CamelOpaDecisionAllow=true for both.",
+              javaType = "Boolean")
+    public static final String DECISION_FAILED_OPEN = HEADER_PREFIX + "DecisionFailedOpen";
+
     private OpaConstants() {
     }
 }

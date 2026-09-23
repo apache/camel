@@ -25,10 +25,13 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.bouncycastle.cms.CMSCompressedDataGenerator;
+import org.bouncycastle.cms.jcajce.ZlibCompressor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,6 +111,9 @@ public class MicUtilsTest {
     private static final String EXPECTED_MESSAGE_DIGEST_ALGORITHM = "sha1";
     private static final String EXPECTED_ENCODED_MESSAGE_DIGEST = "0mGTGdBjQtu8VQ52506Coi0xHbc=";
 
+    /** Highly compressible, so the compressed entity on the wire is a tiny fraction of what it expands to. */
+    private static final String COMPRESSIBLE_EDI_PAYLOAD = "A".repeat(200_000);
+
     @BeforeEach
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
@@ -140,6 +146,25 @@ public class MicUtilsTest {
         LOG.debug("Encoded Message Digest: {}", receivedContentMic.getEncodedMessageDigest());
         assertEquals(EXPECTED_ENCODED_MESSAGE_DIGEST, receivedContentMic.getEncodedMessageDigest(),
                 "Unexpected encoded message digest value");
+    }
+
+    @Test
+    public void createReceivedContentMicForCompressedMessageStaysWithinBound() throws Exception {
+        // A compressed-data message is decompressed on the MIC path (MicUtils#findSignedDataEntity) before the sender
+        // has been authenticated, so that expansion is now bounded (CAMEL-24431). A payload well within the bound must
+        // still decompress and yield a MIC rather than being refused - exercising the newly bounded call site.
+        BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", "/");
+        request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, DISPOSITION_NOTIFICATION_OPTIONS_VALUE);
+
+        ApplicationEDIFACTEntity ediEntity = new ApplicationEDIFACTEntity(
+                COMPRESSIBLE_EDI_PAYLOAD.getBytes(StandardCharsets.US_ASCII), "US-ASCII", "7bit", false, null);
+        ApplicationPkcs7MimeCompressedDataEntity compressed = new ApplicationPkcs7MimeCompressedDataEntity(
+                ediEntity, new CMSCompressedDataGenerator(), new ZlibCompressor(), "base64", false);
+        request.addHeader(AS2Header.CONTENT_TYPE, compressed.getContentType());
+        request.setEntity(compressed);
+
+        ReceivedContentMic receivedContentMic = MicUtils.createReceivedContentMic(request, null, null);
+        assertNotNull(receivedContentMic, "a within-bound compressed message must still produce a MIC");
     }
 
     // verify that a MIC is calculated correctly for an EDI message containing non ASCII chars

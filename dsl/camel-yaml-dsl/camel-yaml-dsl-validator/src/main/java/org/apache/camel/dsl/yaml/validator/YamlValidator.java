@@ -49,13 +49,19 @@ import com.networknt.schema.path.PathType;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.yaml.common.DataFormatKeyHints;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * YAML DSL validator that tooling can use to validate Camel source files if they can be parsed and are valid according
  * to the Camel YAML DSL spec.
  */
 public class YamlValidator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(YamlValidator.class);
 
     private static final String LOCATION = "/schema/camelYamlDsl.json";
     private static final String LOCATION_CANONICAL = "/schema/camelYamlDsl-canonical.json";
@@ -196,13 +202,19 @@ public class YamlValidator {
                 Matcher q = Pattern.compile(":\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'[^']*')\\s*\\S").matcher(t);
                 if (q.find()) {
                     String key = t.trim().contains(":") ? t.trim().substring(0, t.trim().indexOf(':')) : "the value";
+                    String tail = t.substring(t.indexOf(q.group(1)) + q.group(1).length()).strip();
+                    // the value was corrected twice: it ends with two quotes, not with a concatenation (CAMEL-24906)
+                    String message = "\"".equals(tail)
+                            ? "line " + last + ": the value of " + key + " ends with two double quotes; remove the"
+                              + " extra one and write the line as " + t.strip().substring(0, t.strip().length() - 1)
+                            : "line " + last + ": the value of " + key + " continues after its closing quote"
+                              + " (\"...\" + ...): a YAML value is one string, there is no concatenation; a"
+                              + " log message is a simple expression, write it as one quoted text such as"
+                              + " \">>> ${body}\"";
                     return Error.builder()
                             .messageKey("parser")
                             .format(new MessageFormat("{0}"))
-                            .arguments("line " + last + ": the value of " + key + " continues after its closing quote"
-                                       + " (\"...\" + ...): a YAML value is one string, there is no concatenation; a"
-                                       + " log message is a simple expression, write it as one quoted text such as"
-                                       + " \">>> ${body}\"")
+                            .arguments(message)
                             .build();
                 }
             }
@@ -280,8 +292,12 @@ public class YamlValidator {
         String value = colon >= 0 ? line.substring(colon + 1).trim() : line.trim();
         long quotes = value.chars().filter(c -> c == '"').count() - value.split("\\\\\"", -1).length + 1;
         if (value.startsWith("\"") && quotes % 2 == 1) {
-            return hint("line " + start.line() + ": the value opens a double quote and never closes it: end it with"
-                        + " a \" after the last character (" + value + "\")");
+            // the line to write, not a description of the edit: a model copies the line (CAMEL-24906)
+            String indent = line.substring(0, line.length() - line.stripLeading().length());
+            String key = colon >= 0 ? line.stripLeading().substring(0, line.stripLeading().indexOf(':') + 1) : "";
+            return hint("line " + start.line() + ": the value opens a double quote and never closes it; write the line"
+                        + " as " + (indent + key + " " + value + "\"").strip()
+                        + " (a single quote inside a double-quoted value needs no escape)");
         }
         return null;
     }
@@ -563,6 +579,7 @@ public class YamlValidator {
         }
         if (errors.isEmpty()) {
             checkSimpleSyntaxInScripts(target, new NodePath(PathType.JSON_POINTER), errors);
+            checkDynamicUri(target, new NodePath(PathType.JSON_POINTER), errors);
         }
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
@@ -665,6 +682,105 @@ public class YamlValidator {
                         .build());
             }
             checkSimpleSyntaxInScripts(value, path.append(name), errors);
+        }
+    }
+
+    /**
+     * to: http://host/stock/${header.sku}: the endpoint of a to: is resolved once when the route starts, so an
+     * expression in its path is never evaluated - it is sent as the text it is, url-encoded. That is what toD: is for
+     * (CAMEL-24917).
+     * <p/>
+     * Only the path is checked, never the options after the {@code ?}: an option such as the file component's
+     * {@code fileName=${date:now:yyyyMMdd}} is evaluated by the producer and is correct on a plain to:.
+     */
+    void checkDynamicUri(JsonNode node, NodePath path, List<Error> errors) {
+        if (node == null) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                checkDynamicUri(node.get(i), path.append(i), errors);
+            }
+            return;
+        }
+        if (!node.isObject()) {
+            return;
+        }
+        var fields = node.fieldNames();
+        while (fields.hasNext()) {
+            String name = fields.next();
+            JsonNode value = node.get(name);
+            if ("to".equals(name)) {
+                String uri = null;
+                NodePath at = path.append(name);
+                if (value.isTextual()) {
+                    uri = value.asText();
+                } else if (value.isObject() && value.has("uri") && value.get("uri").isTextual()) {
+                    uri = value.get("uri").asText();
+                    at = at.append("uri");
+                }
+                String expression = expressionInPath(uri);
+                if (expression != null) {
+                    errors.add(Error.builder()
+                            .keyword("type")
+                            .instanceLocation(at)
+                            .messageKey("type")
+                            .format(new MessageFormat("{0}"))
+                            .arguments("to: the uri holds an expression (" + expression + ") but the endpoint of a to:"
+                                       + " is fixed when the route starts, so it is sent as text: write toD: to build"
+                                       + " the uri for each message")
+                            .build());
+                }
+            }
+            checkDynamicUri(value, path.append(name), errors);
+        }
+    }
+
+    /**
+     * The first simple expression in the path of the uri (what comes before the options), or null when there is none.
+     */
+    private String expressionInPath(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        int scheme = uri.indexOf(':');
+        String component = scheme > 0 ? uri.substring(0, scheme) : null;
+        if (component != null && (SCRIPT_PATH.contains(component) || pathTakesAnExpression(component))) {
+            return null;
+        }
+        String head = uri.indexOf('?') > 0 ? uri.substring(0, uri.indexOf('?')) : uri;
+        int start = head.indexOf("${");
+        if (start < 0) {
+            return null;
+        }
+        if (start >= 2 && head.startsWith(":#", start - 2)) {
+            return null; // :#${...} is a parameter the component binds per message, not part of the address
+        }
+        int end = head.indexOf('}', start);
+        return end > 0 ? head.substring(start, end + 1) : head.substring(start);
+    }
+
+    /**
+     * The one component whose path is a script written in another language, so what is in it is not the catalog's to
+     * say: language:simple:Hello ${body} is the script, not an address. Everything else is read from the catalog
+     * (CAMEL-24918).
+     */
+    private static final Set<String> SCRIPT_PATH = Set.of("language");
+
+    /**
+     * Whether the component evaluates its path for each message, which its catalog metadata says: an expression is then
+     * what the path is for, as in micrometer:counter:orders.${header.region} (CAMEL-24918).
+     */
+    private boolean pathTakesAnExpression(String component) {
+        try {
+            ComponentModel model = catalog().componentModel(component);
+            if (model == null) {
+                return true; // a component the catalog does not know: say nothing rather than the wrong thing
+            }
+            return model.getEndpointPathOptions().stream().anyMatch(BaseOptionModel::isSupportSimpleExpression);
+        } catch (Exception e) {
+            LOG.debug("Cannot read the catalog model of component {}: the path is left alone", component, e);
+            return true;
         }
     }
 

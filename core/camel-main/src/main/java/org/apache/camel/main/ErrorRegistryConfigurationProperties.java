@@ -32,6 +32,8 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
     private boolean enabled;
     @Metadata(defaultValue = "100")
     private int maximumEntries = 100;
+    @Metadata(defaultValue = "3")
+    private int maximumEntriesPerKind = 3;
     @Metadata(defaultValue = "0")
     private int timeToLiveSeconds;
     @Metadata(label = "advanced", defaultValue = "32768")
@@ -79,6 +81,19 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
      */
     public void setMaximumEntries(int maximumEntries) {
         this.maximumEntries = maximumEntries;
+    }
+
+    public int getMaximumEntriesPerKind() {
+        return maximumEntriesPerKind;
+    }
+
+    /**
+     * The maximum number of error entries of the same kind (same route, node and exception type) to keep, so a storm of
+     * one failure does not evict all the other errors. The counter of that kind keeps rising even when its older
+     * entries are evicted.
+     */
+    public void setMaximumEntriesPerKind(int maximumEntriesPerKind) {
+        this.maximumEntriesPerKind = maximumEntriesPerKind;
     }
 
     public int getTimeToLiveSeconds() {
@@ -167,6 +182,15 @@ public class ErrorRegistryConfigurationProperties implements BootstrapCloseable 
      */
     public ErrorRegistryConfigurationProperties withMaximumEntries(int maximumEntries) {
         this.maximumEntries = maximumEntries;
+        return this;
+    }
+
+    /**
+     * The maximum number of error entries of the same kind (same route, node and exception type) to keep, so a storm of
+     * one failure does not evict all the other errors.
+     */
+    public ErrorRegistryConfigurationProperties withMaximumEntriesPerKind(int maximumEntriesPerKind) {
+        this.maximumEntriesPerKind = maximumEntriesPerKind;
         return this;
     }
 

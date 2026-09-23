@@ -86,12 +86,12 @@ class AuthoringToolsTest {
     @Test
     void filesAreReadAndWrittenInTheGivenDirectory(@TempDir Path dir) throws Exception {
         String route = "- route:\n    from:\n      uri: timer:tick\n      steps:\n        - log:\n            message: hi\n";
-        JsonObject written = tools.camel_write_file(dir.toString(), "demo.camel.yaml", route, null, null);
+        JsonObject written = tools.camel_write_file(dir.toString(), "demo.camel.yaml", route, null);
         assertThat(written.getString("status")).isEqualTo("created");
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8)).isEqualTo(route);
 
         JsonObject invalid = tools.camel_write_file(dir.toString(), "demo.camel.yaml",
-                route.replace("message", "mesage"), null, null);
+                route.replace("message", "mesage"), null);
         assertThat(invalid.getString("status")).isEqualTo("invalid");
         assertThat(Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8)).isEqualTo(route);
 

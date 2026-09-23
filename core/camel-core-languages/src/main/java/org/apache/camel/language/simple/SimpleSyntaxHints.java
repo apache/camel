@@ -149,6 +149,93 @@ public final class SimpleSyntaxHints {
                + VALUE_FORMS + (isKnownFunction(functionName(word)) ? ", e.g. ${" + word + "}" : ", e.g. '" + word + "'");
     }
 
+    /** The comparison operators, with the spaces they must be surrounded by. */
+    private static final String[] SPACED_OPERATORS = {
+            " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",
+            " contains ", " !contains ", " ~~ ", " !~~ ", " regex ", " !regex ",
+            " in ", " !in ", " is ", " !is ", " range ", " !range ",
+            " startsWith ", " !startsWith ", " endsWith ", " !endsWith " };
+
+    /**
+     * Wraps the function references of a predicate written inside {@code ${ }} so that it can be parsed as one:
+     * {@code body != null && body.size() > 0} becomes {@code ${body} != null && ${body.size()} > 0}.
+     * <p/>
+     * Each comparison is wrapped, not only the first, so that a compound condition reads the way it looks (CAMEL-24920,
+     * CAMEL-24921). An operator counts only when whitespace surrounds it outside quotes, which is what keeps
+     * {@code ${header.Content-Length}} and {@code ${date:now:yyyy-MM-dd}} a plain function.
+     */
+    public static String wrapFunctions(String text) {
+        StringBuilder answer = new StringBuilder();
+        int from = 0;
+        for (int at = logicalOperator(text, 0); at >= 0; at = logicalOperator(text, from)) {
+            // the operator matched with its trailing space, so the next space is at most two characters away
+            int end = text.indexOf(' ', at + 1);
+            answer.append(wrapComparison(text.substring(from, at).trim()));
+            answer.append(' ').append(text, at, end).append(' ');
+            from = end + 1;
+        }
+        answer.append(wrapComparison(text.substring(from).trim()));
+        return answer.toString();
+    }
+
+    /**
+     * The index of the next logical operator ({@code &&} or {@code ||}) outside quotes, or -1. Simple has no word
+     * forms: {@code and} and {@code or} are refused by the parser with a message that says so.
+     */
+    private static int logicalOperator(String text, int from) {
+        boolean single = false;
+        boolean dubble = false;
+        for (int i = from; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble && c == ' ') {
+                for (String op : new String[] { "&& ", "|| " }) {
+                    if (text.startsWith(op, i + 1)) {
+                        return i + 1;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /** Wraps the left hand side of one comparison with {@code ${ }} when it is a function reference. */
+    private static String wrapComparison(String text) {
+        for (String op : SPACED_OPERATORS) {
+            int at = text.indexOf(op);
+            if (at < 0 && text.endsWith(op.stripTrailing())) {
+                // the operator ends the text: wrap what is there, so the parser says what is missing after it
+                at = text.length() - op.stripTrailing().length();
+            }
+            if (at > 0) {
+                String left = text.substring(0, at).trim();
+                String right = at + op.length() <= text.length() ? text.substring(at + op.length()).trim() : "";
+                if (!left.startsWith("${") && !left.startsWith("'") && !left.startsWith("\"")
+                        && !isNumeric(left) && !"true".equalsIgnoreCase(left)
+                        && !"false".equalsIgnoreCase(left) && !"null".equalsIgnoreCase(left)) {
+                    left = "${" + left + "}";
+                }
+                return left + op + right;
+            }
+        }
+        return text;
+    }
+
+    private static boolean isNumeric(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        try {
+            Double.parseDouble(text);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     /**
      * When an operator is written inside the function (${body == 'x'}), the rewrite with the operator outside, else
      * null.

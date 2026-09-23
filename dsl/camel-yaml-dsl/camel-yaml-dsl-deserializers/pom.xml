@@ -34,12 +34,6 @@
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
-        <sourcecheckExcludes>
-            **/*.groovy
-        </sourcecheckExcludes>
-        <sourcecheckExcludesComma>
-            ${sourcecheckExcludes},
-        </sourcecheckExcludesComma>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
 
@@ -58,36 +52,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
-            <version>${spock-version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.groovy</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.junit.platform</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-test-junit5</artifactId>
-            <version>${groovy-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -153,5 +117,32 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!--
+                dep-check profile: disable camel-yaml-dsl-maven-plugin generate-sources execution.
+                The generate-yaml-deserializers mojo reads META-INF/jandex.idx from the classpath
+                of compiled reactor artifacts, which are not available in a clean CI checkout when
+                only the compile phase is run. The generated deserializer sources are pre-committed
+                in src/generated/java, so skipping regeneration here is safe.
+            -->
+            <id>dep-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

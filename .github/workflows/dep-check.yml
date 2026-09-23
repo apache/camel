@@ -1,0 +1,322 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: 'Dependency Analysis'
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - .claude-plugin/**
+      - .idea/**
+      - .github/**
+      - .oss-ai-helper-rules/**
+      - AGENTS.md
+      - README.md
+      - SECURITY.md
+      - Jenkinsfile
+      - Jenkinsfile.*
+      - NOTICE.txt
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  dep-check:
+    if: github.repository == 'apache/camel'
+    name: Dependency Analysis (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      # Modules excluded from analysis — kept in one place so both the compile and analysis steps stay in sync.
+      # See comments in the compile step below for the exclusion rationale.
+      # Also update pom.xml <pluginManagement> and docs/main/modules/contributing/pages/building.adoc
+      # when changing the pilot-plugin version (0.4.0 below).
+      EXCLUDED_MODULES: >-
+        !bom,
+        !components/camel-spring-parent/camel-spring-xml,
+        !components/camel-test/camel-test-spring-junit5,
+        !components/camel-test/camel-test-spring-junit6,
+        !components/camel-cxf/camel-cxf-soap,
+        !components/camel-cxf/camel-cxf-rest,
+        !components/camel-cxf/camel-cxf-spring-common,
+        !components/camel-cxf/camel-cxf-spring-soap,
+        !components/camel-cxf/camel-cxf-spring-rest,
+        !components/camel-cxf/camel-cxf-spring-transport,
+        !components/camel-micrometer-observability,
+        !components/camel-telemetry-dev,
+        !components/camel-opentelemetry,
+        !components/camel-telemetry,
+        !components/camel-opentelemetry2,
+        !components/camel-ai/camel-ai-observability,
+        !components/camel-observability-services,
+        !components/camel-asn1,
+        !components/camel-debezium,
+        !components/camel-debezium/camel-debezium-common/camel-debezium-maven-plugin,
+        !tooling/maven/sync-properties-maven-plugin,
+        !dsl/camel-yaml-dsl/camel-yaml-dsl-maven-plugin,
+        !dsl/camel-yaml-dsl/camel-yaml-dsl-validator-maven-plugin,
+        !dsl/camel-endpointdsl-support
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Install SNAPSHOT build plugins
+        run: |
+          # camel-package-maven-plugin is a SNAPSHOT reactor artifact used as a build plugin
+          # by dozens of modules (core, dsl, components, catalog…). Maven cannot parse its
+          # plugin descriptor in a clean CI checkout because the plugin has not been compiled yet.
+          # Installing it (and its SNAPSHOT dependencies) before the main compile step makes the
+          # descriptor available in the local repository for the rest of the build.
+          # camel-api-component-maven-plugin is a SNAPSHOT reactor artifact used as a build plugin
+          # by camel-fhir, camel-olingo4, camel-braintree, camel-google-*, camel-twilio and
+          # other API-component modules. It shares the camel-tooling-util dependency with
+          # camel-package-maven-plugin, so --also-make covers both in a single reactor walk.
+          # camel-debezium-maven-plugin is a SNAPSHOT reactor artifact used as a build plugin
+          # by the debezium connector modules (camel-debezium-mysql, -postgres, etc.).
+          # Maven's --pl ! notation excludes a module by its exact path — it does NOT
+          # recursively exclude submodules discovered through the parent's <modules>.
+          # camel-debezium-maven-plugin lives at a 4-level path and remains in the reactor
+          # even when !components/camel-debezium is specified. Maven then picks it up from
+          # target/classes, where META-INF/maven/plugin.xml has not yet been generated
+          # (that happens at process-classes, not compile). Installing it here and excluding
+          # it via EXCLUDED_MODULES causes Maven to use the .m2 version (with correct
+          # plugin.xml) instead of the reactor target/classes version.
+          # camel-yaml-dsl-maven-plugin is a SNAPSHOT reactor artifact used as a build plugin
+          # by camel-yaml-dsl and camel-yaml-dsl-deserializers at generate-sources phase.
+          # Same root cause as camel-debezium-maven-plugin — installed here and excluded via
+          # EXCLUDED_MODULES so Maven uses the .m2 version (with correct plugin.xml).
+          # sync-properties-maven-plugin is a SNAPSHOT reactor artifact used by camel-dependencies
+          # at generate-resources phase. Same root cause as camel-debezium-maven-plugin — installed
+          # here and excluded via EXCLUDED_MODULES so Maven uses the .m2 version.
+          # camel-yaml-dsl-validator-maven-plugin is a SNAPSHOT reactor artifact used as a build
+          # plugin by camel-jbang-core at generate-resources phase. Same root cause — installed here
+          # and excluded via EXCLUDED_MODULES so Maven uses the .m2 version.
+          mvn install \
+            -pl tooling/maven/camel-package-maven-plugin,tooling/maven/camel-api-component-maven-plugin,components/camel-debezium/camel-debezium-common/camel-debezium-maven-plugin,tooling/maven/sync-properties-maven-plugin,dsl/camel-yaml-dsl/camel-yaml-dsl-maven-plugin,dsl/camel-yaml-dsl/camel-yaml-dsl-validator-maven-plugin \
+            --also-make \
+            -DskipTests -Dlicense.skip -Dquickly \
+            --no-transfer-progress --batch-mode -q
+
+      - name: Install SNAPSHOT stubs
+        run: |
+          # Maven resolves ALL declared dependency scopes (including test-scope and provided) even
+          # during 'mvn compile', because it builds the complete dependency graph upfront. Several
+          # SNAPSHOT artifacts that are excluded from the reactor are declared as dependencies in
+          # modules throughout the reactor. These SNAPSHATs are not published to Maven Central and
+          # cannot be built in a clean checkout without installing a large portion of camel-core first.
+          #
+          # Fix: install empty stub JARs (no classes, no transitive dependencies) for each such
+          # artifact so Maven finds them in the local repository and does not attempt remote
+          # resolution. The stubs are safe because:
+          #   • 'mvn compile' does not compile test sources, so test-scope JARs are never on
+          #     the compile classpath and empty stubs cause no compilation errors.
+          #   • pilot:dependencies with -Dpilot.skipTestScope=true ignores test-scope artifacts
+          #     entirely, so the stubs do not affect the analysis results.
+          #   • provided-scope stubs (camel-allcomponents transitive deps in camel-endpointdsl):
+          #     camel-endpointdsl uses camel-allcomponents as a provided pom to make all component
+          #     endpoints available for DSL generation (the regen profile). With -Dquickly, regen is
+          #     inactive, so none of the excluded components' classes are actually imported by
+          #     camel-endpointdsl's own sources. Empty stubs satisfy Maven's dependency resolution
+          #     without introducing false positives in the pilot analysis.
+          #   • camel-endpointdsl itself: its default-compile execution is disabled (phase:none) so
+          #     mvn compile produces no JAR for it. camel-endpointdsl-support has a compile-scope
+          #     dependency on camel-endpointdsl and needs to resolve it during Maven's dependency
+          #     graph construction. An empty stub satisfies that requirement without triggering
+          #     compilation of the generated CXF-referencing sources.
+          #   • camel-endpointdsl-support: it is excluded from the reactor (see EXCLUDED_MODULES)
+          #     because it has a compile-scope dependency on camel-endpointdsl, which produces no
+          #     class files (default-compile is bound to phase:none). javac cannot compile
+          #     EndpointRouteBuilderLoaderSupport.java against an empty target/classes directory.
+          #     An empty stub installed here lets any downstream module that declares
+          #     camel-endpointdsl-support as a dependency resolve it during graph construction.
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          mkdir -p /tmp/stub-classes
+          jar cf /tmp/stub.jar -C /tmp/stub-classes .
+          for ARTIFACT in \
+              camel-spring-xml \
+              camel-test-spring-junit6 \
+              camel-endpointdsl \
+              camel-endpointdsl-support \
+              "camel-cxf/camel-cxf-soap:camel-cxf-soap" \
+              "camel-cxf/camel-cxf-spring-transport:camel-cxf-spring-transport" \
+              "camel-ai/camel-ai-observability:camel-ai-observability" \
+              camel-asn1 \
+              "camel-cxf/camel-cxf-rest:camel-cxf-rest" \
+              "camel-cxf/camel-cxf-spring-common:camel-cxf-spring-common" \
+              "camel-cxf/camel-cxf-spring-rest:camel-cxf-spring-rest" \
+              "camel-cxf/camel-cxf-spring-soap:camel-cxf-spring-soap" \
+              camel-micrometer-observability \
+              camel-observability-services \
+              camel-opentelemetry \
+              camel-opentelemetry2 \
+              camel-telemetry \
+              camel-telemetry-dev \
+              "camel-test/camel-test-spring-junit5:camel-test-spring-junit5"; do
+            # Split "path:artifactId" or use artifact as both path and id
+            ARTIFACT_ID="${ARTIFACT##*:}"
+            cat > /tmp/stub.pom << EOF
+          <project>
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>${ARTIFACT_ID}</artifactId>
+            <version>${VERSION}</version>
+          </project>
+          EOF
+            mvn install:install-file \
+              -Dfile=/tmp/stub.jar \
+              -DpomFile=/tmp/stub.pom \
+              -DgroupId=org.apache.camel \
+              -DartifactId="${ARTIFACT_ID}" \
+              -Dversion="${VERSION}" \
+              -Dpackaging=jar \
+              --no-transfer-progress --batch-mode -q
+          done
+
+      - name: Compile
+        run: |
+          # bom is excluded: bom/pom.xml uses bom-generator-maven-plugin (a SNAPSHOT reactor artifact)
+          # as a build plugin. Maven cannot parse its plugin descriptor in a clean CI checkout
+          # (the plugin has not been compiled yet). BOM modules have no Java sources to analyze anyway.
+          # camel-xml-io: its camel-package-maven-plugin 'generate-xml-sources' execution
+          # runs at generate-sources phase and reads camel-core-model/target/classes/META-INF/jandex.idx,
+          # which is produced at process-classes phase — not available in a clean CI checkout.
+          # The dep-check profile in camel-xml-io/pom.xml binds that execution to phase=none,
+          # letting the pre-committed sources in src/generated/java be used directly.
+          # camel-spring-xml is excluded: it unpacks SNAPSHOT source JARs (camel-api:sources, etc.)
+          # during process-resources, which are not available in a clean CI checkout without a
+          # prior mvn install. The XSD it generates is pre-committed, so skipping it here is safe.
+          # Modules that declare camel-spring-xml as a test dependency are handled by the
+          # "Install SNAPSHOT stubs" step above.
+          # camel-test-spring-junit5 is excluded: it has a compile dependency on camel-spring-xml.
+          # camel-test-spring-junit6 is excluded: it has a compile dependency on camel-spring-xml.
+          # Modules that declare camel-test-spring-junit6 as a test dependency (94+ modules) are
+          # handled by the "Install SNAPSHOT stubs" step above.
+          # camel-yaml-io: its 'generate-sources' execution reads jandex.idx (same root cause as
+          # camel-xml-io). The dep-check profile in camel-yaml-io/pom.xml binds that execution
+          # to phase=none, letting the pre-committed YamlModelWriter.java be used directly
+          # without regeneration.
+          # camel-java-io: its 'generate-sources' execution reads jandex.idx (same root cause as
+          # camel-xml-io). The dep-check profile in camel-java-io/pom.xml binds that execution
+          # to phase=none, letting the pre-committed JavaDslModelWriter.java be used directly
+          # without regeneration.
+          # camel-cxf-soap, camel-cxf-rest, camel-cxf-spring-soap, camel-cxf-spring-rest are excluded:
+          # they all declare a test-scope dependency on camel-cxf-common:test-jar, which Maven resolves
+          # even during mvn compile. The test-jar is produced at the 'package' phase and is not
+          # available in the local repository in a clean CI checkout (only mvn install would put it
+          # there, and running --also-make for camel-cxf-common would require compiling all of
+          # camel-core, making CI prohibitively slow).
+          # camel-soap declares camel-cxf-soap and camel-cxf-spring-transport as test-scope
+          # dependencies; these are handled by the "Install SNAPSHOT stubs" step above.
+          # camel-cxf-spring-common is excluded: it has a compile-scope dependency on camel-spring-xml,
+          # which is itself excluded (see above). Maven cannot resolve camel-spring-xml's jar during
+          # compile when camel-spring-xml is not part of the reactor subset.
+          # camel-cxf-spring-transport is excluded: it has a compile-scope dependency on
+          # camel-cxf-spring-common, which is itself excluded (see above).
+          # camel-micrometer-observability, camel-telemetry-dev, camel-opentelemetry, camel-telemetry,
+          # camel-opentelemetry2 are excluded for the same reason: they also declare test-scope deps
+          # on camel-cxf-common:test-jar.
+          # camel-observability-services is excluded: it has a compile-scope dependency on
+          # camel-opentelemetry2, which is itself excluded (see above).
+          # camel-ai-observability is excluded: it has a compile-scope dependency on camel-telemetry,
+          # which is itself excluded (see above). Maven cannot resolve camel-telemetry's jar during
+          # compile when camel-telemetry is not part of the reactor subset.
+          # camel-asn1 is excluded: it declares test-scope dependencies on camel-spring-xml and
+          # camel-test-spring-junit6, both of which are excluded from the reactor (see above).
+          # Maven resolves test-scope dependencies even during mvn compile when those artifacts are
+          # not available in the local repository.
+          # camel-debezium is excluded: camel-debezium-maven-plugin is a SNAPSHOT Maven plugin that
+          # lives inside the reactor. The connector modules (camel-debezium-mysql, -postgres, etc.)
+          # use it as a build plugin at generate-sources phase. Maven's --pl ! notation excludes a
+          # module by its exact relative path — it does NOT recursively exclude submodules discovered
+          # through the parent's <modules>. !components/camel-debezium excludes the parent pom, but
+          # the plugin at the 4-level path components/camel-debezium/camel-debezium-common/
+          # camel-debezium-maven-plugin remains in the reactor and is picked up from target/classes.
+          # At compile phase, maven-plugin-plugin has not yet generated META-INF/maven/plugin.xml
+          # (that happens at process-classes), so Maven cannot parse the plugin descriptor and the
+          # build fails. The plugin is pre-installed by the "Install SNAPSHOT build plugins" step
+          # and also excluded from the reactor via EXCLUDED_MODULES so Maven uses the .m2 version.
+          # sync-properties-maven-plugin is excluded for the same reason: it is a SNAPSHOT reactor
+          # plugin used by camel-dependencies at generate-resources phase. Pre-installing it and
+          # excluding it via EXCLUDED_MODULES lets Maven use the .m2 version (with correct plugin.xml).
+          # camel-yaml-dsl-maven-plugin is excluded for the same reason: it is a SNAPSHOT reactor
+          # plugin used by camel-yaml-dsl and camel-yaml-dsl-deserializers at generate-sources phase.
+          # Pre-installing it and excluding it via EXCLUDED_MODULES lets Maven use the .m2 version.
+          # camel-yaml-dsl and camel-yaml-dsl-deserializers each have a dep-check profile that binds
+          # the camel-yaml-dsl-maven-plugin executions to phase=none (the mojos read jandex.idx,
+          # which is not available in a clean CI checkout). The generated sources/resources are
+          # pre-committed, so skipping regeneration is safe.
+          # camel-yaml-dsl-validator-maven-plugin is excluded for the same reason: it is a SNAPSHOT
+          # reactor plugin used by camel-jbang-core at generate-resources phase. Pre-installing it
+          # and excluding it via EXCLUDED_MODULES lets Maven use the .m2 version.
+          # camel-jbang-core has a dep-check profile that binds its generate-doc-samples execution
+          # to phase=none. The generated eip-samples.json is pre-committed, so skipping it is safe.
+          # camel-endpointdsl: its main build disables default-compile (phase:none); there is no
+          # dep-check profile to re-enable it (unlike camel-endpointdsl-support). This means the
+          # compile step is a no-op for this module (same as camel-componentdsl). The reason we
+          # do NOT re-enable compilation is that the pre-committed generated sources in
+          # src/generated/java (CxfEndpointBuilderFactory.java, CxfRsEndpointBuilderFactory.java,
+          # etc.) import types from camel-cxf-soap (org.apache.camel.component.cxf.jaxws) and
+          # camel-cxf-rest (org.apache.camel.component.cxf.jaxrs), which are excluded from the
+          # reactor. The "Install SNAPSHOT stubs" step installs empty JARs for those artifacts,
+          # which satisfies Maven's dependency resolution, but empty JARs contain no class files —
+          # the javac compiler would fail with "package does not exist". Keeping default-compile
+          # disabled avoids this problem; the "Install SNAPSHOT stubs" step still installs stubs
+          # for all transitive provided/test deps so Maven's dependency graph resolution succeeds.
+          # camel-endpointdsl-support is excluded: it has a compile-scope dependency on
+          # camel-endpointdsl, whose default-compile is bound to phase:none (see above). Maven
+          # includes camel-endpointdsl in the reactor but produces no class files for it, so
+          # javac fails when compiling camel-endpointdsl-support's sources against an empty
+          # target/classes directory. Excluding it from the reactor and installing an empty stub
+          # (see "Install SNAPSHOT stubs") is the simplest fix; no other included module depends
+          # on camel-endpointdsl-support at compile scope.
+          # Test-scope analysis is skipped (pilot.skipTestScope=true): compile-scope analysis alone
+          # is sufficient for detecting missing or unused deps.
+          mvn compile -Pdep-check -Dlicense.skip -Dquickly \
+            --pl "$EXCLUDED_MODULES" \
+            --no-transfer-progress --batch-mode -q
+
+      - name: Run dependency analysis
+        run: |
+          mvn eu.maveniverse.maven.plugins:pilot-plugin:0.4.0:dependencies \
+            -Pdep-check -Dpilot.skipTestScope=true -Dlicense.skip \
+            --pl "$EXCLUDED_MODULES" \
+            --no-transfer-progress --batch-mode \
+            2>&1 | tee dep-check-output.txt
+
+      - name: Upload dependency analysis report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dep-check-report
+          path: dep-check-output.txt
+          retention-days: 7

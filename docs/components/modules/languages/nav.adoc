@@ -28,6 +28,7 @@
 ** xref:simple-ognl.adoc[Simple - OGNL Expressions]
 ** xref:spel-language.adoc[SpEL]
 ** xref:tokenize-language.adoc[Tokenize]
+** xref:typesafe-ai-language.adoc[TypeSafe AI]
 ** xref:variable-language.adoc[Variable]
 ** xref:wasm-language.adoc[Wasm]
 ** xref:xtokenize-language.adoc[XML Tokenize]

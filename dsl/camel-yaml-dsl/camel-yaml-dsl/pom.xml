@@ -36,12 +36,6 @@
         <firstVersion>3.9.0</firstVersion>
         <title>YAML DSL</title>
         <label>dsl</label>
-        <sourcecheckExcludes>
-            **/*.groovy
-        </sourcecheckExcludes>
-        <sourcecheckExcludesComma>
-            ${sourcecheckExcludes},
-        </sourcecheckExcludesComma>
         <annotations>
             routes.language=yaml
         </annotations>
@@ -73,23 +67,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
-            <version>${spock-version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.groovy</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.junit.platform</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
@@ -207,19 +184,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-test-junit5</artifactId>
-            <version>${groovy-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>${networknt-json-schema-validator-version}</version>
@@ -266,6 +230,11 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-jcl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-typesafe-ai</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -335,23 +304,43 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>addTestSources</goal>
-                            <goal>compileTests</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <invokeDynamic>true</invokeDynamic>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!--
+                dep-check profile: disable camel-yaml-dsl-maven-plugin generate-sources executions.
+                The mojos (generate-yaml-schema, generate-yaml-completion) read
+                META-INF/jandex.idx from the classpath of compiled reactor artifacts, which are
+                not available in a clean CI checkout when only the compile phase is run.
+                The generated schema/completion JSON files are pre-committed in
+                src/generated/resources/schema/, so skipping regeneration here is safe.
+            -->
+            <id>dep-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-yaml-schema-camelCase</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>generate-yaml-schema-canonical</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>generate-yaml-completion</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

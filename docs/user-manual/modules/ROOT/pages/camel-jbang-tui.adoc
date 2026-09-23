@@ -1307,7 +1307,7 @@ the Source tab's save: YAML routes against the Camel YAML DSL schema (a misspell
 instead of `loggingLevel` is reported) plus endpoint URIs and simple expressions, and `.properties` files
 against the catalog of `camel.*` and Spring Boot options. `camel_write_file` runs that validation itself and
 refuses to write an invalid file, returning the errors instead, so a model fixes them rather than the user
-finding them in the log after the reload (`validate=false` writes anyway). Both tools are part of the core
+finding them in the log after the reload. Both tools are part of the core
 tool set, so local models (Ollama) get them as well.
 
 Simple expressions get two more helpers, because they are what a small model gets wrong most often
@@ -1340,6 +1340,10 @@ so your own edits elsewhere in the file shift them rather than break them; a cha
 you edited is skipped and reported to the agent. When the replay is over you review with *F7* and
 save with *Ctrl+S* or *F5*, which is the confirmation, or discard with *Esc*. The agent waits until then
 and is told what was applied, what was skipped, and the content of the saved file if you changed it.
+
+An edit (`camel_edit_file`, which the agent uses to change a file without rewriting it) goes the same way: the
+snippet is replaced in the file's content and the result is confirmed or replayed like any write, so what you see
+in the editor is the finished file either way.
 
 While the replay pauses you can also ask the agent about the change it just made: *F8* opens the AI panel
 with the question prefilled (`About edit 2 of 3:`), you complete it and press *Enter*. The waiting

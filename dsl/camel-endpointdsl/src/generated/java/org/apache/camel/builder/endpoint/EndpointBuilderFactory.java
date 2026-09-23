@@ -392,6 +392,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageBuilders,
             org.apache.camel.builder.endpoint.dsl.TwitterSearchEndpointBuilderFactory.TwitterSearchBuilders,
             org.apache.camel.builder.endpoint.dsl.TwitterTimelineEndpointBuilderFactory.TwitterTimelineBuilders,
+            org.apache.camel.builder.endpoint.dsl.TypeSafeAiEndpointBuilderFactory.TypeSafeAiBuilders,
             org.apache.camel.builder.endpoint.dsl.UndertowEndpointBuilderFactory.UndertowBuilders,
             org.apache.camel.builder.endpoint.dsl.ValidatorEndpointBuilderFactory.ValidatorBuilders,
             org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory.VelocityBuilders,
