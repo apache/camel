@@ -238,7 +238,10 @@ public class IdempotentConsumer extends BaseProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processor, idempotentRepository);
+        // the idempotent repository may be shared with other routes or EIPs, so do not stop it when the route is
+        // stopped (stopping an in-memory repository clears it); it is stopped when the route is removed
+        // or CamelContext is stopped (doShutdown)
+        ServiceHelper.stopService(processor);
     }
 
     @Override
