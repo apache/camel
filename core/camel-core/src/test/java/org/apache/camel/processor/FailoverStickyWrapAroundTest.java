@@ -18,12 +18,17 @@ package org.apache.camel.processor;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -32,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FailoverStickyWrapAroundTest extends ContextTestSupport {
 
     private final Set<String> down = ConcurrentHashMap.newKeySet();
+    private final FailOverLoadBalancer dynamic = createStickyFailOver();
 
     @Test
     public void testFailoverStickyContinuesFromFirstEndpoint() throws Exception {
@@ -117,6 +123,43 @@ public class FailoverStickyWrapAroundTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testFailoverStickyWhenLastGoodEndpointWasRemoved() throws Exception {
+        // a and b are down, so c becomes the last known good endpoint
+        down.add("a");
+        down.add("b");
+        template.sendBody("direct:dynamic", "Hello World");
+        assertEquals(2, dynamic.getLastGoodIndex());
+
+        // c is removed while the route is running, so the last known good index is now out of range
+        dynamic.removeProcessor(dynamic.getProcessors().get(2));
+
+        // all remaining endpoints are down: each is tried once and the exchange fails (it must not loop)
+        resetMocks();
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(0);
+        Future<Object> future = template.asyncRequestBody("direct:dynamic", "Bye World");
+        assertThrows(ExecutionException.class, () -> future.get(5, TimeUnit.SECONDS));
+        assertMockEndpointsSatisfied();
+
+        // b is up again
+        resetMocks();
+        down.remove("b");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedBodiesReceived("Hi World");
+        template.sendBody("direct:dynamic", "Hi World");
+        assertMockEndpointsSatisfied();
+    }
+
+    private static FailOverLoadBalancer createStickyFailOver() {
+        FailOverLoadBalancer answer = new FailOverLoadBalancer();
+        answer.setMaximumFailoverAttempts(-1);
+        answer.setRoundRobin(false);
+        answer.setSticky(true);
+        return answer;
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -129,6 +172,10 @@ public class FailoverStickyWrapAroundTest extends ContextTestSupport {
                 from("direct:limited")
                         .loadBalance().failover(2, false, false, true)
                         .to("direct:a", "direct:b", "direct:c", "direct:d");
+
+                from("direct:dynamic")
+                        .loadBalance(dynamic)
+                        .to("direct:a", "direct:b", "direct:c");
 
                 from("direct:a").to("mock:a").process(e -> failIfDown("a"));
                 from("direct:b").to("mock:b").process(e -> failIfDown("b"));
