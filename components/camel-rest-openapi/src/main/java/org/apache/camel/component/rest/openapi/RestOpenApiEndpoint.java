@@ -747,7 +747,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (isNotEmpty(componentHost)) {
             return componentHost;
         }
-        
         URI absoluteURI = null;
         URI relativeURI = null;
         Set<URI> operationURIs = getURIs(operation.getServers());
@@ -793,7 +792,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (globalConfigurationHost != null) {
             return globalConfigurationHost;
         }
-       
         try {
             final URI uri = new URI(specificationUri);
             final String specificationScheme = uri.getScheme();

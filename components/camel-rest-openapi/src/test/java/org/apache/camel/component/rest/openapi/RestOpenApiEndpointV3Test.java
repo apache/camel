@@ -237,6 +237,10 @@ public class RestOpenApiEndpointV3Test {
         assertThat(endpoint.determineBasePath(openapi))
                 .as("When the OpenAPI server URL has no path, the base path should be empty")
                 .isEmpty();
+        assertThat(RestOpenApiHelper.determineBasePath(
+                camelContext, component, endpoint, openapi))
+                .as("When the OpenAPI server URL has no path, the helper base path should be empty")
+                .isEmpty();
     }
 
     @Test
