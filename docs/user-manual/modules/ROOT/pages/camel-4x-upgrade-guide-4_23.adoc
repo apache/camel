@@ -2330,6 +2330,13 @@ A name without a scheme, `resource:orderTemplate.json`, is a classpath resource.
 value and is not evaluated again. Nothing changes without the option: the `resource:` prefix on the expression
 text itself is resolved as before, and a returned value that happens to start with `resource:` stays as it is.
 
+=== camel-platform-http-vertx - a path parameter wins over an incoming header of the same name
+
+A REST endpoint with a path parameter, `/stock/{sku}`, sets the header `sku` from the path. When the request also
+carried an HTTP header of that name, the two were merged and `${header.sku}` was a `List` such as `[X, CAMEL-MUG]`,
+so a route that read it failed even when the path value was correct. The value from the path is used now; a query
+parameter may still repeat and is still collected into a list.
+
 === camel-core - the required attribute on rest param and route template parameter is now a String
 
 `ParamDefinition.required` (the rest DSL `param`) and `RouteTemplateParameterDefinition.required`

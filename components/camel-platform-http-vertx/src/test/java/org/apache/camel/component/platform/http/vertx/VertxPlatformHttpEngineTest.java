@@ -503,6 +503,52 @@ public class VertxPlatformHttpEngineTest {
         }
     }
 
+    /**
+     * CAMEL-24910: a path parameter is single-valued and part of the route's contract, so it wins over an incoming
+     * header of the same name; before, the two were merged into a list and ${header.name} answered "[X, Camel]".
+     */
+    @Test
+    public void testPathParameterWinsOverAHeaderOfTheSameName() throws Exception {
+        final CamelContext context = createCamelContextForTest();
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/greeting/{name}")
+                            .transform().simple("Hello ${header.name}");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .when()
+                    .get("/greeting/Camel")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("Hello Camel"));
+
+            // the same request with a header of that name: the path still decides
+            given()
+                    .header("name", "Rider")
+                    .when()
+                    .get("/greeting/Camel")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("Hello Camel"));
+
+            // and a query parameter may still repeat, which is a list
+            given()
+                    .when()
+                    .get("/greeting/Camel?other=a&other=b")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("Hello Camel"));
+        } finally {
+            context.stop();
+        }
+    }
+
     @Test
     public void testMatchOnUriPrefix() throws Exception {
         final CamelContext context = createCamelContextForTest();
