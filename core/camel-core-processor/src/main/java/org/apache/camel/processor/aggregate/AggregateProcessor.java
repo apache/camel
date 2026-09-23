@@ -132,6 +132,9 @@ public class AggregateProcessor extends BaseProcessorSupport
     private final WaitableInteger inProgressCount = new WaitableInteger();
     private final Set<String> unconfirmedCompleteExchanges = ConcurrentHashMap.newKeySet();
     private final Set<String> inProgressCompleteExchangesForRecoveryTask = ConcurrentHashMap.newKeySet();
+    // aggregated exchanges being completed (exchange id -> count): moved to the completed store of a recoverable
+    // repository, but not yet registered in inProgressCompleteExchanges by onSubmitCompletion
+    private final Map<String, Integer> completingExchanges = new ConcurrentHashMap<>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<>();
 
     private final AggregateProcessorStatistics statistics = new Statistics();
@@ -819,6 +822,28 @@ public class AggregateProcessor extends BaseProcessorSupport
     protected Exchange onCompletion(
             final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout,
             boolean aggregateFailed) {
+        // a recoverable repository moves the exchange to its completed store when it is removed, so mark it as being
+        // completed until onSubmitCompletion has registered it as in progress, as otherwise the recover task could
+        // recover and send it as well
+        final boolean completing = original != null && isRecoverableRepository();
+        if (completing) {
+            markCompleting(aggregated.getExchangeId());
+        }
+        Exchange answer = null;
+        try {
+            answer = doOnCompletion(key, original, aggregated, fromTimeout, aggregateFailed);
+            return answer;
+        } finally {
+            if (completing && answer == null) {
+                // not removed, or not to be sent
+                unmarkCompleting(aggregated.getExchangeId());
+            }
+        }
+    }
+
+    private Exchange doOnCompletion(
+            final String key, final Exchange original, final Exchange aggregated, boolean fromTimeout,
+            boolean aggregateFailed) {
         // store the correlation key as property before we remove so the repository has that information
         if (original != null) {
             original.setProperty(ExchangePropertyKey.AGGREGATED_CORRELATION_KEY, key);
@@ -865,6 +890,14 @@ public class AggregateProcessor extends BaseProcessorSupport
         return answer;
     }
 
+    private void markCompleting(String exchangeId) {
+        completingExchanges.merge(exchangeId, 1, Integer::sum);
+    }
+
+    private void unmarkCompleting(String exchangeId) {
+        completingExchanges.computeIfPresent(exchangeId, (id, count) -> count > 1 ? count - 1 : null);
+    }
+
     private void discard(String key, Exchange aggregated) {
         // this exchange is discarded
         discarded.incrementAndGet();
@@ -886,6 +919,8 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (recoveryInProgress.get()) {
             inProgressCompleteExchangesForRecoveryTask.add(exchange.getExchangeId());
         }
+        // registered as in progress, so no longer needs to be marked as being completed
+        unmarkCompleting(exchange.getExchangeId());
         // invoke the on completion callback
         aggregationStrategy.onCompletion(exchange);
 
@@ -1489,8 +1524,10 @@ public class AggregateProcessor extends BaseProcessorSupport
                     lock.lock();
                     try {
                         // consider in progress if it was in progress before we did the scan, or currently after we did the scan
+                        // (or is being completed and not yet registered as in progress)
                         // its safer to consider it in progress than risk duplicates due both in progress + recovered
-                        final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId);
+                        final boolean inProgress = inProgressCompleteExchangesForRecoveryTask.contains(exchangeId)
+                                || completingExchanges.containsKey(exchangeId);
                         if (inProgress) {
                             LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                             if (unconfirmedCompleteExchanges.contains(exchangeId)) {
@@ -1814,6 +1851,7 @@ public class AggregateProcessor extends BaseProcessorSupport
 
         // cleanup when shutting down
         inProgressCompleteExchanges.clear();
+        completingExchanges.clear();
         inProgressCount.reset();
 
         if (shutdownExecutorService) {
@@ -1916,6 +1954,8 @@ public class AggregateProcessor extends BaseProcessorSupport
                 LOG.trace("Force discarded triggered for correlation key: {}", key);
                 // force discarding by setting aggregate failed as true
                 onCompletion(key, exchange, exchange, false, true);
+                // the exchange is not submitted
+                unmarkCompleting(exchange.getExchangeId());
             }
         } finally {
             lock.unlock();
@@ -1955,6 +1995,8 @@ public class AggregateProcessor extends BaseProcessorSupport
                         LOG.trace("Force discarded triggered for correlation key: {}", key);
                         // force discarding by setting aggregate failed as true
                         onCompletion(key, exchange, exchange, false, true);
+                        // the exchange is not submitted
+                        unmarkCompleting(exchange.getExchangeId());
                     }
                 }
             } finally {
