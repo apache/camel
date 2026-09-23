@@ -167,8 +167,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         AsyncProcessor[] processors = doGetProcessors();
         if (processors.length == 0) {
             // no processors but indicate we are done (same as the other load balancers)
-            callback.done(true);
-            return true;
+            callback.done(false);
+            return false;
         }
         exchange.getContext().getCamelContextExtension().getReactiveExecutor()
                 .schedule(new State(exchange, callback, processors)::run);
