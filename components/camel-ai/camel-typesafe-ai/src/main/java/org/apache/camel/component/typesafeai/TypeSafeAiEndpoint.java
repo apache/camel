@@ -40,6 +40,8 @@ import org.apache.camel.util.json.JsonObject;
 @UriEndpoint(firstVersion = "4.23.0", scheme = "typesafe-ai", title = "TypeSafe AI", syntax = "typesafe-ai:name",
              producerOnly = true, category = { Category.AI })
 public class TypeSafeAiEndpoint extends DefaultEndpoint {
+    private static final int MAX_QUESTIONS_RESOURCE_BYTES = 4 * 1024 * 1024;
+
     @UriPath
     @Metadata(required = true)
     private String name;
@@ -81,7 +83,11 @@ public class TypeSafeAiEndpoint extends DefaultEndpoint {
         } else if (configuration.getQuestionsResource() != null) {
             String location = configuration.getQuestionsResource();
             try (InputStream input = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), location)) {
-                configuredQuestions = TypeSafeAiJson.questions(new String(input.readAllBytes(), StandardCharsets.UTF_8));
+                byte[] bytes = input.readNBytes(MAX_QUESTIONS_RESOURCE_BYTES + 1);
+                if (bytes.length > MAX_QUESTIONS_RESOURCE_BYTES) {
+                    throw new IOException("questionsResource exceeds 4 MB limit");
+                }
+                configuredQuestions = TypeSafeAiJson.questions(new String(bytes, StandardCharsets.UTF_8));
             } catch (IOException e) {
                 throw new IOException("Invalid questionsResource: " + e.getMessage(), e);
             }

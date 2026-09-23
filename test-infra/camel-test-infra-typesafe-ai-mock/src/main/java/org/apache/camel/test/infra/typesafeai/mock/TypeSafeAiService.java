@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -36,6 +37,8 @@ import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A local System One HTTP mock, or an existing compatible service when its base URL is supplied. Configure
@@ -45,6 +48,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * @since 4.23
  */
 public class TypeSafeAiService implements BeforeEachCallback, AfterEachCallback {
+    private static final Logger LOG = LoggerFactory.getLogger(TypeSafeAiService.class);
+
     private final String remoteBaseUrl;
     private final String apiKey;
     private final String model;
@@ -154,11 +159,16 @@ public class TypeSafeAiService implements BeforeEachCallback, AfterEachCallback 
     @Override
     public void afterEach(ExtensionContext context) {
         if (server != null) {
-            server.stop(0);
+            server.stop(1);
             server = null;
         }
         if (executor != null) {
             executor.shutdownNow();
+            try {
+                executor.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             executor = null;
         }
     }
@@ -190,7 +200,8 @@ public class TypeSafeAiService implements BeforeEachCallback, AfterEachCallback 
             try {
                 answers = responder.apply(request);
             } catch (RuntimeException e) {
-                send(exchange, 400, "{}");
+                LOG.error("TypeSafe AI mock responder failed", e);
+                send(exchange, 500, "{}");
                 return;
             }
             if (!answers.keySet().equals(questions.keySet())) {

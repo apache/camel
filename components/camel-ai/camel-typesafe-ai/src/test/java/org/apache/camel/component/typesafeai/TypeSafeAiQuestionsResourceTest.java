@@ -86,6 +86,17 @@ class TypeSafeAiQuestionsResourceTest extends TypeSafeAiTestSupport {
     }
 
     @Test
+    void rejectsResourceLargerThanFourMegabytes() throws Exception {
+        Path resource = temporaryDirectory.resolve("oversized-questions.json");
+        byte[] bytes = new byte[4 * 1024 * 1024 + 1];
+        Files.write(resource, bytes);
+
+        assertThatThrownBy(() -> context.getEndpoint(
+                "typesafe-ai:oversized?questionsResource=" + resource.toUri()).start())
+                .hasMessageContaining("questionsResource exceeds 4 MB limit");
+    }
+
+    @Test
     void fileResourceIsLoadedOnceAtEndpointStartup() throws Exception {
         Path resource = temporaryDirectory.resolve("questions.json");
         Files.writeString(resource, "{\"refund\":{\"type\":\"noul\",\"instructions\":\"Refund requested?\"}}");

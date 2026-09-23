@@ -68,6 +68,17 @@ class TypeSafeAiServiceTest {
     }
 
     @Test
+    void responderFailureReturnsServerError() throws Exception {
+        service.setResponder(request -> {
+            throw new IllegalStateException("Broken test responder");
+        });
+        String request = Jsoner.serialize(Map.of("model", "fixture-model", "state", "test",
+                "questions", Map.of("urgent", Map.of("type", "noul", "instructions", "Urgent?"))));
+
+        assertEquals(500, post(request, service.getApiKey()).statusCode());
+    }
+
+    @Test
     void remoteConfigurationBypassesTheMock() throws Exception {
         TypeSafeAiService remote = new TypeSafeAiService("http://127.0.0.1:8000", "local-test", "laya-rl-agent");
         remote.beforeEach(null);

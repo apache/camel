@@ -94,7 +94,10 @@ public class TypeSafeAiConfiguration implements Cloneable {
     }
 
     /**
-     * @since 4.23
+     * Returns the Camel resource URI for the JSON questions file, or {@code null} if not set.
+     *
+     * @return the questions resource URI, or {@code null}
+     * @since  4.23
      */
     public String getQuestionsResource() {
         return questionsResource;
