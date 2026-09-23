@@ -143,6 +143,9 @@ from("direct:start")
 
 A header that carries a literal `${...}` string is now used as the object key verbatim instead of being evaluated.
 
+A configured `keyName` or `bucketName` whose Simple expression resolves to `null` now fails with an
+`IllegalArgumentException` at the producer, instead of passing a `null` key/bucket on to the AWS SDK.
+
 === camel-console
 
 The `context` developer console no longer counts routes created by Kamelets in its `routesTotal` and `routesStarted`

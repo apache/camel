@@ -127,6 +127,16 @@ public class AWS2S3UtilsTest extends CamelTestSupport {
         assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineKey(exchange, config));
     }
 
+    @Test
+    void keyFromConfigurationResolvingToNullThrows() {
+        Exchange exchange = createExchangeWithBody("body");
+        // a configured keyName whose simple expression resolves to null fails fast at the producer
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setKeyName("${header.missing}");
+
+        assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineKey(exchange, config));
+    }
+
     // ---- determineBucketName ----
 
     @Test
@@ -163,6 +173,16 @@ public class AWS2S3UtilsTest extends CamelTestSupport {
     void bucketMissingFromHeaderAndConfigurationThrows() {
         Exchange exchange = createExchangeWithBody("body");
         AWS2S3Configuration config = new AWS2S3Configuration();
+
+        assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineBucketName(exchange, config));
+    }
+
+    @Test
+    void bucketFromConfigurationResolvingToNullThrows() {
+        Exchange exchange = createExchangeWithBody("body");
+        // a configured bucketName whose simple expression resolves to null fails fast at the producer
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setBucketName("${header.missing}");
 
         assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineBucketName(exchange, config));
     }
