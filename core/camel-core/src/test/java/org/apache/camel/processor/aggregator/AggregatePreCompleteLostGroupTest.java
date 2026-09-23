@@ -27,12 +27,15 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.KeyValueAggregationRepository;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -137,6 +140,40 @@ public class AggregatePreCompleteLostGroupTest extends ContextTestSupport {
     }
 
     @Test
+    public void testAggregationFailureAfterPreCompletionWithRecoverableRepository() throws Exception {
+        // the pre-completed group is sent at once, and as it is registered as in progress before it can be seen as
+        // completed in the repository, the recover task must not send it a second time
+        KeyValueAggregationRepository repository = new KeyValueAggregationRepository();
+        repository.setUseRecovery(true);
+        repository.setRecoveryInterval(50);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .aggregate(header("id"), createStrategy()).aggregationRepository(repository).completionTimeout(60000)
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("a1");
+
+        template.sendBodyAndHeader("direct:start", "a1", "id", 1);
+        Exchange bad = template.send("direct:start", e -> {
+            e.getIn().setBody("START-fail");
+            e.getIn().setHeader("id", 1);
+        });
+
+        assertNotNull(bad.getException());
+        assertMockEndpointsSatisfied();
+        // several recovery runs later the group is still delivered only once, and it is confirmed
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> repository.scan(context).isEmpty());
+        Awaitility.await().during(500, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(() -> mock.getReceivedCounter() == 1);
+    }
+
+    @Test
     public void testAggregationFailureDiscardedAfterPreCompletion() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("a1");
@@ -157,8 +194,12 @@ public class AggregatePreCompleteLostGroupTest extends ContextTestSupport {
 
     private AggregateProcessor createProcessor() {
         AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
+        return new AggregateProcessor(context, done, header("id"), createStrategy(), executorService, true);
+    }
+
+    private static AggregationStrategy createStrategy() {
         // pre-completes the current group when a body starting with START arrives
-        AggregationStrategy strategy = new AggregationStrategy() {
+        return new AggregationStrategy() {
             @Override
             public boolean canPreComplete() {
                 return true;
@@ -182,7 +223,6 @@ public class AggregatePreCompleteLostGroupTest extends ContextTestSupport {
                 return oldExchange;
             }
         };
-        return new AggregateProcessor(context, done, header("id"), strategy, executorService, true);
     }
 
     private Exchange createExchange(String body) {
