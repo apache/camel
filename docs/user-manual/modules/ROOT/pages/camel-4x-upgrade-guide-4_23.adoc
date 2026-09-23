@@ -2526,6 +2526,12 @@ field names are unchanged; only the header string values have changed.
 | `ChunkConstants.CHUNK_TEMPLATE` | `ChunkTemplate` | `CamelChunkTemplate`
 |===
 
+Both components read these headers only when `allowTemplateFromHeader=true`. Because the old names sat
+outside the `Camel` namespace, `DefaultHeaderFilterStrategy` did not strip them, so such a header
+arriving from an untrusted sender reached the producer; with the `Camel` prefix the headers are now
+filtered at the component boundary, so the template or resource can only come from the route. For that
+reason the old names should not simply be restored.
+
 Routes that reference the constants (for example `setHeader(MustacheConstants.MUSTACHE_TEMPLATE, ...)`)
 are unaffected. Routes that set the header by its literal string name, or that use
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
