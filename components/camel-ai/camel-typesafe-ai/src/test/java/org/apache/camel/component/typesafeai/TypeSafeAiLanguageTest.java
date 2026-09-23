@@ -227,7 +227,7 @@ class TypeSafeAiLanguageTest extends TypeSafeAiTestSupport {
     }
 
     @Test
-    void predicateOnlyEndpointParticipatesInContextLifecycle() throws Exception {
+    void predicateOnlyEndpointParticipatesInContextLifecycle() {
         Predicate predicate = predicate(0.8);
         predicate.init(context);
         assertThat(predicate.matches(exchange("refund"))).isTrue();

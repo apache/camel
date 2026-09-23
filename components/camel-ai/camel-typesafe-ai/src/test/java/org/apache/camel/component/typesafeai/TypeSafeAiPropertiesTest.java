@@ -92,7 +92,7 @@ class TypeSafeAiPropertiesTest extends TypeSafeAiTestSupport {
     }
 
     @Test
-    void configuresProducerAndLocalRoutingEntirelyThroughProperties() throws Exception {
+    void configuresProducerAndLocalRoutingEntirelyThroughProperties() {
         Main main = configuredMain();
         main.configure().addRoutesBuilder(new RouteBuilder() {
             @Override
@@ -150,7 +150,7 @@ class TypeSafeAiPropertiesTest extends TypeSafeAiTestSupport {
 
     @ParameterizedTest
     @ValueSource(strings = { "{PRIVATE", "[]", "{}", "{\"q\":{\"type\":\"unknown\"}}" })
-    void namesInvalidQuestionsOptionWithoutEchoingItsValue(String questions) throws Exception {
+    void namesInvalidQuestionsOptionWithoutEchoingItsValue(String questions) {
         Main main = configuredMain();
         main.addProperty("camel.component.typesafe-ai.questions", questions);
         main.configure().addRoutesBuilder(new RouteBuilder() {
@@ -231,7 +231,7 @@ class TypeSafeAiPropertiesTest extends TypeSafeAiTestSupport {
     }
 
     @Test
-    void producerAndPredicateReportTheSameNullStateError() throws Exception {
+    void producerAndPredicateReportTheSameNullStateError() {
         TypeSafeAiComponent component = context.getComponent("typesafe-ai", TypeSafeAiComponent.class);
         component.getConfiguration().setQuestions("{\"q\":{\"type\":\"noul\"}}");
         TypeSafeAiEndpoint endpoint = context.getEndpoint("typesafe-ai:null-state", TypeSafeAiEndpoint.class);

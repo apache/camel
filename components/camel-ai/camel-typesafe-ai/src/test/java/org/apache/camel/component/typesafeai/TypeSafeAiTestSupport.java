@@ -71,7 +71,7 @@ abstract class TypeSafeAiTestSupport {
     }
 
     @AfterEach
-    void stop() throws Exception {
+    void stop() {
         release.countDown();
         if (template != null) {
             template.stop();

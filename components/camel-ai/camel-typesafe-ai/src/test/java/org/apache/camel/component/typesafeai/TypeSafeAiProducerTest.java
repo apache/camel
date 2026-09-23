@@ -141,7 +141,7 @@ class TypeSafeAiProducerTest extends TypeSafeAiTestSupport {
             "{\"type\":\"noul\"}", "{\"type\":\"noul\",\"noul\":null}",
             "{\"type\":\"noul\",\"noul\":\"0.9\"}", "{\"type\":\"noul\",\"noul\":1.1}",
             "{\"type\":\"noul\",\"noul\":-0.1}", "{\"type\":\"choice\",\"noul\":0.9}" })
-    void rejectsInvalidNoulAnswers(String answer) throws Exception {
+    void rejectsInvalidNoulAnswers(String answer) {
         respond = request -> "{\"model\":\"jev-1.13.0\",\"usage\":{\"input_tokens\":1,\"output_tokens\":1},\"answers\":{\"predicate\":"
                              + answer + "}}";
         Exchange exchange = template.request("typesafe-ai:decisions", e -> e.getMessage().setBody(request("hello")));
