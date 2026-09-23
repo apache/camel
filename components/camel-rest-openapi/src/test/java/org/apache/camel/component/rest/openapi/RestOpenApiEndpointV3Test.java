@@ -536,6 +536,17 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
+    public void shouldLoadSpecificationWithoutServers() {
+        final CamelContext camelContext = new DefaultCamelContext();
+
+        OpenAPI openapi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "missing-servers.yaml");
+
+        assertThat(openapi).isNotNull();
+        assertThat(openapi.getServers()).isNotEmpty();
+        assertThat(openapi.getServers().get(0).getUrl()).isEqualTo("/");
+    }
+
+    @Test
     public void shouldResolveUris() {
         final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint();
         endpoint.parameters = new HashMap<>();
