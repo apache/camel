@@ -1,9 +1,12 @@
 # TypeSafe AI test execution
 
 Run these commands from `components/camel-ai/camel-typesafe-ai` after building the
-Camel dependencies. `TypeSafeAiExamplesTest` starts real Camel routes for the
-quickstart, triage, extraction cascade, and tool selection examples. It sends
-their requests through the TypeSafe AI HTTP component.
+Camel dependencies. `TypeSafeAiExamplesTest` starts Camel routes corresponding
+to seven TypeSafe AI use cases: quickstart, ticket triage,
+RAG passage screening and ranking, tool selection, extraction cascade,
+input/output guardrails, and judge with a retry. The test methods are small
+smoke checks; the route definitions in `TypeSafeAiExamplesSupport` are the
+reference for using the component.
 
 ## Local mock (default)
 
@@ -31,7 +34,7 @@ mvn verify -Dit.test=TypeSafeAiExternalServiceIT
 `LAYA_API_KEY`, and `LAYA_MODEL` as fallback variable names. The external API
 must implement `POST /v1/systemone` with the Noul, Choice, and Score response
 shapes. `TypeSafeAiExternalServiceIT` is skipped when no external base URL is
-configured. It runs the same four route examples as the mock test. The
+configured. It runs the same seven route examples as the mock test. The
 assertions accept varying model decisions and verify that the Camel route uses
 the returned values correctly.
 
