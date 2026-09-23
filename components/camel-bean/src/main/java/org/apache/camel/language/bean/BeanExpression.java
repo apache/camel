@@ -527,12 +527,53 @@ public class BeanExpression implements Expression, Predicate {
         }
         Object newResult = invokeBean(holder, beanName, methodName, resultExchange);
         if (resultExchange.getException() != null) {
+            // ${body.sku} on a Map with no method of that name: read the key, the only thing it can mean
+            // (CAMEL-24916)
+            Object value = mapValue(holder, exchange, methodName, resultExchange.getException());
+            if (value != NO_SUCH_KEY) {
+                resultExchange.setException(null);
+                return value;
+            }
             throw new RuntimeBeanExpressionException(
                     exchange, describeBean(holder, beanName, exchange),
                     keyHint(holder, exchange, methodName, methodHint(methodName, resultExchange.getException())),
                     resultExchange.getException());
         }
         return newResult;
+    }
+
+    /** Says that the bean is not a Map with that key, as null is a value a key can hold. */
+    private static final Object NO_SUCH_KEY = new Object();
+
+    /**
+     * The value of the key on a Map bean when the method of that name does not exist, so that ${body.sku} reads the sku
+     * of a map the way ${body[sku]} does - what a map means in jq, JavaScript and Groovy too (CAMEL-24916).
+     * <p/>
+     * A method still wins: ${body.size} on a Map calls size() as before. A name that is not a key still fails, so a
+     * misspelled field is still reported.
+     *
+     * @return the value of the key, or {@link #NO_SUCH_KEY} when this is not that case
+     */
+    private static Object mapValue(BeanHolder holder, Exchange exchange, String methodName, Exception cause) {
+        if (methodName == null || methodName.contains("(") || methodName.contains("[")) {
+            return NO_SUCH_KEY;
+        }
+        boolean noSuchMethod = false;
+        for (Throwable t = cause; t != null && !noSuchMethod; t = t.getCause()) {
+            noSuchMethod = t instanceof MethodNotFoundException;
+        }
+        if (!noSuchMethod) {
+            return NO_SUCH_KEY; // the method is there and it failed: that is a real error
+        }
+        try {
+            Object bean = holder != null ? holder.getBean(exchange) : null;
+            if (bean instanceof Map<?, ?> map && map.containsKey(methodName)) {
+                return map.get(methodName);
+            }
+        } catch (Exception e) {
+            // ignore and let the original failure stand
+        }
+        return NO_SUCH_KEY;
     }
 
     /**

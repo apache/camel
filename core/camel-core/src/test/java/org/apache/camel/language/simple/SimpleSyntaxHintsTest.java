@@ -144,14 +144,40 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testOgnlDotOnAMapSaysToUseAKey() {
+    public void testOgnlDotOnAMapReadsTheKey() {
+        // CAMEL-24916: a map has no method type, so the key is what the dot can mean
         exchange.getIn().setBody(new java.util.LinkedHashMap<>(java.util.Map.of("type", "order")));
-        Exception e = assertThrows(Exception.class,
-                () -> context.resolveLanguage("simple").createExpression("${body.type}").evaluate(exchange,
-                        String.class));
-        assertThat(e.getMessage()).contains("the value is a Map: a key is read with [type], as in ${body[type]}");
+        assertEquals("order", context.resolveLanguage("simple").createExpression("${body.type}").evaluate(exchange,
+                String.class));
         assertEquals("order", context.resolveLanguage("simple").createExpression("${body[type]}").evaluate(exchange,
                 String.class));
+    }
+
+    @Test
+    public void testOgnlDotOnAMapWithoutThatKeySaysToUseAKey() {
+        exchange.getIn().setBody(new java.util.LinkedHashMap<>(java.util.Map.of("type", "order")));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.typo}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("the value is a Map: a key is read with [typo], as in ${body[typo]}");
+    }
+
+    @Test
+    public void testAMethodOfAMapStillWins() {
+        exchange.getIn().setBody(new java.util.LinkedHashMap<>(java.util.Map.of("size", "not the size")));
+        assertEquals("1", context.resolveLanguage("simple").createExpression("${body.size}").evaluate(exchange,
+                String.class), "size() is a method of Map, so it still answers before the key");
+    }
+
+    @Test
+    public void testOgnlDotOnANestedMapReadsTheKey() {
+        java.util.Map<String, Object> item = new java.util.LinkedHashMap<>();
+        item.put("sku", "CAMEL-MUG");
+        java.util.Map<String, Object> body = new java.util.LinkedHashMap<>();
+        body.put("item", item);
+        exchange.getIn().setBody(body);
+        assertEquals("CAMEL-MUG", context.resolveLanguage("simple").createExpression("${body.item.sku}")
+                .evaluate(exchange, String.class));
     }
 
     @Test
