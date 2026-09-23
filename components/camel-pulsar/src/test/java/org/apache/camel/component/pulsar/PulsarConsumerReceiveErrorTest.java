@@ -37,7 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Answers.RETURNS_SELF;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -48,8 +51,8 @@ public class PulsarConsumerReceiveErrorTest extends CamelTestSupport {
 
     private static final String ROUTE_ID = "pulsar-receive-error";
 
-    private final CountDownLatch blockReceive = new CountDownLatch(1);
-    private final CountDownLatch secondReceive = new CountDownLatch(1);
+    private Consumer<byte[]> pulsarConsumer;
+
     private final AtomicInteger receiveCalls = new AtomicInteger();
 
     @Test
@@ -67,28 +70,24 @@ public class PulsarConsumerReceiveErrorTest extends CamelTestSupport {
         assertEquals("simulated receive failure", exceptionHandler.captured.get().getMessage());
 
         // the loop must still be polling: the first call failed, so a second one proves it did not die
-        assertTrue(secondReceive.await(10, TimeUnit.SECONDS),
-                "the polling loop should have continued after the error, receive calls: " + receiveCalls.get());
+        verify(pulsarConsumer, timeout(10000).times(2)).receive();
+
+        // the second call reported a closed consumer, which is terminal: the loop must leave rather than
+        // spin on an error that will never clear
+        verify(pulsarConsumer, after(1500).times(2)).receive();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
 
-        final Consumer<byte[]> pulsarConsumer = mock(Consumer.class);
+        pulsarConsumer = mock(Consumer.class);
         when(pulsarConsumer.receive()).thenAnswer(invocation -> {
             if (receiveCalls.incrementAndGet() == 1) {
                 throw new PulsarClientException("simulated receive failure");
             }
-            secondReceive.countDown();
-            // hold the loop here until the route is stopped, the same way a quiet topic would
-            try {
-                blockReceive.await();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            // what the client reports once the consumer thread is interrupted on shutdown
-            throw new PulsarClientException(new InterruptedException());
+            // a failure that never clears, which the loop must treat as terminal
+            throw new PulsarClientException.AlreadyClosedException("consumer is closed");
         });
 
         final ConsumerBuilder<byte[]> builder = mock(ConsumerBuilder.class, RETURNS_SELF);
