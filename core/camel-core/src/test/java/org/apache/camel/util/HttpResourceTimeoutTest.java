@@ -74,8 +74,10 @@ public class HttpResourceTimeoutTest {
             }
         }, "mute-http-server");
         acceptor.setDaemon(true);
-        acceptor.start();
+        // set before the thread starts: it is the loop guard, and a start() that raced ahead of this assignment
+        // would read a value left by the previous test under a PER_CLASS lifecycle
         stopped = false;
+        acceptor.start();
     }
 
     @AfterEach
