@@ -19,6 +19,8 @@ package org.apache.camel.component.xmlsecurity.api;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -91,15 +93,54 @@ class DefaultXmlSignature2MessageReferenceCoverageTest {
         check(WRAPPED, "http://example.org/other.xml");
     }
 
+    @Test
+    void aBareHashReferenceDoesNotCoverAnything() {
+        // URI="#" yields an empty identifier; without the empty-id guard, getAttribute returning "" for a missing
+        // attribute would make "".equals("") match any element and accept the whole document
+        XmlSignatureException e = assertThrows(XmlSignatureException.class, () -> check(WRAPPED, "#"));
+        assertTrue(e.getMessage().contains("None of the validated References covers the document element"),
+                "unexpected message: " + e.getMessage());
+    }
+
+    @Test
+    void anXPointerWithAnEmptyIdDoesNotCoverAnything() {
+        XmlSignatureException e = assertThrows(XmlSignatureException.class, () -> check(WRAPPED, "#xpointer(id(''))"));
+        assertTrue(e.getMessage().contains("None of the validated References covers the document element"),
+                "unexpected message: " + e.getMessage());
+    }
+
+    @Test
+    void aNullReferenceUriDoesNotDisableTheCheckForLaterReferences() {
+        // An absent URI tells us nothing, but it must not short-circuit the whole check: the #myID reference after it
+        // still has to be examined, and it does not cover the <attacker> document element
+        XmlSignatureException e = assertThrows(XmlSignatureException.class,
+                () -> check(WRAPPED, Arrays.asList(null, "#myID")));
+        assertTrue(e.getMessage().contains("None of the validated References covers the document element"),
+                "unexpected message: " + e.getMessage());
+    }
+
+    @Test
+    void aReferenceToTheDocumentElementsXmlIdIsAccepted() throws Exception {
+        // xml:id is a standardised ID attribute (XML DSig 1.1); a reference to it covers the element
+        check("<signed xml:id=\"myID\"><b>bValue</b></signed>", "#myID");
+    }
+
     private static void check(String xml, String referenceUri) throws Exception {
+        check(xml, Collections.singletonList(referenceUri));
+    }
+
+    private static void check(String xml, List<String> referenceUris) throws Exception {
         DefaultXmlSignature2Message mapper = new DefaultXmlSignature2Message();
         mapper.setEnforceReferenceCoverage(true);
 
-        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        // namespace-aware so xml:id resolves to the XML namespace, matching how the signature processor parses
+        dbf.setNamespaceAware(true);
+        Document document = dbf.newDocumentBuilder()
                 .parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         Element documentElement = document.getDocumentElement();
 
-        mapper.checkDocumentElementIsCoveredByAReference(new TestInput(referenceUri), documentElement);
+        mapper.checkDocumentElementIsCoveredByAReference(new TestInput(referenceUris), documentElement);
     }
 
     /**
@@ -107,15 +148,19 @@ class DefaultXmlSignature2MessageReferenceCoverageTest {
      */
     private static final class TestInput implements Input {
 
-        private final String referenceUri;
+        private final List<String> uris;
 
-        private TestInput(String referenceUri) {
-            this.referenceUri = referenceUri;
+        private TestInput(List<String> uris) {
+            this.uris = uris;
         }
 
         @Override
         public List<Reference> getReferences() {
-            return Collections.singletonList(new TestReference(referenceUri));
+            List<Reference> references = new ArrayList<>();
+            for (String uri : uris) {
+                references.add(new TestReference(uri));
+            }
+            return references;
         }
 
         @Override

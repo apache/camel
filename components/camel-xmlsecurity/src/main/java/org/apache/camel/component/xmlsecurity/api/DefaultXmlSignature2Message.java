@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.Manifest;
@@ -171,6 +172,14 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      * purpose. Only the route knows which it is. Turn this on when the signature is expected to cover the document
      * element - a plain enveloped signature with {@code URI=""} or with the document element's own id - and use an
      * output node search or an {@link XmlSignatureChecker} instead when it is not.
+     * <p>
+     * A same-document reference is matched against the document element's own id: an {@code Id}, {@code ID} or
+     * {@code id} attribute (the XML DSig 1.0 convention), an {@code xml:id} attribute (XML DSig 1.1), or an attribute a
+     * DTD or schema declared to be of type ID. A namespaced id from another convention - notably WS-Security's
+     * {@code wsu:Id} - is deliberately not matched by attribute name: matching it by local name across any namespace
+     * would let an attacker put a matching id on their wrapper element and defeat the check, so only the id mechanisms
+     * the signature processor itself resolves references through are honoured. When such a reference legitimately
+     * covers the document element but is not recognised here, select the signed content with an output node search.
      */
     public void setEnforceReferenceCoverage(boolean enforceReferenceCoverage) {
         this.enforceReferenceCoverage = enforceReferenceCoverage;
@@ -377,8 +386,10 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         for (Reference reference : references) {
             String uri = reference.getURI();
             if (uri == null) {
-                // Nothing to correlate against
-                return;
+                // An absent URI tells us nothing about this document. Like an external reference below it must not
+                // short-circuit the check for the references that follow it; a lone absent-URI reference still leaves
+                // sameDocumentReferenceSeen false, so the document is correctly rejected.
+                continue;
             }
             if (uri.isEmpty()) {
                 // The whole document is covered
@@ -412,10 +423,22 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         String xpointerId = getXPointerId(identifier);
         String id = xpointerId != null ? xpointerId : identifier;
 
+        if (id.isEmpty()) {
+            // An empty identifier names nothing. Without this guard it would fall through to the getAttribute
+            // comparison below, where Element.getAttribute returns "" for a missing attribute, so "".equals("")
+            // would match any element and accept the whole document (reachable via URI="#" and URI="#xpointer(id(''))").
+            return false;
+        }
+
         for (String attribute : ID_ATTRIBUTE_NAMES) {
             if (id.equals(documentElement.getAttribute(attribute))) {
                 return true;
             }
+        }
+        // xml:id (XML DSig 1.1 / the W3C xml:id spec) is a standardised ID attribute the signature processor also
+        // resolves references through, so a document element carrying it is genuinely covered
+        if (id.equals(documentElement.getAttributeNS(XMLConstants.XML_NS_URI, "id"))) {
+            return true;
         }
         // In case an ID attribute was declared for the document, ask the DOM as well
         Element byId = documentElement.getOwnerDocument().getElementById(id);

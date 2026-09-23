@@ -213,6 +213,12 @@ DefaultXmlSignature2Message mapper = new DefaultXmlSignature2Message();
 mapper.setEnforceReferenceCoverage(true);
 // ... to("xmlsecurity-verify:verify?xmlSignature2Message=#mapper")
 ----
++
+A same-document reference is matched against the document element's own id — an `Id`, `ID` or
+`id` attribute, an `xml:id` attribute, or an attribute a DTD or schema declared to be of type ID.
+A namespaced id from another convention, notably WS-Security's `wsu:Id`, is deliberately not
+matched by attribute name (matching it across any namespace would let an attacker put a matching
+id on their wrapper element), so select the signed content with an `outputNodeSearch` for those.
 * Configure an `outputNodeSearch` (by element name or XPath), so the output is the signed
 node rather than the document element, or supply an `xmlSignatureChecker` that inspects the
 References against what the route expects.
