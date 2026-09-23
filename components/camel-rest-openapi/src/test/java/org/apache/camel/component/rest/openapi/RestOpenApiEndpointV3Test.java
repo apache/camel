@@ -214,6 +214,67 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
+    void shouldDetermineEmptyBasePathFromOpenApiServer() {
+        final RestConfiguration restConfiguration = new RestConfiguration();
+
+        final CamelContext camelContext = mock(CamelContext.class);
+        when(camelContext.getRestConfiguration()).thenReturn(restConfiguration);
+
+        // Pathless server URL: http://localhost:8080 (no path component)
+        final OpenAPI openapi = new OpenAPI();
+        openapi.addServersItem(new Server().url("http://localhost:8080"));
+
+        final RestOpenApiComponent component = new RestOpenApiComponent();
+        component.setCamelContext(camelContext);
+
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:getPetById", "getPetById", component,
+                Collections.emptyMap());
+
+        assertThat(RestOpenApiHelper.getBasePathFromOpenApi(openapi))
+                .as("OpenAPI server without a path should produce an empty base path")
+                .isEmpty();
+
+        assertThat(endpoint.determineBasePath(openapi))
+                .as("When the OpenAPI server URL has no path, the base path should be empty (not default '/')")
+                .isEmpty();
+
+        assertThat(RestOpenApiHelper.determineBasePath(camelContext, component, endpoint, openapi))
+                .as("RestOpenApiHelper.determineBasePath should also return empty for a pathless server URL")
+                .isEmpty();
+    }
+
+    @Test
+    void shouldDefaultBasePathWhenNoServersInSpec() {
+        final RestConfiguration restConfiguration = new RestConfiguration();
+
+        final CamelContext camelContext = mock(CamelContext.class);
+        when(camelContext.getRestConfiguration()).thenReturn(restConfiguration);
+
+        // OpenAPI spec with no servers entry at all
+        final OpenAPI openapi = new OpenAPI();
+
+        final RestOpenApiComponent component = new RestOpenApiComponent();
+        component.setCamelContext(camelContext);
+
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:getPetById", "getPetById", component,
+                Collections.emptyMap());
+
+        assertThat(RestOpenApiHelper.getBasePathFromOpenApi(openapi))
+                .as("OpenAPI with no servers should return null from getBasePathFromOpenApi")
+                .isNull();
+
+        assertThat(endpoint.determineBasePath(openapi))
+                .as("When the OpenAPI spec has no servers entry, the base path should fall back to default '/'")
+                .isEqualTo("/");
+
+        assertThat(RestOpenApiHelper.determineBasePath(camelContext, component, endpoint, openapi))
+                .as("RestOpenApiHelper.determineBasePath should fall back to '/' when spec has no servers")
+                .isEqualTo("/");
+    }
+
+    @Test
     public void shouldDetermineEndpointParameters() {
         final CamelContext camelContext = mock(CamelContext.class);
 
