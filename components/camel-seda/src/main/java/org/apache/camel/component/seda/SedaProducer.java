@@ -19,6 +19,7 @@ package org.apache.camel.component.seda;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
@@ -141,7 +142,14 @@ public class SedaProducer extends DefaultAsyncProducer {
                 try {
                     latch.await();
                 } catch (InterruptedException e) {
+                    LOG.debug("Interrupted while waiting for task to complete at [{}]", endpoint.getEndpointUri());
                     Thread.currentThread().interrupt();
+                    // the task has not completed so fail the exchange (do not return the request as the reply)
+                    exchange.setException(e);
+                    // remove the Exchange from queue (if not yet processed)
+                    endpoint.getQueue().remove(copy);
+                    // count down to indicate the reply must be ignored
+                    latch.countDown();
                 }
             }
         } else {
@@ -233,6 +241,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             } catch (InterruptedException e) {
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
                 Thread.currentThread().interrupt();
+                throw interruptedWhileAddingToQueue(e);
             }
         } else if (blockWhenFull && offerTimeout == 0) {
             try {
@@ -240,6 +249,7 @@ public class SedaProducer extends DefaultAsyncProducer {
             } catch (InterruptedException e) {
                 LOG.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
                 Thread.currentThread().interrupt();
+                throw interruptedWhileAddingToQueue(e);
             }
         } else if (blockWhenFull && offerTimeout > 0) {
             try {
@@ -250,13 +260,18 @@ public class SedaProducer extends DefaultAsyncProducer {
                                                     + "after timeout of " + offerTimeout + " milliseconds");
                 }
             } catch (InterruptedException e) {
-                // ignore
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
                 Thread.currentThread().interrupt();
+                throw interruptedWhileAddingToQueue(e);
             }
         } else {
             queue.add(target);
         }
+    }
+
+    private static RejectedExecutionException interruptedWhileAddingToQueue(InterruptedException cause) {
+        // the exchange was not added to the queue, so the exchange must fail
+        return new RejectedExecutionException("Interrupted while adding the exchange to the queue", cause);
     }
 
 }
