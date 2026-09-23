@@ -158,6 +158,52 @@ class OpaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void marksAnExchangeThatOnlyProceededBecauseOfFailOpen() throws Exception {
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+
+        Exchange out = template.request(ENDPOINT + "&failOpen=true", e -> {
+        });
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
+    }
+
+    @Test
+    void doesNotMarkADecisionAPolicyActuallyMade() throws Exception {
+        // the point of the marker is that it separates the two, so an allow from a real policy must not carry it
+        givenDecision(Boolean.TRUE);
+
+        Exchange out = template.request(ENDPOINT + "&failOpen=true", e -> {
+        });
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+    }
+
+    @Test
+    void doesNotLetAnInboundMessageClaimItDidNotFailOpen() throws Exception {
+        // as settable by a sender as the verdict was: left in place, "FailedOpen=false" would disguise an
+        // unauthorized exchange as one a policy allowed - which is the audit trail this header exists to give
+        when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
+
+        Exchange out = template.request(ENDPOINT + "&failOpen=true",
+                e -> e.getMessage().setHeader(OpaConstants.DECISION_FAILED_OPEN, false));
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
+    }
+
+    @Test
+    void clearsAClaimedFailOpenMarkerOnAnOrdinaryDecision() throws Exception {
+        givenDecision(Boolean.TRUE);
+
+        Exchange out = template.request(ENDPOINT,
+                e -> e.getMessage().setHeader(OpaConstants.DECISION_FAILED_OPEN, true));
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
+    }
+
+    @Test
     void failsClosedWhenThePolicyCannotBeEvaluated() throws Exception {
         when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenThrow(new OPAException("connection refused"));
 
@@ -167,6 +213,8 @@ class OpaProducerTest extends CamelTestSupport {
         assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class)
                 .hasMessageContaining(PATH);
         assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        // the marker is for the deliberate failOpen path only, not for any exception the evaluator happens to hit
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isNull();
     }
 
     @Test
