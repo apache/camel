@@ -66,9 +66,9 @@ class TypeSafeAiLanguageTest extends TypeSafeAiTestSupport {
         assertThat(exchange.getMessage().getBody()).isSameAs(original);
         JsonObject result = exchange.getProperty(TypeSafeAiLanguage.RESULT, JsonObject.class);
         assertThat(((Number) result.path("answers.predicate.noul")).doubleValue()).isEqualTo(probability);
-        assertThat(result.get("model")).isEqualTo("jev-1.13.0");
+        assertThat(result).containsEntry("model", "jev-1.13.0");
         assertThat(requests).hasSize(1);
-        assertThat(requests.peek().get("state")).isEqualTo(original);
+        assertThat(requests.peek()).containsEntry("state", original);
     }
 
     @ParameterizedTest
@@ -147,8 +147,7 @@ class TypeSafeAiLanguageTest extends TypeSafeAiTestSupport {
             callers.shutdownNow();
         }
         assertThat(requests).hasSize(12).allSatisfy(request -> assertThat(request.getJsonObject("questions")
-                .getJsonObject("predicate").get("instructions"))
-                .isEqualTo("Refund?"));
+                .getJsonObject("predicate")).containsEntry("instructions", "Refund?"));
     }
 
     @Test

@@ -223,7 +223,7 @@ class TypeSafeAiPropertiesTest extends TypeSafeAiTestSupport {
                 assertThat(result.getException()).isNull();
                 assertThat(result.getProperty("evaluation")).isInstanceOf(JsonObject.class);
                 assertThat(requests).hasSize(1);
-                assertThat(requests.peek().get("state")).isEqualTo("refund");
+                assertThat(requests.peek()).containsEntry("state", "refund");
             }
         } finally {
             main.stop();

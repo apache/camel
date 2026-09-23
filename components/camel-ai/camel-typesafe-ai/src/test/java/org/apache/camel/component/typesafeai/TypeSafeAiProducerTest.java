@@ -46,16 +46,16 @@ class TypeSafeAiProducerTest extends TypeSafeAiTestSupport {
                 .containsEntry("questions", mixedQuestions());
         JsonObject choice = (JsonObject) response.path("answers.department");
         JsonObject score = (JsonObject) response.path("answers.urgency");
-        assertThat(choice.get("choice")).isEqualTo("billing");
+        assertThat(choice).containsEntry("choice", "billing");
         assertThat(((Number) choice.get("confidence")).doubleValue()).isEqualTo(0.8);
         assertThat(((Number) choice.path("probabilities.billing")).doubleValue()).isEqualTo(0.9);
         assertThat(((Number) score.get("score")).doubleValue()).isEqualTo(1.2);
-        assertThat(score.get("legend")).isEqualTo(Map.of("0", "Routine", "1", "Urgent", "2", "Critical"));
+        assertThat(score).containsEntry("legend", Map.of("0", "Routine", "1", "Urgent", "2", "Critical"));
         assertThat(((Number) score.path("probabilities.1")).doubleValue()).isEqualTo(0.8);
         assertThat(((Number) response.path("answers.refund.noul")).doubleValue()).isEqualTo(0.9);
         assertThat(((Number) response.path("usage.input_tokens")).longValue()).isEqualTo(100);
         assertThat(((Number) response.path("usage.output_tokens")).longValue()).isEqualTo(20);
-        assertThat(response.get("model")).isEqualTo("jev-1.13.0");
+        assertThat(response).containsEntry("model", "jev-1.13.0");
     }
 
     @Test

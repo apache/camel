@@ -98,7 +98,7 @@ class TypeSafeAiLanguagePropertiesTest extends TypeSafeAiTestSupport {
                 }
             }
             assertThat(requests).hasSize(3).allSatisfy(request -> {
-                assertThat(request.get("state")).isEqualTo("Refund the payment");
+                assertThat(request).containsEntry("state", "Refund the payment");
                 assertThat(request.path("questions.predicate.instructions")).isEqualTo("Refund requested?");
                 assertThat(request.toJson()).doesNotContain("PRIVATE");
             });
@@ -122,20 +122,20 @@ class TypeSafeAiLanguagePropertiesTest extends TypeSafeAiTestSupport {
         exchange.getMessage().setHeader("selected", "SELECTED");
         respond = request -> noulResponse(0.75);
         assertThat(language.createPredicate("Refund?").matches(exchange)).isFalse();
-        assertThat(requests.poll().get("state")).isEqualTo("SELECTED");
+        assertThat(requests.poll()).containsEntry("state", "SELECTED");
 
         language.setThreshold(0.7);
         language.setUncertainty(0.01);
         language.setState("${body}");
         assertThat(language.createPredicate("Refund?").matches(exchange)).isTrue();
-        assertThat(requests.poll().get("state")).isEqualTo("BODY");
+        assertThat(requests.poll()).containsEntry("state", "BODY");
 
         String question = "typesafe-ai:question-is-not-an-endpoint?threshold=0";
         Predicate override = language.createPredicate(question,
                 new Object[] { "typesafe-ai:other?threshold=0.6", 0.8, 0, "Fail", "${header.selected}" });
         assertThat(override.matches(exchange)).isFalse();
         var request = requests.poll();
-        assertThat(request.get("state")).isEqualTo("SELECTED");
+        assertThat(request).containsEntry("state", "SELECTED");
         assertThat(request.path("questions.predicate.instructions")).isEqualTo(question);
         assertThat(context.hasEndpoint("typesafe-ai:other?threshold=0.6")).isNotNull();
     }
