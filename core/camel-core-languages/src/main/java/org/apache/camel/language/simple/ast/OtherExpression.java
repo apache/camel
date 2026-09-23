@@ -112,7 +112,7 @@ public class OtherExpression extends BaseSimpleNode {
     }
 
     private static boolean isZero(Object value) {
-        // any kind of number such as 0, 0L, 0.0 or BigDecimal.ZERO
+        // any kind of number such as 0, 0L, 0.0 or BigDecimal.ZERO; -0.0 is also zero, NaN is not
         return value instanceof Number n && n.doubleValue() == 0;
     }
 }

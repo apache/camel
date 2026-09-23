@@ -1122,8 +1122,19 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${header.count} ?: 'none'", "none");
         exchange.getIn().setHeader("count", BigDecimal.ZERO);
         assertExpression("${header.count} ?: 'none'", "none");
+        exchange.getIn().setHeader("count", -0.0d);
+        assertExpression("${header.count} ?: 'none'", "none");
+        // NaN is not zero
+        exchange.getIn().setHeader("count", Double.NaN);
+        assertExpression("${header.count} ?: 'none'", Double.NaN);
         exchange.getIn().setHeader("count", 3L);
         assertExpression("${header.count} ?: 'none'", 3L);
+    }
+
+    @Test
+    public void testLogicalExpressionToString() {
+        Expression exp = context.resolveLanguage("simple").createExpression("${body != null && body.size() > 0}");
+        assertEquals("${body} != null && ${body.size()} > 0", exp.toString());
     }
 
     @Test
