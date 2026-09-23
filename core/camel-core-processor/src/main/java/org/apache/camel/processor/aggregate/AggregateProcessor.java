@@ -1953,9 +1953,12 @@ public class AggregateProcessor extends BaseProcessorSupport
                 total = 1;
                 LOG.trace("Force discarded triggered for correlation key: {}", key);
                 // force discarding by setting aggregate failed as true
-                onCompletion(key, exchange, exchange, false, true);
-                // the exchange is not submitted
-                unmarkCompleting(exchange.getExchangeId());
+                Exchange answer = onCompletion(key, exchange, exchange, false, true);
+                if (answer != null) {
+                    // onCompletion returned the exchange to be sent (discardOnAggregationFailure is false), so it is still
+                    // marked as being completed, but it is not passed to onSubmitCompletion, so clear the mark here
+                    unmarkCompleting(answer.getExchangeId());
+                }
             }
         } finally {
             lock.unlock();
@@ -1994,9 +1997,12 @@ public class AggregateProcessor extends BaseProcessorSupport
                     if (exchange != null) {
                         LOG.trace("Force discarded triggered for correlation key: {}", key);
                         // force discarding by setting aggregate failed as true
-                        onCompletion(key, exchange, exchange, false, true);
-                        // the exchange is not submitted
-                        unmarkCompleting(exchange.getExchangeId());
+                        Exchange answer = onCompletion(key, exchange, exchange, false, true);
+                        if (answer != null) {
+                            // onCompletion returned the exchange to be sent (discardOnAggregationFailure is false), so it is still
+                            // marked as being completed, but it is not passed to onSubmitCompletion, so clear the mark here
+                            unmarkCompleting(answer.getExchangeId());
+                        }
                     }
                 }
             } finally {
