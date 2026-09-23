@@ -73,6 +73,13 @@ Prior to Camel 4.23 the property was only set when there was no fallback and was
 so a fallback that tested it for `null` must now test for `true` or `false` instead.
 `CamelCircuitBreakerResponseShortCircuited` is unchanged and remains `true` whenever the fallback runs, whatever the cause.
 
+=== Weighted Load Balancer EIP
+
+The distribution ratios of the weighted load balancer are now validated when the route starts. A negative ratio,
+ratios that are all `0`, or ratios whose sum is greater than `2147483647` now fail the route at startup with an
+`IllegalArgumentException`. Previously such a route started, but sending to it could hang the caller, spin a CPU,
+or send every message to the same endpoint.
+
 === Context reload now re-applies placeholder based component options
 
 When a context reload is triggered, for example by one of the vault components detecting that a secret was rotated,
