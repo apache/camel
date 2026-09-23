@@ -25,8 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -80,6 +82,16 @@ public class RecipientListProcessor extends MulticastProcessor {
      * using it.
      */
     static final class RecipientProcessorExchangePair implements ProcessorExchangePair {
+        private static final int NEW = 0;
+        private static final int BEGUN = 1;
+        private static final int DONE = 2;
+        private static final int RELEASED = 3;
+        // used instead of the prepared processor when the pair was released before it could begin
+        private static final Processor SKIP = exchange -> {
+            // noop
+        };
+
+        private final AtomicInteger state = new AtomicInteger(NEW);
         private final int index;
         private final Endpoint endpoint;
         private final AsyncProducer producer;
@@ -120,11 +132,18 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         @Override
         public Processor getProcessor() {
-            return prepared;
+            // the recipient list completed (and released the producer) before this pair could begin,
+            // so it must not be sent anymore
+            return state.get() == RELEASED ? SKIP : prepared;
         }
 
         @Override
         public void begin() {
+            if (!state.compareAndSet(NEW, BEGUN)) {
+                LOG.trace("RecipientProcessorExchangePair #{} not sent as the recipient list is already done: {}", index,
+                        exchange);
+                return;
+            }
             // we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
             exchange.setProperty(ExchangePropertyKey.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
@@ -140,12 +159,32 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         @Override
         public void done() {
+            if (!state.compareAndSet(BEGUN, DONE)) {
+                // not begun (released already), or done already
+                return;
+            }
             LOG.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
+            // preserve original MEP
+            if (originalPattern != null) {
+                exchange.setPattern(originalPattern);
+            }
+            releaseProducer();
+        }
+
+        /**
+         * Releases the producer of this pair when the recipient list is done before the pair was begun (such as
+         * stopOnException or timeout), as then {@link #done()} is not called. If the pair has not begun yet, it will
+         * not be sent anymore.
+         */
+        void releaseIfNotBegun() {
+            if (state.compareAndSet(NEW, RELEASED)) {
+                LOG.trace("RecipientProcessorExchangePair #{} released as not sent: {}", index, exchange);
+                releaseProducer();
+            }
+        }
+
+        private void releaseProducer() {
             try {
-                // preserve original MEP
-                if (originalPattern != null) {
-                    exchange.setPattern(originalPattern);
-                }
                 // when we are done we should release back in pool
                 producerCache.releaseProducer(endpoint, producer);
                 // and stop prototype endpoints
@@ -333,6 +372,22 @@ public class RecipientListProcessor extends MulticastProcessor {
         // and create the pair
         return new RecipientProcessorExchangePair(
                 index, producerCache, endpoint, producer, prepared, copy, pattern, prototypeEndpoint);
+    }
+
+    @Override
+    protected void doDone(
+            Exchange original, Exchange subExchange, Iterable<ProcessorExchangePair> pairs,
+            AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
+        if (pairs != null) {
+            // the producers are acquired up front for all recipients, so release the producers of the recipients
+            // that were not sent to, as the recipient list may be done before (such as stopOnException or timeout)
+            for (ProcessorExchangePair pair : pairs) {
+                if (pair instanceof RecipientProcessorExchangePair rpair) {
+                    rpair.releaseIfNotBegun();
+                }
+            }
+        }
+        super.doDone(original, subExchange, pairs, callback, doneSync, forceExhaust);
     }
 
     protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
