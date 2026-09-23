@@ -129,6 +129,7 @@ public interface AsyncProcessorAwaitManager extends StaticService {
          *
          * @since 4.23
          */
+        @Nullable
         default String getNodeSource() {
             return null;
         }
