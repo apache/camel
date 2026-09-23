@@ -864,7 +864,7 @@ public class SimpleTest extends LanguageTestSupport {
         // exchange scoped
         assertExpression("${variableAs('cheese', 'String')}", "gauda");
         assertExpression("${variableAs('foo', 'int')}", null);
-        assertExpression("${variableAA('bar', 'int')}", null);
+        assertExpression("${variableAs('bar', 'int')}", null);
 
         // global scoped
         assertExpression("${variableAs('global:cheese', 'String')}", "gorgonzola");

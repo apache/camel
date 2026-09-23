@@ -43,7 +43,7 @@ public final class SimpleFunctionHelper {
         if (remainder == null) {
             remainder = ifStartsWithReturnRemainder("header", function);
         }
-        return remainder;
+        return keyRemainder(remainder);
     }
 
     public static String parseVariable(String function) {
@@ -51,6 +51,49 @@ public final class SimpleFunctionHelper {
         if (remainder == null) {
             remainder = ifStartsWithReturnRemainder("variable", function);
         }
+        return keyRemainder(remainder);
+    }
+
+    /**
+     * The remainder after a name such as header must start the key, so ${headerfoo} is not the header foo (and a
+     * custom function named such as headerCount can be called).
+     */
+    private static String keyRemainder(String remainder) {
+        if (remainder != null && !remainder.isEmpty()) {
+            char c = remainder.charAt(0);
+            if (c != '.' && c != ':' && c != '?' && c != '[') {
+                return null;
+            }
+        }
         return remainder;
+    }
+
+    /**
+     * The index of the parenthesis that closes the argument list, where the text is what comes after the opening
+     * parenthesis. Parentheses inside nested functions and quotes are skipped, so the type in
+     * ${convertTo(${header.foo.trim()},Integer)} is found. Returns -1 if there is no closing parenthesis.
+     */
+    public static int indexOfClosingParenthesis(String text) {
+        int depth = 0;
+        boolean single = false;
+        boolean dubble = false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '\'' && !dubble) {
+                single = !single;
+            } else if (c == '"' && !single) {
+                dubble = !dubble;
+            } else if (!single && !dubble) {
+                if (c == '(') {
+                    depth++;
+                } else if (c == ')') {
+                    if (depth == 0) {
+                        return i;
+                    }
+                    depth--;
+                }
+            }
+        }
+        return -1;
     }
 }

@@ -50,9 +50,9 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                         "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function, index);
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
-            if (tokens.length > 3) {
+            if (tokens.length < 2 || tokens.length > 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${replace(from,to,expression)} was: " + function, index);
+                        "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function, index);
             }
             String from = StringHelper.xmlDecode(tokens[0]);
             String to = StringHelper.xmlDecode(tokens[1]);
@@ -196,7 +196,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.trimExpression(exp);
         }
@@ -216,7 +216,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.capitalizeExpression(exp);
         }
@@ -237,10 +237,10 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                 throw new SimpleParserException(
                         "Valid syntax: ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function, index);
             }
-            exp = StringHelper.removeQuotes(tokens[0]);
-            len = StringHelper.removeQuotes(tokens[1]);
+            exp = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+            len = StringHelper.removeLeadingAndEndingQuotes(tokens[1]);
             if (tokens.length == 3) {
-                separator = StringHelper.removeQuotes(tokens[2]);
+                separator = StringHelper.removeLeadingAndEndingQuotes(tokens[2]);
             }
             return StringExpressionBuilder.padExpression(exp, len, separator);
         }
@@ -257,21 +257,22 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                                                 + function,
                         index);
             }
-            if (values.contains(",")) {
-                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-                if (tokens.length > 3) {
-                    throw new SimpleParserException(
-                            "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: "
-                                                    + function,
-                            index);
-                }
-                exp1 = StringHelper.removeQuotes(tokens[0]);
-                exp2 = StringHelper.removeQuotes(tokens[1]);
+            // a comma inside quotes is part of the value, such as ${concat('Hello, ')}
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: "
+                                                + function,
+                        index);
+            }
+            if (tokens.length >= 2) {
+                exp1 = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+                exp2 = StringHelper.removeLeadingAndEndingQuotes(tokens[1]);
                 if (tokens.length == 3) {
-                    separator = StringHelper.removeQuotes(tokens[2]);
+                    separator = StringHelper.removeLeadingAndEndingQuotes(tokens[2]);
                 }
             } else {
-                exp2 = StringHelper.removeQuotes(values.trim());
+                exp2 = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
             }
             return StringExpressionBuilder.concatExpression(exp1, exp2, separator);
         }
@@ -281,7 +282,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.quoteExpression(exp);
         }
@@ -291,7 +292,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.safeQuoteExpression(exp);
         }
@@ -301,7 +302,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.unquoteExpression(exp);
         }
@@ -311,7 +312,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.uppercaseExpression(exp);
         }
@@ -321,7 +322,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.lowercaseExpression(exp);
         }
@@ -331,7 +332,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.lengthExpression(exp);
         }
@@ -341,7 +342,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.sizeExpression(exp);
         }
@@ -364,7 +365,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
                         index);
             }
             if (ObjectHelper.isNotEmpty(exp)) {
-                exp = StringHelper.removeQuotes(exp.trim());
+                exp = StringHelper.removeLeadingAndEndingQuotes(exp.trim());
             } else {
                 exp = null;
             }
@@ -376,7 +377,7 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String exp = null;
             String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
-                exp = StringHelper.removeQuotes(value);
+                exp = StringHelper.removeLeadingAndEndingQuotes(value);
             }
             return StringExpressionBuilder.normalizeWhitespaceExpression(exp);
         }

@@ -40,19 +40,19 @@ public final class MathFunctionFactory implements SimpleLanguageFunctionFactory 
         if (remainder != null) {
             String value = StringHelper.beforeLast(remainder, ")");
             return MathExpressionBuilder.absExpression(
-                    ObjectHelper.isNotEmpty(value) ? StringHelper.removeQuotes(value) : null);
+                    ObjectHelper.isNotEmpty(value) ? StringHelper.removeLeadingAndEndingQuotes(value) : null);
         }
         remainder = ifStartsWithReturnRemainder("floor(", function);
         if (remainder != null) {
             String value = StringHelper.beforeLast(remainder, ")");
             return MathExpressionBuilder.floorExpression(
-                    ObjectHelper.isNotEmpty(value) ? StringHelper.removeQuotes(value) : null);
+                    ObjectHelper.isNotEmpty(value) ? StringHelper.removeLeadingAndEndingQuotes(value) : null);
         }
         remainder = ifStartsWithReturnRemainder("ceil(", function);
         if (remainder != null) {
             String value = StringHelper.beforeLast(remainder, ")");
             return MathExpressionBuilder.ceilExpression(
-                    ObjectHelper.isNotEmpty(value) ? StringHelper.removeQuotes(value) : null);
+                    ObjectHelper.isNotEmpty(value) ? StringHelper.removeLeadingAndEndingQuotes(value) : null);
         }
         remainder = ifStartsWithReturnRemainder("sum(", function);
         if (remainder != null) {
