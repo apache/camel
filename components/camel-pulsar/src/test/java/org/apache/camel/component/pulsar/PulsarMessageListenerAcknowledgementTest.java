@@ -72,11 +72,40 @@ public class PulsarMessageListenerAcknowledgementTest extends CamelTestSupport {
     @Test
     public void testFailedExchangeIsNegativelyAcknowledged() throws Exception {
         final Consumer<byte[]> pulsarConsumer = mock(Consumer.class);
+        final Message<byte[]> message = message("fail");
 
-        listener().received(pulsarConsumer, message("fail"));
+        listener().received(pulsarConsumer, message);
 
-        verify(pulsarConsumer, timeout(5000)).negativeAcknowledge(messageId);
+        // the Message overload, not the MessageId one: only that carries the redelivery count into
+        // NegativeAcksTracker, so a configured negativeAckRedeliveryBackoff can escalate
+        verify(pulsarConsumer, timeout(5000)).negativeAcknowledge(message);
+        verify(pulsarConsumer, never()).negativeAcknowledge(messageId);
         verify(pulsarConsumer, never()).acknowledge(messageId);
+    }
+
+    @Test
+    public void testManualAcknowledgementLeavesTheFailedMessageToTheRoute() throws Exception {
+        final Consumer<byte[]> pulsarConsumer = mock(Consumer.class);
+        final Message<byte[]> message = message("fail");
+
+        final CapturingExceptionHandler exceptionHandler = new CapturingExceptionHandler();
+        pulsarConsumer().setExceptionHandler(exceptionHandler);
+
+        context.getEndpoint(ENDPOINT_URI, PulsarEndpoint.class).getPulsarConfiguration()
+                .setAllowManualAcknowledgement(true);
+        try {
+            listener().received(pulsarConsumer, message);
+
+            // wait for the callback to have run before asserting that nothing was sent to the broker
+            assertTrue(exceptionHandler.latch.await(5, TimeUnit.SECONDS),
+                    "the route failure should still be reported");
+            verify(pulsarConsumer, never()).negativeAcknowledge(message);
+            verify(pulsarConsumer, never()).negativeAcknowledge(messageId);
+            verify(pulsarConsumer, never()).acknowledge(messageId);
+        } finally {
+            context.getEndpoint(ENDPOINT_URI, PulsarEndpoint.class).getPulsarConfiguration()
+                    .setAllowManualAcknowledgement(false);
+        }
     }
 
     @Test

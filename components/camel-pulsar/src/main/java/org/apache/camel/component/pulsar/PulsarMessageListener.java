@@ -50,9 +50,11 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
         pulsarConsumer.getAsyncProcessor().process(exchange, doneSync -> {
             try {
                 if (exchange.getException() != null) {
+                    // tell the broker first: a custom ExceptionHandler that throws must not cost us the
+                    // negative acknowledgement, which would silently fall back to ack-timeout redelivery
+                    negativeAcknowledge(consumer, message);
                     pulsarConsumer.getExceptionHandler().handleException("Error processing exchange", exchange,
                             exchange.getException());
-                    negativeAcknowledge(consumer, message);
                 } else {
                     try {
                         acknowledge(consumer, message);
@@ -77,10 +79,14 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
      * Tells the broker the message was not processed, so that it is redelivered after
      * <tt>negativeAckRedeliveryDelayMicros</tt> instead of waiting for the acknowledgement timeout. Left to the route
      * when manual acknowledgement is enabled, the same way {@link #acknowledge} is.
+     * <p>
+     * The message is passed rather than its id on purpose: only that overload carries the redelivery count into
+     * <tt>NegativeAcksTracker</tt>, and without it a configured <tt>negativeAckRedeliveryBackoff</tt> is always asked
+     * for the delay of attempt zero and never escalates.
      */
     private void negativeAcknowledge(final Consumer<byte[]> consumer, final Message<byte[]> message) {
         if (!endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
-            consumer.negativeAcknowledge(message.getMessageId());
+            consumer.negativeAcknowledge(message);
         }
     }
 
