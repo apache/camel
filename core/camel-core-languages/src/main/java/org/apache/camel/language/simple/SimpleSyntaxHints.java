@@ -168,10 +168,8 @@ public final class SimpleSyntaxHints {
         StringBuilder answer = new StringBuilder();
         int from = 0;
         for (int at = logicalOperator(text, 0); at >= 0; at = logicalOperator(text, from)) {
+            // the operator matched with its trailing space, so the next space is at most two characters away
             int end = text.indexOf(' ', at + 1);
-            if (end < 0) {
-                break; // the operator has nothing after it: leave it to the parser to say so
-            }
             answer.append(wrapComparison(text.substring(from, at).trim()));
             answer.append(' ').append(text, at, end).append(' ');
             from = end + 1;
