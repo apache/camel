@@ -559,6 +559,24 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
             }
             LOG.warn("exactlyOnce is enabled but no Kafka consumer manual-commit is present on the exchange; the source"
                      + " offsets will not be committed inside the transaction. Ensure the source Kafka consumer uses"
+            if (manual instanceof DefaultKafkaManualCommit dmc) {
+                // Read the consumer group metadata on the consumer poll thread that is processing this exchange; the
+                // Kafka consumer is not safe for multi-threaded access. The offset to commit is the next offset to
+                // read, i.e. the processed record's offset + 1.
+                Map<TopicPartition, OffsetAndMetadata> offsets = Collections.singletonMap(
+                        dmc.getPartition(), new OffsetAndMetadata(dmc.getRecordOffset() + 1));
+                return new KafkaTransactionSynchronization(
+                        transactionId, kafkaProducer, offsets, dmc.getConsumerGroupMetadata());
+            } else if (manual != null) {
+                // A custom KafkaManualCommit that doesn't extend DefaultKafkaManualCommit cannot supply
+                // group metadata; failing loudly here is safer than silently producing without EOS.
+                throw new IllegalStateException(
+                    "exactlyOnce=true requires a DefaultKafkaManualCommit instance to read consumer offsets; "
+                    + "found " + manual.getClass().getName() + ". Ensure the source consumer uses the default "
+                    + "KafkaManualCommitFactory.");
+            }
+            LOG.warn("exactlyOnce is enabled but no Kafka consumer manual-commit is present on the exchange; the source"
+                     + " offsets will not be committed inside the transaction. Ensure the source Kafka consumer uses"
                      + " allowManualCommit=true and autoCommitEnable=false.");
         }
         return new KafkaTransactionSynchronization(transactionId, kafkaProducer);
