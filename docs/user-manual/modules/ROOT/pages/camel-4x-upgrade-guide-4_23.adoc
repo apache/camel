@@ -2622,3 +2622,11 @@ Routes that reference the constants (for example `setHeader(MustacheConstants.MU
 are unaffected. Routes that set the header by its literal string name, or that use
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
+
+=== camel-seda - purging the queue completes the discarded exchanges
+
+When a SEDA queue is purged (with `purgeWhenStopping=true` or the `purgeQueue` JMX operation), the discarded exchanges
+are now failed with a `RejectedExecutionException` and their on completions are executed. A producer waiting for the
+reply of a discarded exchange (`waitForTaskToComplete`) is released with that exception, instead of waiting until its
+`timeout`, or forever when the timeout is disabled. On completions handed over to a discarded InOnly exchange, such as
+the commit or rollback of the consumer that received the message, now run as a failure, where previously they never ran.
