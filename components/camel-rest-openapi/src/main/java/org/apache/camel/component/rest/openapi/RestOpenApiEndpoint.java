@@ -810,8 +810,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                 "Unable to determine destination host for requests. The OpenAPI specification"
                                         + " does not specify an absolute URL in 'servers' (found relative or default path), and no 'host'"
                                         + " parameter was configured on the endpoint, component, or RestConfiguration for `"
-                                        + (determineComponentName() != null
-                                                ? determineComponentName() : "default" + "` component"));
+                                        + (determineComponentName() != null ? determineComponentName() : "default")
+                                        + "` component");
     }
 
     private Set<URI> getURIs(List<Server> servers) {
