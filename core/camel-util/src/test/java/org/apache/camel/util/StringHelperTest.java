@@ -621,6 +621,11 @@ public class StringHelperTest {
     public void testCapitalizeAll() {
         assertNull(StringHelper.capitalizeAll(null));
         assertEquals("Hello World How Are You", StringHelper.capitalizeAll("hello world how are you"));
+        assertEquals("", StringHelper.capitalizeAll(""));
+        assertEquals("", StringHelper.capitalize(""));
+        assertEquals(" Hello World", StringHelper.capitalizeAll(" hello world"));
+        assertEquals("A B", StringHelper.capitalizeAll("a b"));
+        assertEquals("Hello\tWorld\nAgain", StringHelper.capitalizeAll("hello\tworld\nagain"));
     }
 
     @Test

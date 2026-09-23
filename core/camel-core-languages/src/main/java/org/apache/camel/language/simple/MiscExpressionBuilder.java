@@ -454,22 +454,7 @@ public final class MiscExpressionBuilder {
                 } else {
                     value = exchange.getMessage().getBody();
                 }
-                if (value != null) {
-                    Class<?> type = value.getClass();
-                    if (ObjectHelper.isNumericType(type)) {
-                        return "number";
-                    } else if (boolean.class == type || Boolean.class == type) {
-                        return "boolean";
-                    } else if (value instanceof CharSequence) {
-                        return "string";
-                    } else if (ObjectHelper.isPrimitiveArrayType(type) || value instanceof Collection
-                            || value instanceof Map<?, ?>) {
-                        return "array";
-                    } else {
-                        return "object";
-                    }
-                }
-                return "null";
+                return kindOfType(value);
             }
 
             @Override
@@ -1112,5 +1097,28 @@ public final class MiscExpressionBuilder {
                 return "simpleJsonpath[" + path + "]";
             }
         };
+    }
+
+    /**
+     * What kind of type is the value in JSON terms (null, number, string, boolean, array or object)
+     */
+    static String kindOfType(Object value) {
+        if (value == null) {
+            return "null";
+        }
+        Class<?> type = value.getClass();
+        if (value instanceof Number) {
+            // also BigDecimal and BigInteger, such as numbers from a JSON document
+            return "number";
+        } else if (Boolean.class == type) {
+            return "boolean";
+        } else if (value instanceof CharSequence) {
+            return "string";
+        } else if (type.isArray() || value instanceof Collection) {
+            return "array";
+        } else {
+            // a Map is a JSON object
+            return "object";
+        }
     }
 }

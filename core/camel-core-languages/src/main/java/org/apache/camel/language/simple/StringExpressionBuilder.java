@@ -17,6 +17,7 @@
 package org.apache.camel.language.simple;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -66,30 +67,22 @@ public final class StringExpressionBuilder {
                     value = exchange.getMessage().getBody(Object.class);
                 }
                 if (value != null) {
-                    String type = kindOfType(value);
+                    String type = MiscExpressionBuilder.kindOfType(value);
                     if ("string".equals(type) || "array".equals(type) || "object".equals(type)) {
                         String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
-                        body = StringHelper.removeLeadingAndEndingQuotes(body);
-                        value = StringQuoteHelper.doubleQuote(body);
+                        // a value that is already one quoted string is not quoted twice
+                        if (isQuotedOnce(body, '"') || isQuotedOnce(body, '\'')) {
+                            body = body.substring(1, body.length() - 1);
+                        }
+                        // escape quotes, backslashes and control characters so the result is a valid JSON string
+                        value = "\"" + EscapeHelper.escape(EscapeHelper.Kind.JSON, body) + "\"";
                     }
                 }
                 return value;
             }
 
-            private String kindOfType(Object value) {
-                Class<?> type = value.getClass();
-                if (ObjectHelper.isNumericType(type)) {
-                    return "number";
-                } else if (boolean.class == type || Boolean.class == type) {
-                    return "boolean";
-                } else if (value instanceof CharSequence) {
-                    return "string";
-                } else if (ObjectHelper.isPrimitiveArrayType(type) || value instanceof Collection
-                        || value instanceof Map<?, ?>) {
-                    return "array";
-                } else {
-                    return "object";
-                }
+            private static boolean isQuotedOnce(String text, char quote) {
+                return text.length() >= 2 && text.charAt(0) == quote && text.indexOf(quote, 1) == text.length() - 1;
             }
 
             @Override
@@ -296,14 +289,16 @@ public final class StringExpressionBuilder {
                 }
 
                 int max = Math.abs(width);
-                while (max > answer.length()) {
-                    if (width > 0) {
-                        answer = answer + sep;
-                    } else {
-                        answer = sep + answer;
-                    }
+                if (max <= answer.length()) {
+                    return answer;
                 }
-                return answer;
+                // a separator of several characters is cut so the answer is exactly the width
+                StringBuilder padding = new StringBuilder(max);
+                while (padding.length() < max - answer.length()) {
+                    padding.append(sep);
+                }
+                padding.setLength(max - answer.length());
+                return width > 0 ? answer + padding : padding + answer;
             }
 
             @Override
@@ -451,18 +446,9 @@ public final class StringExpressionBuilder {
                     body = exchange.getMessage().getBody();
                 }
                 if (body != null) {
-                    if (body instanceof byte[] arr) {
-                        return arr.length;
-                    } else if (body instanceof char[] arr) {
-                        return arr.length;
-                    } else if (body instanceof int[] arr) {
-                        return arr.length;
-                    } else if (body instanceof long[] arr) {
-                        return arr.length;
-                    } else if (body instanceof double[] arr) {
-                        return arr.length;
-                    } else if (body instanceof String[] arr) {
-                        return arr.length;
+                    if (body.getClass().isArray()) {
+                        // any kind of array such as byte[], Object[] or Integer[]
+                        return Array.getLength(body);
                     } else if (body instanceof Collection<?> c) {
                         return c.size();
                     } else if (body instanceof Map<?, ?> m) {
@@ -509,18 +495,9 @@ public final class StringExpressionBuilder {
                     body = exchange.getMessage().getBody();
                 }
                 try {
-                    if (body instanceof byte[] arr) {
-                        return arr.length;
-                    } else if (body instanceof char[] arr) {
-                        return arr.length;
-                    } else if (body instanceof int[] arr) {
-                        return arr.length;
-                    } else if (body instanceof long[] arr) {
-                        return arr.length;
-                    } else if (body instanceof double[] arr) {
-                        return arr.length;
-                    } else if (body instanceof String[] arr) {
-                        return arr.length;
+                    if (body != null && body.getClass().isArray()) {
+                        // any kind of array such as byte[], Object[] or Integer[]
+                        return Array.getLength(body);
                     } else if (body instanceof StreamCache sc) {
                         return (int) sc.length();
                     } else {
@@ -693,8 +670,12 @@ public final class StringExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                int num1 = exp1.evaluate(exchange, Integer.class);
-                int num2 = exp2.evaluate(exchange, Integer.class);
+                Integer num1 = exp1.evaluate(exchange, Integer.class);
+                Integer num2 = exp2.evaluate(exchange, Integer.class);
+                if (num1 == null || num2 == null) {
+                    throw new IllegalArgumentException(
+                            "substring number expression evaluated to null: " + head + "," + tail);
+                }
                 if (num1 < 0 && num2 == 0) {
                     // if there is only one value and its negative then we want to clip from tail
                     num2 = num1;
@@ -735,6 +716,10 @@ public final class StringExpressionBuilder {
                     return null;
                 }
                 String bef = expBefore.evaluate(exchange, String.class);
+                if (bef == null) {
+                    // no delimiter (such as a missing header) then nothing comes before
+                    return null;
+                }
                 return StringHelper.before(body, bef);
             }
 
@@ -768,6 +753,10 @@ public final class StringExpressionBuilder {
                     return null;
                 }
                 String aft = expAfter.evaluate(exchange, String.class);
+                if (aft == null) {
+                    // no delimiter (such as a missing header) then nothing comes after
+                    return null;
+                }
                 return StringHelper.after(body, aft);
             }
 
@@ -807,6 +796,10 @@ public final class StringExpressionBuilder {
                 }
                 String aft = expAfter.evaluate(exchange, String.class);
                 String bef = expBefore.evaluate(exchange, String.class);
+                if (aft == null || bef == null) {
+                    // no delimiter (such as a missing header) then nothing comes between
+                    return null;
+                }
                 return StringHelper.between(body, aft, bef);
             }
 

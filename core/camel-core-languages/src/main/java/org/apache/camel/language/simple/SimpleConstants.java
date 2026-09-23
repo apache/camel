@@ -656,15 +656,15 @@ public final class SimpleConstants {
               label = "core")
     public static final String ORIGINAL_BODY = "originalBody";
 
-    @Metadata(description = "Pads the expression with extra padding if necessary, according the the total width. The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.",
+    @Metadata(description = "Pads the expression with extra padding if necessary, according to the total width. The separator is by default a space. A positive width pads to the right (after the value), and a negative width pads to the left (before the value).",
               label = "string", javaType = "String", displayName = "Pad String",
               examples = {
-                      "${pad('Hi',10)} ->         Hi // left-padded with spaces to width 10",
-                      "${pad('Hi',-10)} -> Hi         // right-padded with spaces",
-                      "${pad('42',5,'0')} -> 00042 // left-padded with zeros" },
+                      "${pad('Hi',10)} -> Hi         // padded to the right with spaces to width 10",
+                      "${pad('Hi',-10)} ->         Hi // padded to the left with spaces",
+                      "${pad('42',-5,'0')} -> 00042 // padded to the left with zeros" },
               annotations = {
                       "param=exp:Object:required::The expression to pad",
-                      "param=width:int:required::The target width. Negative for right-padding",
+                      "param=width:int:required::The target width. Positive pads to the right, negative pads to the left",
                       "param=separator:String:optional: :The padding character (default is space)" })
     public static final String PAD = "pad(exp,width,separator)";
 

@@ -79,7 +79,8 @@ public final class MathFunctionFactory implements SimpleLanguageFunctionFactory 
         if (ObjectHelper.isNotEmpty(values)) {
             return StringQuoteHelper.splitSafeQuote(values, ',', true, false);
         }
-        return null;
+        // no values, such as ${sum()}, then use the message body
+        return new String[] { "${body}" };
     }
 
 }
