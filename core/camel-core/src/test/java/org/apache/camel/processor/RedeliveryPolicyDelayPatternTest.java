@@ -50,4 +50,19 @@ public class RedeliveryPolicyDelayPatternTest {
         assertEquals(10000, policy.calculateRedeliveryDelay(0, 50));
         assertEquals(10000, policy.calculateRedeliveryDelay(0, 100));
     }
+
+    @Test
+    public void testDelayPatternJavadocExample() {
+        // the example in the javadoc of RedeliveryPolicy
+        policy.setDelayPattern("5:1000;10:5000;20:20000");
+
+        assertEquals(0, policy.calculateRedeliveryDelay(0, 0));
+        assertEquals(0, policy.calculateRedeliveryDelay(0, 4));
+        assertEquals(1000, policy.calculateRedeliveryDelay(0, 5));
+        assertEquals(1000, policy.calculateRedeliveryDelay(0, 9));
+        assertEquals(5000, policy.calculateRedeliveryDelay(0, 10));
+        assertEquals(5000, policy.calculateRedeliveryDelay(0, 19));
+        assertEquals(20000, policy.calculateRedeliveryDelay(0, 20));
+        assertEquals(20000, policy.calculateRedeliveryDelay(0, 100));
+    }
 }
