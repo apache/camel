@@ -1460,10 +1460,6 @@
     },
     {
       "source": "to-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - to:\n            uri: \"freemarker:\/\/templateHome\/${body.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
-    },
-    {
-      "source": "to-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: file:messages\/foo\n      steps:\n        - toD:\n            uri: \"freemarker:\/\/templateHome\/${body.templateName}.ftl\"\n        - to:\n            uri: jms:queue:foo\n"
     },
     {

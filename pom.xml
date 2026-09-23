@@ -993,6 +993,43 @@
             </pluginRepositories>
         </profile>
         <profile>
+            <!--
+                Opt-in dependency analysis profile.
+                Usage: mvn compile pilot:dependencies -Pdep-check -Dpilot.skipTestScope=true [-Dpilot.action=check]
+                Leverages eu.maveniverse.maven.plugins:pilot-plugin:dependencies for
+                bytecode-level analysis: detects unused declared and used transitive deps.
+                Non-blocking by default (report mode); use -Dpilot.action=check to fail
+                the build on findings, or -Dpilot.action=fix to apply fixes to pom.xml.
+                Use -Dpilot.skipTestScope=true to skip test-scoped dependency analysis.
+            -->
+            <id>dep-check</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>eu.maveniverse.maven.plugins</groupId>
+                            <artifactId>pilot-plugin</artifactId>
+                            <version>0.4.0</version>
+                            <configuration>
+                                <ignoredUnusedDeclared>
+                                    <!-- Logging implementations are runtime deps intentionally declared at compile scope -->
+                                    <ignoredUnusedDeclared>org.apache.logging.log4j:log4j-slf4j2-impl</ignoredUnusedDeclared>
+                                    <ignoredUnusedDeclared>org.apache.logging.log4j:log4j-core</ignoredUnusedDeclared>
+                                    <!-- JUnit aggregator is declared in parent; code compiles against junit-jupiter-api -->
+                                    <ignoredUnusedDeclared>org.junit.jupiter:junit-jupiter</ignoredUnusedDeclared>
+                                </ignoredUnusedDeclared>
+                                <ignoredUsedTransitive>
+                                    <ignoredUsedTransitive>org.junit.jupiter:junit-jupiter-api</ignoredUsedTransitive>
+                                    <ignoredUsedTransitive>org.junit.jupiter:junit-jupiter-params</ignoredUsedTransitive>
+                                </ignoredUsedTransitive>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
             <!-- The full profile contains mojos *not* essential for the quick build. -->
             <!-- These are typically various source checks and code generations whose result is stored in git anyway. -->
             <!-- Pass -Dquickly to skip these non-essential plugin executions. -->

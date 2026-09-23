@@ -185,6 +185,24 @@ class McpFacadeWriteFileTest {
         assertFalse(result.getString("editing").contains("reloaded"));
     }
 
+    /** CAMEL-24909: an edit goes through the same confirmation and validation as a write. */
+    @Test
+    void anEditIsConfirmedAndValidatedLikeAWrite(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route:\n    id: x\n    from:\n      uri: direct:x\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(true);
+        McpFacade facade = facade(dir, true, bridge);
+
+        JsonObject edited = facade.editFile("demo", "demo.camel.yaml", "id: x", "id: y", true);
+        assertEquals("edited", edited.getString("status"));
+        assertEquals(1, bridge.asked, "the user confirms an edit as a write");
+        assertEquals("- route:\n    id: y\n    from:\n      uri: direct:x\n",
+                Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
+
+        JsonObject missing = facade.editFile("demo", "demo.camel.yaml", "id: nowhere", "id: z", true);
+        assertEquals("not-found", missing.getString("status"));
+        assertEquals(1, bridge.asked, "nothing to confirm when the snippet is not there");
+    }
+
     @Test
     void invalidContentIsNeverWritten(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");

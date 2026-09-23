@@ -17,6 +17,53 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens instead of reusing the same cached token. Applications using such profiles may make additional token requests after upgrading.
 
+=== Simple language
+
+`${ }` may now hold a predicate, as the braces do in Jakarta EL, Groovy and a JavaScript template:
+`${body != null && body.size() > 0}` answers whether it matches, instead of being refused with
+_Operators go outside the function_. The form with the operators outside the braces
+(`+${body} != null && ${body.size()} > 0+`) means the same and is unchanged, and the ternary keeps
+working as before.
+
+An operator counts only when whitespace surrounds it outside quotes, so a name such as
+`${header.Content-Length}` and a pattern such as `${date:now:yyyy-MM-dd}` are read as they were.
+Only expressions that used to throw can now return a value: every one of the 804 distinct simple
+expressions in camel, camel-kamelets, camel-examples and camel-jbang-examples parses to what it
+parsed to before.
+
+
+The simple language reads a `Map` with a dot as well as with a key: `${body.sku}` answers the `sku` entry of a map
+body when the map has no `sku()` method, the same value `${body[sku]}` gives. A method of the map still wins, so
+`${body.size}` calls `size()` as before, and a name that is neither a method nor a key still fails. Only expressions
+that used to throw can now return a value.
+
+The `range(max)` function now starts at 0, as documented and as `range` does in Python: `${range(5)}` returns
+`[0, 1, 2, 3, 4]` where it used to return `[1, 2, 3, 4]`. Routes that relied on the range starting at 1 must use
+`${range(1,5)}` instead. The two-argument form `range(min,max)` is unchanged.
+
+A review of the simple language fixed a number of edge cases. These change what an existing expression returns:
+
+* `split` uses the separator as plain text, not as a regular expression: `${split(${body},'.')}` splits on dots
+  (it used to return an empty array), and `${split(${body},'|')}` splits on the bar. A route that relied on a regular
+  expression separator such as `'\s+'` must use `${body.split('\s+')}` instead.
+* The elvis operator `?:` treats any numeric zero as falsy (such as `0L`, `0.0` or `BigDecimal.ZERO`), not only `0` as
+  an `Integer`.
+* `++` and `--` keep decimals: `1.5` becomes `2.5` (it used to be `2.0`).
+* `safeQuote` escapes double quotes, backslashes and control characters in the value, so the result is a valid JSON
+  string. A `BigDecimal` is a number, so it is not quoted.
+* `kindOfType` returns `object` for a `Map` (it used to return `array`).
+* A name glued to a function prefix is an unknown function instead of being read as that function, such as
+  `${headerfoo}` (which returned the header `foo`), `${uuidv7}` or `${exceptionInfo}`. Use `${header.foo}`.
+* A hidden file name has no extension: for `.bashrc` then `${file:name.ext}` is `null` (it used to be `bashrc`), and
+  for `.route.yaml` then `${file:name.noext}` is `.route`. This comes from `FileUtil.onlyExt` and `FileUtil.stripExt`.
+* The chain operator `~>` needs a space on both sides, as the other operators do, so `A~>B` is text.
+* Inside `${ }` the ternary `?` and `:` need whitespace around them, so `${bean:svc?method=at(10:30)}` is not a
+  ternary.
+
+The simple catalog (`simple.json`) now spells these functions as they are written: `hostname` (was `hostName`),
+`exception.stacktrace` (was `exception.stackTrace`), `throwException(msg,type)` (was `throwException(type,msg)`, the
+order the function has always used), `not(exp)`, and `setAttachment(key,exp)`.
+
 === Circuit Breaker EIP
 
 The exchange property `CamelCircuitBreakerResponseRejected` is now also set inside the `onFallback`,
@@ -127,6 +174,21 @@ agree with that list. This affects consumers of the context status, such as the 
 The `route-topology` developer console (used by `camel cmd route-topology` and the Camel TUI diagram) no longer
 includes routes created by Kamelets, as these are an implementation detail of the Kamelet and were already hidden
 from the route console. Set the `kamelets=true` option (or `--kamelets` on the CLI) to include them.
+
+The `inflight` and `blocked` developer consoles now carry a `nodeSource` field per entry, saying where the node the
+exchange sits at is in the source (such as `orders.camel.yaml:18`). It is `null` when message history or source
+location is disabled. Existing fields are unchanged.
+
+=== camel-management
+
+The JMX `browse` operation of the `DefaultInflightRepository` MBean and the `listAwaitThreads` data of the
+`DefaultAsyncProcessorAwaitManager` MBean gained a `nodeSource` column, saying where the node is in the source (such
+as `orders.camel.yaml:18`), next to the existing `nodeId`. It is `null` when message history or source location is
+disabled. Clients that read the row by item name are unaffected; a client that assumes a fixed number of columns
+should be reviewed.
+
+`InflightRepository.InflightExchange` and `AsyncProcessorAwaitManager.AwaitThread` gained a `getNodeSource()` method
+for the same value. Both are `default` methods returning `null`, so existing implementations continue to compile.
 
 === camel-groovy
 
@@ -902,6 +964,16 @@ did not load. A write with no selected integration answers as before.
 
 The `validate` argument of `camel_write_file` is gone: the write always validates the content and refuses an
 invalid file. A model given the switch turned it off on its own, and the file then failed to load.
+
+The authoring set has a new tool, `camel_edit_file`: it replaces one snippet of a file, given the exact text to find
+and what to put there, and validates and reloads the result as a write does. A model that rewrites a whole file to
+change one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing file;
+`camel_write_file` writes a new one.
+
+`camel_eval_expression` evaluates any language, not only the ones on the server's own classpath: the component of
+a language such as `jsonpath`, `jq` or `xpath` is downloaded on first use, as `camel run` downloads what a route
+needs, and the answer names it in `downloaded`. A failing expression also carries the catalog's syntax error and
+the position where it breaks.
 
 The `camel_run` tool, when no files are named, starts the project with `camel run --source-dir=.` instead of
 listing the directory's files: the directory is watched, so a file added afterwards (a bean file, a Java class
@@ -2345,6 +2417,13 @@ A name without a scheme, `resource:orderTemplate.json`, is a classpath resource.
 value and is not evaluated again. Nothing changes without the option: the `resource:` prefix on the expression
 text itself is resolved as before, and a returned value that happens to start with `resource:` stays as it is.
 
+=== camel-platform-http-vertx - a path parameter wins over an incoming header of the same name
+
+A REST endpoint with a path parameter, `+/stock/{sku}+`, sets the header `sku` from the path. When the request also
+carried an HTTP header of that name, the two were merged and `${header.sku}` was a `List` such as `[X, CAMEL-MUG]`,
+so a route that read it failed even when the path value was correct. The value from the path is used now; a query
+parameter may still repeat and is still collected into a list.
+
 === camel-core - the required attribute on rest param and route template parameter is now a String
 
 `ParamDefinition.required` (the rest DSL `param`) and `RouteTemplateParameterDefinition.required`
@@ -2522,3 +2601,39 @@ Due to the package rename from `com.bazaarvoice.jolt` to `io.joltcommunity.jolt`
 `ContextualTransform` classes into a Chainr spec need to update their imports to `io.joltcommunity.jolt.Transform` and
 `io.joltcommunity.jolt.ContextualTransform`.
 Users referencing `Removr` directly also need to update their import to `io.joltcommunity.jolt.removr.Removr`.
+
+=== camel-mustache, camel-chunk - potential breaking change
+
+The Exchange header constants in `MustacheConstants` and `ChunkConstants` have been renamed to
+follow the Camel naming convention used across the rest of the component catalog (so that they are
+handled consistently by `DefaultHeaderFilterStrategy`, like the other template components). The Java
+field names are unchanged; only the header string values have changed.
+
+`MustacheConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `MustacheConstants.MUSTACHE_RESOURCE_URI` | `MustacheResourceUri` | `CamelMustacheResourceUri`
+| `MustacheConstants.MUSTACHE_TEMPLATE` | `MustacheTemplate` | `CamelMustacheTemplate`
+|===
+
+`ChunkConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ChunkConstants.CHUNK_RESOURCE_URI` | `ChunkResourceUri` | `CamelChunkResourceUri`
+| `ChunkConstants.CHUNK_TEMPLATE` | `ChunkTemplate` | `CamelChunkTemplate`
+|===
+
+Both components read these headers only when `allowTemplateFromHeader=true`. Because the old names sat
+outside the `Camel` namespace, `DefaultHeaderFilterStrategy` did not strip them, so such a header
+arriving from an untrusted sender reached the producer; with the `Camel` prefix the headers are now
+filtered at the component boundary, so the template or resource can only come from the route. For that
+reason the old names should not simply be restored.
+
+Routes that reference the constants (for example `setHeader(MustacheConstants.MUSTACHE_TEMPLATE, ...)`)
+are unaffected. Routes that set the header by its literal string name, or that use
+`allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
+names.

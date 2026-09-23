@@ -1935,6 +1935,44 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointConsumerBuilder maxMultipartDepth(int maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointConsumerBuilder maxMultipartDepth(String maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
          * managed by some other resource, such as a JavaEE container. When
@@ -2788,6 +2826,44 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointProducerBuilder maxMultipartDepth(int maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointProducerBuilder maxMultipartDepth(String maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
          * managed by some other resource, such as a JavaEE container. When
@@ -3384,6 +3460,44 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder javaMailProperties(String javaMailProperties) {
             doSetProperty("javaMailProperties", javaMailProperties);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointBuilder maxMultipartDepth(int maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
+            return this;
+        }
+        /**
+         * The maximum nesting depth of multipart MIME parts the consumer
+         * descends into when extracting attachments. A message nested deeper
+         * than this has its deeper parts skipped, so a crafted deeply nested
+         * multipart cannot exhaust the stack. Increase it only if a legitimate
+         * source produces unusually deep nesting.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxMultipartDepth the value to set
+         * @return the dsl builder
+         */
+        default AdvancedMailEndpointBuilder maxMultipartDepth(String maxMultipartDepth) {
+            doSetProperty("maxMultipartDepth", maxMultipartDepth);
             return this;
         }
         /**

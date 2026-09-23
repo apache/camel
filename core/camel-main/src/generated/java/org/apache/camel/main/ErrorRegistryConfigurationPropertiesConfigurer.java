@@ -29,6 +29,7 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
         map.put("IncludeExchangeProperties", boolean.class);
         map.put("IncludeExchangeVariables", boolean.class);
         map.put("MaximumEntries", int.class);
+        map.put("MaximumEntriesPerKind", int.class);
         map.put("TimeToLiveSeconds", int.class);
         ALL_OPTIONS = map;
     }
@@ -50,6 +51,8 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
         case "includeExchangeVariables": target.setIncludeExchangeVariables(property(camelContext, boolean.class, value)); return true;
         case "maximumentries":
         case "maximumEntries": target.setMaximumEntries(property(camelContext, int.class, value)); return true;
+        case "maximumentriesperkind":
+        case "maximumEntriesPerKind": target.setMaximumEntriesPerKind(property(camelContext, int.class, value)); return true;
         case "timetoliveseconds":
         case "timeToLiveSeconds": target.setTimeToLiveSeconds(property(camelContext, int.class, value)); return true;
         default: return false;
@@ -77,6 +80,8 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
         case "includeExchangeVariables": return boolean.class;
         case "maximumentries":
         case "maximumEntries": return int.class;
+        case "maximumentriesperkind":
+        case "maximumEntriesPerKind": return int.class;
         case "timetoliveseconds":
         case "timeToLiveSeconds": return int.class;
         default: return null;
@@ -100,6 +105,8 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
         case "includeExchangeVariables": return target.isIncludeExchangeVariables();
         case "maximumentries":
         case "maximumEntries": return target.getMaximumEntries();
+        case "maximumentriesperkind":
+        case "maximumEntriesPerKind": return target.getMaximumEntriesPerKind();
         case "timetoliveseconds":
         case "timeToLiveSeconds": return target.getTimeToLiveSeconds();
         default: return null;

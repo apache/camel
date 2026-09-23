@@ -96,7 +96,7 @@
                 <artifactId>camel-package-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-sources</id>
+                        <id>generate-xml-sources</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate-xml-parser</goal>
@@ -280,5 +280,32 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <!--
+                dep-check profile: disable generate-xml-sources at generate-sources phase.
+                The mojo reads camel-core-model/target/classes/META-INF/jandex.idx, which is
+                produced at process-classes phase and is not available in a clean CI checkout
+                when only compile phase is run. The generated XML parser/writer sources are
+                pre-committed in src/generated/java, so skipping generation here is safe.
+            -->
+            <id>dep-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-package-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-xml-sources</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

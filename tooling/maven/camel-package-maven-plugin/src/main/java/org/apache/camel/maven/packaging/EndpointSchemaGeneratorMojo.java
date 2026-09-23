@@ -1013,6 +1013,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 String insecureValue = metadata != null ? metadata.insecureValue() : null;
                 boolean autowired = metadata != null && metadata.autowired();
                 boolean supportFileReference = metadata != null && metadata.supportFileReference();
+                boolean supportSimpleExpression = metadata != null && metadata.supportSimpleExpression();
                 boolean largeInput = metadata != null && metadata.largeInput();
                 String inputLanguage = metadata != null ? metadata.inputLanguage() : null;
                 boolean important = metadata != null && metadata.important();
@@ -1032,6 +1033,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
                 Class<?> fieldType = method.getParameters()[0].getType();
                 String fieldTypeName = getTypeName(GenericsUtil.resolveParameterTypes(orgClassElement, method)[0]);
+                // an Expression or Predicate option is evaluated for each message by definition (CAMEL-24918)
+                supportSimpleExpression = supportSimpleExpression || evaluatedType(fieldType);
 
                 String docComment = findJavaDoc(method, fieldName, name, classElement, false);
                 if (Strings.isNullOrEmpty(docComment)) {
@@ -1134,6 +1137,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setConfigurationClass(nestedTypeName);
                     option.setConfigurationField(nestedFieldName);
                     option.setSupportFileReference(supportFileReference);
+                    option.setSupportSimpleExpression(supportSimpleExpression);
                     option.setLargeInput(largeInput);
                     option.setInputLanguage(inputLanguage);
                     option.setImportant(important);
@@ -1407,6 +1411,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 = !Strings.isNullOrEmpty(param.insecureValue()) ? param.insecureValue() : metaInsecureValue;
         boolean isAutowired = metadata != null && metadata.autowired();
         boolean supportFileReference = metadata != null && metadata.supportFileReference();
+        boolean supportSimpleExpression = metadata != null && metadata.supportSimpleExpression()
+                || evaluatedType(fieldTypeElement);
         boolean important = metadata != null && metadata.important();
         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                 componentModel.isProducerOnly());
@@ -1467,6 +1473,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setMultiValue(multiValue);
         option.setEndpointIdentity(endpointIdentity);
         option.setSupportFileReference(supportFileReference);
+        option.setSupportSimpleExpression(supportSimpleExpression);
         option.setImportant(important);
         if (componentOption) {
             option.setKind("property");
@@ -1608,6 +1615,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     = !Strings.isNullOrEmpty(path.insecureValue()) ? path.insecureValue() : metaInsecureValue;
             boolean isAutowired = metadata != null && metadata.autowired();
             boolean supportFileReference = metadata != null && metadata.supportFileReference();
+            boolean supportSimpleExpression = metadata != null && metadata.supportSimpleExpression()
+                    || evaluatedType(fieldTypeElement);
             boolean largeInput = metadata != null && metadata.largeInput();
             boolean important = metadata != null && metadata.important();
             String inputLanguage = metadata != null ? metadata.inputLanguage() : null;
@@ -1665,6 +1674,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             option.setConfigurationClass(nestedTypeName);
             option.setConfigurationField(nestedFieldName);
             option.setSupportFileReference(supportFileReference);
+            option.setSupportSimpleExpression(supportSimpleExpression);
             option.setLargeInput(largeInput);
             option.setInputLanguage(inputLanguage);
             option.setImportant(important);
@@ -1991,6 +2001,19 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * @param defaultValue  the current default value
      * @param fieldTypeName the field type such as int, boolean, String etc
      */
+    /**
+     * An option declared as an {@link org.apache.camel.Expression} or {@link org.apache.camel.Predicate} is evaluated
+     * for each message by definition, so it needs no annotation to say so (CAMEL-24918). The option may still be
+     * reported as a String, as the file component's fileName is, which is why this reads the declared type.
+     */
+    private static boolean evaluatedType(Class<?> type) {
+        if (type == null) {
+            return false;
+        }
+        String name = type.getName();
+        return "org.apache.camel.Expression".equals(name) || "org.apache.camel.Predicate".equals(name);
+    }
+
     private static Object getDefaultValue(Object defaultValue, String fieldTypeName, boolean isDuration) {
         // special for boolean as it should not be literal
         if ("boolean".equals(fieldTypeName)) {

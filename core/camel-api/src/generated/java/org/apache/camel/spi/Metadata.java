@@ -193,6 +193,15 @@ public @interface Metadata {
     boolean largeInput() default false;
 
     /**
+     * Whether the option is evaluated as a Simple expression for each message, so that ${body.foo} in its value is the
+     * value of that message rather than the text itself.
+     *
+     * This is what tells a dynamic option apart from a fixed one: an expression in a fixed option is sent as the text
+     * it is. Tooling uses it to offer expression completion where it belongs, and to say where it does not.
+     */
+    boolean supportSimpleExpression() default false;
+
+    /**
      * If the option is some specific language such as SQL, XSLT, XML, JavaScript or something else.
      *
      * This can be used to help tooling to provide a better user experience.

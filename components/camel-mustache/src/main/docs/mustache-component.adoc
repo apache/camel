@@ -171,7 +171,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader("MustacheResourceUri").constant("path/to/my/template.mustache")
+    .setHeader("CamelMustacheResourceUri").constant("path/to/my/template.mustache")
     .to("mustache:dummy?allowTemplateFromHeader=true");
 ----
 
@@ -181,7 +181,7 @@ XML::
 ----
 <route>
   <from uri="direct:in"/>
-  <setHeader name="MustacheResourceUri">
+  <setHeader name="CamelMustacheResourceUri">
     <constant>path/to/my/template.mustache</constant>
   </setHeader>
   <to uri="mustache:dummy?allowTemplateFromHeader=true"/>
@@ -197,7 +197,7 @@ YAML::
       uri: direct:in
       steps:
         - setHeader:
-            name: MustacheResourceUri
+            name: CamelMustacheResourceUri
             expression:
               constant:
                 expression: path/to/my/template.mustache

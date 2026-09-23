@@ -25,6 +25,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.SimpleExpressionParser;
 import org.apache.camel.language.simple.SimplePredicateParser;
+import org.apache.camel.language.simple.SimpleSyntaxHints;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -332,50 +333,18 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         if (conditionText.contains("${")) {
             return conditionText;
         }
-
-        // Find the operator in the condition
-        String[] operators = {
-                " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",
-                " contains ", " !contains ", " ~~ ", " !~~ ", " regex ", " !regex ",
-                " in ", " !in ", " is ", " !is ", " range ", " !range ",
-                " startsWith ", " !startsWith ", " endsWith ", " !endsWith " };
-
-        for (String op : operators) {
-            int opIdx = conditionText.indexOf(op);
-            if (opIdx > 0) {
-                String leftSide = conditionText.substring(0, opIdx).trim();
-                String rightSide = conditionText.substring(opIdx + op.length()).trim();
-
-                // Wrap the left side with ${} if it looks like a function reference
-                if (!leftSide.startsWith("${") && !leftSide.startsWith("'") && !leftSide.startsWith("\"")
-                        && !isNumeric(leftSide) && !"true".equalsIgnoreCase(leftSide)
-                        && !"false".equalsIgnoreCase(leftSide) && !"null".equalsIgnoreCase(leftSide)) {
-                    leftSide = "${" + leftSide + "}";
-                }
-
-                return leftSide + op + rightSide;
-            }
-        }
-
-        // No operator found, return as-is
-        return conditionText;
-    }
-
-    private boolean isNumeric(String str) {
-        if (str == null || str.isEmpty()) {
-            return false;
-        }
-        try {
-            Double.parseDouble(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        // the same wrapping a predicate written inside ${ } gets, so the two cannot drift (CAMEL-24920)
+        return SimpleSyntaxHints.wrapFunctions(conditionText);
     }
 
     /**
      * Find the index of the ternary operator character, skipping nested ${}, quotes, etc.
      */
+    private static boolean surroundedByWhitespace(String text, int index) {
+        return index > 0 && index < text.length() - 1
+                && Character.isWhitespace(text.charAt(index - 1)) && Character.isWhitespace(text.charAt(index + 1));
+    }
+
     private int findTernaryOperator(String text, char operator) {
         int depth = 0;
         boolean inSingleQuote = false;
@@ -402,7 +371,9 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                     inDoubleQuote = true;
                     continue;
                 }
-                if (c == operator && depth == 0) {
+                if (c == operator && depth == 0 && surroundedByWhitespace(text, i)) {
+                    // like the tokenizer, the operator must have whitespace around it,
+                    // so ${bean:svc?method=at(10:30)} is not a ternary
                     return i;
                 }
             } else if (inSingleQuote && c == '\'') {
