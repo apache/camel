@@ -65,8 +65,12 @@ class TypeSafeAiCancellationTest extends TypeSafeAiTestSupport {
                     for (int i = 0; i < length; i++) {
                         assertThat(reader.read()).isNotEqualTo(-1);
                     }
-                    socket.getOutputStream().write(("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"
-                                                    + "Content-Length: 100\r\n\r\n{")
+                    socket.getOutputStream().write(("""
+                            HTTP/1.1 200 OK\r
+                            Content-Type: application/json\r
+                            Content-Length: 100\r
+                            \r
+                            {""")
                             .getBytes(StandardCharsets.UTF_8));
                     socket.getOutputStream().flush();
                     headersSent.countDown();
