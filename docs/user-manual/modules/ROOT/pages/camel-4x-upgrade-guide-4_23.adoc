@@ -2637,3 +2637,17 @@ are now failed with a `RejectedExecutionException` and their on completions are 
 reply of a discarded exchange (`waitForTaskToComplete`) is released with that exception, instead of waiting until its
 `timeout`, or forever when the timeout is disabled. On completions handed over to a discarded InOnly exchange, such as
 the commit or rollback of the consumer that received the message, now run as a failure, where previously they never ran.
+
+=== camel-pulsar - a failed exchange is negatively acknowledged
+
+When a route fails, the consumer now calls `negativeAcknowledge` on the Pulsar consumer instead of
+leaving the message unacknowledged. This only applies when `allowManualAcknowledgement` is `false`
+(the default); with manual acknowledgement the route stays in charge, as before.
+
+This changes when the message comes back. Previously it was redelivered once the acknowledgement
+timeout expired, which `camel-pulsar` sets to 10 seconds by default through `ackTimeoutMillis`. A
+negative acknowledgement removes the message from the client's unacknowledged-message tracker, so
+redelivery now follows `negativeAckRedeliveryDelayMicros`, which defaults to 60 seconds, and honours
+`negativeAckRedeliveryBackoff` when one is configured.
+
+A route that wants the previous timing can set `negativeAckRedeliveryDelayMicros=10000000`.
