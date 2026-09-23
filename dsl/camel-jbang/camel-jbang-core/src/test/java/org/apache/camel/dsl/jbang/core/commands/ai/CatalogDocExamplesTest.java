@@ -97,10 +97,6 @@ class CatalogDocExamplesTest {
                 if (skipped != null && yaml.contains(skipped)) {
                     continue;
                 }
-                if (DocBlocks.markedToSkip(doc, m.start())) {
-                    // the page shows what to avoid, and says so (CAMEL-24917)
-                    continue;
-                }
                 examples++;
                 for (String msg : SourceValidator.validateCamelYaml(yaml, catalog)) {
                     failures.add(page + " example " + (n + 1) + ": " + msg);
