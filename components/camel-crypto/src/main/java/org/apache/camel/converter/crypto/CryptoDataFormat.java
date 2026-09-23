@@ -83,6 +83,9 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
     private String macAlgorithm = "HmacSHA1";
     private boolean shouldAppendHMAC = true;
     private AlgorithmParameterSpec algorithmParameterSpec;
+    // The cipher block size is fixed by the algorithm, so it is looked up once and cached rather than building a
+    // Cipher on every marshal purely to read it.
+    private volatile int cachedBlockSize;
 
     public CryptoDataFormat() {
     }
@@ -286,15 +289,24 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
      * message, so the reader takes it from the stream and nothing needs to be shared out of band.
      */
     private byte[] generateInitializationVector() throws Exception {
-        Cipher cipher = cryptoProvider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, cryptoProvider);
-        int blockSize = cipher.getBlockSize();
-        if (blockSize <= 0) {
-            // A stream cipher reports no block size; 16 bytes is the usual nonce length
-            blockSize = 16;
-        }
-        byte[] iv = new byte[blockSize];
+        byte[] iv = new byte[getCipherBlockSize()];
         SECURE_RANDOM.nextBytes(iv);
         return iv;
+    }
+
+    private int getCipherBlockSize() throws Exception {
+        int blockSize = cachedBlockSize;
+        if (blockSize == 0) {
+            Cipher cipher
+                    = cryptoProvider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, cryptoProvider);
+            blockSize = cipher.getBlockSize();
+            if (blockSize <= 0) {
+                // A stream cipher reports no block size; 16 bytes is the usual nonce length
+                blockSize = 16;
+            }
+            cachedBlockSize = blockSize;
+        }
+        return blockSize;
     }
 
     private byte[] getInitializationVector(Exchange exchange) {

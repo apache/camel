@@ -77,7 +77,10 @@ class CryptoDataFormatIvAndFailureTest {
 
             byte[] ciphertext = marshal(context, format, PAYLOAD);
 
-            // corrupt the last byte: the final block no longer decrypts to valid padding
+            // The MAC is written through the CipherOutputStream during marshal, so it is encrypted inside the
+            // ciphertext, not appended in the clear. The last wire byte is therefore the final ciphertext block, and
+            // flipping it makes that block no longer decrypt to valid PKCS5 padding - the BadPaddingException path,
+            // distinct from the bad-MAC path exercised just below.
             byte[] badPadding = ciphertext.clone();
             badPadding[badPadding.length - 1] ^= 0x01;
 
