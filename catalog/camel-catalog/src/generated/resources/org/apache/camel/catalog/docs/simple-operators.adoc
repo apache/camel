@@ -128,6 +128,13 @@ The syntax for the ternary operator is:
 ${leftValue OP rightValue ? trueValue : falseValue}
 ----
 
+The condition may be several comparisons joined by `&&` or `||`:
+
+[source,text]
+----
+${header.age > 18 && header.country == 'DK' ? 'yes' : 'no'}
+----
+
 The whole ternary must be inside a single `${ }`. Outside `${ }` a Simple expression is a template,
 so a `?` and a `:` there are literal text and the operator is not evaluated. For example:
 
