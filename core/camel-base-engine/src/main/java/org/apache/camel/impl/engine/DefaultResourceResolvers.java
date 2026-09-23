@@ -71,10 +71,17 @@ public final class DefaultResourceResolvers {
         if (camelContext == null) {
             return defaultValue;
         }
-        return camelContext.getPropertiesComponent()
-                .resolveProperty(key)
-                .map(Integer::parseInt)
-                .orElse(defaultValue);
+        String value = camelContext.getPropertiesComponent().resolveProperty(key).orElse(null);
+        if (value == null) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            // this runs during startup, so a bare "For input string" says nothing about which property is wrong
+            throw new IllegalArgumentException(
+                    "Property " + key + " must be a number of milliseconds, was: " + value, e);
+        }
     }
 
     private static Resource createHttpResource(CamelContext camelContext, String scheme, String location) {
