@@ -73,6 +73,17 @@ Prior to Camel 4.23 the property was only set when there was no fallback and was
 so a fallback that tested it for `null` must now test for `true` or `false` instead.
 `CamelCircuitBreakerResponseShortCircuited` is unchanged and remains `true` whenever the fallback runs, whatever the cause.
 
+=== Error handler - onException when the exception changes during redelivery
+
+When a redelivery attempt fails with a different exception than the previous attempt, the error handler now uses
+the `onException` that matches the new exception. If no `onException` matches it, the error handler's own settings
+apply, for example moving the message to the dead letter channel.
+
+Prior to Camel 4.23 the error handler kept using the `onException` matched by the earlier exception, including its
+`handled`, `continued`, redelivery and `onRedelivery` settings. So a new exception with no `onException` of its own
+could be routed and handled by the earlier exception's `onException`, and was not seen by the caller or the dead
+letter channel.
+
 === Context reload now re-applies placeholder based component options
 
 When a context reload is triggered, for example by one of the vault components detecting that a secret was rotated,
