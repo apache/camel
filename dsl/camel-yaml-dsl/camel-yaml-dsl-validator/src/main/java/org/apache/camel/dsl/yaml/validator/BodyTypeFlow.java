@@ -75,6 +75,14 @@ final class BodyTypeFlow {
     }
 
     static void check(JsonNode target, NodePath path, List<Error> errors) {
+        check(target, path, errors, Set.of());
+    }
+
+    /**
+     * @param known endpoints the caller knows deliver no body, such as {@code direct:getStock} for the GET operation of
+     *              an OpenAPI specification the route binds to (CAMEL-24844 phase B)
+     */
+    static void check(JsonNode target, NodePath path, List<Error> errors, Set<String> known) {
         List<Route> routes = routes(target);
         if (routes.isEmpty()) {
             return;
@@ -94,7 +102,10 @@ final class BodyTypeFlow {
                 }
             }
         }
-        Set<String> restless = restEndpointsWithoutABody(target);
+        Set<String> restless = new HashSet<>(restEndpointsWithoutABody(target));
+        for (String uri : known) {
+            restless.add(normalize(uri));
+        }
         for (Route r : routes) {
             String reader = firstBodyReaderBeforeAnyProducer(r.steps());
             if (reader == null) {
@@ -186,8 +197,7 @@ final class BodyTypeFlow {
         if (!"to".equals(name) && !"toD".equals(name) && !"enrich".equals(name) && !"wireTap".equals(name)) {
             return false;
         }
-        String uri = value.isTextual() ? value.asText()
-                : value.isObject() && value.has("uri") ? value.get("uri").asText() : null;
+        String uri = endpointOf(value);
         return uri != null && normalize(uri).equals(wanted);
     }
 
@@ -323,8 +333,7 @@ final class BodyTypeFlow {
             JsonNode value = node.get(name);
             if ("to".equals(name) || "toD".equals(name) || "enrich".equals(name) || "pollEnrich".equals(name)
                     || "wireTap".equals(name)) {
-                String uri = value.isTextual() ? value.asText()
-                        : value.isObject() && value.has("uri") ? value.get("uri").asText() : null;
+                String uri = endpointOf(value);
                 if (uri != null) {
                     answer.add(uri);
                 }
@@ -351,10 +360,7 @@ final class BodyTypeFlow {
                 }
                 JsonNode value = rest.get(verb);
                 for (JsonNode operation : value.isArray() ? value : List.of(value)) {
-                    JsonNode to = operation.get("to");
-                    String uri = to == null ? null
-                            : to.isTextual() ? to.asText()
-                            : to.isObject() && to.has("uri") ? to.get("uri").asText() : null;
+                    String uri = endpointOf(operation.get("to"));
                     if (uri != null) {
                         answer.add(normalize(uri));
                     }
@@ -380,7 +386,7 @@ final class BodyTypeFlow {
                 continue;
             }
             String id = route != null && route.has("id") ? route.get("id").asText() : null;
-            String uri = from.isTextual() ? from.asText() : from.has("uri") ? from.get("uri").asText() : null;
+            String uri = endpointOf(from);
             JsonNode steps = from.get("steps");
             if (steps == null && route != null) {
                 steps = route.get("steps");
@@ -388,6 +394,38 @@ final class BodyTypeFlow {
             answer.add(new Route(id, uri, steps, entry));
         }
         return answer;
+    }
+
+    /**
+     * The endpoint a node means, whether its path is in the uri or in the parameters: {@code uri: direct} with
+     * {@code parameters: {name: lookup}} is the endpoint {@code direct:lookup}, which is how the YAML DSL lets an
+     * endpoint be written and how a model often writes it.
+     */
+    private static String endpointOf(JsonNode node) {
+        if (node == null) {
+            return null;
+        }
+        if (node.isTextual()) {
+            return node.asText();
+        }
+        if (!node.isObject() || !node.has("uri")) {
+            return null;
+        }
+        String uri = node.get("uri").asText();
+        if (uri.indexOf(':') > 0) {
+            return uri;
+        }
+        JsonNode parameters = node.get("parameters");
+        if (parameters == null || !parameters.isObject()) {
+            return uri;
+        }
+        // the path parameter of the component, by the names the endpoints of a route use
+        for (String key : new String[] { "name", "destinationName", "topic", "queue", "path", "address" }) {
+            if (parameters.has(key) && parameters.get(key).isValueNode()) {
+                return uri + ":" + parameters.get(key).asText();
+            }
+        }
+        return uri;
     }
 
     /** direct:lookup and direct with parameters name: lookup are the same endpoint. */

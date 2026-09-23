@@ -130,6 +130,14 @@ public class YamlValidator {
     }
 
     public List<Error> validate(String content) throws Exception {
+        return validate(content, java.util.Set.of());
+    }
+
+    /**
+     * @param bodylessEndpoints endpoints the caller knows deliver no body, such as the {@code direct:} endpoint of a
+     *                          GET operation of an OpenAPI specification the file binds to (CAMEL-24844)
+     */
+    public List<Error> validate(String content, java.util.Set<String> bodylessEndpoints) throws Exception {
         if (schema == null) {
             init();
         }
@@ -149,7 +157,7 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            return validate(target);
+            return validate(target, bodylessEndpoints);
         } catch (Exception e) {
             return List.of(parseError(e, content));
         }
@@ -544,7 +552,7 @@ public class YamlValidator {
         return null;
     }
 
-    private List<Error> validate(JsonNode target) {
+    private List<Error> validate(JsonNode target, java.util.Set<String> bodylessEndpoints) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
         if (canonical) {
@@ -581,7 +589,7 @@ public class YamlValidator {
             checkSimpleSyntaxInScripts(target, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(target, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
-            BodyTypeFlow.check(target, new NodePath(PathType.JSON_POINTER), errors);
+            BodyTypeFlow.check(target, new NodePath(PathType.JSON_POINTER), errors, bodylessEndpoints);
         }
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);

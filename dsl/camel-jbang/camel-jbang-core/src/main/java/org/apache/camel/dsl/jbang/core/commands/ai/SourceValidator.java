@@ -104,7 +104,10 @@ public final class SourceValidator {
         Objects.requireNonNull(catalog, "catalog");
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
-            List<String> msgs = validateCamelYaml(content, catalog, schemaValidator);
+            // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the
+            // route: read it, so that a GET operation is known to carry no body (CAMEL-24844)
+            List<String> msgs = validateCamelYaml(content, catalog, schemaValidator,
+                    directory != null ? OpenApiVerbs.bodylessEndpoints(content, directory) : Set.of());
             if (directory != null && msgs.isEmpty()) {
                 msgs = new ArrayList<>(msgs);
                 BeanDeclarations declarations = BeanDeclarations.scan(directory, fileName);
@@ -148,11 +151,20 @@ public final class SourceValidator {
      * catalog's version.
      */
     public static List<String> validateCamelYaml(String content, CamelCatalog catalog, YamlValidator schemaValidator) {
+        return validateCamelYaml(content, catalog, schemaValidator, Set.of());
+    }
+
+    /**
+     * As {@link #validateCamelYaml(String, CamelCatalog, YamlValidator)} with the endpoints known to deliver no body,
+     * such as the {@code direct:} endpoint of a GET operation of an OpenAPI specification the file binds to.
+     */
+    public static List<String> validateCamelYaml(
+            String content, CamelCatalog catalog, YamlValidator schemaValidator, Set<String> bodylessEndpoints) {
         List<String> msgs = new ArrayList<>();
         if (content == null || content.isBlank()) {
             return msgs;
         }
-        if (validateYamlSchema(content, catalog, schemaValidator, msgs)) {
+        if (validateYamlSchema(content, catalog, schemaValidator, bodylessEndpoints, msgs)) {
             msgs.addAll(validateYamlCatalog(content, catalog));
         }
         return msgs;
@@ -175,6 +187,12 @@ public final class SourceValidator {
     /** Adds the schema errors to msgs; false when the YAML could not be checked at all (no schema, not YAML). */
     private static boolean validateYamlSchema(
             String content, CamelCatalog catalog, YamlValidator schemaValidator, List<String> msgs) {
+        return validateYamlSchema(content, catalog, schemaValidator, Set.of(), msgs);
+    }
+
+    private static boolean validateYamlSchema(
+            String content, CamelCatalog catalog, YamlValidator schemaValidator, Set<String> bodylessEndpoints,
+            List<String> msgs) {
         YamlValidator validator;
         try {
             validator = schemaValidator != null ? schemaValidator : yamlValidator(catalog);
@@ -184,7 +202,7 @@ public final class SourceValidator {
             return false;
         }
         try {
-            msgs.addAll(formatSchemaErrors(validator.validate(content)));
+            msgs.addAll(formatSchemaErrors(validator.validate(content, bodylessEndpoints)));
             return true;
         } catch (Exception e) {
             msgs.add("Invalid YAML: " + e.getMessage());
