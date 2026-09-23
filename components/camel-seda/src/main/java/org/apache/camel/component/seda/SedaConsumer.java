@@ -86,9 +86,15 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
     @Override
     public int getPendingExchangesSize() {
+        return getPendingExchangesSize(false);
+    }
+
+    @Override
+    public int getPendingExchangesSize(boolean suspendOnly) {
         // the route is shutting down, so either we should purge the queue,
         // or return how many exchanges are still on the queue
-        if (getEndpoint().isPurgeWhenStopping()) {
+        // (a suspended route must keep its pending exchanges, so only purge when stopping)
+        if (!suspendOnly && getEndpoint().isPurgeWhenStopping()) {
             getEndpoint().purgeQueue();
         }
         return getEndpoint().getQueue().size();

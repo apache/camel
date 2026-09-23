@@ -671,7 +671,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                 for (RouteStartupOrder order : routes) {
                     int inflight = context.getInflightRepository().size(order.getRoute().getId());
-                    inflight += getPendingInflightExchanges(order);
+                    inflight += getPendingInflightExchanges(order, suspendOnly);
                     if (inflight > 0) {
                         String routeId = order.getRoute().getId();
                         routeInflight.put(routeId, inflight);
@@ -770,6 +770,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      * @return       number of inflight exchanges
      */
     protected static int getPendingInflightExchanges(RouteStartupOrder order) {
+        return getPendingInflightExchanges(order, false);
+    }
+
+    /**
+     * Calculates the total number of inflight exchanges for the given route
+     *
+     * @param  order       the route
+     * @param  suspendOnly whether the route is only being suspended (and not shutdown)
+     * @return             number of inflight exchanges
+     */
+    protected static int getPendingInflightExchanges(RouteStartupOrder order, boolean suspendOnly) {
         int inflight = 0;
 
         // the consumer is the 1st service so we always get the consumer
@@ -779,7 +790,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             Set<Service> children = ServiceHelper.getChildServices(service);
             for (Service child : children) {
                 if (child instanceof ShutdownAware shutdownAware) {
-                    inflight += shutdownAware.getPendingExchangesSize();
+                    inflight += shutdownAware.getPendingExchangesSize(suspendOnly);
                 }
             }
         }
