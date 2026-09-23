@@ -136,10 +136,10 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
                         // by exiting the loop. We make it explicit instead of breaking the loop.
                         running = false;
                     } else {
-                        endpoint.getExceptionHandler().handleException(e);
+                        getExceptionHandler().handleException("Error receiving from pulsar", e);
                     }
                 } catch (Exception e) {
-                    endpoint.getExceptionHandler().handleException(e);
+                    getExceptionHandler().handleException("Error receiving from pulsar", e);
                 }
             }
         }
