@@ -28,6 +28,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
@@ -36,6 +37,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Route messages based on a series of predicates
@@ -45,10 +47,14 @@ import org.apache.camel.spi.Resource;
           description = "Routes messages to different steps based on a series of conditions (predicates),"
                         + " similar to if-elseif-else in Java. Each condition is evaluated in order until one matches.")
 @XmlRootElement(name = "choice")
-@XmlType(propOrder = { "whenClauses", "otherwise" })
+@XmlType(propOrder = { "selector", "whenClauses", "otherwise" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
+    @XmlElement
+    @Metadata(description = "Expression evaluated once per entry into this choice. Its String result is matched against literal when values. Cannot be combined with precondition mode or predicate branches.")
+    @DslArg
+    private ExpressionSubElementDefinition selector;
     @XmlElementRef(name = "when")
     @AsPredicate
     @Metadata(description = "The when clauses (predicates) to evaluate. The first when clause that matches determines which route branch to follow.")
@@ -68,6 +74,7 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
 
     protected ChoiceDefinition(ChoiceDefinition source) {
         super(source);
+        this.selector = source.selector != null ? source.selector.copyDefinition() : null;
         this.whenClauses = ProcessorDefinitionHelper.deepCopyDefinitions(source.whenClauses);
         this.otherwise = source.otherwise != null ? source.otherwise.copyDefinition() : null;
         this.precondition = source.precondition;
@@ -345,6 +352,9 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         }
         for (WhenDefinition when : whenClauses) {
             ExpressionDefinition exp = when.getExpression();
+            if (exp == null) {
+                continue;
+            }
             if (exp.getExpressionType() != null) {
                 exp = exp.getExpressionType();
             }
@@ -362,6 +372,32 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
                 }
             }
         }
+    }
+
+    /**
+     * Evaluates an expression once and matches its String result against literal when values.
+     */
+    public ChoiceDefinition selector(Expression expression) {
+        setSelector(new ExpressionSubElementDefinition(ExpressionNodeHelper.toExpressionDefinition(expression)));
+        return this;
+    }
+
+    public ExpressionSubElementDefinition getSelector() {
+        return selector;
+    }
+
+    public void setSelector(ExpressionSubElementDefinition selector) {
+        this.selector = selector;
+    }
+
+    /**
+     * Adds a literal, case-sensitive String value to a selector-based choice.
+     */
+    public ChoiceDefinition when(String value) {
+        WhenDefinition when = new WhenDefinition();
+        when.setValue(value);
+        addClause(when);
+        return this;
     }
 
 }

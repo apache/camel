@@ -72,6 +72,8 @@ public class CustomResolver implements YamlDeserializerResolver {
             //
             // Misc
             //
+            case "semantic":
+                return new SemanticDefinitionDeserializer();
             case "beans":
                 return beansDeserializer;
             case "dataFormats":

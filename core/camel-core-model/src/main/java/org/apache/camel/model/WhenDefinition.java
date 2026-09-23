@@ -31,6 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.DslArg;
 
 /**
  * Triggers a route when the expression evaluates to true
@@ -49,6 +50,10 @@ public class WhenDefinition extends BasicOutputExpressionNode
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
               description = "Disables this EIP from the route.")
     private String disabled;
+    @XmlAttribute
+    @Metadata(description = "Literal, case-sensitive String to match against the parent choice selector. Mutually exclusive with a predicate expression.")
+    @DslArg
+    private String value;
 
     public WhenDefinition() {
     }
@@ -57,6 +62,7 @@ public class WhenDefinition extends BasicOutputExpressionNode
         super(source);
         this.parent = source.parent;
         this.disabled = source.disabled;
+        this.value = source.value;
     }
 
     public WhenDefinition(Predicate predicate) {
@@ -106,6 +112,9 @@ public class WhenDefinition extends BasicOutputExpressionNode
     }
 
     protected String description() {
+        if (value != null) {
+            return value;
+        }
         StringBuilder sb = new StringBuilder(256);
         if (getExpression() != null) {
             String language = getExpression().getLanguage();
@@ -138,6 +147,21 @@ public class WhenDefinition extends BasicOutputExpressionNode
     @Override
     public void setDisabled(String disabled) {
         this.disabled = disabled;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    @Metadata(required = false,
+              description = "Predicate to evaluate for a predicate-based choice. Mutually exclusive with value.")
+    public void setExpression(ExpressionDefinition expression) {
+        super.setExpression(expression);
     }
 
 }

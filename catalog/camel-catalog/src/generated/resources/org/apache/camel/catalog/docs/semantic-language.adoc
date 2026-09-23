@@ -1,0 +1,235 @@
+= Semantic Language
+:doctitle: Semantic
+:shortname: semantic
+:artifactid: camel-semantic
+:description: Evaluate named semantic questions through a provider adapter
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Semantic language evaluates named questions through a provider-independent adapter.
+Boolean questions produce decisions, choice questions produce category strings, and score
+questions produce numbers on an ordered rubric. Calls are synchronous and may block while
+inference runs. Provider errors propagate through normal Camel error handling.
+
+== Dependencies and providers
+
+Add `org.apache.camel:camel-semantic` and a provider, such as `camel-typesafe-ai`, using the
+same Camel version. The provider owns credentials, model selection, request timeout,
+concurrency limits and transport resources. TypeSafe AI uses
+`camel.component.typesafe-ai.*` settings even when a route contains no TypeSafe AI endpoint.
+
+One advertised adapter is selected automatically. No provider, or multiple distinct
+providers, is an error. Select an existing bean with
+`camel.language.semantic.adapter=#bean:myAdapter`, or a class using its fully qualified name
+(with an optional `#class:` prefix). Class selection uses Camel's class resolver and injector.
+Created adapters are registered as `camelSemanticAdapter` and managed by the context.
+A collision at that name is an error. Referenced beans retain their existing lifecycle owner.
+
+Camel Main and Camel JBang bind `camel.language.semantic.adapter` and
+`camel.language.semantic.default-state` to the language. Embedded applications can resolve
+`SemanticLanguage` from the context and call `setAdapter` and `setDefaultState` before route setup.
+The catalog describes the generic `language` expression model; it does not provide a dedicated
+semantic Spring Boot configuration class. Configure the language bean explicitly in Spring Boot
+until generic-language starter configuration is available.
+
+== Named questions
+
+The YAML DSL supports declarations alongside routes, including declarations after their use:
+
+[source,yaml]
+----
+- semantic:
+    question:
+      department:
+        type: choice
+        instructions: Which department should handle this message?
+        criteria:
+          billing: Invoices, payments and refunds
+          technical: Bugs, outages and technical problems
+      actionable:
+        type: boolean
+        instructions: Does this message contain an actionable request?
+        threshold: 0.8
+        uncertainty: 0.1
+        uncertaintyPolicy: fail
+      urgency:
+        type: score
+        instructions: Assess urgency
+        criteria:
+          - Routine request
+          - Time-sensitive request
+          - Immediate attention needed
+- route:
+    from:
+      uri: direct:tickets
+      steps:
+        - choice:
+            selector:
+              language:
+                language: semantic
+                expression: ref:department
+            when:
+              - value: billing
+                steps:
+                  - to: direct:billing
+              - value: technical
+                steps:
+                  - to: direct:technical
+            otherwise:
+              steps:
+                - to: direct:review
+----
+
+Names are context-wide. Duplicate declarations across resources and unknown references fail.
+Reloading a resource replaces its complete set of questions, including removing declarations
+no longer present. This replacement does not make the surrounding route reload transactional.
+Existing expressions resolve the current definition on their next evaluation.
+Loading declarations does not perform inference. Java applications can register immutable
+`SemanticQuestion` definitions using `SemanticQuestions.get(context).replace(source, questions)`.
+
+A question's optional `state` Simple expression overrides
+`camel.language.semantic.default-state`, whose default is `${body}`. Selectors are compiled
+before evaluation; selected strings, maps and lists are passed as data and are never evaluated recursively.
+A missing selected header fails instead of falling back to the body. Blank or invalid selectors
+fail. The original message is preserved. `CamelSemanticResult` contains the latest successful
+normalized result and is cleared before each evaluation, including one that fails.
+
+== Results and policy
+
+Only boolean questions can be predicates. A category string is never implicitly a boolean.
+A probability-based boolean uses an inclusive threshold (default `0.5`). A nonzero
+`uncertainty` defines an inclusive band around that threshold. `fail` (the default) raises
+an error within the band; `non-match` returns false. An already-boolean provider supports the
+default policy without inventing a probability. Additional policy requirements must be
+supported by the provider. Choice results must name a declared criterion. Scores range from
+zero to the last rubric index and may be fractional.
+
+Probabilities, provider confidence and selected values are separate. Missing optional fields
+remain absent. Results can retain provider/model identity and usage metadata. These fields
+do not imply equivalent quality or calibration when switching providers. Timeouts, malformed
+answers and unsupported capabilities are errors, distinct from valid negative decisions or
+unmatched Choice results.
+
+== EIP integration
+
+Use `language("semantic", "ref:name")` wherever an expression or boolean predicate is accepted.
+
+[cols="1,3"]
+|===
+|EIP |Usage
+|Choice |Use a selector to evaluate once per entry and match configured literal values.
+|Filter |Use a boolean question as the filter predicate.
+|Validate |Use a boolean question; false follows normal validation failure handling.
+|Set Header / Set Property |Store a category or score for explicit reuse in later steps.
+|Aggregate correlation |Use a category as a correlation expression, retaining tenant or case identifiers where needed.
+|Aggregate completion |Evaluate a boolean question against the accumulated body, with a size or timeout limit. `eagerCheckCompletion` instead sees the incoming exchange.
+|Recipient List |Map a category to a configured list of recipient URIs.
+|Routing Slip |Map a category to a predefined processing sequence.
+|Enrich |Map a category to a configured resource URI and use an ordinary aggregation strategy.
+|Loop |Reevaluate a boolean question on updated state, with an explicit iteration or time budget.
+|Sort |Score each item once, store the scores, then sort using a deterministic comparator.
+|===
+
+Destination mappings belong to trusted route configuration; provider output should select
+known labels rather than supply unrestricted endpoint URIs. Expressions reevaluate on each
+invocation. There is no implicit exchange-wide inference cache. Store results explicitly
+when reuse is intended, and reevaluate after relevant input changes.
+
+=== Predicates and explicit reuse
+
+[source,java]
+----
+from("direct:actionable")
+    .filter().language("semantic", "ref:actionable")
+    .to("direct:accepted");
+
+from("direct:validate")
+    .validate().language("semantic", "ref:actionable")
+    .to("direct:valid");
+
+from("direct:tag")
+    .setHeader("department").language("semantic", "ref:department")
+    .setProperty("urgency").language("semantic", "ref:urgency")
+    .choice(header("department"))
+        .when("billing").to("direct:billing")
+        .otherwise().to("direct:technical");
+----
+
+=== Aggregation and destinations
+
+For Java APIs accepting an `Expression`, use
+`new LanguageExpression("semantic", "ref:department")` from `org.apache.camel.model.language`.
+For example, group messages with that expression and a `GroupedBodyAggregationStrategy`,
+using `completionSize(10)` and `completionTimeout(5000)` to bound the group. Include a trusted
+tenant or case identifier in the correlation key when messages must remain isolated.
+
+A completion predicate can be obtained with
+`context.resolveLanguage("semantic").createPredicate("ref:actionable")`.
+The aggregation strategy must first put the accumulated conversation in the selected state.
+Use `completionPredicate(predicate).completionSize(10)` to retain a deterministic size limit.
+
+Classify once, then map the stored label to destinations supplied by the route author:
+
+[source,java]
+----
+from("direct:dispatch")
+    .setProperty("department").language("semantic", "ref:department")
+    .process(exchange -> {
+        String department = exchange.getProperty("department", String.class);
+        exchange.getMessage().setHeader("recipients",
+            Map.of("billing", "direct:billing,direct:audit",
+                   "technical", "direct:technical").get(department));
+        exchange.getMessage().setHeader("slip",
+            Map.of("billing", "direct:invoice,direct:archive",
+                   "technical", "direct:diagnose,direct:archive").get(department));
+        exchange.getMessage().setHeader("resource",
+            Map.of("billing", "direct:billingKnowledge",
+                   "technical", "direct:technicalKnowledge").get(department));
+    })
+    .recipientList(header("recipients")).end()
+    .routingSlip(header("slip"))
+    .enrich().header("resource").aggregationStrategy((original, resource) -> {
+        original.getMessage().setHeader("knowledge", resource.getMessage().getBody());
+        return original;
+    });
+----
+
+=== Changed state and sorting
+
+A loop must have a finite budget in addition to its semantic predicate. Combine the predicate
+with a check of `CamelLoopIndex`, and let the loop body update the selected state. Each new
+iteration evaluates the current content. For example, a predicate can first check that
+`exchange.getProperty(Exchange.LOOP_INDEX, 0, Integer.class) < 5` and then call the boolean
+semantic predicate, before `loopDoWhile` invokes a refinement processor.
+
+For sorting, evaluate `ref:urgency` once for each item and build a list containing each item and
+its score. Use `.sort(body(), Comparator.comparingDouble(ScoredItem::score))` with that stored
+score. The comparator must not call the provider: sorting can compare an item multiple times
+and in an implementation-dependent order.
+
+== Implementing an adapter
+
+Implement `org.apache.camel.semantic.SemanticAdapter`. Advertise the class name in
+`META-INF/services/org.apache.camel.semantic.SemanticAdapter`, one class per line. Discovery
+reads class names without constructing unselected adapters. Explicit class selection is
+also available for runtimes whose packaging does not expose discovery resources.
+
+`validate` rejects unsupported questions and decision policies before traffic. `evaluate`
+must be thread-safe, bound time and resource consumption, honor interruption and propagate
+operational failures without disclosing input or credentials. Implement `CamelContextAware`
+for context injection and Camel `Service` interfaces when the adapter owns resources.
+Created service adapters are stopped and shut down by Camel; registry references are not
+started or stopped again by the language. Provider-specific component services remain under
+normal Camel lifecycle management.
+
+For TypeSafe AI, boolean, choice and score map to Noul, Choice and Score respectively. The
+adapter reuses the component endpoint's managed HTTP client, including timeout, concurrency
+and cancellation. Routine integration tests use deterministic adapters and local HTTP fixtures;
+they do not establish a model's classification quality.
+
+// language options: START
+include::partial$language-options.adoc[]
+// language options: END

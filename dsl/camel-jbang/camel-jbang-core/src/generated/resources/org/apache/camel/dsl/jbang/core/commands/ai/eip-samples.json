@@ -102,6 +102,10 @@
   "choice": [
     {
       "source": "choice-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:tickets\n      steps:\n        - choice:\n            selector:\n              header:\n                expression: department\n            when:\n              - value: billing\n                steps:\n                  - to:\n                      uri: direct:billing\n              - value: technical\n                steps:\n                  - to:\n                      uri: direct:technical\n            otherwise:\n              steps:\n                - to:\n                    uri: direct:general\n"
+    },
+    {
+      "source": "choice-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:a\n      steps:\n        - choice:\n            when:\n              - expression:\n                  simple:\n                    expression: \"${header.foo} == 'bar'\"\n                steps:\n                  - to:\n                      uri: direct:b\n              - expression:\n                  simple:\n                    expression: \"${header.foo} == 'cheese'\"\n                steps:\n                  - to:\n                      uri: direct:c\n            otherwise:\n              steps:\n                - to:\n                    uri: direct:d\n"
     },
     {

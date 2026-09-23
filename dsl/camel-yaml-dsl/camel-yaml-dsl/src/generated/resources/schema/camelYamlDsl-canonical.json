@@ -284,6 +284,110 @@
         },
         "required" : [ "steps", "uri" ]
       },
+      "org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "question" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$QuestionSchema"
+            }
+          }
+        },
+        "required" : [ "question" ]
+      },
+      "org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$BooleanSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "threshold" : {
+            "type" : "number"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "boolean" ]
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string",
+            "enum" : [ "fail", "non-match" ]
+          }
+        },
+        "required" : [ "instructions", "type" ]
+      },
+      "org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$ChoiceSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "choice" ]
+          }
+        },
+        "required" : [ "criteria", "instructions", "type" ]
+      },
+      "org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$QuestionSchema" : {
+        "type" : "object",
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$BooleanSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$ChoiceSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$ScoreSchema"
+          } ]
+        } ]
+      },
+      "org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$ScoreSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "score" ]
+          }
+        },
+        "required" : [ "criteria", "instructions", "type" ]
+      },
       "org.apache.camel.model.A2ASubTaskDefinition" : {
         "title" : "A2A Sub Task",
         "description" : "Groups route steps and emits A2A (Agent-to-Agent) protocol progress events before, after, or when the grouped work fails",
@@ -798,6 +902,11 @@
             "title" : "Precondition",
             "description" : "If enabled then the choice is evaluated at route initialization time (precondition). Only when predicates with property placeholders or simple expressions using only property placeholders are supported.",
             "default" : false
+          },
+          "selector" : {
+            "title" : "Selector",
+            "description" : "Expression evaluated once per entry into this choice. Its String result is matched against literal when values. Cannot be combined with precondition mode or predicate branches.",
+            "$ref" : "#/items/definitions/org.apache.camel.model.ExpressionSubElementDefinition"
           },
           "when" : {
             "type" : "array",
@@ -5858,6 +5967,15 @@
         "description" : "Defines a conditional branch within a Choice EIP that executes when its predicate evaluates to true",
         "type" : "object",
         "additionalProperties" : false,
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "type" : "object",
+            "required" : [ "expression" ]
+          }, {
+            "type" : "object",
+            "required" : [ "value" ]
+          } ]
+        } ],
         "properties" : {
           "description" : {
             "type" : "string",
@@ -5872,7 +5990,7 @@
           },
           "expression" : {
             "title" : "Expression",
-            "description" : "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.",
+            "description" : "Predicate to evaluate for a predicate-based choice. Mutually exclusive with value.",
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
           },
           "id" : {
@@ -5890,6 +6008,11 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
             }
+          },
+          "value" : {
+            "type" : "string",
+            "title" : "Value",
+            "description" : "Literal, case-sensitive String to match against the parent choice selector. Mutually exclusive with a predicate expression."
           }
         }
       },
@@ -13468,6 +13591,9 @@
       },
       "errorHandler" : {
         "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.ErrorHandlerDeserializer"
+      },
+      "semantic" : {
+        "$ref" : "#/items/definitions/org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer"
       },
       "intercept" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.InterceptDefinition"
