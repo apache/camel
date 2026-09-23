@@ -552,7 +552,11 @@ public class BeanExpression implements Expression, Predicate {
      * A method still wins: ${body.size} on a Map calls size() as before. A name that is not a key still fails, so a
      * misspelled field is still reported.
      *
-     * @return the value of the key, or {@link #NO_SUCH_KEY} when this is not that case
+     * @param  holder     the bean the OGNL step is called on; null when there is none
+     * @param  exchange   the exchange the bean is resolved against
+     * @param  methodName the name that failed as a method call, and is tried as a key
+     * @param  cause      the failure of that call, so that only a missing method is read as a key
+     * @return            the value of the key, or {@link #NO_SUCH_KEY} when this is not that case
      */
     private static Object mapValue(BeanHolder holder, Exchange exchange, String methodName, Exception cause) {
         if (methodName == null || methodName.contains("(") || methodName.contains("[")) {

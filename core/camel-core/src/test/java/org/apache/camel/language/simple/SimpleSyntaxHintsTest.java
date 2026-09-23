@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -160,6 +161,16 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
                 () -> context.resolveLanguage("simple").createExpression("${body.typo}").evaluate(exchange,
                         String.class));
         assertThat(e.getMessage()).contains("the value is a Map: a key is read with [typo], as in ${body[typo]}");
+    }
+
+    @Test
+    public void testOgnlDotOnAMapWithANullValueAnswersNull() {
+        // a key that is there and holds null is a value, not a missing key
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("sku", null);
+        exchange.getIn().setBody(body);
+        assertNull(context.resolveLanguage("simple").createExpression("${body.sku}").evaluate(exchange, Object.class),
+                "a null value is a map entry: the expression answers null rather than throwing");
     }
 
     @Test
