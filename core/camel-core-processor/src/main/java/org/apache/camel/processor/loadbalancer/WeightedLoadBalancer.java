@@ -29,23 +29,11 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
         this.ratios = distributionRatios.stream()
                 .map(DistributionRatio::new)
                 .toList();
-        this.distributionRatioSum = ratios.stream()
-                .mapToInt(DistributionRatio::getDistributionWeight).sum();
+        this.distributionRatioSum = validateDistributionRatios(ratios);
         this.runtimeRatioSum = distributionRatioSum;
     }
 
-    public int getLastChosenProcessorIndex() {
-        return lastIndex;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        if (getProcessors().size() != ratios.size()) {
-            throw new IllegalArgumentException(
-                    "Loadbalacing with " + getProcessors().size()
-                                               + " should match number of distributions " + ratios.size());
-        }
+    private static int validateDistributionRatios(List<DistributionRatio> ratios) {
         // a ratio that is negative, or ratios that are all zero or add up to more than an int can hold,
         // would make the processor selection loop forever or fail on every exchange
         long sum = 0;
@@ -63,6 +51,21 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
         if (sum > Integer.MAX_VALUE) {
             throw new IllegalArgumentException(
                     "The sum of the distribution ratios must not be greater than " + Integer.MAX_VALUE + ", was: " + sum);
+        }
+        return (int) sum;
+    }
+
+    public int getLastChosenProcessorIndex() {
+        return lastIndex;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (getProcessors().size() != ratios.size()) {
+            throw new IllegalArgumentException(
+                    "Loadbalacing with " + getProcessors().size()
+                                               + " should match number of distributions " + ratios.size());
         }
     }
 
