@@ -496,18 +496,49 @@ public class MulticastProcessor extends BaseProcessorSupport
             Lock lock = this.lock;
             if (lock.tryLock()) {
                 try {
-                    Exchange exchange;
-                    while (!done.get() && (exchange = completion.poll()) != null) {
-                        doAggregate(result, exchange, original);
-                        if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
-                            doDone(result.get(), true);
-                        }
-                    }
-                } catch (Exception e) {
-                    doFailed(e);
+                    aggregateCompleted();
                 } finally {
                     lock.unlock();
                 }
+            }
+        }
+
+        /**
+         * Aggregates the completed exchanges, and is done when all the exchanges are sent and aggregated. Must be
+         * called while holding the lock.
+         */
+        private void aggregateCompleted() {
+            try {
+                Exchange exchange;
+                while (!done.get() && (exchange = completion.poll()) != null) {
+                    doAggregate(result, exchange, original);
+                    if (nbAggregated.incrementAndGet() >= nbExchangeSent.get() && allSent.get()) {
+                        doDone(result.get(), true);
+                    }
+                }
+            } catch (Exception e) {
+                doFailed(e);
+            }
+        }
+
+        /**
+         * There are no more pairs to send, even though the last pair sent was not known to be the last one (some
+         * iterators return true from hasNext() and then null from next()). In parallel mode the exchanges sent may
+         * still be in progress, so mark all as sent, and only be done when they are all aggregated (the transacted task
+         * handles the same case since CAMEL-21114).
+         */
+        protected void doDoneNoMorePairs() {
+            Lock lock = this.lock;
+            lock.lock();
+            try {
+                allSent.set(true);
+                // aggregate() gives up when another thread holds the lock, so aggregate what is completed
+                aggregateCompleted();
+                if (nbAggregated.get() >= nbExchangeSent.get()) {
+                    doDone(result.get(), true);
+                }
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -630,7 +661,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 // Get next processor exchange pair to sent, skipping null ones
                 ProcessorExchangePair pair = getNextProcessorExchangePair();
                 if (pair == null) {
-                    doDone(result.get(), true);
+                    doDoneNoMorePairs();
                     return;
                 }
 
