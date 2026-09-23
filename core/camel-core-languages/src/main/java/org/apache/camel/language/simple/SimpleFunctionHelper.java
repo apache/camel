@@ -55,8 +55,8 @@ public final class SimpleFunctionHelper {
     }
 
     /**
-     * The remainder after a name such as header must start the key, so ${headerfoo} is not the header foo (and a
-     * custom function named such as headerCount can be called).
+     * The remainder after a name such as header must start the key, so ${headerfoo} is not the header foo (and a custom
+     * function named such as headerCount can be called).
      */
     private static String keyRemainder(String remainder) {
         if (remainder != null && !remainder.isEmpty()) {

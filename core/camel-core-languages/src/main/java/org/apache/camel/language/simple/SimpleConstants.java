@@ -32,7 +32,7 @@ public final class SimpleConstants {
               examples = { "${assert(${body} == 'Hello', 'Must be Hello')}" },
               annotations = {
                       "param=exp:Object:required::The predicate expression to evaluate",
-                      "param=msg:String:optional::The error message if the assertion fails" })
+                      "param=msg:String:required::The error message if the assertion fails" })
     public static final String ASSERT = "assert(exp,msg)";
 
     @Metadata(description = "Emits an A2A task progress update with WORKING state. Requires the camel-a2a component on the classpath and an active A2A task context.",
@@ -209,9 +209,9 @@ public final class SimpleConstants {
     @Metadata(description = "Calls a Java bean. The name of the bean can also refer to a class name using type prefix as follows `bean:type:com.foo.MyClass`. If no method name is given then Camel will automatic attempt to find the best method to use.",
               label = "core", javaType = "Object", displayName = "Call Java Bean",
               examples = {
-                      "${bean(myBean)} -> result // calls best matching method",
-                      "${bean(myBean.myMethod)} -> result // calls specific method",
-                      "${bean(type:com.foo.MyClass.myMethod)} -> result // calls static method by classname" },
+                      "${bean:myBean} -> result // calls best matching method",
+                      "${bean:myBean.myMethod} -> result // calls specific method",
+                      "${bean:type:com.foo.MyClass.myMethod} -> result // calls static method by classname" },
               annotations = {
                       "param=name:String:required::The bean name (or type:classname)",
                       "param=method:String:optional::The method name to invoke" })
@@ -252,7 +252,7 @@ public final class SimpleConstants {
     public static final String CAPITALIZE = "capitalize(exp)";
 
     @Metadata(description = "Converts the message body (or expression) to a floating number and return the ceil value (rounded up to nearest integer).",
-              label = "number", javaType = "Integer", displayName = "Ceil Number",
+              label = "number", javaType = "Long", displayName = "Ceil Number",
               examples = { "${ceil(2.3)} -> 3", "${ceil(5.0)} -> 5" },
               annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
     public static final String CEIL = "ceil(exp)";
@@ -301,10 +301,10 @@ public final class SimpleConstants {
     @Metadata(description = "Evaluates to a java.util.Date object. Supported commands are: `now` for current timestamp, `millis` for current timestamp in millis (unix epoch), `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the Long/Date object in the header with the key xxx. `variable.xxx` to use the Long/Date in the variable with the key xxx. `exchangeProperty.xxx` to use the Long/Date object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or even `now+1h30m-100`.",
               label = "date", javaType = "java.util.Date", displayName = "Parse Date",
               examples = {
-                      "${date(now)} -> current Date object",
-                      "${date(now-24h)} -> Date 24 hours ago",
-                      "${date(exchangeCreated)} -> Date when exchange was created",
-                      "${date(header.myDate)} -> Date from header myDate" },
+                      "${date:now} -> current Date object",
+                      "${date:now-24h} -> Date 24 hours ago",
+                      "${date:exchangeCreated} -> Date when exchange was created",
+                      "${date:header.myDate} -> Date from header myDate" },
               annotations = {
                       "param=command:String:required::The date command (now, millis, exchangeCreated, header.xxx, variable.xxx, file). Supports offsets like now-24h" })
     public static final String DATE = "date(command)";
@@ -375,7 +375,7 @@ public final class SimpleConstants {
 
     @Metadata(description = "The exception stacktrace (also from caught exceptions), is null if no exception present.",
               javaType = "String", label = "core", displayName = "Exception Stacktrace")
-    public static final String EXCEPTION_STACKTRACE = "exception.stackTrace";
+    public static final String EXCEPTION_STACKTRACE = "exception.stacktrace";
 
     @Metadata(description = "Returns a List containing the values that satisfy the predicate function (returning true)",
               label = "collection", javaType = "List", displayName = "Filter Elements",
@@ -393,7 +393,7 @@ public final class SimpleConstants {
     public static final String FOR_EACH = "forEach(exp,fun)";
 
     @Metadata(description = "Converts the message body (or expression) to a floating number and return the floor value (rounded down to nearest integer).",
-              label = "number", javaType = "Integer", displayName = "Floor Number",
+              label = "number", javaType = "Long", displayName = "Floor Number",
               examples = { "${floor(2.7)} -> 2", "${floor(5.0)} -> 5" },
               annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
     public static final String FLOOR = "floor(exp)";
@@ -438,8 +438,13 @@ public final class SimpleConstants {
 
     @Metadata(description = "Returns the local hostname (may be empty if not possible to resolve).", javaType = "String",
               label = "other",
-              examples = { "${hostName} -> myserver.local" })
-    public static final String HOST_NAME = "hostName";
+              examples = { "${hostname} -> myserver.local" })
+    public static final String HOST_NAME = "hostname";
+
+    @Metadata(description = "Dumps the exchange for logging purpose (uses `ExchangeFormatter` to format the output).",
+              javaType = "String", label = "core", displayName = "Log Exchange",
+              examples = { "${logExchange} -> Exchange[Id: ..., Headers: {...}, Body: Hello]" })
+    public static final String LOG_EXCHANGE = "logExchange";
 
     @Metadata(description = "Cleans the HTML to remove unsafe links and JavaScripts from the message body (or expression)",
               javaType = "String", label = "html",
@@ -645,8 +650,10 @@ public final class SimpleConstants {
               annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
     public static final String NORMALIZE_WHITESPACE = "normalizeWhitespace(exp)";
 
-    @Metadata(description = "Evaluates the predicate and returns the opposite.", label = "condition", javaType = "boolean")
-    public static final String NOT = "not";
+    @Metadata(description = "Evaluates the predicate and returns the opposite.", label = "condition", javaType = "boolean",
+              examples = { "${not(${header.count} > 5)} -> true // when count is 3" },
+              annotations = { "param=exp:Object:optional:body:The predicate. When omitted uses the message body" })
+    public static final String NOT = "not(exp)";
 
     @Metadata(description = "Returns a null value", label = "other", javaType = "Object",
               examples = { "${null} -> null" })
@@ -786,7 +793,7 @@ public final class SimpleConstants {
 
     @Metadata(description = "Sets an attachment with payload from the message body/expression.",
               label = "attachment", javaType = "Object")
-    public static final String SET_ATTACHMENT = "setVariable(key,exp)";
+    public static final String SET_ATTACHMENT = "setAttachment(key,exp)";
 
     @Metadata(description = "Sets a message header with the given expression (optional converting to the given type)",
               label = "core", javaType = "Object",
@@ -912,11 +919,11 @@ public final class SimpleConstants {
               javaType = "java.lang.Exception", label = "core",
               examples = {
                       "${throwException('Something went wrong')} -> throws IllegalArgumentException",
-                      "${throwException(java.io.IOException,'File not found')} -> throws IOException" },
+                      "${throwException('File not found',java.io.IOException)} -> throws IOException" },
               annotations = {
-                      "param=type:String:optional:java.lang.IllegalArgumentException:The fully qualified exception classname",
-                      "param=msg:String:required::The error message" })
-    public static final String THROW_EXCEPTION = "throwException(type,msg)";
+                      "param=msg:String:required::The error message",
+                      "param=type:String:optional:java.lang.IllegalArgumentException:The fully qualified exception classname" })
+    public static final String THROW_EXCEPTION = "throwException(msg,type)";
 
     @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
               label = "string", javaType = "String", displayName = "Trim",
@@ -954,14 +961,14 @@ public final class SimpleConstants {
               annotations = { "param=exp:Object:optional:body:The expression. When omitted uses the message body" })
     public static final String UPPERCASE = "uppercase(exp)";
 
-    @Metadata(description = "Returns a UUID using the Camel `UuidGenerator`. You can choose between `default`, `classic`, `short` and `simple` as the type. If no type is given, the default is used. It is also possible to use a custom `UuidGenerator` and bind the bean to the Registry with an id. For example `${uuid(myGenerator)}` where the ID is _myGenerator_.",
+    @Metadata(description = "Returns a UUID using the Camel `UuidGenerator`. You can choose between `default`, `classic`, `short`, `simple` and `random` as the type. If no type is given, the default is used. It is also possible to use a custom `UuidGenerator` and bind the bean to the Registry with an id. For example `${uuid(myGenerator)}` where the ID is _myGenerator_.",
               label = "other", javaType = "String", displayName = "Generate UUID",
               examples = {
                       "${uuid()} -> ID-myhost-1234567890-0-1 // default generator",
                       "${uuid(short)} -> a1b2c3d4 // short format",
                       "${uuid(simple)} -> 550e8400-e29b-41d4-a716-446655440000 // simple UUID" },
               annotations = {
-                      "param=type:String:optional:default:The UUID type: default, classic, short, simple, or a custom generator bean name" })
+                      "param=type:String:optional:default:The UUID type: default, classic, short, simple, random, or a custom generator bean name" })
     public static final String UUID = "uuid(type)";
 
     @Metadata(description = "Returns the expression as a constant value",

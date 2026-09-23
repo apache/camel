@@ -143,14 +143,14 @@ public final class StringFunctionFactory implements SimpleLanguageFunctionFactor
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${substringBetween(after,before)} or ${substringAfter(exp,after,before)} was: "
+                        "Valid syntax: ${substringBetween(after,before)} or ${substringBetween(exp,after,before)} was: "
                                                 + function,
                         index);
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length < 2 || tokens.length > 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${substringBetween(after,before)} or ${substringAfter(exp,after,before)} was: "
+                        "Valid syntax: ${substringBetween(after,before)} or ${substringBetween(exp,after,before)} was: "
                                                 + function,
                         index);
             }

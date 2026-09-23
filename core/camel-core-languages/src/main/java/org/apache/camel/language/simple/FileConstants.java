@@ -26,7 +26,7 @@ public final class FileConstants {
     @Metadata(description = "The file name (relative from starting directory) without extension", javaType = "String",
               label = "file")
     public static final String FILE_NO_EXT = "file:name.noext";
-    @Metadata(description = "The file name (relative from starting directory) without extension. If the file name has multiple dots, then this expression strips and only returns the last part.",
+    @Metadata(description = "The file name (relative from starting directory) without extension. If the file name has multiple dots, then only the last extension is stripped (such as a.tar.gz becomes a.tar).",
               javaType = "String", label = "file")
     public static final String FILE_NO_EXT_SINGLE = "file:name.noext.single";
     @Metadata(description = "The file extension", javaType = "String", label = "file")
@@ -34,12 +34,12 @@ public final class FileConstants {
     @Metadata(description = "The file extension. If the file extension has multiple dots, then this expression strips and only returns the last part.",
               javaType = "String", label = "file")
     public static final String FILE_EXT_SINGLE = "file:name.ext.single";
-    @Metadata(description = "†he file name (without any leading paths)", javaType = "String", label = "file")
+    @Metadata(description = "The file name (without any leading paths)", javaType = "String", label = "file")
     public static final String FILE_ONLY_NAME = "file:onlyname";
-    @Metadata(description = "†he file name (without any leading paths) without extension", javaType = "String",
+    @Metadata(description = "The file name (without any leading paths) without extension", javaType = "String",
               label = "file")
     public static final String FILE_ONLY_NAME_NO_EXT = "file:onlyname.noext";
-    @Metadata(description = "†he file name (without any leading paths) without extension. If the file name has multiple dots, then this expression strips and only returns the last part.",
+    @Metadata(description = "The file name (without any leading paths) without extension. If the file name has multiple dots, then only the last extension is stripped (such as a.tar.gz becomes a.tar).",
               javaType = "String", label = "file")
     public static final String FILE_ONLY_NAME_NO_EXT_SINGLE = "file:onlyname.noext.single";
     @Metadata(description = "The file parent directory (null if no parent directory)", javaType = "String", label = "file")

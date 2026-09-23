@@ -96,7 +96,7 @@ to access Camel functionality and content of the message being routed.
 |`setHeader(name,type,exp)` | `null` | Sets a message header with the given expression (optional converting to the given type).
 |`setVariable(name,type,exp)` | `null` | Sets a variable with the given expression (optional converting to the given type).
 |`stepId` | `String` | Returns the id of the current step the `Exchange` is being routed. Returns `null` if there are no steps.
-|`throwException(type,msg)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
+|`throwException(msg,type)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
 |`type:name.field` | `Object` | To refer to a type or field by its fully qualified classname. For example: `type:org.apache.camel.Exchange.FILE_NAME`.
 |`val(exp)` | `Object` | Returns the expression as a constant value.
 |`variable.key` | `Object` | To look up the variable with the given key.
@@ -410,10 +410,10 @@ Various functions to work with numbers.
 |`abs()` | `long` | Converts the message body to a long number and return the absolute value.
 |`abs(exp)` | `Long` | Converts the message body (or expression) to a long number and return the absolute value.
 |`average(val1,val2,...)` | `long` | Returns the average number from all the values  (integral numbers only).
-|`ceil()` | `int` | Converts the message body to a floating number and return the ceil value (rounded up to nearest integer).
-|`ceil(exp)` | `int` | Converts the expression to a floating number and return the ceil value (rounded up to nearest integer).
-|`floor()` | `int` | Converts the message body to a floating number and return the floor value (rounded down to nearest integer).
-|`floor(exp)` | `int` | Converts the expression to a floating number and return the floor value (rounded down to nearest integer).
+|`ceil()` | `long` | Converts the message body to a floating number and return the ceil value (rounded up to nearest integer).
+|`ceil(exp)` | `long` | Converts the expression to a floating number and return the ceil value (rounded up to nearest integer).
+|`floor()` | `long` | Converts the message body to a floating number and return the floor value (rounded down to nearest integer).
+|`floor(exp)` | `long` | Converts the expression to a floating number and return the floor value (rounded down to nearest integer).
 |`max(val1,val2,...)` | `long` | Returns the maximum number from all the values (integral numbers only).
 |`min(val1,val2,...)` | `long` | Returns the minimum number from all the values (integral numbers only).
 |`random(max)` | `int` | Returns a random `Integer` between 0 (included) and max (excluded).

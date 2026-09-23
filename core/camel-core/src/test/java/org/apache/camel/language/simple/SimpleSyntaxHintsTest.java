@@ -96,6 +96,11 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertThat(expressionError("${Body}")).contains("case sensitive: ${body}");
         assertThat(expressionError("${ body }")).contains("remove the spaces: ${body}");
         assertThat(expressionError("${bodyy}")).contains("did you mean ${body}?");
+        // CAMEL-24970: the suggestions name the simple functions
+        assertThat(expressionError("${upper}")).contains("did you mean ${uppercase()}?");
+        assertThat(expressionError("${avg(1,2)}")).contains("did you mean ${average(1,2)}?");
+        assertThat(expressionError("${uppercse()}")).contains("did you mean ${uppercase()}?");
+        assertThat(expressionError("${count}")).contains("did you mean ${size()}?");
     }
 
     @Test

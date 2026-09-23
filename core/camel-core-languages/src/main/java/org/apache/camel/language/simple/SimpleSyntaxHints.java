@@ -37,15 +37,21 @@ public final class SimpleSyntaxHints {
     /** Function names a model is likely to write, for the did-you-mean suggestion. */
     static final List<String> FUNCTIONS = List.of("body", "bodyAs", "mandatoryBodyAs", "bodyOneLine", "prettyBody",
             "originalBody", "header", "headerAs", "headers", "exchangeProperty", "exchangePropertyAs",
-            "exchangeProperties", "variable", "variableAs", "variables", "exception", "exchange", "camelContext",
+            "variable", "variableAs", "variables", "exception", "exchange", "camelContext",
             "camelId", "routeId", "routeGroup", "stepId", "id", "messageTimestamp", "threadName", "threadId",
-            "hostname", "date", "date-with-timezone", "random", "skip", "collate", "join", "sum", "avg", "min", "max",
-            "replace", "substring", "substringBefore", "substringAfter", "substringBetween", "contains", "pad",
-            "concat", "val", "length", "empty", "newEmpty", "iif", "hash", "convertTo", "throwException", "assert",
-            "load", "uuid", "env", "sys", "ref", "bean", "properties", "propertiesExist", "type", "messageAs",
-            "messageHistory", "pretty", "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath",
-            "function", "list", "map", "range", "split", "sort", "forEach", "filter", "listAdd", "listRemove",
-            "mapAdd", "mapRemove", "file", "null");
+            "hostname", "date", "date-with-timezone", "random", "skip", "collate", "join", "sum", "average", "min",
+            "max", "abs", "ceil", "floor", "replace", "substring", "substringBefore", "substringAfter",
+            "substringBetween", "contains", "pad", "concat", "val", "length", "size", "empty", "newEmpty", "iif",
+            "hash", "convertTo", "throwException", "assert", "load", "uuid", "env", "sys", "sysenv", "ref", "bean",
+            "properties", "propertiesExist", "type", "messageAs", "messageHistory", "logExchange", "pretty",
+            "toJson", "toPrettyJson", "jq", "jsonpath", "xpath", "simpleJsonpath", "function", "list", "map",
+            "range", "split", "sort", "distinct", "reverse", "shuffle", "forEach", "filter", "listAdd", "listRemove",
+            "mapAdd", "mapRemove", "setHeader", "setVariable", "uppercase", "lowercase", "trim", "capitalize",
+            "normalizeWhitespace", "quote", "unquote", "safeQuote", "escape", "isEmpty", "isAlpha", "isAlphaNumeric",
+            "isNumeric", "not", "kindOfType", "file", "null");
+
+    /** Functions that are called with parentheses, so a suggestion without arguments adds them. */
+    private static final Set<String> CALLED_WITH_PARENTHESES = Set.of("uppercase", "lowercase", "trim", "size", "average");
 
     /**
      * Functions that delegate to another language, all of them written {@code ${name(exp)}}. Unlike {@code bean:} or
@@ -64,14 +70,15 @@ public final class SimpleSyntaxHints {
             Map.entry("var", "variable"),
             Map.entry("prop", "exchangeProperty"),
             Map.entry("json", "jsonpath"),
-            Map.entry("upper", "bodyAs(String).toUpperCase()"),
-            Map.entry("lower", "bodyAs(String).toLowerCase()"),
-            Map.entry("trim", "bodyAs(String).trim()"),
+            Map.entry("upper", "uppercase"),
+            Map.entry("toUpperCase", "uppercase"),
+            Map.entry("lower", "lowercase"),
+            Map.entry("toLowerCase", "lowercase"),
             Map.entry("padding", "pad"),
             Map.entry("now", "date:now:yyyy-MM-dd'T'HH:mm:ss"),
             Map.entry("timestamp", "messageTimestamp"),
-            Map.entry("size", "length"),
-            Map.entry("count", "length"));
+            Map.entry("avg", "average"),
+            Map.entry("count", "size"));
 
     private static final String[] OPERATOR_WORDS = {
             "==", "!=", ">=", "<=", ">", "<", "=~", "!=~", "~~", "!~~", "contains",
@@ -359,6 +366,9 @@ public final class SimpleSyntaxHints {
             }
         }
         if (alias != null) {
+            if (rest.isEmpty() && CALLED_WITH_PARENTHESES.contains(alias)) {
+                rest = "()";
+            }
             if (rest.startsWith(":") && QUERY_FUNCTIONS.contains(alias)) {
                 // ${json:$.status}: the alias resolves to jsonpath, so the argument moves into parentheses too
                 return parentheses(alias, rest.substring(1));
