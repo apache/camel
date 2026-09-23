@@ -16,7 +16,7 @@
 
 The LLM component provides integration with OpenAI and OpenAI-compatible APIs (Ollama, vLLM, LM Studio, OpenRouter, Azure OpenAI, and others) for chat completion, text embeddings, content moderation, audio transcription, audio translation, text-to-speech, and image generation and editing using the official openai-java SDK.
 
-The Maven artifact remains `camel-openai`. Routes may use the primary `llm:` scheme or the backward-compatible `openai:` alias.
+The Maven artifact remains `camel-openai`. Routes may use either the `llm:` or the `openai:` scheme.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 

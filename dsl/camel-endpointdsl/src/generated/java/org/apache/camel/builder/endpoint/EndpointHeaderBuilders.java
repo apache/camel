@@ -3009,21 +3009,6 @@ public class EndpointHeaderBuilders {
         return OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder.INSTANCE;
     }
     /**
-     * LLM (camel-openai)
-     * LLM endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech using
-     * OpenAI-compatible APIs. The openai scheme is a supported alias.
-     * 
-     * Category: ai
-     * Since: 4.17
-     * Maven coordinates: org.apache.camel:camel-openai
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    public static OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder llm() {
-        return OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
      * 

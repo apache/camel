@@ -7096,39 +7096,6 @@ public interface OpenAIEndpointBuilderFactory {
         default OpenAIEndpointBuilder llm(String path) {
             return OpenAIEndpointBuilderFactory.endpointBuilder("llm", path);
         }
-        /**
-         * LLM (camel-openai)
-         * LLM endpoint for chat completion, Responses API, embeddings, audio
-         * transcription, audio translation, and text-to-speech using
-         * OpenAI-compatible APIs. The openai scheme is a supported alias.
-         * 
-         * Category: ai
-         * Since: 4.17
-         * Maven coordinates: org.apache.camel:camel-openai
-         * 
-         * Syntax: <code>llm:operation</code>
-         * 
-         * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
-         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
-         * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
-         * consumer)
-         * There are 17 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, batch,
-         * batch-retrieve, batch-cancel, batch-results, embeddings,
-         * tool-execution, audio-transcription, audio-translation, audio-speech,
-         * moderation, image-generation, image-edit, webhook
-         * 
-         * @param componentName to use a custom component name for the endpoint
-         * instead of the default name
-         * @param path operation
-         * @return the dsl builder
-         */
-        default OpenAIEndpointBuilder llm(String componentName, String path) {
-            return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
-        }
 
     }
     /**
