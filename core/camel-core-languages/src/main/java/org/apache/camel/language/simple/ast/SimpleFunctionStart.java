@@ -338,10 +338,8 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         StringBuilder answer = new StringBuilder();
         int from = 0;
         for (int at = logicalOperator(conditionText, 0); at >= 0; at = logicalOperator(conditionText, from)) {
+            // the operator matched with its trailing space, so the next space is at most two characters away
             int end = conditionText.indexOf(' ', at + 1);
-            if (end < 0) {
-                break; // the operator has nothing after it: leave it to the predicate parser to say so
-            }
             answer.append(wrapComparison(conditionText.substring(from, at).trim()));
             answer.append(' ').append(conditionText, at, end).append(' ');
             from = end + 1;
