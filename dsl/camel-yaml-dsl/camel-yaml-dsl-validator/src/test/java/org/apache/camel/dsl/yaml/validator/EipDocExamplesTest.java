@@ -55,9 +55,6 @@ class EipDocExamplesTest {
      */
     private static final Map<String, String> EXAMPLES_SKIPPED = Map.of("yaml-dsl", "myStep:");
 
-    /** The same marker the doc-samples plugin honours: a block that shows what to avoid is not an example. */
-    private static final String SKIP_MARKER = "// yaml-validator: skip";
-
     private static CamelCatalog catalog;
     private static YamlValidator validator;
 
@@ -144,7 +141,7 @@ class EipDocExamplesTest {
                 if (skipped != null && yaml.contains(skipped)) {
                     continue;
                 }
-                if (doc.substring(Math.max(0, m.start() - 200), m.start()).contains(SKIP_MARKER)) {
+                if (DocBlocks.markedToSkip(doc, m.start())) {
                     continue;
                 }
                 examples++;

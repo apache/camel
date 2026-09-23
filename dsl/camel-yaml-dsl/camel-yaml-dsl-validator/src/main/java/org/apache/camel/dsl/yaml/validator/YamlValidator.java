@@ -744,11 +744,11 @@ public class YamlValidator {
     }
 
     /**
-     * Components that read their path as a script, a statement or a template name and evaluate it for each message,
-     * where an expression in the path is what the component is for.
+     * Components that evaluate their path for each message, where an expression in it is what the component is for: the
+     * language component's script, and the metric name of the two metrics components. Each was read in the component's
+     * own producer; CAMEL-24918 replaces this list with metadata in the catalog, so that a component says it itself.
      */
-    private static final Set<String> EVALUATED_PATH = Set.of("language", "sql", "sql-stored", "elsql", "jdbc",
-            "spring-jdbc", "mybatis", "xquery", "xslt");
+    private static final Set<String> EVALUATED_PATH = Set.of("language", "micrometer", "opentelemetry-metrics");
 
     /** Adds an error for every expression node in the tree that has neither expression: nor a language key. */
     void checkRequiredExpressions(JsonNode node, NodePath path, List<Error> errors) {

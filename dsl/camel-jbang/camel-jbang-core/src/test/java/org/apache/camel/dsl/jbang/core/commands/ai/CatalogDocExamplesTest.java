@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.yaml.validator.DocBlocks;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -104,6 +105,10 @@ class CatalogDocExamplesTest {
                 n++;
                 String skipped = EXAMPLES_SKIPPED.get(page);
                 if (skipped != null && yaml.contains(skipped)) {
+                    continue;
+                }
+                if (DocBlocks.markedToSkip(doc, m.start())) {
+                    // the page shows what to avoid, and says so (CAMEL-24917)
                     continue;
                 }
                 examples++;
