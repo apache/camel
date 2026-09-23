@@ -220,6 +220,42 @@ To restore the previous behaviour and allow external entity resolution, set the 
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
 
+=== camel-mustache, camel-chunk - potential breaking change
+
+The Exchange header constants in `MustacheConstants` and `ChunkConstants` have been renamed to
+follow the Camel naming convention used across the rest of the component catalog (so that they are
+handled consistently by `DefaultHeaderFilterStrategy`, like the other template components). The Java
+field names are unchanged; only the header string values have changed.
+
+`MustacheConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `MustacheConstants.MUSTACHE_RESOURCE_URI` | `MustacheResourceUri` | `CamelMustacheResourceUri`
+| `MustacheConstants.MUSTACHE_TEMPLATE` | `MustacheTemplate` | `CamelMustacheTemplate`
+|===
+
+`ChunkConstants`:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ChunkConstants.CHUNK_RESOURCE_URI` | `ChunkResourceUri` | `CamelChunkResourceUri`
+| `ChunkConstants.CHUNK_TEMPLATE` | `ChunkTemplate` | `CamelChunkTemplate`
+|===
+
+Both components read these headers only when `allowTemplateFromHeader=true`. Because the old names sat
+outside the `Camel` namespace, `DefaultHeaderFilterStrategy` did not strip them, so such a header
+arriving from an untrusted sender reached the producer; with the `Camel` prefix the headers are now
+filtered at the component boundary, so the template or resource can only come from the route. For that
+reason the old names should not simply be restored.
+
+Routes that reference the constants (for example `setHeader(MustacheConstants.MUSTACHE_TEMPLATE, ...)`)
+are unaffected. Routes that set the header by its literal string name, or that use
+`allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
+names.
+
 == Upgrading from 4.18.3 to 4.18.4
 
 === camel-core - Multicast EIP honors UseOriginalAggregationStrategy
