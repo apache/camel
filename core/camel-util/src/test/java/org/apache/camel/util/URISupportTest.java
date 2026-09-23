@@ -28,6 +28,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -764,6 +765,92 @@ public class URISupportTest {
         assertNotEquals(expected, URISupport.sanitizeUri(uri1));
         expected = "http://foo?username=xxxxxx&password=xxxxxx&domain=xxxxxx&database=customers";
         assertEquals(expected, URISupport.sanitizeUri(uri1));
+    }
+
+    @Test
+    public void testSanitizeCustomKeysAppliedToAllParameters() {
+        URISupport.addSanitizeKeywords("pincode");
+        assertThat(URISupport.sanitizeUri("my:host?pincode=1111&pincode=2222"))
+                .isEqualTo("my:host?pincode=xxxxxx&pincode=xxxxxx");
+
+        // keywords added by an earlier call are kept
+        URISupport.addSanitizeKeywords("otp-code");
+        assertThat(URISupport.sanitizeUri("my:host?otpCode=123456&pincode=1111&otp-code=654321"))
+                .isEqualTo("my:host?otpCode=xxxxxx&pincode=xxxxxx&otp-code=xxxxxx");
+
+        // only built-in or empty keywords, which must not mask any other parameter
+        URISupport.addSanitizeKeywords("password, ");
+        URISupport.addSanitizeKeywords(null);
+        assertThat(URISupport.sanitizeUri("my:host?foo=bar&timeout=5000")).isEqualTo("my:host?foo=bar&timeout=5000");
+    }
+
+    @Test
+    public void testSanitizeUriRawValueWithClosingBracket() {
+        // a RAW value ends at the closing bracket followed by & or the end, the same way as when parsing the query
+        assertThat(URISupport.sanitizeUri("ftp://host/dir?password=RAW(se)cret)&binary=true"))
+                .isEqualTo("ftp://host/dir?password=xxxxxx&binary=true");
+        assertThat(URISupport.sanitizeUri("ftp://host/dir?password=RAW{se}cret}&binary=true"))
+                .isEqualTo("ftp://host/dir?password=xxxxxx&binary=true");
+        assertThat(URISupport.sanitizeUri("ftp://host/dir?binary=true&password=RAW()s3cr3t)"))
+                .isEqualTo("ftp://host/dir?binary=true&password=xxxxxx");
+        assertThat(URISupport.sanitizeUri("foo:bar?password=RAW(++?)w&rd)&serviceName=somechat"))
+                .isEqualTo("foo:bar?password=xxxxxx&serviceName=somechat");
+    }
+
+    @Test
+    public void testSanitizeUriRawValueInText() {
+        // the uri is part of a longer text, such as a route label, so the RAW value is masked up to the last bracket
+        assertThat(URISupport.sanitizeUri("from[ftp://host/dir?password=RAW(se)cret)]"))
+                .isEqualTo("from[ftp://host/dir?password=xxxxxx]");
+        assertThat(URISupport.sanitizeUri("from[ftp://host/dir?password=RAW(secr...]"))
+                .isEqualTo("from[ftp://host/dir?password=xxxxxx");
+    }
+
+    @Test
+    public void testSanitizeUriWithUserInfoAndOtherUri() {
+        assertThat(URISupport.sanitizeUri(
+                "ftp://joe:s3cr3t@ftp.example.com/in?callbackUrl=http://cb.example.com:8080/x&notify=ops@example.com"))
+                .isEqualTo(
+                        "ftp://joe:xxxxxx@ftp.example.com/in?callbackUrl=http://cb.example.com:8080/x&notify=ops@example.com");
+        // the userinfo ends at the last @ before the path
+        assertThat(URISupport.sanitizeUri("ftp://joe:p@ss@ftp.example.com/in"))
+                .isEqualTo("ftp://joe:xxxxxx@ftp.example.com/in");
+        // every uri in the text is sanitized
+        assertThat(URISupport.sanitizeUri("From[ftp://joe:secret1@host1/in] -> To[sftp://bob:secret2@host2/out]"))
+                .isEqualTo("From[ftp://joe:xxxxxx@host1/in] -> To[sftp://bob:xxxxxx@host2/out]");
+        // no userinfo
+        assertThat(URISupport.sanitizeUri("smtp://host:25?to=ops@example.com")).isEqualTo("smtp://host:25?to=ops@example.com");
+        assertThat(URISupport.sanitizeUri("ftp://joe@host:21/dir?to=ops@example.com"))
+                .isEqualTo("ftp://joe@host:21/dir?to=ops@example.com");
+    }
+
+    @Test
+    public void testSanitizeUriDashCaseKeys() {
+        assertThat(URISupport.sanitizeUri(
+                "my:host?access-key=A1&private-key=P2&connection-string=C3&sasl-jaas-config=J4&pass-phrase=P5&foo-bar=keep"))
+                .isEqualTo(
+                        "my:host?access-key=xxxxxx&private-key=xxxxxx&connection-string=xxxxxx&sasl-jaas-config=xxxxxx&pass-phrase=xxxxxx&foo-bar=keep");
+    }
+
+    @Test
+    public void testSanitizeUriNestedUri() {
+        assertThat(URISupport.sanitizeUri("http://host/cb?url=http://other/path?token=abc&foo=bar"))
+                .isEqualTo("http://host/cb?url=http://other/path?token=xxxxxx&foo=bar");
+    }
+
+    @Test
+    public void testSanitizeParameters() {
+        Map<String, Object> parameters = new LinkedHashMap<>();
+        parameters.put("password", "secret");
+        parameters.put("private-key", "pk");
+        parameters.put("token", null);
+        parameters.put("foo", "bar");
+
+        assertThat(URISupport.sanitizeParameters(parameters))
+                .containsExactly(entry("password", "xxxxxx"), entry("private-key", "xxxxxx"), entry("token", null),
+                        entry("foo", "bar"));
+        // the given parameters are not changed
+        assertThat(parameters).containsEntry("password", "secret");
     }
 
 }

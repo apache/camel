@@ -26,15 +26,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for helper methods on the DefaultComponent.
@@ -268,6 +271,16 @@ public class DefaultComponentTest extends ContextTestSupport {
                 "Should have thrown a IllegalArgumentException");
 
         assertEquals("camelContext must be specified", e.getMessage());
+    }
+
+    @Test
+    public void testUnknownParametersAreSanitized() {
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("timer:foo?privateKeyPassphrase=secret&foo=bar"),
+                "Should have thrown a ResolveEndpointFailedException");
+
+        assertTrue(e.getMessage().endsWith("Unknown parameters=[{foo=bar, privateKeyPassphrase=xxxxxx}]"), e.getMessage());
+        assertFalse(e.getMessage().contains("secret"), e.getMessage());
     }
 
     @Override
