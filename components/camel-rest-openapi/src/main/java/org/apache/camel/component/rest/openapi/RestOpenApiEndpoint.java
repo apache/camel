@@ -627,9 +627,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return restConfigurationBasePath;
         }
 
-        final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
-        if (isNotEmpty(specificationBasePath)) {
-            return specificationBasePath;
+        if (openapi != null) {
+            final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
+            if (isNotEmpty(specificationBasePath)) {
+                return specificationBasePath;
+            }
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;
