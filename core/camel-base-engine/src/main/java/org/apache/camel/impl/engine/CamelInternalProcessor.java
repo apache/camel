@@ -194,7 +194,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
     @Override
     public void addRouteInflightRepositoryAdvice(InflightRepository inflightRepository, String routeId) {
-        addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(camelContext.getInflightRepository(), routeId));
+        addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(inflightRepository, routeId));
     }
 
     @Override
@@ -723,9 +723,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         input.getShortName(), input.getLabel(),
                         level, exchangeId, correlationExchangeId, breadcrumbId, rest, template, data);
                 if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
-                    first.setEndpointServiceUrl(esl.getServiceUrl());
-                    first.setEndpointServiceProtocol(esl.getServiceProtocol());
-                    first.setEndpointServiceMetadata(esl.getServiceMetadata());
+                    last.setEndpointServiceUrl(esl.getServiceUrl());
+                    last.setEndpointServiceProtocol(esl.getServiceProtocol());
+                    last.setEndpointServiceMetadata(esl.getServiceMetadata());
                 }
                 backlogTracer.traceEvent(last);
                 doneProcessing(exchange, last);
@@ -796,6 +796,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public DefaultBacklogTracerEventMessage before(Exchange exchange) throws Exception {
+            if (!backlogTracer.shouldTrace(processorDefinition, exchange)) {
+                return null;
+            }
             String exchangeId = exchange.getExchangeId();
             String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
             String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
@@ -850,9 +853,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         processorDefinition.getShortName(), processorDefinition.getLabel(),
                         level, exchangeId, correlationExchangeId, breadcrumbId, false, false, data);
                 if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
-                    first.setEndpointServiceUrl(esl.getServiceUrl());
-                    first.setEndpointServiceProtocol(esl.getServiceProtocol());
-                    first.setEndpointServiceMetadata(esl.getServiceMetadata());
+                    last.setEndpointServiceUrl(esl.getServiceUrl());
+                    last.setEndpointServiceProtocol(esl.getServiceProtocol());
+                    last.setEndpointServiceMetadata(esl.getServiceMetadata());
                 }
                 backlogTracer.traceEvent(last);
                 doneProcessing(exchange, last);
@@ -983,44 +986,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             }
 
             return null;
-        }
-
-        private SynchronizationAdapter createAggregateOnCompletion(
-                String source, DefaultBacklogTracerEventMessage pseudoFirst) {
-            return new SynchronizationAdapter() {
-                @Override
-                public void onDone(Exchange exchange) {
-                    // create pseudo last for the aggregate
-                    String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
-                    String fromRouteId = exchange.getFromRouteId();
-                    String exchangeId = exchange.getExchangeId();
-                    String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
-                    String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
-                    boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
-                    boolean includeExchangeVariables = backlogTracer.isIncludeExchangeVariables();
-                    long created = exchange.getClock().getCreated();
-                    int level = pseudoFirst.getToNodeLevel();
-                    String toNode = pseudoFirst.getToNode();
-                    String toNodeShortName = pseudoFirst.getToNodeShortName();
-                    String toNodeLabel = pseudoFirst.getToNodeLabel();
-                    JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties,
-                            includeExchangeVariables, true,
-                            true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
-                            backlogTracer.getBodyMaxChars());
-                    DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
-                            camelContext,
-                            false, true, backlogTracer.incrementTraceCounter(), created, source, fromRouteId, routeId, toNode,
-                            null, null,
-                            null, toNodeShortName, toNodeLabel,
-                            level, exchangeId, correlationExchangeId, breadcrumbId, rest, template, data);
-                    backlogTracer.traceEvent(pseudoLast);
-                    doneProcessing(exchange, pseudoLast);
-                    doneProcessing(exchange, pseudoFirst);
-                    // to not be confused then lets store duration on first/last as (first = 0, last = total time to process)
-                    pseudoLast.setElapsed(pseudoFirst.getElapsed());
-                    pseudoFirst.setElapsed(0);
-                }
-            };
         }
 
         @Override
