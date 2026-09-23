@@ -31,7 +31,6 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.EscapeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 

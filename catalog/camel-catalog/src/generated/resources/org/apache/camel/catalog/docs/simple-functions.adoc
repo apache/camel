@@ -520,7 +520,7 @@ The string functions is various functions to work with values that are String an
 |`lowercase(exp)` | `String` | Lowercases the expression
 |`normalizeWhitespace()` | `String` | Normalizes the whitespace in the message body by cleaning up excess whitespaces.
 |`normalizeWhitespace(exp)` | `String` | Normalizes the whitespace in the expression by cleaning up excess whitespaces.
-|`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according the total width The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.
+|`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according to the total width. The separator is by default a space. A positive width pads to the right (after the value), and a negative width pads to the left (before the value).
 |`replace(from,to)` | `String` | Replace all the string values in the message body. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`replace(from,to,exp)` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`safeQuote()` | `String` | Returns the message body safely quoted if needed
@@ -636,13 +636,16 @@ If the value is currently in single quote, then this will be converted to double
 
 If the message body contains `Hello World` then `${quote()}` returns `"Hello World"`.
 And using `${quote('Hi from me')}` then `"Hi from me"` is returned.
+The `quote` function does not escape the value, so a value with double quotes or backslashes is not a valid JSON string;
+use `safeQuote` (or `escape(json)`) for JSON.
 
 The `unquote` function removes any surrounding single or double quotes from a value.
 If the body contains `'hello'` then `${unquote()}` returns `hello` (without the quotes).
 
 The `safeQuote` function is quoting the value depending on the value type
 (uses the same logic as `kindOfType` function). In essence values that are null, boolean or numbers are not quoted,
-while everything else is. The `safeQuote` function is useful when working with JSON data.
+while everything else is. When quoted, double quotes, backslashes and control characters in the value are escaped,
+so the result is a valid JSON string. The `safeQuote` function is useful when working with JSON data.
 
 For example when doing JSON to JSON mapping you can extract values form the source document,
 to be included in the output, but the values may or may not need to be quoted. Then you can use the `~>` chain operator

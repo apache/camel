@@ -19,7 +19,6 @@ package org.apache.camel.language.simple;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
@@ -58,7 +57,6 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
-import org.apache.camel.util.StringHelper;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
@@ -91,22 +89,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 SimpleInitBlockParser initParser
                         = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
                 init = initParser.parseExpression();
-                if (init != null) {
-                    String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
-                    if (part.startsWith("\n")) {
-                        // skip newline after ending init block
-                        part = part.substring(1);
-                    }
-                    this.expression = part;
-                    // use $$key as local variable in the expression afterwards.
-                    // Sort by descending length so a longer key (e.g. "$ab") is replaced before any
-                    // shorter prefix (e.g. "$a"), preventing "$ab" from becoming "${variable.a}b".
-                    List<String> sortedKeys = new ArrayList<>(initParser.getInitKeys());
-                    sortedKeys.sort(Comparator.comparingInt(String::length).reversed());
-                    for (String key : sortedKeys) {
-                        this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
-                    }
-                }
+                // the init block may only define functions ($f ~:= ...) and then there is no init expression
+                this.expression = initParser.rewriteExpressionAfterInitBlock(expression);
             }
 
             parseTokens();

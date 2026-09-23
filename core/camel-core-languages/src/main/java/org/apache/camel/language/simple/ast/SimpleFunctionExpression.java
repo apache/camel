@@ -65,7 +65,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (answer != null) {
                 answer.init(camelContext);
             }
-            if (cacheExpression != null && answer != null) {
+            // a custom function from an init block ($f ~:= ...) is bound to the definition of that block,
+            // so it is not shared with another expression that defines a function with the same name
+            if (cacheExpression != null && answer != null && !function.startsWith("function(")) {
                 cacheExpression.put(function, answer);
             }
         }
