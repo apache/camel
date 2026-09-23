@@ -2630,3 +2630,14 @@ are now failed with a `RejectedExecutionException` and their on completions are 
 reply of a discarded exchange (`waitForTaskToComplete`) is released with that exception, instead of waiting until its
 `timeout`, or forever when the timeout is disabled. On completions handed over to a discarded InOnly exchange, such as
 the commit or rollback of the consumer that received the message, now run as a failure, where previously they never ran.
+
+=== camel-core - Recipient List releases the producers of recipients it did not send to
+
+The Recipient List acquires a producer for every recipient before it starts sending. When it completes before
+it has sent to every recipient (`stopOnException`, `timeout`, or a rejected task), it now releases the
+producers of the recipients it did not send to. Previously these producers were never released: a pooled
+(non-singleton) producer was not returned to its pool, and with `cacheSize(-1)` the prototype endpoint and its
+producer were never stopped.
+
+With `parallelProcessing`, a recipient whose task had not started yet when the Recipient List completed is now
+skipped instead of being sent to afterwards. As before, recipients that had already started keep running.
