@@ -199,6 +199,9 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
                     headerFilterStrategy, contentTypeResolver, decode, mapMailMessage, failDuplicate,
                     generateMissingAttachmentNames,
                     handleDuplicateAttachmentNames);
+            if (getConfiguration() != null) {
+                binding.setMaxMultipartDepth(getConfiguration().getMaxMultipartDepth());
+            }
         }
         return binding;
     }
