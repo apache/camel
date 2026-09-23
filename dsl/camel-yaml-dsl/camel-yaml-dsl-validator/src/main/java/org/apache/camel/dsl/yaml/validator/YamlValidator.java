@@ -49,6 +49,8 @@ import com.networknt.schema.path.PathType;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.yaml.common.DataFormatKeyHints;
+import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 
 /**
@@ -723,12 +725,13 @@ public class YamlValidator {
     /**
      * The first simple expression in the path of the uri (what comes before the options), or null when there is none.
      */
-    private static String expressionInPath(String uri) {
+    private String expressionInPath(String uri) {
         if (uri == null) {
             return null;
         }
         int scheme = uri.indexOf(':');
-        if (scheme > 0 && EVALUATED_PATH.contains(uri.substring(0, scheme))) {
+        String component = scheme > 0 ? uri.substring(0, scheme) : null;
+        if (component != null && (SCRIPT_PATH.contains(component) || pathTakesAnExpression(component))) {
             return null;
         }
         String head = uri.indexOf('?') > 0 ? uri.substring(0, uri.indexOf('?')) : uri;
@@ -744,11 +747,27 @@ public class YamlValidator {
     }
 
     /**
-     * Components that read their path as a script, a statement or a template name and evaluate it for each message,
-     * where an expression in the path is what the component is for.
+     * The one component whose path is a script written in another language, so what is in it is not the catalog's to
+     * say: language:simple:Hello ${body} is the script, not an address. Everything else is read from the catalog
+     * (CAMEL-24918).
      */
-    private static final Set<String> EVALUATED_PATH = Set.of("language", "sql", "sql-stored", "elsql", "jdbc",
-            "spring-jdbc", "mybatis", "xquery", "xslt");
+    private static final Set<String> SCRIPT_PATH = Set.of("language");
+
+    /**
+     * Whether the component evaluates its path for each message, which its catalog metadata says: an expression is then
+     * what the path is for, as in micrometer:counter:orders.${header.region} (CAMEL-24918).
+     */
+    private boolean pathTakesAnExpression(String component) {
+        try {
+            ComponentModel model = catalog().componentModel(component);
+            if (model == null) {
+                return true; // a component the catalog does not know: say nothing rather than the wrong thing
+            }
+            return model.getEndpointPathOptions().stream().anyMatch(BaseOptionModel::isSupportSimpleExpression);
+        } catch (Exception e) {
+            return true;
+        }
+    }
 
     /** Adds an error for every expression node in the tree that has neither expression: nor a language key. */
     void checkRequiredExpressions(JsonNode node, NodePath path, List<Error> errors) {

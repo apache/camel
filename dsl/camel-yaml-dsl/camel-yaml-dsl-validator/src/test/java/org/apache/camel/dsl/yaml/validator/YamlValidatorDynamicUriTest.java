@@ -125,6 +125,34 @@ public class YamlValidatorDynamicUriTest {
     }
 
     @Test
+    public void testAComponentWhosePathIsEvaluatedIsFine() {
+        // CAMEL-24918: micrometer evaluates the metric name for each message, and its catalog metadata says so
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: "micrometer:counter:orders.${header.region}"
+                """;
+        assertNoHint(yaml);
+    }
+
+    @Test
+    public void testAComponentWhosePathIsAnAddressIsReported() {
+        // xslt takes a resource name, not an expression: a stylesheet per message needs toD
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to:
+                            uri: "xslt:styles/${header.style}.xsl"
+                """;
+        assertHint(yaml, "${header.style}", "write toD:");
+    }
+
+    @Test
     public void testAPropertyPlaceholderIsFine() {
         String yaml = """
                 - route:
