@@ -52,12 +52,16 @@ import org.apache.camel.dsl.yaml.common.DataFormatKeyHints;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * YAML DSL validator that tooling can use to validate Camel source files if they can be parsed and are valid according
  * to the Camel YAML DSL spec.
  */
 public class YamlValidator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(YamlValidator.class);
 
     private static final String LOCATION = "/schema/camelYamlDsl.json";
     private static final String LOCATION_CANONICAL = "/schema/camelYamlDsl-canonical.json";
@@ -775,6 +779,7 @@ public class YamlValidator {
             }
             return model.getEndpointPathOptions().stream().anyMatch(BaseOptionModel::isSupportSimpleExpression);
         } catch (Exception e) {
+            LOG.debug("Cannot read the catalog model of component {}: the path is left alone", component, e);
             return true;
         }
     }
