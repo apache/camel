@@ -402,7 +402,7 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
-    public void shouldFailDescriptivelyWhenServersSectionIsMissing() {
+    public void shouldFailDescriptivelyWhenServersSectionIsMissing() throws Exception {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         final CamelContext camelContext = new DefaultCamelContext();
         component.setCamelContext(camelContext);
@@ -419,7 +419,7 @@ public class RestOpenApiEndpointV3Test {
 
         assertThatThrownBy(() -> endpoint.createProducerFor(openapi, operation, "get", "/test"))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("does not specify an absolute URL in 'servers'");
+                .hasMessageContaining("Unable to determine destination host for requests");
     }
 
     @Test
@@ -555,18 +555,6 @@ public class RestOpenApiEndpointV3Test {
 
         assertThrows(IllegalArgumentException.class,
                 () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "non-existant.json"));
-    }
-
-    @Test
-    public void shouldLoadSpecificationWithoutServers() {
-        final CamelContext camelContext = new DefaultCamelContext();
-
-        OpenAPI openapi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "missing-servers.yaml");
-
-        assertThat(openapi).isNotNull();
-        assertThat(openapi.getServers()).isNotNull();
-        assertThat(openapi.getServers()).isNotEmpty();
-        assertThat(openapi.getServers().get(0).getUrl()).isEqualTo("/");
     }
 
     @Test

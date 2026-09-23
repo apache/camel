@@ -1004,14 +1004,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             if (openApi != null && openApi.getOpenAPI() != null) {
                 return openApi.getOpenAPI();
             }
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage() != null && e.getMessage().contains("URI is not absolute")) {
-                throw new IllegalArgumentException(
-                        "Failed to load OpenAPI specification from '" + uri + "': URI is not absolute. "
-                                                   + "Specify an absolute location or define 'servers' in the OpenAPI contract.",
-                        e);
-            }
-            throw e;
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to load OpenAPI specification from: " + uri, e);
         } finally {
