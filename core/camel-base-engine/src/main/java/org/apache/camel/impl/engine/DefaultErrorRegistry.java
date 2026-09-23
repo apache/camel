@@ -300,6 +300,11 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             String nodeId = mh.getNode() != null ? mh.getNode().getId() : null;
             long elapsed = mh.getElapsed();
             String step = mh.getRouteId() + "[" + nodeId + "]";
+            // where the step is in the source, so the reader can go to the line (CAMEL-24972)
+            String loc = LoggerHelper.getLineNumberLoggerName(mh.getNode());
+            if (loc != null) {
+                step += " " + loc;
+            }
             if (elapsed > 0) {
                 step += " (" + elapsed + " ms)";
             }
