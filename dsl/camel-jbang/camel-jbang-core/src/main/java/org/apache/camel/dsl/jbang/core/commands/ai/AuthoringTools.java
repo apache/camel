@@ -307,9 +307,10 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_eval_expression",
-                "Evaluates an expression: in the running integration when there is one, else locally. Returns the "
-                                                      + "value (true/false for a predicate) or the syntax error, so check simple "
-                                                      + "before answering or writing it.")
+                "Evaluates an expression: in the running integration when there is one, else locally, in any "
+                                                      + "language (jsonpath, jq, xpath, groovy: its component is downloaded when "
+                                                      + "needed). Returns the value (true/false for a predicate) or the syntax "
+                                                      + "error, so check an expression before answering or writing it.")
                 .param("expression", "string", "e.g. ${random(1,10)} or ${body} ?: 'none'", true)
                 .param("language", "string", "simple (default), jsonpath, xpath, jq", false)
                 .param("body", "string", "Message body", false)

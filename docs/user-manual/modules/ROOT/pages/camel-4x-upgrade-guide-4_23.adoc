@@ -913,6 +913,11 @@ and what to put there, and validates and reloads the result as a write does. A m
 change one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing file;
 `camel_write_file` writes a new one.
 
+`camel_eval_expression` evaluates any language, not only the ones on the server's own classpath: the component of
+a language such as `jsonpath`, `jq` or `xpath` is downloaded on first use, as `camel run` downloads what a route
+needs, and the answer names it in `downloaded`. A failing expression also carries the catalog's syntax error and
+the position where it breaks.
+
 The `camel_run` tool, when no files are named, starts the project with `camel run --source-dir=.` instead of
 listing the directory's files: the directory is watched, so a file added afterwards (a bean file, a Java class
 under `src/main/java`) is part of the app and reloaded in dev mode, and a `restart` starts the same way. Naming

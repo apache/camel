@@ -365,8 +365,10 @@ project `directory` as an argument, the runtime tools take the integration `name
 
 | `camel_eval_expression`
 | Evaluates an expression (simple by default) in the running integration, or locally when none is named,
-  and returns the value (true/false for a predicate) or the syntax error, so an agent can check a simple
-  expression before writing it into a route.
+  and returns the value (true/false for a predicate) or the syntax error with the position where it breaks,
+  so an agent can check an expression before writing it into a route. Any language works: one that is not on
+  the server's own classpath, `jsonpath`, `jq`, `xpath`, `groovy`, has its component downloaded on first use
+  and the answer says so in `downloaded`.
 
 | `camel_dependency_for_class`
 | Which Maven dependency provides a class, and how to declare it. Local first: the known dependencies
