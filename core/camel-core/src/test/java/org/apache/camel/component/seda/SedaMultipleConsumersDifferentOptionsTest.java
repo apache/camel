@@ -18,7 +18,6 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -92,7 +91,7 @@ public class SedaMultipleConsumersDifferentOptionsTest extends ContextTestSuppor
             template.sendBody("seda:news", body);
         }
 
-        MockEndpoint.assertIsSatisfied(context);
+        assertMockEndpointsSatisfied();
     }
 
     private static String[] bodies(String prefix) {
