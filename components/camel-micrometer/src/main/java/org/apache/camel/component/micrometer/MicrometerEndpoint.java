@@ -49,19 +49,25 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     protected final Meter.Type metricsType;
     @UriPath(description = "Name of metrics")
-    @Metadata(required = true)
+    @Metadata(required = true, supportSimpleExpression = true)
     protected final String metricsName;
     @UriParam(description = "Description of metrics")
+    @Metadata(supportSimpleExpression = true)
     protected String metricsDescription;
     @UriParam(description = "Tags of metrics", multiValue = true, prefix = "tags.")
+    @Metadata(supportSimpleExpression = true)
     protected Map<String, String> tags;
     @UriParam(description = "Action expression when using timer type", enums = "start,stop")
+    @Metadata(supportSimpleExpression = true)
     private String action;
     @UriParam(description = "Value expression when using histogram type")
+    @Metadata(supportSimpleExpression = true)
     private String value;
     @UriParam(description = "Increment value expression when using counter type")
+    @Metadata(supportSimpleExpression = true)
     private String increment;
     @UriParam(description = "Decrement value expression when using counter type")
+    @Metadata(supportSimpleExpression = true)
     private String decrement;
 
     public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, Meter.Type metricsType,
