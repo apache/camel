@@ -96,6 +96,37 @@ public class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSuppo
     }
 
     @Test
+    public void testStopCacheRouteKeepsAutoDiscoveredKeyValueRepository() throws Exception {
+        // no repositories configured, so the idempotent consumer and the cache EIP use this store
+        MemoryKeyValueRepository store = new MemoryKeyValueRepository();
+        context.getRegistry().bind("store", store);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:a").routeId("a").idempotentConsumer(header("messageId")).to("mock:a");
+                from("direct:cache").routeId("cache")
+                        .cache(header("key"))
+                            .to("mock:service")
+                        .end();
+            }
+        });
+        context.start();
+
+        MockEndpoint a = getMockEndpoint("mock:a");
+        a.expectedBodiesReceived("one");
+
+        template.sendBodyAndHeader("direct:a", "one", "messageId", "1");
+        template.sendBodyAndHeader("direct:cache", "value", "key", "K");
+
+        context.getRouteController().stopRoute("cache");
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("a"));
+
+        // route a must still know id 1
+        template.sendBodyAndHeader("direct:a", "one", "messageId", "1");
+        a.assertIsSatisfied();
+    }
+
+    @Test
     public void testRestartRouteKeepsRepository() throws Exception {
         KeyValueIdempotentRepository repo = new KeyValueIdempotentRepository();
         addRoute("a", repo);
