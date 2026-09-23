@@ -24,7 +24,7 @@ public class TypeSafeAiEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(13);
+        Set<String> props = new HashSet<>(14);
         props.add("apiKey");
         props.add("baseUrl");
         props.add("lazyStartProducer");
@@ -32,6 +32,7 @@ public class TypeSafeAiEndpointUriFactory extends org.apache.camel.support.compo
         props.add("model");
         props.add("name");
         props.add("questions");
+        props.add("questionsResource");
         props.add("requestTimeout");
         props.add("resultProperty");
         props.add("state");

@@ -80,6 +80,7 @@
         <module>camel-test-infra-mosquitto</module>
         <module>camel-test-infra-chatscript</module>
         <module>camel-test-infra-openai-mock</module>
+        <module>camel-test-infra-typesafe-ai-mock</module>
         <module>camel-test-infra-openldap</module>
         <module>camel-test-infra-ignite</module>
         <module>camel-test-infra-hashicorp-vault</module>

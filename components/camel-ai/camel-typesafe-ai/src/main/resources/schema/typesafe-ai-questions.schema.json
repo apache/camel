@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TypeSafe AI questions resource",
+  "description": "The questions object of a TypeSafe AI System One request, without state or model.",
+  "type": "object",
+  "minProperties": 1,
+  "propertyNames": { "type": "string", "minLength": 1, "pattern": "\\S" },
+  "additionalProperties": { "$ref": "#/$defs/question" },
+  "$defs": {
+    "content": {
+      "type": ["string", "object", "array"]
+    },
+    "noul": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "noul" },
+        "instructions": { "anyOf": [{ "$ref": "#/$defs/content" }, { "type": "null" }] },
+        "criteria": {
+          "type": ["object", "null"],
+          "properties": {
+            "true": { "anyOf": [{ "$ref": "#/$defs/content" }, { "type": "null" }] },
+            "false": { "anyOf": [{ "$ref": "#/$defs/content" }, { "type": "null" }] }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "required": ["type", "criteria"],
+      "properties": {
+        "type": { "const": "choice" },
+        "instructions": { "anyOf": [{ "$ref": "#/$defs/content" }, { "type": "null" }] },
+        "criteria": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 255,
+          "propertyNames": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "additionalProperties": { "anyOf": [{ "$ref": "#/$defs/content" }, { "type": "null" }] }
+        }
+      }
+    },
+    "score": {
+      "type": "object",
+      "required": ["type", "criteria"],
+      "properties": {
+        "type": { "const": "score" },
+        "instructions": { "anyOf": [{ "$ref": "#/$defs/content" }, { "type": "null" }] },
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "items": { "$ref": "#/$defs/content" }
+        }
+      }
+    },
+    "question": {
+      "oneOf": [
+        { "$ref": "#/$defs/noul" },
+        { "$ref": "#/$defs/choice" },
+        { "$ref": "#/$defs/score" }
+      ]
+    }
+  }
+}

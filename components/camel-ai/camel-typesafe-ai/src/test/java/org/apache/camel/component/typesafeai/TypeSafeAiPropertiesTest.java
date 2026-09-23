@@ -39,6 +39,38 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 class TypeSafeAiPropertiesTest extends TypeSafeAiTestSupport {
+    @Test
+    void preconfiguresQuestionsResourceThroughComponentProperties() throws Exception {
+        Main main = new Main();
+        main.addProperty("camel.component.typesafe-ai.api-key", "test-key");
+        main.addProperty("camel.component.typesafe-ai.base-url", "http://127.0.0.1:" + server.getAddress().getPort());
+        main.addProperty("camel.component.typesafe-ai.questions-resource", "classpath:typesafe-ai/refund-questions.json");
+        main.addProperty("camel.component.typesafe-ai.result-property", "evaluation");
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:resource").to("typesafe-ai:refund");
+            }
+        });
+        respond = request -> result(Map.of("refund", Map.of("type", "noul", "noul", 0.9)));
+        try {
+            main.start();
+            try (var producer = main.getCamelContext().createProducerTemplate()) {
+                Exchange exchange = producer.request("direct:resource",
+                        e -> e.getMessage().setBody("Please refund the duplicate charge."));
+                assertThat(exchange.getException()).isNull();
+                assertThat(exchange.getMessage().getBody()).isEqualTo("Please refund the duplicate charge.");
+                assertThat(exchange.getProperty("evaluation", JsonObject.class).getJsonObject("answers")
+                        .getJsonObject("refund").getDouble("noul"))
+                        .isEqualTo(0.9);
+                assertThat(requests).hasSize(1);
+                assertThat(requests.peek().getJsonObject("questions")).containsKey("refund");
+            }
+        } finally {
+            main.stop();
+        }
+    }
+
     private Main configuredMain() {
         Main main = new Main();
         main.addProperty("camel.component.typesafe-ai.api-key", "test-key");

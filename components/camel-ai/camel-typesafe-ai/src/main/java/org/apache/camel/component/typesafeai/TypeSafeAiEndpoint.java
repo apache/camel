@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.typesafeai;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -30,6 +33,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.json.JsonObject;
 
 /** Evaluate text and structured state with the TypeSafe AI decision API. */
@@ -73,6 +77,14 @@ public class TypeSafeAiEndpoint extends DefaultEndpoint {
         stateExpression = null;
         if (configuration.getQuestions() != null) {
             configuredQuestions = TypeSafeAiJson.questions(configuration.getQuestions());
+            stateExpression = createStateExpression();
+        } else if (configuration.getQuestionsResource() != null) {
+            String location = configuration.getQuestionsResource();
+            try (InputStream input = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), location)) {
+                configuredQuestions = TypeSafeAiJson.questions(new String(input.readAllBytes(), StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                throw new IOException("Invalid questionsResource: " + e.getMessage(), e);
+            }
             stateExpression = createStateExpression();
         }
         client = new TypeSafeAiClient(configuration);

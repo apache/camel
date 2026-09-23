@@ -41,6 +41,8 @@ public class TypeSafeAiConfiguration implements Cloneable {
     @UriParam(label = "common")
     private String questions;
     @UriParam(label = "common")
+    private String questionsResource;
+    @UriParam(label = "common")
     private String state = "${body}";
     @UriParam(label = "producer")
     private String resultProperty;
@@ -89,6 +91,23 @@ public class TypeSafeAiConfiguration implements Cloneable {
      */
     public void setQuestions(String questions) {
         this.questions = questions;
+    }
+
+    /**
+     * @since 4.23
+     */
+    public String getQuestionsResource() {
+        return questionsResource;
+    }
+
+    /**
+     * Camel resource URI for a UTF-8 JSON object mapping question names to Noul, Choice or Score questions. Loaded and
+     * validated when the endpoint starts. Cannot be combined with questions.
+     *
+     * @since 4.23
+     */
+    public void setQuestionsResource(String questionsResource) {
+        this.questionsResource = questionsResource;
     }
 
     public String getState() {
@@ -169,6 +188,12 @@ public class TypeSafeAiConfiguration implements Cloneable {
     }
 
     void validate() {
+        if (questions != null && questionsResource != null) {
+            throw new IllegalArgumentException("questions and questionsResource are mutually exclusive");
+        }
+        if (questionsResource != null && questionsResource.isBlank()) {
+            throw new IllegalArgumentException("questionsResource must not be blank");
+        }
         ObjectHelper.notNull(apiKey, "apiKey");
         ObjectHelper.notNull(model, "model");
         ObjectHelper.notNull(baseUrl, "baseUrl");
