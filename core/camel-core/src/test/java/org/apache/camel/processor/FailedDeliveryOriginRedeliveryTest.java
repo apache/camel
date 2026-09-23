@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -68,11 +67,6 @@ public class FailedDeliveryOriginRedeliveryTest extends ContextTestSupport {
         assertTrue(logger.messages.stream().anyMatch(m -> m.contains("On delivery attempt")), logger.messages.toString());
         assertTrue(logger.messages.stream().anyMatch(m -> m.contains("Exhausted after delivery attempt")),
                 logger.messages.toString());
-    }
-
-    private String lastFailure() {
-        assertFalse(logger.messages.isEmpty(), "The error handler should have logged the exhausted delivery");
-        return logger.messages.get(logger.messages.size() - 1);
     }
 
     @Override
