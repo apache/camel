@@ -1,0 +1,25 @@
+{
+  "language": {
+    "kind": "language",
+    "name": "typesafe-ai",
+    "title": "TypeSafe AI",
+    "description": "Evaluate a Noul question with the TypeSafe AI decision API",
+    "deprecated": false,
+    "firstVersion": "4.23.0",
+    "label": "language,ai",
+    "javaType": "org.apache.camel.language.typesafeai.TypeSafeAiLanguage",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-typesafe-ai",
+    "version": "4.23.0-SNAPSHOT",
+    "modelName": "language",
+    "modelJavaType": "org.apache.camel.model.language.LanguageExpression"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node." },
+    "language": { "index": 1, "kind": "attribute", "displayName": "Language", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the language to use." },
+    "expression": { "index": 2, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax." },
+    "trim": { "index": 3, "kind": "attribute", "displayName": "Trim", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the source code to remove leading and trailing whitespaces and line breaks." },
+    "resolveResource": { "index": 4, "kind": "attribute", "displayName": "Resolve Resource", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates\/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate." }
+  }
+}
