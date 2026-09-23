@@ -259,14 +259,20 @@ public final class SimpleSyntaxHints {
         }
         int open = 0;
         for (int i = 0; i < head.length(); i++) {
-            if (head.charAt(i) == '(') {
+            char c = head.charAt(i);
+            if (c == '(' || c == '[') {
                 open++;
-            } else if (head.charAt(i) == ')') {
+            } else if (c == ')' || c == ']') {
                 open--;
             }
         }
         if (open > 0) {
-            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach)
+            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach),
+            // or inside a key such as ${header[order in progress]}
+            return null;
+        }
+        if (head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
+            // the operator word is in the default value: ${properties:msg:value is not set}
             return null;
         }
         return "${" + head + "}" + function.substring(best);
