@@ -467,6 +467,7 @@ public final class ArtifactUtils {
             Map.entry("python3", "camel-python3"),
             Map.entry("quickjs", "camel-quickjs"),
             Map.entry("ref", "camel-core-languages"),
+            Map.entry("semantic", "camel-semantic"),
             Map.entry("simple", "camel-core-languages"),
             Map.entry("spel", "camel-spring"),
             Map.entry("tokenize", "camel-core-languages"),

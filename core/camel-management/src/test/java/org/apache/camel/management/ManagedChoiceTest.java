@@ -34,6 +34,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ManagedChoiceTest extends ManagementTestSupport {
 
     @Test
+    public void testManageSelectorChoice() throws Exception {
+        template.sendBodyAndHeader("direct:select", "message", "department", "billing");
+        template.sendBodyAndHeader("direct:select", "message", "department", "other");
+        TabularData data = (TabularData) getMBeanServer().invoke(
+                getCamelObjectName(TYPE_PROCESSOR, "selector"), "extendedInformation", null, null);
+        assertEquals(2, data.size());
+        assertEquals(1L, data.get(new Object[] { "billing" }).get("matches"));
+        assertEquals("header", data.get(new Object[] { "billing" }).get("language"));
+        assertEquals(1L, data.get(new Object[] { "otherwise" }).get("matches"));
+    }
+
+    @Test
     public void testManageChoice() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
@@ -78,6 +90,9 @@ public class ManagedChoiceTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                from("direct:select").routeId("selectorRoute").choice(header("department")).id("selector")
+                        .when("billing").to("mock:selected")
+                        .otherwise().to("mock:other");
                 from("direct:start")
                         .choice().id("mysend")
                         .when(header("foo"))

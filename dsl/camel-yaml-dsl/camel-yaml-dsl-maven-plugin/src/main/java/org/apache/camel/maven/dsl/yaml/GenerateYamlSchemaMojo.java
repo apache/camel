@@ -168,9 +168,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         kebabToCamelCase(step);
         kebabToCamelCase(root.withObject("/items"));
 
-        if (!inheritedDefinitions.isEmpty()) {
-            postProcessInheritance(inheritedDefinitions, inlineDefinitions);
-        }
+        postProcessInheritance(inheritedDefinitions, inlineDefinitions);
 
         try {
             ToolingSupport.mkparents(outputFile);
@@ -252,7 +250,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     .map(AnnotationValue::asBoolean)
                     .orElse(false);
 
-            boolean isInOneOf = !canonical && !StringUtils.isEmpty(propertyOneOf);
+            boolean isInOneOf
+                    = (!canonical || propertyName.equals("__oneOf") || "org.apache.camel.model.WhenDefinition".equals(type))
+                            && !StringUtils.isEmpty(propertyOneOf);
             if (isInOneOf) {
                 if (!oneOfGroups.containsKey(propertyOneOf)) {
                     var oneOfGroup = objectDefinition.withArray("anyOf").addObject();
@@ -263,8 +263,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             //
             // Internal properties
             //
-            if (propertyName.equals("__extends") && propertyType.startsWith("object:")) {
-                if (canonical) {
+            if ((propertyName.equals("__extends") || propertyName.equals("__oneOf")) && propertyType.startsWith("object:")) {
+                if (canonical && propertyName.equals("__extends")) {
                     // In canonical mode, skip __extends to avoid merging parent properties inline.
                     // Users must use the explicit form (e.g., expression: { simple: "..." })
                     continue;
@@ -280,7 +280,12 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 } else {
                     objectDefinition.put("$ref", "#/items/definitions/" + objectRef);
                 }
-                inheritedDefinitions.add(objectRef);
+                if (propertyName.equals("__extends")) {
+                    inheritedDefinitions.add(objectRef);
+                } else {
+                    // Alternatives describe complete, closed objects rather than inherited properties.
+                    objectDefinition.remove("additionalProperties");
+                }
                 continue;
             }
             if (propertyName.equals("__extends") && propertyType.startsWith("array:")) {
@@ -323,7 +328,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 if (!propertyRequired) {
                     makeOptional(oneOf, entry);
                 }
-                finalObjectDefinition = entry;
+                // Canonical completion metadata also reads the top-level property schemas.
+                finalObjectDefinition = canonical ? objectDefinition : entry;
                 propertyRequired = false;
             }
 
@@ -486,6 +492,15 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             String objectType = StringHelper.after(propertyType, ":");
             current.put("$ref", "#/items/definitions/" + objectType);
 
+        } else if (propertyType.startsWith("map:")) {
+            current.put("type", "object");
+            String valueType = StringHelper.after(propertyType, ":");
+            ObjectNode valueSchema = current.putObject("additionalProperties");
+            if (valueType.contains(".")) {
+                valueSchema.put("$ref", "#/items/definitions/" + valueType);
+            } else {
+                valueSchema.put("type", valueType);
+            }
         } else if (propertyType.startsWith("array:")) {
 
             current.put("type", "array");

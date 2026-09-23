@@ -35,6 +35,7 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.model.BasicExpressionNode;
 import org.apache.camel.model.BeanFactoryDefinition;
+import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
@@ -260,6 +261,12 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                 }
             }
         }
+        for (ChoiceDefinition choice : filterTypeInOutputs(route.getOutputs(), ChoiceDefinition.class)) {
+            NamespaceAware na = getNamespaceAwareFromSelector(choice);
+            if (na != null && na.getNamespaces() != null) {
+                namespaces.putAll(na.getNamespaces());
+            }
+        }
     }
 
     /**
@@ -322,11 +329,19 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         return () -> restorers.forEach(Runnable::run);
     }
 
+    private static NamespaceAware getNamespaceAwareFromSelector(ChoiceDefinition choice) {
+        ExpressionDefinition definition = choice.getSelector() != null ? choice.getSelector().getExpressionType() : null;
+        if (definition instanceof NamespaceAware aware) {
+            return aware;
+        }
+        return definition != null && definition.getExpressionValue() instanceof NamespaceAware aware ? aware : null;
+    }
+
     private static NamespaceAware getNamespaceAwareFromExpression(ExpressionNode expressionNode) {
         ExpressionDefinition ed = expressionNode.getExpression();
 
         NamespaceAware na = null;
-        Expression exp = ed.getExpressionValue();
+        Expression exp = ed != null ? ed.getExpressionValue() : null;
         if (exp instanceof NamespaceAware namespaceAware) {
             na = namespaceAware;
         } else if (ed instanceof NamespaceAware namespaceAware) {
@@ -340,7 +355,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         ExpressionDefinition ed = expressionNode.getExpression();
 
         NamespaceAware na = null;
-        Expression exp = ed.getExpressionValue();
+        Expression exp = ed != null ? ed.getExpressionValue() : null;
         if (exp instanceof NamespaceAware namespaceAware) {
             na = namespaceAware;
         } else if (ed instanceof NamespaceAware namespaceAware) {

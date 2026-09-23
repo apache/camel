@@ -894,6 +894,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("precondition", def.getPrecondition(), "false");
+        doWriteElement("selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
         doWriteList(null, null, def.getWhenClauses(), this::doWriteWhenDefinitionRef);
         doWriteElement("otherwise", def.getOtherwise(), this::doWriteOtherwiseDefinition);
         endElement(name);
@@ -2039,6 +2040,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("disabled", def.getDisabled(), null);
+        doWriteAttribute("value", def.getValue(), null);
         doWriteBasicOutputExpressionNodeElements(def);
         endElement(name);
     }

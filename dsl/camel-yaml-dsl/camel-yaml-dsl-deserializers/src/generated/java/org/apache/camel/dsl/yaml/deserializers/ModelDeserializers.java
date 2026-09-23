@@ -1961,6 +1961,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
                     @YamlProperty(name = "otherwise", type = "object:org.apache.camel.model.OtherwiseDefinition", description = "The otherwise clause to execute when none of the when predicates matched.", displayName = "Otherwise"),
                     @YamlProperty(name = "precondition", type = "boolean", defaultValue = "false", description = "If enabled then the choice is evaluated at route initialization time (precondition). Only when predicates with property placeholders or simple expressions using only property placeholders are supported.", displayName = "Precondition"),
+                    @YamlProperty(name = "selector", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", description = "Expression evaluated once per entry into this choice. Its String result is matched against literal when values. Cannot be combined with precondition mode or predicate branches.", displayName = "Selector"),
                     @YamlProperty(name = "when", type = "array:org.apache.camel.model.WhenDefinition", description = "The when clauses (predicates) to evaluate. The first when clause that matches determines which route branch to follow.", displayName = "When")
             }
     )
@@ -1992,6 +1993,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "precondition": {
                     String val = asText(node);
                     target.setPrecondition(val);
+                    break;
+                }
+                case "selector": {
+                    org.apache.camel.model.ExpressionSubElementDefinition val = asType(node, org.apache.camel.model.ExpressionSubElementDefinition.class);
+                    target.setSelector(val);
                     break;
                 }
                 case "when": {
@@ -20907,10 +20913,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", required = true, oneOf = "expression"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Disables this EIP from the route.", displayName = "Disabled"),
-                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", required = true, description = "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.", displayName = "Expression", oneOf = "expression"),
+                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", required = true, description = "Predicate to evaluate for a predicate-based choice. Mutually exclusive with value.", displayName = "Expression", oneOf = "expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
-                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition")
+                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
+                    @YamlProperty(name = "value", type = "string", required = true, description = "Literal, case-sensitive String to match against the parent choice selector. Mutually exclusive with a predicate expression.", displayName = "Value", oneOf = "expression")
             }
     )
     public static class WhenDefinitionDeserializer extends YamlDeserializerBase<WhenDefinition> {
@@ -20936,6 +20943,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
+                    break;
+                }
+                case "value": {
+                    String val = asText(node);
+                    target.setValue(val);
                     break;
                 }
                 case "id": {

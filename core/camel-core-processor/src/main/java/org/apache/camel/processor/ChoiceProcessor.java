@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
@@ -53,16 +54,41 @@ public class ChoiceProcessor extends BaseProcessorSupport
     private final FilterProcessor[] filters;
     private final int len;
     private final AsyncProcessor otherwise;
+    private final Expression selector;
+    private final List<String> values;
     private transient long notFiltered;
 
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
+        this(filters, otherwise, null, null);
+    }
+
+    public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise, Expression selector, List<String> values) {
         this.filters = filters.toArray(new FilterProcessor[0]);
         this.len = filters.size();
         this.otherwise = otherwise != null ? AsyncProcessorConverterHelper.convert(otherwise) : null;
+        this.selector = selector;
+        this.values = values != null ? List.copyOf(values) : null;
+        if (selector != null && (values == null || values.size() != len)) {
+            throw new IllegalArgumentException("Choice selector requires one value per filter");
+        }
     }
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        String selected = null;
+        if (selector != null) {
+            try {
+                selected = selector.evaluate(exchange, String.class);
+            } catch (Exception e) {
+                exchange.setException(e);
+            } finally {
+                MessageHelper.resetStreamCache(exchange.getIn());
+            }
+            if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
+                callback.done(true);
+                return true;
+            }
+        }
         // find the first matching filter and process the exchange using it
         for (int i = 0; i < len; i++) {
             FilterProcessor filter = filters[i];
@@ -71,7 +97,7 @@ public class ChoiceProcessor extends BaseProcessorSupport
             // as we should only pick one processor
             boolean matches = false;
             try {
-                matches = filter.matches(exchange);
+                matches = (selector == null || values.get(i).equals(selected)) && filter.matches(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
             }
@@ -192,22 +218,22 @@ public class ChoiceProcessor extends BaseProcessorSupport
 
     @Override
     protected void doInit() throws Exception {
-        ServiceHelper.initService(Arrays.asList(filters), otherwise);
+        ServiceHelper.initService(selector, Arrays.asList(filters), otherwise);
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(Arrays.asList(filters), otherwise);
+        ServiceHelper.startService(selector, Arrays.asList(filters), otherwise);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(otherwise, Arrays.asList(filters));
+        ServiceHelper.stopService(otherwise, Arrays.asList(filters), selector);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(otherwise, Arrays.asList(filters));
+        ServiceHelper.stopAndShutdownServices(otherwise, Arrays.asList(filters), selector);
     }
 
 }

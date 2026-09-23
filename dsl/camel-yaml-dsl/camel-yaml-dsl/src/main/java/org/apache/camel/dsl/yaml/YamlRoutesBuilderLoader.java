@@ -37,6 +37,7 @@ import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition;
+import org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -357,6 +358,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     private Object preConfigureNode(Node root, YamlDeserializationContext ctx, boolean preParse) {
+        SemanticDefinitionDeserializer.configure(getCamelContext(), ctx, root);
         // backwards compatible fixes
         Object target = root;
 

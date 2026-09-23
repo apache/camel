@@ -147,6 +147,24 @@ class DocExamplesXmlSchemaTest {
     }
 
     @Test
+    void selectorChoiceAllowsLiteralBranchesInBothSchemas() {
+        String route = """
+                <route xmlns="%s">
+                  <from uri="direct:start"/>
+                  <choice>
+                    <selector><header>department</header></selector>
+                    <when value="billing"><to uri="mock:billing"/></when>
+                    <otherwise><to uri="mock:other"/></otherwise>
+                  </choice>
+                </route>
+                """;
+        List<String> errors = new ArrayList<>();
+        validate(route.formatted(SPRING_NS), springSchema, errors);
+        validate(route.formatted(XML_IO_NS), xmlIoSchema, errors);
+        assertTrue(errors.isEmpty(), errors.toString());
+    }
+
+    @Test
     void everyXmlExampleOfTheUserManualValidates() throws Exception {
         Map<String, String> pages = UserManualPages.currentPages();
         assumeTrue(!pages.isEmpty(), "the user manual is only checked inside the Camel source tree");
