@@ -343,12 +343,14 @@ class ErrorsTab extends AbstractTableTab {
                     Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ei.nodeId != null ? ei.nodeId : ""),
                     Cell.from(Span.styled(handledStr, handledStyle)),
+                    Cell.from(ei.repeatCount > 1
+                            ? Span.styled(Long.toString(ei.repeatCount), Theme.error().bold()) : Span.raw("")),
                     Cell.from(shortException),
                     Cell.from(ei.exceptionMessage != null ? ei.exceptionMessage : "")));
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No errors captured", 7));
+            rows.add(emptyRow("No errors captured", 8));
         }
 
         ErrorInfo selectedError = null;
@@ -371,6 +373,7 @@ class ErrorsTab extends AbstractTableTab {
                         Cell.from(Span.styled(sortLabel("ROUTE", "route"), sortStyle("route"))),
                         Cell.from(Span.styled(sortLabel("NODE", "node"), sortStyle("node"))),
                         Cell.from(Span.styled("HANDLED", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("COUNT", Style.EMPTY.bold())),
                         Cell.from(Span.styled(sortLabel("EXCEPTION", "exception"), sortStyle("exception"))),
                         Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
                 .widths(
@@ -379,6 +382,7 @@ class ErrorsTab extends AbstractTableTab {
                         Constraint.length(20),
                         Constraint.length(20),
                         Constraint.length(8),
+                        Constraint.length(6),
                         Constraint.length(30),
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
@@ -442,12 +446,26 @@ class ErrorsTab extends AbstractTableTab {
         hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
     }
 
+    /** How often this kind of error happened, and how long it has been going on (CAMEL-24911). */
+    private static void addRepeatLine(List<Line> lines, ErrorInfo ei) {
+        if (ei.repeatCount <= 1) {
+            return;
+        }
+        String since = ei.repeatFirstTimestamp > 0
+                ? " (since " + org.apache.camel.util.TimeUtils.printSince(ei.repeatFirstTimestamp) + " ago)" : "";
+        lines.add(Line.from(
+                Span.styled(" Repeated: ", Theme.muted()),
+                Span.styled(ei.repeatCount + " times", Theme.error().bold()),
+                Span.styled(since, Style.EMPTY.dim())));
+    }
+
     private void renderDetail(Frame frame, Rect area, ErrorInfo ei) {
         List<Line> lines = new ArrayList<>();
 
         HistoryTab.addExchangeInfoLines(lines,
                 ei.exchangeId, ei.routeId, ei.nodeId, null, ei.location,
                 ei.elapsed, ei.threadName, !ei.handled);
+        addRepeatLine(lines, ei);
 
         // exception with stack trace
         String exception = null;
@@ -662,6 +680,7 @@ class ErrorsTab extends AbstractTableTab {
         lines.add(Line.from(
                 Span.styled(" Handled:  ", Theme.muted()),
                 Span.styled(ei.handled ? "true" : "false", handledStyle)));
+        addRepeatLine(lines, ei);
 
         if (ei.exceptionType != null) {
             lines.add(Line.from(Span.raw("")));
@@ -794,6 +813,9 @@ class ErrorsTab extends AbstractTableTab {
             row.put("nodeId", ei.nodeId);
             row.put("exchangeId", ei.exchangeId);
             row.put("handled", ei.handled);
+            if (ei.repeatCount > 1) {
+                row.put("repeatCount", ei.repeatCount);
+            }
             row.put("timestamp", ei.timestamp);
             row.put("elapsed", ei.elapsed);
             if (ei.exceptionType != null) {

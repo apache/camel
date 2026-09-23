@@ -73,6 +73,16 @@ public class ManagedErrorRegistry extends ManagedService implements ManagedError
     }
 
     @Override
+    public int getMaximumEntriesPerKind() {
+        return errorRegistry.getMaximumEntriesPerKind();
+    }
+
+    @Override
+    public void setMaximumEntriesPerKind(int maximumEntriesPerKind) {
+        errorRegistry.setMaximumEntriesPerKind(maximumEntriesPerKind);
+    }
+
+    @Override
     public long getTimeToLiveSeconds() {
         return errorRegistry.getTimeToLive().toSeconds();
     }

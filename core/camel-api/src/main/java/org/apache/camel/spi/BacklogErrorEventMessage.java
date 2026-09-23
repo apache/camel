@@ -86,6 +86,31 @@ public interface BacklogErrorEventMessage extends BacklogEventMessage {
     void markHandled();
 
     /**
+     * How many errors of this kind (same route, node and exception type) have been captured so far. The count keeps
+     * rising for as long as the same error keeps happening, also after older entries of that kind have been evicted, so
+     * a storm of the same failure shows as a growing number instead of filling up the registry.
+     * <p/>
+     * Is 1 when the error only happened once.
+     *
+     * @since 4.23
+     */
+    long getRepeatCount();
+
+    /**
+     * Timestamp (millis) of the first error of this kind that was captured.
+     *
+     * @since 4.23
+     */
+    long getRepeatFirstTimestamp();
+
+    /**
+     * Timestamp (millis) of the latest error of this kind that was captured.
+     *
+     * @since 4.23
+     */
+    long getRepeatLastTimestamp();
+
+    /**
      * The fully qualified class name of the exception (e.g. "java.lang.IllegalArgumentException").
      */
     String getExceptionType();
