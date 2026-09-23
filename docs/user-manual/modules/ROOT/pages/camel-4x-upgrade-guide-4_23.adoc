@@ -148,6 +148,21 @@ The `route-topology` developer console (used by `camel cmd route-topology` and t
 includes routes created by Kamelets, as these are an implementation detail of the Kamelet and were already hidden
 from the route console. Set the `kamelets=true` option (or `--kamelets` on the CLI) to include them.
 
+The `inflight` and `blocked` developer consoles now carry a `nodeSource` field per entry, saying where the node the
+exchange sits at is in the source (such as `orders.camel.yaml:18`). It is `null` when message history or source
+location is disabled. Existing fields are unchanged.
+
+=== camel-management
+
+The JMX `browse` operation of the `DefaultInflightRepository` MBean and the `listAwaitThreads` data of the
+`DefaultAsyncProcessorAwaitManager` MBean gained a `nodeSource` column, saying where the node is in the source (such
+as `orders.camel.yaml:18`), next to the existing `nodeId`. It is `null` when message history or source location is
+disabled. Clients that read the row by item name are unaffected; a client that assumes a fixed number of columns
+should be reviewed.
+
+`InflightRepository.InflightExchange` and `AsyncProcessorAwaitManager.AwaitThread` gained a `getNodeSource()` method
+for the same value. Both are `default` methods returning `null`, so existing implementations continue to compile.
+
 === camel-groovy
 
 A `GroovyShellFactory` is now looked up in the registry once per `CamelContext`, when the first groovy expression is

@@ -829,8 +829,12 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             sb.append("\n\tInflightExchange: [exchangeId=").append(inflight.getExchange().getExchangeId())
                     .append(", fromRouteId=").append(inflight.getExchange().getFromRouteId())
                     .append(", atRouteId=").append(inflight.getAtRouteId())
-                    .append(", nodeId=").append(inflight.getNodeId())
-                    .append(", elapsed=").append(inflight.getElapsed())
+                    .append(", nodeId=").append(inflight.getNodeId());
+            if (inflight.getNodeSource() != null) {
+                // where the node is in the source, so it is clear which line is holding the shutdown up
+                sb.append(", nodeSource=").append(inflight.getNodeSource());
+            }
+            sb.append(", elapsed=").append(inflight.getElapsed())
                     .append(", duration=").append(inflight.getDuration())
                     .append("]");
         }
