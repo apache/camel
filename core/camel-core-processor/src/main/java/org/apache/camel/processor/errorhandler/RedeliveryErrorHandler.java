@@ -2027,7 +2027,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
     /**
      * Where the failure happened, as the route and node the exchange was at and where that node is in the source, such
-     * as {@code  at route1[to3] orders.camel.yaml:18}. Empty when nothing was captured - message history or source
+     * as {@code at route1[to3] orders.camel.yaml:18}. Empty when nothing was captured - message history or source
      * location can be off - so the message keeps its shape (CAMEL-24974).
      */
     private static String failureOrigin(Exchange exchange) {
