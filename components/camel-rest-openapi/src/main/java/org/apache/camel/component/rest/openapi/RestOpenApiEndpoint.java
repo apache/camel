@@ -627,9 +627,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return restConfigurationBasePath;
         }
 
-        final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
-        if (isNotEmpty(specificationBasePath)) {
-            return specificationBasePath;
+        if (openapi != null && openapi.getServers() != null && !openapi.getServers().isEmpty()) {
+            final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
+            if (specificationBasePath != null) {
+                return specificationBasePath;
+            }
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;
@@ -745,7 +747,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (isNotEmpty(componentHost)) {
             return componentHost;
         }
-
+        
         URI absoluteURI = null;
         URI relativeURI = null;
         Set<URI> operationURIs = getURIs(operation.getServers());
@@ -791,7 +793,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         if (globalConfigurationHost != null) {
             return globalConfigurationHost;
         }
-
+       
         try {
             final URI uri = new URI(specificationUri);
             final String specificationScheme = uri.getScheme();

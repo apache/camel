@@ -124,9 +124,9 @@ public final class RestOpenApiHelper {
         }
 
         // openapi spec should be last, as all the above can override the configuration
-        if (openAPI != null) {
+        if (openAPI != null && openAPI.getServers() != null && !openAPI.getServers().isEmpty()) {
             String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
-            if (isNotEmpty(specificationBasePath)) {
+            if (specificationBasePath != null) {
                 return specificationBasePath;
             }
         }

@@ -214,6 +214,32 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
+    public void shouldDetermineEmptyBasePathFromOpenApiServer() {
+        final RestConfiguration restConfiguration = new RestConfiguration();
+
+        final CamelContext camelContext = mock(CamelContext.class);
+        when(camelContext.getRestConfiguration()).thenReturn(restConfiguration);
+
+        final OpenAPI openapi = new OpenAPI();
+        openapi.addServersItem(new Server().url("http://localhost:8080"));
+
+        final RestOpenApiComponent component = new RestOpenApiComponent();
+        component.setCamelContext(camelContext);
+
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:getPetById", "getPetById", component,
+                Collections.emptyMap());
+
+        assertThat(RestOpenApiHelper.getBasePathFromOpenApi(openapi))
+                .as("OpenAPI server without a path should produce an empty base path")
+                .isEmpty();
+
+        assertThat(endpoint.determineBasePath(openapi))
+                .as("When the OpenAPI server URL has no path, the base path should be empty")
+                .isEmpty();
+    }
+
+    @Test
     public void shouldDetermineEndpointParameters() {
         final CamelContext camelContext = mock(CamelContext.class);
 
