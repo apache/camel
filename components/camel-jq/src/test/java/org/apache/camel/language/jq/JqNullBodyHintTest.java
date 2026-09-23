@@ -56,6 +56,9 @@ public class JqNullBodyHintTest extends JqTestSupport {
                 "should show the form for a known file, but was: " + message);
         assertTrue(message.contains("poll:"),
                 "should offer poll for a file that is not known in advance, but was: " + message);
+
+        assertTrue(message.contains("has the body of its caller"),
+                "should say why the body is null in a direct: route, but was: " + message);
     }
 
     @Test
