@@ -19,6 +19,19 @@ OAuth client credentials token caching now distinguishes profiles by client secr
 
 === Simple language
 
+`${ }` may now hold a predicate, as the braces do in Jakarta EL, Groovy and a JavaScript template:
+`${body != null && body.size() > 0}` answers whether it matches, instead of being refused with
+_Operators go outside the function_. The form with the operators outside the braces
+(`${body} != null && ${body.size()} > 0`) means the same and is unchanged, and the ternary keeps
+working as before.
+
+An operator counts only when whitespace surrounds it outside quotes, so a name such as
+`${header.Content-Length}` and a pattern such as `${date:now:yyyy-MM-dd}` are read as they were.
+Only expressions that used to throw can now return a value: every one of the 804 distinct simple
+expressions in camel, camel-kamelets, camel-examples and camel-jbang-examples parses to what it
+parsed to before.
+
+
 The simple language reads a `Map` with a dot as well as with a key: `${body.sku}` answers the `sku` entry of a map
 body when the map has no `sku()` method, the same value `${body[sku]}` gives. A method of the map still wins, so
 `${body.size}` calls `size()` as before, and a name that is neither a method nor a key still fails. Only expressions

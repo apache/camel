@@ -50,7 +50,15 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
 
     @Test
     public void testOperatorInsideFunction() {
-        assertThat(predicateError("${body == 'x'}")).contains("Operators go outside the function: ${body} == 'x'");
+        // CAMEL-24921: the braces may hold a predicate, which is then what they answer
+        exchange.getIn().setBody("x");
+        assertEquals(true, context.resolveLanguage("simple").createPredicate("${body == 'x'}").matches(exchange));
+        exchange.getIn().setBody("y");
+        assertEquals(false, context.resolveLanguage("simple").createPredicate("${body == 'x'}").matches(exchange));
+        // and what is inside must still be a predicate the parser understands, reported against the wrapped text
+        assertThat(predicateError("${body == }"))
+                .contains("Unexpected token ==")
+                .contains("${body} ==");
     }
 
     @Test
@@ -130,7 +138,11 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
 
     @Test
     public void testOperatorAfterOgnlMethod() {
-        assertThat(predicateError("${body.length() > 3}")).contains("Operators go outside the function: ${body.length()} > 3");
+        // CAMEL-24921: an OGNL call on the left of the operator is wrapped as the function it is
+        exchange.getIn().setBody("hello");
+        assertEquals(true, context.resolveLanguage("simple").createPredicate("${body.length() > 3}").matches(exchange));
+        exchange.getIn().setBody("hi");
+        assertEquals(false, context.resolveLanguage("simple").createPredicate("${body.length() > 3}").matches(exchange));
     }
 
     @Test
