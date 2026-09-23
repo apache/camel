@@ -115,6 +115,7 @@ decimals instead of first coercing both operands to integers.
 Use `questionsResource` when the question set is too large for a property value. It accepts
 a Camel resource URI, including `classpath:` and `file:`, and contains only the named
 questions. The component reads and validates the UTF-8 JSON once when the endpoint starts.
+The resource is limited to 4 MB.
 `questions` and `questionsResource` cannot be used together. An invalid or missing resource
 prevents the endpoint from starting.
 
