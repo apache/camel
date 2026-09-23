@@ -22,7 +22,7 @@ OAuth client credentials token caching now distinguishes profiles by client secr
 `${ }` may now hold a predicate, as the braces do in Jakarta EL, Groovy and a JavaScript template:
 `${body != null && body.size() > 0}` answers whether it matches, instead of being refused with
 _Operators go outside the function_. The form with the operators outside the braces
-(`${body} != null && ${body.size()} > 0`) means the same and is unchanged, and the ternary keeps
+(`+${body} != null && ${body.size()} > 0+`) means the same and is unchanged, and the ternary keeps
 working as before.
 
 An operator counts only when whitespace surrounds it outside quotes, so a name such as
@@ -2362,7 +2362,7 @@ text itself is resolved as before, and a returned value that happens to start wi
 
 === camel-platform-http-vertx - a path parameter wins over an incoming header of the same name
 
-A REST endpoint with a path parameter, `/stock/{sku}`, sets the header `sku` from the path. When the request also
+A REST endpoint with a path parameter, `+/stock/{sku}+`, sets the header `sku` from the path. When the request also
 carried an HTTP header of that name, the two were merged and `${header.sku}` was a `List` such as `[X, CAMEL-MUG]`,
 so a route that read it failed even when the path value was correct. The value from the path is used now; a query
 parameter may still repeat and is still collected into a list.
