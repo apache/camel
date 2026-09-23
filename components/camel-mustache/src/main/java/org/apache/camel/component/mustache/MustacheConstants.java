@@ -27,13 +27,13 @@ public final class MustacheConstants {
      * Header containing a Mustache template location
      */
     @Metadata(description = "A URI for the template resource to use instead of the endpoint.", javaType = "String")
-    public static final String MUSTACHE_RESOURCE_URI = "MustacheResourceUri";
+    public static final String MUSTACHE_RESOURCE_URI = "CamelMustacheResourceUri";
 
     /**
      * Header containing the Mustache template code
      */
     @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
-    public static final String MUSTACHE_TEMPLATE = "MustacheTemplate";
+    public static final String MUSTACHE_TEMPLATE = "CamelMustacheTemplate";
 
     /**
      * Mustache endpoint URI prefix
