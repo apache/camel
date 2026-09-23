@@ -580,6 +580,8 @@ public class YamlValidator {
         if (errors.isEmpty()) {
             checkSimpleSyntaxInScripts(target, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(target, new NodePath(PathType.JSON_POINTER), errors);
+            // where the body comes from, across the routes of the file (CAMEL-24844)
+            BodyTypeFlow.check(target, new NodePath(PathType.JSON_POINTER), errors);
         }
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
