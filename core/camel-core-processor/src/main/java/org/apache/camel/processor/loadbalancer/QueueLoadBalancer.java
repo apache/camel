@@ -35,8 +35,8 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
                 processor = chooseProcessor(list, exchange);
             } catch (Exception e) {
                 exchange.setException(e);
-                callback.done(true);
-                return true;
+                callback.done(false);
+                return false;
             }
             if (processor == null) {
                 Exception e = new IllegalStateException("No processors could be chosen to process " + exchange);
