@@ -50,6 +50,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -401,6 +402,27 @@ public class RestOpenApiEndpointV3Test {
     }
 
     @Test
+    public void shouldFailDescriptivelyWhenServersSectionIsMissing() {
+        final RestOpenApiComponent component = new RestOpenApiComponent();
+        final CamelContext camelContext = new DefaultCamelContext();
+        component.setCamelContext(camelContext);
+
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:missing-servers.yaml#testOperation",
+                "missing-servers.yaml#testOperation",
+                component, Collections.emptyMap());
+
+        final OpenAPI openapi = RestOpenApiEndpoint.loadSpecificationFrom(
+                camelContext, "missing-servers.yaml");
+
+        final Operation operation = openapi.getPaths().get("/test").getGet();
+
+        assertThatThrownBy(() -> endpoint.createProducerFor(openapi, operation, "get", "/test"))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("does not specify an absolute URL in 'servers'");
+    }
+
+    @Test
     public void shouldDetermineOptions() {
         assertThat(RestOpenApiEndpoint.determineOption(null, null, null, null)).isNull();
 
@@ -542,6 +564,7 @@ public class RestOpenApiEndpointV3Test {
         OpenAPI openapi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "missing-servers.yaml");
 
         assertThat(openapi).isNotNull();
+        assertThat(openapi.getServers()).isNotNull();
         assertThat(openapi.getServers()).isNotEmpty();
         assertThat(openapi.getServers().get(0).getUrl()).isEqualTo("/");
     }
