@@ -103,6 +103,10 @@ public class JcrProducer extends DefaultProducer {
         }
     }
 
+    // Strips the JCR control keys (operation, node name, node type) unconditionally, independent of the configured
+    // HeaderFilterStrategy. The default strategy already filters these (they are Camel-prefixed), but a custom
+    // strategy that does not filter Camel* headers must still never persist these operational headers as node
+    // properties, so this filtering is kept as a separate, unconditional guard.
     private Map<String, Object> filterComponentHeaders(Map<String, Object> properties) {
         Map<String, Object> result = new HashMap<>(properties.size());
         for (Map.Entry<String, Object> entry : properties.entrySet()) {

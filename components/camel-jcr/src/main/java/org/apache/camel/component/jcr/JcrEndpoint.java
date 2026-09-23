@@ -75,9 +75,9 @@ public class JcrEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private long sessionLiveCheckInterval = 60000L;
     @UriParam
     private String workspaceName;
-    @UriParam(label = "filter",
+    @UriParam(label = "producer,filter",
               description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     protected JcrEndpoint(String endpointUri, JcrComponent component) {
         super(endpointUri, component);
@@ -300,9 +300,6 @@ public class JcrEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
-        if (headerFilterStrategy == null) {
-            headerFilterStrategy = new DefaultHeaderFilterStrategy();
-        }
         return headerFilterStrategy;
     }
 
