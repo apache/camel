@@ -37,6 +37,10 @@ body when the map has no `sku()` method, the same value `${body[sku]}` gives. A 
 `${body.size}` calls `size()` as before, and a name that is neither a method nor a key still fails. Only expressions
 that used to throw can now return a value.
 
+The `range(max)` function now starts at 0, as documented and as `range` does in Python: `${range(5)}` returns
+`[0, 1, 2, 3, 4]` where it used to return `[1, 2, 3, 4]`. Routes that relied on the range starting at 1 must use
+`${range(1,5)}` instead. The two-argument form `range(min,max)` is unchanged.
+
 === Circuit Breaker EIP
 
 The exchange property `CamelCircuitBreakerResponseRejected` is now also set inside the `onFallback`,

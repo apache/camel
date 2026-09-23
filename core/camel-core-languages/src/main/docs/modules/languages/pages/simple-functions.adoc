@@ -526,8 +526,8 @@ The string functions is various functions to work with values that are String an
 |`safeQuote()` | `String` | Returns the message body safely quoted if needed
 |`safeQuote(exp)` | `String` | Returns the expression safely quoted if needed
 |`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
-|`substring(num1,num2)` | `String` | Returns a substring of the message body. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
-|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. `num1` clips from the beginning, `num2` clips from the ending. Negative values clip from the opposite end.
+|`substring(num1,num2)` | `String` | Returns a substring of the message body. `num1` is how many characters to clip from the beginning, and `num2` how many characters to clip from the ending. The sign of `num2` does not matter, so `-1` and `1` both clip one character.
+|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. `num1` is how many characters to clip from the beginning, and `num2` how many characters to clip from the ending. The sign of `num2` does not matter, so `-1` and `1` both clip one character.
 |`substringAfter(after)` | `String` | Returns a substring of the message body that comes after. Returns `null` if nothing comes after.
 |`substringAfter(exp,after)` | `String` | Returns a substring of the expression that comes after. Returns `null` if nothing comes after.
 |`substringBefore(before)` | `String` | Returns a substring of the message body that comes before. Returns `null` if nothing comes before.
@@ -599,6 +599,9 @@ The `substring`, `substringBefore`, and `substringAfter` functions are all simil
 
 Suppose the message body contains `ABCDEFGHIJK` then `${substring(3)}` returns `DEFGHIJK`, and `${substring(-3)}` returns `ABCDEFGH`.
 If you want to clip the first and last character you can use `${substring(1,-1)}` returning `BCDEFGHIJ`.
+
+The numbers are how many characters to clip, not positions as in a Python slice: `${substring(3,-2)}` returns `DEFGHI`
+(three characters clipped from the beginning and two from the end), and `${substring(1,0)}` returns `BCDEFGHIJK`.
 
 [NOTE]
 ====

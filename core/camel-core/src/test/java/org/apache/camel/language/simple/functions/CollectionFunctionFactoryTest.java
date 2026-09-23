@@ -66,9 +66,9 @@ public class CollectionFunctionFactoryTest extends AbstractSimpleFunctionFactory
     @Test
     @SuppressWarnings("unchecked")
     public void testRangeMax() {
-        // range(max) uses min=1, exclusive upper: range(3) -> [1,2]
+        // range(max) starts at 0, exclusive upper (as Python): range(3) -> [0,1,2]
         List<Integer> result = evaluate("range(3)", List.class);
-        assertEquals(List.of(1, 2), result);
+        assertEquals(List.of(0, 1, 2), result);
     }
 
     // --- shuffle toString ---

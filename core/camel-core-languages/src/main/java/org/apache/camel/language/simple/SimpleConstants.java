@@ -851,15 +851,15 @@ public final class SimpleConstants {
               label = "core")
     public static final String STEP_ID = "stepId";
 
-    @Metadata(description = "Returns a substring of the message body/expression. If only one positive number, then the returned string is clipped from the beginning. If only one negative number, then the returned string is clipped from the beginning. Otherwise the returned string is clipped between the head and tail positions.",
+    @Metadata(description = "Returns a substring of the message body/expression by clipping characters off its ends (not by positions). With one number, a positive number clips that many characters from the beginning, and a negative number clips that many characters from the end. With two numbers, head is how many characters to clip from the beginning and tail how many to clip from the end; the sign of tail does not matter, so -1 and 1 both clip one character.",
               label = "string", javaType = "String",
               examples = {
-                      "${substring(0,5)} -> Hello // when body is 'Hello World'",
-                      "${substring(6)} -> World // from position 6 to end",
-                      "${substring(-5)} -> World // last 5 characters" },
+                      "${substring(6)} -> World // when body is 'Hello World', clips the first 6 characters",
+                      "${substring(-6)} -> Hello // clips the last 6 characters",
+                      "${substring(1,-1)} -> ello Worl // clips the first and the last character" },
               annotations = {
-                      "param=head:int:required::The start position (inclusive). Negative counts from end",
-                      "param=tail:int:optional::The end position (exclusive)" })
+                      "param=head:int:required::How many characters to clip from the beginning. When it is the only argument, a negative value clips that many characters from the end instead",
+                      "param=tail:int:optional::How many characters to clip from the end" })
     public static final String SUBSTRING = "substring(head,tail)";
 
     @Metadata(description = "Returns a substring of the message body/expression that comes after. Returns null if nothing comes after.",

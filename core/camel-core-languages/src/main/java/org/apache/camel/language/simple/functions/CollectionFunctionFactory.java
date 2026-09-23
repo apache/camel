@@ -107,7 +107,7 @@ public final class CollectionFunctionFactory implements SimpleLanguageFunctionFa
                 }
                 return CollectionExpressionBuilder.rangeExpression(tokens[0].trim(), tokens[1].trim());
             } else {
-                return CollectionExpressionBuilder.rangeExpression("1", values.trim());
+                return CollectionExpressionBuilder.rangeExpression("0", values.trim());
             }
         }
 

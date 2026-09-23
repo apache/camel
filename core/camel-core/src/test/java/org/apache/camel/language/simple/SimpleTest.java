@@ -1862,6 +1862,15 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${substring(0,-99)}", "");
         assertExpression("${substring(99,0)}", "");
         assertExpression("${substring(0,0)}", "ABCDEFGHIJK");
+        // the sign of the tail does not matter
+        assertExpression("${substring(3,-2)}", "DEFGHI");
+        assertExpression("${substring(3,2)}", "DEFGHI");
+
+        // the examples in the simple catalog
+        exchange.getMessage().setBody("Hello World");
+        assertExpression("${substring(6)}", "World");
+        assertExpression("${substring(-6)}", "Hello");
+        assertExpression("${substring(1,-1)}", "ello Worl");
 
         exchange.getMessage().setBody("Hello World");
         exchange.getMessage().setHeader("foo", "1234567890");
