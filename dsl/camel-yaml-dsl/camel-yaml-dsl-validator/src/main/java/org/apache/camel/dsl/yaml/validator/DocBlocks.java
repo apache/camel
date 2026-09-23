@@ -37,13 +37,19 @@ public final class DocBlocks {
     private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\s*\\n----\\n(.*?)\\n----",
             Pattern.DOTALL);
 
+    /** An AsciiDoc callout marker at the end of a line, which is documentation and not part of the route. */
+    private static final Pattern CALLOUT = Pattern.compile("[ \\t]*#[ \\t]*<\\d+>[ \\t]*$", Pattern.MULTILINE);
+
     /** How far back the marker is looked for, enough for the tabs and titles between it and the block. */
     private static final int MARKER_LOOKBEHIND = 200;
 
     private DocBlocks() {
     }
 
-    /** The route examples of the page: the YAML blocks that start with a top-level list entry, markers honoured. */
+    /**
+     * The route examples of the page: the YAML blocks that start with a top-level list entry, without their callout
+     * markers, and without the blocks that carry {@value #SKIP_MARKER}.
+     */
     public static List<String> examples(String doc) {
         List<String> answer = new ArrayList<>();
         if (doc == null) {
@@ -51,7 +57,7 @@ public final class DocBlocks {
         }
         Matcher m = YAML_BLOCK.matcher(doc);
         while (m.find()) {
-            String yaml = m.group(1).stripTrailing() + "\n";
+            String yaml = CALLOUT.matcher(m.group(1)).replaceAll("").stripTrailing() + "\n";
             if (yaml.stripLeading().startsWith("- ") && !markedToSkip(doc, m.start())) {
                 answer.add(yaml);
             }
