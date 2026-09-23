@@ -50,6 +50,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumerscount":
         case "consumersCount": getOrCreateConfiguration(target).setConsumersCount(property(camelContext, int.class, value)); return true;
         case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "iggyheaderoptions":
+        case "iggyHeaderOptions": getOrCreateConfiguration(target).setIggyHeaderOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxtopicsize":
@@ -67,8 +69,6 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "pollingstrategy":
         case "pollingStrategy": getOrCreateConfiguration(target).setPollingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "port": getOrCreateConfiguration(target).setPort(property(camelContext, int.class, value)); return true;
-        case "replicationfactor":
-        case "replicationFactor": getOrCreateConfiguration(target).setReplicationFactor(property(camelContext, java.lang.Short.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": getOrCreateConfiguration(target).setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "sslcontextparameters":
@@ -113,6 +113,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumerscount":
         case "consumersCount": return int.class;
         case "host": return java.lang.String.class;
+        case "iggyheaderoptions":
+        case "iggyHeaderOptions": return java.util.Map.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxtopicsize":
@@ -130,8 +132,6 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "pollingstrategy":
         case "pollingStrategy": return java.lang.String.class;
         case "port": return int.class;
-        case "replicationfactor":
-        case "replicationFactor": return java.lang.Short.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return int.class;
         case "sslcontextparameters":
@@ -177,6 +177,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "consumerscount":
         case "consumersCount": return getOrCreateConfiguration(target).getConsumersCount();
         case "host": return getOrCreateConfiguration(target).getHost();
+        case "iggyheaderoptions":
+        case "iggyHeaderOptions": return getOrCreateConfiguration(target).getIggyHeaderOptions();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxtopicsize":
@@ -194,8 +196,6 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "pollingstrategy":
         case "pollingStrategy": return getOrCreateConfiguration(target).getPollingStrategy();
         case "port": return getOrCreateConfiguration(target).getPort();
-        case "replicationfactor":
-        case "replicationFactor": return getOrCreateConfiguration(target).getReplicationFactor();
         case "shutdowntimeout":
         case "shutdownTimeout": return getOrCreateConfiguration(target).getShutdownTimeout();
         case "sslcontextparameters":
@@ -213,6 +213,15 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username": return getOrCreateConfiguration(target).getUsername();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "iggyheaderoptions":
+        case "iggyHeaderOptions": return java.lang.String.class;
         default: return null;
         }
     }

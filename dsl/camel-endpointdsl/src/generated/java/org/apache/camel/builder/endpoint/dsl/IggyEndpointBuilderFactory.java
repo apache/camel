@@ -166,6 +166,37 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Options provided when creating a topic.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         * 
+         * @param iggyHeaderOptions the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointConsumerBuilder iggyHeaderOptions(Map<java.lang.String, java.lang.String> iggyHeaderOptions) {
+            doSetProperty("iggyHeaderOptions", iggyHeaderOptions);
+            return this;
+        }
+        /**
+         * Options provided when creating a topic.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param iggyHeaderOptions the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointConsumerBuilder iggyHeaderOptions(String iggyHeaderOptions) {
+            doSetProperty("iggyHeaderOptions", iggyHeaderOptions);
+            return this;
+        }
+        /**
          * Maximum topic size in bytes (0 means unlimited).
          * 
          * The option is a: <code>java.lang.Long</code> type.
@@ -297,34 +328,6 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointConsumerBuilder port(String port) {
             doSetProperty("port", port);
-            return this;
-        }
-        /**
-         * Replication factor for the topic.
-         * 
-         * The option is a: <code>java.lang.Short</code> type.
-         * 
-         * Group: common
-         * 
-         * @param replicationFactor the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointConsumerBuilder replicationFactor(Short replicationFactor) {
-            doSetProperty("replicationFactor", replicationFactor);
-            return this;
-        }
-        /**
-         * Replication factor for the topic.
-         * 
-         * The option will be converted to a <code>java.lang.Short</code> type.
-         * 
-         * Group: common
-         * 
-         * @param replicationFactor the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointConsumerBuilder replicationFactor(String replicationFactor) {
-            doSetProperty("replicationFactor", replicationFactor);
             return this;
         }
         /**
@@ -976,6 +979,37 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Options provided when creating a topic.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         * 
+         * @param iggyHeaderOptions the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointProducerBuilder iggyHeaderOptions(Map<java.lang.String, java.lang.String> iggyHeaderOptions) {
+            doSetProperty("iggyHeaderOptions", iggyHeaderOptions);
+            return this;
+        }
+        /**
+         * Options provided when creating a topic.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param iggyHeaderOptions the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointProducerBuilder iggyHeaderOptions(String iggyHeaderOptions) {
+            doSetProperty("iggyHeaderOptions", iggyHeaderOptions);
+            return this;
+        }
+        /**
          * Maximum topic size in bytes (0 means unlimited).
          * 
          * The option is a: <code>java.lang.Long</code> type.
@@ -1107,34 +1141,6 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointProducerBuilder port(String port) {
             doSetProperty("port", port);
-            return this;
-        }
-        /**
-         * Replication factor for the topic.
-         * 
-         * The option is a: <code>java.lang.Short</code> type.
-         * 
-         * Group: common
-         * 
-         * @param replicationFactor the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointProducerBuilder replicationFactor(Short replicationFactor) {
-            doSetProperty("replicationFactor", replicationFactor);
-            return this;
-        }
-        /**
-         * Replication factor for the topic.
-         * 
-         * The option will be converted to a <code>java.lang.Short</code> type.
-         * 
-         * Group: common
-         * 
-         * @param replicationFactor the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointProducerBuilder replicationFactor(String replicationFactor) {
-            doSetProperty("replicationFactor", replicationFactor);
             return this;
         }
         /**
@@ -1530,6 +1536,37 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Options provided when creating a topic.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * 
+         * Group: common
+         * 
+         * @param iggyHeaderOptions the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointBuilder iggyHeaderOptions(Map<java.lang.String, java.lang.String> iggyHeaderOptions) {
+            doSetProperty("iggyHeaderOptions", iggyHeaderOptions);
+            return this;
+        }
+        /**
+         * Options provided when creating a topic.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param iggyHeaderOptions the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointBuilder iggyHeaderOptions(String iggyHeaderOptions) {
+            doSetProperty("iggyHeaderOptions", iggyHeaderOptions);
+            return this;
+        }
+        /**
          * Maximum topic size in bytes (0 means unlimited).
          * 
          * The option is a: <code>java.lang.Long</code> type.
@@ -1661,34 +1698,6 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointBuilder port(String port) {
             doSetProperty("port", port);
-            return this;
-        }
-        /**
-         * Replication factor for the topic.
-         * 
-         * The option is a: <code>java.lang.Short</code> type.
-         * 
-         * Group: common
-         * 
-         * @param replicationFactor the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointBuilder replicationFactor(Short replicationFactor) {
-            doSetProperty("replicationFactor", replicationFactor);
-            return this;
-        }
-        /**
-         * Replication factor for the topic.
-         * 
-         * The option will be converted to a <code>java.lang.Short</code> type.
-         * 
-         * Group: common
-         * 
-         * @param replicationFactor the value to set
-         * @return the dsl builder
-         */
-        default IggyEndpointBuilder replicationFactor(String replicationFactor) {
-            doSetProperty("replicationFactor", replicationFactor);
             return this;
         }
         /**
