@@ -24,16 +24,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BacklogErrorEventMessage;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The step strings of the error registry say where each step is in the source, so a reader holding the file can go to
- * the line instead of mapping a generated node id back to it by hand (CAMEL-24972).
+ * With source location off there is no line to name, so a step keeps its shape rather than inventing one. Source
+ * location is set on the route definitions when they are loaded, so this needs its own context (CAMEL-24972).
  */
-public class ErrorRegistrySourceLocationTest extends ContextTestSupport {
+public class ErrorRegistryNoSourceLocationTest extends ContextTestSupport {
 
-    /** Such as ErrorRegistrySourceLocationTest:57 */
+    /** Such as ErrorRegistryNoSourceLocationTest:57 */
     private static final Pattern LOCATION = Pattern.compile("\\S+:\\d+");
 
     @Override
@@ -41,12 +42,12 @@ public class ErrorRegistrySourceLocationTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
         context.getErrorRegistry().setEnabled(true);
         context.setMessageHistory(true);
-        context.setSourceLocationEnabled(true);
+        context.setSourceLocationEnabled(false);
         return context;
     }
 
     @Test
-    public void testStepsCarryTheSourceLocation() throws Exception {
+    public void testStepsKeepTheirShapeWithoutASourceLocation() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
@@ -56,10 +57,9 @@ public class ErrorRegistrySourceLocationTest extends ContextTestSupport {
         assertNotNull(steps, "Message history should be captured when enabled");
         assertTrue(steps.length > 0, "Message history should have at least one entry");
         for (String step : steps) {
-            assertTrue(LOCATION.matcher(step).find(), "Step should say where it is in the source: " + step);
+            assertFalse(LOCATION.matcher(step).find(), "There is no line to name, so none is named: " + step);
+            assertTrue(step.contains("bodyType="), step);
         }
-        // the location sits next to the body type, so both facts about a step arrive together
-        assertTrue(steps[0].contains("bodyType="), steps[0]);
     }
 
     @Override
