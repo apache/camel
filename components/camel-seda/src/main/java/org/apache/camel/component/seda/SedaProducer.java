@@ -21,6 +21,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -69,13 +70,15 @@ public class SedaProducer extends DefaultAsyncProducer {
 
             // latch that waits until we are complete
             final CountDownLatch latch = new CountDownLatch(1);
+            // either the response or the timeout completes the exchange, whichever claims it first
+            final AtomicBoolean completed = new AtomicBoolean();
 
             // we should wait for the reply so install a on completion so we know when its complete
             copy.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange response) {
-                    // check for timeout, which then already would have invoked the latch
-                    if (latch.getCount() == 0) {
+                    // check for timeout, which then already has completed the exchange
+                    if (!completed.compareAndSet(false, true)) {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
                         }
@@ -128,11 +131,15 @@ public class SedaProducer extends DefaultAsyncProducer {
                     Thread.currentThread().interrupt();
                 }
                 if (!done) {
-                    exchange.setException(new ExchangeTimedOutException(exchange, timeout));
-                    // remove timed out Exchange from queue
-                    endpoint.getQueue().remove(copy);
-                    // count down to indicate timeout
-                    latch.countDown();
+                    if (completed.compareAndSet(false, true)) {
+                        exchange.setException(new ExchangeTimedOutException(exchange, timeout));
+                        // remove timed out Exchange from queue
+                        endpoint.getQueue().remove(copy);
+                    } else {
+                        // the response is being copied into the exchange, so wait for the copy to complete
+                        // (the exchange must not be changed after we have returned)
+                        awaitUninterruptibly(latch);
+                    }
                 }
             } else {
                 if (LOG.isTraceEnabled()) {
@@ -167,6 +174,21 @@ public class SedaProducer extends DefaultAsyncProducer {
         // so we should just signal the callback we are done synchronously
         callback.done(true);
         return true;
+    }
+
+    private static void awaitUninterruptibly(CountDownLatch latch) {
+        boolean interrupted = false;
+        while (true) {
+            try {
+                latch.await();
+                break;
+            } catch (InterruptedException e) {
+                interrupted = true;
+            }
+        }
+        if (interrupted) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     protected Exchange prepareCopy(Exchange exchange, boolean handover) {
