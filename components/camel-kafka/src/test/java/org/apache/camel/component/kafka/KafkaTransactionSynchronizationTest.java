@@ -89,6 +89,10 @@ class KafkaTransactionSynchronizationTest {
 
         // A failed sendOffsetsToTransaction must abort the (now open) transaction, not commit it.
         verify(producer).abortTransaction();
+        verify(producer).abortTransaction();
         verify(producer, never()).commitTransaction();
+        verify(exchange).setException(any(KafkaException.class));
+    }
+}
     }
 }
