@@ -95,11 +95,12 @@ public class OtherExpression extends BaseSimpleNode {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
+                // evaluate only once as the left hand side may have side effects
                 Object value = leftExp.evaluate(exchange, Object.class);
-                if (value == null || Boolean.FALSE == value || ObjectHelper.isEmpty(value) || ObjectHelper.equal(0, value)) {
+                if (value == null || Boolean.FALSE == value || ObjectHelper.isEmpty(value) || isZero(value)) {
                     return rightExp.evaluate(exchange, type);
                 } else {
-                    return leftExp.evaluate(exchange, type);
+                    return camelContext.getTypeConverter().convertTo(type, exchange, value);
                 }
             }
 
@@ -108,5 +109,10 @@ public class OtherExpression extends BaseSimpleNode {
                 return left + " " + token.getText() + " " + right;
             }
         };
+    }
+
+    private static boolean isZero(Object value) {
+        // any kind of number such as 0, 0L, 0.0 or BigDecimal.ZERO
+        return value instanceof Number n && n.doubleValue() == 0;
     }
 }
