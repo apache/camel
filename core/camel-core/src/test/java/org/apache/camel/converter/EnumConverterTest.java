@@ -139,4 +139,14 @@ public class EnumConverterTest extends ContextTestSupport {
         GET_USERS_BY_TOPIC
     }
 
+    @Test
+    public void testEnumPreferExactMatch() {
+        assertSame(CaseEnum.a, context.getTypeConverter().convertTo(CaseEnum.class, "a"));
+        assertSame(CaseEnum.A, context.getTypeConverter().convertTo(CaseEnum.class, "A"));
+    }
+
+    public enum CaseEnum {
+        a,
+        A
+    }
 }

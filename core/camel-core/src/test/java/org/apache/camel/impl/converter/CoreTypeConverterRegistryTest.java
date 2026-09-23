@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -243,5 +244,17 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
             return type.cast(new Foo(name));
         }
+    }
+
+    @Test
+    public void testArrayToCollectionTypes() {
+        TypeConverter tc = context.getTypeConverter();
+
+        assertInstanceOf(List.class, tc.convertTo(List.class, new String[] { "a", "b" }));
+        assertInstanceOf(ArrayList.class, tc.convertTo(ArrayList.class, new String[] { "a", "b" }));
+        assertInstanceOf(List.class, tc.convertTo(List.class, new int[] { 1, 2 }));
+        // a set is not a list
+        assertInstanceOf(Set.class, tc.convertTo(Set.class, new String[] { "a", "b" }));
+        assertNull(tc.convertTo(Set.class, new int[] { 1, 2 }));
     }
 }

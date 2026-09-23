@@ -17,11 +17,13 @@
 package org.apache.camel.converter;
 
 import java.sql.Timestamp;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 public class FutureConverterTest extends ContextTestSupport {
@@ -112,5 +115,21 @@ public class FutureConverterTest extends ContextTestSupport {
                 from("direct:foo").delay(10).transform(constant("Bye World"));
             }
         };
+    }
+
+    @Test
+    public void testConvertInterruptedFuture() {
+        Future<String> future = new CompletableFuture<>() {
+            @Override
+            public String get() throws InterruptedException {
+                throw new InterruptedException("Interrupted");
+            }
+        };
+        Exchange exchange = new DefaultExchange(context);
+
+        assertThrows(TypeConversionException.class,
+                () -> context.getTypeConverter().convertTo(String.class, exchange, future));
+        // the interrupted flag should be restored (and interrupted() clears it again)
+        assertTrue(Thread.interrupted());
     }
 }
