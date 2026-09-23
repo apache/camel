@@ -40,6 +40,7 @@
 
     <dependencies>
 
+        <!-- required dependencies by camel-core -->
         <!-- JAXB annotations are used for the EIP models -->
         <!-- but they are only used at runtime when using camel-xml-jaxb -->
         <dependency>
@@ -60,6 +61,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-reifier</artifactId>
         </dependency>
         <dependency>
@@ -73,6 +78,16 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util-json</artifactId>
+        </dependency>
+
+        <!-- required logging api dependency -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
     </dependencies>
