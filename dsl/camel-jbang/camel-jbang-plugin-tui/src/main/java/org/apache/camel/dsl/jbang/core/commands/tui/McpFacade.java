@@ -1190,6 +1190,35 @@ class McpFacade {
         return result;
     }
 
+    /**
+     * Replaces one snippet of a file of the integration and writes the result through
+     * {@link #writeFile(String, String, String, boolean)}, so an edit is confirmed and replayed in the editor like a
+     * write (CAMEL-24909). The reading and the matching are the shared tool's, only the writing is the TUI's.
+     */
+    JsonObject editFile(String name, String file, String find, String replace, boolean confirm) {
+        IntegrationInfo target = findIntegration(name);
+        if (target == null) {
+            return writeError(name != null && !name.isEmpty()
+                    ? "No integration named '" + name + "'" : "No integration selected");
+        }
+        Path dir = FilesBrowser.resolveSourceDirectory(target);
+        if (dir == null || !Files.isDirectory(dir)) {
+            return writeError("No source directory found for the integration");
+        }
+        JsonObject edit = AuthoringTools.editedContent(dir, file, find, replace);
+        String content = edit.getString("content");
+        if (content == null) {
+            return edit; // not-found, ambiguous or an error: the shared answer says what to do
+        }
+        JsonObject result = writeFile(name, file, content, confirm);
+        if (!"invalid".equals(result.getString("status")) && !"error".equals(result.getString("status"))) {
+            result.put("status", "edited");
+            result.put("editedAtLine", edit.getInteger("editedAtLine"));
+            result.put("replacedLines", edit.getInteger("replacedLines"));
+        }
+        return result;
+    }
+
     private JsonObject replayResult(
             IntegrationInfo target, Path dir, String file, String requested, ReplayOutcome outcome) {
         JsonObject result = new JsonObject();

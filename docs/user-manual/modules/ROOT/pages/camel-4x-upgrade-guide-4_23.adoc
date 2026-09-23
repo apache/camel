@@ -895,6 +895,11 @@ did not load. A write with no selected integration answers as before.
 The `validate` argument of `camel_write_file` is gone: the write always validates the content and refuses an
 invalid file. A model given the switch turned it off on its own, and the file then failed to load.
 
+The authoring set has a new tool, `camel_edit_file`: it replaces one snippet of a file, given the exact text to find
+and what to put there, and validates and reloads the result as a write does. A model that rewrites a whole file to
+change one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing file;
+`camel_write_file` writes a new one.
+
 The `camel_run` tool, when no files are named, starts the project with `camel run --source-dir=.` instead of
 listing the directory's files: the directory is watched, so a file added afterwards (a bean file, a Java class
 under `src/main/java`) is part of the app and reloaded in dev mode, and a `restart` starts the same way. Naming

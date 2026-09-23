@@ -338,6 +338,13 @@ project `directory` as an argument, the runtime tools take the integration `name
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
 
+| `camel_edit_file`
+| Changes a file by replacing one snippet: the lines to find (they must name one place; other indentation is fine)
+  and what to put there.
+  Validated and reloaded as a write is, and the answer says at which line it changed. A model that rewrites a whole
+  file to add one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing
+  file; `camel_write_file` writes a new one.
+
 | `camel_run`
 | Starts an integration from a project directory with `camel run --source-dir` in a separate process, in dev
   mode by default: the directory is watched, so a changed or added file (a route, a bean file, a Java class) is
