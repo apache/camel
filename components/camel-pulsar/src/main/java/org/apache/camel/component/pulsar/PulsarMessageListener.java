@@ -52,12 +52,12 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
                 if (exchange.getException() != null) {
                     pulsarConsumer.getExceptionHandler().handleException("Error processing exchange", exchange,
                             exchange.getException());
+                    negativeAcknowledge(consumer, message);
                 } else {
                     try {
                         acknowledge(consumer, message);
                     } catch (Exception e) {
-                        pulsarConsumer.getExceptionHandler().handleException("Error processing exchange", exchange,
-                                exchange.getException());
+                        pulsarConsumer.getExceptionHandler().handleException("Error acknowledging message", exchange, e);
                     }
                 }
             } finally {
@@ -70,6 +70,17 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
             throws PulsarClientException {
         if (!endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
             consumer.acknowledge(message.getMessageId());
+        }
+    }
+
+    /**
+     * Tells the broker the message was not processed, so that it is redelivered after
+     * <tt>negativeAckRedeliveryDelayMicros</tt> instead of waiting for the acknowledgement timeout. Left to the route
+     * when manual acknowledgement is enabled, the same way {@link #acknowledge} is.
+     */
+    private void negativeAcknowledge(final Consumer<byte[]> consumer, final Message<byte[]> message) {
+        if (!endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
+            consumer.negativeAcknowledge(message.getMessageId());
         }
     }
 
