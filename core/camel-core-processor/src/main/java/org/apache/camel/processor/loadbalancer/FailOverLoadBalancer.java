@@ -181,6 +181,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         final AsyncCallback callback;
         final AsyncProcessor[] processors;
         int index;
+        int start;
         int attempts;
         // use a copy of the original exchange before failover to avoid populating side effects
         // directly into the original exchange
@@ -198,6 +199,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             } else if (isRoundRobin()) {
                 index = counter.updateAndGet(x -> ++x < processors.length ? x : 0);
             }
+            start = index;
             LOG.trace("Failover starting with endpoint index {}", index);
         }
 
@@ -245,6 +247,11 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                     LOG.trace("Failover is round robin enabled and therefore starting from the first endpoint");
                     index = 0;
                     counter.set(0);
+                } else if (isSticky() && start > 0) {
+                    // sticky mode started from the last known good endpoint, so the endpoints
+                    // before it have not been tried yet
+                    LOG.trace("Failover is sticky enabled and therefore continuing from the first endpoint");
+                    index = 0;
                 } else {
                     // no more processors to try
                     LOG.trace("Breaking out of failover as we reached the end of endpoints to use for failover");
@@ -252,6 +259,14 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                     callback.done(false);
                     return;
                 }
+            }
+
+            if (copy != null && isSticky() && !isRoundRobin() && index == start) {
+                // sticky mode (without round robin) has tried all endpoints once
+                LOG.trace("Breaking out of failover as all endpoints have been tried");
+                ExchangeHelper.copyResults(exchange, copy);
+                callback.done(false);
+                return;
             }
 
             // try again but copy original exchange before we failover
