@@ -104,6 +104,8 @@ public class MailConfiguration implements Cloneable {
     private boolean debugMode;
     @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, label = "advanced")
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
+    @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_MAX_MULTIPART_DEPTH, label = "advanced")
+    private int maxMultipartDepth = MailConstants.MAIL_DEFAULT_MAX_MULTIPART_DEPTH;
     @UriParam(defaultValue = "text/plain", label = "advanced")
     private String contentType = "text/plain";
     @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY, label = "advanced")
@@ -670,6 +672,19 @@ public class MailConfiguration implements Cloneable {
      */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getMaxMultipartDepth() {
+        return maxMultipartDepth;
+    }
+
+    /**
+     * The maximum nesting depth of multipart MIME parts the consumer descends into when extracting attachments. A
+     * message nested deeper than this has its deeper parts skipped, so a crafted deeply nested multipart cannot exhaust
+     * the stack. Increase it only if a legitimate source produces unusually deep nesting.
+     */
+    public void setMaxMultipartDepth(int maxMultipartDepth) {
+        this.maxMultipartDepth = maxMultipartDepth;
     }
 
     public String getContentType() {
