@@ -82,7 +82,7 @@ public class PulsarProducer extends DefaultAsyncProducer {
             }
 
             messageBuilder.sendAsync()
-                    .thenAccept(r -> exchange.getIn().setBody(r))
+                    .thenAccept(r -> exchange.getIn().setHeader(PulsarMessageHeaders.MESSAGE_ID_OUT, r))
                     .whenComplete(
                             (r, e) -> {
                                 try {
