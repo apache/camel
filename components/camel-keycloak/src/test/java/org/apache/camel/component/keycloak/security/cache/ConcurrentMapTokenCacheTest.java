@@ -177,7 +177,9 @@ class ConcurrentMapTokenCacheTest {
 
     @Test
     void testExpiredResultNotServed() {
-        // A result whose token has already expired must not be served, even while the configured TTL has not elapsed.
+        // A result whose token has already expired is not cached at all: put() rejects it up front via the
+        // isExpired() early-return, so get() returns null because no entry was ever inserted. The TTL bounding
+        // for a not-yet-expired token is covered by testResultExpiringBeforeTtlNotServedAfterExp.
         Map<String, Object> claims = new HashMap<>();
         claims.put("active", true);
         claims.put("sub", "test-user");

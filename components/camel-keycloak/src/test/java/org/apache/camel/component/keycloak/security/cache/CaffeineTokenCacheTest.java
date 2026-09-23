@@ -204,7 +204,9 @@ class CaffeineTokenCacheTest {
 
     @Test
     void testExpiredResultNotServed() {
-        // A result whose token has already expired must not be served, even while the configured TTL has not elapsed.
+        // A result whose token has already expired is given a 0 lifetime by IntrospectionExpiry
+        // (expiryNanos returns 0), so it is evicted immediately rather than kept for the TTL. The TTL
+        // bounding for a not-yet-expired token is covered by testResultExpiringBeforeTtlNotServedAfterExp.
         Map<String, Object> claims = new HashMap<>();
         claims.put("active", true);
         claims.put("sub", "test-user");
@@ -247,13 +249,16 @@ class CaffeineTokenCacheTest {
         KeycloakTokenIntrospector.IntrospectionResult shortLived
                 = new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
-        longTtlCache.put("short-lived-token", shortLived);
-        assertNotNull(longTtlCache.get("short-lived-token"));
+        try {
+            longTtlCache.put("short-lived-token", shortLived);
+            assertNotNull(longTtlCache.get("short-lived-token"));
 
-        await().atMost(10, TimeUnit.SECONDS).until(() -> {
-            longTtlCache.getCaffeineCache().cleanUp();
-            return longTtlCache.get("short-lived-token") == null;
-        });
-        longTtlCache.close();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> {
+                longTtlCache.getCaffeineCache().cleanUp();
+                return longTtlCache.get("short-lived-token") == null;
+            });
+        } finally {
+            longTtlCache.close();
+        }
     }
 }
