@@ -539,4 +539,46 @@ class KeycloakSecurityProcessorTest {
         assertTrue(e.getMessage().contains("expired"), "unexpected message: " + e.getMessage());
         assertFalse(routeReached.get(), "Route body must not be reached for an expired token");
     }
+
+    @Test
+    void testActiveButExpiredIntrospectionResultRejectedOnRolesPath() throws Exception {
+        // With required roles configured, authentication runs through validateRoles(); the expiry check there
+        // must reject an active-but-expired result before the role check, so removing it from that path is caught.
+        long expiredSecondsAgo = System.currentTimeMillis() / 1000 - 60;
+        KeycloakTokenIntrospector introspector
+                = introspectorReturning(Map.of("active", true, "exp", expiredSecondsAgo));
+
+        KeycloakSecurityPolicy policy = introspectionPolicy(introspector);
+        policy.setValidateIssuer(false);
+        policy.setRequiredRoles("admin");
+
+        AtomicBoolean routeReached = new AtomicBoolean(false);
+        KeycloakSecurityProcessor processor = new KeycloakSecurityProcessor(e -> routeReached.set(true), policy);
+
+        CamelAuthorizationException e
+                = assertThrows(CamelAuthorizationException.class, () -> processor.process(bearer("x")));
+        assertTrue(e.getMessage().contains("expired"), "unexpected message: " + e.getMessage());
+        assertFalse(routeReached.get(), "Route body must not be reached for an expired token on the roles path");
+    }
+
+    @Test
+    void testActiveButExpiredIntrospectionResultRejectedOnPermissionsPath() throws Exception {
+        // With required permissions configured, authentication runs through validatePermissions(); the expiry
+        // check there must reject an active-but-expired result before the permission check.
+        long expiredSecondsAgo = System.currentTimeMillis() / 1000 - 60;
+        KeycloakTokenIntrospector introspector
+                = introspectorReturning(Map.of("active", true, "exp", expiredSecondsAgo));
+
+        KeycloakSecurityPolicy policy = introspectionPolicy(introspector);
+        policy.setValidateIssuer(false);
+        policy.setRequiredPermissions("read");
+
+        AtomicBoolean routeReached = new AtomicBoolean(false);
+        KeycloakSecurityProcessor processor = new KeycloakSecurityProcessor(e -> routeReached.set(true), policy);
+
+        CamelAuthorizationException e
+                = assertThrows(CamelAuthorizationException.class, () -> processor.process(bearer("x")));
+        assertTrue(e.getMessage().contains("expired"), "unexpected message: " + e.getMessage());
+        assertFalse(routeReached.get(), "Route body must not be reached for an expired token on the permissions path");
+    }
 }

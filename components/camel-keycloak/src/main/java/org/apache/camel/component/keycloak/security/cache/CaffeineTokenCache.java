@@ -168,15 +168,12 @@ public class CaffeineTokenCache implements TokenCache {
             }
             long remainingMillis = expSeconds * 1000L - System.currentTimeMillis();
             if (remainingMillis <= 0) {
-                // Already expired: expire immediately so the entry is not served.
+                // Already expired, or an out-of-range exp whose millisecond conversion overflowed to a
+                // negative value: expire immediately so the entry is not served.
                 return 0L;
             }
-            long remainingNanos = TimeUnit.MILLISECONDS.toNanos(remainingMillis);
-            if (remainingNanos < 0) {
-                // Overflow guard for a far-future exp: fall back to the configured TTL.
-                return maxTtlNanos;
-            }
-            return Math.min(maxTtlNanos, remainingNanos);
+            // toNanos() saturates to Long.MAX_VALUE for a far-future exp, so min() still yields the TTL.
+            return Math.min(maxTtlNanos, TimeUnit.MILLISECONDS.toNanos(remainingMillis));
         }
     }
 }
