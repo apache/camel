@@ -128,9 +128,24 @@ public class ThreadPerTaskSedaConsumer extends SedaConsumer {
 
     @Override
     protected void processPolledExchange(Exchange exchange) {
+        // count the task when it is dispatched (not when it starts running), so a graceful shutdown
+        // also waits for polled exchanges whose task has not started yet
+        activeTasks.increment();
+        try {
+            dispatch(exchange);
+        } catch (RuntimeException e) {
+            // the task was not dispatched (e.g. rejected)
+            activeTasks.decrement();
+            if (concurrencyLimiter != null) {
+                concurrencyLimiter.release();
+            }
+            throw e;
+        }
+    }
+
+    private void dispatch(Exchange exchange) {
         // Dispatch to task executor for processing
         taskExecutor.execute(() -> {
-            activeTasks.increment();
             try {
                 // Prepare the exchange
                 Exchange prepared = prepareExchange(exchange);
