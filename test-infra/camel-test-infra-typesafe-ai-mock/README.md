@@ -16,8 +16,9 @@ component.getConfiguration().setApiKey(service.getApiKey());
 component.getConfiguration().setModel(service.getModel());
 ```
 
-To bypass the mock and run the same test against a compatible API such as a
-local Laya server, set `TYPESAFE_AI_BASE_URL` and `TYPESAFE_AI_API_KEY`.
+To run the same example routes against a compatible API such as a local Laya
+server, set `TYPESAFE_AI_BASE_URL` and `TYPESAFE_AI_API_KEY` for the external
+integration test. The unit test continues to use the mock.
 `TYPESAFE_AI_MODEL` is optional. `LAYA_BASE_URL`, `LAYA_API_KEY`, and
 `LAYA_MODEL` are accepted as fallbacks. From
 `components/camel-ai/camel-typesafe-ai`, for example:
@@ -25,7 +26,7 @@ local Laya server, set `TYPESAFE_AI_BASE_URL` and `TYPESAFE_AI_API_KEY`.
 ```sh
 TYPESAFE_AI_BASE_URL=http://127.0.0.1:8000 \
 TYPESAFE_AI_API_KEY=local-test \
-mvn test -Dtest=TypeSafeAiExamplesTest
+mvn verify -Dit.test=TypeSafeAiExternalServiceIT
 ```
 
 The remote mode sends requests directly to the configured service. The mock

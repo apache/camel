@@ -24,14 +24,16 @@ Set a base URL (without `/v1/systemone`) and bearer token to bypass the mock:
 TYPESAFE_AI_BASE_URL=http://127.0.0.1:8000 \
 TYPESAFE_AI_API_KEY=local-test \
 TYPESAFE_AI_MODEL=laya-rl-agent \
-mvn test -Dtest=TypeSafeAiExamplesTest
+mvn verify -Dit.test=TypeSafeAiExternalServiceIT
 ```
 
 `TYPESAFE_AI_MODEL` is optional. The test service also accepts `LAYA_BASE_URL`,
 `LAYA_API_KEY`, and `LAYA_MODEL` as fallback variable names. The external API
 must implement `POST /v1/systemone` with the Noul, Choice, and Score response
-shapes. The example assertions accept varying model decisions and verify that
-the Camel route uses the returned values correctly.
+shapes. `TypeSafeAiExternalServiceIT` is skipped when no external base URL is
+configured. It runs the same four route examples as the mock test. The
+assertions accept varying model decisions and verify that the Camel route uses
+the returned values correctly.
 
 ### Local Laya example
 
