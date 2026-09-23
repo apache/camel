@@ -27,13 +27,13 @@ public final class ChunkConstants {
      * Header containing a Chunk template location
      */
     @Metadata(description = "A URI for the template resource to use instead of the endpoint configured.", javaType = "String")
-    public static final String CHUNK_RESOURCE_URI = "ChunkResourceUri";
+    public static final String CHUNK_RESOURCE_URI = "CamelChunkResourceUri";
 
     /**
      * Header containing the Chunk template code
      */
     @Metadata(description = "The template to use instead of the endpoint configured.", javaType = "String")
-    public static final String CHUNK_TEMPLATE = "ChunkTemplate";
+    public static final String CHUNK_TEMPLATE = "CamelChunkTemplate";
 
     /**
      * Chunk endpoint URI prefix
