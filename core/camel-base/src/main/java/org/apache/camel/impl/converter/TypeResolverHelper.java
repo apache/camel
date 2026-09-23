@@ -63,6 +63,10 @@ final class TypeResolverHelper {
 
         // try with base converters first
         final TypeConverter typeConverter = converters.get(typeConvertible);
+        if (typeConverter == CoreTypeConverterRegistry.MISS_CONVERTER) {
+            // we have previously found no type converter for this pair of types
+            return null;
+        }
         if (typeConverter != null) {
             return typeConverter;
         }
@@ -87,7 +91,7 @@ final class TypeResolverHelper {
             }
 
             final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, typeConvertible.getTo()));
-            if (objConverter != null) {
+            if (objConverter != null && objConverter != CoreTypeConverterRegistry.MISS_CONVERTER) {
                 return objConverter;
             }
         }
@@ -115,6 +119,9 @@ final class TypeResolverHelper {
          matching both the "from type" and the "to type" which are NOT Object (we usually try this later).
          */
         for (var entry : converters.entrySet()) {
+            if (entry.getValue() == CoreTypeConverterRegistry.MISS_CONVERTER) {
+                continue;
+            }
             final TypeConvertible<?, ?> key = entry.getKey();
             if (key.isAssignableMatch(typeConvertible)) {
                 return entry.getValue();
@@ -138,7 +145,7 @@ final class TypeResolverHelper {
     static TypeConverter tryMatch(
             TypeConvertible<?, ?> typeConvertible, Map<TypeConvertible<?, ?>, TypeConverter> converters) {
         for (var entry : converters.entrySet()) {
-            if (entry.getKey().matches(typeConvertible)) {
+            if (entry.getValue() != CoreTypeConverterRegistry.MISS_CONVERTER && entry.getKey().matches(typeConvertible)) {
                 return entry.getValue();
             }
 
@@ -158,7 +165,8 @@ final class TypeResolverHelper {
     static TypeConverter tryPrimitive(
             TypeConvertible<?, ?> typeConvertible, Map<TypeConvertible<?, ?>, TypeConverter> converters) {
         for (var entry : converters.entrySet()) {
-            if (entry.getKey().matchesPrimitive(typeConvertible)) {
+            if (entry.getValue() != CoreTypeConverterRegistry.MISS_CONVERTER
+                    && entry.getKey().matchesPrimitive(typeConvertible)) {
                 return entry.getValue();
             }
 

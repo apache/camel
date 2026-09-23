@@ -17,13 +17,17 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.TypeConverterSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CoreTypeConverterRegistryTest extends ContextTestSupport {
 
@@ -64,6 +68,67 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
         assertEquals("long:5", template.requestBody("direct:long", 5));
     }
 
+    @Test
+    public void testFallbackStillTriedAfterMiss() {
+        context.getTypeConverterRegistry().addFallbackTypeConverter(new FooFallback(), false);
+        TypeConverter tc = context.getTypeConverter();
+
+        // the fallback cannot convert this value, which is recorded as a miss
+        assertNull(tc.convertTo(Foo.class, "bar"));
+        // but it can convert this value of the same type
+        assertEquals("b", tc.convertTo(Foo.class, "foo:b").value);
+        assertNull(tc.convertTo(Foo.class, "baz"));
+        assertEquals("c", tc.tryConvertTo(Foo.class, "foo:c").value);
+    }
+
+    @Test
+    public void testFallbackAddedAfterMiss() {
+        TypeConverter tc = context.getTypeConverter();
+
+        assertNull(tc.convertTo(Foo.class, "foo:x"));
+        context.getTypeConverterRegistry().addFallbackTypeConverter(new FooFallback(), false);
+        assertEquals("x", tc.convertTo(Foo.class, "foo:x").value);
+    }
+
+    @Test
+    public void testConverterAddedAfterMiss() {
+        TypeConverter tc = context.getTypeConverter();
+
+        assertNull(tc.convertTo(Foo.class, new Sub()));
+        context.getTypeConverterRegistry().addTypeConverter(Foo.class, Base.class, new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+                return type.cast(new Foo("base"));
+            }
+        });
+        // converter for the super class is used for the sub class that previously missed
+        assertEquals("base", tc.convertTo(Foo.class, new Sub()).value);
+    }
+
+    @Test
+    public void testMissOnSuperClassDoesNotAffectSubClass() {
+        context.getTypeConverterRegistry().addFallbackTypeConverter(new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+                return value instanceof Sub && type == Foo.class ? type.cast(new Foo("sub")) : null;
+            }
+        }, false);
+        TypeConverter tc = context.getTypeConverter();
+
+        assertNull(tc.convertTo(Foo.class, new Base()));
+        assertEquals("sub", tc.convertTo(Foo.class, new Sub()).value);
+    }
+
+    @Test
+    public void testLookupDoesNotReturnMiss() {
+        TypeConverterRegistry registry = context.getTypeConverterRegistry();
+
+        assertNull(context.getTypeConverter().convertTo(Foo.class, new Base()));
+        assertNull(registry.lookup(Foo.class, Base.class));
+        assertNull(registry.lookup(Foo.class, Sub.class));
+        assertTrue(registry.lookup(Foo.class).isEmpty());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -82,6 +147,33 @@ public class CoreTypeConverterRegistryTest extends ContextTestSupport {
 
         public String longArg(long x) {
             return "long:" + x;
+        }
+    }
+
+    public static class Foo {
+        private final String value;
+
+        public Foo(String value) {
+            this.value = value;
+        }
+    }
+
+    public static class Base {
+    }
+
+    public static class Sub extends Base {
+    }
+
+    /**
+     * Fallback that depends on the value: it can only convert strings that start with foo:
+     */
+    private static class FooFallback extends TypeConverterSupport {
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+            if (type == Foo.class && value instanceof String s && s.startsWith("foo:")) {
+                return type.cast(new Foo(s.substring(4)));
+            }
+            return null;
         }
     }
 }
