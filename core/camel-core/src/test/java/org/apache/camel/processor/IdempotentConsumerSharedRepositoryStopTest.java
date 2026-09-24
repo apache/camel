@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Stopping a route must not stop (and thereby clear) an idempotent repository that other routes still use.
  */
-public class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSupport {
+class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -43,17 +43,17 @@ public class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSuppo
     }
 
     @Test
-    public void testStopRouteKeepsSharedMemoryRepository() throws Exception {
+    void testStopRouteKeepsSharedMemoryRepository() throws Exception {
         assertStopRouteKeepsSharedRepository(MemoryIdempotentRepository.memoryIdempotentRepository(200));
     }
 
     @Test
-    public void testStopRouteKeepsSharedKeyValueRepository() throws Exception {
+    void testStopRouteKeepsSharedKeyValueRepository() throws Exception {
         assertStopRouteKeepsSharedRepository(new KeyValueIdempotentRepository());
     }
 
     @Test
-    public void testStopRouteKeepsAutoDiscoveredKeyValueRepository() throws Exception {
+    void testStopRouteKeepsAutoDiscoveredKeyValueRepository() throws Exception {
         // no repositories configured, so both idempotent consumers and the aggregator use this store
         MemoryKeyValueRepository store = new MemoryKeyValueRepository();
         context.getRegistry().bind("store", store);
@@ -96,7 +96,7 @@ public class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSuppo
     }
 
     @Test
-    public void testStopCacheRouteKeepsAutoDiscoveredKeyValueRepository() throws Exception {
+    void testStopCacheRouteKeepsAutoDiscoveredKeyValueRepository() throws Exception {
         // no repositories configured, so the idempotent consumer and the cache EIP use this store
         MemoryKeyValueRepository store = new MemoryKeyValueRepository();
         context.getRegistry().bind("store", store);
@@ -127,7 +127,7 @@ public class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSuppo
     }
 
     @Test
-    public void testRestartRouteKeepsRepository() throws Exception {
+    void testRestartRouteKeepsRepository() throws Exception {
         KeyValueIdempotentRepository repo = new KeyValueIdempotentRepository();
         addRoute("a", repo);
         context.start();
@@ -145,7 +145,7 @@ public class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSuppo
     }
 
     @Test
-    public void testRemoveRouteStopsRepository() throws Exception {
+    void testRemoveRouteStopsRepository() throws Exception {
         KeyValueIdempotentRepository repo = new KeyValueIdempotentRepository();
         addRoute("a", repo);
         context.start();
@@ -161,7 +161,7 @@ public class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSuppo
     }
 
     @Test
-    public void testStopCamelContextStopsRepository() throws Exception {
+    void testStopCamelContextStopsRepository() throws Exception {
         KeyValueIdempotentRepository repo = new KeyValueIdempotentRepository();
         addRoute("a", repo);
         context.start();
