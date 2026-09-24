@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.enricher;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
@@ -24,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,6 +66,19 @@ public class PollEnrichFileAggregationFailureTest extends ContextTestSupport {
         assertFileNotExists(testFile("inbox/" + out.toLowerCase() + ".txt"));
     }
 
+    @Test
+    public void testFileIsCommittedWhenAggregationReturnsNull() {
+        template.sendBodyAndHeader(fileUri("discard"), "Content", Exchange.FILE_NAME, "x.dat");
+
+        // the strategy discards the polled file (returns null), so the original message continues unchanged
+        String out = template.requestBody("direct:discard", "Start", String.class);
+        assertEquals("Start", out);
+
+        // the polled file was used (discarded by the strategy), so it is committed (moved to .camel)
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFileNotExists(testFile("discard/x.dat")));
+        assertFileExists(testFile("discard/.camel/x.dat"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -71,6 +86,9 @@ public class PollEnrichFileAggregationFailureTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .pollEnrich(fileUri("data?initialDelay=0&delay=10"), 2000, new FailOnceStrategy());
+
+                from("direct:discard")
+                        .pollEnrich(fileUri("discard?initialDelay=0&delay=10"), 2000, (original, resource) -> null);
 
                 from("direct:redelivery")
                         .errorHandler(defaultErrorHandler().maximumRedeliveries(1).redeliveryDelay(0))
