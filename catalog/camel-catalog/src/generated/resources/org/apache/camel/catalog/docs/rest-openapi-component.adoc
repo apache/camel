@@ -255,7 +255,7 @@ YAML::
 ====
 
 The option is supported by the built-in `platform-http` consumer component: Camel Main when using
-xref:platform-http-vertx.adoc[camel-platform-http-vertx], and Spring Boot when using the platform-http starter
+xref:platform-http-component.adoc[Platform HTTP], and Spring Boot when using the platform-http starter
 (`camel-platform-http-starter`). Other consumer components ignore the option.
 
 On Camel Main and Quarkus, the catch-all route is evaluated last on the HTTP server, so it never shadows the
