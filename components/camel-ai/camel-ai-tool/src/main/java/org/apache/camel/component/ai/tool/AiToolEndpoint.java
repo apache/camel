@@ -51,7 +51,7 @@ public class AiToolEndpoint extends DefaultEndpoint {
     @UriParam(description = "Tool configuration including tags, description, and parameter definitions.")
     private AiToolConfiguration configuration;
 
-    private AiToolConsumer consumer;
+    private volatile AiToolConsumer consumer;
 
     public AiToolEndpoint(String uri, AiToolComponent component, String toolName,
                           AiToolConfiguration configuration) {

@@ -51,7 +51,7 @@ public class AiResourceEndpoint extends DefaultEndpoint {
     @UriParam(description = "Resource configuration including the resource uri, tags, description and MIME type.")
     private AiResourceConfiguration configuration;
 
-    private AiResourceConsumer consumer;
+    private volatile AiResourceConsumer consumer;
 
     public AiResourceEndpoint(String uri, AiResourceComponent component, String resourceName,
                               AiResourceConfiguration configuration) {
