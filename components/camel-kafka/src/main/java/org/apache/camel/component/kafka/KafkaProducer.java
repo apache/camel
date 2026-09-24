@@ -32,6 +32,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommit;
+import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.producer.support.DelegatingCallback;
 import org.apache.camel.component.kafka.producer.support.KafkaProducerCallBack;
 import org.apache.camel.component.kafka.producer.support.KafkaProducerMetadataCallBack;
@@ -50,10 +52,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.slf4j.Logger;
@@ -144,6 +148,10 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         if (ObjectHelper.isEmpty(transactionId) && configuration.isTransacted()) {
             transactionId = getEndpoint().getId() + "-" + getRouteId();
             props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
+        }
+        if (configuration.isExactlyOnce() && transactionId == null) {
+            throw new IllegalArgumentException(
+                    "exactlyOnce=true requires a transactional producer: set transacted=true or a transactionalId");
         }
         if (kafkaProducer == null) {
             createProducer(props);
@@ -529,11 +537,49 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
             // flagged as transacted without a synchronization to commit or roll it back (CAMEL-24780).
             kafkaProducer.beginTransaction();
             uow.beginTransactedBy(transactionId);
-            uow.addSynchronization(new KafkaTransactionSynchronization(transactionId, kafkaProducer));
+            uow.addSynchronization(createTransactionSynchronization(exchange));
         } else {
             LOG.debug("Using existing kafka transaction {} with exchange {}.",
                     transactionId, exchange.getExchangeId());
         }
+    }
+
+    private KafkaTransactionSynchronization createTransactionSynchronization(Exchange exchange) {
+        if (configuration.isExactlyOnce()) {
+            KafkaManualCommit manual
+                    = exchange.getMessage().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+            if (manual instanceof DefaultKafkaManualCommit dmc) {
+                // Read the consumer group metadata on the consumer poll thread that is processing this exchange; the
+                // Kafka consumer is not safe for multi-threaded access. The offset to commit is the next offset to
+                // read, i.e. the processed record's offset + 1.
+                Map<TopicPartition, OffsetAndMetadata> offsets = Collections.singletonMap(
+                        dmc.getPartition(), new OffsetAndMetadata(dmc.getRecordOffset() + 1));
+                return new KafkaTransactionSynchronization(
+                        transactionId, kafkaProducer, offsets, dmc.getConsumerGroupMetadata());
+            }
+            LOG.warn("exactlyOnce is enabled but no Kafka consumer manual-commit is present on the exchange; the source"
+                     + " offsets will not be committed inside the transaction. Ensure the source Kafka consumer uses"
+            if (manual instanceof DefaultKafkaManualCommit dmc) {
+                // Read the consumer group metadata on the consumer poll thread that is processing this exchange; the
+                // Kafka consumer is not safe for multi-threaded access. The offset to commit is the next offset to
+                // read, i.e. the processed record's offset + 1.
+                Map<TopicPartition, OffsetAndMetadata> offsets = Collections.singletonMap(
+                        dmc.getPartition(), new OffsetAndMetadata(dmc.getRecordOffset() + 1));
+                return new KafkaTransactionSynchronization(
+                        transactionId, kafkaProducer, offsets, dmc.getConsumerGroupMetadata());
+            } else if (manual != null) {
+                // A custom KafkaManualCommit that doesn't extend DefaultKafkaManualCommit cannot supply
+                // group metadata; failing loudly here is safer than silently producing without EOS.
+                throw new IllegalStateException(
+                    "exactlyOnce=true requires a DefaultKafkaManualCommit instance to read consumer offsets; "
+                    + "found " + manual.getClass().getName() + ". Ensure the source consumer uses the default "
+                    + "KafkaManualCommitFactory.");
+            }
+            LOG.warn("exactlyOnce is enabled but no Kafka consumer manual-commit is present on the exchange; the source"
+                     + " offsets will not be committed inside the transaction. Ensure the source Kafka consumer uses"
+                     + " allowManualCommit=true and autoCommitEnable=false.");
+        }
+        return new KafkaTransactionSynchronization(transactionId, kafkaProducer);
     }
 
     @Override

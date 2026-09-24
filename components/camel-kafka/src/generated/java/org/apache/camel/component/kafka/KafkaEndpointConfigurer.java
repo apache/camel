@@ -63,6 +63,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "deliveryTimeoutMs": target.getConfiguration().setDeliveryTimeoutMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "enableidempotence":
         case "enableIdempotence": target.getConfiguration().setEnableIdempotence(property(camelContext, boolean.class, value)); return true;
+        case "exactlyonce":
+        case "exactlyOnce": target.getConfiguration().setExactlyOnce(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -303,6 +305,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "deliveryTimeoutMs": return java.lang.Integer.class;
         case "enableidempotence":
         case "enableIdempotence": return boolean.class;
+        case "exactlyonce":
+        case "exactlyOnce": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -544,6 +548,8 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "deliveryTimeoutMs": return target.getConfiguration().getDeliveryTimeoutMs();
         case "enableidempotence":
         case "enableIdempotence": return target.getConfiguration().isEnableIdempotence();
+        case "exactlyonce":
+        case "exactlyOnce": return target.getConfiguration().isExactlyOnce();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
