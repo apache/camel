@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Resource;
 
 /** Context-local named questions, replaced atomically per source when a route resource is reloaded. */
 public final class SemanticQuestions {
     private final Map<String, Map<String, SemanticQuestion>> sources = new HashMap<>();
+    private final Map<String, Resource> resources = new HashMap<>();
     private volatile Map<String, SemanticQuestion> questions = Map.of();
 
     public static SemanticQuestions get(CamelContext context) {
@@ -53,8 +55,27 @@ public final class SemanticQuestions {
                 throw new IllegalArgumentException("Duplicate semantic question: " + name);
             }
         });
-        sources.put(source, Map.copyOf(definitions));
+        if (definitions.isEmpty()) {
+            sources.remove(source);
+        } else {
+            sources.put(source, Map.copyOf(definitions));
+        }
+        resources.remove(source);
         questions = Map.copyOf(replacement);
+    }
+
+    /** Track a route resource so deleted files can be discarded before development-mode reload. */
+    public synchronized void replace(Resource source, Map<String, SemanticQuestion> definitions) {
+        removeDeletedResources();
+        replace(source.getLocation(), definitions);
+        if (!definitions.isEmpty() && "file".equals(source.getScheme())) {
+            resources.put(source.getLocation(), source);
+        }
+    }
+
+    synchronized void removeDeletedResources() {
+        resources.values().stream().filter(resource -> !resource.exists()).map(Resource::getLocation).toList()
+                .forEach(location -> replace(location, Map.of()));
     }
 
     public SemanticQuestion get(String name) {

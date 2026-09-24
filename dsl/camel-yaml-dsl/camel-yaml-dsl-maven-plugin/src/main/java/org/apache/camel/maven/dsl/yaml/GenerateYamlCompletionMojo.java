@@ -376,6 +376,14 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
             }
 
             ArrayNode children = buildChildrenFromDefinition(def, fqName);
+            for (JsonNode group : def.path("anyOf")) {
+                for (JsonNode variant : group.path("oneOf")) {
+                    String variantName = resolveRefFq(variant);
+                    if (variantName != null && definitions.has(variantName)) {
+                        mergeChildren(children, buildChildrenFromDefinition(definitions.get(variantName), variantName));
+                    }
+                }
+            }
             node.set("children", children);
 
             nodes.set(nodeName, node);
@@ -418,7 +426,8 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         }
 
         // check for language model
-        LanguageModel langModel = catalog.languageModel(nodeName);
+        LanguageModel langModel = fqName.startsWith("org.apache.camel.model.language.")
+                ? catalog.languageModel(nodeName) : null;
         if (langModel != null) {
             node.put("title", langModel.getTitle());
             node.put("description", langModel.getDescription());
@@ -448,7 +457,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
 
         // look up catalog model for enriched option metadata
         String nodeName = defToNodeName.get(fqName);
-        Map<String, BaseOptionModel> catalogOptions = loadCatalogOptions(nodeName);
+        Map<String, BaseOptionModel> catalogOptions = loadCatalogOptions(nodeName, fqName);
 
         Iterator<Map.Entry<String, JsonNode>> propFields = props.fields();
         while (propFields.hasNext()) {
@@ -478,6 +487,13 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
                     child.set("enum", enumValues);
                 } else {
                     child.put("type", type);
+                }
+            }
+            if (prop.has("additionalProperties") && prop.get("additionalProperties").isObject()) {
+                String entryRef = resolveRef(prop.get("additionalProperties"));
+                if (entryRef != null) {
+                    child.put("type", "map");
+                    child.put("ref", entryRef);
                 }
             }
 
@@ -546,7 +562,35 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         return children;
     }
 
-    private Map<String, BaseOptionModel> loadCatalogOptions(String nodeName) {
+    private void mergeChildren(ArrayNode children, ArrayNode variants) {
+        for (JsonNode variant : variants) {
+            ObjectNode existing = null;
+            for (JsonNode child : children) {
+                if (child.path("name").equals(variant.path("name"))) {
+                    existing = (ObjectNode) child;
+                    break;
+                }
+            }
+            if (existing == null) {
+                children.add(variant);
+            } else if (existing.has("enum") && variant.has("enum")) {
+                ArrayNode values = (ArrayNode) existing.get("enum");
+                variant.get("enum").forEach(value -> {
+                    boolean present = false;
+                    for (JsonNode item : values) {
+                        present |= item.equals(value);
+                    }
+                    if (!present) {
+                        values.add(value);
+                    }
+                });
+            } else if (!existing.path("type").equals(variant.path("type"))) {
+                existing.put("type", "any");
+            }
+        }
+    }
+
+    private Map<String, BaseOptionModel> loadCatalogOptions(String nodeName, String fqName) {
         Map<String, BaseOptionModel> optMap = new LinkedHashMap<>();
         if (nodeName == null) {
             return optMap;
@@ -562,7 +606,8 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         }
 
         // try language model
-        LanguageModel langModel = catalog.languageModel(nodeName);
+        LanguageModel langModel = fqName.startsWith("org.apache.camel.model.language.")
+                ? catalog.languageModel(nodeName) : null;
         if (langModel != null) {
             for (LanguageModel.LanguageOptionModel opt : langModel.getOptions()) {
                 optMap.put(opt.getName(), opt);

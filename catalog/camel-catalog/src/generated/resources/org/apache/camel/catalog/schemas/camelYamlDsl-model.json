@@ -863,13 +863,11 @@
       } ]
     },
     "semantic" : {
-      "title" : "Semantic",
-      "description" : "Evaluate named semantic questions through a provider adapter",
-      "label" : "language,ai",
       "isListItem" : true,
       "children" : [ {
         "name" : "question",
-        "type" : "object",
+        "type" : "map",
+        "ref" : "semanticDefinitionDeserializer$QuestionSchema",
         "required" : true
       } ]
     },
@@ -921,7 +919,32 @@
       } ]
     },
     "semanticDefinitionDeserializer$QuestionSchema" : {
-      "children" : [ ]
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "any"
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "boolean", "choice", "score" ],
+        "required" : true
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "enum",
+        "enum" : [ "fail", "non-match" ]
+      } ]
     },
     "semanticDefinitionDeserializer$ScoreSchema" : {
       "children" : [ {
@@ -1374,9 +1397,9 @@
       } ]
     },
     "bean" : {
-      "title" : "Bean Method",
-      "description" : "Calls a Java bean method",
-      "label" : "language,core,java",
+      "title" : "Bean",
+      "description" : "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties",
+      "label" : "eip,endpoint",
       "input" : true,
       "isListItem" : true,
       "children" : [ {

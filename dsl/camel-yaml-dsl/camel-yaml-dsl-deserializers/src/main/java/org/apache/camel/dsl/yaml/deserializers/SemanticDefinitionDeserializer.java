@@ -71,8 +71,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                 }
             }
         }
-        String location = dc.getResource().getLocation();
-        SemanticQuestions.get(context).replace(location, definitions);
+        SemanticQuestions.get(context).replace(dc.getResource(), definitions);
     }
 
     private static Map<String, SemanticQuestion> read(Node node) {
@@ -83,11 +82,6 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         Map<String, SemanticQuestion> result = new LinkedHashMap<>();
         fields(semantic.get("question")).forEach((name, definition) -> {
             Map<String, Node> values = fields(definition);
-            if (values.containsKey("uncertainty-policy")) {
-                if (values.putIfAbsent("uncertaintyPolicy", values.remove("uncertainty-policy")) != null) {
-                    throw new IllegalArgumentException("Duplicate uncertainty policy: " + name);
-                }
-            }
             if (!FIELDS.containsAll(values.keySet())) {
                 throw new IllegalArgumentException("Unknown property in semantic question: " + name);
             }

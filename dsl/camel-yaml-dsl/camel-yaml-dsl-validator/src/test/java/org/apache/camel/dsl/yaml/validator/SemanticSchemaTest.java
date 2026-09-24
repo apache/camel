@@ -39,9 +39,14 @@ class SemanticSchemaTest {
         assertThat(validator.validate(choice)).isEmpty();
         assertThat(validator.validate(choice.replace("type: choice", "type: boolean")))
                 .isEmpty(); // criterion key constraints are checked by the runtime
-        assertThat(validator.validate(choice.replace("type: choice", "type: score"))).isNotEmpty();
-        assertThat(validator.validate(choice.replace("instructions:", "threshold: 0.5\n        instructions:"))).isNotEmpty();
-        assertThat(validator.validate(choice.replace("instructions:", "typo:"))).isNotEmpty();
+        for (String invalid : new String[] {
+                choice.replace("type: choice", "type: score"),
+                choice.replace("instructions:", "threshold: 0.5\n        instructions:"),
+                choice.replace("instructions:", "typo:"),
+                choice.replace("instructions:", "uncertainty-policy: fail\n        instructions:") }) {
+            assertThat(validator.validate(invalid)).isNotEmpty().allSatisfy(
+                    error -> assertThat(error.getInstanceLocation().toString()).startsWith("/0/semantic/question/topic"));
+        }
         assertThat(validator.validate("""
                 - semantic:
                     question:

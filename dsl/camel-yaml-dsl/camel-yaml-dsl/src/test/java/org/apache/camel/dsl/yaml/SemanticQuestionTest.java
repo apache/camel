@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.yaml;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,14 +28,19 @@ import org.apache.camel.semantic.SemanticAdapter;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.semantic.SemanticResult;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticQuestionTest extends YamlTestSupport {
+    @TempDir
+    Path directory;
     private final AtomicInteger calls = new AtomicInteger();
     private Object selected;
 
@@ -137,13 +145,45 @@ class SemanticQuestionTest extends YamlTestSupport {
     }
 
     @Test
+    void watcherDropsDeletedQuestionOnlyResourcesBeforeLoadingRenamedFiles() throws Exception {
+        Path original = directory.resolve("questions.yaml");
+        Files.writeString(original, declarations("${body}"));
+        Resource source = ResourceHelper.resolveResource(context, original.toUri().toString());
+        loadRoutes(source);
+        context.start();
+        TestWatcher watcher = new TestWatcher();
+        watcher.setCamelContext(context);
+        Path renamed = Files.move(original, directory.resolve("q.yaml"));
+        watcher.reload(source);
+        assertThatThrownBy(() -> SemanticQuestions.get(context).get("department"))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Unknown");
+        Resource replacement = ResourceHelper.resolveResource(context, renamed.toUri().toString());
+        watcher.reload(replacement);
+        assertThat(watcher.getLastError()).isNull();
+        assertThat(SemanticQuestions.get(context).get("department").getState()).isEqualTo("${body}");
+        Files.delete(renamed);
+        watcher.reload(replacement);
+        assertThatThrownBy(() -> SemanticQuestions.get(context).get("department"))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Unknown");
+    }
+
+    private static class TestWatcher extends RouteWatcherReloadStrategy {
+        void reload(Resource resource) {
+            onRouteReload(List.of(resource), false);
+        }
+    }
+
+    @Test
     void duplicatesAndInvalidDefinitionsAreRejected() {
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}") + declarations("${body}")))
                 .hasStackTraceContaining("Duplicate semantic question");
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("instructions:", "typo:")))
                 .hasStackTraceContaining("Unknown property");
-        assertThatThrownBy(() -> loadRoutes(declarations("${body}").replace("type: choice", "type: unsupported")))
-                .isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("type: choice", "type: unsupported")))
+                .hasRootCauseInstanceOf(IllegalArgumentException.class).hasStackTraceContaining("UNSUPPORTED");
+        assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}")
+                .replace("instructions:", "uncertainty-policy: fail\n        instructions:")))
+                .hasStackTraceContaining("Unknown property");
     }
 
     @Test
@@ -163,7 +203,7 @@ class SemanticQuestionTest extends YamlTestSupport {
                         criteria: [Routine, Urgent]
                 """);
         assertThat(SemanticQuestions.get(context).get("urgency").getLevels()).containsExactly("Routine", "Urgent");
-        assertThatThrownBy(() -> loadRoutes(declarations("${body}").replace("type: choice", "type: score")))
-                .isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("type: choice", "type: score")))
+                .hasStackTraceContaining("Node type map is invalid, expected array");
     }
 }

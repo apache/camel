@@ -23,7 +23,7 @@ concurrency limits and transport resources. TypeSafe AI uses
 
 One advertised adapter is selected automatically. No provider, or multiple distinct
 providers, is an error. Select an existing bean with
-`camel.language.semantic.adapter=#bean:myAdapter`, or a class using its fully qualified name
+`camel.language.semantic.adapter=#bean:myAdapter` (or `#myAdapter`), or a class using its fully qualified name
 (with an optional `#class:` prefix). Class selection uses Camel's class resolver and injector.
 Created adapters are registered as `camelSemanticAdapter` and managed by the context.
 A collision at that name is an error. Referenced beans retain their existing lifecycle owner.
@@ -85,17 +85,22 @@ The YAML DSL supports declarations alongside routes, including declarations afte
 
 Names are context-wide. Duplicate declarations across resources and unknown references fail.
 Reloading a resource replaces its complete set of questions, including removing declarations
-no longer present. This replacement does not make the surrounding route reload transactional.
+no longer present. Development-mode route reload also removes definitions from deleted or renamed files
+before parsing replacements. This replacement does not make the surrounding route reload transactional.
 Existing expressions resolve the current definition on their next evaluation.
 Loading declarations does not perform inference. Java applications can register immutable
 `SemanticQuestion` definitions using `SemanticQuestions.get(context).replace(source, questions)`.
 
 A question's optional `state` Simple expression overrides
-`camel.language.semantic.default-state`, whose default is `${body}`. Selectors are compiled
+`camel.language.semantic.default-state`, whose default is `$\{body}`. Selectors are compiled
 before evaluation; selected strings, maps and lists are passed as data and are never evaluated recursively.
 A missing selected header fails instead of falling back to the body. Blank or invalid selectors
 fail. The original message is preserved. `CamelSemanticResult` contains the latest successful
 normalized result and is cleared before each evaluation, including one that fails.
+
+State must be a string, map or list. For byte arrays or stream bodies, explicitly select
+`$\{bodyAs(String)}`. Enable stream caching before evaluating a stream when later processors
+also need to read it. Unsupported state types fail instead of being implicitly converted.
 
 == Results and policy
 

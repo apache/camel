@@ -47,17 +47,25 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
                 || question.getType() == SemanticQuestion.Type.SCORE && question.getLevels().size() > 10) {
             throw new IllegalArgumentException("TypeSafe AI supports at most 255 choice criteria or 10 score levels");
         }
+    }
+
+    private TypeSafeAiEndpoint endpoint() {
         if (endpoint == null) {
             synchronized (this) {
                 if (endpoint == null) {
+                    if (camelContext == null) {
+                        throw new IllegalStateException("TypeSafe AI semantic adapter requires a CamelContext");
+                    }
                     endpoint = camelContext.getEndpoint("typesafe-ai:semantic", TypeSafeAiEndpoint.class);
                 }
             }
         }
+        return endpoint;
     }
 
     @Override
     public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
+        validate(question);
         Map<String, Object> definition = new HashMap<>();
         definition.put("instructions", question.getInstructions());
         String type = switch (question.getType()) {
@@ -71,7 +79,7 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
         } else if (!question.getCriteria().isEmpty()) {
             definition.put("criteria", question.getCriteria());
         }
-        JsonObject response = endpoint.evaluate(Map.of("state", state, "questions", Map.of("question", definition)));
+        JsonObject response = endpoint().evaluate(Map.of("state", state, "questions", Map.of("question", definition)));
         JsonObject answer = response.getJsonObject("answers").getJsonObject("question");
         Map<String, Double> probabilities = new HashMap<>();
         if (answer.get("probabilities") instanceof Map<?, ?> values) {
