@@ -451,6 +451,11 @@ public class AggregateProcessor extends BaseProcessorSupport
         List<Exchange> aggregated = null;
         lock.lock();
         try {
+            // check again under the lock (and on every optimistic locking retry), as the key may have been closed
+            // by a completion that happened after the check in doProcess(Exchange, AsyncCallback)
+            if (closedCorrelationKeys != null && closedCorrelationKeys.containsKey(key)) {
+                throw new ClosedCorrelationKeyException(key, exchange);
+            }
             aggregated = doAggregation(key, copy);
         } catch (CamelExchangeException e) {
             exchange.setException(e);

@@ -142,6 +142,23 @@ class KeyValueAggregationRepositoryTest {
     }
 
     @Test
+    void testRemoveStoresGivenExchangeForRecovery() {
+        aggregationRepository.add(camelContext, "key1", createExchange("A"));
+
+        // the group is completed by an exchange that is aggregated but not added to the repository
+        Exchange aggregated = aggregationRepository.get(camelContext, "key1");
+        aggregated.getIn().setBody("A+B");
+        aggregated.setProperty(Exchange.AGGREGATED_CORRELATION_KEY, "key1");
+        aggregationRepository.remove(camelContext, "key1", aggregated);
+
+        Exchange recovered = aggregationRepository.recover(camelContext, aggregated.getExchangeId());
+        assertThat(recovered).isNotNull();
+        assertThat(recovered.getExchangeId()).isEqualTo(aggregated.getExchangeId());
+        assertThat(recovered.getIn().getBody(String.class)).isEqualTo("A+B");
+        assertThat(recovered.getProperty(Exchange.AGGREGATED_CORRELATION_KEY, String.class)).isEqualTo("key1");
+    }
+
+    @Test
     void testScanReturnsCompletedExchangeIds() {
         Exchange ex1 = createExchange("One");
         Exchange ex2 = createExchange("Two");

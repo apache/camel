@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.AsyncProcessor;
@@ -45,6 +46,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -582,12 +584,20 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Purges the queue
+     * Purges the queue.
+     * <p/>
+     * The discarded exchanges are failed with a {@link RejectedExecutionException} and their on completions are
+     * executed, so a producer waiting for the reply of a discarded exchange is released.
      */
     @ManagedOperation(description = "Purges the seda queue")
     public void purgeQueue() {
         LOG.debug("Purging queue with {} exchanges", queue.size());
-        queue.clear();
+        List<Exchange> discarded = new ArrayList<>();
+        queue.drainTo(discarded);
+        for (Exchange exchange : discarded) {
+            exchange.setException(new RejectedExecutionException("Exchange discarded as the SEDA queue was purged"));
+            UnitOfWorkHelper.doneSynchronizations(exchange, exchange.getExchangeExtension().handoverCompletions());
+        }
     }
 
     /**

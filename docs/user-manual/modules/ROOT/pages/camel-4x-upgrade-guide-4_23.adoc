@@ -64,6 +64,15 @@ The simple catalog (`simple.json`) now spells these functions as they are writte
 `exception.stacktrace` (was `exception.stackTrace`), `throwException(msg,type)` (was `throwException(type,msg)`, the
 order the function has always used), `not(exp)`, and `setAttachment(key,exp)`.
 
+=== camel-core - internal processor advices
+
+When a `CamelInternalProcessorAdvice` fails in its `before` method, then the `after` method is now executed
+for the advices whose `before` was already executed. Previously they were skipped, which could leave the exchange
+counted as inflight and its unit of work not done. The same now happens when the debugger skips over a processor.
+
+An exception thrown from the `after` method of an advice no longer replaces the exception the exchange has already
+failed with. Instead, it is added as a suppressed exception to the existing exception.
+
 === Circuit Breaker EIP
 
 The exchange property `CamelCircuitBreakerResponseRejected` is now also set inside the `onFallback`,
@@ -83,6 +92,19 @@ Prior to Camel 4.23 the error handler kept using the `onException` matched by th
 `handled`, `continued`, redelivery and `onRedelivery` settings. So a new exception with no `onException` of its own
 could be routed and handled by the earlier exception's `onException`, and was not seen by the caller or the dead
 letter channel.
+
+The redelivery counter is not reset when the exception changes, so the new `onException` measures its
+`maximumRedeliveries` against the attempts already made. A route whose `onException(IOException.class)` allows 5
+redeliveries and which fails 4 times before the exception changes leaves the new policy a counter of 4, so an
+`onException(IllegalArgumentException.class).maximumRedeliveries(2)` is already exhausted and the message goes to
+the dead letter channel on the next failure.
+
+=== Weighted Load Balancer EIP
+
+The distribution ratios of the weighted load balancer are now validated when the route starts. A negative ratio,
+ratios that are all `0`, or ratios whose sum is greater than `2147483647` now fail the route at startup with an
+`IllegalArgumentException`. Previously such a route started, but sending to it could hang the caller, spin a CPU,
+or send every message to the same endpoint.
 
 === Context reload now re-applies placeholder based component options
 
@@ -567,6 +589,33 @@ Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` i
 set here, because that would reject input that parses today. Routes that genuinely need to resolve
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
+
+=== camel-core - type converter
+
+Several bugs in the type converter have been fixed, and some of the fixes change behavior:
+
+* Converting to a primitive type (such as `int.class`) now returns the matching wrapper type.
+Before, an `Integer` or `Long` value was returned as-is for any primitive type, so
+`convertTo(int.class, 5L)` returned a `Long`. For example, a bean method with an `int` parameter
+failed with `argument type mismatch` when the message body was a `Long`.
+* `tryConvertTo(boolean.class, value)` returns `null` instead of throwing an exception when the value
+cannot be converted.
+* When no type converter can convert a pair of types, the registry records a miss so it does not
+search for a converter again. Fallback type converters are now still tried for such a pair,
+because a fallback converter can convert depending on the value. Recorded misses are also cleared when
+a type converter or fallback type converter is added.
+* When there is no type converter for the exact type of the value, the registry uses a type converter
+for a super type. This used to depend on the iteration order of an internal map, which could change
+between JVM restarts. The nearest super type now wins: the type hierarchy is walked breadth-first,
+interfaces are tried before the super class at each level, and `java.lang.Object` is tried last.
+* Converting a `String` to a `Number` now returns an `Integer` for all values within the `Integer` range
+(including `Integer.MAX_VALUE`, which returned a `Long` before), and supports exponent notation such as `1e5`.
+* Converting a `BigDecimal`, or a `double` larger than a `long`, to `BigInteger` no longer loses precision.
+* Converting a `byte[]` to `char` no longer sign-extends bytes above 127.
+* Converting a `String` to `ByteBuffer` now uses the charset from the `CamelCharsetName` header or exchange
+property (like the other converters), and falls back to the default charset.
+* Converting an array to a `Set` no longer returns a `List`.
+* Enum conversion prefers a constant that matches exactly before matching case-insensitively.
 
 === camel-core - a failed route reload restores the previous routes
 
@@ -1104,6 +1153,13 @@ consumer has filtered since 4.14.9/4.18.4/4.22.0.
 Routes that relied on `+mail.smtp.*+` or `+mail.smtps.*+` headers arriving on the exchange from an
 unmarshalled MIME message must set those values explicitly on the route instead. Ordinary
 application headers are unaffected.
+
+`MailBinding` now parses the content type returned by a custom `ContentTypeResolver` before adding the
+attachment file name as a quoted parameter, instead of concatenating the file name into the header - closing
+a header-injection vector via a crafted file name. As a side effect, a `ContentTypeResolver` that returns an
+unparsable content type now fails fast with a `ParseException` at marshal time, where before the invalid
+value was written into the `Content-Type` header as-is. Ensure a custom `ContentTypeResolver` returns a valid
+MIME type.
 
 === camel-netty - object codecs apply a deserialization filter by default
 
@@ -2633,3 +2689,11 @@ Routes that reference the constants (for example `setHeader(MustacheConstants.MU
 are unaffected. Routes that set the header by its literal string name, or that use
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
+
+=== camel-seda - purging the queue completes the discarded exchanges
+
+When a SEDA queue is purged (with `purgeWhenStopping=true` or the `purgeQueue` JMX operation), the discarded exchanges
+are now failed with a `RejectedExecutionException` and their on completions are executed. A producer waiting for the
+reply of a discarded exchange (`waitForTaskToComplete`) is released with that exception, instead of waiting until its
+`timeout`, or forever when the timeout is disabled. On completions handed over to a discarded InOnly exchange, such as
+the commit or rollback of the consumer that received the message, now run as a failure, where previously they never ran.

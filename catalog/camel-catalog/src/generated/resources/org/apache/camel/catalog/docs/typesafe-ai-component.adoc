@@ -99,7 +99,7 @@ camel.component.typesafe-ai.result-property=evaluation
 from("direct:route")
     .to("typesafe-ai:refund")
     .choice()
-        .when(simple("${exchangeProperty.evaluation[answers][refund][noul]} >= 0.8"))
+        .when(simple("${exchangeProperty.evaluation[answers][refund][noul]} >= '0.8'"))
             .to("direct:refund-handler")
         .otherwise().to("direct:general-handler");
 ----
@@ -107,6 +107,62 @@ from("direct:route")
 No manually registered beans are needed. `state` is a Simple expression, defaulting to
 `$\{body}`. For an `InputStream`, use `${bodyAs(String)}`. Only the selected state is sent.
 Without `resultProperty`, the response replaces the message body.
+Quote fractional thresholds in Simple predicates as shown, so Camel compares them as
+decimals instead of first coercing both operands to integers.
+
+=== Questions from a JSON resource
+
+Use `questionsResource` when the question set is too large for a property value. It accepts
+a Camel resource URI, including `classpath:` and `file:`, and contains only the named
+questions. The component reads and validates the UTF-8 JSON once when the endpoint starts.
+The resource is limited to 4 MB.
+`questions` and `questionsResource` cannot be used together. An invalid or missing resource
+prevents the endpoint from starting.
+
+[source,json]
+----
+{
+  "department": {
+    "type": "choice",
+    "instructions": "Which team should handle this request?",
+    "criteria": {
+      "billing": "Payments and refunds",
+      "technical": "Bugs and outages",
+      "sales": "Pricing and new accounts"
+    }
+  },
+  "refund_requested": {
+    "type": "noul",
+    "instructions": "Does the customer explicitly request a refund?"
+  }
+}
+----
+
+Put this file at `src/main/resources/typesafe/triage-questions.json` and configure the
+endpoint and state through properties:
+
+[source,properties]
+----
+camel.component.typesafe-ai.questions-resource=classpath:typesafe/triage-questions.json
+camel.component.typesafe-ai.state=${body}
+camel.component.typesafe-ai.result-property=evaluation
+----
+
+[source,java]
+----
+from("direct:triage")
+    .to("typesafe-ai:triage")
+    .choice()
+        .when(simple("${exchangeProperty.evaluation[answers][department][choice]} == 'billing'"))
+            .to("direct:billing")
+        .otherwise().to("direct:other");
+----
+
+The resource shape is the `questions` object from the TypeSafe AI System One request;
+it has no outer `state`, `questions`, or `model` fields. The component validates the
+question types, criteria and JSON values at startup using the same rules as inline
+`questions`. For editor validation, use the Camel-maintained JSON Schema in
+`schema/typesafe-ai-questions.schema.json` from this component's JAR.
 
 == Producer request and response
 

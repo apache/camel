@@ -240,6 +240,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             if (advice != null) {
                 ip.removeAdvice(advice);
             }
+            // remove the advice from a previous start of the route, as the consumer is created again when restarted
+            RestOpenApiProcessorAdvice existing = ip.getAdvice(RestOpenApiProcessorAdvice.class);
+            if (existing != null) {
+                ip.removeAdvice(existing);
+            }
             ip.addAdvice(new RestOpenApiProcessorAdvice(openApiProcessor));
         }
 
@@ -627,9 +632,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return restConfigurationBasePath;
         }
 
-        final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
-        if (isNotEmpty(specificationBasePath)) {
-            return specificationBasePath;
+        // Only fall back to DEFAULT_BASE_PATH when there are no servers entries at all.
+        // When servers are present but the URL has no path, getBasePathFromOpenApi returns ""
+        // which isNotEmpty() would wrongly treat as absent — so we use != null here.
+        if (openapi != null && openapi.getServers() != null && !openapi.getServers().isEmpty()) {
+            final String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openapi);
+            if (specificationBasePath != null) {
+                return specificationBasePath;
+            }
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;

@@ -1,0 +1,193 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.processor;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+/**
+ * Sticky failover (without round robin) must also try the endpoints before the last known good endpoint, once each.
+ */
+public class FailoverStickyWrapAroundTest extends ContextTestSupport {
+
+    private final Set<String> down = ConcurrentHashMap.newKeySet();
+    private final FailOverLoadBalancer dynamic = createStickyFailOver();
+
+    @Test
+    public void testFailoverStickyContinuesFromFirstEndpoint() throws Exception {
+        // a and b are down, so c becomes the last known good endpoint
+        down.add("a");
+        down.add("b");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        // now c is down and a and b are up: sticky starts from c, and must then continue from a
+        resetMocks();
+        down.clear();
+        down.add("c");
+        getMockEndpoint("mock:a").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedBodiesReceived("Bye World");
+        template.sendBody("direct:start", "Bye World");
+        assertMockEndpointsSatisfied();
+
+        // and a is now the last known good endpoint
+        resetMocks();
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hi World");
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedMessageCount(0);
+        template.sendBody("direct:start", "Hi World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testFailoverStickyTriesEachEndpointOnceWhenAllDown() throws Exception {
+        down.add("a");
+        down.add("b");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        resetMocks();
+        down.add("c");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Bye World"));
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testFailoverStickyWrapAroundRespectsMaximumFailoverAttempts() throws Exception {
+        // a and b are down, so c becomes the last known good endpoint (2 failover attempts)
+        down.add("a");
+        down.add("b");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:d").expectedMessageCount(0);
+        template.sendBody("direct:limited", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        // all down: sticky starts from c, fails over to d, then wraps around to a, which uses up the
+        // 2 failover attempts, so b is not tried
+        resetMocks();
+        down.add("c");
+        down.add("d");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:d").expectedMessageCount(1);
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:limited", "Bye World"));
+        assertMockEndpointsSatisfied();
+
+        // a is up again: reached with the last failover attempt after the wrap around
+        resetMocks();
+        down.remove("a");
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hi World");
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:d").expectedMessageCount(1);
+        template.sendBody("direct:limited", "Hi World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testFailoverStickyWhenLastGoodEndpointWasRemoved() throws Exception {
+        // a and b are down, so c becomes the last known good endpoint
+        down.add("a");
+        down.add("b");
+        template.sendBody("direct:dynamic", "Hello World");
+        assertEquals(2, dynamic.getLastGoodIndex());
+
+        // c is removed while the route is running, so the last known good index is now out of range
+        dynamic.removeProcessor(dynamic.getProcessors().get(2));
+
+        // all remaining endpoints are down: each is tried once and the exchange fails (it must not loop)
+        resetMocks();
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(0);
+        Future<Object> future = template.asyncRequestBody("direct:dynamic", "Bye World");
+        assertThrows(ExecutionException.class, () -> future.get(5, TimeUnit.SECONDS));
+        assertMockEndpointsSatisfied();
+
+        // b is up again
+        resetMocks();
+        down.remove("b");
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedBodiesReceived("Hi World");
+        template.sendBody("direct:dynamic", "Hi World");
+        assertMockEndpointsSatisfied();
+    }
+
+    private static FailOverLoadBalancer createStickyFailOver() {
+        FailOverLoadBalancer answer = new FailOverLoadBalancer();
+        answer.setMaximumFailoverAttempts(-1);
+        answer.setRoundRobin(false);
+        answer.setSticky(true);
+        return answer;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .loadBalance().failover(-1, false, false, true)
+                        .to("direct:a", "direct:b", "direct:c");
+
+                from("direct:limited")
+                        .loadBalance().failover(2, false, false, true)
+                        .to("direct:a", "direct:b", "direct:c", "direct:d");
+
+                from("direct:dynamic")
+                        .loadBalance(dynamic)
+                        .to("direct:a", "direct:b", "direct:c");
+
+                from("direct:a").to("mock:a").process(e -> failIfDown("a"));
+                from("direct:b").to("mock:b").process(e -> failIfDown("b"));
+                from("direct:c").to("mock:c").process(e -> failIfDown("c"));
+                from("direct:d").to("mock:d").process(e -> failIfDown("d"));
+            }
+        };
+    }
+
+    private void failIfDown(String name) {
+        if (down.contains(name)) {
+            throw new IllegalArgumentException(name + " is down");
+        }
+    }
+}

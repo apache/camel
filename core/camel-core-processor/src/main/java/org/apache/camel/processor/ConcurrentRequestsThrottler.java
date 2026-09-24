@@ -147,7 +147,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
     }
 
     private static void doThrottle(Exchange exchange, ThrottlingState throttlingState, State state, long queuedStart)
-            throws InterruptedException {
+            throws Exception {
         // block waiting for a permit
         long start = 0;
         long elapsed = 0;
@@ -222,6 +222,8 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();
         private volatile int throttleRate;
         private final WrappedSemaphore semaphore;
+        // guarded by lock
+        private boolean removed;
 
         ThrottlingState(String key) {
             this.key = key;
@@ -232,20 +234,65 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
             return throttleRate;
         }
 
+        /**
+         * Removes this state if no permit is taken and nobody is waiting for one. A state that is in use must be kept,
+         * otherwise the next exchange would create a new state with all the permits, and more exchanges than allowed
+         * would be processed at the same time.
+         */
         public void clean() {
-            states.remove(key);
+            states.computeIfPresent(key, (k, s) -> s == this && markRemovedIfUnused() ? null : s);
         }
 
-        public boolean tryAcquire(Exchange exchange) {
+        private boolean markRemovedIfUnused() {
+            lock.lock();
+            try {
+                if (semaphore.availablePermits() >= throttleRate && !semaphore.hasQueuedThreads()) {
+                    removed = true;
+                }
+                return removed;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        /**
+         * Whether this state was removed by {@link #clean()} after the exchange looked it up, in which case a permit
+         * taken from it does not count, and must be taken from the state that replaced it instead.
+         */
+        private boolean isRemoved() {
+            lock.lock();
+            try {
+                return removed;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        private ThrottlingState currentState(Exchange exchange) throws Exception {
+            ThrottlingState answer = states.computeIfAbsent(key, ThrottlingState::new);
+            answer.calculateAndSetMaxConcurrentRequestsExpression(exchange);
+            return answer;
+        }
+
+        public boolean tryAcquire(Exchange exchange) throws Exception {
             boolean acquired = semaphore.tryAcquire();
             if (acquired) {
+                if (isRemoved()) {
+                    semaphore.release();
+                    return currentState(exchange).tryAcquire(exchange);
+                }
                 addSynchronization(exchange);
             }
             return acquired;
         }
 
-        public void acquire(Exchange exchange) throws InterruptedException {
+        public void acquire(Exchange exchange) throws Exception {
             semaphore.acquire();
+            if (isRemoved()) {
+                semaphore.release();
+                currentState(exchange).acquire(exchange);
+                return;
+            }
             addSynchronization(exchange);
         }
 

@@ -420,6 +420,11 @@ public class MulticastProcessor extends BaseProcessorSupport
             } catch (RejectedExecutionException e) {
                 if (runnable instanceof Rejectable rej) {
                     rej.reject();
+                } else {
+                    // a sub-exchange task (submitted via the completion service) is not rejectable,
+                    // so rethrow to let the multicast task fail the exchange instead of silently
+                    // dropping the sub-exchange (which would otherwise never complete)
+                    throw e;
                 }
             }
         } else if (transacted) {
@@ -499,9 +504,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                         }
                     }
                 } catch (Exception e) {
-                    original.setException(e);
-                    // and do the done work
-                    doDone(null, false);
+                    doFailed(e);
                 } finally {
                     lock.unlock();
                 }
@@ -536,9 +539,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 }
                 doTimeoutDone(result.get(), true);
             } catch (Exception e) {
-                original.setException(e);
-                // and do the done work
-                doTimeoutDone(null, false);
+                doTimeoutFailed(e);
             } finally {
                 lock.unlock();
             }
@@ -552,24 +553,58 @@ public class MulticastProcessor extends BaseProcessorSupport
 
         protected void doDone(Exchange exchange, boolean forceExhaust) {
             if (done.compareAndSet(false, true)) {
-                // cancel timeout if we are done normally (we cannot cancel if called via onTimeout)
-                if (timeoutTask != null) {
-                    try {
-                        timeoutTask.cancel(true);
-                    } catch (Exception e) {
-                        // ignore
-                        LOG.debug("Cancel timeout task caused an exception. This exception is ignored.", e);
-                    }
-                }
+                cancelTimeoutTask();
                 MulticastProcessor.this.doDone(original, exchange, pairs, callback, false, forceExhaust);
+            }
+        }
+
+        /**
+         * Fails the original exchange with the given exception and does the done work, unless this task is already
+         * done. The exception is only set by the thread that completes the task, so an exchange that has already been
+         * completed (for example by the timeout), and handed back to the caller, is not changed afterwards.
+         */
+        protected void doFailed(Exception e) {
+            if (done.compareAndSet(false, true)) {
+                cancelTimeoutTask();
+                original.setException(e);
+                MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
+            } else {
+                logFailedAfterDone(e);
+            }
+        }
+
+        /**
+         * Same as {@link #doFailed(Exception)} but called from the timeout task, which must not cancel itself.
+         */
+        protected void doTimeoutFailed(Exception e) {
+            if (done.compareAndSet(false, true)) {
+                original.setException(e);
+                MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
+            } else {
+                logFailedAfterDone(e);
+            }
+        }
+
+        private void logFailedAfterDone(Exception e) {
+            LOG.debug("Exception occurred after the exchange was already completed, so it is not set on exchange: {}",
+                    original.getExchangeId(), e);
+        }
+
+        private void cancelTimeoutTask() {
+            // cancel timeout if we are done normally (we cannot cancel if called via onTimeout)
+            if (timeoutTask != null) {
+                try {
+                    timeoutTask.cancel(true);
+                } catch (Exception e) {
+                    // ignore
+                    LOG.debug("Cancel timeout task caused an exception. This exception is ignored.", e);
+                }
             }
         }
 
         @Override
         public void reject() {
-            original.setException(new RejectedExecutionException("Task rejected executing from ExecutorService"));
-            // and do the done work
-            doDone(null, false);
+            doFailed(new RejectedExecutionException("Task rejected executing from ExecutorService"));
         }
     }
 
@@ -668,8 +703,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                     schedule(this);
                 }
             } catch (Exception e) {
-                original.setException(e);
-                doDone(null, false);
+                doFailed(e);
             }
         }
 
@@ -702,8 +736,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 try {
                     next = doRun();
                 } catch (Exception e) {
-                    original.setException(e);
-                    doDone(null, false);
+                    doFailed(e);
                     return;
                 }
             }

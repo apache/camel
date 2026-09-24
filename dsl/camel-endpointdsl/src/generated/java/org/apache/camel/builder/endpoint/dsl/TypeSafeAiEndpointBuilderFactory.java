@@ -128,6 +128,22 @@ public interface TypeSafeAiEndpointBuilderFactory {
             return this;
         }
         /**
+         * Camel resource URI for a UTF-8 JSON object mapping question names to
+         * Noul, Choice or Score questions. Loaded and validated when the
+         * endpoint starts. Cannot be combined with questions.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param questionsResource the value to set
+         * @return the dsl builder
+         */
+        default TypeSafeAiEndpointBuilder questionsResource(String questionsResource) {
+            doSetProperty("questionsResource", questionsResource);
+            return this;
+        }
+        /**
          * The timeout in milliseconds for the complete HTTP request and
          * response body. Must be positive.
          * 

@@ -80,7 +80,9 @@ public class OnExceptionChangedExceptionOnRedeliveryTest extends ContextTestSupp
         template.sendBody("direct:iae", "Hello");
 
         assertMockEndpointsSatisfied();
-        // 1 attempt with IOException, then 2 more as the IllegalArgumentException policy allows 2 redeliveries
+        // 1 attempt throwing IOException, 1 redelivery allowed by its policy which then throws
+        // IllegalArgumentException, and 1 more allowed by that exception's policy: the redelivery counter is not
+        // reset when the exception changes, so at the third attempt it is already 2 and 2 <= 2 passes once
         assertEquals(3, attempts.get());
     }
 

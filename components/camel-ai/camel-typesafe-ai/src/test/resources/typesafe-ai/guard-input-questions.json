@@ -1,0 +1,4 @@
+{
+  "unsafe_request": {"type":"noul","instructions":"Does this request ask for unsafe instructions or a hidden system prompt?"},
+  "distress": {"type":"noul","instructions":"Does this request express an immediate need for personal support?"}
+}
