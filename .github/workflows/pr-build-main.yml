@@ -78,6 +78,37 @@ jobs:
             # JDK 17 is kept for runtime compatibility testing.
             # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
             maven_extra_args: '-Denforcer.phase=none'
+    env:
+      # Modules excluded from dependency analysis.
+      # Keep this list in sync with the dep-check profile and the notes below whenever modules are
+      # added or removed.
+      # Also update pom.xml <pluginManagement> and docs/main/modules/contributing/pages/building.adoc
+      # when changing the pilot-plugin version referenced in the dep-check step below.
+      DEP_CHECK_EXCLUDED_MODULES: >-
+        !bom,
+        !components/camel-spring-parent/camel-spring-xml,
+        !components/camel-test/camel-test-spring-junit5,
+        !components/camel-test/camel-test-spring-junit6,
+        !components/camel-cxf/camel-cxf-soap,
+        !components/camel-cxf/camel-cxf-rest,
+        !components/camel-cxf/camel-cxf-spring-common,
+        !components/camel-cxf/camel-cxf-spring-soap,
+        !components/camel-cxf/camel-cxf-spring-rest,
+        !components/camel-cxf/camel-cxf-spring-transport,
+        !components/camel-micrometer-observability,
+        !components/camel-telemetry-dev,
+        !components/camel-opentelemetry,
+        !components/camel-telemetry,
+        !components/camel-opentelemetry2,
+        !components/camel-ai/camel-ai-observability,
+        !components/camel-observability-services,
+        !components/camel-asn1,
+        !components/camel-debezium,
+        !components/camel-debezium/camel-debezium-common/camel-debezium-maven-plugin,
+        !tooling/maven/sync-properties-maven-plugin,
+        !dsl/camel-yaml-dsl/camel-yaml-dsl-maven-plugin,
+        !dsl/camel-yaml-dsl/camel-yaml-dsl-validator-maven-plugin,
+        !dsl/camel-endpointdsl-support
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -235,3 +266,24 @@ jobs:
           name: ci-comment
           path: ci-comment-artifact/
           overwrite: true
+      # Dependency analysis runs only on JDK 25 (the primary CI JDK) and only on full builds
+      # (not /component-test targeted builds). The regen.sh step above has already compiled the
+      # full reactor and installed all JARs into the local .m2 repository, so pilot:dependencies
+      # can run directly without re-compiling or installing SNAPSHOT stubs — the compiled classes
+      # and resolved artifacts are already available on disk.
+      - name: Run dependency analysis
+        if: matrix.java == '25' && !inputs.skip_full_build
+        continue-on-error: true
+        run: |
+          mvn eu.maveniverse.maven.plugins:pilot-plugin:0.4.0:dependencies \
+            -Pdep-check -Dpilot.skipTestScope=true -Dlicense.skip \
+            --pl "$DEP_CHECK_EXCLUDED_MODULES" \
+            --no-transfer-progress --batch-mode \
+            2>&1 | tee dep-check-output.txt
+      - name: Upload dependency analysis report
+        if: (matrix.java == '25' && !inputs.skip_full_build) && always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dep-check-report
+          path: dep-check-output.txt
+          retention-days: 7
