@@ -176,7 +176,7 @@ Run `package -DskipTests` first:
 
 # Single module (after a full reactor package)
 cd components/camel-ftp
-mvn eu.maveniverse.maven.plugins:pilot-plugin:0.4.0:dependencies -Pdep-check
+./mvnw eu.maveniverse.maven.plugins:pilot-plugin:0.4.0:dependencies -Pdep-check
 ----
 
 To fail the build on findings:
