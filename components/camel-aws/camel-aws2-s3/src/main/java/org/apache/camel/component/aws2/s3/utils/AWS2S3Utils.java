@@ -59,7 +59,7 @@ public final class AWS2S3Utils {
             }
         }
         if (bucketName == null) {
-            throw new IllegalArgumentException("AWS S3 Bucket name is not set or resolved to null.");
+            throw new IllegalArgumentException("AWS S3 Bucket name is not set, or resolved to null.");
         }
         return bucketName;
     }
@@ -147,7 +147,7 @@ public final class AWS2S3Utils {
             }
         }
         if (key == null) {
-            throw new IllegalArgumentException("AWS S3 Key is not set or resolved to null.");
+            throw new IllegalArgumentException("AWS S3 Key is not set, or resolved to null.");
         }
         return key;
     }
