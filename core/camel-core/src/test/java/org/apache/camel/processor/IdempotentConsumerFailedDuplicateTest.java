@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.KeyValueIdempotentRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class IdempotentConsumerFailedDuplicateTest extends ContextTestSupport {
 
-    private final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+    private final IdempotentRepository repo = new KeyValueIdempotentRepository();
     private final CountDownLatch firstInProgress = new CountDownLatch(1);
     private final CountDownLatch releaseFirst = new CountDownLatch(1);
 
@@ -81,18 +81,20 @@ class IdempotentConsumerFailedDuplicateTest extends ContextTestSupport {
             e.getIn().setHeader("block", true);
             e.getIn().setBody("first");
         });
-        assertTrue(firstInProgress.await(10, TimeUnit.SECONDS));
+        try {
+            assertTrue(firstInProgress.await(10, TimeUnit.SECONDS));
 
-        // a duplicate that fails while the first exchange is still in progress
-        Exchange second = send("second");
-        assertTrue(second.isFailed());
-        assertTrue(repo.contains("1"), "The failed duplicate must not remove the key of the in-flight exchange");
+            // a duplicate that fails while the first exchange is still in progress
+            Exchange second = send("second");
+            assertTrue(second.isFailed());
+            assertTrue(repo.contains("1"), "The failed duplicate must not remove the key of the in-flight exchange");
 
-        // so another copy is still a duplicate, and is not processed concurrently with the first exchange
-        Exchange third = send("third");
-        assertEquals(Boolean.TRUE, third.getProperty(Exchange.DUPLICATE_MESSAGE));
-
-        releaseFirst.countDown();
+            // so another copy is still a duplicate, and is not processed concurrently with the first exchange
+            Exchange third = send("third");
+            assertEquals(Boolean.TRUE, third.getProperty(Exchange.DUPLICATE_MESSAGE));
+        } finally {
+            releaseFirst.countDown();
+        }
         Exchange out = first.get(10, TimeUnit.SECONDS);
         assertFalse(out.isFailed());
         assertNull(out.getProperty(Exchange.DUPLICATE_MESSAGE));
