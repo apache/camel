@@ -13,6 +13,30 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== camel-core - Exchange Pooling deprecated
+
+Exchange pooling (`exchangeFactory=pooled`) is deprecated and will be removed in a future release.
+The following classes are deprecated:
+
+- `org.apache.camel.PooledExchange`
+- `org.apache.camel.support.DefaultPooledExchange`
+- `org.apache.camel.impl.engine.PooledExchangeFactory`
+- `org.apache.camel.impl.engine.PooledProcessorExchangeFactory`
+- `org.apache.camel.processor.PooledExchangeTask`
+- `org.apache.camel.processor.PooledExchangeTaskFactory`
+- `org.apache.camel.processor.PooledTaskFactory`
+- `org.apache.camel.impl.engine.CamelInternalPooledTaskFactory`
+
+The following `camel.main` configuration properties are deprecated:
+
+- `camel.main.exchange-factory` (value `pooled`)
+- `camel.main.exchange-factory-capacity`
+- `camel.main.exchange-factory-statistics-enabled`
+
+To migrate, remove the `camel.main.exchange-factory=pooled` property (and any related capacity/statistics
+properties) from your `application.properties`. Camel will use the default prototype mode which creates a
+new exchange per message. A `WARN` is logged at startup if pooled mode is still configured.
+
 === camel-oauth
 
 OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens instead of reusing the same cached token. Applications using such profiles may make additional token requests after upgrading.

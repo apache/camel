@@ -31,7 +31,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Pooled {@link org.apache.camel.spi.ProcessorExchangeFactory} that reuses {@link Exchange} instance from a pool.
+ *
+ * @deprecated Exchange pooling is deprecated and will be removed in a future release.
  */
+@Deprecated(since = "4.23.0")
 public class PooledProcessorExchangeFactory extends PrototypeProcessorExchangeFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PooledProcessorExchangeFactory.class);
