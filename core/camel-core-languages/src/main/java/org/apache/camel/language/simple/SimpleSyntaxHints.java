@@ -103,6 +103,23 @@ public final class SimpleSyntaxHints {
         return expression.substring(start, end);
     }
 
+    /**
+     * The comparison that a negated function is written as, or null when the text is not one: simple has no boolean
+     * {@code !} prefix, so {@code !${body.isEmpty()}} is {@code ${body.isEmpty()} == false}. Models and people write
+     * the Java form, and the parser otherwise reports it as a missing predicate next to the operator.
+     */
+    private static String negatedFunction(String word) {
+        if (word.length() < 2 || word.charAt(0) != '!') {
+            return null;
+        }
+        String rest = word.substring(1);
+        // !=, !contains and the other negated operators are words of their own, not a negated function
+        if (rest.isEmpty() || rest.charAt(0) == '=' || Character.isLetter(rest.charAt(0)) && !rest.contains("(")) {
+            return null;
+        }
+        return rest + " == false";
+    }
+
     /** The message for a token the grammar does not know at the given index. */
     public static String unexpectedToken(String expression, int index) {
         String word = wordAt(expression, index);
@@ -145,6 +162,11 @@ public final class SimpleSyntaxHints {
     /** The message when an operator has no usable value next to it. */
     public static String unsupportedOperand(String kind, Object operator, String expression, int index) {
         String word = wordAt(expression, index);
+        String compared = negatedFunction(word);
+        if (compared != null) {
+            return "! does not negate a function: compare it instead, so " + word + " is written as " + compared
+                   + ", or negate the operator (!=, !contains)";
+        }
         if ("Logical".equals(kind)) {
             return kind + " operator " + operator + " needs a predicate on the right hand side, e.g. ${header.foo} == 'bar'"
                    + (word.isEmpty() ? "" : "; was: " + word);

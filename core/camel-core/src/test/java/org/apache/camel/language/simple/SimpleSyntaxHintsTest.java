@@ -17,6 +17,7 @@
 package org.apache.camel.language.simple;
 
 import org.apache.camel.ExchangeTestSupport;
+import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,18 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     private String predicateError(String text) {
         SimplePredicateParser parser = new SimplePredicateParser(context, text, true, null);
         return assertThrows(SimpleIllegalSyntaxException.class, parser::parsePredicate).getMessage();
+    }
+
+    /**
+     * The message of a function that only fails when the node builds its expression, such as one with operators inside
+     * the {@code ${ }} (CAMEL-24921), which the parsers above accept as a single function token.
+     */
+    private String functionError(String text) {
+        return assertThrows(SimpleIllegalSyntaxException.class, () -> {
+            Expression exp = context.resolveLanguage("simple").createExpression(text);
+            exp.init(context);
+            exp.evaluate(exchange, Object.class);
+        }).getMessage();
     }
 
     private String expressionError(String text) {
@@ -75,6 +88,21 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         assertThat(predicateError("${body} = 'x'")).contains("Unknown operator =: did you mean ==?");
         assertThat(predicateError("${body} == 'x' and ${header.y} == 1")).contains("use && for and");
         assertThat(predicateError("${body} == 'x' || ")).contains("needs a predicate on the right hand side");
+    }
+
+    @Test
+    public void testNegatedFunction() {
+        // simple has no boolean ! prefix; both the nested and the plain form fail the same way, and the message
+        // says the comparison to write instead (the shapes a local model wrote in the benchmark)
+        assertThat(functionError("${body != null && !${body.isEmpty()}}"))
+                .contains("! does not negate a function")
+                .contains("${body.isEmpty()} == false")
+                .doesNotContain("needs a predicate on the right hand side");
+        assertThat(functionError("${body != null && !body.isEmpty()}"))
+                .contains("! does not negate a function")
+                .contains("body.isEmpty() == false");
+        // a negated operator is not a negated function
+        assertThat(predicateError("${body} !contains")).doesNotContain("does not negate a function");
     }
 
     @Test
