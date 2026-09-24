@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The on completions registered on the resource exchange (for example to close a response stream) run when the enrich
- * fails, both when the resource fails and when the aggregation fails.
+ * fails (the resource fails, or the aggregation fails), when the aggregation strategy returns null, and on success.
  */
 public class EnricherResourceCompletionTest extends ContextTestSupport {
 
@@ -55,6 +55,14 @@ public class EnricherResourceCompletionTest extends ContextTestSupport {
     @Test
     public void testAggregationFailed() {
         assertThrows(Exception.class, () -> template.requestBody("direct:aggregationFails", "Hello"));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, completions.get()));
+    }
+
+    @Test
+    public void testAggregationReturnsNull() {
+        // the strategy discards the resource, so the original message continues unchanged
+        String out = template.requestBody("direct:aggregationReturnsNull", "Hello", String.class);
+        assertEquals("Hello", out);
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, completions.get()));
     }
 
@@ -99,6 +107,7 @@ public class EnricherResourceCompletionTest extends ContextTestSupport {
             public void configure() {
                 from("direct:resourceFails").enrich("resource:failing");
                 from("direct:aggregationFails").enrich("resource:ok", new FailingStrategy());
+                from("direct:aggregationReturnsNull").enrich("resource:ok", (oldExchange, newExchange) -> null);
                 from("direct:ok").enrich("resource:ok");
             }
         };
