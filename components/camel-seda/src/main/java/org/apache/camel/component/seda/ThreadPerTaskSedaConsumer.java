@@ -131,15 +131,18 @@ public class ThreadPerTaskSedaConsumer extends SedaConsumer {
         // count the task when it is dispatched (not when it starts running), so a graceful shutdown
         // also waits for polled exchanges whose task has not started yet
         activeTasks.increment();
+        boolean dispatched = false;
         try {
             dispatch(exchange);
-        } catch (RuntimeException e) {
-            // the task was not dispatched (e.g. rejected)
-            activeTasks.decrement();
-            if (concurrencyLimiter != null) {
-                concurrencyLimiter.release();
+            dispatched = true;
+        } finally {
+            if (!dispatched) {
+                // the task was not dispatched (e.g. rejected), so it will never run and undo the count itself
+                activeTasks.decrement();
+                if (concurrencyLimiter != null) {
+                    concurrencyLimiter.release();
+                }
             }
-            throw e;
         }
     }
 
