@@ -568,6 +568,8 @@ public class MulticastProcessor extends BaseProcessorSupport
                 cancelTimeoutTask();
                 original.setException(e);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
+            } else {
+                logFailedAfterDone(e);
             }
         }
 
@@ -578,7 +580,14 @@ public class MulticastProcessor extends BaseProcessorSupport
             if (done.compareAndSet(false, true)) {
                 original.setException(e);
                 MulticastProcessor.this.doDone(original, null, pairs, callback, false, false);
+            } else {
+                logFailedAfterDone(e);
             }
+        }
+
+        private void logFailedAfterDone(Exception e) {
+            LOG.debug("Exception occurred after the exchange was already completed, so it is not set on exchange: {}",
+                    original.getExchangeId(), e);
         }
 
         private void cancelTimeoutTask() {
