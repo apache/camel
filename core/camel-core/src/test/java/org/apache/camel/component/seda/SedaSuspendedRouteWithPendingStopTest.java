@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -74,6 +76,9 @@ class SedaSuspendedRouteWithPendingStopTest extends ContextTestSupport {
 
     @Test
     void testStopContextWithSuspendedRoute() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        // keep a reference to the queue, as the endpoint releases it when it is shut down
+        BlockingQueue<Exchange> queue = ((SedaEndpoint) context.getRoute("foo").getEndpoint()).getQueue();
         context.getRouteController().suspendRoute("foo");
 
         template.sendBody("seda:start", "A");
@@ -82,6 +87,9 @@ class SedaSuspendedRouteWithPendingStopTest extends ContextTestSupport {
         context.getShutdownStrategy().setTimeout(10);
         context.stop();
         assertFalse(context.getShutdownStrategy().isTimeoutOccurred(), "Graceful shutdown should not time out");
+        // nothing was lost: a message is either still on the queue (purgeWhenStopping is false), or it was processed
+        // (a poll that was already in progress when the route was suspended may still take the first one)
+        assertEquals(2, queue.size() + mock.getReceivedCounter());
     }
 
     @Override

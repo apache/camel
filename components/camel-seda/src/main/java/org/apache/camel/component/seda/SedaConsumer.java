@@ -178,11 +178,12 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
             // do not poll if we are suspended or starting again after resuming
             if (isSuspending() || isSuspended() || isStarting()) {
-                if (shutdownPending) {
-                    LOG.trace(
-                            "Consumer is suspended and shutdown is pending, so this consumer thread is breaking out.");
-                    // we want to shutdown so break out, as a suspended consumer does not poll the task queue
-                    // (any pending exchanges are kept on the queue)
+                // a suspended consumer does not poll the task queue, so break out without waiting for the queue to be
+                // empty (any pending exchanges are kept on the queue), but a consumer that is starting will poll it,
+                // so only break out once the queue is empty
+                if (shutdownPending && (isSuspending() || isSuspended() || queue.isEmpty())) {
+                    LOG.trace("Consumer is suspended or starting and shutdown is pending, so this consumer thread is"
+                              + " breaking out.");
                     break;
                 } else {
                     LOG.trace("Consumer is suspended so skip polling");
