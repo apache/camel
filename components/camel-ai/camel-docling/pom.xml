@@ -77,7 +77,6 @@
             <version>${docling-java-version}</version>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -98,6 +97,7 @@
             <groupId>ai.docling</groupId>
             <artifactId>docling-core</artifactId>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

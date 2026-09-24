@@ -31,8 +31,6 @@
     <name>Camel :: Fastjson</name>
     <description>Camel Fastjson support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

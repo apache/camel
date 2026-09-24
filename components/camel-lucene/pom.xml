@@ -31,8 +31,6 @@
     <name>Camel :: Lucene</name>
     <description>Camel Lucene based search component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

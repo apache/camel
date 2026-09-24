@@ -31,8 +31,6 @@
     <name>Camel :: LDAP</name>
     <description>Camel LDAP support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

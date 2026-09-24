@@ -32,8 +32,6 @@
     <name>Camel :: Twitter</name>
     <description>Camel Twitter support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

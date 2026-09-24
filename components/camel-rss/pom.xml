@@ -31,8 +31,6 @@
     <name>Camel :: RSS</name>
     <description>Camel RSS support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

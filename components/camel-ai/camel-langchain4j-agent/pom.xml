@@ -81,7 +81,6 @@
       <artifactId>camel-ai-observability-api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-api</artifactId>
@@ -111,6 +110,7 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
+    <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>

@@ -53,7 +53,6 @@
             <artifactId>camel-platform-http</artifactId>
         </dependency>
 
-        <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -74,6 +73,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http-base</artifactId>
         </dependency>
+        <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

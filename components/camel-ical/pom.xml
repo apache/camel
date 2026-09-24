@@ -32,8 +32,6 @@
     <name>Camel :: iCal</name>
     <description>Camel iCal component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

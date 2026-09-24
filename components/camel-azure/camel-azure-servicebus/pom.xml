@@ -67,7 +67,6 @@
             <artifactId>azure-identity</artifactId>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -92,6 +91,7 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-core-amqp</artifactId>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

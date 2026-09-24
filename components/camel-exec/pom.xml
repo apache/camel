@@ -31,8 +31,6 @@
     <name>Camel :: Exec</name>
     <description>Camel support for system command execution</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

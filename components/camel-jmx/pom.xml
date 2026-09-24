@@ -31,8 +31,6 @@
     <name>Camel :: JMX</name>
     <description>Camel JMX support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

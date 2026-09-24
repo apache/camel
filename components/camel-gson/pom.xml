@@ -31,8 +31,6 @@
     <name>Camel :: Gson</name>
     <description>Camel Gson support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

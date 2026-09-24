@@ -32,8 +32,6 @@
     <name>Camel :: Atmosphere WebSocket Servlet</name>
     <description>Camel Atmosphere WebSocket Servlet</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <!-- Camel -->

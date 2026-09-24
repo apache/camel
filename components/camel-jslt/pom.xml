@@ -32,8 +32,6 @@
     <name>Camel :: Jslt</name>
     <description>Camel Jslt Support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

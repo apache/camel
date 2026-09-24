@@ -31,8 +31,6 @@
     <name>Camel :: Java Toolbox for IBM i</name>
     <description>Camel IBM i support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

@@ -31,8 +31,6 @@
     <name>Camel :: Metrics</name>
     <description>Camel Metrics based monitoring component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

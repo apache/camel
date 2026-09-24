@@ -32,8 +32,6 @@
     <name>Camel :: Master</name>
     <description>Camel Master Support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

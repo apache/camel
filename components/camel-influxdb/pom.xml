@@ -31,8 +31,6 @@
     <name>Camel :: InfluxDB</name>
     <description>Camel InfluxDB component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

@@ -31,8 +31,6 @@
     <name>Camel :: ASN.1</name>
     <description>Camel ASN.1 support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

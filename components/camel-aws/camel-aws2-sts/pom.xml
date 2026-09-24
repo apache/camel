@@ -32,22 +32,18 @@
     <name>Camel :: AWS2 STS</name>
     <description>Execute different operations on Amazon STS service</description>
 
-    <properties>
-        <regions-version>2.55.1</regions-version>
-        <sdk-core-version>2.55.1</sdk-core-version>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>regions</artifactId>
-                <version>${regions-version}</version>
+                <version>${aws-java-sdk2-version}</version>
             </dependency>
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>sdk-core</artifactId>
-                <version>${sdk-core-version}</version>
+                <version>${aws-java-sdk2-version}</version>
             </dependency>
         </dependencies>
 
@@ -73,7 +69,6 @@
             <version>${aws-java-sdk2-version}</version>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -94,6 +89,7 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sdk-core</artifactId>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit6</artifactId>

@@ -32,8 +32,6 @@
     <name>Camel :: JSONATA</name>
     <description>Camel JSONATA Support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

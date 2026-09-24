@@ -32,8 +32,6 @@
     <name>Camel :: Stream</name>
     <description>Camel Stream (System.in, System.out, System.err) support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

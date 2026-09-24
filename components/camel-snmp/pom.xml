@@ -31,8 +31,6 @@
     <name>Camel :: SNMP</name>
     <description>Camel SNMP support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
     	<dependency>

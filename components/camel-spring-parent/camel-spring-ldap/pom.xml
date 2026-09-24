@@ -30,8 +30,6 @@
     <name>Camel :: Spring LDAP</name>
     <description>Camel support for Spring LDAP</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

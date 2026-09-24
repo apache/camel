@@ -31,8 +31,6 @@
     <name>Camel :: StAX</name>
     <description>Camel StAX support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

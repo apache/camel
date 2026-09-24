@@ -31,8 +31,6 @@
     <name>Camel :: Chunk</name>
     <description>Camel Chunk support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

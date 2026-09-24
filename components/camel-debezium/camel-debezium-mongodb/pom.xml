@@ -73,7 +73,6 @@
             </exclusions>
         </dependency>
 
-        <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
@@ -90,6 +89,7 @@
             <groupId>io.debezium</groupId>
             <artifactId>debezium-config</artifactId>
         </dependency>
+        <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

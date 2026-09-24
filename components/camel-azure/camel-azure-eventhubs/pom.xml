@@ -71,7 +71,6 @@
             <artifactId>azure-identity</artifactId>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -104,6 +103,7 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-common</artifactId>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

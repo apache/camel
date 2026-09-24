@@ -31,8 +31,6 @@
     <name>Camel :: Reactive Streams</name>
     <description>Camel Reactive Streams Component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

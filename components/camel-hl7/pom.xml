@@ -31,8 +31,6 @@
     <name>Camel :: HL7</name>
     <description>Camel HL7 support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

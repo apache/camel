@@ -31,8 +31,6 @@
     <name>Camel :: Zip File</name>
     <description>Camel Zip file support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

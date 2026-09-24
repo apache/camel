@@ -32,8 +32,6 @@
     <name>Camel :: Azure :: Key Vault</name>
     <description>Camel Azure Key Vault Component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -74,7 +72,6 @@
             <version>${commons-io-version}</version>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -111,6 +108,7 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-common</artifactId>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

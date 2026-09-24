@@ -32,8 +32,6 @@
     <name>Camel :: Dropbox</name>
     <description>Camel Dropbox support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

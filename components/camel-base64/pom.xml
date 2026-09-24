@@ -31,8 +31,6 @@
     <name>Camel :: Base64</name>
     <description>Camel Base64 data format support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

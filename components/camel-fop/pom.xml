@@ -67,7 +67,6 @@
             </exclusions>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop-core</artifactId>
@@ -78,6 +77,7 @@
             <artifactId>xml-apis</artifactId>
             <version>${xml-apis-version}</version>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

@@ -32,8 +32,6 @@
     <name>Camel :: Azure :: Event Grid</name>
     <description>Camel Azure Event Grid Component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -55,7 +53,6 @@
             <artifactId>azure-identity</artifactId>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -72,6 +69,7 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-core</artifactId>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

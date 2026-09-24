@@ -31,8 +31,6 @@
     <packaging>jar</packaging>
     <name>Camel :: Git</name>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

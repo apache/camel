@@ -32,8 +32,6 @@
     <name>Camel :: HTTP</name>
     <description>Camel HTTP support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>        <dependency>
             <groupId>org.apache.camel</groupId>

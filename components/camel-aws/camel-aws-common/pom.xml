@@ -34,8 +34,6 @@
 
     <properties>
         <firstVersion>4.17.0</firstVersion>
-        <http-client-spi-version>2.55.1</http-client-spi-version>
-        <utils-version>2.55.1</utils-version>
         <label>cloud,aws</label>
     </properties>
 
@@ -65,7 +63,7 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>http-client-spi</artifactId>
-            <version>${http-client-spi-version}</version>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
@@ -90,7 +88,7 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>utils</artifactId>
-            <version>${utils-version}</version>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

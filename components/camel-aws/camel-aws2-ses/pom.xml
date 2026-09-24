@@ -33,10 +33,7 @@
     <description>Send Email Messages through AWS SES Service</description>
 
     <properties>
-        <aws-core-version>2.55.1</aws-core-version>
         <jakarta.mail-api-version>2.1.5</jakarta.mail-api-version>
-        <regions-version>2.55.1</regions-version>
-        <sdk-core-version>2.55.1</sdk-core-version>
     </properties>
 
     <dependencyManagement>
@@ -44,17 +41,17 @@
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>regions</artifactId>
-                <version>${regions-version}</version>
+                <version>${aws-java-sdk2-version}</version>
             </dependency>
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>sdk-core</artifactId>
-                <version>${sdk-core-version}</version>
+                <version>${aws-java-sdk2-version}</version>
             </dependency>
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>aws-core</artifactId>
-                <version>${aws-core-version}</version>
+                <version>${aws-java-sdk2-version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.mail</groupId>

@@ -31,8 +31,6 @@
     <name>Camel :: Lumberjack</name>
     <description>Camel Lumberjack log streaming component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

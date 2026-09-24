@@ -31,8 +31,6 @@
     <name>Camel :: MyBatis</name>
     <description>Camel MyBatis support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <!-- requires camel-bean as it uses the bean component -->

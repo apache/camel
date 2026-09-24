@@ -30,8 +30,6 @@
     <name>Camel :: Syslog</name>
     <description>Camel Syslog support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

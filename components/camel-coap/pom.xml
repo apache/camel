@@ -33,8 +33,6 @@
     <name>Camel :: CoAP</name>
     <description>Camel CoAP support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

@@ -32,8 +32,6 @@
     <name>Camel :: PgReplicationSlot</name>
     <description>Component for receiving from PostgreSQL Replication Slots</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

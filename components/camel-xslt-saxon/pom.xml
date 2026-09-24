@@ -32,8 +32,6 @@
     <name>Camel :: XSLT Saxon</name>
     <description>Camel XSLT Saxon component</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

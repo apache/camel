@@ -31,8 +31,6 @@
     <description>Camel :: Disruptor component</description>
     <packaging>jar</packaging>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

@@ -32,8 +32,6 @@
     <name>Camel :: Jolt</name>
     <description>Camel Jolt Support</description>
 
-    <properties>
-    </properties>
 
     <dependencyManagement>
         <dependencies>

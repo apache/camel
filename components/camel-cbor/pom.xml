@@ -32,8 +32,6 @@
     <name>Camel :: CBOR</name>
     <description>Camel Cbor Support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

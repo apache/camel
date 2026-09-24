@@ -32,8 +32,6 @@
     <name>Camel :: JSonApi</name>
     <description>Camel JSonApi Data Format</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>

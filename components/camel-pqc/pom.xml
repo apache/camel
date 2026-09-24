@@ -35,8 +35,6 @@
     <properties>
         <skipITs.s390x>true</skipITs.s390x>
         <skipITs.ppc64le>true</skipITs.ppc64le>
-        <auth-version>2.55.1</auth-version>
-        <regions-version>2.55.1</regions-version>
     </properties>
 
     <dependencyManagement>
@@ -44,12 +42,12 @@
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>auth</artifactId>
-                <version>${auth-version}</version>
+                <version>${aws-java-sdk2-version}</version>
             </dependency>
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>regions</artifactId>
-                <version>${regions-version}</version>
+                <version>${aws-java-sdk2-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.azure</groupId>
@@ -117,7 +115,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -146,6 +143,7 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-core</artifactId>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

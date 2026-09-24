@@ -31,8 +31,6 @@
     <description>Camel JSON Schema validation based on NetworkNT SON-schema library</description>
     <packaging>jar</packaging>
 
-    <properties>
-    </properties>
 
     <dependencies>
 
@@ -46,7 +44,6 @@
             <version>${networknt-json-schema-validator-version}</version>
         </dependency>
 
-        <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-api</artifactId>
@@ -63,6 +60,7 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <!-- for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

@@ -31,8 +31,6 @@
     <name>Camel :: Atom</name>
     <description>Camel Atom support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>
