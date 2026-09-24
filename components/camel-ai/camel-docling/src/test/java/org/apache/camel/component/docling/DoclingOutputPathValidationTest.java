@@ -17,7 +17,6 @@
 package org.apache.camel.component.docling;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,7 +86,7 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
 
     @Test
     void outputPathOutsideOutputBaseDirectoryIsRejected() throws Exception {
-        baseDir();
+        baseDir(); // create the directory the jailed route points at via outputBaseDirectory
         String outside = tempDir.resolve("outside").toString();
 
         assertThatThrownBy(() -> template.requestBodyAndHeader("direct:jailed", CONTENT,
@@ -100,7 +99,7 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
 
     @Test
     void absoluteOutputPathOutsideOutputBaseDirectoryIsRejected() throws Exception {
-        baseDir();
+        baseDir(); // create the directory the jailed route points at via outputBaseDirectory
 
         // an absolute header value ignores the base directory when resolved, so it must be rejected as escaping
         assertThatThrownBy(() -> template.requestBodyAndHeader("direct:jailed", CONTENT,
@@ -113,7 +112,7 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
 
     @Test
     void traversalOutOfOutputBaseDirectoryIsRejected() throws Exception {
-        baseDir();
+        baseDir(); // create the directory the jailed route points at via outputBaseDirectory
 
         // a genuinely relative value, so the baseDir.resolve(..) + normalize() branch is exercised; an absolute
         // value would instead hit the same branch as absoluteOutputPathOutsideOutputBaseDirectoryIsRejected
@@ -129,7 +128,7 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
     void siblingDirectorySharingANamePrefixIsRejected() throws Exception {
         // "<base>-evil" shares a string prefix with "<base>" but is not inside it; a plain String.startsWith
         // comparison would wrongly accept this
-        baseDir();
+        baseDir(); // create the directory the jailed route points at via outputBaseDirectory
         String sibling = tempDir.resolve("base-evil").resolve("out").toString();
 
         assertThatThrownBy(() -> template.requestBodyAndHeader("direct:jailed", CONTENT,
@@ -159,12 +158,7 @@ class DoclingOutputPathValidationTest extends CamelTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(DoclingHeaders.OUTPUT_FILE_PATH, outputHeader);
 
-        Method m = DoclingProducer.class.getDeclaredMethod(
-                "buildDoclingCommand", String.class, String.class, Exchange.class, String.class);
-        m.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        List<String> command = (List<String>) m.invoke(producer, "input.pdf", "markdown", exchange, "/tmp/managed");
-        return command;
+        return producer.buildDoclingCommand("input.pdf", "markdown", exchange, "/tmp/managed");
     }
 
     @Override

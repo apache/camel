@@ -2121,7 +2121,8 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private List<String> buildDoclingCommand(String inputPath, String outputFormat, Exchange exchange, String outputDirectory)
+    // package-private so DoclingOutputPathValidationTest can assert the built command without reflection
+    List<String> buildDoclingCommand(String inputPath, String outputFormat, Exchange exchange, String outputDirectory)
             throws IOException {
         List<String> command = new ArrayList<>();
         command.add(configuration.getDoclingCommand());
