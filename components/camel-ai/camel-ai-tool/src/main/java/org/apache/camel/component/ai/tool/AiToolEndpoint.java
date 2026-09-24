@@ -51,6 +51,8 @@ public class AiToolEndpoint extends DefaultEndpoint {
     @UriParam(description = "Tool configuration including tags, description, and parameter definitions.")
     private AiToolConfiguration configuration;
 
+    private volatile AiToolConsumer consumer;
+
     public AiToolEndpoint(String uri, AiToolComponent component, String toolName,
                           AiToolConfiguration configuration) {
         super(uri, component);
@@ -70,6 +72,7 @@ public class AiToolEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         AiToolConsumer consumer = new AiToolConsumer(this, processor);
         configureConsumer(consumer);
+        this.consumer = consumer;
         return consumer;
     }
 
@@ -83,5 +86,22 @@ public class AiToolEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(AiToolConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // the endpoint is started during route warm-up, before any route consumer is started
+        if (consumer != null) {
+            consumer.registerEarly();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (consumer != null) {
+            consumer.deregisterEarly();
+        }
+        super.doStop();
     }
 }
