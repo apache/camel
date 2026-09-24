@@ -19,6 +19,7 @@ package org.apache.camel.component.ai.tool;
 import java.util.Map;
 
 import org.apache.camel.Processor;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,35 @@ public class AiToolConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (registeredSpec == null) {
+            prepare();
+        }
+        register();
+    }
 
+    /**
+     * Registers during route warm-up, which Camel completes for all routes before it starts any route consumer, so a
+     * route that sends a request as soon as its consumer starts (such as {@code stream:in}) sees every tool. Routes
+     * that are not started automatically are registered when their consumer starts.
+     */
+    void registerEarly() throws Exception {
+        if (registeredSpec == null && getRoute() != null && CamelContextHelper.isAutoStartup(getRoute())) {
+            prepare();
+            register();
+        }
+    }
+
+    /**
+     * Removes an early registration whose consumer never started, e.g. when another route failed to start.
+     */
+    void deregisterEarly() {
+        if (registeredSpec != null && !isStarted()) {
+            deregister();
+            registeredSpec = null;
+        }
+    }
+
+    private void prepare() throws Exception {
         Map<String, String> params = configuration.getParameters();
         String argSchema = configuration.getArgSchema();
         AiToolParameterHelper.validateParameterSourceExclusive(params, argSchema);
@@ -82,8 +111,6 @@ public class AiToolConsumer extends DefaultConsumer {
             registeredTags = null;
             registeredInDefaultPool = true;
         }
-
-        register();
     }
 
     @Override
