@@ -45,20 +45,20 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
  */
 @Isolated
 @Timeout(30)
-public class MulticastParallelSubTaskRejectedTest extends ContextTestSupport {
+class MulticastParallelSubTaskRejectedTest extends ContextTestSupport {
 
     @Test
-    public void testSplitSingleElement() throws Exception {
+    void testSplitSingleElement() throws Exception {
         assertRejected("direct:split", List.of("a"));
     }
 
     @Test
-    public void testMulticast() throws Exception {
+    void testMulticast() throws Exception {
         assertRejected("direct:multicast", "Hello World");
     }
 
     @Test
-    public void testRecipientList() throws Exception {
+    void testRecipientList() throws Exception {
         assertRejected("direct:recipients", "mock:z");
     }
 
