@@ -48,6 +48,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,14 +138,22 @@ public class RecipientListProcessor extends MulticastProcessor {
             return state.get() == RELEASED ? SKIP : prepared;
         }
 
+        /**
+         * Claims this pair to be sent, before any event is emitted for it. Fails when the recipient list is already
+         * done and has released the pair, as then it must not be sent anymore.
+         */
+        boolean claim() {
+            if (state.compareAndSet(NEW, BEGUN)) {
+                return true;
+            }
+            LOG.trace("RecipientProcessorExchangePair #{} not sent as the recipient list is already done: {}", index,
+                    exchange);
+            return false;
+        }
+
         @Override
         public void begin() {
-            if (!state.compareAndSet(NEW, BEGUN)) {
-                LOG.trace("RecipientProcessorExchangePair #{} not sent as the recipient list is already done: {}", index,
-                        exchange);
-                return;
-            }
-            // we have already acquired and prepare the producer
+            // the pair has been claimed (see beforeSend), and we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
             exchange.setProperty(ExchangePropertyKey.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
@@ -372,6 +381,16 @@ public class RecipientListProcessor extends MulticastProcessor {
         // and create the pair
         return new RecipientProcessorExchangePair(
                 index, producerCache, endpoint, producer, prepared, copy, pattern, prototypeEndpoint);
+    }
+
+    @Override
+    protected StopWatch beforeSend(ProcessorExchangePair pair) {
+        if (pair instanceof RecipientProcessorExchangePair rpair && !rpair.claim()) {
+            // the recipient list is already done and has released this pair, so it is skipped: it is not begun, its
+            // processor does nothing, and no exchange sending or sent event is emitted as nothing is sent
+            return null;
+        }
+        return super.beforeSend(pair);
     }
 
     @Override
