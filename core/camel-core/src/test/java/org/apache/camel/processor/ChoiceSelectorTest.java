@@ -140,6 +140,24 @@ class ChoiceSelectorTest extends ContextTestSupport {
         invalid("without predicates", choice -> choice.when(exchange -> true).to("mock:mixed"));
     }
 
+    @Test
+    void emptyLiteralMatchesAndUnmatchedWithoutOtherwiseContinues() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start").choice(selector()).when("").to("mock:empty")
+                    .end().to("mock:after");
+            }
+        });
+        context.start();
+        getMockEndpoint("mock:empty").expectedBodiesReceived("empty");
+        getMockEndpoint("mock:after").expectedBodiesReceived("empty", "unmatched", "null");
+        template.sendBodyAndHeader("direct:start", "empty", "department", "");
+        template.sendBodyAndHeader("direct:start", "unmatched", "department", "other");
+        template.sendBody("direct:start", "null");
+        assertMockEndpointsSatisfied();
+        assertEquals(3, calls.get());
+    }
+
     private void invalid(String message, Consumer<ChoiceDefinition> configure) throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

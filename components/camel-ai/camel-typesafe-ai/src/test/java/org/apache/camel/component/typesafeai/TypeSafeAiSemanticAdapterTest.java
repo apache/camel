@@ -18,6 +18,8 @@ package org.apache.camel.component.typesafeai;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.camel.Expression;
 import org.apache.camel.language.semantic.SemanticLanguage;
@@ -31,6 +33,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
+    @Test
+    void directEvaluationInitializesTransportWithoutPriorValidation() throws Exception {
+        respond = request -> result(Map.of("question", Map.of("type", "noul", "noul", 0.9)));
+        TypeSafeAiSemanticAdapter adapter = new TypeSafeAiSemanticAdapter();
+        adapter.setCamelContext(context);
+        SemanticQuestion question = new SemanticQuestion(
+                SemanticQuestion.Type.BOOLEAN, "Classify", null,
+                Map.of(), List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
+        assertThat(adapter.evaluate(question, "original").decision(question)).isEqualTo(true);
+        assertThat(requests).hasSize(1);
+        assertThat(authorization).containsExactly("Bearer test-key");
+    }
+
+    @Test
+    void rejectsCapabilityLimitsWithoutInitializingTransport() {
+        TypeSafeAiSemanticAdapter adapter = new TypeSafeAiSemanticAdapter();
+        Map<String, String> criteria = IntStream.range(0, 256).boxed()
+                .collect(Collectors.toMap(Object::toString, i -> "Criterion " + i));
+        SemanticQuestion choice = new SemanticQuestion(
+                SemanticQuestion.Type.CHOICE, "Classify", null,
+                criteria, List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
+        SemanticQuestion score = new SemanticQuestion(
+                SemanticQuestion.Type.SCORE, "Score", null,
+                Map.of(), IntStream.range(0, 11).mapToObj(i -> "Level " + i).toList(), 0.5, 0,
+                SemanticQuestion.UncertaintyPolicy.FAIL);
+        assertThatThrownBy(() -> adapter.validate(choice)).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("255 choice criteria");
+        assertThatThrownBy(() -> adapter.evaluate(score, "original")).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("10 score levels");
+        assertThat(requests).isEmpty();
+    }
+
     private Expression expression(SemanticQuestion.Type type) {
         SemanticQuestion question = new SemanticQuestion(
                 type, "Classify", null,
