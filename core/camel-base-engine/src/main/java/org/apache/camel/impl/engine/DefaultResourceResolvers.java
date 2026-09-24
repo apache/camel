@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ContentTypeAware;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.ResourceResolver;
@@ -42,7 +43,52 @@ import org.apache.camel.util.FileUtil;
 
 public final class DefaultResourceResolvers {
 
+    /**
+     * Property key for how long to wait for the connection to an {@code http:} or {@code https:} resource to be
+     * established, in milliseconds. {@code 0} means wait indefinitely.
+     */
+    public static final String HTTP_CONNECT_TIMEOUT_PROPERTY = "camel.resource.http.connect-timeout";
+
+    /**
+     * Property key for how long to wait for data when reading an {@code http:} or {@code https:} resource, in
+     * milliseconds. {@code 0} means wait indefinitely.
+     */
+    public static final String HTTP_READ_TIMEOUT_PROPERTY = "camel.resource.http.read-timeout";
+
+    static final int DEFAULT_HTTP_CONNECT_TIMEOUT = 10000;
+    static final int DEFAULT_HTTP_READ_TIMEOUT = 30000;
+
     private DefaultResourceResolvers() {
+    }
+
+    /**
+     * Resolves a timeout from the properties component, falling back to the given default.
+     * <p/>
+     * Resolution happens per resource rather than once per resolver because a resolver is a long-lived service while
+     * the properties it reads can be reloaded underneath it.
+     */
+    private static int resolveTimeout(CamelContext camelContext, String key, int defaultValue) {
+        if (camelContext == null) {
+            return defaultValue;
+        }
+        String value = camelContext.getPropertiesComponent().resolveProperty(key).orElse(null);
+        if (value == null) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            // this runs during startup, so a bare "For input string" says nothing about which property is wrong
+            throw new IllegalArgumentException(
+                    "Property " + key + " must be a number of milliseconds, was: " + value, e);
+        }
+    }
+
+    private static Resource createHttpResource(CamelContext camelContext, String scheme, String location) {
+        return new HttpResource(
+                scheme, location,
+                resolveTimeout(camelContext, HTTP_CONNECT_TIMEOUT_PROPERTY, DEFAULT_HTTP_CONNECT_TIMEOUT),
+                resolveTimeout(camelContext, HTTP_READ_TIMEOUT_PROPERTY, DEFAULT_HTTP_READ_TIMEOUT));
     }
 
     /**
@@ -97,7 +143,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new HttpResource(SCHEME, location);
+            return createHttpResource(getCamelContext(), SCHEME, location);
         }
     }
 
@@ -114,7 +160,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public Resource createResource(String location, String remaining) {
-            return new HttpResource(SCHEME, location);
+            return createHttpResource(getCamelContext(), SCHEME, location);
         }
     }
 
@@ -335,17 +381,21 @@ public final class DefaultResourceResolvers {
     }
 
     static final class HttpResource extends ResourceSupport implements ContentTypeAware {
+        private final int connectTimeout;
+        private final int readTimeout;
         private String contentType;
 
-        HttpResource(String scheme, String location) {
+        HttpResource(String scheme, String location, int connectTimeout, int readTimeout) {
             super(scheme, location);
+            this.connectTimeout = connectTimeout;
+            this.readTimeout = readTimeout;
         }
 
         @Override
         public boolean exists() {
             URLConnection connection = null;
             try {
-                connection = URI.create(getLocation()).toURL().openConnection();
+                connection = openConnection();
                 if (connection instanceof HttpURLConnection httpURLConnection) {
                     return httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK;
                 }
@@ -363,7 +413,7 @@ public final class DefaultResourceResolvers {
 
         @Override
         public InputStream getInputStream() throws IOException {
-            URLConnection con = URI.create(getLocation()).toURL().openConnection();
+            URLConnection con = openConnection();
             con.setUseCaches(false);
             try {
                 setContentType(con.getContentType());
@@ -376,6 +426,20 @@ public final class DefaultResourceResolvers {
                 }
                 throw e;
             }
+        }
+
+        /**
+         * Opens the connection with both timeouts applied.
+         * <p/>
+         * The read timeout is per read rather than for the transfer as a whole, so a large resource arriving slowly is
+         * not cut off as long as bytes keep coming; it bounds the wait on a server that accepts the connection and then
+         * says nothing, which is the case that otherwise stalls the caller forever.
+         */
+        private URLConnection openConnection() throws IOException {
+            URLConnection connection = URI.create(getLocation()).toURL().openConnection();
+            connection.setConnectTimeout(connectTimeout);
+            connection.setReadTimeout(readTimeout);
+            return connection;
         }
 
         @Override

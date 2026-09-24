@@ -242,9 +242,10 @@ Data that is *not* part of the bundle — what a server would receive through it
 equivalent in `wasm` mode. A policy depending on it needs `evaluationMode=rest`.
 
 Prefer `classpath:` or `file:` for a bundle shipped with the application, which is what a build-time artefact
-usually is. The bundle is fetched when the endpoint starts, and Camel resolves an `http:` resource with no
-connect or read timeout (CAMEL-24756), so a policy server that accepts the connection and then does not answer
-stalls `CamelContext` startup rather than failing the one route.
+usually is. The bundle is fetched when the endpoint starts, so an `http:` location makes startup depend on a
+server being reachable; since Camel 4.23 that fetch is bounded by `camel.resource.http.connect-timeout` and
+`camel.resource.http.read-timeout`, so an unresponsive server fails the route rather than stalling
+`CamelContext` startup indefinitely.
 
 Which to choose:
 
