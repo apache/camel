@@ -74,8 +74,9 @@ public class HttpResourceTimeoutTest {
             }
         }, "mute-http-server");
         acceptor.setDaemon(true);
-        // set before the thread starts: it is the loop guard, and a start() that raced ahead of this assignment
-        // would read a value left by the previous test under a PER_CLASS lifecycle
+        // the loop guard is set before the thread that reads it. Nothing depends on that order today: this class
+        // uses the default PER_METHOD lifecycle, so every test gets a fresh instance with the field already false.
+        // It would matter under PER_CLASS, where @AfterEach leaves it true for the next test
         stopped = false;
         acceptor.start();
     }
