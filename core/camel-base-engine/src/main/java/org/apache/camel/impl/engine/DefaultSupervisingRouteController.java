@@ -741,7 +741,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                                 }
                             }
 
-                            routes.remove(r);
+                            // a cancelled task completes again when its running attempt ends, and by then the route
+                            // may have a new restart task, which must not be removed
+                            routes.remove(r, task);
                         });
 
                         return task;
