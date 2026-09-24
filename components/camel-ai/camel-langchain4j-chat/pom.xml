@@ -77,6 +77,14 @@
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit6</artifactId>
             <scope>test</scope>
         </dependency>
