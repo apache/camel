@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.spi.CamelContextCustomizer;
@@ -110,13 +111,24 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                     : SemanticQuestion.UncertaintyPolicy.FAIL;
             result.put(name, new SemanticQuestion(
                     type, asText(values.get("instructions")), asText(values.get("state")),
-                    criteria, levels, number(values, "threshold", 0.5), number(values, "uncertainty", 0), policy));
+                    criteria, levels, number(values, name, "threshold", 0.5), number(values, name, "uncertainty", 0), policy));
         });
         return result;
     }
 
-    private static double number(Map<String, Node> values, String name, double fallback) {
-        return values.containsKey(name) ? Double.parseDouble(asText(values.get(name))) : fallback;
+    private static double number(Map<String, Node> values, String question, String name, double fallback) {
+        if (!values.containsKey(name)) {
+            return fallback;
+        }
+        Node node = values.get(name);
+        String raw = asText(node);
+        try {
+            return Double.parseDouble(raw);
+        } catch (NumberFormatException e) {
+            throw new YamlDeserializationException(
+                    node,
+                    "Invalid numeric value for '" + name + "' in semantic question '" + question + "': " + raw, e);
+        }
     }
 
     private static Map<String, Node> fields(Node node) {
