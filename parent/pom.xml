@@ -289,6 +289,7 @@
         <jakarta-servlet-api-version>6.1.0</jakarta-servlet-api-version>
         <jakarta-enterprise-cdi-api-version>4.1.0</jakarta-enterprise-cdi-api-version>
         <jakarta-inject-version>2.0.1</jakarta-inject-version>
+        <javax-inject-version>1</javax-inject-version>
         <jakarta-xml-bind-api-version>4.0.5</jakarta-xml-bind-api-version>
         <jakarta-xml-soap-api-version>3.0.2</jakarta-xml-soap-api-version>
         <jakarta-xml-ws-api-version>4.0.3</jakarta-xml-ws-api-version>
@@ -3859,6 +3860,21 @@
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
                 <version>${plexus-archiver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta-xml-bind-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax-inject-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
