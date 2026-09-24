@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticAdapter;
@@ -34,6 +35,8 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -205,5 +208,29 @@ class SemanticQuestionTest extends YamlTestSupport {
         assertThat(SemanticQuestions.get(context).get("urgency").getLevels()).containsExactly("Routine", "Urgent");
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("type: choice", "type: score")))
                 .hasStackTraceContaining("Node type map is invalid, expected array");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "threshold", "uncertainty" })
+    void invalidNumericValuesIdentifyQuestionFieldAndLocation(String field) {
+        String yaml = """
+                - semantic:
+                    question:
+                      spam:
+                        type: boolean
+                        instructions: Is this spam?
+                        %s: abc
+                """.formatted(field);
+        assertThatThrownBy(() -> loadRoutesNoValidate(yaml))
+                .hasMessageContaining("route-0.yaml")
+                .hasRootCauseInstanceOf(NumberFormatException.class)
+                .cause().isInstanceOfSatisfying(YamlDeserializationException.class, error -> {
+                    assertThat(error).hasMessageContaining(
+                            "Invalid numeric value for '" + field + "' in semantic question 'spam': abc");
+                    assertThat(error.getProblemMark()).hasValueSatisfying(mark -> {
+                        assertThat(mark.getLine()).isEqualTo(5);
+                        assertThat(mark.getColumn()).isEqualTo(8 + field.length() + 2);
+                    });
+                });
     }
 }
