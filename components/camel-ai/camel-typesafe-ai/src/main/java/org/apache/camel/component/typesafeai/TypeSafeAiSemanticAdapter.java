@@ -24,9 +24,11 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.semantic.SemanticAdapter;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticResult;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.json.JsonObject;
 
 /** Maps common questions to TypeSafe AI using the component's configured, managed transport. */
+@JdkService("semantic-adapter")
 public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextAware {
     private CamelContext camelContext;
     private volatile TypeSafeAiEndpoint endpoint;
