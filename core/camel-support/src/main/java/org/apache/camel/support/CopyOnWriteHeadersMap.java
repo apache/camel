@@ -16,9 +16,12 @@
  */
 package org.apache.camel.support;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -485,6 +488,55 @@ final class CopyOnWriteHeadersMap implements Map<String, Object> {
     /**
      * A COW-aware Set wrapper for entrySet() that triggers copy-on-write for mutating operations.
      */
+    /**
+     * An entry of the shared map, which copies the map before its value is set.
+     */
+    private final class CopyOnWriteEntry implements Entry<String, Object> {
+        private final Entry<String, Object> entry;
+        private Object value;
+        private boolean valueSet;
+
+        private CopyOnWriteEntry(Entry<String, Object> entry) {
+            this.entry = entry;
+        }
+
+        @Override
+        public String getKey() {
+            return entry.getKey();
+        }
+
+        @Override
+        public Object getValue() {
+            return valueSet ? value : entry.getValue();
+        }
+
+        @Override
+        public Object setValue(Object value) {
+            Object old = getValue();
+            ensureWritable();
+            delegate.put(entry.getKey(), value);
+            this.value = value;
+            this.valueSet = true;
+            return old;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof Entry<?, ?> e && Objects.equals(getKey(), e.getKey())
+                    && Objects.equals(getValue(), e.getValue());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(getKey()) ^ Objects.hashCode(getValue());
+        }
+
+        @Override
+        public String toString() {
+            return getKey() + "=" + getValue();
+        }
+    }
+
     private class CopyOnWriteEntrySet implements Set<Entry<String, Object>> {
 
         // Read operations - no COW trigger
@@ -505,12 +557,25 @@ final class CopyOnWriteHeadersMap implements Map<String, Object> {
 
         @Override
         public Object[] toArray() {
+            if (shared) {
+                // the entries of a shared map must be wrapped, so setValue does not change the shared map
+                return toList().toArray();
+            }
             return delegate.entrySet().toArray();
         }
 
         @Override
         public <T> T[] toArray(T[] a) {
+            if (shared) {
+                return toList().toArray(a);
+            }
             return delegate.entrySet().toArray(a);
+        }
+
+        private List<Entry<String, Object>> toList() {
+            List<Entry<String, Object>> list = new ArrayList<>(delegate.size());
+            iterator().forEachRemaining(list::add);
+            return list;
         }
 
         @Override
@@ -570,6 +635,9 @@ final class CopyOnWriteHeadersMap implements Map<String, Object> {
         @Override
         public Iterator<Entry<String, Object>> iterator() {
             final Iterator<Entry<String, Object>> iter = delegate.entrySet().iterator();
+            // the entries of a shared map are wrapped, so setValue copies the map first instead of changing the
+            // shared map (the map this iterator iterates does not change, even if this map is copied meanwhile)
+            final boolean wrap = shared;
             return new Iterator<Entry<String, Object>>() {
                 private Entry<String, Object> lastReturned;
 
@@ -581,7 +649,7 @@ final class CopyOnWriteHeadersMap implements Map<String, Object> {
                 @Override
                 public Entry<String, Object> next() {
                     lastReturned = iter.next();
-                    return lastReturned;
+                    return wrap ? new CopyOnWriteEntry(lastReturned) : lastReturned;
                 }
 
                 @Override
