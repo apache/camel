@@ -30,6 +30,7 @@ import org.apache.camel.language.simple.types.BinaryOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.UnaryOperatorType;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.builder.PredicateBuilder;
@@ -58,8 +59,34 @@ public class BinaryExpression extends BaseSimpleNode {
     }
 
     public boolean acceptLeftNode(SimpleNode lef) {
+        if (lef instanceof UnaryExpression unary && unary.getOperator() == UnaryOperatorType.NOT) {
+            // ! negates a function, not a comparison: !${body} == 'x' would read as neither of the two things it
+            // could mean, so it is refused and the negated operator is offered instead (CAMEL-24984)
+            throw new SimpleParserException(
+                    "! cannot be compared: it negates a function, so negate the operator instead, e.g. "
+                                            + operator.toString().replace("=", "!=") + " or write "
+                                            + "${" + "..." + "} " + negatedOperator() + " value",
+                    getToken().getIndex());
+        }
         this.left = lef;
         return true;
+    }
+
+    /** The operator that says the opposite, for the message above. */
+    private String negatedOperator() {
+        String text = operator.toString();
+        if ("==".equals(text)) {
+            return "!=";
+        } else if ("contains".equals(text)) {
+            return "!contains";
+        } else if ("startsWith".equals(text)) {
+            return "!startsWith";
+        } else if ("endsWith".equals(text)) {
+            return "!endsWith";
+        } else if ("in".equals(text)) {
+            return "!in";
+        }
+        return "!" + text;
     }
 
     public boolean acceptRightNode(SimpleNode right) {

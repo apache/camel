@@ -252,7 +252,7 @@ And the following boolean operators can be used to group expressions:
 |Operator |Description
 |`&&` | The `and` operator is used to group two expressions if both operands evaluates to `true`.
 |`\|\|` | The `or` operator is used to group two expressions if any operand evaluates to `true`.
-|`!` | The `not` operator negates the function that follows it, which must evaluate to `true` or `false`.
+|`!` | The `not` operator negates the function that follows it, answering the opposite of what that function answers as a predicate.
 |====
 
 The `!` operator is written directly in front of the function it negates, and only in a predicate:
@@ -270,9 +270,28 @@ simple("!${body.isEmpty()} && ${header.foo} == 'bar'")
 simple("${!body.isEmpty() && header.foo == 'bar'}")
 ----
 
-In an expression a `!` is ordinary text, so a message such as `Hello ${body}!` is unaffected. Note that `!` negates a
-function, not a comparison: write `${body} != 'x'` rather than `!${body} == 'x'`, and the negated operators
-(`!contains`, `!startsWith`, `!in`, ...) stay as they are.
+In an expression a `!` is ordinary text, so a message such as `Hello ${body}!` is unaffected.
+
+`!` answers the opposite of what the function answers as a predicate on its own, which is the rule the language
+already uses: a value that is not null and not `false` is true, and null is false.
+
+[width="100%",cols="40%,20%,40%",options="header"]
+|====
+|Expression |Answer |Why
+|`!${body.isEmpty()}` |`true` |the body is not empty
+|`!${header.missing}` |`true` |a missing header is false, so its opposite is true
+|`!${body}` |`false` |a body that is set is true
+|====
+
+==== Where it does not work
+
+* *A `!` must be directly in front of the function.* `! ${body.isEmpty()}` with a space is not the operator.
+* *`!` negates a function, not a comparison.* `!${body} == 'x'` is refused: negate the operator instead and write
+  `${body} != 'x'`, or one of `!contains`, `!startsWith`, `!endsWith`, `!in`, `!is`, `!range`, `!regex`, which are
+  unchanged.
+* *It cannot be the right hand side of a comparison.* `${body} == !${header.foo}` is refused.
+* *Double negation only works inside the braces.* `${!!body.isEmpty()}` answers what you would expect, while
+  `!!${body.isEmpty()}` is not valid.
 
 The syntax for AND is:
 

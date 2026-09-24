@@ -149,12 +149,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 Object value = exp.evaluate(exchange, Object.class);
-                Boolean bool = exchange.getContext().getTypeConverter().convertTo(Boolean.class, exchange, value);
-                if (bool == null) {
-                    throw new SimpleParserException(
-                            "Cannot negate ${" + name + "} as it is not true or false but: " + value, token.getIndex());
-                }
-                return exchange.getContext().getTypeConverter().convertTo(type, exchange, !bool);
+                // the same rule the language uses for a predicate on its own (CAMEL-24984)
+                boolean matches = ObjectHelper.evaluateValuePredicate(value);
+                return exchange.getContext().getTypeConverter().convertTo(type, exchange, !matches);
             }
 
             @Override

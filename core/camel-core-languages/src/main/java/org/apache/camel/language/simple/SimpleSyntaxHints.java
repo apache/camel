@@ -103,6 +103,27 @@ public final class SimpleSyntaxHints {
         return expression.substring(start, end);
     }
 
+    /**
+     * The same negation with its function in braces, or null when the text is not a negated name: {@code !x} is
+     * {@code !${x}}. The parser otherwise reports it as a missing predicate next to the operator (CAMEL-24984).
+     */
+    private static String negatedFunction(String word) {
+        if (word.length() < 2 || word.charAt(0) != '!' || word.startsWith("!${")) {
+            return null;
+        }
+        String rest = word.substring(1);
+        // !=, !contains and the other negated operators are words of their own, not a negated function
+        if (rest.charAt(0) == '=' || rest.charAt(0) == '$') {
+            return null;
+        }
+        for (String op : new String[] { "contains", "endsWith", "equals", "in", "is", "range", "regex", "startsWith", "~~" }) {
+            if (rest.equals(op)) {
+                return null;
+            }
+        }
+        return "!${" + rest + "}";
+    }
+
     /** The message for a token the grammar does not know at the given index. */
     public static String unexpectedToken(String expression, int index) {
         String word = wordAt(expression, index);
@@ -146,6 +167,10 @@ public final class SimpleSyntaxHints {
     /** The message when an operator has no usable value next to it. */
     public static String unsupportedOperand(String kind, Object operator, String expression, int index) {
         String word = wordAt(expression, index);
+        String negated = negatedFunction(word);
+        if (negated != null) {
+            return "! negates a function, which is written as ${ }: " + word + " is written as " + negated;
+        }
         if ("Logical".equals(kind)) {
             return kind + " operator " + operator + " needs a predicate on the right hand side, e.g. ${header.foo} == 'bar'"
                    + (word.isEmpty() ? "" : "; was: " + word);

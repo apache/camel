@@ -22,10 +22,12 @@ import java.util.Map;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -78,6 +80,38 @@ public class SimpleNotOperatorTest extends ExchangeTestSupport {
         // (!isEmpty) && (body == null) is true && false; negating the whole predicate would answer true
         assertFalse(predicate("${!body.isEmpty() && body == null}"));
         assertFalse(predicate("!${body.isEmpty()} && ${body} == null"));
+    }
+
+    @Test
+    public void testAnswersTheOppositeOfThePredicate() {
+        // the same rule the language uses for a predicate on its own
+        exchange.getMessage().setBody(new LinkedHashMap<>(Map.of("a", 1)));
+        assertFalse(predicate("!${body}"));
+        assertTrue(predicate("!${header.missing}"));
+    }
+
+    @Test
+    public void testCannotNegateAComparison() {
+        exchange.getMessage().setBody("y");
+        // it would read as neither of the two things it could mean, so it is refused rather than answered
+        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> predicate("!${body} == 'x'"));
+        assertTrue(e.getMessage().contains("! cannot be compared"), e.getMessage());
+        assertThrows(SimpleIllegalSyntaxException.class, () -> predicate("${body} == !${body}"));
+        // the negated operator is the way to say it
+        assertTrue(predicate("${body} != 'x'"));
+    }
+
+    @Test
+    public void testSaysHowToWriteANegationItCannotRead() {
+        exchange.getMessage().setBody("x");
+        // ! before something that is not a ${ } function: say the form that works
+        SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> predicate("${body} != null && !someFlag"));
+        assertTrue(e.getMessage().contains("! negates a function, which is written as ${ }"), e.getMessage());
+        assertTrue(e.getMessage().contains("!${someFlag}"), e.getMessage());
+        // a negated operator is not a negated function
+        assertTrue(predicate("${body} !contains 'zz'"));
     }
 
     @Test

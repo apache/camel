@@ -98,12 +98,10 @@ public class UnaryExpression extends BaseSimpleNode {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 Object value = exp.evaluate(exchange, Object.class);
-                Boolean bool = camelContext.getTypeConverter().convertTo(Boolean.class, exchange, value);
-                if (bool == null) {
-                    throw new SimpleParserException(
-                            "Cannot negate " + left + " as it is not true or false but: " + value, token.getIndex());
-                }
-                return camelContext.getTypeConverter().convertTo(type, exchange, !bool);
+                // the same rule the language uses for a predicate on its own, where ${body} is true and a missing
+                // header is false, so !${body} and !${header.foo} answer the opposite of those (CAMEL-24984)
+                boolean matches = ObjectHelper.evaluateValuePredicate(value);
+                return camelContext.getTypeConverter().convertTo(type, exchange, !matches);
             }
 
             @Override
