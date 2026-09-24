@@ -121,13 +121,20 @@ public class OpaEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * {@code serverUrl} and {@code bearerToken} address and authenticate to an OPA server, of which there is none in
-     * {@code wasm} mode, so they are ignored - a startup warning is clearer than silence for an operator who set one
-     * and expects it to take effect. {@code failOpen} is deliberately not among these: a {@code wasm} evaluation can
-     * still fail (a busy pool, a bad bundle), and {@code failOpen} governs that outcome exactly as in {@code rest}
-     * mode, so it applies in both.
+     * {@code opaClient}, {@code serverUrl} and {@code bearerToken} reach and authenticate to an OPA server, of which
+     * there is none in {@code wasm} mode, so they are ignored - a startup warning is clearer than silence for an
+     * operator who set one and expects it to take effect. {@code failOpen} is deliberately not among these: a
+     * {@code wasm} evaluation can still fail (a busy pool, a bad bundle), and {@code failOpen} governs that outcome
+     * exactly as in {@code rest} mode, so it applies in both.
+     * <p/>
+     * Kept in step with {@code OpaSecurityPolicy.warnIgnoredServerOptions}: the two configure the same evaluators, so
+     * an option that is silently dropped by one and warned about by the other is a trap for anyone moving a policy path
+     * between the producer and {@code .policy(...)}.
      */
     private void warnAboutIgnoredServerOptions() {
+        if (configuration.getOpaClient() != null) {
+            LOG.warn("opaClient is ignored when evaluationMode=wasm: the policy is evaluated in-process");
+        }
         if (ObjectHelper.isNotEmpty(configuration.getBearerToken())) {
             LOG.warn("bearerToken is ignored when evaluationMode=wasm: there is no server to authenticate to");
         }
