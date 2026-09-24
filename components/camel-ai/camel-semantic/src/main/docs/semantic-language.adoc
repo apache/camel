@@ -236,10 +236,19 @@ and in an implementation-dependent order.
 
 == Implementing an adapter
 
-Implement `org.apache.camel.semantic.SemanticAdapter`. Advertise the class name in
-`META-INF/services/org.apache.camel.semantic.SemanticAdapter`, one class per line. Discovery
-reads class names without constructing unselected adapters. Explicit class selection is
-also available for runtimes whose packaging does not expose discovery resources.
+Implement `org.apache.camel.semantic.SemanticAdapter`. Advertise the implementation in
+`META-INF/services/org/apache/camel/semantic-adapter` using Camel's `FactoryFinder` format:
+
+[source,properties]
+----
+class=com.example.MySemanticAdapter
+----
+
+Camel components can generate this descriptor with `@JdkService("semantic-adapter")`.
+Discovery checks the declarations for ambiguity before resolving the implementation through
+`FactoryFinder`. Repeated declarations of the same class are accepted; different classes require
+explicit selection. Only the selected adapter is constructed, through Camel's `Injector`.
+Explicit bean or class selection also works when packaging does not expose discovery resources.
 
 `validate` rejects unsupported questions and decision policies before traffic. `evaluate`
 must be thread-safe, bound time and resource consumption, honor interruption and propagate
