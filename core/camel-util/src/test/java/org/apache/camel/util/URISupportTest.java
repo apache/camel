@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +40,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class URISupportTest {
+
+    @AfterEach
+    public void resetSanitizeKeywords() {
+        // the keywords added by some tests are global
+        URISupport.resetSanitizeKeywords();
+    }
 
     @Test
     public void testNormalizeEndpointUri() throws Exception {
@@ -851,6 +858,25 @@ public class URISupportTest {
                         entry("foo", "bar"));
         // the given parameters are not changed
         assertThat(parameters).containsEntry("password", "secret");
+        assertThat(URISupport.sanitizeParameters(null)).isNull();
+    }
+
+    @Test
+    public void testSanitizeUriWithUserInfoPasswordWithSlashOrQuestionMark() {
+        assertThat(URISupport.sanitizeUri("ftp://joe:pa/ss@host/dir")).isEqualTo("ftp://joe:xxxxxx@host/dir");
+        assertThat(URISupport.sanitizeUri("ftp://joe:pa?ss@host/dir?binary=true"))
+                .isEqualTo("ftp://joe:xxxxxx@host/dir?binary=true");
+        assertThat(URISupport.sanitizeUri("ftp://joe:p/a@b@host/dir")).isEqualTo("ftp://joe:xxxxxx@host/dir");
+        // a password that contains a query parameter (?key=value) cannot be told apart from host:port?key=value@...
+        // (see smtp://host:25?to=ops@example.com), so it is not masked
+        assertThat(URISupport.sanitizeUri("ftp://joe:p?a=b@host/dir")).isEqualTo("ftp://joe:p?a=b@host/dir");
+    }
+
+    @Test
+    public void testSanitizePathWithUserInfoAndOtherAt() {
+        assertThat(URISupport.sanitizePath("joe:secret@host/in?to=ops@example.com"))
+                .isEqualTo("joe:xxxxxx@host/in?to=ops@example.com");
+        assertThat(URISupport.sanitizePath("joe:pa/ss@host/dir")).isEqualTo("joe:xxxxxx@host/dir");
     }
 
 }

@@ -60,16 +60,8 @@ public final class URISupport {
     private static final Pattern SENSITIVE_KEYWORDS
             = Pattern.compile(SensitiveUtils.getSensitivePattern(), Pattern.CASE_INSENSITIVE);
 
-    // Match the user password in the URI as second capture group
-    // (applies to URI with authority component and userinfo token in the form
-    // "user:password"). The authority ends at the first / or ? and the userinfo
-    // ends at the last @ in the authority, which is how normalizeUri reads it.
-    private static final Pattern USERINFO_PASSWORD = Pattern.compile("(://[^/?:]*:)([^/?]*)(@)");
-
-    // Match the user password in the URI path as second capture group
-    // (applies to URI path with authority component and userinfo token in the
-    // form "user:password").
-    private static final Pattern PATH_USERINFO_PASSWORD = Pattern.compile("(.*?:)(.*)(@)");
+    // use xxxxxx as replacement as that works well with JMX also
+    private static final String MASK = "xxxxxx";
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
@@ -105,19 +97,25 @@ public final class URISupport {
     }
 
     /**
+     * Removes the keywords added by {@link #addSanitizeKeywords(String)}. Only for testing.
+     */
+    static synchronized void resetSanitizeKeywords() {
+        extraKeywords = Set.of();
+    }
+
+    /**
      * Removes detected sensitive information (such as passwords) from the URI and returns the result.
      *
      * @param  uri The uri to sanitize.
      * @return     Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey
      *             sanitized.
-     * @see        #USERINFO_PASSWORD for the matched pattern
+     * @see        SensitiveUtils#maskUserInfoCredentials(String, String) for how the userinfo password is found
      */
     public static String sanitizeUri(String uri) {
-        // use xxxxx as replacement as that works well with JMX also
         String sanitized = uri;
         if (uri != null) {
             sanitized = sanitizeQueryParameters(sanitized);
-            sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceAll("$1xxxxxx$3");
+            sanitized = SensitiveUtils.maskUserInfo(sanitized, MASK, false);
         }
         return sanitized;
     }
@@ -127,13 +125,17 @@ public final class URISupport {
      * the same rules as {@link #sanitizeUri(String)}.
      *
      * @param  parameters the parameters
-     * @return            a copy of the parameters with the sensitive values masked
+     * @return            null if the parameters are null, otherwise a copy of the parameters with the sensitive values
+     *                    masked
      */
     public static Map<String, Object> sanitizeParameters(Map<String, Object> parameters) {
+        if (parameters == null) {
+            return null;
+        }
         Map<String, Object> answer = new LinkedHashMap<>(parameters.size());
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             Object value = entry.getValue();
-            answer.put(entry.getKey(), value != null && isSensitiveKey(entry.getKey()) ? "xxxxxx" : value);
+            answer.put(entry.getKey(), value != null && isSensitiveKey(entry.getKey()) ? MASK : value);
         }
         return answer;
     }
@@ -151,7 +153,7 @@ public final class URISupport {
                 if (sb == null) {
                     sb = new StringBuilder(uri.length());
                 }
-                sb.append(uri, copied, pos).append("xxxxxx");
+                sb.append(uri, copied, pos).append(MASK);
                 copied = end;
                 pos = end;
             }
@@ -243,7 +245,7 @@ public final class URISupport {
     public static String sanitizePath(String path) {
         String sanitized = path;
         if (path != null) {
-            sanitized = PATH_USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
+            sanitized = SensitiveUtils.maskPathUserInfo(sanitized, MASK);
         }
         return sanitized;
     }

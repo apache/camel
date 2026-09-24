@@ -106,6 +106,27 @@ class SensitiveUtilsTest {
     }
 
     @Test
+    void maskUserInfoCredentialsUsesTheSameRuleAsSanitizeUri() {
+        // the userinfo ends at the last @ before the path
+        assertThat(SensitiveUtils.maskUserInfoCredentials("ftp://joe:p@ss@host/in", "xxxxx"))
+                .isEqualTo("ftp://joe:xxxxx@host/in");
+        assertThat(SensitiveUtils.maskUserInfoCredentials("ftp://joe:pa/ss@host/dir", "xxxxx"))
+                .isEqualTo("ftp://joe:xxxxx@host/dir");
+        // an @ in the query is not the end of a password
+        assertThat(SensitiveUtils.maskUserInfoCredentials("smtp://host:25?to=ops@example.com", "xxxxx"))
+                .isEqualTo("smtp://host:25?to=ops@example.com");
+        assertThat(SensitiveUtils.maskUserInfoCredentials(
+                "ftp://joe:s3cr3t@ftp.example.com/in?callbackUrl=http://cb.example.com:8080/x&notify=ops@example.com", "xxxxx"))
+                .isEqualTo(
+                        "ftp://joe:xxxxx@ftp.example.com/in?callbackUrl=http://cb.example.com:8080/x&notify=ops@example.com");
+        // in free text a whitespace ends the uri
+        assertThat(SensitiveUtils.maskUserInfoCredentials("Connecting to ftp://joe:pw@host as bob@example.com", "xxxxx"))
+                .isEqualTo("Connecting to ftp://joe:xxxxx@host as bob@example.com");
+        assertThat(SensitiveUtils.maskUserInfoCredentials("see http://host:8080/x for bob@example.com", "xxxxx"))
+                .isEqualTo("see http://host:8080/x for bob@example.com");
+    }
+
+    @Test
     void maskUserInfoCredentialsHandlesNullEmptyAndSpecialMask() {
         assertThat(SensitiveUtils.maskUserInfoCredentials(null, "xxxxx")).isNull();
         assertThat(SensitiveUtils.maskUserInfoCredentials("", "xxxxx")).isEmpty();

@@ -27,21 +27,6 @@ import java.util.regex.Pattern;
 public final class SensitiveUtils {
 
     /**
-     * Matches URI userinfo credentials ({@code scheme://user:password@host} or {@code scheme://:password@host}) and
-     * captures the password as group 2. The scheme may contain {@code +} / {@code .} / {@code -} (e.g.
-     * {@code mongodb+srv}). Does not match user-only userinfo without a password ({@code scheme://user@host}).
-     * <p>
-     * Stricter than {@link URISupport}'s {@code USERINFO_PASSWORD} (used in {@link URISupport#sanitizeUri}): requires a
-     * scheme and a colon before the password. Used for free-text log masking. The user/password prefix uses a
-     * non-greedy match so passwords may contain {@code :} (aligned with {@link URISupport#sanitizeUri}).
-     * <p>
-     * Passwords must not contain a raw {@code @} (use percent-encoding such as {@code %40}); capture stops at the first
-     * {@code @} that ends userinfo.
-     */
-    private static final Pattern URI_USERINFO_PASSWORD_IN_TEXT
-            = Pattern.compile("([a-zA-Z][a-zA-Z0-9+.-]*://[^/@\\s\"']*?:)([^@\\s\"']+)(@)");
-
-    /**
      * Matches PEM private-key blocks ({@code -----BEGIN ... PRIVATE KEY-----} … {@code -----END ... PRIVATE KEY-----})
      * and captures the key body as group 2. Public keys and certificates are not matched.
      */
@@ -299,6 +284,11 @@ public final class SensitiveUtils {
      * Masks passwords embedded in URI userinfo ({@code scheme://user:password@host}) within free text. Complements
      * name-based secret detection: the password has no {@code password=} key, so key/value maskers never see it.
      * <p>
+     * The userinfo ends at the last {@code @} before the path or query, so a password may contain {@code :} and
+     * {@code @}. A password with an unencoded {@code /} or {@code ?} is masked up to the {@code @}, unless it contains
+     * something that reads as a query parameter ({@code ?key=} or {@code &key=}). In free text a URI also ends at a
+     * whitespace or a quote. {@link URISupport#sanitizeUri(String)} masks userinfo passwords with the same rule.
+     * <p>
      * Query-parameter forms such as {@code ?password=secret} are not handled here; use a key/value masker or
      * {@link URISupport#sanitizeUri(String)} for those.
      *
@@ -311,11 +301,122 @@ public final class SensitiveUtils {
         if (source == null || source.isEmpty() || mask == null) {
             return source;
         }
-        if (!source.contains("://")) {
+        return maskUserInfo(source, mask, true);
+    }
+
+    /**
+     * Masks the userinfo password of every {@code scheme://user:password@} in the source.
+     *
+     * @param source the source
+     * @param mask   the replacement string for the password
+     * @param text   whether the source is free text, where a whitespace or a quote ends a URI
+     */
+    static String maskUserInfo(String source, String mask, boolean text) {
+        int idx = source.indexOf("://");
+        if (idx == -1) {
             return source;
         }
-        return URI_USERINFO_PASSWORD_IN_TEXT.matcher(source)
-                .replaceAll("$1" + Matcher.quoteReplacement(mask) + "$3");
+        StringBuilder sb = null;
+        int copied = 0;
+        while (idx != -1) {
+            int next = idx + 3;
+            // there must be a scheme before ://
+            if (idx > 0 && isSchemeChar(source.charAt(idx - 1))) {
+                int[] password = passwordRange(source, idx + 3, text);
+                if (password != null) {
+                    if (sb == null) {
+                        sb = new StringBuilder(source.length());
+                    }
+                    sb.append(source, copied, password[0]).append(mask);
+                    copied = password[1];
+                    next = password[1];
+                }
+            }
+            idx = source.indexOf("://", next);
+        }
+        if (sb == null) {
+            return source;
+        }
+        return sb.append(source, copied, source.length()).toString();
+    }
+
+    /**
+     * Masks the password of a URI path (without the scheme) that starts with {@code user:password@}.
+     *
+     * @param path the path
+     * @param mask the replacement string for the password
+     */
+    static String maskPathUserInfo(String path, String mask) {
+        int[] password = passwordRange(path, 0, false);
+        if (password == null) {
+            return path;
+        }
+        return path.substring(0, password[0]) + mask + path.substring(password[1]);
+    }
+
+    // the start and end of the password in the userinfo of the authority that begins at start, or null if there is none
+    private static int[] passwordRange(String source, int start, boolean text) {
+        int len = source.length();
+        // the user ends at the first colon
+        int colon = -1;
+        for (int i = start; i < len && colon == -1; i++) {
+            char ch = source.charAt(i);
+            if (ch == ':') {
+                colon = i;
+            } else if (ch == '/' || ch == '?' || text && isTextDelimiter(ch)) {
+                return null;
+            }
+        }
+        if (colon == -1) {
+            return null;
+        }
+        // the userinfo ends at the last @ before the path or query
+        int at = -1;
+        for (int i = colon + 1; i < len; i++) {
+            char ch = source.charAt(i);
+            if (ch == '@') {
+                at = i;
+            } else if (ch == '/' || ch == '?' || text && isTextDelimiter(ch)) {
+                break;
+            }
+        }
+        if (at == -1) {
+            // a password with an unencoded / or ? ends at the last @ before a query parameter, the next uri,
+            // or (in free text) a whitespace or a quote
+            for (int i = colon + 1; i < len; i++) {
+                char ch = source.charAt(i);
+                if (ch == '@') {
+                    at = i;
+                } else if ((ch == '?' || ch == '&') && isQueryParameter(source, i + 1)
+                        || ch == ':' && source.startsWith("//", i + 1)
+                        || text && isTextDelimiter(ch)) {
+                    break;
+                }
+            }
+        }
+        return at == -1 ? null : new int[] { colon + 1, at };
+    }
+
+    // whether the text at the given index is a query parameter key followed by =
+    private static boolean isQueryParameter(String source, int from) {
+        for (int i = from; i < source.length(); i++) {
+            char ch = source.charAt(i);
+            if (ch == '=') {
+                return i > from;
+            }
+            if (ch == '&' || ch == '?' || ch == '@' || ch == '/' || ch == ':' || Character.isWhitespace(ch)) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isSchemeChar(char ch) {
+        return Character.isLetterOrDigit(ch) || ch == '+' || ch == '.' || ch == '-';
+    }
+
+    private static boolean isTextDelimiter(char ch) {
+        return Character.isWhitespace(ch) || ch == '"' || ch == '\'';
     }
 
     /**
