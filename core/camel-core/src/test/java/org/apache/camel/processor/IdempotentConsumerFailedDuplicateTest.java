@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * With skipDuplicate=false a duplicate is routed on. If the duplicate fails, it must not remove the key that the
  * original exchange added.
  */
-public class IdempotentConsumerFailedDuplicateTest extends ContextTestSupport {
+class IdempotentConsumerFailedDuplicateTest extends ContextTestSupport {
 
     private final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
     private final CountDownLatch firstInProgress = new CountDownLatch(1);
@@ -49,25 +49,25 @@ public class IdempotentConsumerFailedDuplicateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFailedDuplicateDoesNotRemoveKey() throws Exception {
+    void testFailedDuplicateDoesNotRemoveKey() throws Exception {
         addRoute(true, false);
         assertFailedDuplicateDoesNotRemoveKey();
     }
 
     @Test
-    public void testFailedDuplicateDoesNotRemoveKeyCompletionEager() throws Exception {
+    void testFailedDuplicateDoesNotRemoveKeyCompletionEager() throws Exception {
         addRoute(true, true);
         assertFailedDuplicateDoesNotRemoveKey();
     }
 
     @Test
-    public void testFailedDuplicateDoesNotRemoveKeyNonEager() throws Exception {
+    void testFailedDuplicateDoesNotRemoveKeyNonEager() throws Exception {
         addRoute(false, false);
         assertFailedDuplicateDoesNotRemoveKey();
     }
 
     @Test
-    public void testFailedDuplicateDoesNotRemoveKeyOfInflightExchange() throws Exception {
+    void testFailedDuplicateDoesNotRemoveKeyOfInflightExchange() throws Exception {
         addRoute(true, false);
 
         MockEndpoint newMessages = getMockEndpoint("mock:new");
