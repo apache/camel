@@ -2634,7 +2634,7 @@ the commit or rollback of the consumer that received the message, now run as a f
 === camel-core - Recipient List releases the producers of recipients it did not send to
 
 The Recipient List acquires a producer for every recipient before it starts sending. When it completes before
-it has sent to every recipient (`stopOnException`, `timeout`, or a rejected task), it now releases the
+it has sent to every recipient (for example with `stopOnException` or a `timeout`), it now releases the
 producers of the recipients it did not send to. Previously these producers were never released: a pooled
 (non-singleton) producer was not returned to its pool, and with `cacheSize(-1)` the prototype endpoint and its
 producer were never stopped.
