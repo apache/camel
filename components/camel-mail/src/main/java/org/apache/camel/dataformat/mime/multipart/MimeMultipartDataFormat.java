@@ -56,6 +56,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -405,6 +406,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private String getAttachmentKey(BodyPart bp) throws MessagingException, UnsupportedEncodingException {
         // use the filename as key for the map
         String key = bp.getFileName();
+        boolean fromFileName = key != null;
         // if there is no file name we use the Content-ID header
         if (key == null && bp instanceof MimeBodyPart mimeBodyPart) {
             key = mimeBodyPart.getContentID();
@@ -417,7 +419,13 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         if (key == null) {
             key = UUID.randomUUID() + "@camel.apache.org";
         }
-        return MimeUtility.decodeText(key);
+        key = MimeUtility.decodeText(key);
+        key = key.replaceAll("[\n\r\t]", "_");
+        // Only a file name is sender-chosen path data. Reduce it to a leaf name the same way
+        // MailBinding.extractAndNormalizeFileName does, so it cannot carry path components before it identifies the
+        // attachment. A Content-ID local part may legally contain '/' (RFC 5322 atext) and a generated id never
+        // carries a path, so those are left as-is.
+        return fromFileName ? FileUtil.stripPath(key) : key;
     }
 
     @Override

@@ -1094,6 +1094,13 @@ Routes that relied on `+mail.smtp.*+` or `+mail.smtps.*+` headers arriving on th
 unmarshalled MIME message must set those values explicitly on the route instead. Ordinary
 application headers are unaffected.
 
+`MailBinding` now parses the content type returned by a custom `ContentTypeResolver` before adding the
+attachment file name as a quoted parameter, instead of concatenating the file name into the header - closing
+a header-injection vector via a crafted file name. As a side effect, a `ContentTypeResolver` that returns an
+unparsable content type now fails fast with a `ParseException` at marshal time, where before the invalid
+value was written into the `Content-Type` header as-is. Ensure a custom `ContentTypeResolver` returns a valid
+MIME type.
+
 === camel-netty - object codecs apply a deserialization filter by default
 
 The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
