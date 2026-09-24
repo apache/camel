@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -254,6 +256,44 @@ class PlatformHttpRestPostmanConsumerTest {
 
             given().when().get("/api/v3/pet/123").then().statusCode(200).body(equalTo("ok"));
             given().when().post("/api/v3/pet").then().statusCode(404);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    void shouldInvokeRequestOnceAfterRouteRestart() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final AtomicInteger counter = new AtomicInteger();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-postman:classpath:postman-petstore.json?missingRequest=ignore").routeId("api")
+                            .to("mock:result");
+
+                    from("direct:getPetById")
+                            .process(e -> counter.incrementAndGet())
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            VertxPlatformHttpEngineTest.startCamelContext(context);
+
+            // restart the route, which creates the consumer again
+            context.getRouteController().stopRoute("api");
+            context.getRouteController().startRoute("api");
+
+            given()
+                    .when()
+                    .get("/api/v3/pet/123")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+
+            // the operation must only be invoked once
+            assertThat(counter.get()).isEqualTo(1);
         } finally {
             context.stop();
         }
