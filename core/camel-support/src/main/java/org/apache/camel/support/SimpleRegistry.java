@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import org.apache.camel.NoSuchBeanException;
@@ -35,7 +36,7 @@ import org.apache.camel.spi.Registry;
  *
  * @see DefaultRegistry
  */
-public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>> implements Registry, Closeable {
+public class SimpleRegistry extends ConcurrentHashMap<String, Map<Class<?>, Object>> implements Registry, Closeable {
 
     @Override
     public Object lookupByName(String name) {
@@ -103,7 +104,7 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     @Override
     public void bind(String id, Class<?> type, Object bean) {
         if (bean != null) {
-            computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
+            computeIfAbsent(id, k -> new ConcurrentHashMap<>()).put(type, wrap(bean));
         }
     }
 

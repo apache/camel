@@ -66,9 +66,12 @@ import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultModel implements Model {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultModel.class);
     private final CamelContext camelContext;
     private final Lock lock = new ReentrantLock();
 
@@ -901,9 +904,14 @@ public class DefaultModel implements Model {
 
     @Override
     public void addCustomBean(BeanFactoryDefinition<?> bean) {
-        // remove exiting bean with same name to update
-        beans.removeIf(b -> bean.getName().equals(b.getName()));
-        beans.add(bean);
+        lock.lock();
+        try {
+            // remove existing bean with same name to update; guard against null entries left by prior corruption
+            beans.removeIf(b -> b != null && bean.getName().equals(b.getName()));
+            beans.add(bean);
+        }finally {
+            lock.unlock();
+        }
     }
 
     @Override
