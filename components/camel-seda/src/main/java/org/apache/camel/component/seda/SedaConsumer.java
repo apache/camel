@@ -84,6 +84,21 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         return true;
     }
 
+    /**
+     * Returns the number of pending exchanges the shutdown strategy must wait for before this consumer can be stopped.
+     * <p/>
+     * Note that this method has side effects and is not only a getter:
+     * <ul>
+     * <li>if {@code purgeWhenStopping} is enabled, the queue is purged first, so there are no pending exchanges to wait
+     * for.</li>
+     * <li>if this consumer is suspending or suspended, {@code 0} is returned: a suspended consumer does not poll the
+     * queue, so waiting for its pending exchanges would only wait for the shutdown timeout. The pending exchanges are
+     * kept on the queue (unless purged as above).</li>
+     * </ul>
+     * Otherwise the number of exchanges on the queue is returned.
+     *
+     * @return the number of pending exchanges to wait for
+     */
     @Override
     public int getPendingExchangesSize() {
         return getPendingExchangesSize(false);
