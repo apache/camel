@@ -93,6 +93,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 // the pool is growing too large, so we need to stop (stop will remove itself from pool)
                 p.stop();
             }
+        } else if (e.isSingletonProducer()) {
+            // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
+            stopAndRemove(s);
         } else {
             // the pool has been stopped, which stopped its idle services, so this service is either stopped already
             // or in use, and then it is stopped when it is released (the pool is gone), not while it is in use
@@ -300,7 +303,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private final BlockingQueue<S> queue;
         private final Deque<S> evicts;
-        // the services created by this pool which have not been evicted, only these are returned to the queue
+        // the services created by this pool which have not been evicted, only these are kept in the queue
         private final Set<S> active;
         private volatile boolean stopped;
 
@@ -338,8 +341,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 // the pool is stopped, it was evicted while in use, or there is no room so let's just stop and discard this
                 active.remove(s);
                 doStop(s);
-            } else if (stopped && queue.remove(s)) {
-                // the pool was stopped after the check above, and did not drain this service
+            } else if ((stopped || !active.contains(s)) && queue.remove(s)) {
+                // the pool was stopped, or the service evicted, after the check above, and did not take it from the queue
                 active.remove(s);
                 doStop(s);
             }
