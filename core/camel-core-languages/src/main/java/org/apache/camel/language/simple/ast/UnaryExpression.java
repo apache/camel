@@ -61,6 +61,13 @@ public class UnaryExpression extends BaseSimpleNode {
         this.left = left;
     }
 
+    /**
+     * NOT is written before what it negates, so the node it works upon comes from the right (CAMEL-24984).
+     */
+    public void acceptRight(SimpleNode right) {
+        this.left = right;
+    }
+
     public UnaryOperatorType getOperator() {
         return operator;
     }
@@ -79,9 +86,34 @@ public class UnaryExpression extends BaseSimpleNode {
             return createIncDecExpression(camelContext, leftExp, 1);
         } else if (operator == UnaryOperatorType.DEC) {
             return createIncDecExpression(camelContext, leftExp, -1);
+        } else if (operator == UnaryOperatorType.NOT) {
+            return createNotExpression(camelContext, leftExp);
         }
 
         throw new SimpleParserException("Unknown unary operator " + operator, token.getIndex());
+    }
+
+    private Expression createNotExpression(CamelContext camelContext, final Expression exp) {
+        return new Expression() {
+            @Override
+            public void init(CamelContext context) {
+                exp.init(context);
+            }
+
+            @Override
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                Object value = exp.evaluate(exchange, Object.class);
+                // the same rule the language uses for a predicate on its own, where ${body} is true and a missing
+                // header is false, so !${body} and !${header.foo} answer the opposite of those (CAMEL-24984)
+                boolean matches = ObjectHelper.evaluateValuePredicate(value);
+                return camelContext.getTypeConverter().convertTo(type, exchange, !matches);
+            }
+
+            @Override
+            public String toString() {
+                return "!" + left;
+            }
+        };
     }
 
     private Expression createIncDecExpression(CamelContext camelContext, final Expression leftExp, final int delta) {
