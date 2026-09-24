@@ -51,6 +51,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.NormalizedUri;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.cache.DefaultConsumerCache;
 import org.apache.camel.support.cache.EmptyConsumerCache;
 import org.apache.camel.support.service.ServiceHelper;
@@ -409,7 +410,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 originalHeaders = headersMapFactory.newMap(exchange.getMessage().getHeaders());
             } catch (Exception throwable) {
                 exchange.setException(throwable);
-                handoverCompletions(resourceExchange, exchange);
+                doneResourceAsFailed(resourceExchange, throwable);
                 callback.done(true);
                 return true;
             }
@@ -420,6 +421,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 // copy resource exchange onto original exchange (preserving pattern)
                 // and preserve redelivery headers
                 copyResultsPreservePattern(exchange, resourceExchange);
+                // the resource failed, so release it as failed now (such as rolling back a polled file)
+                doneResourceAsFailed(resourceExchange, null);
             } else {
                 prepareResult(exchange);
 
@@ -438,9 +441,10 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                     // copy aggregation result onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, aggregatedExchange);
                 }
+                // the resource has been aggregated (or discarded by the aggregation strategy), so handover any
+                // synchronization to complete together with the exchange (such as committing a polled file)
+                handoverCompletions(resourceExchange, exchange);
             }
-            // handover any synchronization, such as the on completion of a polled file
-            handoverCompletions(resourceExchange, exchange);
 
             // if we failed then restore caused exception
             if (cause != null) {
@@ -466,8 +470,9 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
         } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
-            // handover any synchronization, so the polled resource is released (such as a file being rolled back)
-            handoverCompletions(resourceExchange, exchange);
+            // the resource was not aggregated, so release it as failed now (such as rolling back a polled file),
+            // and not together with the exchange, which may still complete successfully (such as by redelivery)
+            doneResourceAsFailed(resourceExchange, e);
             callback.done(true);
             return true;
         }
@@ -479,6 +484,16 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     private static void handoverCompletions(Exchange resourceExchange, Exchange exchange) {
         if (resourceExchange != null) {
             resourceExchange.getExchangeExtension().handoverCompletions(exchange);
+        }
+    }
+
+    private static void doneResourceAsFailed(Exchange resourceExchange, Exception cause) {
+        if (resourceExchange != null) {
+            if (cause != null && resourceExchange.getException() == null) {
+                resourceExchange.setException(cause);
+            }
+            UnitOfWorkHelper.doneSynchronizations(resourceExchange,
+                    resourceExchange.getExchangeExtension().handoverCompletions());
         }
     }
 

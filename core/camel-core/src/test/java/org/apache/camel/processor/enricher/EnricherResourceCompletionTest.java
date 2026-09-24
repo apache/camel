@@ -45,17 +45,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class EnricherResourceCompletionTest extends ContextTestSupport {
 
     private final AtomicInteger completions = new AtomicInteger();
+    private final AtomicInteger failures = new AtomicInteger();
 
     @Test
     public void testResourceFailed() {
         assertThrows(Exception.class, () -> template.requestBody("direct:resourceFails", "Hello"));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, completions.get()));
+        assertEquals(1, failures.get(), "the resource should be completed as failed");
     }
 
     @Test
     public void testAggregationFailed() {
         assertThrows(Exception.class, () -> template.requestBody("direct:aggregationFails", "Hello"));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, completions.get()));
+        assertEquals(1, failures.get(), "the resource should be completed as failed");
     }
 
     @Test
@@ -118,6 +121,9 @@ public class EnricherResourceCompletionTest extends ContextTestSupport {
             @Override
             public void onDone(Exchange exchange) {
                 completions.incrementAndGet();
+                if (exchange.isFailed()) {
+                    failures.incrementAndGet();
+                }
             }
         });
     }

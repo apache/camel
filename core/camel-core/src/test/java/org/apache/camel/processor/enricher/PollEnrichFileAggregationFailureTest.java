@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * When the aggregation of a polled file fails, the file is released (its on completion runs), so it can be polled
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PollEnrichFileAggregationFailureTest extends ContextTestSupport {
 
     private final AtomicInteger attempts = new AtomicInteger();
+    private final AtomicInteger redeliveryAttempts = new AtomicInteger();
 
     @Test
     public void testFileCanBePolledAgainAfterAggregationFailure() {
@@ -47,6 +49,21 @@ public class PollEnrichFileAggregationFailureTest extends ContextTestSupport {
         assertEquals("Big file", out);
     }
 
+    @Test
+    public void testFileNotAggregatedIsNotCommittedWhenRedeliverySucceeds() throws Exception {
+        template.sendBodyAndHeader(fileUri("inbox"), "A", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader(fileUri("inbox"), "B", Exchange.FILE_NAME, "b.txt");
+
+        // the first aggregation fails, and the redelivery polls and aggregates the other file
+        String out = template.requestBody("direct:redelivery", "Start", String.class);
+        assertTrue("A".equals(out) || "B".equals(out), "one of the files should be aggregated, was: " + out);
+
+        // the file that was not aggregated must not be committed (moved to .camel), so it can be polled again
+        String notAggregated = "A".equals(out) ? "b.txt" : "a.txt";
+        assertFileExists(testFile("inbox/" + notAggregated));
+        assertFileNotExists(testFile("inbox/" + out.toLowerCase() + ".txt"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -54,6 +71,16 @@ public class PollEnrichFileAggregationFailureTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .pollEnrich(fileUri("data?initialDelay=0&delay=10"), 2000, new FailOnceStrategy());
+
+                from("direct:redelivery")
+                        .errorHandler(defaultErrorHandler().maximumRedeliveries(1).redeliveryDelay(0))
+                        .pollEnrich(fileUri("inbox?initialDelay=0&delay=10"), 2000, (original, resource) -> {
+                            if (redeliveryAttempts.incrementAndGet() == 1) {
+                                throw new IllegalStateException("Transient failure");
+                            }
+                            original.getMessage().setBody(resource.getMessage().getBody(String.class));
+                            return original;
+                        });
             }
         };
     }
