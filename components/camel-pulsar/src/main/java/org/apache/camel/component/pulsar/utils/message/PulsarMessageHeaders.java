@@ -62,5 +62,5 @@ public interface PulsarMessageHeaders {
     String DELIVER_AFTER = "CamelPulsarProducerMessageDeliverAfter";
     @Metadata(label = "producer", description = "The message id the broker assigned to the published message.",
               javaType = "org.apache.pulsar.client.api.MessageId")
-    String MESSAGE_ID_OUT = "CamelPulsarProducerMessageId";
+    String PRODUCER_MESSAGE_ID = "CamelPulsarProducerMessageId";
 }

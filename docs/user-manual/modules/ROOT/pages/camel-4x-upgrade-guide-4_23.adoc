@@ -2539,6 +2539,7 @@ server and is unchanged.
 After sending, the producer used to overwrite the message body with the `MessageId` returned by the
 broker, so every step after the `to("pulsar:...")` saw a `MessageId` instead of the payload, and a route
 such as `.to("pulsar:a").to("pulsar:b")` published a Java-serialized `MessageId` to the second topic.
+That behaviour dates from the asynchronous send added in 3.20 (CAMEL-16030).
 
 The body is now left untouched, and the assigned id is reported on the new
 `CamelPulsarProducerMessageId` header instead.

@@ -50,7 +50,7 @@ public class PulsarProducerMessageIdHeaderTest extends CamelTestSupport {
 
         assertEquals("Hello World!", out.getMessage().getBody(String.class),
                 "the producer should leave the body alone");
-        assertSame(messageId, out.getMessage().getHeader(PulsarMessageHeaders.MESSAGE_ID_OUT),
+        assertSame(messageId, out.getMessage().getHeader(PulsarMessageHeaders.PRODUCER_MESSAGE_ID),
                 "the send result should be reported as a header");
     }
 
