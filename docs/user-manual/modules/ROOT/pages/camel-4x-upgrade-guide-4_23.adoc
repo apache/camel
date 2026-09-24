@@ -749,6 +749,22 @@ The message of the part is copied into the child exchange, so the exchanges in t
 untouched and remain usable after the split, for example by the batching consumer that owns them. Exchange
 properties of the part are not carried over to the child exchange, as is already the case for `Message` parts.
 
+=== camel-core - Idempotent Consumer no longer stops its repository when the route is stopped
+
+Stopping a route with an Idempotent Consumer (for example with `stopRoute` on the route controller, over JMX,
+or when a supervising route controller restarts the route) used to stop the idempotent repository as well.
+The in-memory repositories clear their data when stopped: `MemoryIdempotentRepository`, and a
+`KeyValueIdempotentRepository` over a `MemoryKeyValueRepository`, which clears the whole store. A repository
+that other routes were still using was therefore wiped, and so was the data of any other EIP sharing the
+same `KeyValueRepository` (for example the Aggregate EIP, when the `KeyValueRepository` is auto-discovered
+from the registry).
+
+The repository is now only stopped when the route is removed or when `CamelContext` is stopped. A route
+that is stopped and started again therefore keeps the message ids that its in-memory repository has
+seen, and a repository backed by a remote store keeps its connection while the route is stopped. To
+forget the ids, clear the repository with `IdempotentRepository.clear()` (or the `clear` JMX operation of
+the Idempotent Consumer).
+
 === Component deprecation
 
 ==== camel-minio
