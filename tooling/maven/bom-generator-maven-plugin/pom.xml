@@ -86,7 +86,6 @@
             <artifactId>camel-tooling-util</artifactId>
         </dependency>
 
-        <!-- logging -->
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -96,6 +95,8 @@
             <artifactId>maven-model</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
