@@ -249,15 +249,16 @@ public class Enricher extends BaseProcessorSupport
                             }
                             // copy aggregation result onto original exchange (preserving pattern)
                             copyResultsWithoutCorrelationId(exchange, aggregatedExchange);
-                            // handover any synchronization (if unit of work is not shared)
-                            if (resourceExchange != null && !isShareUnitOfWork()) {
-                                resourceExchange.getExchangeExtension().handoverCompletions(exchange);
-                            }
                         }
                     } catch (Exception e) {
                         // if the aggregationStrategy threw an exception, set it on the original exchange
                         exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
                     }
+                }
+                // handover any synchronization (if unit of work is not shared), also when the resource or the
+                // aggregation failed, as the resource may need to be released (such as closing a response stream)
+                if (!isShareUnitOfWork()) {
+                    resourceExchange.getExchangeExtension().handoverCompletions(exchange);
                 }
 
                 // and release resource exchange back in pool

@@ -409,6 +409,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 originalHeaders = headersMapFactory.newMap(exchange.getMessage().getHeaders());
             } catch (Exception throwable) {
                 exchange.setException(throwable);
+                handoverCompletions(resourceExchange, exchange);
                 callback.done(true);
                 return true;
             }
@@ -436,12 +437,10 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                     }
                     // copy aggregation result onto original exchange (preserving pattern)
                     copyResultsPreservePattern(exchange, aggregatedExchange);
-                    // handover any synchronization
-                    if (resourceExchange != null) {
-                        resourceExchange.getExchangeExtension().handoverCompletions(exchange);
-                    }
                 }
             }
+            // handover any synchronization, such as the on completion of a polled file
+            handoverCompletions(resourceExchange, exchange);
 
             // if we failed then restore caused exception
             if (cause != null) {
@@ -467,12 +466,20 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
         } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
+            // handover any synchronization, so the polled resource is released (such as a file being rolled back)
+            handoverCompletions(resourceExchange, exchange);
             callback.done(true);
             return true;
         }
 
         callback.done(true);
         return true;
+    }
+
+    private static void handoverCompletions(Exchange resourceExchange, Exchange exchange) {
+        if (resourceExchange != null) {
+            resourceExchange.getExchangeExtension().handoverCompletions(exchange);
+        }
     }
 
     private static boolean isBridgeErrorHandler(PollingConsumer consumer) {
