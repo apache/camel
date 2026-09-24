@@ -386,10 +386,12 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         for (Reference reference : references) {
             String uri = reference.getURI();
             if (uri == null) {
-                // An absent URI tells us nothing about this document. Like an external reference below it must not
-                // short-circuit the check for the references that follow it; a lone absent-URI reference still leaves
-                // sameDocumentReferenceSeen false, so the document is correctly rejected.
+                // Absent URI (getURI() == null per JSR-105) identifies the whole document per the XML Signature
+                // spec, the same as URI="". However, treating it as whole-document coverage here would let an
+                // attacker bypass the check by attaching a null-URI reference, so we skip it conservatively:
+                // a lone absent-URI reference leaves sameDocumentReferenceSeen false and the document is rejected.
                 continue;
+            }
             }
             if (uri.isEmpty()) {
                 // The whole document is covered
