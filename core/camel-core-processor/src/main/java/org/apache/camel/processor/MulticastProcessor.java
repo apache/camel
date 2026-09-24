@@ -950,8 +950,10 @@ public class MulticastProcessor extends BaseProcessorSupport
             }
         }
 
-        if (processorExchangeFactory != null && pairs != null) {
+        if (processorExchangeFactory != null && pairs instanceof Collection) {
             // the exchanges on the pairs was created with a factory, so they should be released
+            // (only when the pairs are a collection, as iterating a streaming iterable would read, prepare and create
+            // exchanges for all the remaining parts, such as after stopOnException or a timeout)
             try {
                 for (ProcessorExchangePair pair : pairs) {
                     processorExchangeFactory.release(pair.getExchange());
