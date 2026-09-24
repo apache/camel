@@ -486,9 +486,6 @@ final class CopyOnWriteHeadersMap implements Map<String, Object> {
     }
 
     /**
-     * A COW-aware Set wrapper for entrySet() that triggers copy-on-write for mutating operations.
-     */
-    /**
      * An entry of the shared map, which copies the map before its value is set.
      */
     private final class CopyOnWriteEntry implements Entry<String, Object> {
@@ -537,6 +534,9 @@ final class CopyOnWriteHeadersMap implements Map<String, Object> {
         }
     }
 
+    /**
+     * A COW-aware Set wrapper for entrySet() that triggers copy-on-write for mutating operations.
+     */
     private class CopyOnWriteEntrySet implements Set<Entry<String, Object>> {
 
         // Read operations - no COW trigger

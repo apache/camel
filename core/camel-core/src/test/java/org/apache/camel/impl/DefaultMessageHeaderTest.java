@@ -811,6 +811,25 @@ public class DefaultMessageHeaderTest {
         assertEquals("bar", original.getHeader("foo"));
     }
 
+    @Test
+    public void testCopyOnWriteEntrySetTypedToArraySetValue() {
+        DefaultMessage original = new DefaultMessage(camelContext);
+        original.setHeader("foo", "bar");
+
+        DefaultMessage copy = new DefaultMessage(camelContext);
+        copy.copyFrom(original);
+
+        // the same through the entries from toArray with a typed array
+        @SuppressWarnings("unchecked")
+        Map.Entry<String, Object>[] entries = copy.getHeaders().entrySet().toArray(new Map.Entry[0]);
+        for (Map.Entry<String, Object> entry : entries) {
+            entry.setValue("changed");
+        }
+
+        assertEquals("changed", copy.getHeader("foo"));
+        assertEquals("bar", original.getHeader("foo"));
+    }
+
     // ========== Lazy populated headers tests ==========
 
     private static class LazyPopulatedMessage extends DefaultMessage {
