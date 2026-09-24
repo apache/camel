@@ -129,7 +129,8 @@ public final class SimpleSyntaxHints {
                 return "Unknown operator " + word + ": use || for or, and && for and";
             case "not":
             case "!":
-                return "Unknown operator " + word + ": negate the operator instead, e.g. != or !contains";
+                return "Unknown operator " + word + ": ! negates a function and is written directly in front of it, "
+                       + "e.g. !${body.isEmpty()}; a comparison negates its operator instead, e.g. != or !contains";
             default:
         }
         String name = functionName(word);
