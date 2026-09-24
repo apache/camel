@@ -53,6 +53,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-typesafe-ai-mock</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-dsl</artifactId>
             <scope>test</scope>
         </dependency>
