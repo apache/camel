@@ -20,16 +20,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.ExchangeHelper;
 
 import static org.apache.camel.util.BufferCaster.cast;
 
@@ -38,8 +35,6 @@ import static org.apache.camel.util.BufferCaster.cast;
  */
 @Converter(generateBulkLoader = true)
 public final class NIOConverter {
-
-    private static final Logger LOG = LoggerFactory.getLogger(NIOConverter.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -88,21 +83,7 @@ public final class NIOConverter {
 
     @Converter(order = 7)
     public static ByteBuffer toByteBuffer(String value, Exchange exchange) {
-        byte[] bytes = null;
-        if (exchange != null) {
-            String charsetName = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
-            if (charsetName != null) {
-                try {
-                    bytes = value.getBytes(charsetName);
-                } catch (UnsupportedEncodingException e) {
-                    LOG.warn("Cannot convert the byte to String with the charset {}", charsetName, e);
-                }
-            }
-        }
-        if (bytes == null) {
-            bytes = value.getBytes();
-        }
-        return ByteBuffer.wrap(bytes);
+        return ByteBuffer.wrap(value.getBytes(ExchangeHelper.getCharset(exchange)));
     }
 
     @Converter(order = 8)

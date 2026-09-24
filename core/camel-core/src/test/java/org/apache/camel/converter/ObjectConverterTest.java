@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -146,6 +147,10 @@ public class ObjectConverterTest {
         assertNull(ObjectConverter.toBigInteger(Float.NaN));
         assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Long.valueOf("4")));
         assertEquals(new BigInteger("14350442579497085228"), ObjectConverter.toBigInteger("14350442579497085228"));
+        assertEquals(new BigInteger("123456789012345678901234"),
+                ObjectConverter.toBigInteger(new BigDecimal("123456789012345678901234.56")));
+        assertEquals(new BigInteger("100000000000000000000"), ObjectConverter.toBigInteger(1e20));
+        assertEquals(BigInteger.ONE, ObjectConverter.toBigInteger(1.9d));
     }
 
     @Test
@@ -162,6 +167,7 @@ public class ObjectConverterTest {
         assertEquals('A', ObjectConverter.toChar("A".getBytes(StandardCharsets.UTF_8)));
         assertEquals(Character.valueOf('A'), ObjectConverter.toCharacter("A"));
         assertEquals(Character.valueOf('A'), ObjectConverter.toCharacter("A".getBytes(StandardCharsets.UTF_8)));
+        assertEquals('\u00e9', ObjectConverter.toChar(new byte[] { (byte) 0xE9 }));
     }
 
     @Test
@@ -195,4 +201,15 @@ public class ObjectConverterTest {
         assertThrows(IllegalArgumentException.class, () -> ObjectConverter.toBool("yes"), "Should throw exception");
     }
 
+    @Test
+    public void testToNumber() {
+        assertEquals(123, ObjectConverter.toNumber("123"));
+        assertEquals(Integer.MAX_VALUE, ObjectConverter.toNumber("2147483647"));
+        assertEquals(Integer.MIN_VALUE, ObjectConverter.toNumber("-2147483648"));
+        assertEquals(2147483648L, ObjectConverter.toNumber("2147483648"));
+        assertEquals(-3000000000L, ObjectConverter.toNumber("-3000000000"));
+        assertEquals(1.5d, ObjectConverter.toNumber("1.5"));
+        assertEquals(1e5d, ObjectConverter.toNumber("1e5"));
+        assertEquals(2.5e-3d, ObjectConverter.toNumber("2.5E-3"));
+    }
 }
