@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The pooled component has no singleton producer, so a producer which is released is reused from the pool by the next
  * exchange, and a producer which is not released makes the next exchange create and start a new producer.
  */
-public class RecipientListReleaseUnsentProducerTest extends ContextTestSupport {
+class RecipientListReleaseUnsentProducerTest extends ContextTestSupport {
 
     private final AtomicInteger producersStarted = new AtomicInteger();
     private final AtomicInteger producersSent = new AtomicInteger();
@@ -62,7 +62,7 @@ public class RecipientListReleaseUnsentProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testStopOnException() {
+    void testStopOnException() {
         for (int i = 0; i < 5; i++) {
             Exchange out = template.send("direct:stop", e -> e.getIn().setHeader("to", "direct:boom,pooled:b"));
             assertNotNull(out.getException());
@@ -74,7 +74,7 @@ public class RecipientListReleaseUnsentProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testStopOnExceptionParallel() {
+    void testStopOnExceptionParallel() {
         for (int i = 0; i < 5; i++) {
             Exchange out = template.send("direct:parallel", e -> e.getIn().setHeader("to", "direct:boom,pooled:b"));
             assertNotNull(out.getException());
@@ -86,7 +86,7 @@ public class RecipientListReleaseUnsentProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPrototypeEndpointStopped() {
+    void testPrototypeEndpointStopped() {
         for (int i = 0; i < 5; i++) {
             final int n = i;
             Exchange out = template.send("direct:prototype", e -> e.getIn().setHeader("to", "direct:boom,pooled:c" + n));
@@ -99,7 +99,7 @@ public class RecipientListReleaseUnsentProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTimeout() {
+    void testTimeout() {
         try {
             for (int i = 0; i < 2; i++) {
                 Exchange out = template.send("direct:timeout",
