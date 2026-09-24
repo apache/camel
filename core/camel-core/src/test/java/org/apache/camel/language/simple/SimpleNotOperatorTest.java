@@ -63,6 +63,24 @@ public class SimpleNotOperatorTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testInsideTheBraces() {
+        exchange.getMessage().setBody(new LinkedHashMap<>(Map.of("a", 1)));
+        // a ! in front of the function inside the braces, with and without a nested ${ }
+        assertTrue(predicate("${!body.isEmpty()}"));
+        assertFalse(predicate("${!body.containsKey('a')}"));
+        assertTrue(predicate("${body != null && !body.isEmpty()}"));
+        assertTrue(predicate("${!body.isEmpty() && body != null}"));
+    }
+
+    @Test
+    public void testNegatesOnlyItsOwnFunction() {
+        exchange.getMessage().setBody(new LinkedHashMap<>(Map.of("a", 1)));
+        // (!isEmpty) && (body == null) is true && false; negating the whole predicate would answer true
+        assertFalse(predicate("${!body.isEmpty() && body == null}"));
+        assertFalse(predicate("!${body.isEmpty()} && ${body} == null"));
+    }
+
+    @Test
     public void testEmptyBodyIsNegatedToFalse() {
         exchange.getMessage().setBody(new LinkedHashMap<>());
         assertFalse(predicate("!${body.isEmpty()}"));

@@ -234,6 +234,11 @@ public final class SimpleSyntaxHints {
                 }
             }
         }
+        if (text.length() > 1 && text.charAt(0) == '!' && !text.startsWith("!${")) {
+            // a negated function on its own, such as !body.isEmpty(): the predicate parser reads a ! in front of
+            // a ${ }, so give it that form (CAMEL-24984)
+            return "!${" + text.substring(1).trim() + "}";
+        }
         return text;
     }
 

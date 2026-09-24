@@ -262,8 +262,12 @@ The `!` operator is written directly in front of the function it negates, and on
 // true when the body is not empty
 simple("!${body.isEmpty()}")
 
-// it groups with && and || like any other predicate
+// the same written inside the braces
+simple("${!body.isEmpty()}")
+
+// it groups with && and || like any other predicate, and negates only its own function
 simple("!${body.isEmpty()} && ${header.foo} == 'bar'")
+simple("${!body.isEmpty() && header.foo == 'bar'}")
 ----
 
 In an expression a `!` is ordinary text, so a message such as `Hello ${body}!` is unaffected. Note that `!` negates a
