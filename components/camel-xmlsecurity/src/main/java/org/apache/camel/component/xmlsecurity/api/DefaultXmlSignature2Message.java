@@ -392,7 +392,6 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 // a lone absent-URI reference leaves sameDocumentReferenceSeen false and the document is rejected.
                 continue;
             }
-            }
             if (uri.isEmpty()) {
                 // The whole document is covered
                 return;
