@@ -150,13 +150,17 @@ public class SedaProducer extends DefaultAsyncProducer {
                     latch.await();
                 } catch (InterruptedException e) {
                     LOG.debug("Interrupted while waiting for task to complete at [{}]", endpoint.getEndpointUri());
+                    if (completed.compareAndSet(false, true)) {
+                        // the task has not completed so fail the exchange (do not return the request as the reply)
+                        exchange.setException(e);
+                        // remove the Exchange from queue (if not yet processed), and a later reply is ignored
+                        endpoint.getQueue().remove(copy);
+                    } else {
+                        // the response is being copied into the exchange, so wait for the copy to complete
+                        // (the exchange must not be changed after we have returned)
+                        awaitUninterruptibly(latch);
+                    }
                     Thread.currentThread().interrupt();
-                    // the task has not completed so fail the exchange (do not return the request as the reply)
-                    exchange.setException(e);
-                    // remove the Exchange from queue (if not yet processed)
-                    endpoint.getQueue().remove(copy);
-                    // count down to indicate the reply must be ignored
-                    latch.countDown();
                 }
             }
         } else {

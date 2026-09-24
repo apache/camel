@@ -41,8 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A reply that arrives while the seda producer times out must either be returned to the caller, or be ignored. It must
- * never be copied into the caller's exchange after the producer has returned with the timeout.
+ * A reply that arrives while the seda producer times out, or is interrupted, must either be returned to the caller, or
+ * be ignored. It must never be copied into the caller's exchange after the producer has returned with the timeout (or
+ * the interruption).
  */
 public class SedaTimeoutLateReplyTest extends ContextTestSupport {
 
@@ -101,6 +102,56 @@ public class SedaTimeoutLateReplyTest extends ContextTestSupport {
             releaseCopy.countDown();
             executor.shutdownNow();
         }
+    }
+
+    @Test
+    public void testReplyBeingCopiedWhenInterrupted() throws Exception {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        AtomicReference<Thread> caller = new AtomicReference<>();
+        AtomicBoolean interruptedAfterSend = new AtomicBoolean();
+        try {
+            Future<Exchange> future = executor.submit(() -> {
+                caller.set(Thread.currentThread());
+                Exchange exchange = context.getEndpoint("seda:reply").createExchange(ExchangePattern.InOut);
+                exchange.getMessage().setBody("request");
+                Exchange answer = template.send("seda:reply?timeout=0", exchange);
+                interruptedAfterSend.set(Thread.currentThread().isInterrupted());
+                return answer;
+            });
+
+            // the consumer is copying its reply into the caller's exchange
+            assertTrue(copyStarted.await(10, TimeUnit.SECONDS));
+            // interrupt the producer while the copy is in progress: either the producer returns
+            // or it waits (uninterruptibly) for the copy to complete
+            caller.get().interrupt();
+            await().atMost(10, TimeUnit.SECONDS)
+                    .until(() -> future.isDone() || isWaitingForCopy(caller.get()));
+            boolean returnedBeforeCopyCompleted = future.isDone();
+            releaseCopy.countDown();
+
+            Exchange out = future.get(10, TimeUnit.SECONDS);
+            // the reply won the race, so the caller gets the complete reply, and the interrupt status is kept
+            assertFalse(returnedBeforeCopyCompleted, "Producer returned while the reply was copied into the exchange");
+            assertNull(out.getException());
+            assertEquals("reply", out.getMessage().getBody());
+            assertTrue(interruptedAfterSend.get(), "The interrupt status of the caller should be kept");
+        } finally {
+            releaseCopy.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    private static boolean isWaitingForCopy(Thread thread) {
+        if (thread.getState() != Thread.State.WAITING) {
+            return false;
+        }
+        for (StackTraceElement element : thread.getStackTrace()) {
+            if (SedaProducer.class.getName().equals(element.getClassName())
+                    && "awaitUninterruptibly".equals(element.getMethodName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Test
