@@ -270,7 +270,7 @@ simple("!${body.isEmpty()} && ${header.foo} == 'bar'")
 simple("${!body.isEmpty() && header.foo == 'bar'}")
 ----
 
-In an expression a `!` is ordinary text, so a message such as `Hello \${body}!` is unaffected.
+In an expression a `!` is ordinary text, so a message such as `Hello $\{body}!` is unaffected.
 
 `!` answers the opposite of what the function answers as a predicate on its own, which is the rule the language
 already uses: a value that is not null and not `false` is true, and null is false.
@@ -278,20 +278,20 @@ already uses: a value that is not null and not `false` is true, and null is fals
 [width="100%",cols="40%,20%,40%",options="header"]
 |====
 |Expression |Answer |Why
-|`!\${body.isEmpty()}` |`true` |the body is not empty
-|`!\${header.missing}` |`true` |a missing header is false, so its opposite is true
-|`!\${body}` |`false` |a body that is set is true
+|`!$\{body.isEmpty()}` |`true` |the body is not empty
+|`!$\{header.missing}` |`true` |a missing header is false, so its opposite is true
+|`!$\{body}` |`false` |a body that is set is true
 |====
 
 ==== Where it does not work
 
-* *A `!` must be directly in front of the function.* `! \${body.isEmpty()}` with a space is not the operator.
-* *`!` negates a function, not a comparison.* `!\${body} == 'x'` is refused: negate the operator instead and write
-  `\${body} != 'x'`, or one of `!contains`, `!startsWith`, `!endsWith`, `!in`, `!is`, `!range`, `!regex`, which are
+* *A `!` must be directly in front of the function.* `! $\{body.isEmpty()}` with a space is not the operator.
+* *`!` negates a function, not a comparison.* `!$\{body} == 'x'` is refused: negate the operator instead and write
+  `$\{body} != 'x'`, or one of `!contains`, `!startsWith`, `!endsWith`, `!in`, `!is`, `!range`, `!regex`, which are
   unchanged.
-* *It cannot be the right hand side of a comparison.* `\${body} == !\${header.foo}` is refused.
-* *Double negation only works inside the braces.* `\${!!body.isEmpty()}` answers what you would expect, while
-  `!!\${body.isEmpty()}` is not valid.
+* *It cannot be the right hand side of a comparison.* `$\{body} == !$\{header.foo}` is refused.
+* *Double negation only works inside the braces.* `$\{!!body.isEmpty()}` answers what you would expect, while
+  `!!$\{body.isEmpty()}` is not valid.
 
 The syntax for AND is:
 
