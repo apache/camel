@@ -260,7 +260,15 @@ xref:platform-http-component.adoc[Platform HTTP], and Spring Boot when using the
 reject the parameter.
 
 On Camel Main and Quarkus, the catch-all route is evaluated last on the HTTP server, so it never shadows the
-operations of other APIs served by the same server, even when their base paths are nested under this API.
+operation routes of other APIs served by the same server, even when their base paths are nested under this API.
+
+[NOTE]
+====
+With nested base paths (for example `/api` and `/api/v3`), the order of the catch-all follows the order in
+which the consumers start: `PUT /api/v3/pet/123` may get a 404 from `/api` instead of 405 with an `Allow`
+header from `/api/v3`. To work around this, avoid nesting the base paths of several APIs in `camel`
+mode, or inspect the request in a custom `RestOpenApiUnmatchedRequestHandler` and determine the proper response.
+====
 
 When the request has been routed to Camel, the response body (and headers) can be customized by registering a
 bean in the xref:manual::registry.adoc[Registry] that implements the `RestOpenApiUnmatchedRequestHandler` interface.
