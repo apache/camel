@@ -1063,7 +1063,7 @@ final class SourceEditAssist {
     }
 
     List<AutocompletePopup.CompletionItem> provideTreeCompletions(String contextAfterPrefix) {
-        // context format: "nodeName" or "nodeName:existingKey1,existingKey2,..."
+        // The node is a name or slash-separated path with URL-encoded keys, optionally followed by :existingKey1,...
         String[] parts = contextAfterPrefix.split(":", 2);
         String nodeName = parts[0];
 
@@ -1120,7 +1120,7 @@ final class SourceEditAssist {
     }
 
     List<AutocompletePopup.CompletionItem> provideTreeValueCompletions(String contextAfterPrefix) {
-        // context format: "nodeName:optionName"
+        // The node is a name or slash-separated path with URL-encoded keys, followed by :optionName.
         String[] parts = contextAfterPrefix.split(":", 2);
         if (parts.length < 2) {
             return List.of();

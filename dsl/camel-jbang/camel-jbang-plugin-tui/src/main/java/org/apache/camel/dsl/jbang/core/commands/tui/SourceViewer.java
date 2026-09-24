@@ -1104,7 +1104,7 @@ class SourceViewer {
             return;
         }
 
-        // tree-driven completion — walk up to find parent key, use completion tree
+        // Tree completion uses the full YAML path so named map entries retain their schema context.
         if (autocompleteProvider != null) {
             String parentKey = yaml.findParentYamlKey(row);
             String parentPath = yaml.findParentYamlPath(row);
