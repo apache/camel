@@ -97,6 +97,9 @@ public class SimpleNotOperatorTest extends ExchangeTestSupport {
         SimpleIllegalSyntaxException e = assertThrows(SimpleIllegalSyntaxException.class,
                 () -> predicate("!${body} == 'x'"));
         assertTrue(e.getMessage().contains("! cannot be compared"), e.getMessage());
+        // the operator that says the opposite, not a mangled one
+        assertTrue(e.getMessage().contains("${...} != value"), e.getMessage());
+        assertFalse(e.getMessage().contains("!=!="), e.getMessage());
         assertThrows(SimpleIllegalSyntaxException.class, () -> predicate("${body} == !${body}"));
         // the negated operator is the way to say it
         assertTrue(predicate("${body} != 'x'"));

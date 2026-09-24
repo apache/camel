@@ -19,6 +19,7 @@ package org.apache.camel.language.simple.ast;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,30 +64,30 @@ public class BinaryExpression extends BaseSimpleNode {
             // ! negates a function, not a comparison: !${body} == 'x' would read as neither of the two things it
             // could mean, so it is refused and the negated operator is offered instead (CAMEL-24984)
             throw new SimpleParserException(
-                    "! cannot be compared: it negates a function, so negate the operator instead, e.g. "
-                                            + operator.toString().replace("=", "!=") + " or write "
-                                            + "${" + "..." + "} " + negatedOperator() + " value",
+                    "! cannot be compared: it negates a function, not a comparison"
+                                            + (negatedOperator() != null
+                                                    ? ": write ${...} " + negatedOperator() + " value"
+                                                    : ": compare the other way round"),
                     getToken().getIndex());
         }
         this.left = lef;
         return true;
     }
 
-    /** The operator that says the opposite, for the message above. */
+    /** The eleven operators that have one saying the opposite; the comparisons do not, and answer null. */
+    private static final Set<String> NEGATED = Set.of(
+            "==", "=~", "~~", "contains", "endsWith", "equals", "in", "is", "range", "regex", "startsWith");
+
+    /**
+     * The operator that says the opposite of this one, or null when it has none: {@code >} and the other comparisons
+     * are negated by using the opposite comparison, not by putting a ! in front of them.
+     */
     private String negatedOperator() {
         String text = operator.toString();
-        if ("==".equals(text)) {
-            return "!=";
-        } else if ("contains".equals(text)) {
-            return "!contains";
-        } else if ("startsWith".equals(text)) {
-            return "!startsWith";
-        } else if ("endsWith".equals(text)) {
-            return "!endsWith";
-        } else if ("in".equals(text)) {
-            return "!in";
+        if (!NEGATED.contains(text)) {
+            return null;
         }
-        return "!" + text;
+        return "==".equals(text) ? "!=" : "!" + text;
     }
 
     public boolean acceptRightNode(SimpleNode right) {
