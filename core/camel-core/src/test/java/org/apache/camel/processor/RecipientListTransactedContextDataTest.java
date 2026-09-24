@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Each transaction must get its own transaction context data when a transacted exchange goes through a recipient list.
@@ -47,6 +48,18 @@ public class RecipientListTransactedContextDataTest extends ContextTestSupport {
         assertNotSame(data.get(0), data.get(1), "two transactions must not share the transaction context data");
     }
 
+    @Test
+    public void testTransactionContextDataIsSharedWithinTransaction() {
+        template.sendBody("direct:two", "A");
+        template.sendBody("direct:two", "B");
+
+        assertEquals(4, data.size());
+        assertNotNull(data.get(0));
+        assertSame(data.get(0), data.get(1), "the recipients of one transaction must share the transaction context data");
+        assertSame(data.get(2), data.get(3), "the recipients of one transaction must share the transaction context data");
+        assertNotSame(data.get(0), data.get(2), "two transactions must not share the transaction context data");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -55,6 +68,10 @@ public class RecipientListTransactedContextDataTest extends ContextTestSupport {
                 from("direct:start")
                         .process(e -> e.getExchangeExtension().setTransacted(true))
                         .recipientList(constant("direct:a"));
+
+                from("direct:two")
+                        .process(e -> e.getExchangeExtension().setTransacted(true))
+                        .recipientList(constant("direct:a,direct:a"));
 
                 from("direct:a")
                         .process(e -> data.add(e.getProperty(Exchange.TRANSACTION_CONTEXT_DATA, Map.class)));

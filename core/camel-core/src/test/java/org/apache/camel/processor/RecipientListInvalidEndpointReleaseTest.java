@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Consumer;
@@ -39,15 +40,30 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public class RecipientListInvalidEndpointReleaseTest extends ContextTestSupport {
 
-    private final AtomicInteger started = new AtomicInteger();
-    private final AtomicInteger stopped = new AtomicInteger();
+    private final Map<String, AtomicInteger> started = new ConcurrentHashMap<>();
+    private final Map<String, AtomicInteger> stopped = new ConcurrentHashMap<>();
 
     @Test
     public void testProducersReleasedWhenLaterRecipientIsInvalid() {
         assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello"));
 
-        assertEquals(1, started.get());
-        assertEquals(1, stopped.get(), "the producer of the prototype recipient should be released and stopped");
+        assertEquals(1, count(started, "a"));
+        assertEquals(1, count(stopped, "a"), "the producer of the prototype recipient should be released and stopped");
+    }
+
+    @Test
+    public void testCachedProducerReleasedWhenLaterRecipientIsInvalid() {
+        assertThrows(Exception.class, () -> template.sendBody("direct:cached", "Hello"));
+        assertThrows(Exception.class, () -> template.sendBody("direct:cached", "World"));
+
+        // the producer is not a singleton, so it is pooled: when released after the first message,
+        // the second message acquires it from the pool again, instead of creating a new producer
+        assertEquals(1, count(started, "c"), "the pooled producer should be released and reused");
+    }
+
+    private static int count(Map<String, AtomicInteger> counters, String key) {
+        AtomicInteger counter = counters.get(key);
+        return counter != null ? counter.get() : 0;
     }
 
     @Override
@@ -66,14 +82,19 @@ public class RecipientListInvalidEndpointReleaseTest extends ContextTestSupport 
 
                             @Override
                             protected void doStart() {
-                                started.incrementAndGet();
+                                started.computeIfAbsent(remaining, k -> new AtomicInteger()).incrementAndGet();
                             }
 
                             @Override
                             protected void doStop() {
-                                stopped.incrementAndGet();
+                                stopped.computeIfAbsent(remaining, k -> new AtomicInteger()).incrementAndGet();
                             }
                         };
+                    }
+
+                    @Override
+                    public boolean isSingletonProducer() {
+                        return false;
                     }
 
                     @Override
@@ -88,6 +109,8 @@ public class RecipientListInvalidEndpointReleaseTest extends ContextTestSupport 
             @Override
             public void configure() {
                 from("direct:start").recipientList(constant("track:a,unknownxyz:b")).cacheSize(-1);
+
+                from("direct:cached").recipientList(constant("track:c,unknownxyz:d"));
             }
         };
     }
