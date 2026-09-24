@@ -36,7 +36,7 @@ public abstract class BasicExpressionNode<T extends BasicExpressionNode<T>> exte
 
     @Metadata(required = true,
               description = "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.")
-    @XmlElementRef(required = false)
+    @XmlElementRef
     @DslArg
     private ExpressionDefinition expression;
 

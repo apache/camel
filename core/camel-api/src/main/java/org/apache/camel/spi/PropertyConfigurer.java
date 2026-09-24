@@ -38,24 +38,6 @@ import org.apache.camel.CamelContext;
 public interface PropertyConfigurer {
 
     /**
-     * Optionally binds a value before resolving bean or class references. Property placeholders are resolved before
-     * this call when placeholder resolution was requested by the caller. This allows an option that owns reference
-     * resolution and lifecycle to retain the reference text. Returning false leaves the normal binding behavior
-     * unchanged.
-     *
-     * @param  camelContext the Camel context
-     * @param  target       the target instance
-     * @param  name         the property name
-     * @param  value        the value before reference resolution
-     * @param  ignoreCase   whether to ignore case for matching the property name
-     * @return              true if the property was configured
-     * @since               4.23
-     */
-    default boolean configureRaw(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        return false;
-    }
-
-    /**
      * Configures the property
      *
      * @param  camelContext the Camel context

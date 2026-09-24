@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.yaml.deserializers;
+package org.apache.camel.semantic.yaml;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
+import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.semantic.SemanticQuestion;
@@ -41,12 +42,17 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
 @YamlIn
 @YamlType(nodes = "semantic", properties = {
         @YamlProperty(name = "question",
-                      type = "map:org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$QuestionSchema",
+                      type = "map:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema",
                       required = true)
 })
-public class SemanticDefinitionDeserializer extends YamlDeserializerSupport implements ConstructNode {
+public class SemanticDefinitionDeserializer extends YamlDeserializerSupport implements ConstructNode, YamlDeserializerResolver {
     private static final Set<String> FIELDS
             = Set.of("type", "instructions", "state", "criteria", "threshold", "uncertainty", "uncertaintyPolicy");
+
+    @Override
+    public ConstructNode resolve(String id) {
+        return "semantic".equals(id) ? this : null;
+    }
 
     @Override
     public Object construct(Node node) {
@@ -56,7 +62,8 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         };
     }
 
-    public static void configure(CamelContext context, YamlDeserializationContext dc, Node root) {
+    @Override
+    public void preParse(YamlDeserializationContext dc, Node root) {
         if (!(root instanceof SequenceNode sequence)) {
             return;
         }
@@ -72,7 +79,13 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                 }
             }
         }
-        SemanticQuestions.get(context).replace(dc.getResource(), definitions);
+        CamelContext context = dc.getCamelContext();
+        SemanticQuestions questions = definitions.isEmpty()
+                ? context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class)
+                : SemanticQuestions.get(context);
+        if (questions != null) {
+            questions.replace(dc.getResource(), definitions);
+        }
     }
 
     private static Map<String, SemanticQuestion> read(Node node) {
@@ -144,13 +157,13 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
 
     @YamlType(properties = {
             @YamlProperty(name = "__oneOf",
-                          type = "object:org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$BooleanSchema",
+                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema",
                           oneOf = "kind", required = true),
             @YamlProperty(name = "__oneOf",
-                          type = "object:org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$ChoiceSchema",
+                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema",
                           oneOf = "kind", required = true),
             @YamlProperty(name = "__oneOf",
-                          type = "object:org.apache.camel.dsl.yaml.deserializers.SemanticDefinitionDeserializer$ScoreSchema",
+                          type = "object:org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema",
                           oneOf = "kind", required = true)
     })
     public static class QuestionSchema {

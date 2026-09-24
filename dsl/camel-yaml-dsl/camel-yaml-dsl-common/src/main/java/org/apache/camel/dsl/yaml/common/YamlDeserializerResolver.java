@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.common;
 
 import org.apache.camel.Ordered;
 import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.Node;
 
 /**
  * Resolves YAML node ids to SnakeYAML constructors.
@@ -51,6 +52,17 @@ public interface YamlDeserializerResolver extends Ordered {
 
     default ConstructNode resolve(Class<?> type) {
         return resolve(type.getName());
+    }
+
+    /**
+     * Prepares resource-wide declarations before any routes in the resource are constructed. Called in resolver
+     * precedence order, including for resources without declarations, so implementations can remove obsolete state when
+     * reloading. Implementations must not perform message processing here.
+     *
+     * @param context deserialization context containing the Camel context and resource
+     * @param root    parsed document root, including an empty sequence for a resource without declarations
+     */
+    default void preParse(YamlDeserializationContext context, Node root) {
     }
 
     /**

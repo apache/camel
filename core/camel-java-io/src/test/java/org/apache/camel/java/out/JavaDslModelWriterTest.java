@@ -46,20 +46,6 @@ import org.junit.jupiter.api.Test;
 
 public class JavaDslModelWriterTest {
 
-    @Test
-    public void testSelectorChoice() {
-        RouteDefinition route = new RouteDefinition();
-        route.setInput(new FromDefinition("direct:start"));
-        route.choice(new HeaderExpression("department"))
-                .when("billing").to("mock:billing")
-                .otherwise().to("mock:other");
-        String out = new JavaDslModelWriter().writeRouteDefinition(route);
-        Assertions.assertTrue(out.contains(".choice(header(\"department\"))"));
-        Assertions.assertTrue(out.contains(".when(\"billing\")"));
-        Assertions.assertFalse(out.contains(".value("));
-        Assertions.assertFalse(out.contains(".when()"));
-    }
-
     private String loadExpected(String name) throws IOException {
         return Files.readString(Paths.get("src/test/resources/" + name));
     }

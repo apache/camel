@@ -61,8 +61,8 @@ public class SemanticLanguage extends LanguageSupport {
     }
 
     /**
-     * Adapter registry reference (#bean:name) or implementation class (plain FQCN or #class:FQCN). Absent selects the
-     * sole advertised adapter.
+     * Adapter registry bean name or fully qualified implementation class name, without a reference prefix. Registry
+     * lookup takes precedence over class resolution. Absent selects the sole advertised adapter.
      */
     public void setAdapter(String adapter) {
         this.adapter = adapter;
@@ -113,17 +113,19 @@ public class SemanticLanguage extends LanguageSupport {
         }
         CamelContext context = getCamelContext();
         String configured = adapter == null ? null : context.resolvePropertyPlaceholders(adapter);
-        if (configured != null && configured.startsWith("#") && !configured.startsWith("#class:")) {
-            String name = configured.startsWith("#bean:") ? configured.substring(6) : configured.substring(1);
-            if (name.contains(":")) {
-                throw new IllegalArgumentException("Semantic adapter reference must use #bean:name, #name or #class:FQCN");
+        if (configured != null) {
+            if (configured.isBlank() || configured.startsWith("#")) {
+                throw new IllegalArgumentException("Semantic adapter must be a bean name or class name without a # prefix");
             }
-            Object bean = context.getRegistry().lookupByName(name);
-            if (!(bean instanceof SemanticAdapter found)) {
-                throw new IllegalArgumentException("Semantic adapter bean is missing or does not implement SemanticAdapter");
+            Object bean = context.getRegistry().lookupByName(configured);
+            if (bean != null) {
+                if (!(bean instanceof SemanticAdapter found)) {
+                    throw new IllegalArgumentException(
+                            "Semantic adapter bean does not implement SemanticAdapter: " + configured);
+                }
+                selectedAdapter = found;
+                return found;
             }
-            selectedAdapter = found;
-            return found;
         }
         ManagedAdapter owned = null;
         try {
@@ -146,11 +148,11 @@ public class SemanticLanguage extends LanguageSupport {
                 }
                 className = candidates.iterator().next();
             }
-            if (className.startsWith("#class:")) {
-                className = className.substring(7);
+            Class<?> resolved = context.getClassResolver().resolveClass(className);
+            if (resolved == null) {
+                throw new IllegalArgumentException("No semantic adapter bean or class found: " + className);
             }
-            Class<? extends SemanticAdapter> type
-                    = context.getClassResolver().resolveMandatoryClass(className).asSubclass(SemanticAdapter.class);
+            Class<? extends SemanticAdapter> type = resolved.asSubclass(SemanticAdapter.class);
             synchronized (context.getRegistry()) {
                 if (context.getRegistry().lookupByName(ADAPTER_NAME) != null) {
                     throw new IllegalArgumentException("Semantic adapter registry name is already bound: " + ADAPTER_NAME);

@@ -535,9 +535,6 @@ public final class PropertyBindingSupport {
 
         // prepare the value before it is bound
         try {
-            if (configurer != null && configurer.configureRaw(camelContext, target, key, text, ignoreCase)) {
-                return true;
-            }
             Object str = resolveValue(camelContext, target, key, text, ignoreCase, fluentBuilder,
                     allowPrivateSetter, reflection, configurer);
             // resolve property placeholders

@@ -139,6 +139,13 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         loadResolvers();
     }
 
+    /** Prepares resource-wide declarations using the discovered resolvers. */
+    public void preParse(Node root) {
+        for (ResolverEntry entry : resolvers) {
+            entry.resolver.preParse(this, root);
+        }
+    }
+
     private void loadResolvers() {
         ObjectHelper.notNull(camelContext, "camel context");
 

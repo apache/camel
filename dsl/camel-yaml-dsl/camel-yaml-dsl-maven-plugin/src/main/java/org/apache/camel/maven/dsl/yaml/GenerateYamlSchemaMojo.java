@@ -250,9 +250,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     .map(AnnotationValue::asBoolean)
                     .orElse(false);
 
-            boolean isInOneOf
-                    = (!canonical || propertyName.equals("__oneOf") || "org.apache.camel.model.WhenDefinition".equals(type))
-                            && !StringUtils.isEmpty(propertyOneOf);
+            boolean isInOneOf = (!canonical || propertyName.equals("__oneOf")) && !StringUtils.isEmpty(propertyOneOf);
             if (isInOneOf) {
                 if (!oneOfGroups.containsKey(propertyOneOf)) {
                     var oneOfGroup = objectDefinition.withArray("anyOf").addObject();
@@ -328,8 +326,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 if (!propertyRequired) {
                     makeOptional(oneOf, entry);
                 }
-                // Canonical completion metadata also reads the top-level property schemas.
-                finalObjectDefinition = canonical ? objectDefinition : entry;
+                finalObjectDefinition = entry;
                 propertyRequired = false;
             }
 

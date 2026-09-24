@@ -17,12 +17,9 @@
 package org.apache.camel.reifier;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -52,25 +49,6 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         final boolean isPrecondition = Boolean.TRUE == parseBoolean(definition.getPrecondition());
-        boolean selecting = definition.getSelector() != null;
-        if (selecting && isPrecondition) {
-            throw new IllegalArgumentException("Choice selector cannot be combined with precondition mode");
-        }
-        Set<String> uniqueValues = new HashSet<>();
-        for (WhenDefinition when : definition.getWhenClauses()) {
-            if (selecting) {
-                if (when.getValue() == null || when.getExpression() != null) {
-                    throw new IllegalArgumentException("Choice selector requires literal when values without predicates");
-                }
-                if (!uniqueValues.add(parseString(when.getValue()))) {
-                    throw new IllegalArgumentException("Choice selector has duplicate when values");
-                }
-            } else if (when.getValue() != null || when.getExpression() == null) {
-                throw new IllegalArgumentException("Choice without a selector requires when predicates without values");
-            }
-        }
-        Expression selector = selecting ? createExpression(definition.getSelector().getExpressionType()) : null;
-        List<String> values = selecting ? new ArrayList<>() : null;
         final List<FilterProcessor> filters = isPrecondition ? null : new ArrayList<>();
         for (WhenDefinition whenClause : definition.getWhenClauses()) {
             if (filters != null) {
@@ -80,7 +58,7 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 if (!isDisabled(camelContext, whenClause)) {
                     // ensure id is assigned on when
                     whenClause.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
-                    when = selecting ? exchange -> true : createPredicate(whenClause.getExpression());
+                    when = createPredicate(whenClause.getExpression());
                     output = createOutputsProcessor(whenClause.getOutputs());
                     if (output == null) {
                         // when with no outputs, then its like its disabled
@@ -90,9 +68,6 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 }
                 if (when != null) {
                     filters.add(new FilterProcessor(camelContext, when, output));
-                    if (selecting) {
-                        values.add(parseString(whenClause.getValue()));
-                    }
                 }
             }
         }
@@ -108,7 +83,7 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                 otherwiseProcessor = createOutputsProcessor(definition.getOtherwise().getOutputs());
             }
         }
-        ChoiceProcessor answer = new ChoiceProcessor(filters, otherwiseProcessor, selector, values);
+        ChoiceProcessor answer = new ChoiceProcessor(filters, otherwiseProcessor);
         answer.setDisabled(isDisabled(camelContext, definition));
         return answer;
     }

@@ -63,30 +63,33 @@ class SemanticSchemaTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void selectorBranchRequiresExactlyOneValueOrExpression(boolean canonical) throws Exception {
+    void storedSemanticDecisionUsesOrdinaryChoicePredicates(boolean canonical) throws Exception {
         YamlValidator validator = new YamlValidator(canonical);
         String route = """
                 - route:
                     from:
                       uri: direct:start
                       steps:
+                        - setProperty:
+                            name: department
+                            expression:
+                              language:
+                                language: semantic
+                                expression: ref:department
                         - choice:
-                            selector:
-                              header:
-                                expression: department
                             when:
-                              - value: billing
+                              - expression:
+                                  simple:
+                                    expression: "${exchangeProperty.department} == 'billing'"
                                 steps:
                                   - to:
                                       uri: mock:billing
                 """;
         assertThat(validator.validate(route)).isEmpty();
-        assertThat(validator.validate(route.replace("value: billing",
-                "expression:\n                  constant:\n                    expression: billing")))
-                .isEmpty();
-        assertThat(validator.validate(route.replace("value: billing",
-                "value: billing\n                expression:\n                  constant:\n                    expression: billing")))
-                .isNotEmpty();
-        assertThat(validator.validate(route.replace("- value: billing\n                steps:", "- steps:"))).isNotEmpty();
+        assertThat(validator.validate(route.replace("""
+                              - expression:
+                                  simple:
+                                    expression: "${exchangeProperty.department} == 'billing'"
+                """, "              - value: billing\n"))).isNotEmpty();
     }
 }
