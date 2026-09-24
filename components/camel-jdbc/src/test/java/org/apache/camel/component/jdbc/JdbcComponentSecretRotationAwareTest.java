@@ -70,7 +70,7 @@ class JdbcComponentSecretRotationAwareTest {
     }
 
     @Test
-    void evictDataSourceConnections_genericPool_doesNotThrow() throws Exception {
+    void evictDataSourceConnections_genericPool_doesNotThrow() {
         // Arrange: a DataSource without getHikariPoolMXBean() — the generic fallback path
         DataSource generic = new NoOpDataSource();
 

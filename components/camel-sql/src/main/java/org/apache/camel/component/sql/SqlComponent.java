@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.sql;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -158,19 +155,7 @@ public class SqlComponent extends HealthCheckComponent implements SecretRotation
 
     @Override
     public void onSecretRotation(Object source) throws Exception {
-        // Use identity-based deduplication to avoid double-eviction when this.dataSource
-        // is the same object instance as a bean registered in the registry.
-        // (equals/hashCode on DataSource wrappers may delegate to the wrapped instance,
-        // causing a regular HashSet to miss duplicates or collapse distinct pools.)
-        Set<DataSource> dataSources = Collections.newSetFromMap(new IdentityHashMap<>());
-        dataSources.addAll(getCamelContext().getRegistry().findByType(DataSource.class));
-        if (this.dataSource != null) {
-            dataSources.add(this.dataSource);
-        }
-
-        for (DataSource ds : dataSources) {
-            DataSourceHelper.evictDataSourceConnections(ds, source);
-        }
+        DataSourceHelper.evictAllDataSourceConnections(getCamelContext().getRegistry(), this.dataSource, source);
     }
 
     /**

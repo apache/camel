@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -32,9 +29,13 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DataSourceHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("jdbc")
 public class JdbcComponent extends DefaultComponent implements SecretRotationAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcComponent.class);
 
     @Metadata
     private DataSource dataSource;
@@ -116,19 +117,7 @@ public class JdbcComponent extends DefaultComponent implements SecretRotationAwa
 
     @Override
     public void onSecretRotation(Object source) throws Exception {
-        // Use identity-based deduplication to avoid double-eviction when this.dataSource
-        // is the same object instance as a bean registered in the registry.
-        // (equals/hashCode on DataSource wrappers may delegate to the wrapped instance,
-        // causing a regular HashSet to miss duplicates or collapse distinct pools.)
-        Set<DataSource> dataSources = Collections.newSetFromMap(new IdentityHashMap<>());
-        dataSources.addAll(getCamelContext().getRegistry().findByType(DataSource.class));
-        if (this.dataSource != null) {
-            dataSources.add(this.dataSource);
-        }
-
-        for (DataSource ds : dataSources) {
-            DataSourceHelper.evictDataSourceConnections(ds, source);
-        }
+        DataSourceHelper.evictAllDataSourceConnections(getCamelContext().getRegistry(), this.dataSource, source);
     }
 
     private static boolean isDefaultDataSourceName(String remaining) {
