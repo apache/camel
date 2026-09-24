@@ -22,8 +22,10 @@ The following classes are deprecated:
 - `org.apache.camel.support.DefaultPooledExchange`
 - `org.apache.camel.impl.engine.PooledExchangeFactory`
 - `org.apache.camel.impl.engine.PooledProcessorExchangeFactory`
+- `org.apache.camel.processor.PooledExchangeTask`
 - `org.apache.camel.processor.PooledExchangeTaskFactory`
 - `org.apache.camel.processor.PooledTaskFactory`
+- `org.apache.camel.impl.engine.CamelInternalPooledTaskFactory`
 
 The following `camel.main` configuration properties are deprecated:
 
