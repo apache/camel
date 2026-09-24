@@ -32,9 +32,7 @@
     <description>Camel Spring Redis Component</description>
 
     <properties>
-        <spring-core-version>7.0.9</spring-core-version>
         <spring-data-commons-version>4.1.1</spring-data-commons-version>
-        <spring-tx-version>7.0.9</spring-tx-version>
 
     </properties>
 
@@ -48,12 +46,12 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>${spring-core-version}</version>
+                <version>${spring-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
-                <version>${spring-tx-version}</version>
+                <version>${spring-version}</version>
             </dependency>
         </dependencies>
 

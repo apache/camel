@@ -32,7 +32,6 @@
 
     <properties>
         <firstVersion>3.2.0</firstVersion>
-        <spring-context-version>7.0.9</spring-context-version>
         <label>spring</label>
     </properties>
 
@@ -41,7 +40,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>${spring-context-version}</version>
+                <version>${spring-version}</version>
             </dependency>
         </dependencies>
 

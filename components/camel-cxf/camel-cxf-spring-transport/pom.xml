@@ -35,7 +35,6 @@
     <properties>
         <cxf-core-version>4.2.3</cxf-core-version>
         <firstVersion>2.8.0</firstVersion>
-        <spring-beans-version>7.0.9</spring-beans-version>
         <label>soap,webservice</label>
         <title>CXF Transport</title>
 
@@ -53,7 +52,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>${spring-beans-version}</version>
+                <version>${spring-version}</version>
             </dependency>
         </dependencies>
 

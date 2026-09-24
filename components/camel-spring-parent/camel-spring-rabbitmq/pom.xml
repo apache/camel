@@ -34,8 +34,6 @@
     <properties>
         <amqp-client-version>5.31.0</amqp-client-version>
         <spring-amqp-version>4.1.1</spring-amqp-version>
-        <spring-aop-version>7.0.9</spring-aop-version>
-        <spring-core-version>7.0.9</spring-core-version>
 
     </properties>
 
@@ -73,7 +71,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring-core-version}</version>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>com.rabbitmq</groupId>
@@ -83,7 +81,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>${spring-aop-version}</version>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

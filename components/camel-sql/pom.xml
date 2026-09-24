@@ -33,8 +33,6 @@
 
     <properties>
         <camel.surefire.parallel>true</camel.surefire.parallel>
-        <spring-core-version>7.0.9</spring-core-version>
-        <spring-tx-version>7.0.9</spring-tx-version>
     </properties>
 
     <dependencies>
@@ -68,12 +66,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring-core-version}</version>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>${spring-tx-version}</version>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

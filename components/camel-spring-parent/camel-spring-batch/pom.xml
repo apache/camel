@@ -33,7 +33,6 @@
     <properties>
         <camel.surefire.parallel>true</camel.surefire.parallel>
         <spring-batch-infrastructure-version>6.0.5</spring-batch-infrastructure-version>
-        <spring-beans-version>7.0.9</spring-beans-version>
     </properties>
 
     <dependencyManagement>
@@ -46,7 +45,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>${spring-beans-version}</version>
+                <version>${spring-version}</version>
             </dependency>
         </dependencies>
 

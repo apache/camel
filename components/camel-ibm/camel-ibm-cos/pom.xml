@@ -44,11 +44,31 @@
                 <groupId>com.ibm.cos</groupId>
                 <artifactId>ibm-cos-java-sdk-core</artifactId>
                 <version>${ibm-cos-java-sdk-core-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.ibm.cos</groupId>
                 <artifactId>ibm-cos-java-sdk-s3</artifactId>
                 <version>${ibm-cos-java-sdk-s3-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
 

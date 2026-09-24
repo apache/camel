@@ -36,7 +36,6 @@
 
         <camel-prepare-component>false</camel-prepare-component>
         <cxf-core-version>4.2.3</cxf-core-version>
-        <spring-core-version>7.0.9</spring-core-version>
 
     </properties>
 
@@ -84,7 +83,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring-core-version}</version>
+            <version>${spring-version}</version>
         </dependency>
 
 

@@ -34,9 +34,6 @@
         <commons-logging-version>1.3.5</commons-logging-version>
         <firstVersion>4.12.0</firstVersion>
         <spring-boot-version>4.0.8</spring-boot-version>
-        <spring-context-version>7.0.9</spring-context-version>
-        <spring-core-version>7.0.9</spring-core-version>
-        <spring-web-version>7.0.9</spring-web-version>
     </properties>
 
     <dependencyManagement>
@@ -54,17 +51,17 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>${spring-context-version}</version>
+                <version>${spring-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>${spring-core-version}</version>
+                <version>${spring-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>${spring-web-version}</version>
+                <version>${spring-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>

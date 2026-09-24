@@ -34,9 +34,6 @@
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
-        <spring-beans-version>7.0.9</spring-beans-version>
-        <spring-context-version>7.0.9</spring-context-version>
-        <spring-core-version>7.0.9</spring-core-version>
         <label>testing,java,spring</label>
         <title>Test Spring JUnit5</title>
     </properties>
@@ -46,17 +43,17 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>${spring-beans-version}</version>
+                <version>${spring-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>${spring-context-version}</version>
+                <version>${spring-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>${spring-core-version}</version>
+                <version>${spring-version}</version>
             </dependency>
         </dependencies>
 

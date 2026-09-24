@@ -35,7 +35,6 @@
         <label>security</label>
         <firstVersion>3.3.0</firstVersion>
         <jakarta.servlet-api-version>6.0.0</jakarta.servlet-api-version>
-        <spring-core-version>7.0.9</spring-core-version>
         <spring-security-core-version>7.1.1</spring-security-core-version>
         <undertow-core-version>2.4.3.Final</undertow-core-version>
         <undertow-servlet-version>2.3.26.Final</undertow-servlet-version>
@@ -91,7 +90,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring-core-version}</version>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

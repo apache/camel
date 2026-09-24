@@ -45,7 +45,6 @@
         <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
         <camel.failsafe.fork.additional-vmargs>-XX:+ExitOnOutOfMemoryError -Xmx3G</camel.failsafe.fork.additional-vmargs>
         <commons-logging-version>1.4.0</commons-logging-version>
-        <spring-core-version>7.0.9</spring-core-version>
     </properties>
 
     <dependencies>
@@ -103,7 +102,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring-core-version}</version>
+            <version>${spring-version}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>

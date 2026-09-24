@@ -36,8 +36,6 @@
         <camel.surefire.parallel>true</camel.surefire.parallel>
        <jakarta.activation-api-version>2.1.4</jakarta.activation-api-version>
        <Saxon-HE-version>13.0</Saxon-HE-version>
-       <spring-beans-version>7.0.9</spring-beans-version>
-       <spring-core-version>7.0.9</spring-core-version>
        <spring-xml-version>5.0.2</spring-xml-version>
     </properties>
 
@@ -79,12 +77,12 @@
        <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-core</artifactId>
-          <version>${spring-core-version}</version>
+          <version>${spring-version}</version>
        </dependency>
        <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-beans</artifactId>
-          <version>${spring-beans-version}</version>
+          <version>${spring-version}</version>
        </dependency>
        <dependency>
           <groupId>org.apache.camel</groupId>
