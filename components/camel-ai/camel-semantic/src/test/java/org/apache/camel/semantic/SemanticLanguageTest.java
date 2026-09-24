@@ -16,14 +16,19 @@
  */
 package org.apache.camel.semantic;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
@@ -31,13 +36,18 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.impl.engine.DefaultFactoryFinder;
+import org.apache.camel.impl.engine.DefaultInjector;
 import org.apache.camel.language.semantic.SemanticLanguage;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -120,27 +130,118 @@ class SemanticLanguageTest {
     @Test
     void discoversOneAdapterAndRejectsMissingOrAmbiguousWithoutConstruction() throws Exception {
         language.setAdapter(null);
-        discovery("");
+        discovery();
         assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("exactly one");
-        discovery(CountingAdapter.class.getName() + "\n" + LabelAdapter.class.getName());
+        discovery("class=" + CountingAdapter.class.getName(), "class=" + LabelAdapter.class.getName());
         assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("explicitly");
         assertThat(CountingAdapter.constructed).hasValue(0);
-        discovery(CountingAdapter.class.getName() + "\n# comment\n" + CountingAdapter.class.getName());
+        discovery("class=" + CountingAdapter.class.getName(), "# same provider\nclass: " + CountingAdapter.class.getName());
         language.createExpression("ref:q");
         assertThat(CountingAdapter.constructed).hasValue(1);
+        assertThat(CountingAdapter.started).hasValue(1);
+        context.stop();
+        assertThat(CountingAdapter.stopped).hasValue(1);
     }
 
-    private void discovery(String declarations) throws Exception {
-        Path descriptor = directory.resolve("adapters");
-        Files.writeString(descriptor, declarations);
-        URL url = descriptor.toUri().toURL();
-        context.setClassResolver(new DefaultClassResolver() {
+    @ParameterizedTest
+    @ValueSource(strings = { "", "# no implementation", "class=", "class=   " })
+    void invalidDiscoveryDescriptorFailsBeforeConstruction(String declaration) throws Exception {
+        language.setAdapter(null);
+        discovery(declaration);
+        assertThatThrownBy(() -> language.createExpression("ref:q"))
+                .isInstanceOf(RuntimeCamelException.class).hasCauseInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("requires a class property").hasMessageContaining("adapter-0");
+        assertThat(CountingAdapter.constructed).hasValue(0);
+    }
+
+    @Test
+    void discoveredClassIsTypeCheckedBeforeConstruction() throws Exception {
+        NotAnAdapter.constructed.set(0);
+        language.setAdapter(null);
+        discovery("class=" + NotAnAdapter.class.getName());
+        assertThatThrownBy(() -> language.createExpression("ref:q"))
+                .isInstanceOf(RuntimeCamelException.class).hasCauseInstanceOf(ClassCastException.class);
+        assertThat(NotAnAdapter.constructed).hasValue(0);
+    }
+
+    @Test
+    void factoryFinderCannotSelectADifferentAdvertisedClass() throws Exception {
+        language.setAdapter(null);
+        discovery("class=" + CountingAdapter.class.getName());
+        context.getCamelContextExtension()
+                .setDefaultFactoryFinder(new DefaultFactoryFinder(context.getClassResolver(), FactoryFinder.DEFAULT_PATH) {
+                    @Override
+                    public Optional<Class<?>> findClass(String key) {
+                        return Optional.of(FailingAdapter.class);
+                    }
+                });
+        assertThatThrownBy(() -> language.createExpression("ref:q"))
+                .isInstanceOf(RuntimeCamelException.class).hasCauseInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("does not match advertised adapter");
+        assertThat(CountingAdapter.constructed).hasValue(0);
+    }
+
+    @Test
+    void discoveryUsesCamelInjectorForConstructorArguments() throws Exception {
+        language.setAdapter(null);
+        discovery("class=" + InjectedAdapter.class.getName());
+        context.setInjector(new DefaultInjector(context) {
+            @Override
+            public <T> T newInstance(Class<T> type, boolean postProcessBean) {
+                return type == InjectedAdapter.class
+                        ? type.cast(new InjectedAdapter("injected")) : super.newInstance(type, postProcessBean);
+            }
+        });
+        language.createExpression("ref:q");
+        InjectedAdapter instance
+                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, InjectedAdapter.class);
+        assertThat(instance.dependency).isEqualTo("injected");
+        assertThat(CountingAdapter.constructed).hasValue(1);
+        assertThat(CountingAdapter.started).hasValue(1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void explicitSelectionBypassesAmbiguousDiscovery(boolean bean) throws Exception {
+        discovery("class=" + CountingAdapter.class.getName(), "class=" + LabelAdapter.class.getName());
+        if (bean) {
+            context.getRegistry().bind("custom", new CountingAdapter());
+            language.setAdapter("custom");
+        }
+        language.createExpression("ref:q");
+        assertThat(CountingAdapter.constructed).hasValue(1);
+        assertThat(CountingAdapter.started).hasValue(bean ? 0 : 1);
+    }
+
+    private void discovery(String... declarations) throws Exception {
+        List<URL> urls = new ArrayList<>();
+        for (int i = 0; i < declarations.length; i++) {
+            Path descriptor = directory.resolve("adapter-" + i);
+            Files.writeString(descriptor, declarations[i]);
+            urls.add(descriptor.toUri().toURL());
+        }
+        var resolver = new DefaultClassResolver() {
             @Override
             public Enumeration<URL> loadAllResourcesAsURL(String name) {
                 return SemanticLanguage.ADAPTER_RESOURCE.equals(name)
-                        ? Collections.enumeration(List.of(url)) : super.loadAllResourcesAsURL(name);
+                        ? Collections.enumeration(urls) : super.loadAllResourcesAsURL(name);
             }
-        });
+
+            @Override
+            public InputStream loadResourceAsStream(String name) {
+                if (SemanticLanguage.ADAPTER_RESOURCE.equals(name)) {
+                    try {
+                        return urls.isEmpty() ? null : urls.get(0).openStream();
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                }
+                return super.loadResourceAsStream(name);
+            }
+        };
+        context.setClassResolver(resolver);
+        context.getCamelContextExtension()
+                .setDefaultFactoryFinder(new DefaultFactoryFinder(resolver, FactoryFinder.DEFAULT_PATH));
     }
 
     @Test
@@ -339,6 +440,22 @@ class SemanticLanguageTest {
         @Override
         protected void doStart() {
             throw new IllegalStateException("start failure");
+        }
+    }
+
+    public static class InjectedAdapter extends CountingAdapter {
+        final String dependency;
+
+        public InjectedAdapter(String dependency) {
+            this.dependency = dependency;
+        }
+    }
+
+    public static class NotAnAdapter {
+        static final AtomicInteger constructed = new AtomicInteger();
+
+        public NotAnAdapter() {
+            constructed.incrementAndGet();
         }
     }
 

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.language.semantic;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,12 +36,14 @@ import org.apache.camel.semantic.SemanticAdapter;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.semantic.SemanticResult;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 
 /** Evaluates a named, provider-independent question against selected message state. */
 @Language(value = "semantic", modelName = "language")
@@ -50,7 +52,8 @@ import org.apache.camel.support.service.ServiceSupport;
 public class SemanticLanguage extends LanguageSupport {
     public static final String RESULT = "CamelSemanticResult";
     public static final String ADAPTER_NAME = "camelSemanticAdapter";
-    public static final String ADAPTER_RESOURCE = "META-INF/services/org.apache.camel.semantic.SemanticAdapter";
+    public static final String ADAPTER_FACTORY = "semantic-adapter";
+    public static final String ADAPTER_RESOURCE = FactoryFinder.DEFAULT_PATH + ADAPTER_FACTORY;
 
     private String adapter;
     private String defaultState = "${body}";
@@ -129,28 +132,10 @@ public class SemanticLanguage extends LanguageSupport {
         }
         ManagedAdapter owned = null;
         try {
-            String className = configured;
-            if (className == null) {
-                Set<String> candidates = new TreeSet<>();
-                Enumeration<URL> resources = context.getClassResolver().loadAllResourcesAsURL(ADAPTER_RESOURCE);
-                while (resources.hasMoreElements()) {
-                    try (BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(
-                                    resources.nextElement().openStream(), StandardCharsets.UTF_8))) {
-                        reader.lines().map(line -> line.split("#", 2)[0].trim()).filter(line -> !line.isEmpty())
-                                .forEach(candidates::add);
-                    }
-                }
-                if (candidates.size() != 1) {
-                    throw new IllegalArgumentException(
-                            "Semantic language requires exactly one advertised adapter; found "
-                                                       + candidates + ". Configure camel.language.semantic.adapter explicitly");
-                }
-                className = candidates.iterator().next();
-            }
-            Class<?> resolved = context.getClassResolver().resolveClass(className);
+            Class<?> resolved = configured == null
+                    ? discoverAdapter(context) : context.getClassResolver().resolveClass(configured);
             if (resolved == null) {
-                throw new IllegalArgumentException("No semantic adapter bean or class found: " + className);
+                throw new IllegalArgumentException("No semantic adapter bean or class found: " + configured);
             }
             Class<? extends SemanticAdapter> type = resolved.asSubclass(SemanticAdapter.class);
             AdapterLock lock = AdapterLock.get(context);
@@ -177,6 +162,36 @@ public class SemanticLanguage extends LanguageSupport {
             }
             throw RuntimeCamelException.wrapRuntimeCamelException(failure);
         }
+    }
+
+    private Class<?> discoverAdapter(CamelContext context) throws IOException {
+        // FactoryFinder resolves one descriptor; check all declarations first to avoid classpath-order selection.
+        Set<String> candidates = new TreeSet<>();
+        Enumeration<URL> resources = context.getClassResolver().loadAllResourcesAsURL(ADAPTER_RESOURCE);
+        while (resources.hasMoreElements()) {
+            URL resource = resources.nextElement();
+            try (InputStream input = resource.openStream()) {
+                Properties properties = new Properties();
+                properties.load(IOHelper.buffered(input));
+                String className = properties.getProperty("class");
+                if (className == null || className.isBlank()) {
+                    throw new IllegalArgumentException("Semantic adapter descriptor requires a class property: " + resource);
+                }
+                candidates.add(className);
+            }
+        }
+        if (candidates.size() != 1) {
+            throw new IllegalArgumentException(
+                    "Semantic language requires exactly one advertised adapter; found "
+                                               + candidates + ". Configure camel.language.semantic.adapter explicitly");
+        }
+        Class<?> resolved = context.getCamelContextExtension().getDefaultFactoryFinder().findClass(ADAPTER_FACTORY)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot resolve advertised semantic adapter: " + candidates));
+        if (!candidates.contains(resolved.getName())) {
+            throw new IllegalArgumentException(
+                    "Resolved semantic adapter " + resolved.getName() + " does not match advertised adapter: " + candidates);
+        }
+        return resolved;
     }
 
     private static final class AdapterLock {
