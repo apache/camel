@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,15 +29,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DataSourceHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.PropertiesHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component("jdbc")
 public class JdbcComponent extends DefaultComponent implements SecretRotationAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcComponent.class);
 
     @Metadata
     private DataSource dataSource;
@@ -118,52 +116,19 @@ public class JdbcComponent extends DefaultComponent implements SecretRotationAwa
 
     @Override
     public void onSecretRotation(Object source) throws Exception {
-        // Collect all DataSources this component can reach: the one injected directly (if any)
-        // plus all DataSource beans registered in the registry. The registry beans are typically
-        // not recreated during a route reload, so their connection pools still hold connections
-        // that were authenticated with the old credentials.
-        Set<DataSource> dataSources = getCamelContext().getRegistry().findByType(DataSource.class);
+        // Use identity-based deduplication to avoid double-eviction when this.dataSource
+        // is the same object instance as a bean registered in the registry.
+        // (equals/hashCode on DataSource wrappers may delegate to the wrapped instance,
+        // causing a regular HashSet to miss duplicates or collapse distinct pools.)
+        Set<DataSource> dataSources = Collections.newSetFromMap(new IdentityHashMap<>());
+        dataSources.addAll(getCamelContext().getRegistry().findByType(DataSource.class));
         if (this.dataSource != null) {
             dataSources.add(this.dataSource);
         }
 
         for (DataSource ds : dataSources) {
-            evictDataSourceConnections(ds, source);
+            DataSourceHelper.evictDataSourceConnections(ds, source);
         }
-    }
-
-    /**
-     * Evicts stale connections from the given DataSource so that the pool rebuilds them with the rotated credentials.
-     * <p/>
-     * HikariCP is tried first via reflection (so camel-jdbc does not need a compile-time dependency on it). Any
-     * DataSource that does not expose {@code getHikariPoolMXBean()} is left untouched — the pool will pick up the new
-     * credentials on its own reconnect cycle when existing connections expire.
-     */
-    static void evictDataSourceConnections(DataSource ds, Object source) {
-        // HikariCP: softEvictConnections() is defined on HikariPoolMXBean, not on HikariDataSource directly.
-        // We retrieve the MXBean via getHikariPoolMXBean() (a public method on HikariDataSource) using reflection
-        // so that camel-jdbc does not need a compile-time dependency on HikariCP.
-        try {
-            Method getPoolMXBean = ds.getClass().getMethod("getHikariPoolMXBean");
-            Object poolMXBean = getPoolMXBean.invoke(ds);
-            if (poolMXBean != null) {
-                Method softEvict = poolMXBean.getClass().getMethod("softEvictConnections");
-                softEvict.invoke(poolMXBean);
-                LOG.info("Secret rotation (source={}): HikariCP softEvictConnections() called on {}", source, ds);
-                return;
-            }
-        } catch (NoSuchMethodException e) {
-            // Not a HikariCP DataSource — fall through to generic handling
-        } catch (Exception e) {
-            LOG.warn("Secret rotation (source={}): softEvictConnections() failed on {}: {}", source, ds, e.getMessage());
-        }
-
-        // Generic fallback: log that the pool was not explicitly evicted.
-        // The pool will pick up the new credentials when existing connections expire naturally.
-        LOG.info(
-                "Secret rotation (source={}): DataSource {} does not support HikariCP pool eviction; "
-                 + "existing connections will be replaced as they expire or are validated",
-                source, ds.getClass().getName());
     }
 
     private static boolean isDefaultDataSourceName(String remaining) {

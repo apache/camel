@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import org.apache.camel.spi.SecretRotationAware;
+import org.apache.camel.support.DataSourceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -62,7 +63,7 @@ class SqlComponentSecretRotationAwareTest {
         };
 
         // Act
-        SqlComponent.evictDataSourceConnections(hikariLike, "test");
+        DataSourceHelper.evictDataSourceConnections(hikariLike, "test");
 
         // Assert
         assertTrue(softEvictCalled.get(), "softEvictConnections() should have been called via HikariPoolMXBean");
@@ -74,7 +75,7 @@ class SqlComponentSecretRotationAwareTest {
         DataSource generic = new NoOpDataSource();
 
         // Act — must not throw
-        SqlComponent.evictDataSourceConnections(generic, "test");
+        DataSourceHelper.evictDataSourceConnections(generic, "test");
     }
 
     @Test
