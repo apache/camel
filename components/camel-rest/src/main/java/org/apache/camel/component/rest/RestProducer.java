@@ -29,6 +29,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -167,6 +168,17 @@ public class RestProducer extends DefaultAsyncProducer {
                     }
                 }
                 resolvedUriTemplate = uriTemplateBuilder.toString();
+
+                // a placeholder with no value would be sent as it is, and the service answers 404 for a path that
+                // holds a {name}: say which parameter it is instead (CAMEL-24986)
+                String unresolved = firstPlaceholder(resolvedUriTemplate);
+                if (unresolved != null) {
+                    throw new CamelExchangeException(
+                            "The path parameter {" + unresolved + "} of " + resolvedUriTemplate + " has no value:"
+                                                     + " set the header " + unresolved + ", or an exchange variable of"
+                                                     + " that name, before the call.",
+                            exchange);
+                }
             }
         }
 
@@ -219,6 +231,28 @@ public class RestProducer extends DefaultAsyncProducer {
         if (isEmpty(exchange.getMessage().getHeader(RestConstants.ACCEPT)) && isNotEmpty(consumes)) {
             exchange.getMessage().setHeader(RestConstants.ACCEPT, consumes);
         }
+    }
+
+    /**
+     * The name of the first {@code {name}} left in the template, or null when every one of them was resolved
+     * (CAMEL-24986).
+     */
+    private static String firstPlaceholder(String uriTemplate) {
+        int start = uriTemplate.indexOf('{');
+        while (start >= 0) {
+            int end = uriTemplate.indexOf('}', start);
+            if (end < 0) {
+                return null;
+            }
+            String name = uriTemplate.substring(start + 1, end);
+            // a name, not something else that happens to be in braces
+            if (!name.isEmpty() && name.chars().allMatch(c -> Character.isLetterOrDigit(c) || c == '_' || c == '-'
+                    || c == '.')) {
+                return name;
+            }
+            start = uriTemplate.indexOf('{', end);
+        }
+        return null;
     }
 
     /**

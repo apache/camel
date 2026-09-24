@@ -19,6 +19,7 @@ package org.apache.camel.component.rest;
 import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -32,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class RestProducerAdvancedTest {
@@ -84,12 +86,11 @@ class RestProducerAdvancedTest {
         RestProducer producer = new RestProducer(endpoint, mockProducer, config);
 
         Exchange exchange = new DefaultExchange(camelContext);
-        // Don't set the header, so placeholder won't be resolved
-        producer.prepareExchange(exchange);
-
-        // When placeholder is not resolved, REST_HTTP_URI should not be set
-        String uri = exchange.getMessage().getHeader(RestConstants.REST_HTTP_URI, String.class);
-        assertThat(uri).isNull();
+        // no header, so the placeholder has no value: the request would go out with {userId} in the path and the
+        // service would answer 404 for it, so it fails here instead and says which parameter it is (CAMEL-24986)
+        CamelExchangeException e = assertThrows(CamelExchangeException.class, () -> producer.prepareExchange(exchange));
+        assertThat(e.getMessage()).contains("The path parameter {userId}").contains("set the header userId");
+        assertThat(exchange.getMessage().getHeader(RestConstants.REST_HTTP_URI, String.class)).isNull();
     }
 
     @Test
