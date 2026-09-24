@@ -2812,3 +2812,12 @@ producer were never stopped.
 
 With `parallelProcessing`, a recipient whose task had not started yet when the Recipient List completed is now
 skipped instead of being sent to afterwards. As before, recipients that had already started keep running.
+
+== ThrottlingExceptionRoutePolicy
+
+`ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
+is suspended before the setter returns) rather than waiting for the next `onExchangeDone()` callback.
+This is the intended behaviour and makes the `keepOpen` toggle deterministic, but callers that previously
+relied on the setter being inert until an exchange arrived must be aware of the change.
+Setting `keepOpen` back to `false` remains deferred: the half-open timer attempts to close the circuit on
+its next tick (after `halfOpenAfter` milliseconds, default 30 s).
