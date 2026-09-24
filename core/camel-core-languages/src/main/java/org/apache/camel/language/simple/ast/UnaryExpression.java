@@ -96,6 +96,11 @@ public class UnaryExpression extends BaseSimpleNode {
     private Expression createNotExpression(CamelContext camelContext, final Expression exp) {
         return new Expression() {
             @Override
+            public void init(CamelContext context) {
+                exp.init(context);
+            }
+
+            @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 Object value = exp.evaluate(exchange, Object.class);
                 // the same rule the language uses for a predicate on its own, where ${body} is true and a missing
