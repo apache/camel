@@ -176,7 +176,8 @@ public class IdempotentConsumer extends BaseProcessorSupport
                 } else {
                     // we can use existing callback as target
                     target = callback;
-                    // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
+                    // the scope is to do the idempotent completion work as an unit of work on the exchange
+                    // when its done being routed
                     exchange.getExchangeExtension().addOnCompletion(onCompletion);
                 }
             }
