@@ -177,6 +177,38 @@ through the transformer. The defaults are unchanged when the header is absent.
 If a route sets `CamelAwsDdbReturnValues` before the transformer runs and relies on it being discarded, remove the
 header instead.
 
+=== camel-aws2-s3
+
+The producer no longer evaluates the S3 object key or bucket name taken from a message header as a Simple
+expression. `AWS2S3Utils.determineKey()` and `determineBucketName()` evaluate the Simple language only for the
+values configured on the endpoint (`keyName` and `bucketName`); a key supplied through the `CamelAwsS3Key` header,
+or a bucket name supplied through the `CamelAwsS3OverrideBucketName` header, is now used literally. The
+`CamelAwsS3Key` header carries message content — for example the name of a consumed object, which the consumer
+sets on the exchange — whereas a dynamic key or bucket is a route authoring feature.
+
+Configured dynamic keys and buckets are unchanged:
+
+[source,java]
+----
+from("direct:start")
+    .to("aws2-s3://mybucket?keyName=RAW(${date:now:yyyyMMdd}/file.txt)");
+----
+
+A route that needs a dynamic value on the header must evaluate it in the route, so the header already holds the
+resolved value when it reaches the producer:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader(AWS2S3Constants.KEY, simple("${date:now:yyyyMMdd}/file.txt"))
+    .to("aws2-s3://mybucket");
+----
+
+A header that carries a literal `${...}` string is now used as the object key verbatim instead of being evaluated.
+
+A configured `keyName` or `bucketName` whose Simple expression resolves to `null` now fails with an
+`IllegalArgumentException` at the producer, instead of passing a `null` key/bucket on to the AWS SDK.
+
 === camel-console
 
 The `context` developer console no longer counts routes created by Kamelets in its `routesTotal` and `routesStarted`
