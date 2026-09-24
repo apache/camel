@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * An exchange that passed the closed correlation key check before the group of its key was completed (and the key
  * closed) must not start a new group for the closed key.
  */
-public class AggregateClosedCorrelationKeyRaceTest extends ContextTestSupport {
+class AggregateClosedCorrelationKeyRaceTest extends ContextTestSupport {
 
     private final CountDownLatch inAggregate = new CountDownLatch(1);
     private final CountDownLatch releaseAggregate = new CountDownLatch(1);
@@ -74,7 +74,7 @@ public class AggregateClosedCorrelationKeyRaceTest extends ContextTestSupport {
     }
 
     @Test
-    public void testExchangeWaitingForLockWhileKeyIsClosed() throws Exception {
+    void testExchangeWaitingForLockWhileKeyIsClosed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
 
@@ -111,7 +111,7 @@ public class AggregateClosedCorrelationKeyRaceTest extends ContextTestSupport {
     }
 
     @Test
-    public void testOptimisticLockingRetryAfterKeyIsClosed() throws Exception {
+    void testOptimisticLockingRetryAfterKeyIsClosed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
 
