@@ -2431,6 +2431,15 @@ custom `headerFilterStrategy` is used as-is and is unaffected.
 Routes that relied on one of those headers reaching the wire must set it through the endpoint
 configuration or supply a `headerFilterStrategy` that permits it.
 
+=== camel-seda - an interrupted producer fails the exchange
+
+A SEDA producer whose thread is interrupted while it waits now fails the exchange, where previously it reported the send
+as successful. When it waits for space in a full queue (`blockWhenFull=true`, with or without `offerTimeout`, or
+`discardWhenFull=true`), the exchange fails with a `RejectedExecutionException` caused by the `InterruptedException`,
+as the message was not added to the queue. When it waits for the reply without a timeout (`waitForTaskToComplete` with
+`timeout=0`), the exchange fails with the `InterruptedException`, instead of returning the request as the reply.
+Camel itself interrupts such threads when a route is forced to stop after the graceful shutdown timeout.
+
 === camel-servlet, camel-jetty - the multipart upload whitelist is enforced against the submitted file name
 
 `fileNameExtWhitelist` accepts file name extensions, but `camel-servlet`'s `AttachmentHttpBinding`
