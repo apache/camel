@@ -101,7 +101,7 @@ class SemanticLanguageTest {
     void explicitBeanRetainsIdentityAndLifecycleOwner() throws Exception {
         CountingAdapter bean = new CountingAdapter();
         context.getRegistry().bind("custom", bean);
-        language.setAdapter("#bean:custom");
+        language.setAdapter("custom");
         language.createExpression("ref:q");
         assertThat(context.getRegistry().lookupByName("custom")).isSameAs(bean);
         assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
@@ -111,8 +111,8 @@ class SemanticLanguageTest {
     }
 
     @Test
-    void explicitClassSpellingUsesSamePath() {
-        language.setAdapter("#class:" + CountingAdapter.class.getName());
+    void explicitClassIsConstructedOnce() {
+        language.setAdapter(CountingAdapter.class.getName());
         language.createExpression("ref:q");
         assertThat(CountingAdapter.constructed).hasValue(1);
     }
@@ -148,10 +148,11 @@ class SemanticLanguageTest {
         language.setAdapter(String.class.getName());
         assertThatThrownBy(() -> language.createExpression("ref:q")).isInstanceOf(RuntimeCamelException.class)
                 .hasCauseInstanceOf(ClassCastException.class);
-        language.setAdapter("#bean:missing");
-        assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("missing");
+        language.setAdapter("missing");
+        assertThatThrownBy(() -> language.createExpression("ref:q"))
+                .hasMessageContaining("No semantic adapter bean or class found: missing");
         context.getRegistry().bind("wrong", "not an adapter");
-        language.setAdapter("#bean:wrong");
+        language.setAdapter("wrong");
         assertThatThrownBy(() -> language.createExpression("ref:q"))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not implement SemanticAdapter");
         language.setAdapter(CountingAdapter.class.getName());
@@ -200,10 +201,10 @@ class SemanticLanguageTest {
     }
 
     @Test
-    void shorthandBeanReferenceRetainsExistingInstance() {
+    void registryNameTakesPrecedenceOverClassName() {
         CountingAdapter bean = new CountingAdapter();
-        context.getRegistry().bind("custom", bean);
-        language.setAdapter("#custom");
+        context.getRegistry().bind(CountingAdapter.class.getName(), bean);
+        language.setAdapter(CountingAdapter.class.getName());
         language.createExpression("ref:q");
         assertThat(CountingAdapter.constructed).hasValue(1);
         assertThat(CountingAdapter.started).hasValue(0);

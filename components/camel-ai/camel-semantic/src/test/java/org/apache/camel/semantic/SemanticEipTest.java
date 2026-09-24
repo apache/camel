@@ -52,7 +52,8 @@ class SemanticEipTest extends CamelTestSupport {
                         calls.computeIfAbsent(purpose, k -> new AtomicInteger()).incrementAndGet();
                         String text = state.toString();
                         Object value = switch (purpose) {
-                            case "department" -> text.contains("invoice") ? "billing" : "technical";
+                            case "department" -> text.contains("invoice") ? "billing"
+                                    : text.contains("outage") ? "technical" : "general";
                             case "actionable" -> text.contains("please");
                             case "complete" -> {
                                 completionState = text;
@@ -65,7 +66,7 @@ class SemanticEipTest extends CamelTestSupport {
                         return new SemanticResult(value, null, null, null, Map.of("provider", "fixture"));
                     }
                 });
-                ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("#bean:classifier");
+                ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("classifier");
                 SemanticQuestions.get(context).replace("test", Map.of(
                         "department", question("department", SemanticQuestion.Type.CHOICE),
                         "actionable", question("actionable", SemanticQuestion.Type.BOOLEAN),
@@ -73,8 +74,15 @@ class SemanticEipTest extends CamelTestSupport {
                         "unfinished", question("unfinished", SemanticQuestion.Type.BOOLEAN),
                         "urgency", question("urgency", SemanticQuestion.Type.SCORE)));
 
-                from("direct:choice").choice(semantic("department"))
-                        .when("billing").to("mock:billing").when("technical").to("mock:technical");
+                from("direct:choice").setProperty("department").language("semantic", "ref:department")
+                        .choice()
+                        .when(exchangeProperty("department").isEqualTo("billing")).to("mock:billing")
+                        .when(exchangeProperty("department").isEqualTo("technical")).to("mock:technical")
+                        .otherwise().to("mock:general");
+                from("direct:repeatedChoice").loop(2)
+                        .to("direct:choice")
+                        .setBody(constant("invoice"))
+                        .end();
                 from("direct:filter").filter().language("semantic", "ref:actionable").to("mock:accepted");
                 from("direct:validate").validate().language("semantic", "ref:actionable").to("mock:valid");
                 from("direct:metadata").setHeader("department").language("semantic", "ref:department")
@@ -137,7 +145,8 @@ class SemanticEipTest extends CamelTestSupport {
     private static SemanticQuestion question(String name, SemanticQuestion.Type type) {
         return new SemanticQuestion(
                 type, name, null,
-                type == SemanticQuestion.Type.CHOICE ? Map.of("billing", "Payments", "technical", "Bugs") : null,
+                type == SemanticQuestion.Type.CHOICE
+                        ? Map.of("billing", "Payments", "technical", "Bugs", "general", "Other requests") : null,
                 type == SemanticQuestion.Type.SCORE ? List.of("low", "medium", "high") : null,
                 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
     }
@@ -159,6 +168,29 @@ class SemanticEipTest extends CamelTestSupport {
         assertThat(calls.get("department")).hasValue(2);
         assertThat(calls.get("urgency")).hasValue(1);
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void storedChoiceDecisionEvaluatesOnceForEachBranchAndPreservesTheBody() throws Exception {
+        getMockEndpoint("mock:billing").expectedBodiesReceived("invoice");
+        getMockEndpoint("mock:technical").expectedBodiesReceived("outage");
+        getMockEndpoint("mock:general").expectedBodiesReceived("hello");
+        template.sendBody("direct:choice", "invoice");
+        template.sendBody("direct:choice", "outage");
+        template.sendBody("direct:choice", "hello");
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(calls.get("department")).hasValue(3);
+    }
+
+    @Test
+    void storedChoiceDecisionIsRefreshedOnEachLoopIteration() throws Exception {
+        getMockEndpoint("mock:technical").expectedBodiesReceived("outage");
+        getMockEndpoint("mock:billing").expectedBodiesReceived("invoice");
+        Exchange exchange = template.request("direct:repeatedChoice", e -> e.getMessage().setBody("outage"));
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getProperty("department")).isEqualTo("billing");
+        assertThat(calls.get("department")).hasValue(2);
     }
 
     @Test

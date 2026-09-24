@@ -60,7 +60,7 @@ class SemanticQuestionTest extends YamlTestSupport {
                         state.toString().contains("invoice") ? "billing" : "technical", null, null, null, null);
             }
         });
-        ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("#bean:classifier");
+        ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("classifier");
     }
 
     private static String declarations(String state) {
@@ -77,6 +77,17 @@ class SemanticQuestionTest extends YamlTestSupport {
                 """.formatted(state);
     }
 
+    @Test
+    void ordinaryResourceDoesNotCreateSemanticQuestionState() throws Exception {
+        loadRoutes("""
+                - from:
+                    uri: direct:ordinary
+                    steps:
+                      - to: mock:ordinary
+                """);
+        assertThat(context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class)).isNull();
+    }
+
     private static String route() {
         return """
                 - route:
@@ -84,16 +95,22 @@ class SemanticQuestionTest extends YamlTestSupport {
                     from:
                       uri: direct:tickets
                       steps:
-                        - choice:
-                            selector:
+                        - setProperty:
+                            name: department
+                            expression:
                               language:
                                 language: semantic
                                 expression: ref:department
+                        - choice:
                             when:
-                              - value: billing
+                              - expression:
+                                  simple:
+                                    expression: "${exchangeProperty.department} == 'billing'"
                                 steps:
                                   - to: mock:billing
-                              - value: technical
+                              - expression:
+                                  simple:
+                                    expression: "${exchangeProperty.department} == 'technical'"
                                 steps:
                                   - to: mock:technical
                             otherwise:

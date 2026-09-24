@@ -578,7 +578,7 @@ public class YamlValidator {
         // oneOf and required errors the strict schema adds at the same location only repeat it thirty times
         Set<String> hinted = new HashSet<>();
         for (Error e : errors) {
-            if ("additionalProperties".equals(e.getKeyword()) || "compactNotation".equals(e.getKeyword())) {
+            if ("additionalProperties".equals(e.getKeyword())) {
                 hinted.add(String.valueOf(e.getInstanceLocation()));
             }
         }
@@ -817,7 +817,7 @@ public class YamlValidator {
                 // choice: {when: [...]}: each item is an expression node
                 for (int i = 0; i < value.size(); i++) {
                     JsonNode item = value.get(i);
-                    if (item != null && item.isObject() && !item.has("value") && !hasExpression(item)) {
+                    if (item != null && item.isObject() && !hasExpression(item)) {
                         errors.add(Error.builder()
                                 .keyword("required")
                                 .instanceLocation(path.append(name).append(i))

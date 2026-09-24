@@ -23,8 +23,9 @@ concurrency limits and transport resources. TypeSafe AI uses
 
 One advertised adapter is selected automatically. No provider, or multiple distinct
 providers, is an error. Select an existing bean with
-`camel.language.semantic.adapter=#bean:myAdapter` (or `#myAdapter`), or a class using its fully qualified name
-(with an optional `#class:` prefix). Class selection uses Camel's class resolver and injector.
+`camel.language.semantic.adapter=myAdapter`, or a class using its fully qualified name.
+Use plain names without `#bean:` or `#class:` prefixes. Registry lookup takes precedence over
+class resolution. Class selection uses Camel's class resolver and injector.
 Created adapters are registered as `camelSemanticAdapter` and managed by the context.
 A collision at that name is an error. Referenced beans retain their existing lifecycle owner.
 
@@ -66,16 +67,22 @@ The YAML DSL supports declarations alongside routes, including declarations afte
     from:
       uri: direct:tickets
       steps:
-        - choice:
-            selector:
+        - setProperty:
+            name: department
+            expression:
               language:
                 language: semantic
                 expression: ref:department
+        - choice:
             when:
-              - value: billing
+              - expression:
+                  simple:
+                    expression: "${exchangeProperty.department} == 'billing'"
                 steps:
                   - to: direct:billing
-              - value: technical
+              - expression:
+                  simple:
+                    expression: "${exchangeProperty.department} == 'technical'"
                 steps:
                   - to: direct:technical
             otherwise:
@@ -102,6 +109,10 @@ State must be a string, map or list. For byte arrays or stream bodies, explicitl
 `$\{bodyAs(String)}`. Enable stream caching before evaluating a stream when later processors
 also need to read it. Unsupported state types fail instead of being implicitly converted.
 
+YAML declarations are provided by `camel-semantic` through the YAML deserializer resolver SPI.
+Include both `camel-semantic` and `camel-yaml-dsl` when using them. The YAML DSL does not pull
+in semantic evaluation, and Java applications using `camel-semantic` do not pull in the YAML DSL.
+
 == Results and policy
 
 Only boolean questions can be predicates. A category string is never implicitly a boolean.
@@ -125,7 +136,7 @@ Use `language("semantic", "ref:name")` wherever an expression or boolean predica
 [cols="1,3"]
 |===
 |EIP |Usage
-|Choice |Use a selector to evaluate once per entry and match configured literal values.
+|Choice |Store a category with Set Property, then compare that property in ordinary when predicates.
 |Filter |Use a boolean question as the filter predicate.
 |Validate |Use a boolean question; false follows normal validation failure handling.
 |Set Header / Set Property |Store a category or score for explicit reuse in later steps.
@@ -158,10 +169,17 @@ from("direct:validate")
 from("direct:tag")
     .setHeader("department").language("semantic", "ref:department")
     .setProperty("urgency").language("semantic", "ref:urgency")
-    .choice(header("department"))
-        .when("billing").to("direct:billing")
+    .choice()
+        .when(header("department").isEqualTo("billing")).to("direct:billing")
         .otherwise().to("direct:technical");
 ----
+
+Storing the category before Choice performs one semantic evaluation each time execution
+reaches that Set Header or Set Property step. The branches compare the stored result without
+calling the provider again. Place that step inside a loop when the decision must be refreshed
+on each iteration. Nested decisions can use separate properties to retain their own results.
+Boolean questions can also be used directly as ordinary when predicates. These patterns use
+the existing EIP model and work with the Java, XML and YAML DSLs.
 
 === Aggregation and destinations
 

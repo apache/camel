@@ -31,17 +31,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticPropertiesTest {
     @ParameterizedTest
-    @ValueSource(strings = { "bean", "shorthand", "class", "plain" })
+    @ValueSource(strings = { "bean", "class", "placeholder" })
     void camelMainBindsAdapterAndDefaultState(String selection) throws Exception {
         Main main = new Main();
         SemanticLanguageTest.LabelAdapter bean = new SemanticLanguageTest.LabelAdapter();
         main.bind("classifier", bean);
         String adapter = switch (selection) {
-            case "bean" -> "#bean:classifier";
-            case "shorthand" -> "#classifier";
-            case "class" -> "#class:" + SemanticLanguageTest.LabelAdapter.class.getName();
+            case "bean" -> "classifier";
+            case "placeholder" -> "{{adapter.name}}";
             default -> SemanticLanguageTest.LabelAdapter.class.getName();
         };
+        main.addProperty("adapter.name", "classifier");
         main.addProperty("camel.language.semantic.adapter", adapter);
         main.addProperty("camel.language.semantic.default-state", "${header.selected}");
         main.configure().addRoutesBuilder(new RouteBuilder() {
@@ -54,7 +54,7 @@ class SemanticPropertiesTest {
         });
         try {
             main.start();
-            if (selection.equals("bean") || selection.equals("shorthand")) {
+            if (selection.equals("bean") || selection.equals("placeholder")) {
                 assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
             } else {
                 assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME))
@@ -79,7 +79,7 @@ class SemanticPropertiesTest {
     void classReferenceIsTypeCheckedBeforeConstruction() {
         Main main = new Main();
         WrongType.constructed.set(0);
-        main.addProperty("camel.language.semantic.adapter", "#class:" + WrongType.class.getName());
+        main.addProperty("camel.language.semantic.adapter", WrongType.class.getName());
         main.configure().addRoutesBuilder(new RouteBuilder() {
             public void configure() {
                 SemanticQuestions.get(getContext()).replace("test", Map.of("q",

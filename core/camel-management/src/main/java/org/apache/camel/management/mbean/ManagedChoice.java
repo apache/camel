@@ -76,9 +76,8 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
                 FilterProcessor filter = filters.get(i);
 
                 CompositeType ct = CamelOpenMBeanTypes.choiceCompositeType();
-                String predicate = when.getValue() != null ? when.getValue() : when.getExpression().getExpression();
-                String language = getDefinition().getSelector() != null
-                        ? getDefinition().getSelector().getExpressionType().getLanguage() : when.getExpression().getLanguage();
+                String predicate = when.getExpression().getExpression();
+                String language = when.getExpression().getLanguage();
                 long matches = filter.getFilteredCount();
 
                 CompositeData data = new CompositeDataSupport(

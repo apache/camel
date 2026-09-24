@@ -1636,17 +1636,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Routes by evaluating the selector once per entry and matching its String result against literal when values. Null
-     * and unmatched results use otherwise, if configured.
-     *
-     * @param  selector expression to evaluate
-     * @return          the choice builder
-     */
-    public ChoiceDefinition choice(Expression selector) {
-        return choice().selector(selector);
-    }
-
-    /**
      * Creates a try/catch block
      *
      * @return the builder for a tryBlock expression

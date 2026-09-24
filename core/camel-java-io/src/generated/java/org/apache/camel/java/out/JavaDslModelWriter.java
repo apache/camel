@@ -1837,7 +1837,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteChoiceDefinition(StringBuilder sb, ChoiceDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "precondition", def.getPrecondition(), "false");
-        doWriteChildElement(sb, "selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
         doWriteChildList(sb, "when", def.getWhenClauses(), this::doWriteWhenDefinitionRef);
         doWriteChildElement(sb, "otherwise", def.getOtherwise(), this::doWriteOtherwiseDefinition);
     }
@@ -2759,7 +2758,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteWhenDefinition(StringBuilder sb, WhenDefinition def) {
         doWriteOptionalIdentifiedDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "disabled", def.getDisabled(), null);
-        doWriteAttribute(sb, "value", def.getValue(), null);
         doWriteBasicOutputExpressionNodeElements(sb, def);
     }
     protected void doWriteWireTapDefinition(StringBuilder sb, WireTapDefinition<?> def) {
@@ -4162,19 +4160,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "doCatch", v);
                 }
                 case "ChoiceDefinition" -> {
-                    ChoiceDefinition _d = (ChoiceDefinition) v;
-                    handledAttributes.clear();
-                    sb.append("\n").append(indent()).append(".choice(");
-                    boolean _first = true;
-                    if (_d.getSelector() != null && _d.getSelector().getExpressionType() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append(expressionDsl(_d.getSelector().getExpressionType()));
-                    }
-                    handledAttributes.add("selector");
-                    handledAttributes.add("expression");
-                    sb.append(")");
-                    doWriteChoiceDefinition(sb, _d);
+                    beginStep(sb, "choice", v);
+                    doWriteChoiceDefinition(sb, (ChoiceDefinition) v);
                     endStep(sb, "choice", v);
                 }
                 case "CircuitBreakerDefinition" -> {
@@ -5080,12 +5067,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".when(");
                     boolean _first = true;
-                    if (_d.getValue() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append(quote(_d.getValue()));
-                    }
-                    handledAttributes.add("value");
                     if (_d.getExpression() != null) {
                         if (!_first) sb.append(", ");
                         _first = false;
@@ -5326,19 +5307,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     endStep(sb, "doCatch", v);
                 }
                 case "ChoiceDefinition" -> {
-                    ChoiceDefinition _d = (ChoiceDefinition) v;
-                    handledAttributes.clear();
-                    sb.append("\n").append(indent()).append(".choice(");
-                    boolean _first = true;
-                    if (_d.getSelector() != null && _d.getSelector().getExpressionType() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append(expressionDsl(_d.getSelector().getExpressionType()));
-                    }
-                    handledAttributes.add("selector");
-                    handledAttributes.add("expression");
-                    sb.append(")");
-                    doWriteChoiceDefinition(sb, _d);
+                    beginStep(sb, "choice", v);
+                    doWriteChoiceDefinition(sb, (ChoiceDefinition) v);
                     endStep(sb, "choice", v);
                 }
                 case "CircuitBreakerDefinition" -> {
@@ -6300,12 +6270,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     handledAttributes.clear();
                     sb.append("\n").append(indent()).append(".when(");
                     boolean _first = true;
-                    if (_d.getValue() != null) {
-                        if (!_first) sb.append(", ");
-                        _first = false;
-                        sb.append(quote(_d.getValue()));
-                    }
-                    handledAttributes.add("value");
                     if (_d.getExpression() != null) {
                         if (!_first) sb.append(", ");
                         _first = false;

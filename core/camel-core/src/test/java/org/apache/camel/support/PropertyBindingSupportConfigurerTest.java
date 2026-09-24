@@ -27,7 +27,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.junit.jupiter.api.Test;
 
@@ -39,32 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
     private final MyConfigurer myConfigurer = new MyConfigurer();
-
-    @Test
-    public void testRawConfigurerRetainsReferencesAfterPlaceholderResolution() {
-        Map<String, Object> bound = new HashMap<>();
-        Map<String, Object> properties = new HashMap<>(Map.of("selection", "#class:{{companyName}}", "work", "#bean:myWork"));
-        PropertyConfigurer configurer = new PropertyConfigurer() {
-            @Override
-            public boolean configureRaw(CamelContext context, Object target, String name, Object value, boolean ignoreCase) {
-                if ("selection".equals(name)) {
-                    bound.put(name, value);
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean configure(CamelContext context, Object target, String name, Object value, boolean ignoreCase) {
-                bound.put(name, value);
-                return true;
-            }
-        };
-        PropertyBindingSupport.build().withConfigurer(configurer).bind(context, new Object(), properties);
-        assertEquals("#class:Acme", bound.get("selection"));
-        assertSame(context.getRegistry().lookupByName("myWork"), bound.get("work"));
-        assertTrue(properties.isEmpty());
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
