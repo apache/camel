@@ -106,6 +106,23 @@ Prior to Camel 4.23 the property was only set when there was no fallback and was
 so a fallback that tested it for `null` must now test for `true` or `false` instead.
 `CamelCircuitBreakerResponseShortCircuited` is unchanged and remains `true` whenever the fallback runs, whatever the cause.
 
+=== Error handler - onException when the exception changes during redelivery
+
+When a redelivery attempt fails with a different exception than the previous attempt, the error handler now uses
+the `onException` that matches the new exception. If no `onException` matches it, the error handler's own settings
+apply, for example moving the message to the dead letter channel.
+
+Prior to Camel 4.23 the error handler kept using the `onException` matched by the earlier exception, including its
+`handled`, `continued`, redelivery and `onRedelivery` settings. So a new exception with no `onException` of its own
+could be routed and handled by the earlier exception's `onException`, and was not seen by the caller or the dead
+letter channel.
+
+The redelivery counter is not reset when the exception changes, so the new `onException` measures its
+`maximumRedeliveries` against the attempts already made. A route whose `onException(IOException.class)` allows 5
+redeliveries and which fails 4 times before the exception changes leaves the new policy a counter of 4, so an
+`onException(IllegalArgumentException.class).maximumRedeliveries(2)` is already exhausted and the message goes to
+the dead letter channel on the next failure.
+
 === Weighted Load Balancer EIP
 
 The distribution ratios of the weighted load balancer are now validated when the route starts. A negative ratio,
