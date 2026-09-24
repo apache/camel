@@ -270,6 +270,17 @@ header from `/api/v3`. To work around this, avoid nesting the base paths of seve
 mode, or inspect the request in a custom `RestOpenApiUnmatchedRequestHandler` and determine the proper response.
 ====
 
+On Spring Boot, the catch-all is served by a Spring MVC handler mapping that is evaluated before the
+application's own controller mappings and the static resources. With a base path of `/`, in `camel` mode
+every request unmatched by the API will be answered by the unmatched request handler. Controllers and static 
+resources will be shadowed. When the application also serves MVC contet it is prefered to use a base path other 
+than `/` (for example by setting `servers` in the OpenAPI specification or `contextPath` in the rest
+configuration), so the catch-all only claims requests under that path.
+
+If the API and Spring MVC controllers must keep responding to their own paths at a base path of `/`, you can 
+set register your own `RequestMappingHandlerMapping` bean with a order set to `-50`. This will still not work for 
+serving static resources.
+
 When the request has been routed to Camel, the response body (and headers) can be customized by registering a
 bean in the xref:manual::registry.adoc[Registry] that implements the `RestOpenApiUnmatchedRequestHandler` interface.
 The handler is called with the exchange, the status code (`404` or `405`) and the list of allowed HTTP
