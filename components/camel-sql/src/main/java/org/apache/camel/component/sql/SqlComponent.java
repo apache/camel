@@ -16,18 +16,23 @@
  */
 package org.apache.camel.component.sql;
 
+import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -35,7 +40,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * queries.
  */
 @Component("sql")
-public class SqlComponent extends HealthCheckComponent {
+public class SqlComponent extends HealthCheckComponent implements SecretRotationAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlComponent.class);
 
     @Metadata(autowired = true)
     private DataSource dataSource;
@@ -149,6 +156,51 @@ public class SqlComponent extends HealthCheckComponent {
         endpoint.setTemplateOptions(templateOptions);
 
         return endpoint;
+    }
+
+    @Override
+    public void onSecretRotation(Object source) throws Exception {
+        // Collect all DataSources this component can reach: the one injected directly (if any)
+        // plus all DataSource beans registered in the registry. The registry beans are typically
+        // not recreated during a route reload, so their connection pools still hold connections
+        // that were authenticated with the old credentials.
+        Set<DataSource> dataSources = getCamelContext().getRegistry().findByType(DataSource.class);
+        if (this.dataSource != null) {
+            dataSources.add(this.dataSource);
+        }
+
+        for (DataSource ds : dataSources) {
+            evictDataSourceConnections(ds, source);
+        }
+    }
+
+    /**
+     * Evicts stale connections from the given DataSource so that the pool rebuilds them with the rotated credentials.
+     * <p/>
+     * HikariCP is tried first via reflection (so camel-sql does not need a compile-time dependency on it). Any
+     * DataSource that does not expose a {@code softEvictConnections()} method is left untouched — the pool will pick up
+     * the new credentials on its own reconnect cycle when existing connections expire.
+     */
+    static void evictDataSourceConnections(DataSource ds, Object source) {
+        // HikariCP: softEvictConnections() marks all current connections for eviction while
+        // allowing in-flight queries to complete; the pool then recreates them with the new credentials.
+        try {
+            Method softEvict = ds.getClass().getMethod("softEvictConnections");
+            softEvict.invoke(ds);
+            LOG.info("Secret rotation (source={}): HikariCP softEvictConnections() called on {}", source, ds);
+            return;
+        } catch (NoSuchMethodException e) {
+            // Not a HikariCP DataSource — fall through to generic handling
+        } catch (Exception e) {
+            LOG.warn("Secret rotation (source={}): softEvictConnections() failed on {}: {}", source, ds, e.getMessage());
+        }
+
+        // Generic fallback: log that the pool was not explicitly evicted.
+        // The pool will pick up the new credentials when existing connections expire naturally.
+        LOG.info(
+                "Secret rotation (source={}): DataSource {} does not expose softEvictConnections(); "
+                 + "existing connections will be replaced as they expire or are validated",
+                source, ds.getClass().getName());
     }
 
     /**
