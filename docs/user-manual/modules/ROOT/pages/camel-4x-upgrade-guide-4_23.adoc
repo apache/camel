@@ -2550,6 +2550,14 @@ The accessors changed accordingly:
 The fluent builder `ParamDefinition.required(Boolean)` is unchanged, and a `required(String)` overload
 was added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change.
 
+=== camel-seda - stopping a suspended route does not wait for its pending messages
+
+Stopping a suspended SEDA route, or stopping the CamelContext while such a route is suspended, no longer waits for the
+messages that were sent to it while it was suspended. A suspended consumer does not consume them, so previously the stop
+always ran into the graceful shutdown timeout and was then forced (or aborted). The messages are now kept on the queue
+(or purged with `purgeWhenStopping=true`), and are processed if the route is started again while the queue still
+exists.
+
 === camel-sql, camel-sql-stored - the query/template override headers are gated
 
 A message header could override the endpoint-configured SQL by default, letting an incoming message choose the
