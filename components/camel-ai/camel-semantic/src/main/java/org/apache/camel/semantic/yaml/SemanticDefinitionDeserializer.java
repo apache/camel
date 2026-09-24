@@ -18,7 +18,6 @@ package org.apache.camel.semantic.yaml;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.exception.InvalidEnumException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
@@ -34,6 +34,7 @@ import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
@@ -69,7 +70,11 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         }
         Map<String, SemanticQuestion> definitions = new LinkedHashMap<>();
         for (Node node : sequence.getValue()) {
-            for (NodeTuple tuple : asMappingNode(node).getValue()) {
+            if (!(node instanceof MappingNode mapping)) {
+                // Leave malformed entries to the route loader without replacing the resource's questions.
+                return;
+            }
+            for (NodeTuple tuple : mapping.getValue()) {
                 if ("semantic".equals(asText(tuple.getKeyNode()))) {
                     read(tuple.getValueNode()).forEach((name, question) -> {
                         if (definitions.putIfAbsent(name, question) != null) {
@@ -151,12 +156,11 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
     }
 
     private static <T extends Enum<T>> T enumeration(Node node, String question, String field, Class<T> type) {
-        String raw = asText(node);
         try {
-            return Enum.valueOf(type, raw.replace('-', '_').toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e) {
+            return asEnum(node, type);
+        } catch (InvalidEnumException e) {
             throw new YamlDeserializationException(
-                    node, "Invalid value for '" + field + "' in semantic question '" + question + "': " + raw, e);
+                    node, "Invalid value for '" + field + "' in semantic question '" + question + "': " + asText(node), e);
         }
     }
 
