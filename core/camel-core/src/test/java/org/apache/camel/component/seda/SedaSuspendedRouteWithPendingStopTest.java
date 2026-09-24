@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,19 +33,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Stopping a suspended seda route must not wait for the messages sent to it while it was suspended, as a suspended
  * consumer does not consume them.
  */
-public class SedaSuspendedRouteWithPendingStopTest extends ContextTestSupport {
+class SedaSuspendedRouteWithPendingStopTest extends ContextTestSupport {
+
+    private final CountDownLatch processing = new CountDownLatch(1);
+    private final CountDownLatch release = new CountDownLatch(1);
 
     @Test
-    public void testStopSuspendedRouteWithPendingMessages() throws Exception {
+    void testStopSuspendedRouteWithPendingMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
+        mock.expectedBodiesReceived("X");
 
-        context.getRouteController().suspendRoute("foo");
-        assertEquals(ServiceStatus.Suspended, context.getRouteController().getRouteStatus("foo"));
+        // keep the consumer thread busy with X while the consumer is suspended (as a route policy such as
+        // ThrottlingInflightRoutePolicy does), so it does not poll the queue while A, B and C are sent
+        template.sendBody("seda:start", "X");
+        assertTrue(processing.await(10, TimeUnit.SECONDS), "X should be processed");
+        SedaEndpoint seda = (SedaEndpoint) context.getRoute("foo").getEndpoint();
+        ((SedaConsumer) context.getRoute("foo").getConsumer()).suspend();
 
         template.sendBody("seda:start", "A");
         template.sendBody("seda:start", "B");
         template.sendBody("seda:start", "C");
+        release.countDown();
+        mock.assertIsSatisfied();
 
         // abort the stop if the graceful shutdown times out
         boolean stopped = context.getRouteController().stopRoute("foo", 10, TimeUnit.SECONDS, true);
@@ -52,9 +62,8 @@ public class SedaSuspendedRouteWithPendingStopTest extends ContextTestSupport {
         assertFalse(context.getShutdownStrategy().isTimeoutOccurred());
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
 
-        // the suspended route did not process the messages, they are kept on the queue
-        mock.assertIsSatisfied();
-        assertEquals(3, context.getEndpoint("seda:start", SedaEndpoint.class).getQueue().size());
+        // the suspended consumer did not process the messages, they are kept on the queue
+        assertEquals(3, seda.getQueue().size());
 
         // and they are processed when the route is started again
         mock.reset();
@@ -64,7 +73,7 @@ public class SedaSuspendedRouteWithPendingStopTest extends ContextTestSupport {
     }
 
     @Test
-    public void testStopContextWithSuspendedRoute() throws Exception {
+    void testStopContextWithSuspendedRoute() throws Exception {
         context.getRouteController().suspendRoute("foo");
 
         template.sendBody("seda:start", "A");
@@ -80,7 +89,14 @@ public class SedaSuspendedRouteWithPendingStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("seda:start?pollTimeout=100").routeId("foo").to("mock:result");
+                from("seda:start?pollTimeout=100").routeId("foo")
+                        .process(e -> {
+                            if ("X".equals(e.getMessage().getBody(String.class))) {
+                                processing.countDown();
+                                release.await(10, TimeUnit.SECONDS);
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
