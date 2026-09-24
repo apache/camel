@@ -2638,6 +2638,16 @@ reply of a discarded exchange (`waitForTaskToComplete`) is released with that ex
 `timeout`, or forever when the timeout is disabled. On completions handed over to a discarded InOnly exchange, such as
 the commit or rollback of the consumer that received the message, now run as a failure, where previously they never ran.
 
+=== camel-pulsar - PulsarMessageUtils.updateExchange returns the exchange it was given
+
+`PulsarMessageUtils.updateExchange(message, exchange)` used to return a *copy* of the exchange passed to
+it. It now populates and returns that same instance.
+
+The copy orphaned the exchange the consumer had taken from the exchange factory, so with
+`camel.main.exchange-factory=pooled` every consumed message leaked one pooled exchange and the pool never
+refilled. Code outside the component that called this method and relied on getting an independent copy
+must make its own copy instead.
+
 === camel-pulsar - a failed exchange is negatively acknowledged
 
 When a route fails, the consumer now calls `negativeAcknowledge` on the Pulsar consumer instead of
