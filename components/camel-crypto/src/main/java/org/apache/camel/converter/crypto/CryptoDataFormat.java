@@ -74,6 +74,13 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
 
     private static final Logger LOG = LoggerFactory.getLogger(CryptoDataFormat.class);
     private static final String INIT_VECTOR = "CamelCryptoInitVector";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    /**
+     * Upper bound on the length of an inlined initialization vector read from the stream. A JCE initialization vector
+     * is at most a cipher block, so this is generous; the bound exists because the length is read from the message and
+     * used directly to size an allocation.
+     */
+    private static final int MAX_INLINE_IV_LENGTH = 1024;
     private String algorithm;
     private String cryptoProvider;
     private Key key;
@@ -126,19 +133,18 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         return cipher;
     }
 
-    /**
-     * Upper bound on the length of an inlined initialization vector read from the stream. A JCE initialization vector
-     * is at most a cipher block, so this is generous; the bound exists because the length is read from the message and
-     * used directly to size an allocation.
-     */
-    private static final int MAX_INLINE_IV_LENGTH = 1024;
-
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         byte[] iv = getInitializationVector(exchange);
         if (iv == null && inline) {
+            if (algorithmParameterSpec != null) {
+                // initializeCipher gives algorithmParameterSpec precedence over the IV, so a generated vector would be
+                // written into the message but never used - every message would encrypt identically behind a vector
+                // that only looks per-message. Keep failing loudly, as this configuration did before.
+                throw new IllegalStateException(
+                        "Inlining cannot be performed when an algorithmParameterSpec is configured, as the spec is"
+                                                + " used instead of the initialization vector");
+            }
             // The whole point of inlining is that the IV travels with the message, so there is no reason to make
             // the caller supply a fixed one - and requiring it is what used to push users into reusing a single IV
             // across every message.
@@ -191,12 +197,15 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
                         hmac.decryptUpdate(buffer, read);
                     }
                 } catch (IOException e) {
-                    if (e.getCause() instanceof GeneralSecurityException) {
+                    if (shouldAppendHMAC && e.getCause() instanceof GeneralSecurityException) {
                         // CipherInputStream surfaces bad padding as an IOException wrapping
                         // BadPaddingException, while a bad MAC surfaces from validate() below. Reporting the two
                         // differently is exactly what lets a caller who can submit ciphertext and watch the
                         // outcome tell them apart, which is the padding-oracle distinguisher. Report the same
-                        // authentication failure for both.
+                        // authentication failure for both - but only when a MAC is actually appended: with
+                        // shouldAppendHMAC=false nothing is authenticating, so calling it an authentication failure
+                        // would misdescribe a plain padding error and drop its cause.
+                        LOG.debug("Reporting cipher failure as an authentication failure", e);
                         throw new IllegalStateException(HMACAccumulator.AUTHENTICATION_FAILED);
                     }
                     throw e;

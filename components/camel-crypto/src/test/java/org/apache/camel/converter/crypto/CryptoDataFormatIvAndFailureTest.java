@@ -16,11 +16,14 @@
  */
 package org.apache.camel.converter.crypto;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Arrays;
 
 import javax.crypto.KeyGenerator;
+import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -52,7 +55,7 @@ class CryptoDataFormatIvAndFailureTest {
             byte[] first = marshal(context, encryptor, PAYLOAD);
             byte[] second = marshal(context, encryptor, PAYLOAD);
 
-            assertFalse(java.util.Arrays.equals(first, second),
+            assertFalse(Arrays.equals(first, second),
                     "the same plaintext must not produce identical ciphertext twice");
 
             CryptoDataFormat decryptor = new CryptoDataFormat("AES/CBC/PKCS5Padding", key);
@@ -130,6 +133,48 @@ class CryptoDataFormatIvAndFailureTest {
         }
     }
 
+    /**
+     * Inlining plus a configured algorithmParameterSpec used to be a silent IV-reuse trap: the spec wins in the cipher,
+     * so a generated per-message vector was written into the message but never used. It must fail loudly.
+     */
+    @Test
+    void inliningWithAnAlgorithmParameterSpecIsRejected() throws Exception {
+        Key key = key();
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            CryptoDataFormat format = new CryptoDataFormat("AES/CBC/PKCS5Padding", key);
+            format.setShouldInlineInitializationVector(true);
+            format.setAlgorithmParameterSpec(new IvParameterSpec(new byte[16]));
+
+            IllegalStateException e = assertThrows(IllegalStateException.class,
+                    () -> marshal(context, format, PAYLOAD));
+            assertTrue(e.getMessage().contains("algorithmParameterSpec"), "unexpected message: " + e.getMessage());
+        }
+    }
+
+    /**
+     * With the MAC turned off there is nothing authenticating, so a cipher failure must surface as itself rather than
+     * be relabelled "Message authentication failed" (which would also drop the real cause).
+     */
+    @Test
+    void aCipherFailureWithoutAMacIsNotReportedAsAnAuthenticationFailure() throws Exception {
+        Key key = key();
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            CryptoDataFormat format = new CryptoDataFormat("AES/CBC/PKCS5Padding", key);
+            format.setInitVector(new byte[16]);
+            format.setShouldAppendHMAC(false);
+
+            byte[] ciphertext = marshal(context, format, PAYLOAD);
+            byte[] corrupted = ciphertext.clone();
+            corrupted[corrupted.length - 1] ^= 0x01;
+
+            String message = failureMessage(context, format, corrupted);
+            assertFalse(message.contains("authentication failed"),
+                    "a cipher failure with no MAC must not be relabelled an authentication failure: " + message);
+        }
+    }
+
     private static String failureMessage(DefaultCamelContext context, CryptoDataFormat format, byte[] body) {
         Exception e = assertThrows(Exception.class, () -> unmarshal(context, format, body));
         return rootMessage(e);
@@ -153,7 +198,7 @@ class CryptoDataFormatIvAndFailureTest {
     private static String unmarshal(DefaultCamelContext context, CryptoDataFormat format, byte[] body)
             throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Object result = format.unmarshal(exchange, new java.io.ByteArrayInputStream(body));
+        Object result = format.unmarshal(exchange, new ByteArrayInputStream(body));
         return context.getTypeConverter().convertTo(String.class, exchange, result);
     }
 
