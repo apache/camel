@@ -248,8 +248,13 @@ public class SendDynamicProcessor extends BaseProcessorSupport
                 e.setException(t);
                 // restore previous MEP
                 target.setPattern(existingPattern);
-                // we failed
+                // stop endpoint if prototype as it is not used
+                if (stopEndpoint) {
+                    ServiceHelper.stopAndShutdownService(endpoint);
+                }
+                // we failed, so do not send
                 c.done(true);
+                return true;
             }
 
             LOG.debug(">>>> {} {}", endpoint, e);
