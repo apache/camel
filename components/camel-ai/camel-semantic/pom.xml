@@ -26,8 +26,8 @@
         <version>4.23.0-SNAPSHOT</version>
     </parent>
     <artifactId>camel-semantic</artifactId>
-    <name>Camel :: AI :: Semantic</name>
-    <description>Provider-independent semantic evaluation language and adapter SPI</description>
+    <name>Camel :: AI :: Semantic Evaluation</name>
+    <description>Evaluate named questions about message content to produce boolean decisions, categories and scores through provider adapters</description>
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

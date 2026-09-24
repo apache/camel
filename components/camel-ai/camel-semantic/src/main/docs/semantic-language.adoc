@@ -1,8 +1,8 @@
-= Semantic Language
-:doctitle: Semantic
+= Semantic Evaluation Language
+:doctitle: Semantic Evaluation
 :shortname: semantic
 :artifactid: camel-semantic
-:description: Evaluate named semantic questions through a provider adapter
+:description: Evaluate named questions about message content to produce boolean decisions, categories and scores through provider adapters
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
@@ -136,7 +136,7 @@ Use `language("semantic", "ref:name")` wherever an expression or boolean predica
 
 [cols="1,3"]
 |===
-|EIP |Usage
+|EIP / integration point |Usage
 |Choice |Store a category with Set Property, then compare that property in ordinary when predicates.
 |Filter |Use a boolean question as the filter predicate.
 |Validate |Use a boolean question; false follows normal validation failure handling.
@@ -148,6 +148,8 @@ Use `language("semantic", "ref:name")` wherever an expression or boolean predica
 |Enrich |Map a category to a configured resource URI and use an ordinary aggregation strategy.
 |Loop |Reevaluate a boolean question on updated state, with an explicit iteration or time budget.
 |Sort |Score each item once, store the scores, then sort using a deterministic comparator.
+|On Exception / retryWhile |Evaluate whether another attempt is worthwhile, with an explicit retry budget checked before inference.
+|Contextual action validation |Use Validate after ordinary permission checks and before executing the action.
 |===
 
 Destination mappings belong to trusted route configuration; provider output should select
@@ -233,6 +235,94 @@ For sorting, evaluate `ref:urgency` once for each item and build a list containi
 its score. Use `.sort(body(), Comparator.comparingDouble(ScoredItem::score))` with that stored
 score. The comparator must not call the provider: sorting can compare an item multiple times
 and in an implementation-dependent order.
+
+=== Bounded semantic retry
+
+A boolean question can supply the xref:manual::exception-advanced.adoc[retryWhile predicate]
+for an exception clause. Ask whether another attempt is worthwhile using the current failure
+and selected request context. Restrict this to operations that are safe to retry.
+
+IMPORTANT: `retryWhile` replaces the `maximumRedeliveries` decision. Check the retry budget
+inside the predicate, before calling the provider. A provider that always returns true must
+not cause unlimited retries or evaluations.
+
+Declare a boolean question named `retryable` with `state: $\{exchangeProperty.retryState}`.
+In this example, the request body is a string. `onExceptionOccurred` prepares the state before
+the retry predicate runs; `onRedelivery` runs later and is too late for this purpose.
+Include only the failure details needed by the question, excluding credentials and sensitive data.
+
+[source,java]
+----
+Predicate retryable = context.resolveLanguage("semantic").createPredicate("ref:retryable");
+
+onException(IOException.class)
+    .onExceptionOccurred(exchange -> {
+        Exception failure = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+        exchange.setProperty("retryState", Map.of(
+            "request", exchange.getMessage().getBody(String.class),
+            "failureType", failure.getClass().getSimpleName(),
+            "attempt", exchange.getMessage().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class)));
+    })
+    .retryWhile(exchange ->
+        exchange.getMessage().getHeader(Exchange.REDELIVERY_COUNTER, 0, Integer.class) <= 3
+            && retryable.matches(exchange))
+    .redeliveryDelay(1000)
+    .handled(true)
+    .to("direct:escalate");
+----
+
+The counter starts at one when deciding the first redelivery. This permits at most three
+redeliveries after the initial attempt. Each failure refreshes the selected state; redelivery
+restarts at the failed processor, not at the beginning of the route. A negative decision or
+an exhausted budget sends the message to `direct:escalate` through normal exception handling.
+
+Evaluation errors are distinct from a negative decision. If the retry predicate throws,
+Camel reports the evaluation failure on the exchange; it does not automatically execute
+the exception clause's escalation route. Arrange caller or supervising-route handling for
+that failure. Bound provider timeouts as well as the retry count.
+
+=== Contextual action validation
+
+Use a semantic question for an additional check such as "Does this proposed action serve
+the approved task?" after normal identity, permission and tenant checks have succeeded.
+The semantic decision must not grant permissions that those checks denied.
+
+For example, declare this question alongside routes:
+
+[source,yaml]
+----
+- semantic:
+    question:
+      withinScope:
+        type: boolean
+        instructions: Does the proposed action serve the approved task?
+        state: ${body}
+        threshold: 0.8
+        uncertainty: 0.05
+        uncertaintyPolicy: fail
+----
+
+The selected state should contain the approved task and the proposed action. Obtain the
+approved task from trusted application state; do not let the proposed action redefine it.
+In this example, `direct:checkPermissions` performs the application's existing authorization
+and rejects unauthorized requests before semantic evaluation:
+
+[source,java]
+----
+from("direct:action")
+    .to("direct:checkPermissions")
+    .validate().language("semantic", "ref:withinScope")
+    .to("direct:performAction");
+----
+
+A negative decision raises normal validation failure. With this question's `fail` policy,
+an uncertain decision raises an evaluation error. Timeouts and malformed responses also
+fail, and none of these outcomes should execute the protected action. Failure handling may
+reject the request or send it for human review; do not use `continued(true)` to resume at
+the action. The example's threshold is a decision policy, not an accuracy guarantee.
+
+This pattern uses Validate and existing authorization services. It does not add a semantic
+`AuthorizationPolicy` implementation or replace a component's internal guardrail interfaces.
 
 == Implementing an adapter
 

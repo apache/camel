@@ -47,7 +47,8 @@ import org.apache.camel.util.IOHelper;
 
 /** Evaluates a named, provider-independent question against selected message state. */
 @Language(value = "semantic", modelName = "language")
-@Metadata(title = "Semantic", description = "Evaluate named semantic questions through a provider adapter",
+@Metadata(title = "Semantic Evaluation",
+          description = "Evaluate named questions about message content to produce boolean decisions, categories and scores through provider adapters",
           label = "language,ai", firstVersion = "4.23.0")
 public class SemanticLanguage extends LanguageSupport {
     public static final String RESULT = "CamelSemanticResult";

@@ -2,8 +2,8 @@
   "language": {
     "kind": "language",
     "name": "semantic",
-    "title": "Semantic",
-    "description": "Evaluate named semantic questions through a provider adapter",
+    "title": "Semantic Evaluation",
+    "description": "Evaluate named questions about message content to produce boolean decisions, categories and scores through provider adapters",
     "deprecated": false,
     "firstVersion": "4.23.0",
     "label": "language,ai",
