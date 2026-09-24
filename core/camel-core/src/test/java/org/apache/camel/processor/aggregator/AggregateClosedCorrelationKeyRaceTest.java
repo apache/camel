@@ -39,6 +39,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -100,6 +101,8 @@ class AggregateClosedCorrelationKeyRaceTest extends ContextTestSupport {
         releaseAggregate.countDown();
         producerB.join(10000);
         producerC.join(10000);
+        assertFalse(producerB.isAlive(), "producer-B did not complete within 10 s");
+        assertFalse(producerC.isAlive(), "producer-C did not complete within 10 s");
 
         assertTrue(c.getException() instanceof ClosedCorrelationKeyException,
                 "Expected ClosedCorrelationKeyException but was: " + c.getException());
@@ -150,6 +153,7 @@ class AggregateClosedCorrelationKeyRaceTest extends ContextTestSupport {
         // C fails to remove the group it read (optimistic locking) and is retried
         releaseAggregate.countDown();
         producerC.join(10000);
+        assertFalse(producerC.isAlive(), "producer-C did not complete within 10 s");
 
         assertTrue(c.getException() instanceof ClosedCorrelationKeyException,
                 "Expected ClosedCorrelationKeyException but was: " + c.getException());
