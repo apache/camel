@@ -23,10 +23,6 @@
         "description" : "Configures error handling strategy for routes, controlling how failed exchanges are handled and redelivered",
         "label" : "configuration,error,errorhandling"
       }, {
-        "name" : "semantic",
-        "type" : "object",
-        "ref" : "semantic"
-      }, {
         "name" : "intercept",
         "type" : "object",
         "ref" : "intercept",
@@ -121,6 +117,10 @@
         "title" : "Validations",
         "description" : "Container for defining data type validator definitions",
         "label" : "validation"
+      }, {
+        "name" : "semantic",
+        "type" : "object",
+        "ref" : "semantic"
       } ]
     },
     "steps" : {
@@ -860,109 +860,6 @@
       }, {
         "name" : "variableReceive",
         "type" : "string"
-      } ]
-    },
-    "semantic" : {
-      "isListItem" : true,
-      "children" : [ {
-        "name" : "question",
-        "type" : "map",
-        "ref" : "semanticDefinitionDeserializer$QuestionSchema",
-        "required" : true
-      } ]
-    },
-    "semanticDefinitionDeserializer$BooleanSchema" : {
-      "children" : [ {
-        "name" : "criteria",
-        "type" : "object"
-      }, {
-        "name" : "instructions",
-        "type" : "string",
-        "required" : true
-      }, {
-        "name" : "state",
-        "type" : "string"
-      }, {
-        "name" : "threshold",
-        "type" : "number"
-      }, {
-        "name" : "type",
-        "type" : "enum",
-        "enum" : [ "boolean" ],
-        "required" : true
-      }, {
-        "name" : "uncertainty",
-        "type" : "number"
-      }, {
-        "name" : "uncertaintyPolicy",
-        "type" : "enum",
-        "enum" : [ "fail", "non-match" ]
-      } ]
-    },
-    "semanticDefinitionDeserializer$ChoiceSchema" : {
-      "children" : [ {
-        "name" : "criteria",
-        "type" : "object",
-        "required" : true
-      }, {
-        "name" : "instructions",
-        "type" : "string",
-        "required" : true
-      }, {
-        "name" : "state",
-        "type" : "string"
-      }, {
-        "name" : "type",
-        "type" : "enum",
-        "enum" : [ "choice" ],
-        "required" : true
-      } ]
-    },
-    "semanticDefinitionDeserializer$QuestionSchema" : {
-      "children" : [ {
-        "name" : "criteria",
-        "type" : "any"
-      }, {
-        "name" : "instructions",
-        "type" : "string",
-        "required" : true
-      }, {
-        "name" : "state",
-        "type" : "string"
-      }, {
-        "name" : "threshold",
-        "type" : "number"
-      }, {
-        "name" : "type",
-        "type" : "enum",
-        "enum" : [ "boolean", "choice", "score" ],
-        "required" : true
-      }, {
-        "name" : "uncertainty",
-        "type" : "number"
-      }, {
-        "name" : "uncertaintyPolicy",
-        "type" : "enum",
-        "enum" : [ "fail", "non-match" ]
-      } ]
-    },
-    "semanticDefinitionDeserializer$ScoreSchema" : {
-      "children" : [ {
-        "name" : "criteria",
-        "type" : "array",
-        "required" : true
-      }, {
-        "name" : "instructions",
-        "type" : "string",
-        "required" : true
-      }, {
-        "name" : "state",
-        "type" : "string"
-      }, {
-        "name" : "type",
-        "type" : "enum",
-        "enum" : [ "score" ],
-        "required" : true
       } ]
     },
     "a2aSubTask" : {
@@ -1822,16 +1719,6 @@
         "group" : "advanced",
         "label" : "advanced"
       }, {
-        "name" : "selector",
-        "type" : "object",
-        "ref" : "expressionSubElement",
-        "description" : "Expression evaluated once per entry into this choice. Its String result is matched against literal when values. Cannot be combined with precondition mode or predicate branches.",
-        "title" : "Selector",
-        "displayName" : "Selector",
-        "kind" : "expression",
-        "index" : 4,
-        "group" : "common"
-      }, {
         "name" : "when",
         "type" : "array",
         "ref" : "when",
@@ -1839,7 +1726,7 @@
         "title" : "When",
         "displayName" : "When",
         "kind" : "element",
-        "index" : 5,
+        "index" : 4,
         "group" : "common"
       }, {
         "name" : "otherwise",
@@ -1849,7 +1736,7 @@
         "title" : "Otherwise",
         "displayName" : "Otherwise",
         "kind" : "element",
-        "index" : 6,
+        "index" : 5,
         "group" : "common"
       }, {
         "name" : "precondition",
@@ -1859,7 +1746,7 @@
         "default" : "false",
         "displayName" : "Precondition",
         "kind" : "attribute",
-        "index" : 7,
+        "index" : 6,
         "group" : "advanced",
         "label" : "advanced"
       } ]
@@ -9937,21 +9824,13 @@
         "name" : "expression",
         "type" : "object",
         "ref" : "expression",
-        "description" : "Predicate to evaluate for a predicate-based choice. Mutually exclusive with value.",
+        "description" : "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.",
         "title" : "Expression",
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 4,
-        "group" : "common"
-      }, {
-        "name" : "value",
-        "type" : "string",
-        "description" : "Literal, case-sensitive String to match against the parent choice selector. Mutually exclusive with a predicate expression.",
-        "title" : "Value",
-        "displayName" : "Value",
-        "kind" : "attribute",
-        "index" : 5,
-        "group" : "common"
+        "group" : "common",
+        "required" : true
       }, {
         "name" : "steps",
         "type" : "array",
@@ -20488,6 +20367,109 @@
         "name" : "predicateValidator",
         "type" : "object",
         "ref" : "predicateValidator"
+      } ]
+    },
+    "semantic" : {
+      "isListItem" : true,
+      "children" : [ {
+        "name" : "question",
+        "type" : "map",
+        "ref" : "semanticDefinitionDeserializer$QuestionSchema",
+        "required" : true
+      } ]
+    },
+    "semanticDefinitionDeserializer$BooleanSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "object"
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "boolean" ],
+        "required" : true
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "enum",
+        "enum" : [ "fail", "non-match" ]
+      } ]
+    },
+    "semanticDefinitionDeserializer$ChoiceSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "object",
+        "required" : true
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "choice" ],
+        "required" : true
+      } ]
+    },
+    "semanticDefinitionDeserializer$QuestionSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "any"
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "boolean", "choice", "score" ],
+        "required" : true
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "enum",
+        "enum" : [ "fail", "non-match" ]
+      } ]
+    },
+    "semanticDefinitionDeserializer$ScoreSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "array",
+        "required" : true
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "score" ],
+        "required" : true
       } ]
     }
   }

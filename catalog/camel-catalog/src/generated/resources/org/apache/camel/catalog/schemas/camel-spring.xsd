@@ -4222,16 +4222,6 @@ The exception class names (fully qualified) to catch.
     <xs:complexContent>
       <xs:extension base="tns:noOutputDefinition">
         <xs:sequence>
-          <xs:element minOccurs="0" name="selector" type="tns:expressionSubElementDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Expression evaluated once per entry into this choice. Its String result is matched against literal when values. Cannot
-be combined with precondition mode or predicate branches.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:when"/>
           <xs:element minOccurs="0" ref="tns:otherwise"/>
         </xs:sequence>
@@ -4252,7 +4242,7 @@ placeholders or simple expressions using only property placeholders are supporte
     <xs:complexContent>
       <xs:extension base="tns:optionalIdentifiedDefinition">
         <xs:sequence>
-          <xs:choice minOccurs="0">
+          <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:datasonnet"/>
@@ -4362,16 +4352,6 @@ placeholders or simple expressions using only property placeholders are supporte
             <xs:documentation xml:lang="en">
 <![CDATA[
 Disables this EIP from the route. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="value" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Literal, case-sensitive String to match against the parent choice selector. Mutually exclusive with a predicate
-expression.
 ]]>
             </xs:documentation>
           </xs:annotation>

@@ -1184,11 +1184,9 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                             .build());
                             break;
                         default:
-                            boolean selectorValue = "WhenDefinition".equals(info.simpleName()) && "value".equals(fieldName);
                             annotations.add(
                                     YamlProperties.annotation(fieldName, "string")
-                                            .withRequired(selectorValue || isRequired(field))
-                                            .withOneOf(selectorValue ? "expression" : "")
+                                            .withRequired(isRequired(field))
                                             .withDeprecated(isDeprecated(field))
                                             .withDescription(descriptor.description(fieldName))
                                             .withDisplayName(descriptor.displayName(fieldName))
@@ -1293,10 +1291,6 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
      * field (true on ExpressionNode), else required.
      */
     private boolean expressionRequired(ClassInfo info) {
-        // A when requires exactly one alternative: a predicate expression or a selector value.
-        if ("WhenDefinition".equals(info.simpleName())) {
-            return true;
-        }
         FieldInfo expressionField = null;
         for (FieldInfo fi : fields(info)) {
             if ("expression".equals(fi.name()) && expressionField == null) {

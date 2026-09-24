@@ -25,67 +25,6 @@ include::partial$eip-options.adoc[]
 include::partial$eip-exchangeProperties.adoc[]
 // eip exchangeProperties: END
 
-== Selector-based choice
-
-A selector evaluates one ordinary Camel expression per entry into the Choice block and
-matches its result against literal branch values:
-
-[source,java]
-----
-from("direct:tickets")
-    .choice(header("department"))
-        .when("billing").to("direct:billing")
-        .when("technical").to("direct:technical")
-        .otherwise().to("direct:general")
-    .end();
-----
-
-The selector is evaluated as a `String`. Values are case-sensitive strings; quote numeric
-or boolean literals in YAML. There is no comparison coercion after selector conversion.
-Null and unmatched results select `otherwise`, if present. Empty strings are valid values.
-Duplicate values, mixing literal values and predicate branches, and combining a selector
-with `precondition` are rejected during route setup. Existing predicate choices are unchanged.
-
-Nested choices have independent evaluations. Reentering a choice through a loop or a retry
-of the choice evaluates again. No selected value is stored on the exchange. Selector errors
-follow normal Camel error handling and do not select `otherwise`. A stream cache consumed
-by the selector is reset before branch processing.
-
-[source,xml]
-----
-<choice>
-    <selector><header>department</header></selector>
-    <when value="billing"><to uri="direct:billing"/></when>
-    <when value="technical"><to uri="direct:technical"/></when>
-    <otherwise><to uri="direct:general"/></otherwise>
-</choice>
-----
-
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:tickets
-      steps:
-        - choice:
-            selector:
-              header:
-                expression: department
-            when:
-              - value: billing
-                steps:
-                  - to:
-                      uri: direct:billing
-              - value: technical
-                steps:
-                  - to:
-                      uri: direct:technical
-            otherwise:
-              steps:
-                - to:
-                    uri: direct:general
-----
-
 == Example
 
 The Camel xref:languages:simple-language.adoc[Simple] language
