@@ -51,6 +51,8 @@ public class AiResourceEndpoint extends DefaultEndpoint {
     @UriParam(description = "Resource configuration including the resource uri, tags, description and MIME type.")
     private AiResourceConfiguration configuration;
 
+    private AiResourceConsumer consumer;
+
     public AiResourceEndpoint(String uri, AiResourceComponent component, String resourceName,
                               AiResourceConfiguration configuration) {
         super(uri, component);
@@ -69,6 +71,7 @@ public class AiResourceEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         AiResourceConsumer consumer = new AiResourceConsumer(this, processor);
         configureConsumer(consumer);
+        this.consumer = consumer;
         return consumer;
     }
 
@@ -82,5 +85,22 @@ public class AiResourceEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(AiResourceConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // the endpoint is started during route warm-up, before any route consumer is started
+        if (consumer != null) {
+            consumer.registerEarly();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (consumer != null) {
+            consumer.deregisterEarly();
+        }
+        super.doStop();
     }
 }

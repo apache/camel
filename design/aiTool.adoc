@@ -334,7 +334,12 @@ URI syntax: `ai-tool:toolName[?options]`
 
 Lifecycle (managed by `AiToolConsumer`):
 
-* **`doStart()`**: builds `AiToolSpec` from configuration, registers in `AiToolRegistry`
+* **route warm-up** (`AiToolEndpoint.doStart()`): builds `AiToolSpec` from configuration and registers in
+  `AiToolRegistry`, if the route is started automatically. Camel warms up all routes before it starts any route
+  consumer, so a route that sends a request as soon as it starts (such as `stream:in`) sees every tool regardless of
+  route order. `ai-resource` follows the same lifecycle.
+* **`doStart()`**: registers in `AiToolRegistry` (building the spec first when the route was not started
+  automatically, or is restarted)
 * **`doStop()`**: deregisters from `AiToolRegistry`, clears state
 * **`doSuspend()`**: deregisters from `AiToolRegistry` (keeps state for resume)
 * **`doResume()`**: re-registers in `AiToolRegistry` using saved state
