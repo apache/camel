@@ -67,8 +67,8 @@ The `range(max)` function now starts at 0, as documented and as `range` does in 
 
 A review of the simple language fixed a number of edge cases. These change what an existing expression returns:
 
-* `split` uses the separator as plain text, not as a regular expression: `${split(${body},'.')}` splits on dots
-  (it used to return an empty array), and `${split(${body},'|')}` splits on the bar. A route that relied on a regular
+* `split` uses the separator as plain text, not as a regular expression: `+${split(${body},'.')}+` splits on dots
+  (it used to return an empty array), and `+${split(${body},'|')}+` splits on the bar. A route that relied on a regular
   expression separator such as `'\s+'` must use `${body.split('\s+')}` instead.
 * The elvis operator `?:` treats any numeric zero as falsy (such as `0L`, `0.0` or `BigDecimal.ZERO`), not only `0` as
   an `Integer`.
@@ -77,7 +77,7 @@ A review of the simple language fixed a number of edge cases. These change what 
   string. A `BigDecimal` is a number, so it is not quoted.
 * `kindOfType` returns `object` for a `Map` (it used to return `array`).
 * A name glued to a function prefix is an unknown function instead of being read as that function, such as
-  `${headerfoo}` (which returned the header `foo`), `${uuidv7}` or `${exceptionInfo}`. Use `${header.foo}`.
+  `+${headerfoo}+` (which returned the header `foo`), `+${uuidv7}+` or `+${exceptionInfo}+`. Use `${header.foo}`.
 * A hidden file name has no extension: for `.bashrc` then `${file:name.ext}` is `null` (it used to be `bashrc`), and
   for `.route.yaml` then `${file:name.noext}` is `.route`. This comes from `FileUtil.onlyExt` and `FileUtil.stripExt`.
 * The chain operator `~>` needs a space on both sides, as the other operators do, so `A~>B` is text.
