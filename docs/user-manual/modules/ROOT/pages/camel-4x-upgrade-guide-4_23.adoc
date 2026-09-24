@@ -2795,6 +2795,13 @@ reply of a discarded exchange (`waitForTaskToComplete`) is released with that ex
 `timeout`, or forever when the timeout is disabled. On completions handed over to a discarded InOnly exchange, such as
 the commit or rollback of the consumer that received the message, now run as a failure, where previously they never ran.
 
+=== camel-seda - multipleConsumers broadcasts to consumers with different uri options
+
+With `multipleConsumers=true` every consumer of a SEDA queue now receives a copy of each message, also when the consumers
+use the same queue name with different consumer options, such as `seda:foo?multipleConsumers=true` and
+`seda:foo?multipleConsumers=true&concurrentConsumers=5`. Previously each distinct endpoint uri only multicast to its own
+consumers, so such consumers silently competed for the messages instead of each receiving a copy.
+
 === camel-core - Recipient List releases the producers of recipients it did not send to
 
 The Recipient List acquires a producer for every recipient before it starts sending. When it completes before
