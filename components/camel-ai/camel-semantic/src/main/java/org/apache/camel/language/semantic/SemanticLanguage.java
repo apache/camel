@@ -153,13 +153,14 @@ public class SemanticLanguage extends LanguageSupport {
                 throw new IllegalArgumentException("No semantic adapter bean or class found: " + className);
             }
             Class<? extends SemanticAdapter> type = resolved.asSubclass(SemanticAdapter.class);
-            synchronized (context.getRegistry()) {
+            AdapterLock lock = AdapterLock.get(context);
+            synchronized (lock.monitor) {
                 if (context.getRegistry().lookupByName(ADAPTER_NAME) != null) {
                     throw new IllegalArgumentException("Semantic adapter registry name is already bound: " + ADAPTER_NAME);
                 }
                 SemanticAdapter instance = context.getInjector().newInstance(type);
                 CamelContextAware.trySetCamelContext(instance, context);
-                owned = new ManagedAdapter(context, instance);
+                owned = new ManagedAdapter(context, instance, lock);
                 context.getRegistry().bind(ADAPTER_NAME, instance);
             }
             context.addService(owned, true, true);
@@ -178,13 +179,31 @@ public class SemanticLanguage extends LanguageSupport {
         }
     }
 
+    private static final class AdapterLock {
+        private static final Object CREATION_LOCK = new Object();
+        private final Object monitor = new Object();
+
+        private static AdapterLock get(CamelContext context) {
+            synchronized (CREATION_LOCK) {
+                AdapterLock lock = context.getCamelContextExtension().getContextPlugin(AdapterLock.class);
+                if (lock == null) {
+                    lock = new AdapterLock();
+                    context.getCamelContextExtension().addContextPlugin(AdapterLock.class, lock);
+                }
+                return lock;
+            }
+        }
+    }
+
     private static final class ManagedAdapter extends ServiceSupport {
         private final CamelContext context;
         private final SemanticAdapter instance;
+        private final AdapterLock lock;
 
-        private ManagedAdapter(CamelContext context, SemanticAdapter instance) {
+        private ManagedAdapter(CamelContext context, SemanticAdapter instance, AdapterLock lock) {
             this.context = context;
             this.instance = instance;
+            this.lock = lock;
         }
 
         @Override
@@ -207,8 +226,10 @@ public class SemanticLanguage extends LanguageSupport {
             try {
                 ServiceHelper.stopAndShutdownService(instance);
             } finally {
-                if (context.getRegistry().lookupByName(ADAPTER_NAME) == instance) {
-                    context.getRegistry().unbind(ADAPTER_NAME);
+                synchronized (lock.monitor) {
+                    if (context.getRegistry().lookupByName(ADAPTER_NAME) == instance) {
+                        context.getRegistry().unbind(ADAPTER_NAME);
+                    }
                 }
             }
         }

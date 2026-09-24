@@ -73,7 +73,8 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                 if ("semantic".equals(asText(tuple.getKeyNode()))) {
                     read(tuple.getValueNode()).forEach((name, question) -> {
                         if (definitions.putIfAbsent(name, question) != null) {
-                            throw new IllegalArgumentException("Duplicate semantic question: " + name);
+                            throw new YamlDeserializationException(
+                                    tuple.getValueNode(), "Duplicate semantic question: " + name);
                         }
                     });
                 }
@@ -84,49 +85,79 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                 ? context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class)
                 : SemanticQuestions.get(context);
         if (questions != null) {
-            questions.replace(dc.getResource(), definitions);
+            try {
+                questions.replace(dc.getResource(), definitions);
+            } catch (IllegalArgumentException e) {
+                throw new YamlDeserializationException(root, e.getMessage(), e);
+            }
         }
     }
 
     private static Map<String, SemanticQuestion> read(Node node) {
-        Map<String, Node> semantic = fields(node);
+        Map<String, Node> semantic = fields(node, "semantic declaration");
         if (!semantic.keySet().equals(Set.of("question"))) {
-            throw new IllegalArgumentException("Semantic declaration requires only question");
+            throw new YamlDeserializationException(node, "Semantic declaration requires only question");
         }
         Map<String, SemanticQuestion> result = new LinkedHashMap<>();
-        fields(semantic.get("question")).forEach((name, definition) -> {
-            Map<String, Node> values = fields(definition);
-            if (!FIELDS.containsAll(values.keySet())) {
-                throw new IllegalArgumentException("Unknown property in semantic question: " + name);
+        fields(semantic.get("question"), "semantic questions").forEach((name, definition) -> {
+            if (name.isBlank()) {
+                throw new YamlDeserializationException(definition, "Semantic question requires a nonblank name");
             }
-            String typeName = asText(values.get("type"));
-            if (typeName == null) {
-                throw new IllegalArgumentException("Semantic question type is required: " + name);
+            try {
+                result.put(name, readQuestion(name, definition));
+            } catch (IllegalArgumentException e) {
+                throw new YamlDeserializationException(
+                        definition, "Invalid semantic question '" + name + "': " + e.getMessage(), e);
             }
-            SemanticQuestion.Type type = SemanticQuestion.Type.valueOf(typeName.toUpperCase(Locale.ROOT));
-            Map<String, String> criteria = new LinkedHashMap<>();
-            List<String> levels = List.of();
-            if (values.containsKey("criteria")) {
-                if (type == SemanticQuestion.Type.SCORE) {
-                    levels = asSequenceNode(values.get("criteria")).getValue().stream().map(YamlDeserializerSupport::asText)
-                            .toList();
-                } else {
-                    fields(values.get("criteria")).forEach((key, value) -> criteria.put(key, asText(value)));
-                }
-            }
-            if (type != SemanticQuestion.Type.BOOLEAN && (values.containsKey("threshold") || values.containsKey("uncertainty")
-                    || values.containsKey("uncertaintyPolicy"))) {
-                throw new IllegalArgumentException("Threshold and uncertainty policy require a boolean question: " + name);
-            }
-            SemanticQuestion.UncertaintyPolicy policy = values.containsKey("uncertaintyPolicy")
-                    ? SemanticQuestion.UncertaintyPolicy
-                            .valueOf(asText(values.get("uncertaintyPolicy")).replace('-', '_').toUpperCase(Locale.ROOT))
-                    : SemanticQuestion.UncertaintyPolicy.FAIL;
-            result.put(name, new SemanticQuestion(
-                    type, asText(values.get("instructions")), asText(values.get("state")),
-                    criteria, levels, number(values, name, "threshold", 0.5), number(values, name, "uncertainty", 0), policy));
         });
         return result;
+    }
+
+    private static SemanticQuestion readQuestion(String name, Node definition) {
+        Map<String, Node> values = fields(definition, "semantic question '" + name + "'");
+        values.forEach((field, value) -> {
+            if (!FIELDS.contains(field)) {
+                throw new YamlDeserializationException(
+                        value, "Unknown property '" + field + "' in semantic question '" + name + "'");
+            }
+        });
+        if (!values.containsKey("type")) {
+            throw new YamlDeserializationException(definition, "Semantic question type is required: " + name);
+        }
+        SemanticQuestion.Type type = enumeration(values.get("type"), name, "type", SemanticQuestion.Type.class);
+        Map<String, String> criteria = new LinkedHashMap<>();
+        List<String> levels = List.of();
+        if (values.containsKey("criteria")) {
+            if (type == SemanticQuestion.Type.SCORE) {
+                levels = asSequenceNode(values.get("criteria")).getValue().stream().map(YamlDeserializerSupport::asText)
+                        .toList();
+            } else {
+                fields(values.get("criteria"), "criteria for semantic question '" + name + "'")
+                        .forEach((key, value) -> criteria.put(key, asText(value)));
+            }
+        }
+        if (type != SemanticQuestion.Type.BOOLEAN && (values.containsKey("threshold") || values.containsKey("uncertainty")
+                || values.containsKey("uncertaintyPolicy"))) {
+            throw new YamlDeserializationException(
+                    definition, "Threshold and uncertainty policy require a boolean question: " + name);
+        }
+        SemanticQuestion.UncertaintyPolicy policy = values.containsKey("uncertaintyPolicy")
+                ? enumeration(values.get("uncertaintyPolicy"), name, "uncertaintyPolicy",
+                        SemanticQuestion.UncertaintyPolicy.class)
+                : SemanticQuestion.UncertaintyPolicy.FAIL;
+        return new SemanticQuestion(
+                type, asText(values.get("instructions")), asText(values.get("state")),
+                criteria, levels, number(values, name, "threshold", 0.5), number(values, name, "uncertainty", 0), policy);
+    }
+
+    private static <T extends Enum<T>> T enumeration(Node node, String question, String field, Class<T> type) {
+        String raw = asText(node);
+        try {
+            return Enum.valueOf(type, raw.replace('-', '_').toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new YamlDeserializationException(
+                    node, "Invalid value for '" + field + "' in semantic question '" + question + "': " + raw, e);
+        }
     }
 
     private static double number(Map<String, Node> values, String question, String name, double fallback) {
@@ -144,12 +175,12 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
         }
     }
 
-    private static Map<String, Node> fields(Node node) {
+    private static Map<String, Node> fields(Node node, String description) {
         Map<String, Node> result = new LinkedHashMap<>();
         for (NodeTuple tuple : asMappingNode(node).getValue()) {
             String name = asText(tuple.getKeyNode());
             if (result.putIfAbsent(name, tuple.getValueNode()) != null) {
-                throw new IllegalArgumentException("Duplicate semantic declaration key: " + name);
+                throw new YamlDeserializationException(tuple.getKeyNode(), "Duplicate key '" + name + "' in " + description);
             }
         }
         return result;

@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
@@ -36,6 +37,8 @@ import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -250,4 +253,76 @@ class SemanticQuestionTest extends YamlTestSupport {
                     });
                 });
     }
+
+    @ParameterizedTest
+    @MethodSource("invalidEnums")
+    void invalidEnumValuesIdentifyQuestionFieldAndLocation(String field, String value, int line) {
+        String yaml = """
+                - semantic:
+                    question:
+                      spam:
+                        type: boolean
+                        instructions: Is this spam?
+                """;
+        yaml = field.equals("type")
+                ? yaml.replace("type: boolean", "type: " + value)
+                : yaml + "        uncertaintyPolicy: " + value + "\n";
+        String source = yaml;
+        assertThatThrownBy(() -> loadRoutesNoValidate(source))
+                .hasMessageContaining("route-0.yaml")
+                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .cause().isInstanceOfSatisfying(YamlDeserializationException.class, error -> {
+                    assertThat(error).hasMessageContaining("Invalid value for '" + field + "' in semantic question 'spam'");
+                    assertThat(error.getProblemMark()).hasValueSatisfying(mark -> {
+                        assertThat(mark.getLine()).isEqualTo(line);
+                        assertThat(mark.getColumn()).isEqualTo(8 + field.length() + 2);
+                    });
+                });
+    }
+
+    static Stream<Arguments> invalidEnums() {
+        return Stream.of(
+                Arguments.of("type", "unsupported", 3),
+                Arguments.of("type", "''", 3),
+                Arguments.of("uncertaintyPolicy", "unsupported", 5),
+                Arguments.of("uncertaintyPolicy", "''", 5),
+                Arguments.of("uncertaintyPolicy", "null", 5));
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidStructures")
+    void invalidStructuresIdentifySourceAndOffendingNode(String yaml, String message, int line, int column) {
+        assertThatThrownBy(() -> loadRoutesNoValidate(yaml))
+                .hasMessageContaining("route-0.yaml")
+                .cause().isInstanceOfSatisfying(YamlDeserializationException.class, error -> {
+                    assertThat(error).hasMessageContaining(message);
+                    assertThat(error.getProblemMark()).hasValueSatisfying(mark -> {
+                        assertThat(mark.getLine()).isEqualTo(line);
+                        assertThat(mark.getColumn()).isEqualTo(column);
+                    });
+                });
+    }
+
+    static Stream<Arguments> invalidStructures() {
+        String declaration = declarations("${body}");
+        String question = """
+                - semantic:
+                    question:
+                      q: {type: boolean, instructions: Is it valid?}
+                """;
+        return Stream.of(
+                Arguments.of(declaration.replace("instructions:", "typo:"),
+                        "Unknown property 'typo' in semantic question 'department'", 5, 14),
+                Arguments.of(declaration.replace("        type: choice\n", ""),
+                        "Semantic question type is required: department", 3, 8),
+                Arguments.of(declaration.replace("type: choice", "type: choice\n        type: choice"),
+                        "Duplicate key 'type' in semantic question 'department'", 4, 8),
+                Arguments.of("- semantic: {other: {}}", "Semantic declaration requires only question", 0, 12),
+                Arguments.of(question + question, "Duplicate semantic question: q", 4, 4),
+                Arguments.of(question + "      q: {type: boolean, instructions: Is it valid?}\n",
+                        "Duplicate key 'q' in semantic questions", 3, 6),
+                Arguments.of(question.replace("Is it valid?", "''"),
+                        "Invalid semantic question 'q': Question instructions must not be blank", 2, 9));
+    }
+
 }
