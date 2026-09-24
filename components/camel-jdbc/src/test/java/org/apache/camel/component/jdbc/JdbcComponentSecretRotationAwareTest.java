@@ -44,12 +44,20 @@ class JdbcComponentSecretRotationAwareTest {
 
     @Test
     void evictDataSourceConnections_hikariCpPool_callsSoftEvict() throws Exception {
-        // Arrange: a DataSource that exposes softEvictConnections(), simulating HikariCP
+        // Arrange: a DataSource that simulates HikariDataSource by exposing getHikariPoolMXBean(),
+        // which returns a mock MXBean with softEvictConnections(). This matches the real HikariCP API
+        // where softEvictConnections() lives on HikariPoolMXBean, not on HikariDataSource itself.
         AtomicBoolean softEvictCalled = new AtomicBoolean(false);
-        DataSource hikariLike = new HikariLikeDataSource() {
+        Object mockMXBean = new Object() {
             @SuppressWarnings("unused")
             public void softEvictConnections() {
                 softEvictCalled.set(true);
+            }
+        };
+        DataSource hikariLike = new HikariLikeDataSource() {
+            @SuppressWarnings("unused")
+            public Object getHikariPoolMXBean() {
+                return mockMXBean;
             }
         };
 
@@ -57,12 +65,12 @@ class JdbcComponentSecretRotationAwareTest {
         JdbcComponent.evictDataSourceConnections(hikariLike, "test");
 
         // Assert
-        assertTrue(softEvictCalled.get(), "softEvictConnections() should have been called on a HikariCP-like pool");
+        assertTrue(softEvictCalled.get(), "softEvictConnections() should have been called via HikariPoolMXBean");
     }
 
     @Test
     void evictDataSourceConnections_genericPool_doesNotThrow() throws Exception {
-        // Arrange: a DataSource without softEvictConnections() — the generic fallback path
+        // Arrange: a DataSource without getHikariPoolMXBean() — the generic fallback path
         DataSource generic = new NoOpDataSource();
 
         // Act — must not throw
@@ -73,10 +81,16 @@ class JdbcComponentSecretRotationAwareTest {
     void onSecretRotation_withRegistryDataSource_evictsConnections() throws Exception {
         // Arrange
         AtomicBoolean softEvictCalled = new AtomicBoolean(false);
-        DataSource hikariLike = new HikariLikeDataSource() {
+        Object mockMXBean = new Object() {
             @SuppressWarnings("unused")
             public void softEvictConnections() {
                 softEvictCalled.set(true);
+            }
+        };
+        DataSource hikariLike = new HikariLikeDataSource() {
+            @SuppressWarnings("unused")
+            public Object getHikariPoolMXBean() {
+                return mockMXBean;
             }
         };
 
@@ -97,10 +111,16 @@ class JdbcComponentSecretRotationAwareTest {
     void onSecretRotation_withComponentOwnedDataSource_evictsConnections() throws Exception {
         // Arrange: DataSource injected directly on the component (not in registry)
         AtomicBoolean softEvictCalled = new AtomicBoolean(false);
-        DataSource hikariLike = new HikariLikeDataSource() {
+        Object mockMXBean = new Object() {
             @SuppressWarnings("unused")
             public void softEvictConnections() {
                 softEvictCalled.set(true);
+            }
+        };
+        DataSource hikariLike = new HikariLikeDataSource() {
+            @SuppressWarnings("unused")
+            public Object getHikariPoolMXBean() {
+                return mockMXBean;
             }
         };
 
@@ -131,7 +151,10 @@ class JdbcComponentSecretRotationAwareTest {
     // Minimal DataSource stubs
     // ---------------------------------------------------------------------------
 
-    /** Base class for the HikariCP-like stub — the subclass adds softEvictConnections() dynamically. */
+    /**
+     * Base class for the HikariCP-like stub. Subclasses add {@code getHikariPoolMXBean()} to simulate the real
+     * {@code HikariDataSource} API (where {@code softEvictConnections()} lives on the MXBean, not the DataSource).
+     */
     private abstract static class HikariLikeDataSource implements DataSource {
         @Override
         public Connection getConnection() throws SQLException {
@@ -177,8 +200,8 @@ class JdbcComponentSecretRotationAwareTest {
         }
     }
 
-    /** A plain DataSource without softEvictConnections(). */
+    /** A plain DataSource without getHikariPoolMXBean(). */
     private static final class NoOpDataSource extends HikariLikeDataSource {
-        // no softEvictConnections() — exercises the generic fallback path
+        // no getHikariPoolMXBean() — exercises the generic fallback path
     }
 }

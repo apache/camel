@@ -136,17 +136,22 @@ public class JdbcComponent extends DefaultComponent implements SecretRotationAwa
      * Evicts stale connections from the given DataSource so that the pool rebuilds them with the rotated credentials.
      * <p/>
      * HikariCP is tried first via reflection (so camel-jdbc does not need a compile-time dependency on it). Any
-     * DataSource that does not expose a {@code softEvictConnections()} method is left untouched — the pool will pick up
-     * the new credentials on its own reconnect cycle when existing connections expire.
+     * DataSource that does not expose {@code getHikariPoolMXBean()} is left untouched — the pool will pick up the new
+     * credentials on its own reconnect cycle when existing connections expire.
      */
     static void evictDataSourceConnections(DataSource ds, Object source) {
-        // HikariCP: softEvictConnections() marks all current connections for eviction while
-        // allowing in-flight queries to complete; the pool then recreates them with the new credentials.
+        // HikariCP: softEvictConnections() is defined on HikariPoolMXBean, not on HikariDataSource directly.
+        // We retrieve the MXBean via getHikariPoolMXBean() (a public method on HikariDataSource) using reflection
+        // so that camel-jdbc does not need a compile-time dependency on HikariCP.
         try {
-            Method softEvict = ds.getClass().getMethod("softEvictConnections");
-            softEvict.invoke(ds);
-            LOG.info("Secret rotation (source={}): HikariCP softEvictConnections() called on {}", source, ds);
-            return;
+            Method getPoolMXBean = ds.getClass().getMethod("getHikariPoolMXBean");
+            Object poolMXBean = getPoolMXBean.invoke(ds);
+            if (poolMXBean != null) {
+                Method softEvict = poolMXBean.getClass().getMethod("softEvictConnections");
+                softEvict.invoke(poolMXBean);
+                LOG.info("Secret rotation (source={}): HikariCP softEvictConnections() called on {}", source, ds);
+                return;
+            }
         } catch (NoSuchMethodException e) {
             // Not a HikariCP DataSource — fall through to generic handling
         } catch (Exception e) {
@@ -156,7 +161,7 @@ public class JdbcComponent extends DefaultComponent implements SecretRotationAwa
         // Generic fallback: log that the pool was not explicitly evicted.
         // The pool will pick up the new credentials when existing connections expire naturally.
         LOG.info(
-                "Secret rotation (source={}): DataSource {} does not expose softEvictConnections(); "
+                "Secret rotation (source={}): DataSource {} does not support HikariCP pool eviction; "
                  + "existing connections will be replaced as they expire or are validated",
                 source, ds.getClass().getName());
     }
