@@ -308,6 +308,9 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void openCircuit(Route route) {
         try {
             lock.lock();
+            if (state.get() == STATE_OPEN) {
+                return;
+            }
             suspendOrStopConsumer(route.getConsumer());
             state.set(STATE_OPEN);
             openedAt = System.currentTimeMillis();
@@ -413,13 +416,24 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         return this.keepOpenBool.get();
     }
 
+    /**
+     * Sets whether to keep the circuit breaker always open (never closes). This is only intended for development and
+     * testing purposes.
+     * <p>
+     * When set to {@code true}, the circuit is opened immediately and synchronously (the consumer is suspended before
+     * this method returns). Setting it back to {@code false} is deferred: the half-open timer will attempt to close the
+     * circuit on its next tick (after {@link #getHalfOpenAfter()} milliseconds).
+     * <p>
+     * Note: a single {@link ThrottlingExceptionRoutePolicy} instance is designed for one route. When attached to
+     * multiple routes, only the last route bound via {@link #setRoute(Route)} is acted upon by this setter.
+     */
     public void setKeepOpen(boolean keepOpen) {
         this.keepOpenBool.set(keepOpen);
         // Immediately act on the new value so callers do not have to send a
         // trigger message and wait for the next onExchangeDone() callback:
-        //  - keepOpen=true  → open the circuit right away if it is not already open
+        //  - keepOpen=true  → open the circuit right away (openCircuit is idempotent under its lock)
         //  - keepOpen=false → the half-open timer will close the circuit on its next tick
-        if (keepOpen && route != null && state.get() != STATE_OPEN) {
+        if (keepOpen && route != null) {
             LOG.debug("Opening circuit (keepOpen set to true)");
             openCircuit(route);
         }

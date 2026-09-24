@@ -89,9 +89,11 @@ class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport
             template.sendBody(url, "MessageRound2 " + i);
         }
 
-        // should not close b/c keepOpen is true
+        // should not close b/c keepOpen is true; use assertPeriod to verify no extra messages arrive
+        result.setAssertPeriod(500);
         result.expectedMessageCount(size + 1);
         MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        result.setAssertPeriod(0);
 
         // set keepOpen to false
         policy.setKeepOpen(false);
