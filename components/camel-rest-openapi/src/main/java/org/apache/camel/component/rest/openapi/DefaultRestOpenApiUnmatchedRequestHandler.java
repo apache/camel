@@ -19,6 +19,7 @@ package org.apache.camel.component.rest.openapi;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.RestOpenApiUnmatchedRequestHandler;
 
 /**
  * Default {@link RestOpenApiUnmatchedRequestHandler} that returns empty body with the HTTP status code and, if

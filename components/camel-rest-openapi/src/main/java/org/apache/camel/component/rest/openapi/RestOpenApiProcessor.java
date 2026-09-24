@@ -28,6 +28,7 @@ import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestOpenApiUnmatchedRequestHandler;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.CamelContextHelper;

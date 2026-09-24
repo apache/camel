@@ -35,6 +35,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.RestOpenApiUnmatchedRequestHandler;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.AfterEach;

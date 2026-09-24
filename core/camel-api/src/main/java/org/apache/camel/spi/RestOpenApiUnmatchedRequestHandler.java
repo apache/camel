@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rest.openapi;
+package org.apache.camel.spi;
 
 import java.util.List;
 
@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
  * <p>
  * This allows to plugin different handlers to produce custom error response bodies.
  *
- * @see   DefaultRestOpenApiUnmatchedRequestHandler
  * @since 4.23
  */
 public interface RestOpenApiUnmatchedRequestHandler {
