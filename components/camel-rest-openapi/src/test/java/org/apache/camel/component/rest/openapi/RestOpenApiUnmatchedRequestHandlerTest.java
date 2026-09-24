@@ -228,12 +228,12 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
         PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
 
         // a catch-all for the api base path (without verbs) must be registered so unmatched requests are routed to Camel
-        verify(phc).addHttpEndpoint(eq(""), isNull(), isNull(), isNull(), isNull());
+        verify(phc).addHttpEndpoint(eq(""), isNull(), isNull(), isNull(), any(PlatformHttpConsumer.class));
         ServiceHelper.stopService(processor);
         openApiProcessor = null;
 
         // and removed again when the processor stops
-        verify(phc).removeHttpEndpoint(eq(""), isNull());
+        verify(phc).removeHttpEndpoint(eq(""), any(PlatformHttpConsumer.class));
     }
 
     @Test
