@@ -145,6 +145,30 @@ class IdempotentConsumerSharedRepositoryStopTest extends ContextTestSupport {
     }
 
     @Test
+    void testRemoveCacheRouteStopsRepository() throws Exception {
+        MemoryKeyValueRepository store = new MemoryKeyValueRepository();
+        context.getRegistry().bind("store", store);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:cache").routeId("cache")
+                        .cache(header("key"))
+                            .to("mock:service")
+                        .end();
+            }
+        });
+        context.start();
+        assertTrue(store.isStarted());
+
+        context.getRouteController().stopRoute("cache");
+        assertTrue(store.isStarted(), "Stopping the route must not stop the repository");
+
+        // removing the route stops the repository
+        assertTrue(context.removeRoute("cache"));
+        assertFalse(store.isStarted());
+    }
+
+    @Test
     void testRemoveRouteStopsRepository() throws Exception {
         KeyValueIdempotentRepository repo = new KeyValueIdempotentRepository();
         addRoute("a", repo);
