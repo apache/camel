@@ -16,7 +16,14 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -119,6 +126,36 @@ public class SimpleRegistryTest {
         String bar = "bar";
         registry.bind("myKey", bar);
         Assertions.assertEquals("bar", registry.lookupByName("myKey"));
+    }
+
+    @Test
+    public void testConcurrentBind() throws Exception {
+        int threads = 20;
+        SimpleRegistry reg = new SimpleRegistry();
+        CyclicBarrier barrier = new CyclicBarrier(threads);
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        List<Future<?>> futures = new ArrayList<>(threads);
+
+        for (int i = 0; i < threads; i++) {
+            final String key = "bean-" + i;
+            futures.add(pool.submit(() -> {
+                try {
+                    barrier.await(5, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                reg.bind(key, Object.class, new Object());
+            }));
+        }
+
+        pool.shutdown();
+        assertTrue(pool.awaitTermination(10, TimeUnit.SECONDS));
+
+        for (Future<?> f : futures) {
+            f.get(); // rethrows any ConcurrentModificationException from threads
+        }
+
+        assertEquals(threads, reg.size());
     }
 
 }
