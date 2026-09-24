@@ -217,12 +217,16 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
 
     void complete(Throwable throwable) {
         this.cause = throwable;
+        List<BiConsumer<BackOffTimer.Task, Throwable>> copy;
         lock.lock();
         try {
-            consumers.forEach(c -> c.accept(this, throwable));
+            copy = new ArrayList<>(consumers);
         } finally {
             lock.unlock();
         }
+        // call the consumers without holding the lock, as they may take locks of their own,
+        // which could deadlock with a thread holding such a lock and cancelling this task
+        copy.forEach(c -> c.accept(this, throwable));
     }
 
     // *****************************
