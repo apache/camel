@@ -107,8 +107,21 @@ public abstract class JBangTestSupport {
             // The JBang installation baseline is entirely hidden (.jbang/, .bashrc, .camel-jbang/).
             try {
                 execInContainer("find /home/jbang -maxdepth 1 -mindepth 1 -not -name '.*' -exec rm -rf {} +");
-            } catch (Exception e) {
+            } catch (Exception | AssertionError e) {
                 logger.debug("failed to clean up test files from /home/jbang: {}", e.getMessage());
+            }
+            try {
+                execute("config unset runtime");
+                execute("config unset gav");
+                execute("config unset directory");
+                String forceRunVersion = System.getProperty(CliProperties.FORCE_RUN_VERSION, "");
+                if (!forceRunVersion.isEmpty()) {
+                    execute("version set " + forceRunVersion);
+                } else {
+                    execute("config unset camel-version");
+                }
+            } catch (Exception e) {
+                logger.debug("failed to reset config: {}", e.getMessage());
             }
             logger.debug("clean up data folder");
             if (containerDataFolder != null) {
