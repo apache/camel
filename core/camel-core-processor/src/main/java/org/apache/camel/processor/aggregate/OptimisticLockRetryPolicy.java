@@ -46,7 +46,7 @@ public class OptimisticLockRetryPolicy {
 
     private int maximumRetries;
     private long retryDelay = 50L;
-    private long maximumRetryDelay;
+    private long maximumRetryDelay = DEFAULT_MAXIMUM_RETRY_DELAY;
     private boolean exponentialBackOff = true;
     private boolean randomBackOff;
 
@@ -68,7 +68,7 @@ public class OptimisticLockRetryPolicy {
         long sleepFor = 0;
         if (retryDelay > 0 || randomBackOff) {
             sleepFor = exponentialBackOff
-                    ? (retryDelay << retryCounter)
+                    ? exponentialDelay(retryCounter)
                     : (randomBackOff
                             ? ThreadLocalRandom.current() // NOSONAR
                                     .nextInt((int) (maximumRetryDelay > 0 ? maximumRetryDelay : DEFAULT_MAXIMUM_RETRY_DELAY))
@@ -78,6 +78,14 @@ public class OptimisticLockRetryPolicy {
             }
         }
         return sleepFor;
+    }
+
+    private long exponentialDelay(int retryCounter) {
+        // the retry counter keeps growing when retrying forever, so do not let the shift overflow
+        if (retryCounter >= Long.numberOfLeadingZeros(retryDelay) - 1) {
+            return Long.MAX_VALUE;
+        }
+        return retryDelay << retryCounter;
     }
 
     public int getMaximumRetries() {
