@@ -177,14 +177,16 @@ from("direct:orders")
 ------------------------------------------------------------
 
 The per-element verdicts arrive in `CamelOpaBatchDecision`, a `List<Boolean>` parallel to the input list: element
-_i_ is allowed when entry _i_ is `true`. `CamelOpaDecisionAllow` is not set in batch mode - there is no single
-verdict - and the header is cleared on entry like the other decision headers, so a value an inbound message
-supplied never survives.
+_i_ is allowed when entry _i_ is `true`. Neither `CamelOpaDecisionAllow` nor `CamelOpaDecision` is set in batch
+mode - there is no single verdict, and no single decision document - and both are cleared on entry like the other
+decision headers, so a value an inbound message supplied never survives. `CamelOpaPolicyPath` *is* set, to the same
+value a single evaluation records, so tooling can read it either way.
 
 Fail-closed applies *per element*: an element whose evaluation could not be reached is denied (`false`), or allowed
 when `failOpen` is set, while every other element decides normally. The batch is never denied as a whole because
-one element failed, nor allowed because most of it succeeded. Only a call that fails entirely - the server could
-not be reached at all - denies every element (or, under `failOpen`, allows them).
+one element failed, nor allowed because most of it succeeded. A call that fails entirely - the server could not be
+reached at all - fails the exchange rather than denying each element: it carries no verdict at all, not a list of
+`false`. Under `failOpen` that same failure allows every element instead.
 
 `batch` requires `evaluationMode=rest`: it saves the per-element HTTP round-trip, which has no meaning for in-process
 `wasm` evaluation, and the endpoint rejects the combination at startup.
