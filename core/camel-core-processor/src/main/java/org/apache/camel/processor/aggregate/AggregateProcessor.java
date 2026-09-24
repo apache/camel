@@ -1966,7 +1966,7 @@ public class AggregateProcessor extends BaseProcessorSupport
     /**
      * Completes the group and sends the aggregated exchange. Must be called while holding the lock.
      *
-     * @return <tt>false</tt> if another Camel instance completed the group first (optimistic locking)
+     * @return {@code false} if another Camel instance has already completed the group (optimistic locking)
      */
     private boolean forceCompletion(String key, Exchange exchange) {
         try {
@@ -1984,7 +1984,8 @@ public class AggregateProcessor extends BaseProcessorSupport
     /**
      * Discards the group. Must be called while holding the lock.
      *
-     * @return <tt>false</tt> if another Camel instance completed the group first (optimistic locking)
+     * @return {@code false} if another Camel instance has already removed the group from the repository (optimistic
+     *         locking)
      */
     private boolean forceDiscarding(String key, Exchange exchange) {
         try {
