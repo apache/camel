@@ -69,12 +69,16 @@ class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport
         result.expectedMessageCount(size);
         MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
-        // set keepOpen to true
-        policy.setKeepOpen(true);
-
-        // trigger opening circuit
-        // by sending another message
+        // send the trigger message while the circuit is still closed so it is
+        // guaranteed to be consumed before we open the circuit
         template.sendBody(url, "MessageTrigger");
+        result.expectedMessageCount(size + 1);
+        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+
+        // toggle keepOpen to true: setKeepOpen() immediately suspends the
+        // consumer so no late onExchangeDone() callback can race against the
+        // trigger message (CAMEL-24903)
+        policy.setKeepOpen(true);
 
         // wait for the circuit to open (consumer suspended)
         await().atMost(10, TimeUnit.SECONDS).until(consumer::isSuspended);
@@ -85,9 +89,11 @@ class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport
             template.sendBody(url, "MessageRound2 " + i);
         }
 
-        // should not close b/c keepOpen is true
+        // should not close b/c keepOpen is true; use assertPeriod to verify no extra messages arrive
+        result.setAssertPeriod(500);
         result.expectedMessageCount(size + 1);
         MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        result.setAssertPeriod(0);
 
         // set keepOpen to false
         policy.setKeepOpen(false);
