@@ -74,6 +74,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
 import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
@@ -145,6 +146,10 @@ public class XmlSignatureTest extends CamelTestSupport {
         registry.bind("xpathsToIdAttributes", xpaths);
 
         registry.bind("parentXpathBean", getParentXPathBean());
+
+        DefaultXmlSignature2Message enforceCoverageMapper = new DefaultXmlSignature2Message();
+        enforceCoverageMapper.setEnforceReferenceCoverage(true);
+        registry.bind("enforceCoverageMapper", enforceCoverageMapper);
     }
 
     @Override
@@ -350,7 +355,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                         .to(
                                 "mock:result");
             }
-        }, createDetachedRoute(), createRouteForEnvelopedWithParentXpath() };
+        }, createDetachedRoute(), createRouteForEnvelopedWithParentXpath(), createEnforceReferenceCoverageRoute() };
     }
 
     RouteBuilder createDetachedRoute() {
@@ -380,6 +385,41 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // END SNIPPET: enveloped XML signature with parent XPath
             }
         };
+    }
+
+    RouteBuilder createEnforceReferenceCoverageRoute() {
+        return new RouteBuilder() {
+            public void configure() {
+                onException(XmlSignatureException.class).handled(true).to("mock:enforceCoverageException");
+                from("direct:enforceCoverage")
+                        .to("xmlsecurity-sign:enforceCoverage?keyAccessor=#keyAccessorDefault"
+                            + "&xpathsToIdAttributes=#xpathsToIdAttributes"
+                            + "&schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false")
+                        .to("xmlsecurity-verify:enforceCoverage?keySelector=#keySelectorDefault"
+                            + "&schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd"
+                            + "&xmlSignature2Message=#enforceCoverageMapper")
+                        .to("mock:enforceCoverageResult");
+            }
+        };
+    }
+
+    @Test
+    void enforceReferenceCoverageRejectsASignatureCoveringOnlyASubElement() throws Exception {
+        // a detached signature legitimately covers a sub-element while the whole document is emitted - the same shape
+        // as an XML signature wrapping attack. With enforceReferenceCoverage on, the default output-node search must
+        // refuse to emit the uncovered document element. This drives the check through mapToMessage, not in isolation.
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                 + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+
+        MockEndpoint exceptionMock = getMockEndpoint("mock:enforceCoverageException");
+        exceptionMock.expectedMessageCount(1);
+        MockEndpoint resultMock = getMockEndpoint("mock:enforceCoverageResult");
+        resultMock.expectedMessageCount(0);
+
+        TestSupport.sendBody(this.template, "direct:enforceCoverage", detachedPayload,
+                Collections.singletonMap(XmlSignatureConstants.HEADER_CONTENT_REFERENCE_URI, (Object) "#myID"));
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
