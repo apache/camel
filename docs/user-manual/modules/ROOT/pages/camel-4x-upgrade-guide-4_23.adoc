@@ -2473,6 +2473,14 @@ Configure the `target` and `credentials` endpoint options instead, or route to a
 with `toD` when the destination varies per message. The constants remain in place for backwards
 compatibility and are now marked deprecated in the component metadata.
 
+=== camel-seda - purgeWhenStopping no longer purges when suspending
+
+A SEDA consumer with `purgeWhenStopping=true` no longer discards the pending messages on its queue when its route
+(or the CamelContext) is suspended; like any other SEDA consumer it completes them before the route is suspended.
+The queue is still purged when the route is stopped. To support this, `org.apache.camel.spi.ShutdownAware` has a new
+default method `getPendingExchangesSize(boolean suspendOnly)`, which the shutdown strategy now calls instead of
+`getPendingExchangesSize()`. It delegates to `getPendingExchangesSize()` by default.
+
 === camel-smooks - external XML entity resolution disabled by default
 
 The Smooks data format and the Smooks component now parse XML input with a reader that does not
