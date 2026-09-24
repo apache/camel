@@ -28,7 +28,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -102,6 +101,6 @@ public class OpaWasmBundleBuilderIT {
         IllegalStateException e = assertThrows(IllegalStateException.class,
                 () -> OpaWasmBundleBuilder.build("broken.rego", "this is not rego at all", "authz/allow"));
 
-        assertEquals(true, e.getMessage().contains("broken.rego"), e.getMessage());
+        assertTrue(e.getMessage().contains("broken.rego"), e.getMessage());
     }
 }
