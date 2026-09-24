@@ -166,6 +166,9 @@ public final class DefaultConfigurationConfigurer {
         beanIntrospection.afterPropertiesConfigured(camelContext);
 
         if ("pooled".equals(config.getExchangeFactory())) {
+            LOG.warn(
+                    "Exchange pooling (exchangeFactory=pooled) is deprecated and will be removed in a future release."
+                     + " Please remove the 'camel.main.exchange-factory=pooled' configuration.");
             ecc.setExchangeFactory(new PooledExchangeFactory());
             ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
         } else if ("prototype".equals(config.getExchangeFactory())) {
