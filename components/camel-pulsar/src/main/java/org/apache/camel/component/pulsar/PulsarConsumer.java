@@ -160,7 +160,7 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
          * Failed state - does not turn this into a hot loop on every consumer thread, reporting the same error to the
          * exception handler as fast as the CPU allows.
          *
-         * @return <tt>false</tt> when the wait was interrupted, which is how a stopping consumer leaves the loop
+         * @return {@code false} when the wait was interrupted, which is how a stopping consumer leaves the loop
          */
         private boolean waitBeforeRetry() {
             try {
