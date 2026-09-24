@@ -24,12 +24,13 @@ import org.apache.camel.spi.Resource;
 
 /** Context-local named questions, replaced atomically per source when a route resource is reloaded. */
 public final class SemanticQuestions {
+    private static final Object CREATION_LOCK = new Object();
     private final Map<String, Map<String, SemanticQuestion>> sources = new HashMap<>();
     private final Map<String, Resource> resources = new HashMap<>();
     private volatile Map<String, SemanticQuestion> questions = Map.of();
 
     public static SemanticQuestions get(CamelContext context) {
-        synchronized (context) {
+        synchronized (CREATION_LOCK) {
             SemanticQuestions answer = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
             if (answer == null) {
                 answer = new SemanticQuestions();
