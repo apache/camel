@@ -31,12 +31,6 @@
     <name>Camel :: Spring RabbitMQ</name>
     <description>Camel RabbitMQ Component using Spring RabbitMQ client</description>
 
-    <properties>
-        <amqp-client-version>5.31.0</amqp-client-version>
-        <spring-amqp-version>4.1.1</spring-amqp-version>
-
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -66,7 +60,6 @@
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-amqp</artifactId>
-            <version>${spring-amqp-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -76,7 +69,6 @@
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
-            <version>${amqp-client-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
