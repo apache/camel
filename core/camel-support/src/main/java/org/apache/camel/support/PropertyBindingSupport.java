@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -1630,6 +1631,13 @@ public final class PropertyBindingSupport {
             }
         }
 
+        if (candidates.size() > 1) {
+            // more than one matches (such as overloaded with int and long), so choose the most specific
+            Constructor<?> best = mostSpecific(camelContext, candidates, params);
+            if (best != null) {
+                return best;
+            }
+        }
         return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
     }
 
@@ -1756,7 +1764,63 @@ public final class PropertyBindingSupport {
             }
         }
 
+        if (candidates.size() > 1) {
+            // more than one matches (such as overloaded with int and long), so choose the most specific
+            Method best = mostSpecific(camelContext, candidates, params);
+            if (best != null) {
+                return best;
+            }
+        }
         return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
+    }
+
+    /**
+     * Chooses the most specific of the matching constructors or factory methods, the same way as Java would choose for
+     * the given parameters: a whole number is an int (and then a long), a boolean is a boolean, and a bean is of its
+     * own type (rather than a super type).
+     *
+     * @return the most specific, or <tt>null</tt> if there is no single most specific
+     */
+    private static <T extends Executable> T mostSpecific(CamelContext camelContext, List<T> candidates, String[] params) {
+        T best = null;
+        int bestScore = -1;
+        boolean tie = false;
+        for (T candidate : candidates) {
+            int score = 0;
+            Class<?>[] types = candidate.getParameterTypes();
+            for (int i = 0; i < types.length; i++) {
+                String parameter = params[i] != null ? params[i].trim() : null;
+                score += specificity(getValidParameterType(camelContext, parameter), types[i]);
+            }
+            if (score > bestScore) {
+                best = candidate;
+                bestScore = score;
+                tie = false;
+            } else if (score == bestScore) {
+                tie = true;
+            }
+        }
+        return tie ? null : best;
+    }
+
+    private static int specificity(Class<?> parameterType, Class<?> expectedType) {
+        if (parameterType == null) {
+            // unknown type of parameter, so it does not prefer any candidate
+            return 0;
+        }
+        if (Number.class.equals(parameterType)) {
+            if (int.class.equals(expectedType) || Integer.class.equals(expectedType)) {
+                return 3;
+            }
+            if (long.class.equals(expectedType) || Long.class.equals(expectedType)) {
+                return 2;
+            }
+            return 1;
+        }
+        if (Boolean.class.equals(parameterType)) {
+            return boolean.class.equals(expectedType) || Boolean.class.equals(expectedType) ? 3 : 1;
+        }
+        return parameterType.equals(expectedType) ? 3 : 1;
     }
 
     /**
