@@ -527,7 +527,7 @@ public class MulticastProcessor extends BaseProcessorSupport
          * still be in progress, so mark all as sent, and only be done when they are all aggregated (the transacted task
          * handles the same case since CAMEL-21114).
          */
-        protected void doDoneNoMorePairs() {
+        private void doDoneNoMorePairs() {
             Lock lock = this.lock;
             lock.lock();
             try {
@@ -661,7 +661,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 // Get next processor exchange pair to sent, skipping null ones
                 ProcessorExchangePair pair = getNextProcessorExchangePair();
                 if (pair == null) {
-                    doDoneNoMorePairs();
+                    super.doDoneNoMorePairs();
                     return;
                 }
 
