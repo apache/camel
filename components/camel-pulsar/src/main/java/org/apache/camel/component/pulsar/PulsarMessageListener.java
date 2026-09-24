@@ -77,12 +77,12 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
 
     /**
      * Tells the broker the message was not processed, so that it is redelivered after
-     * <tt>negativeAckRedeliveryDelayMicros</tt> instead of waiting for the acknowledgement timeout. Left to the route
+     * {@code negativeAckRedeliveryDelayMicros} instead of waiting for the acknowledgement timeout. Left to the route
      * when manual acknowledgement is enabled, the same way {@link #acknowledge} is.
      * <p>
      * The message is passed rather than its id on purpose: only that overload carries the redelivery count into
-     * <tt>NegativeAcksTracker</tt>, and without it a configured <tt>negativeAckRedeliveryBackoff</tt> is always asked
-     * for the delay of attempt zero and never escalates.
+     * {@code NegativeAcksTracker}, and without it a configured {@code negativeAckRedeliveryBackoff} is always asked for
+     * the delay of attempt zero and never escalates.
      */
     private void negativeAcknowledge(final Consumer<byte[]> consumer, final Message<byte[]> message) {
         if (!endpoint.getPulsarConfiguration().isAllowManualAcknowledgement()) {
