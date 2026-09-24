@@ -32,15 +32,6 @@
     <name>Camel :: AWS2 Kinesis</name>
     <description>Consuming and Producing data to AWS Kinesis Service</description>
 
-    <properties>
-        <auth-version>2.54.18</auth-version>
-        <cloudwatch-version>2.41.21</cloudwatch-version>
-        <dynamodb-version>2.41.21</dynamodb-version>
-        <regions-version>2.54.18</regions-version>
-        <sdk-core-version>2.54.18</sdk-core-version>
-
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <!-- Pin com.squareup.wire:wire-runtime transitively brought in by amazon-kinesis-client
@@ -115,17 +106,17 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>auth</artifactId>
-            <version>${auth-version}</version>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>regions</artifactId>
-            <version>${regions-version}</version>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sdk-core</artifactId>
-            <version>${sdk-core-version}</version>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -142,12 +133,12 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb</artifactId>
-            <version>${dynamodb-version}</version>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>cloudwatch</artifactId>
-            <version>${cloudwatch-version}</version>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
