@@ -43,6 +43,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,6 +59,7 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
 
     private CamelContext camelContext;
     private RestOpenApiProcessor openApiProcessor;
+    private PlatformHttpComponent platformHttpComponent;
 
     @BeforeEach
     public void createMocks() throws Exception {
@@ -79,9 +81,13 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
     @Override
     protected CamelContext createCamelContext(String componentName) {
         camelContext = new DefaultCamelContext();
-        PlatformHttpComponent httpCmpn = mock(PlatformHttpComponent.class);
-        camelContext.addComponent("platform-http", httpCmpn);
+        platformHttpComponent = mock(PlatformHttpComponent.class);
+        camelContext.addComponent("platform-http", platformHttpComponent);
         return camelContext;
+    }
+
+    private void enableServerRequestValidation() {
+        when(platformHttpComponent.isServerRequestValidation()).thenReturn(true);
     }
 
     private RestOpenApiProcessor createProcessor() throws Exception {
@@ -89,7 +95,12 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
     }
 
     private RestOpenApiProcessor createProcessor(String unmatchedRequestHandling) throws Exception {
-        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "unmatched-request-handler.yaml");
+        return createProcessor("unmatched-request-handler.yaml", unmatchedRequestHandling);
+    }
+
+    private RestOpenApiProcessor createProcessor(String specificationResource, String unmatchedRequestHandling)
+            throws Exception {
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, specificationResource);
         String basePath = RestOpenApiHelper.determineBasePath(camelContext, null, null, openApi);
 
         DefaultRestOpenapiProcessorStrategy strategy = new DefaultRestOpenapiProcessorStrategy();
@@ -97,7 +108,7 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
 
         RestOpenApiComponent component = new RestOpenApiComponent();
         RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
-                "rest-openapi:unmatched-request-handler.yaml", "unmatched-request-handler.yaml", component, null);
+                "rest-openapi:" + specificationResource, specificationResource, component, null);
         if (unmatchedRequestHandling != null) {
             endpoint.setUnmatchedRequestHandling(unmatchedRequestHandling);
         }
@@ -121,9 +132,22 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
     }
 
     private Exchange send(RestOpenApiProcessor processor, String path, String verb) throws Exception {
+        return send(processor, path, verb, null, null);
+    }
+
+    private Exchange send(
+            RestOpenApiProcessor processor, String path, String verb, String contentType,
+            String accept)
+            throws Exception {
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getMessage().setHeader(Exchange.HTTP_PATH, path);
         exchange.getMessage().setHeader(Exchange.HTTP_METHOD, verb);
+        if (contentType != null) {
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentType);
+        }
+        if (accept != null) {
+            exchange.getMessage().setHeader("Accept", accept);
+        }
         exchange.getMessage().setBody("request-payload");
         processor.process(exchange, done -> {
         });
@@ -190,6 +214,70 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
         send(processor, "/orders", "PUT");
 
         assertEquals(List.of(List.of(), List.of("GET", "POST")), handler.allowedMethods);
+    }
+
+    @Test
+    void testWrongContentTypeIsAnswered415ByHandler() throws Exception {
+        enableServerRequestValidation();
+        RecordingHandler handler = new RecordingHandler();
+        camelContext.getRegistry().bind("customHandler", handler);
+
+        // POST /orders consumes application/json according to the specification,
+        // so the Content-Type header must not be processed
+        RestOpenApiProcessor processor = createProcessor("unmatched-request-handler-content-type.yaml", null);
+        Exchange exchange = send(processor, "/orders", "POST", "text/plain", null);
+
+        assertEquals(415, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+        assertEquals("{\"error\":\"not found\"}", exchange.getMessage().getBody(String.class));
+        assertTrue(exchange.isRouteStop());
+        assertEquals(List.of(415), handler.statusCodes);
+        assertEquals(List.of(List.of()), handler.allowedMethods);
+    }
+
+    @Test
+    void testUnacceptableAcceptIsAnswered406ByHandler() throws Exception {
+        enableServerRequestValidation();
+        RecordingHandler handler = new RecordingHandler();
+        camelContext.getRegistry().bind("customHandler", handler);
+
+        // GET /users produces application/json according to the specification,
+        // so the Accept header asking for an unsupported type must not be processed
+        RestOpenApiProcessor processor = createProcessor("unmatched-request-handler-content-type.yaml", null);
+        Exchange exchange = send(processor, "/users", "GET", "application/json", "text/plain");
+
+        assertEquals(406, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+        assertEquals("{\"error\":\"not found\"}", exchange.getMessage().getBody(String.class));
+        assertTrue(exchange.isRouteStop());
+        assertEquals(List.of(406), handler.statusCodes);
+    }
+
+    @Test
+    void testMatchingContentTypeAndAcceptAreProcessed() throws Exception {
+        enableServerRequestValidation();
+        RecordingHandler handler = new RecordingHandler();
+        camelContext.getRegistry().bind("customHandler", handler);
+
+        RestOpenApiProcessor processor = createProcessor("unmatched-request-handler-content-type.yaml", null);
+
+        Exchange matched = send(processor, "/orders", "POST", "application/json", "application/json");
+        // allowed as no Content-Type and Accept headers are set
+        Exchange withoutHeaders = send(processor, "/users", "GET", null, null);
+
+        // processed as valid operations, not answered by the unmatched request handler
+        assertFalse(matched.isRouteStop());
+        assertFalse(withoutHeaders.isRouteStop());
+        assertEquals(List.of(), handler.statusCodes);
+    }
+
+    @Test
+    void testContentTypeCheckSkippedWhenServerRequestValidationDisabled() throws Exception {
+        // the mocked platform-http component is registered with serverRequestValidation disabled,
+        // so Camel processes requests that the HTTP layer did not reject for custom validation
+        RestOpenApiProcessor processor = createProcessor("unmatched-request-handler-content-type.yaml", null);
+        Exchange exchange = send(processor, "/orders", "POST", "text/plain", null);
+
+        assertFalse(exchange.isRouteStop());
+        assertNull(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
     @Test

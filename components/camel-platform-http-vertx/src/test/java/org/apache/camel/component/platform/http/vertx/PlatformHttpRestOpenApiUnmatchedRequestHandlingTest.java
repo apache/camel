@@ -123,6 +123,79 @@ public class PlatformHttpRestOpenApiUnmatchedRequestHandlingTest {
                     .then()
                     .statusCode(404)
                     .body(equalTo(""));
+
+            // the addPet operation matches but only consumes json, xml and form data, so posting with a
+            // plain text body is rejected with 415 even though the catch-all route would accept it
+            given()
+                    .when()
+                    .contentType("text/plain")
+                    .body("pet in plain text")
+                    .post("/api/v3/pet")
+                    .then()
+                    .statusCode(415)
+                    .body(equalTo(""));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testContentNegotiationFailureAnsweredByCustomHandlerWhenCamelHandling() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        RecordingHandler handler = new RecordingHandler();
+        context.getRegistry().bind("myHandler", handler);
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore&unmatchedRequestHandling=camel")
+                            .to("mock:result");
+
+                    from("direct:getPetById")
+                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                }
+            });
+
+            VertxPlatformHttpEngineTest.startCamelContext(context);
+
+            // expected is generated from the OpenAPI specification with json and xml produces
+            given()
+                    .when()
+                    .get("/api/v3/pet/123")
+                    .then()
+                    .statusCode(200);
+
+            // wrong Content-Type on a matched operation is rejected with 415 (the request
+            // falls through the operation route to the catch-all but must not be processed)
+            given()
+                    .when()
+                    .contentType("text/plain")
+                    .body("pet in plain text")
+                    .post("/api/v3/pet")
+                    .then()
+                    .statusCode(415)
+                    .body(equalTo("{\"error\":\"handled by camel\"}"));
+
+            // unacceptable Accept header on a matched operation is rejected with 406
+            given()
+                    .when()
+                    .accept("text/plain")
+                    .get("/api/v3/pet/123")
+                    .then()
+                    .statusCode(406)
+                    .body(equalTo("{\"error\":\"handled by camel\"}"));
+
+            // matching Accept is still answered by Camel
+            given()
+                    .when()
+                    .accept("application/json")
+                    .get("/api/v3/pet/123")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+
+            Assertions.assertEquals(List.of(415, 406), handler.statusCodes.stream().toList());
         } finally {
             context.stop();
         }

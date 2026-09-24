@@ -208,6 +208,12 @@ By default, an incoming request that does not match any operation in the OpenAPI
 HTTP layer of the runtime, with HTTP 404, and a request that matches a path but not the HTTP method is answered
 with HTTP 405 and an `Allow` header listing the allowed methods.
 
+A request that matches an operation but whose `Content-Type` or `Accept` header does not match the `consumes` or
+`produces` of the operation is answered by the HTTP layer, with HTTP 415 or 406 (see the `serverRequestValidation`
+option of the platform-http component, enabled by default). When `unmatchedRequestHandling` is set to `camel`,
+some runtimes also route these requests to Camel, so the unmatched request handler answers them with the same
+415 or 406 status code.
+
 To let Camel answer these requests instead, set the `unmatchedRequestHandling` option to `camel` on the
 rest-openapi consumer endpoint or via the rest DSL `openApi` section. The rest-openapi component then registers a
 catch-all for the API base path on the HTTP layer so requests that match no operation are routed to Camel, where
@@ -283,8 +289,8 @@ serving static resources.
 
 When the request has been routed to Camel, the response body (and headers) can be customized by registering a
 bean in the xref:manual::registry.adoc[Registry] that implements the `RestOpenApiUnmatchedRequestHandler` interface.
-The handler is called with the exchange, the status code (`404` or `405`) and the list of allowed HTTP
-methods (empty for `404`), and can then set the response body, status code and headers as needed.
+The handler is called with the exchange, the status code (`404`, `405`, `415` or `406`) and the list of allowed HTTP
+methods (empty for `404`, `415` and `406`), and can then set the response body, status code and headers as needed.
 The handler can also be registered using a factory finder on the classpath. This is done by adding a
 resource file `META-INF/services/org/apache/camel/rest-openapi-unmatched-request-handler-factory`
 with the content `class=com.example.MyHandler`.

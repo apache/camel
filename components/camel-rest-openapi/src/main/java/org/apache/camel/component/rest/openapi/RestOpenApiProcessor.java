@@ -35,6 +35,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
+import org.apache.camel.support.http.RestUtil;
 import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
@@ -63,6 +64,7 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
     private RestRegistry restRegistry;
     private boolean unmatchedRequestCatchAllRegistered;
     private String unmatchedRequestCatchAllPath;
+    private boolean serverRequestValidation;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
                                 RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
@@ -112,6 +114,22 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         RestConsumerContextPathMatcher.ConsumerPath<Operation> m
                 = RestConsumerContextPathMatcher.matchBestPath(verb, path, paths);
         if (m instanceof RestOpenApiConsumerPath rcp) {
+            // when server request validation is enabled, the HTTP layer rejects requests whose Content-Type
+            // or Accept header does not match the consumes/produces of the operation with 415/406. However,
+            // depending on the runtime, such requests may still be routed to Camel (via an unconstrained
+            // catch-all route or a matchOnUriPrefix endpoint), so the rejected requests must be answered
+            // here instead of being processed as if they were valid
+            if (serverRequestValidation) {
+                String contentType = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
+                if (!RestUtil.isValidOrAcceptedContentType(rcp.getConsumes(), contentType)) {
+                    return answerUnmatchedRequest(exchange, callback, 415, List.of());
+                }
+                String accept = exchange.getMessage().getHeader("Accept", String.class);
+                if (!RestUtil.isValidOrAcceptedContentType(rcp.getProduces(), accept)) {
+                    return answerUnmatchedRequest(exchange, callback, 406, List.of());
+                }
+            }
+
             Operation o = rcp.getConsumer();
 
             String consumerPath = rcp.getConsumerPath();
@@ -142,8 +160,18 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         final String contextPath = path;
         List<String> allow = METHODS.stream()
                 .filter(v -> RestConsumerContextPathMatcher.matchBestPath(v, contextPath, paths) != null).toList();
-        int statusCode = allow.isEmpty() ? 404 : 405;
-        unmatchedRequestHandler.handle(exchange, statusCode, allow);
+        return answerUnmatchedRequest(exchange, callback, allow.isEmpty() ? 404 : 405, allow);
+    }
+
+    /**
+     * Lets the resolved (default or custom) {@link RestOpenApiUnmatchedRequestHandler} answer a request that Camel must
+     * not process, such as requests that match no operation of the OpenAPI specification or requests failing
+     * Content-Type/Accept negotiation when server request validation is enabled.
+     */
+    private boolean answerUnmatchedRequest(
+            Exchange exchange, AsyncCallback callback, int statusCode,
+            List<String> allowedMethods) {
+        unmatchedRequestHandler.handle(exchange, statusCode, allowedMethods);
         exchange.setRouteStop(true);
         callback.done(true);
         return true;
@@ -194,7 +222,9 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
                 try {
                     RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);
                     ServiceHelper.buildService(binding);
-                    paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
+                    paths.add(new RestOpenApiConsumerPath(
+                            v, path, o.getValue(), binding, bc.getConsumes(),
+                            bc.getProduces()));
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -236,6 +266,18 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
 
         ServiceHelper.startService(restOpenapiProcessorStrategy);
 
+        // the platform-http component (if used) decides whether the HTTP layer performs preliminary
+        // request validation of the Content-Type/Accept headers against the consumes/produces of the
+        // OpenAPI operations, in which case Camel must reject such requests with 415/406 itself because
+        // the HTTP layer may let them fall through to the catch-all route (see below) or to a
+        // matchOnUriPrefix endpoint
+        PlatformHttpComponent platformHttp = camelContext.hasComponent("platform-http") != null
+                ? camelContext.getComponent("platform-http", PlatformHttpComponent.class)
+                : null;
+        if (platformHttp != null) {
+            this.serverRequestValidation = platformHttp.isServerRequestValidation();
+        }
+
         // when Camel should answer requests that do not match any operation in the OpenAPI specification,
         // then register a catch-all for this API on the platform-http component, so the runtime (such as
         // Spring Boot or camel-platform-http-vertx) routes these requests to Camel where they are
@@ -246,13 +288,12 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
                          + " platform-http, so requests matching no operation of the OpenAPI specification cannot be"
                          + " routed to Camel");
             } else {
-                PlatformHttpComponent phc = camelContext.getComponent("platform-http", PlatformHttpComponent.class);
-                if (phc != null) {
+                if (platformHttp != null) {
                     String path = basePath;
                     if (path == null || path.isEmpty() || path.equals("/")) {
                         path = "";
                     }
-                    phc.addHttpEndpoint(path, null, null, null, platformHttpConsumer.getPlatformHttpConsumer());
+                    platformHttp.addHttpEndpoint(path, null, null, null, platformHttpConsumer.getPlatformHttpConsumer());
                     unmatchedRequestCatchAllPath = path;
                     unmatchedRequestCatchAllRegistered = true;
                 } else {

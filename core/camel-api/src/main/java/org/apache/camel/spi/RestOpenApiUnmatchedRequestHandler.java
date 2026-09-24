@@ -21,8 +21,10 @@ import java.util.List;
 import org.apache.camel.Exchange;
 
 /**
- * Used for customizing the HTTP 404 and 405 responses when an incoming request does not match any operation defined in
- * the OpenAPI specification.
+ * Used for customizing the HTTP responses for incoming requests that Camel must not process. Exemplary these are
+ * requests that do not match any operation defined in the OpenAPI specification (404/405) or, when server request
+ * validation is enabled, requests whose Content-Type/Accept header does not match the consumes/produces of the matched
+ * operation (415/406).
  * <p>
  * This allows to plugin different handlers to produce custom error response bodies.
  *
@@ -33,11 +35,11 @@ public interface RestOpenApiUnmatchedRequestHandler {
     String FACTORY = "rest-openapi-unmatched-request-handler-factory";
 
     /**
-     * Handles the incoming request that did not match any operation in the OpenAPI specification.
+     * Handles the incoming request that is not processed by Camel.
      *
      * @param exchange       the current exchange
-     * @param statusCode     the HTTP status code (404 or 405)
-     * @param allowedMethods the list of allowed HTTP methods for the requested path (empty for 404)
+     * @param statusCode     the HTTP status code (404, 405, 415 or 406)
+     * @param allowedMethods the list of allowed HTTP methods for the requested path (empty for 404, 415 and 406)
      */
     void handle(Exchange exchange, int statusCode, List<String> allowedMethods);
 }
