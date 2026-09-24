@@ -30,9 +30,39 @@
     <description>Camel Component for Google Cloud Text-to-Speech</description>
     <properties>
         <firstVersion>4.19.0</firstVersion>
+        <gax-version>2.85.0</gax-version>
+        <proto-google-cloud-texttospeech-v1-version>2.98.0</proto-google-cloud-texttospeech-v1-version>
         <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.api.grpc</groupId>
+                <artifactId>proto-google-cloud-texttospeech-v1</artifactId>
+                <version>${proto-google-cloud-texttospeech-v1-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api</groupId>
+                <artifactId>gax</artifactId>
+                <version>${gax-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>com.google.api.grpc</groupId>
+            <artifactId>proto-google-cloud-texttospeech-v1</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>gax</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-common</artifactId>
@@ -51,6 +81,14 @@
                     <artifactId>jsr305</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

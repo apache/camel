@@ -31,6 +31,12 @@
     <name>Camel :: Milo</name>
     <description>Camel OPC UA support</description>
 
+    <properties>
+        <milo-sdk-core-version>1.1.7</milo-sdk-core-version>
+        <milo-transport-version>1.1.7</milo-transport-version>
+
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -69,6 +75,28 @@
 
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.milo</groupId>
+            <artifactId>milo-transport</artifactId>
+            <version>${milo-transport-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.milo</groupId>
+            <artifactId>milo-sdk-core</artifactId>
+            <version>${milo-sdk-core-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

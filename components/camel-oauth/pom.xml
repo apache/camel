@@ -34,6 +34,8 @@
 
     <properties>
         <firstVersion>4.12.0</firstVersion>
+        <vertx-auth-common-version>4.5.34</vertx-auth-common-version>
+        <vertx-core-version>4.5.34</vertx-core-version>
         <supportLevel>preview</supportLevel>
     </properties>
 
@@ -49,8 +51,22 @@
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-common</artifactId>
+            <version>${vertx-auth-common-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
             <artifactId>vertx-auth-oauth2</artifactId>
             <version>${vertx-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>${vertx-core-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -64,8 +80,12 @@
 
         <!-- Provided Dependencies -->
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-platform-http-main</artifactId>
+            <artifactId>camel-platform-http-vertx</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

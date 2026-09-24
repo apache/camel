@@ -32,6 +32,9 @@
     <description>Camel Cometd support based on Jetty</description>
 
     <properties>
+        <cometd-java-api-common-version>9.0.1</cometd-java-api-common-version>
+        <cometd-java-api-server-version>9.0.1</cometd-java-api-server-version>
+        <cometd-java-server-common-version>9.0.1</cometd-java-server-common-version>
     </properties>
 
     <dependencies>
@@ -60,16 +63,6 @@
             <version>${jetty-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util-ajax</artifactId>
-            <version>${jetty-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.cometd.java</groupId>
-            <artifactId>cometd-java-server-websocket-jetty</artifactId>
-            <version>${cometd-java-server-version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.cometd.java</groupId>
             <artifactId>cometd-java-server-http-jakarta</artifactId>
             <version>${cometd-java-server-version}</version>
@@ -81,6 +74,33 @@
         </dependency>
 
         <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-api-server</artifactId>
+            <version>${cometd-java-api-server-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-api-common</artifactId>
+            <version>${cometd-java-api-common-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-server-common</artifactId>
+            <version>${cometd-java-server-common-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

@@ -53,6 +53,14 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-base-engine</artifactId>
+        </dependency>
 
     </dependencies>
 

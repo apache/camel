@@ -35,13 +35,33 @@
     <properties>
         <camel.surefire.fork.additional-vmargs>-Dwasm.resources.path=${project.basedir}/src/test/resources</camel.surefire.fork.additional-vmargs>
         <supportLevel>Experimental</supportLevel>
+        <wasm-version>1.1.0</wasm-version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>run.endive</groupId>
+                <artifactId>wasm</artifactId>
+                <version>${wasm-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
         </dependency>
 
         <dependency>
@@ -64,6 +84,10 @@
         </dependency>
 
         <!-- testing - misc -->
+        <dependency>
+            <groupId>run.endive</groupId>
+            <artifactId>wasm</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

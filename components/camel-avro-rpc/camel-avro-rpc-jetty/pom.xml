@@ -32,8 +32,20 @@
 
 
     <properties>
+        <avro-ipc-version>1.12.2</avro-ipc-version>
         <firstVersion>3.11.0</firstVersion>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-ipc</artifactId>
+                <version>${avro-ipc-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -48,6 +60,10 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-ipc-jetty</artifactId>
             <version>${avro-ipc-jetty-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-ipc</artifactId>
         </dependency>
     </dependencies>
 

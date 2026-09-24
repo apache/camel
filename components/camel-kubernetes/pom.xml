@@ -32,15 +32,108 @@
     <name>Camel :: Kubernetes</name>
 
     <properties>
+        <kubernetes-client-api-version>7.9.0</kubernetes-client-api-version>
+        <kubernetes-model-apps-version>7.9.0</kubernetes-model-apps-version>
+        <kubernetes-model-autoscaling-version>7.9.0</kubernetes-model-autoscaling-version>
+        <kubernetes-model-batch-version>7.9.0</kubernetes-model-batch-version>
+        <kubernetes-model-coordination-version>7.9.0</kubernetes-model-coordination-version>
+        <kubernetes-model-core-version>7.9.0</kubernetes-model-core-version>
+        <kubernetes-model-events-version>7.9.0</kubernetes-model-events-version>
+        <openshift-client-api-version>7.9.0</openshift-client-api-version>
+        <openshift-model-version>7.9.0</openshift-model-version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-client-api</artifactId>
+                <version>${kubernetes-client-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-model-apps</artifactId>
+                <version>${kubernetes-model-apps-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-model-autoscaling</artifactId>
+                <version>${kubernetes-model-autoscaling-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-model-batch</artifactId>
+                <version>${kubernetes-model-batch-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-model-coordination</artifactId>
+                <version>${kubernetes-model-coordination-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-model-core</artifactId>
+                <version>${kubernetes-model-core-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-model-events</artifactId>
+                <version>${kubernetes-model-events-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>openshift-client-api</artifactId>
+                <version>${openshift-client-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>openshift-model</artifactId>
+                <version>${openshift-model-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-model-apps</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-model-autoscaling</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-model-batch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-model-coordination</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-model-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-model-events</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-client-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-model</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-        </dependency>        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cluster</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -57,6 +150,18 @@
             <version>${kubernetes-client-version}</version>
         </dependency>
         <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-server-mock</artifactId>

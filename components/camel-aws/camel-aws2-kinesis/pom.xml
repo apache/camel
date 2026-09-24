@@ -32,6 +32,15 @@
     <name>Camel :: AWS2 Kinesis</name>
     <description>Consuming and Producing data to AWS Kinesis Service</description>
 
+    <properties>
+        <auth-version>2.55.1</auth-version>
+        <cloudwatch-version>2.41.21</cloudwatch-version>
+        <dynamodb-version>2.41.21</dynamodb-version>
+        <regions-version>2.55.1</regions-version>
+        <sdk-core-version>2.55.1</sdk-core-version>
+
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <!-- Pin com.squareup.wire:wire-runtime transitively brought in by amazon-kinesis-client
@@ -83,11 +92,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>at.yawk.lz4</groupId>
-            <artifactId>lz4-java</artifactId>
-            <version>${lz4-java-version}</version>
-        </dependency>
-        <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>netty-nio-client</artifactId>
             <version>${aws-java-sdk2-version}</version>
@@ -108,6 +112,43 @@
         </dependency>
 
         <!-- for testing -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>auth</artifactId>
+            <version>${auth-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>regions</artifactId>
+            <version>${regions-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sdk-core</artifactId>
+            <version>${sdk-core-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>dynamodb</artifactId>
+            <version>${dynamodb-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>cloudwatch</artifactId>
+            <version>${cloudwatch-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit6</artifactId>

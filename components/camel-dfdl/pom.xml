@@ -34,15 +34,34 @@
     <name>Camel :: DFDL</name>
     <description>Camel DFDL Component</description>
 
+    <properties>
+        <xml-apis-version>1.4.01</xml-apis-version>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>${xml-apis-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.daffodil</groupId>
-            <artifactId>daffodil-sapi_2.12</artifactId>
-            <version>${daffodil-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.daffodil</groupId>
@@ -53,6 +72,10 @@
             <groupId>org.apache.daffodil</groupId>
             <artifactId>daffodil-schematron_2.12</artifactId>
             <version>${daffodil-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
         </dependency>
 
         <dependency>

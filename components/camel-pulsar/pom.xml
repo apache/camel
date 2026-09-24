@@ -39,7 +39,25 @@
         <camel.surefire.fork.additional-vmargs>--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-exports=java.base/sun.net=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
         <!-- Make use of native access during IT test execution only -->
         <camel.failsafe.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
+    	<pulsar-client-admin-api-version>4.2.4</pulsar-client-admin-api-version>
+    	<pulsar-client-api-version>4.2.4</pulsar-client-api-version>
     </properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.pulsar</groupId>
+				<artifactId>pulsar-client-api</artifactId>
+				<version>${pulsar-client-api-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.pulsar</groupId>
+				<artifactId>pulsar-client-admin-api</artifactId>
+				<version>${pulsar-client-admin-api-version}</version>
+			</dependency>
+		</dependencies>
+
+	</dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -59,6 +77,26 @@
         </dependency>
 
         <!-- testing -->
+    	<dependency>
+    		<groupId>org.apache.camel</groupId>
+    		<artifactId>camel-api</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.apache.camel</groupId>
+    		<artifactId>camel-util</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.slf4j</groupId>
+    		<artifactId>slf4j-api</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.apache.pulsar</groupId>
+    		<artifactId>pulsar-client-api</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.apache.pulsar</groupId>
+    		<artifactId>pulsar-client-admin-api</artifactId>
+    	</dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

@@ -35,6 +35,7 @@
         <!-- OpenLDAP container is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
+        <api-ldap-model-version>2.1.8</api-ldap-model-version>
     </properties>
 
     <dependencies>
@@ -67,9 +68,21 @@
             <version>${directory-api-version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.directory.api</groupId>
-            <artifactId>api-ldap-extras-util</artifactId>
-            <version>${directory-api-version}</version>
+            <artifactId>api-ldap-model</artifactId>
+            <version>${api-ldap-model-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.directory.api</groupId>

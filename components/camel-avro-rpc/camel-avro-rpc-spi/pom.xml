@@ -38,9 +38,9 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.avro</groupId>
-            <artifactId>avro-ipc-jetty</artifactId>
-            <version>${avro-ipc-jetty-version}</version>
+            <artifactId>avro-ipc</artifactId>
+            <version>1.12.2</version>
         </dependency>
-    </dependencies>
+</dependencies>
 
 </project>

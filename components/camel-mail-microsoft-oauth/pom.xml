@@ -34,6 +34,7 @@
 
     <properties>
         <firstVersion>3.18.4</firstVersion>
+    	<jakarta.mail-api-version>2.1.5</jakarta.mail-api-version>
     </properties>
 
     <dependencies>
@@ -48,6 +49,11 @@
 	    <artifactId>msal4j</artifactId>
 	    <version>${msal4j-version}</version>
         </dependency>
+    	<dependency>
+    		<groupId>jakarta.mail</groupId>
+    		<artifactId>jakarta.mail-api</artifactId>
+    		<version>${jakarta.mail-api-version}</version>
+    	</dependency>
     </dependencies>
 
 </project>
