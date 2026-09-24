@@ -168,7 +168,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         kebabToCamelCase(step);
         kebabToCamelCase(root.withObject("/items"));
 
-        postProcessInheritance(inheritedDefinitions, inlineDefinitions);
+        if (!inheritedDefinitions.isEmpty()) {
+            postProcessInheritance(inheritedDefinitions, inlineDefinitions);
+        }
 
         try {
             ToolingSupport.mkparents(outputFile);

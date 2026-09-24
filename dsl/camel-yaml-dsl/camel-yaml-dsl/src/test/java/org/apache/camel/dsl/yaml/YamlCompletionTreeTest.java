@@ -130,6 +130,18 @@ class YamlCompletionTreeTest {
     }
 
     @Test
+    void beanEipMetadataIsNotOverwrittenByBeanLanguage() {
+        JsonNode bean = nodes.get("bean");
+        assertThat(bean.get("title").asText()).isEqualTo("Bean");
+        assertThat(bean.get("description").asText()).startsWith("Invokes a method on a Java bean");
+        assertThat(bean.get("label").asText()).contains("eip").doesNotContain("language");
+        assertThat(childNames(bean)).contains("ref", "method", "scope");
+        JsonNode language = findChild(nodes.get("expression"), "method");
+        assertThat(language.get("title").asText()).isEqualTo("Bean Method");
+        assertThat(language.get("label").asText()).contains("language").doesNotContain("eip");
+    }
+
+    @Test
     void marshalNodeHasDataFormats() {
         JsonNode marshal = nodes.get("marshal");
         assertThat(marshal).as("marshal node must exist").isNotNull();

@@ -16,8 +16,9 @@ inference runs. Provider errors propagate through normal Camel error handling.
 
 == Dependencies and providers
 
-Add `org.apache.camel:camel-semantic` and a provider, such as `camel-typesafe-ai`, using the
-same Camel version. The provider owns credentials, model selection, request timeout,
+Add `org.apache.camel:camel-semantic` and a provider, such as
+xref:ROOT:typesafe-ai-component.adoc[TypeSafe AI] (`camel-typesafe-ai`), using the same Camel version.
+The provider owns credentials, model selection, request timeout,
 concurrency limits and transport resources. TypeSafe AI uses
 `camel.component.typesafe-ai.*` settings even when a route contains no TypeSafe AI endpoint.
 
@@ -38,7 +39,7 @@ until generic-language starter configuration is available.
 
 == Named questions
 
-The YAML DSL supports declarations alongside routes, including declarations after their use:
+The xref:others:yaml-dsl.adoc[YAML DSL] supports declarations alongside routes, including declarations after their use:
 
 [source,yaml]
 ----
@@ -174,7 +175,7 @@ from("direct:tag")
         .otherwise().to("direct:technical");
 ----
 
-Storing the category before Choice performs one semantic evaluation each time execution
+Storing the category before xref:eips:choice-eip.adoc[Choice] performs one semantic evaluation each time execution
 reaches that Set Header or Set Property step. The branches compare the stored result without
 calling the provider again. Place that step inside a loop when the decision must be refreshed
 on each iteration. Nested decisions can use separate properties to retain their own results.
@@ -183,7 +184,7 @@ the existing EIP model and work with the Java, XML and YAML DSLs.
 
 === Aggregation and destinations
 
-For Java APIs accepting an `Expression`, use
+For xref:eips:aggregate-eip.adoc[Aggregate] and other Java APIs accepting an `Expression`, use
 `new LanguageExpression("semantic", "ref:department")` from `org.apache.camel.model.language`.
 For example, group messages with that expression and a `GroupedBodyAggregationStrategy`,
 using `completionSize(10)` and `completionTimeout(5000)` to bound the group. Include a trusted

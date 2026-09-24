@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.widgets.input.TextAreaState;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -34,12 +36,13 @@ class SemanticCompletionTest {
                         new AtomicReference<List<InfraInfo>>(List.of())));
     }
 
-    @Test
-    void completionFollowsNamedQuestionMapAndOffersVariantFields() {
-        TextAreaState state = new TextAreaState("- semantic:\n    question:\n      department:\n        ");
+    @ParameterizedTest
+    @CsvSource({ "department,/semantic/question/department", "support/team,/semantic/question/support%2Fteam" })
+    void completionFollowsNamedQuestionMapAndOffersVariantFields(String question, String expectedPath) {
+        TextAreaState state = new TextAreaState("- semantic:\n    question:\n      " + question + ":\n        ");
         SourceEditorNavigation.positionCursor(state, 3, 8);
         String path = new YamlSourceContext(state).findParentYamlPath(3);
-        assertEquals("/semantic/question/department", path);
+        assertEquals(expectedPath, path);
         SourceEditAssist assist = assist();
         List<String> keys = assist.provideTreeCompletions(path).stream().map(AutocompletePopup.CompletionItem::key).toList();
         assertTrue(keys.containsAll(List.of("type", "instructions", "state", "criteria", "threshold", "uncertaintyPolicy")),
@@ -54,7 +57,15 @@ class SemanticCompletionTest {
 
     @Test
     void ordinaryRouteCompletionStillResolvesThroughItsAncestors() {
+        TextAreaState state = new TextAreaState(
+                "- route:\n    from:\n      uri: direct:start\n      steps:\n        - log:\n            ");
+        SourceEditorNavigation.positionCursor(state, 5, 12);
+        String path = new YamlSourceContext(state).findParentYamlPath(5);
+        assertEquals("/route/from/steps/log", path);
         SourceEditAssist assist = assist();
-        assertEquals(assist.provideTreeCompletions("log"), assist.provideTreeCompletions("/route/from/steps/log"));
+        assertEquals(assist.provideTreeCompletions("log"), assist.provideTreeCompletions(path));
+        assertEquals(assist.provideTreeValueCompletions("log:loggingLevel"),
+                assist.provideTreeValueCompletions(path + ":loggingLevel"));
+        assertFalse(assist.provideTreeValueCompletions(path + ":loggingLevel").isEmpty());
     }
 }

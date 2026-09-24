@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dsl.yaml.common.exception.InvalidEnumException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.language.semantic.SemanticLanguage;
@@ -167,6 +168,24 @@ class SemanticQuestionTest extends YamlTestSupport {
         assertThatThrownBy(() -> SemanticQuestions.get(context).get("department")).hasMessageContaining("Unknown");
     }
 
+    @ParameterizedTest
+    @MethodSource("malformedTopLevelResources")
+    void malformedTopLevelEntriesUseNormalLoaderErrorsAndKeepQuestions(String yaml) throws Exception {
+        loadRoutes(ResourceHelper.fromString("questions.yaml", declarations("${body}")));
+        context.start();
+        SemanticQuestion original = SemanticQuestions.get(context).get("department");
+        assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context)
+                .updateRoutes(ResourceHelper.fromString("questions.yaml", yaml)))
+                .isInstanceOf(YamlDeserializationException.class)
+                .hasMessageContaining("Unable to find constructor for node");
+        assertThat(SemanticQuestions.get(context).get("department")).isSameAs(original);
+    }
+
+    static Stream<String> malformedTopLevelResources() {
+        return Stream.of("- invalid\n", "- []\n")
+                .flatMap(entry -> Stream.of(entry, declarations("${header.updated}") + entry));
+    }
+
     @Test
     void watcherDropsDeletedQuestionOnlyResourcesBeforeLoadingRenamedFiles() throws Exception {
         Path original = directory.resolve("questions.yaml");
@@ -203,7 +222,7 @@ class SemanticQuestionTest extends YamlTestSupport {
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("instructions:", "typo:")))
                 .hasStackTraceContaining("Unknown property");
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}").replace("type: choice", "type: unsupported")))
-                .hasRootCauseInstanceOf(IllegalArgumentException.class).hasStackTraceContaining("UNSUPPORTED");
+                .hasRootCauseInstanceOf(InvalidEnumException.class).hasStackTraceContaining("unsupported");
         assertThatThrownBy(() -> loadRoutesNoValidate(declarations("${body}")
                 .replace("instructions:", "uncertainty-policy: fail\n        instructions:")))
                 .hasStackTraceContaining("Unknown property");
@@ -270,7 +289,7 @@ class SemanticQuestionTest extends YamlTestSupport {
         String source = yaml;
         assertThatThrownBy(() -> loadRoutesNoValidate(source))
                 .hasMessageContaining("route-0.yaml")
-                .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                .hasRootCauseInstanceOf(InvalidEnumException.class)
                 .cause().isInstanceOfSatisfying(YamlDeserializationException.class, error -> {
                     assertThat(error).hasMessageContaining("Invalid value for '" + field + "' in semantic question 'spam'");
                     assertThat(error.getProblemMark()).hasValueSatisfying(mark -> {
@@ -287,6 +306,22 @@ class SemanticQuestionTest extends YamlTestSupport {
                 Arguments.of("uncertaintyPolicy", "unsupported", 5),
                 Arguments.of("uncertaintyPolicy", "''", 5),
                 Arguments.of("uncertaintyPolicy", "null", 5));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "non-match", "NON_MATCH", "nonMatch" })
+    void enumParsingFollowsYamlDslConventions(String policy) throws Exception {
+        loadRoutesNoValidate("""
+                - semantic:
+                    question:
+                      spam:
+                        type: BoOlEaN
+                        instructions: Is this spam?
+                        uncertaintyPolicy: %s
+                """.formatted(policy));
+        SemanticQuestion question = SemanticQuestions.get(context).get("spam");
+        assertThat(question.getType()).isEqualTo(SemanticQuestion.Type.BOOLEAN);
+        assertThat(question.getUncertaintyPolicy()).isEqualTo(SemanticQuestion.UncertaintyPolicy.NON_MATCH);
     }
 
     @ParameterizedTest
