@@ -19,6 +19,7 @@ package org.apache.camel.support.cache;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -93,8 +94,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 p.stop();
             }
         } else {
-            // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
-            stopAndRemove(s);
+            // the pool has been stopped, which stopped its idle services, so this service is either stopped already
+            // or in use, and then it is stopped when it is released (the pool is gone), not while it is in use
+            LOG.trace("Evicted service: {} is no longer in a pool", s);
         }
     }
 
@@ -298,11 +300,15 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private final BlockingQueue<S> queue;
         private final Deque<S> evicts;
+        // the services created by this pool which have not been evicted, only these are returned to the queue
+        private final Set<S> active;
+        private volatile boolean stopped;
 
         MultiplePool(Endpoint endpoint) {
             this.endpoint = endpoint;
             this.queue = new ArrayBlockingQueue<>(capacity);
             this.evicts = new ConcurrentLinkedDeque<>();
+            this.active = ConcurrentHashMap.newKeySet();
         }
 
         private void cleanupEvicts() {
@@ -319,6 +325,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             if (s == null) {
                 s = creator.apply(endpoint);
                 s.start();
+                active.add(s);
             }
             return s;
         }
@@ -327,8 +334,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         public void release(S s) {
             cleanupEvicts();
 
-            if (!queue.offer(s)) {
-                // there is no room so let's just stop and discard this
+            if (stopped || !active.contains(s) || !queue.offer(s)) {
+                // the pool is stopped, it was evicted while in use, or there is no room so let's just stop and discard this
+                active.remove(s);
+                doStop(s);
+            } else if (stopped && queue.remove(s)) {
+                // the pool was stopped after the check above, and did not drain this service
+                active.remove(s);
                 doStop(s);
             }
         }
@@ -340,16 +352,25 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
         @Override
         public void stop() {
+            stopped = true;
             ArrayList<S> list = new ArrayList<>();
             queue.drainTo(list);
             pool.remove(endpoint);
             list.forEach(this::doStop);
+            cleanupEvicts();
         }
 
         @Override
         public void evict(S s) {
-            // to be evicted
-            evicts.add(s);
+            // only an idle service can be stopped (by cleanupEvicts): take it out of the queue so it is not acquired
+            // again, and a service in use is stopped when it is released
+            if (active.remove(s) && queue.remove(s)) {
+                evicts.add(s);
+                if (stopped) {
+                    // the pool was stopped meanwhile, and may have stopped its evicts already
+                    cleanupEvicts();
+                }
+            }
         }
 
         @Override
