@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -30,9 +31,11 @@ import org.apache.camel.Ordered;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.support.ExchangeHelper;
@@ -47,7 +50,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * Processor implementing <a href="http://camel.apache.org/oncompletion.html">onCompletion</a>.
  */
-public class OnCompletionProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
+public class OnCompletionProcessor extends BaseProcessorSupport
+        implements Traceable, ShutdownAware, IdAware, RouteIdAware, StepIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnCompletionProcessor.class);
 
@@ -64,6 +68,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
     private final boolean useOriginalBody;
     private final boolean afterConsumer;
     private final boolean routeScoped;
+    private final LongAdder taskCount = new LongAdder();
 
     public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
                                  boolean shutdownExecutorService,
@@ -116,6 +121,22 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
     }
 
     @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // not in use
+        return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return taskCount.intValue();
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // noop
+    }
+
+    @Override
     public String getId() {
         return id;
     }
@@ -160,6 +181,30 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
 
         callback.done(true);
         return true;
+    }
+
+    /**
+     * Submits the onCompletion task to the thread pool (parallel processing). The task is counted as pending from when
+     * it is submitted until it is done, so a graceful shutdown waits for it.
+     */
+    @SuppressWarnings("deprecation")
+    private void submitTask(Runnable task) {
+        taskCount.increment();
+        Runnable counted = () -> {
+            try {
+                task.run();
+            } finally {
+                taskCount.decrement();
+            }
+        };
+        try {
+            // Deprecated since 4.19.0
+            executorService.submit(prepareMDCParallelTask(camelContext, counted));
+        } catch (RuntimeException e) {
+            // the task will not run
+            taskCount.decrement();
+            throw e;
+        }
     }
 
     protected boolean isCreateCopy() {
@@ -301,7 +346,6 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
             };
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public void onComplete(final Exchange exchange) {
             if (shouldSkip(exchange, onFailureOnly)) {
@@ -316,9 +360,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                     LOG.debug("Processing onComplete: {}", copy);
                     doProcess(processor, copy);
                 };
-                // Deprecated since 4.19.0
-                task = prepareMDCParallelTask(camelContext, task);
-                executorService.submit(task);
+                submitTask(task);
             } else {
                 // run without thread-pool
                 LOG.debug("Processing onComplete: {}", copy);
@@ -326,7 +368,6 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
             }
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public void onFailure(final Exchange exchange) {
             if (shouldSkip(exchange, onCompleteOnly)) {
@@ -349,9 +390,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                     // restore exception after processing
                     copy.setException(original);
                 };
-                // Deprecated since 4.19.0
-                task = prepareMDCParallelTask(camelContext, task);
-                executorService.submit(task);
+                submitTask(task);
             } else {
                 // run without thread-pool
                 LOG.debug("Processing onFailure: {}", copy);
@@ -444,7 +483,6 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                     // NO-OP
                 }
 
-                @SuppressWarnings("deprecation")
                 @Override
                 public void onAfterRoute(Route route, Exchange exchange) {
                     LOG.debug("onAfterRoute from Route {}", route.getRouteId());
@@ -479,9 +517,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                             LOG.debug("Processing onAfterRoute: {}", copy);
                             doProcess(processor, copy);
                         };
-                        // Deprecated since 4.19.0
-                        task = prepareMDCParallelTask(camelContext, task);
-                        executorService.submit(task);
+                        submitTask(task);
                     } else {
                         // run without thread-pool
                         LOG.debug("Processing onAfterRoute: {}", copy);
