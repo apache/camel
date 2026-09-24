@@ -37,7 +37,6 @@
     <properties>
         <supportLevel>Preview</supportLevel>
         <failsafe.rerunFailingTestsCount>3</failsafe.rerunFailingTestsCount>
-      <langchain4j-core.version>1.20.0</langchain4j-core.version>
     </properties>
 
   <dependencies>
@@ -82,35 +81,6 @@
       <version>${project.version}</version>
     </dependency>
     <!-- for testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-util</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-util-json</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-core</artifactId>
-      <version>${langchain4j-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>

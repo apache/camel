@@ -38,11 +38,12 @@
 
     <dependencies>
 
-        <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-model</artifactId>
+            <artifactId>camel-core-engine</artifactId>
         </dependency>
+
+        <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io</artifactId>
@@ -68,10 +69,6 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-api</artifactId>
         </dependency>
     </dependencies>
 

@@ -33,19 +33,7 @@
 
     <properties>
         <camel.surefire.fork.additional-vmargs>-Dfile.encoding=UTF-8</camel.surefire.fork.additional-vmargs>
-        <jakarta.activation-api-version>2.1.4</jakarta.activation-api-version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>jakarta.activation</groupId>
-                <artifactId>jakarta.activation-api</artifactId>
-                <version>${jakarta.activation-api-version}</version>
-            </dependency>
-        </dependencies>
-
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -63,22 +51,6 @@
         </dependency>
 
         <!-- testing -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.activation</groupId>
-            <artifactId>jakarta.activation-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit6</artifactId>

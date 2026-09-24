@@ -32,10 +32,6 @@
     <description>Camel Apache Drill support</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-api</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -67,10 +63,6 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
