@@ -33,12 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests that a streaming split waits for its parts and aggregates all of them when the iterator returns true from
  * hasNext() and then null from next() (see {@link SplitIteratorNullTest}), also with parallel processing.
  */
-public class SplitParallelStreamingIteratorNullTest extends ContextTestSupport {
+class SplitParallelStreamingIteratorNullTest extends ContextTestSupport {
 
     private final CountDownLatch lastHasNext = new CountDownLatch(1);
 
     @Test
-    public void testSplitStreamingParallel() {
+    void testSplitStreamingParallel() {
         String out = template.requestBody("direct:parallel", new MyIterator(lastHasNext), String.class);
 
         // the parts complete in any order
@@ -46,7 +46,7 @@ public class SplitParallelStreamingIteratorNullTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSplitStreaming() {
+    void testSplitStreaming() {
         String out = template.requestBody("direct:sequential", new MyIterator(lastHasNext), String.class);
 
         assertEquals("ABC", out, "The split should return the aggregated parts, but returned: " + out);
