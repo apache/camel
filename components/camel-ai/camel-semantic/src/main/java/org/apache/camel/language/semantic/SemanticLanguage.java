@@ -113,8 +113,12 @@ public class SemanticLanguage extends LanguageSupport {
         }
         CamelContext context = getCamelContext();
         String configured = adapter == null ? null : context.resolvePropertyPlaceholders(adapter);
-        if (configured != null && configured.startsWith("#bean:")) {
-            Object bean = context.getRegistry().lookupByName(configured.substring(6));
+        if (configured != null && configured.startsWith("#") && !configured.startsWith("#class:")) {
+            String name = configured.startsWith("#bean:") ? configured.substring(6) : configured.substring(1);
+            if (name.contains(":")) {
+                throw new IllegalArgumentException("Semantic adapter reference must use #bean:name, #name or #class:FQCN");
+            }
+            Object bean = context.getRegistry().lookupByName(name);
             if (!(bean instanceof SemanticAdapter found)) {
                 throw new IllegalArgumentException("Semantic adapter bean is missing or does not implement SemanticAdapter");
             }
@@ -212,8 +216,8 @@ public class SemanticLanguage extends LanguageSupport {
         private final String name;
         private final boolean predicate;
         private volatile Compiled compiled;
-        private SemanticQuestions questions;
-        private SemanticAdapter provider;
+        private volatile SemanticQuestions questions;
+        private volatile SemanticAdapter provider;
 
         private Evaluation(String name, boolean predicate) {
             this.name = name;
@@ -264,7 +268,9 @@ public class SemanticLanguage extends LanguageSupport {
                     throw new IllegalArgumentException("Missing selected state for semantic question: " + name);
                 }
                 if (!(state instanceof String || state instanceof Map<?, ?> || state instanceof List<?>)) {
-                    throw new IllegalArgumentException("Unsupported state type for semantic question: " + name);
+                    throw new IllegalArgumentException(
+                            "Unsupported state type for semantic question: " + name
+                                                       + ". Select strings, maps or lists explicitly");
                 }
                 SemanticResult result = provider.evaluate(question, state);
                 if (result == null) {

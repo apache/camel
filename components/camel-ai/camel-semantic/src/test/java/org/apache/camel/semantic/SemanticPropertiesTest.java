@@ -31,13 +31,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticPropertiesTest {
     @ParameterizedTest
-    @ValueSource(strings = { "bean", "class", "plain" })
+    @ValueSource(strings = { "bean", "shorthand", "class", "plain" })
     void camelMainBindsAdapterAndDefaultState(String selection) throws Exception {
         Main main = new Main();
         SemanticLanguageTest.LabelAdapter bean = new SemanticLanguageTest.LabelAdapter();
         main.bind("classifier", bean);
         String adapter = switch (selection) {
             case "bean" -> "#bean:classifier";
+            case "shorthand" -> "#classifier";
             case "class" -> "#class:" + SemanticLanguageTest.LabelAdapter.class.getName();
             default -> SemanticLanguageTest.LabelAdapter.class.getName();
         };
@@ -53,7 +54,7 @@ class SemanticPropertiesTest {
         });
         try {
             main.start();
-            if (selection.equals("bean")) {
+            if (selection.equals("bean") || selection.equals("shorthand")) {
                 assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
             } else {
                 assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME))

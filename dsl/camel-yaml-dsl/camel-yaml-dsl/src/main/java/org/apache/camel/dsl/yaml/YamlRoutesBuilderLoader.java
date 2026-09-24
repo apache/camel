@@ -358,7 +358,9 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
     }
 
     private Object preConfigureNode(Node root, YamlDeserializationContext ctx, boolean preParse) {
-        SemanticDefinitionDeserializer.configure(getCamelContext(), ctx, root);
+        if (preParse) {
+            SemanticDefinitionDeserializer.configure(getCamelContext(), ctx, root);
+        }
         // backwards compatible fixes
         Object target = root;
 

@@ -17,6 +17,7 @@
 package org.apache.camel.semantic;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.language.semantic.SemanticLanguage;
@@ -144,9 +146,14 @@ class SemanticLanguageTest {
     @Test
     void classAndBeanTypeErrorsAndRegistryCollisionDoNotFallBack() {
         language.setAdapter(String.class.getName());
-        assertThatThrownBy(() -> language.createExpression("ref:q")).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> language.createExpression("ref:q")).isInstanceOf(RuntimeCamelException.class)
+                .hasCauseInstanceOf(ClassCastException.class);
         language.setAdapter("#bean:missing");
         assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("missing");
+        context.getRegistry().bind("wrong", "not an adapter");
+        language.setAdapter("#bean:wrong");
+        assertThatThrownBy(() -> language.createExpression("ref:q"))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not implement SemanticAdapter");
         language.setAdapter(CountingAdapter.class.getName());
         context.getRegistry().bind(SemanticLanguage.ADAPTER_NAME, "occupied");
         assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("already bound");
@@ -189,7 +196,36 @@ class SemanticLanguageTest {
         assertThatThrownBy(() -> language.createExpression("ref:unknown")).hasMessageContaining("Unknown");
         questions(
                 question(SemanticQuestion.Type.BOOLEAN, "${invalidFunction}", 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL));
-        assertThatThrownBy(() -> language.createExpression("ref:q")).isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("Unknown function: invalidFunction");
+    }
+
+    @Test
+    void shorthandBeanReferenceRetainsExistingInstance() {
+        CountingAdapter bean = new CountingAdapter();
+        context.getRegistry().bind("custom", bean);
+        language.setAdapter("#custom");
+        language.createExpression("ref:q");
+        assertThat(CountingAdapter.constructed).hasValue(1);
+        assertThat(CountingAdapter.started).hasValue(0);
+        assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
+    }
+
+    @Test
+    void byteStateRequiresExplicitConversionAndPreservesBody() {
+        Expression expression = language.createExpression("ref:q");
+        var exchange = new DefaultExchange(context);
+        byte[] body = "invoice".getBytes(StandardCharsets.UTF_8);
+        exchange.getMessage().setBody(body);
+        assertThatThrownBy(() -> expression.evaluate(exchange, Object.class))
+                .hasCauseInstanceOf(IllegalArgumentException.class).hasMessageContaining("Unsupported state type");
+        assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
+        questions(question(SemanticQuestion.Type.BOOLEAN, "${bodyAs(String)}", 0.5, 0,
+                SemanticQuestion.UncertaintyPolicy.FAIL));
+        assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+        CountingAdapter adapter
+                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, CountingAdapter.class);
+        assertThat(adapter.state).isEqualTo("invoice");
+        assertThat(exchange.getMessage().getBody()).isSameAs(body);
     }
 
     @Test
