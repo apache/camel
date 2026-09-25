@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +39,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -109,6 +112,12 @@ public final class ObjectHelper {
             return doublePairComparison(leftValue, rightValue);
         } else if (rightValue instanceof String string && leftValue instanceof Boolean booleanValue) {
             return booleanStringComparison(booleanValue, string);
+        } else if (leftValue instanceof Number leftNum && rightValue instanceof Number rightNum
+                && (leftValue.getClass() != rightValue.getClass() || leftValue instanceof BigDecimal)) {
+            // numbers of different types (such as Double and Integer) are equal if their values are equal, as
+            // converting one to the type of the other may drop the decimals, and BigDecimal.equals also compares the
+            // scale (2.50 is not equal to 2.5)
+            return compareNumbers(leftNum, rightNum) == 0;
         }
 
         // try without type coerce
@@ -128,6 +137,75 @@ public final class ObjectHelper {
         }
 
         return tryConverters(converter, leftValue, rightValue, ignoreCase);
+    }
+
+    /**
+     * Returns the value as a number if it is a {@link Number}, or a String with a decimal number, otherwise
+     * <tt>null</tt>.
+     */
+    private static Number asNumber(Object value) {
+        if (value instanceof Number number) {
+            return number;
+        } else if (value instanceof String text && (isNumber(text) || isFloatingNumber(text))) {
+            try {
+                return new BigDecimal(text);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Compares two numbers of any type by their numeric values.
+     */
+    private static int compareNumbers(Number left, Number right) {
+        if (isIntegral(left) && isIntegral(right)) {
+            return Long.compare(left.longValue(), right.longValue());
+        }
+        BigDecimal leftDecimal = toBigDecimal(left);
+        BigDecimal rightDecimal = toBigDecimal(right);
+        if (leftDecimal != null && rightDecimal != null) {
+            return leftDecimal.compareTo(rightDecimal);
+        }
+        double leftDouble = left.doubleValue();
+        double rightDouble = right.doubleValue();
+        if (leftDecimal != null && Double.isInfinite(rightDouble)) {
+            // a finite value, even one too large for a double, is less than positive and more than negative infinity
+            return rightDouble > 0 ? -1 : 1;
+        } else if (rightDecimal != null && Double.isInfinite(leftDouble)) {
+            return leftDouble > 0 ? 1 : -1;
+        }
+        // NaN, or both infinite
+        return Double.compare(leftDouble, rightDouble);
+    }
+
+    private static boolean isIntegral(Number number) {
+        return number instanceof Integer || number instanceof Long || number instanceof Short || number instanceof Byte
+                || number instanceof AtomicInteger || number instanceof AtomicLong;
+    }
+
+    private static BigDecimal toBigDecimal(Number number) {
+        if (number instanceof BigDecimal bigDecimal) {
+            return bigDecimal;
+        } else if (number instanceof BigInteger bigInteger) {
+            return new BigDecimal(bigInteger);
+        } else if (isIntegral(number)) {
+            return BigDecimal.valueOf(number.longValue());
+        } else if (number instanceof Double || number instanceof Float) {
+            double value = number.doubleValue();
+            if (Double.isNaN(value) || Double.isInfinite(value)) {
+                return null;
+            }
+            // use the decimal representation, so 0.1f is 0.1 and not 0.100000001490116...
+            return new BigDecimal(number.toString());
+        }
+        try {
+            // other types of numbers (such as LongAdder) usually print their exact value
+            return new BigDecimal(number.toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private static boolean evalNulls(Object leftValue, Object rightValue) {
@@ -323,6 +401,14 @@ public final class ObjectHelper {
         } else if (rightValue instanceof String rightStr && leftValue instanceof Boolean leftBool) {
             Boolean rightBool = Boolean.valueOf(rightStr);
             return leftBool.compareTo(rightBool);
+        }
+
+        // numbers of different types (such as Double and Integer), or a number and a numeric String, are compared
+        // by their values, as converting both to Long below would drop the decimals
+        Number leftNumber = asNumber(leftValue);
+        Number rightNumber = leftNumber != null ? asNumber(rightValue) : null;
+        if (leftNumber != null && rightNumber != null) {
+            return compareNumbers(leftNumber, rightNumber);
         }
 
         // if both values is numeric then compare using numeric

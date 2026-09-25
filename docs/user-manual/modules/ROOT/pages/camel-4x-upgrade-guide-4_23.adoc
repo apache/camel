@@ -13,6 +13,30 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== camel-core - Exchange Pooling deprecated
+
+Exchange pooling (`exchangeFactory=pooled`) is deprecated and will be removed in a future release.
+The following classes are deprecated:
+
+- `org.apache.camel.PooledExchange`
+- `org.apache.camel.support.DefaultPooledExchange`
+- `org.apache.camel.impl.engine.PooledExchangeFactory`
+- `org.apache.camel.impl.engine.PooledProcessorExchangeFactory`
+- `org.apache.camel.processor.PooledExchangeTask`
+- `org.apache.camel.processor.PooledExchangeTaskFactory`
+- `org.apache.camel.processor.PooledTaskFactory`
+- `org.apache.camel.impl.engine.CamelInternalPooledTaskFactory`
+
+The following `camel.main` configuration properties are deprecated:
+
+- `camel.main.exchange-factory` (value `pooled`)
+- `camel.main.exchange-factory-capacity`
+- `camel.main.exchange-factory-statistics-enabled`
+
+To migrate, remove the `camel.main.exchange-factory=pooled` property (and any related capacity/statistics
+properties) from your `application.properties`. Camel will use the default prototype mode which creates a
+new exchange per message. A `WARN` is logged at startup if pooled mode is still configured.
+
 === camel-oauth
 
 OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens instead of reusing the same cached token. Applications using such profiles may make additional token requests after upgrading.
@@ -43,8 +67,8 @@ The `range(max)` function now starts at 0, as documented and as `range` does in 
 
 A review of the simple language fixed a number of edge cases. These change what an existing expression returns:
 
-* `split` uses the separator as plain text, not as a regular expression: `${split(${body},'.')}` splits on dots
-  (it used to return an empty array), and `${split(${body},'|')}` splits on the bar. A route that relied on a regular
+* `split` uses the separator as plain text, not as a regular expression: `+${split(${body},'.')}+` splits on dots
+  (it used to return an empty array), and `+${split(${body},'|')}+` splits on the bar. A route that relied on a regular
   expression separator such as `'\s+'` must use `${body.split('\s+')}` instead.
 * The elvis operator `?:` treats any numeric zero as falsy (such as `0L`, `0.0` or `BigDecimal.ZERO`), not only `0` as
   an `Integer`.
@@ -53,16 +77,31 @@ A review of the simple language fixed a number of edge cases. These change what 
   string. A `BigDecimal` is a number, so it is not quoted.
 * `kindOfType` returns `object` for a `Map` (it used to return `array`).
 * A name glued to a function prefix is an unknown function instead of being read as that function, such as
-  `${headerfoo}` (which returned the header `foo`), `${uuidv7}` or `${exceptionInfo}`. Use `${header.foo}`.
+  `+${headerfoo}+` (which returned the header `foo`), `+${uuidv7}+` or `+${exceptionInfo}+`. Use `${header.foo}`.
 * A hidden file name has no extension: for `.bashrc` then `${file:name.ext}` is `null` (it used to be `bashrc`), and
   for `.route.yaml` then `${file:name.noext}` is `.route`. This comes from `FileUtil.onlyExt` and `FileUtil.stripExt`.
 * The chain operator `~>` needs a space on both sides, as the other operators do, so `A~>B` is text.
+* Comparing two numbers of different types, such as a `Double` or `BigDecimal` header and an integer literal, no
+  longer drops the decimals: `${header.amount} > 100` is `true` for a `BigDecimal` of `100.50` (it used to be `false`),
+  `${header.price} == 2` is `false` for a `Double` of `2.5`, and `${header.price} range '1..2'` is `false` for `2.5`.
+  The same applies to two `BigDecimal` or two `BigInteger` values, to a number compared with a numeric `String`, and to
+  the Java DSL predicates such as `header("amount").isGreaterThan(100)`. Two `BigDecimal` values with a different scale,
+  such as `2.50` and `2.5`, are now equal.
 * Inside `${ }` the ternary `?` and `:` need whitespace around them, so `${bean:svc?method=at(10:30)}` is not a
   ternary.
 
 The simple catalog (`simple.json`) now spells these functions as they are written: `hostname` (was `hostName`),
 `exception.stacktrace` (was `exception.stackTrace`), `throwException(msg,type)` (was `throwException(type,msg)`, the
 order the function has always used), `not(exp)`, and `setAttachment(key,exp)`.
+
+=== camel-core - internal processor advices
+
+When a `CamelInternalProcessorAdvice` fails in its `before` method, then the `after` method is now executed
+for the advices whose `before` was already executed. Previously they were skipped, which could leave the exchange
+counted as inflight and its unit of work not done. The same now happens when the debugger skips over a processor.
+
+An exception thrown from the `after` method of an advice no longer replaces the exception the exchange has already
+failed with. Instead, it is added as a suppressed exception to the existing exception.
 
 === Circuit Breaker EIP
 
@@ -72,6 +111,30 @@ because the breaker was open or the bulkhead was full, `false` when the call was
 Prior to Camel 4.23 the property was only set when there was no fallback and was absent inside the fallback,
 so a fallback that tested it for `null` must now test for `true` or `false` instead.
 `CamelCircuitBreakerResponseShortCircuited` is unchanged and remains `true` whenever the fallback runs, whatever the cause.
+
+=== Error handler - onException when the exception changes during redelivery
+
+When a redelivery attempt fails with a different exception than the previous attempt, the error handler now uses
+the `onException` that matches the new exception. If no `onException` matches it, the error handler's own settings
+apply, for example moving the message to the dead letter channel.
+
+Prior to Camel 4.23 the error handler kept using the `onException` matched by the earlier exception, including its
+`handled`, `continued`, redelivery and `onRedelivery` settings. So a new exception with no `onException` of its own
+could be routed and handled by the earlier exception's `onException`, and was not seen by the caller or the dead
+letter channel.
+
+The redelivery counter is not reset when the exception changes, so the new `onException` measures its
+`maximumRedeliveries` against the attempts already made. A route whose `onException(IOException.class)` allows 5
+redeliveries and which fails 4 times before the exception changes leaves the new policy a counter of 4, so an
+`onException(IllegalArgumentException.class).maximumRedeliveries(2)` is already exhausted and the message goes to
+the dead letter channel on the next failure.
+
+=== Weighted Load Balancer EIP
+
+The distribution ratios of the weighted load balancer are now validated when the route starts. A negative ratio,
+ratios that are all `0`, or ratios whose sum is greater than `2147483647` now fail the route at startup with an
+`IllegalArgumentException`. Previously such a route started, but sending to it could hang the caller, spin a CPU,
+or send every message to the same endpoint.
 
 === Context reload now re-applies placeholder based component options
 
@@ -160,6 +223,38 @@ through the transformer. The defaults are unchanged when the header is absent.
 
 If a route sets `CamelAwsDdbReturnValues` before the transformer runs and relies on it being discarded, remove the
 header instead.
+
+=== camel-aws2-s3
+
+The producer no longer evaluates the S3 object key or bucket name taken from a message header as a Simple
+expression. `AWS2S3Utils.determineKey()` and `determineBucketName()` evaluate the Simple language only for the
+values configured on the endpoint (`keyName` and `bucketName`); a key supplied through the `CamelAwsS3Key` header,
+or a bucket name supplied through the `CamelAwsS3OverrideBucketName` header, is now used literally. The
+`CamelAwsS3Key` header carries message content — for example the name of a consumed object, which the consumer
+sets on the exchange — whereas a dynamic key or bucket is a route authoring feature.
+
+Configured dynamic keys and buckets are unchanged:
+
+[source,java]
+----
+from("direct:start")
+    .to("aws2-s3://mybucket?keyName=RAW(${date:now:yyyyMMdd}/file.txt)");
+----
+
+A route that needs a dynamic value on the header must evaluate it in the route, so the header already holds the
+resolved value when it reaches the producer:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader(AWS2S3Constants.KEY, simple("${date:now:yyyyMMdd}/file.txt"))
+    .to("aws2-s3://mybucket");
+----
+
+A header that carries a literal `${...}` string is now used as the object key verbatim instead of being evaluated.
+
+A configured `keyName` or `bucketName` whose Simple expression resolves to `null` now fails with an
+`IllegalArgumentException` at the producer, instead of passing a `null` key/bucket on to the AWS SDK.
 
 === camel-console
 
@@ -557,6 +652,33 @@ set here, because that would reject input that parses today. Routes that genuine
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
 
+=== camel-core - type converter
+
+Several bugs in the type converter have been fixed, and some of the fixes change behavior:
+
+* Converting to a primitive type (such as `int.class`) now returns the matching wrapper type.
+Before, an `Integer` or `Long` value was returned as-is for any primitive type, so
+`convertTo(int.class, 5L)` returned a `Long`. For example, a bean method with an `int` parameter
+failed with `argument type mismatch` when the message body was a `Long`.
+* `tryConvertTo(boolean.class, value)` returns `null` instead of throwing an exception when the value
+cannot be converted.
+* When no type converter can convert a pair of types, the registry records a miss so it does not
+search for a converter again. Fallback type converters are now still tried for such a pair,
+because a fallback converter can convert depending on the value. Recorded misses are also cleared when
+a type converter or fallback type converter is added.
+* When there is no type converter for the exact type of the value, the registry uses a type converter
+for a super type. This used to depend on the iteration order of an internal map, which could change
+between JVM restarts. The nearest super type now wins: the type hierarchy is walked breadth-first,
+interfaces are tried before the super class at each level, and `java.lang.Object` is tried last.
+* Converting a `String` to a `Number` now returns an `Integer` for all values within the `Integer` range
+(including `Integer.MAX_VALUE`, which returned a `Long` before), and supports exponent notation such as `1e5`.
+* Converting a `BigDecimal`, or a `double` larger than a `long`, to `BigInteger` no longer loses precision.
+* Converting a `byte[]` to `char` no longer sign-extends bytes above 127.
+* Converting a `String` to `ByteBuffer` now uses the charset from the `CamelCharsetName` header or exchange
+property (like the other converters), and falls back to the default charset.
+* Converting an array to a `Set` no longer returns a `List`.
+* Enum conversion prefers a constant that matches exactly before matching case-insensitively.
+
 === camel-core - a failed route reload restores the previous routes
 
 When a route file is reloaded in dev mode (`camel run --dev`, or the route watcher reload strategy in general) and
@@ -649,6 +771,22 @@ KafkaManualCommit manual = exchange.getMessage().getHeader(KafkaConstants.MANUAL
 The message of the part is copied into the child exchange, so the exchanges in the original list are left
 untouched and remain usable after the split, for example by the batching consumer that owns them. Exchange
 properties of the part are not carried over to the child exchange, as is already the case for `Message` parts.
+
+=== camel-core - Idempotent Consumer no longer stops its repository when the route is stopped
+
+Stopping a route with an Idempotent Consumer (for example with `stopRoute` on the route controller, over JMX,
+or when a supervising route controller restarts the route) used to stop the idempotent repository as well.
+The in-memory repositories clear their data when stopped: `MemoryIdempotentRepository`, and a
+`KeyValueIdempotentRepository` over a `MemoryKeyValueRepository`, which clears the whole store. A repository
+that other routes were still using was therefore wiped, and so was the data of any other EIP sharing the
+same `KeyValueRepository` (for example the Aggregate EIP, when the `KeyValueRepository` is auto-discovered
+from the registry).
+
+The repository is now only stopped when the route is removed or when `CamelContext` is stopped. A route
+that is stopped and started again therefore keeps the message ids that its in-memory repository has
+seen, and a repository backed by a remote store keeps its connection while the route is stopped. To
+forget the ids, clear the repository with `IdempotentRepository.clear()` (or the `clear` JMX operation of
+the Idempotent Consumer).
 
 === Component deprecation
 
@@ -806,6 +944,20 @@ without supplying their own `hazelcastInstance` must now provide a `Config` with
 The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
+=== camel-netty - NettyConverter.toByteArray returns a copy of the buffer's readable bytes
+
+The `ByteBuf` to `byte[]` type converter (`NettyConverter.toByteArray`, also used when converting a Netty
+HTTP response body and by `camel-hl7`, `camel-lumberjack` and `camel-syslog`) now always returns a copy of
+exactly the buffer's readable region (`readerIndex()`..`readableBytes()`).
+
+Previously, for an array-backed (heap) buffer it returned the buffer's whole backing array directly. That
+could include bytes outside the readable region and, for a pooled buffer, bytes belonging to other
+allocations; the returned array was also a live reference into a buffer that could later be recycled.
+
+If your code relied on mutating the returned `byte[]` to write through to the original `ByteBuf`, that no
+longer has any effect. The converter now behaves consistently for heap and direct, pooled and unpooled
+buffers.
 
 === camel-http, camel-http-common, camel-netty-http, camel-undertow, camel-vertx-http - property placeholders in HTTP URI override headers
 
@@ -2332,6 +2484,15 @@ custom `headerFilterStrategy` is used as-is and is unaffected.
 Routes that relied on one of those headers reaching the wire must set it through the endpoint
 configuration or supply a `headerFilterStrategy` that permits it.
 
+=== camel-seda - an interrupted producer fails the exchange
+
+A SEDA producer whose thread is interrupted while it waits now fails the exchange, where previously it reported the send
+as successful. When it waits for space in a full queue (`blockWhenFull=true`, with or without `offerTimeout`, or
+`discardWhenFull=true`), the exchange fails with a `RejectedExecutionException` caused by the `InterruptedException`,
+as the message was not added to the queue. When it waits for the reply without a timeout (`waitForTaskToComplete` with
+`timeout=0`), the exchange fails with the `InterruptedException`, instead of returning the request as the reply.
+Camel itself interrupts such threads when a route is forced to stop after the graceful shutdown timeout.
+
 === camel-servlet, camel-jetty - the multipart upload whitelist is enforced against the submitted file name
 
 `fileNameExtWhitelist` accepts file name extensions, but `camel-servlet`'s `AttachmentHttpBinding`
@@ -2373,6 +2534,14 @@ as a header cannot take effect. A route that set either header was silently igno
 Configure the `target` and `credentials` endpoint options instead, or route to a different endpoint
 with `toD` when the destination varies per message. The constants remain in place for backwards
 compatibility and are now marked deprecated in the component metadata.
+
+=== camel-seda - purgeWhenStopping no longer purges when suspending
+
+A SEDA consumer with `purgeWhenStopping=true` no longer discards the pending messages on its queue when its route
+(or the CamelContext) is suspended; like any other SEDA consumer it completes them before the route is suspended.
+The queue is still purged when the route is stopped. To support this, `org.apache.camel.spi.ShutdownAware` has a new
+default method `getPendingExchangesSize(boolean suspendOnly)`, which the shutdown strategy now calls instead of
+`getPendingExchangesSize()`. It delegates to `getPendingExchangesSize()` by default.
 
 === camel-smooks - external XML entity resolution disabled by default
 
@@ -2450,6 +2619,14 @@ The accessors changed accordingly:
 
 The fluent builder `ParamDefinition.required(Boolean)` is unchanged, and a `required(String)` overload
 was added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change.
+
+=== camel-seda - stopping a suspended route does not wait for its pending messages
+
+Stopping a suspended SEDA route, or stopping the CamelContext while such a route is suspended, no longer waits for the
+messages that were sent to it while it was suspended. A suspended consumer does not consume them, so previously the stop
+always ran into the graceful shutdown timeout and was then forced (or aborted). The messages are now kept on the queue
+(or purged with `purgeWhenStopping=true`), and are processed if the route is started again while the queue still
+exists.
 
 === camel-sql, camel-sql-stored - the query/template override headers are gated
 
@@ -2583,6 +2760,18 @@ was published as a second, undocumented spelling of the same setting. Routes tha
 `databaseOutServerName` should use `xstreamOutServerName` instead; it configures the same XStream outbound
 server and is unchanged.
 
+=== camel-pulsar - the producer no longer replaces the body with the message id
+
+After sending, the producer used to overwrite the message body with the `MessageId` returned by the
+broker, so every step after the `to("pulsar:...")` saw a `MessageId` instead of the payload, and a route
+such as `.to("pulsar:a").to("pulsar:b")` published a Java-serialized `MessageId` to the second topic.
+That behaviour dates from the asynchronous send added in 3.20 (CAMEL-16030).
+
+The body is now left untouched, and the assigned id is reported on the new
+`CamelPulsarProducerMessageId` header instead.
+
+A route that read the `MessageId` from the body must read that header instead.
+
 === camel-jolt - switch from unmaintained bazaarvoice jolt to the jolt-community fork
 
 The JOLT library dependency has been migrated from `com.bazaarvoice.jolt:jolt-core` to
@@ -2630,6 +2819,18 @@ are unaffected. Routes that set the header by its literal string name, or that u
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
 
+=== camel-debezium - a failed embedded engine is now reported
+
+The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops
+with an error - for example because the connector cannot reach the database, or the offset store cannot be
+read - the failure is passed to the consumer's `ExceptionHandler`, and the consumer's health check reports
+`DOWN` with that error.
+
+Previously the engine reported such failures only through its own logger, so the route stayed started and
+healthy while no longer receiving any change event. Deployments that use readiness or liveness probes will
+now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
+The engine is still not restarted automatically.
+
 === camel-seda - purging the queue completes the discarded exchanges
 
 When a SEDA queue is purged (with `purgeWhenStopping=true` or the `purgeQueue` JMX operation), the discarded exchanges
@@ -2661,3 +2862,29 @@ redelivery now follows `negativeAckRedeliveryDelayMicros`, which defaults to 60 
 `negativeAckRedeliveryBackoff` when one is configured.
 
 A route that wants the previous timing can set `negativeAckRedeliveryDelayMicros=10000000`.
+=== camel-seda - multipleConsumers broadcasts to consumers with different uri options
+
+With `multipleConsumers=true` every consumer of a SEDA queue now receives a copy of each message, also when the consumers
+use the same queue name with different consumer options, such as `seda:foo?multipleConsumers=true` and
+`seda:foo?multipleConsumers=true&concurrentConsumers=5`. Previously each distinct endpoint uri only multicast to its own
+consumers, so such consumers silently competed for the messages instead of each receiving a copy.
+
+=== camel-core - Recipient List releases the producers of recipients it did not send to
+
+The Recipient List acquires a producer for every recipient before it starts sending. When it completes before
+it has sent to every recipient (for example with `stopOnException` or a `timeout`), it now releases the
+producers of the recipients it did not send to. Previously these producers were never released: a pooled
+(non-singleton) producer was not returned to its pool, and with `cacheSize(-1)` the prototype endpoint and its
+producer were never stopped.
+
+With `parallelProcessing`, a recipient whose task had not started yet when the Recipient List completed is now
+skipped instead of being sent to afterwards. As before, recipients that had already started keep running.
+
+== ThrottlingExceptionRoutePolicy
+
+`ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
+is suspended before the setter returns) rather than waiting for the next `onExchangeDone()` callback.
+This is the intended behaviour and makes the `keepOpen` toggle deterministic, but callers that previously
+relied on the setter being inert until an exchange arrived must be aware of the change.
+Setting `keepOpen` back to `false` remains deferred: the half-open timer attempts to close the circuit on
+its next tick (after `halfOpenAfter` milliseconds, default 30 s).

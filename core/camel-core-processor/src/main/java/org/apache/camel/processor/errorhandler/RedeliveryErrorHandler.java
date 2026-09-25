@@ -996,13 +996,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
-            this.retryWhilePredicate = retryWhilePolicy;
-            this.currentRedeliveryPolicy = redeliveryPolicy;
-            this.handledPredicate = getDefaultHandledPredicate();
-            this.useOriginalInMessage = useOriginalMessagePolicy;
-            this.useOriginalInBody = useOriginalBodyPolicy;
-            this.onRedeliveryProcessor = redeliveryProcessor;
-            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
+            useErrorHandlerDefaults();
             // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
             // original Exchange is being redelivered, and not a mutated Exchange
             this.original = redeliveryEnabled ? defensiveCopyExchangeIfNeeded(exchange) : null;
@@ -1010,10 +1004,27 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             this.callback = callback;
         }
 
+        /**
+         * Uses the behaviour configured on the error handler itself, which an exception policy (onException) matching
+         * the caught exception can then override.
+         */
+        private void useErrorHandlerDefaults() {
+            this.retryWhilePredicate = retryWhilePolicy;
+            this.currentRedeliveryPolicy = redeliveryPolicy;
+            this.failureProcessor = null;
+            this.handledPredicate = getDefaultHandledPredicate();
+            this.continuedPredicate = null;
+            this.useOriginalInMessage = useOriginalMessagePolicy;
+            this.useOriginalInBody = useOriginalBodyPolicy;
+            this.onRedeliveryProcessor = redeliveryProcessor;
+            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
+        }
+
         @Override
         public void reset() {
             this.retryWhilePredicate = null;
             this.currentRedeliveryPolicy = null;
+            this.failureProcessor = null;
             this.handledPredicate = null;
             this.continuedPredicate = null;
             this.useOriginalInMessage = false;
@@ -1330,6 +1341,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             // store the original caused exception in a property, so we can restore it later
             exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
+
+            // the exception may differ from the one caught on a previous attempt, so start over from the
+            // error handler defaults and do not keep what a previous exception policy set (CAMEL-24981)
+            useErrorHandlerDefaults();
 
             // find the error handler to use (if any)
             ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, e);

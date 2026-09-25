@@ -124,9 +124,12 @@ public final class RestOpenApiHelper {
         }
 
         // openapi spec should be last, as all the above can override the configuration
-        if (openAPI != null) {
+        // Only fall back to DEFAULT_BASE_PATH when there are no servers entries at all.
+        // When servers are present but the URL has no path, getBasePathFromOpenApi returns ""
+        // which isNotEmpty() would wrongly treat as absent — so we use != null here.
+        if (openAPI != null && openAPI.getServers() != null && !openAPI.getServers().isEmpty()) {
             String specificationBasePath = RestOpenApiHelper.getBasePathFromOpenApi(openAPI);
-            if (isNotEmpty(specificationBasePath)) {
+            if (specificationBasePath != null) {
                 return specificationBasePath;
             }
         }

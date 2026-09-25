@@ -123,9 +123,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                 return (T) parsedBoolean;
             }
         } else if (type.isPrimitive()) {
-            // okay its a wrapper -> primitive then return as-is for some common types
-            Class<?> cls = value.getClass();
-            if (cls == Integer.class || cls == Long.class) {
+            // okay its a wrapper -> primitive then return as-is when the wrapper matches the primitive type
+            if (isWrapperOfPrimitive(type, value)) {
                 return (T) value;
             }
         } else if (type == String.class) {
@@ -223,10 +222,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                 return (T) value;
             }
             if (type == boolean.class) {
-                // primitive boolean which must return a value so throw exception if not possible
-                Object answer = ObjectConverter.toBoolean(value);
-                requireNonNullBoolean(type, value, answer);
-                return (T) answer;
+                // primitive boolean, but as we are only trying then return null if not possible
+                return (T) ObjectConverter.toBoolean(value);
             } else if (type == Boolean.class && value instanceof String str) {
                 // String -> Boolean
                 Boolean parsedBoolean = customParseBoolean(str);
@@ -234,9 +231,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
                     return (T) parsedBoolean;
                 }
             } else if (type.isPrimitive()) {
-                // okay its a wrapper -> primitive then return as-is for some common types
-                Class<?> cls = value.getClass();
-                if (cls == Integer.class || cls == Long.class) {
+                // okay its a wrapper -> primitive then return as-is when the wrapper matches the primitive type
+                if (isWrapperOfPrimitive(type, value)) {
                     return (T) value;
                 }
             } else if (type == String.class) {
@@ -266,6 +262,10 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             return null;
         }
         return (T) answer;
+    }
+
+    private static boolean isWrapperOfPrimitive(Class<?> type, Object value) {
+        return value.getClass() == ObjectHelper.convertPrimitiveTypeToWrapperType(type);
     }
 
     private static <T> void requireNonNullBoolean(Class<T> type, Object value, Object answer) {
@@ -387,6 +387,13 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         final Class<?> aClass = type.isPrimitive() ? ObjectHelper.convertPrimitiveTypeToWrapperType(type) : type;
         final TypeConvertible<?, ?> typeConvertible = new TypeConvertible<>(value.getClass(), aClass);
 
+        if (converters.get(typeConvertible) == MISS_CONVERTER) {
+            // we have previously found no type converter for this pair of types, but fallback converters
+            // can convert depending on the given value, so we must still let them try
+            final Object fallBackRet = tryFallback(type, exchange, value, tryConvert, typeConvertible);
+            return fallBackRet != null ? fallBackRet : TypeConverter.MISS_VALUE;
+        }
+
         final Object ret = tryCachedConverters(type, exchange, value, typeConvertible);
         if (ret != null) {
             return ret;
@@ -405,14 +412,15 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         }
 
         // This is the last resort: if nothing else works, try to find something that converts from an Object to the target type
-        final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, type));
-        if (objConverter != null) {
+        final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, aClass));
+        if (objConverter != null && objConverter != MISS_CONVERTER) {
             converters.put(typeConvertible, objConverter);
             return objConverter.convertTo(type, exchange, value);
         }
 
         if (!tryConvert) {
-            converters.put(typeConvertible, MISS_CONVERTER);
+            // only mark as a miss if no type converter was added in the meantime
+            converters.putIfAbsent(typeConvertible, MISS_CONVERTER);
         }
 
         // Could not find suitable conversion, so return Void to indicate not found
@@ -421,7 +429,8 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
 
     private Object tryCachedConverters(Class<?> type, Exchange exchange, Object value, TypeConvertible<?, ?> typeConvertible) {
         final TypeConverter typeConverter = converters.get(typeConvertible);
-        if (typeConverter != null) {
+        // a miss may have been recorded concurrently, which must not prevent trying the fallback converters
+        if (typeConverter != null && typeConverter != MISS_CONVERTER) {
             final Object ret = typeConverter.convertTo(type, exchange, value);
             if (ret != null) {
                 return ret;
@@ -482,12 +491,22 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
     }
 
     public TypeConverter getTypeConverter(Class<?> toType, Class<?> fromType) {
-        return converters.get(new TypeConvertible<>(fromType, toType));
+        TypeConverter answer = converters.get(new TypeConvertible<>(fromType, toType));
+        return answer != MISS_CONVERTER ? answer : null;
     }
 
     @Override
     public void addConverter(TypeConvertible<?, ?> typeConvertible, TypeConverter typeConverter) {
         converters.put(typeConvertible, typeConverter);
+        clearMisses();
+    }
+
+    /**
+     * Clears the previously recorded misses, as a type converter that is added may now be able to convert, such as from
+     * a subclass of the type it is added for.
+     */
+    private void clearMisses() {
+        converters.values().removeIf(tc -> tc == MISS_CONVERTER);
     }
 
     @Override
@@ -500,6 +519,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         final TypeConvertible<?, ?> typeConvertible = new TypeConvertible<>(fromType, toType);
 
         addOrReplaceTypeConverter(typeConverter, typeConvertible);
+        clearMisses();
     }
 
     private void addOrReplaceTypeConverter(TypeConverter typeConverter, TypeConvertible<?, ?> typeConvertible) {
@@ -563,6 +583,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
+        clearMisses();
     }
 
     public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
@@ -574,7 +595,7 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
         Map<Class<?>, TypeConverter> answer = new LinkedHashMap<>();
         for (var e : converters.entrySet()) {
             Class<?> target = e.getKey().getTo();
-            if (target == toType) {
+            if (target == toType && e.getValue() != MISS_CONVERTER) {
                 answer.put(e.getKey().getFrom(), e.getValue());
             }
         }

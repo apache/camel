@@ -340,6 +340,11 @@ Since we have specified `multipleConsumers=true` on the seda `foo`
 endpoint we can have those two consumers receive their own copy of the
 message as a kind of _publish/subscribe_ style messaging.
 
+The consumers share the queue by its name, so they can use different consumer options,
+such as `seda:foo?multipleConsumers=true&concurrentConsumers=5`, and still each receive
+their own copy of the message. The `multipleConsumers=true` option must be specified
+on every consumer.
+
 === Extracting queue information.
 
 If needed, information such as queue size, etc. can be obtained without
