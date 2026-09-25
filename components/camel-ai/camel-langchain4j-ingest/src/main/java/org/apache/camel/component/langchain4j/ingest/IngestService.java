@@ -131,10 +131,6 @@ class IngestService {
         return new IngestResult(pipeline, documentId, batching.segmentsEmbedded(), IngestResult.Outcome.INGESTED);
     }
 
-    public String pipeline() {
-        return pipeline;
-    }
-
     /**
      * Every LangChain4j-provided splitter propagates the document metadata onto its segments, but a custom
      * {@code DocumentSplitter} might not — and a segment without the identity stamps would break citation and the

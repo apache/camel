@@ -17,22 +17,27 @@
 package org.apache.camel.component.langchain4j.ingest;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Set;
 
+import dev.langchain4j.data.message.ContentType;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.AntPathMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Splits the message body into segments, embeds them in batches and writes them to the embedding store; the message
- * body is replaced with the {@link IngestResult}.
+ * body is replaced with the {@link IngestResult}. With {@link IngestModality#MEDIA} the body is embedded whole instead.
  *
  * <p>
  * With an {@code idempotentRepository} configured, the producer claims the document id before writing: a duplicate
@@ -45,11 +50,20 @@ import org.apache.camel.util.AntPathMatcher;
  */
 public class LangChain4jIngestProducer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(LangChain4jIngestProducer.class);
+
     private final LangChain4jIngestEndpoint endpoint;
     private final LangChain4jIngestConfiguration configuration;
-    private IngestService service;
+    /** One of the two is set at start, by modality. */
+    private IngestService textService;
+    private MediaIngestService mediaService;
     private String[] includeIds;
     private String[] excludeIds;
+    private boolean media;
+    /** The configured contentType, normalised; null when unset. Content-type headers are ignored on purpose. */
+    private String contentType;
+    /** What the model declares it can embed; media mode only. */
+    private Set<ContentType> supportedTypes;
 
     public LangChain4jIngestProducer(LangChain4jIngestEndpoint endpoint) {
         super(endpoint);
@@ -71,9 +85,24 @@ public class LangChain4jIngestProducer extends DefaultProducer {
                     "Ingestion pipeline '" + pipeline + "': documentIdHeader must not be blank. Omit the option for"
                                                + " the default, or name the header carrying the document id.");
         }
+        media = configuration.getModality() == IngestModality.MEDIA;
+        contentType = normalizeContentType(configuration.getContentType());
+        if (!media && contentType != null) {
+            // silently ignoring it would embed media bytes as text on a forgotten modality=media
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + pipeline + "': contentType only applies to modality=media (got '"
+                                               + configuration.getContentType() + "'). Set modality=media, or"
+                                               + " remove the option.");
+        }
+        if (media && configuration.getDocumentSplitter() != null) {
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + pipeline + "': documentSplitter does not apply to modality=media, where"
+                                               + " a document is embedded whole. Remove the option.");
+        }
         // the splitter bounds parameterize the default recursive splitter only: with a custom
-        // documentSplitter they are documented as ignored, so they are not validated either
-        if (configuration.getDocumentSplitter() == null
+        // documentSplitter, or in media mode, they are documented as ignored, so they are not
+        // validated either
+        if (!media && configuration.getDocumentSplitter() == null
                 && (configuration.getMaxSegmentSize() <= 0 || configuration.getMaxOverlapSize() < 0
                         || configuration.getMaxOverlapSize() >= configuration.getMaxSegmentSize())) {
             throw new IllegalArgumentException(
@@ -83,7 +112,9 @@ public class LangChain4jIngestProducer extends DefaultProducer {
                                                + " / " + configuration.getMaxOverlapSize() + ")");
         }
 
-        if (configuration.getEmbeddingBatchSize() < 1) {
+        // like the splitter bounds, the batch size does not apply in media mode, so it is not
+        // validated there either
+        if (!media && configuration.getEmbeddingBatchSize() < 1) {
             throw new IllegalArgumentException(
                     "Ingestion pipeline '" + pipeline + "': embeddingBatchSize must be positive (got "
                                                + configuration.getEmbeddingBatchSize() + ")");
@@ -121,15 +152,53 @@ public class LangChain4jIngestProducer extends DefaultProducer {
                 = resolve(EmbeddingStore.class, configuration.getEmbeddingStore(), "embedding store", "embeddingStore");
         EmbeddingModel model
                 = resolve(EmbeddingModel.class, configuration.getEmbeddingModel(), "embedding model", "embeddingModel");
-        service = configuration.getDocumentSplitter() != null
-                ? new IngestService(
-                        pipeline, store, model, configuration.getDocumentSplitter(),
-                        configuration.getEmbeddingBatchSize(), configuration.getMaxDocumentSize(),
-                        configuration.getMinDocumentSize())
-                : new IngestService(
-                        pipeline, store, model, configuration.getMaxSegmentSize(),
-                        configuration.getMaxOverlapSize(), configuration.getEmbeddingBatchSize(),
-                        configuration.getMaxDocumentSize(), configuration.getMinDocumentSize());
+        if (media) {
+            // LangChain4j would reject the first request anyway, but only once a document has
+            // been read; the misconfiguration is better reported before any is. allMatch is
+            // vacuously true for an empty set, which declares no medium either
+            supportedTypes = model.supportedContentTypes();
+            if (supportedTypes == null || supportedTypes.stream().allMatch(type -> type == ContentType.TEXT)) {
+                throw new IllegalArgumentException(
+                        "Ingestion pipeline '" + pipeline + "': modality=media, but the embedding model "
+                                                   + model.getClass().getName() + " does not support any media input"
+                                                   + " (its supportedContentTypes() are " + supportedTypes
+                                                   + "). Configure an EmbeddingModel that declares AUDIO, IMAGE,"
+                                                   + " VIDEO or PDF.");
+            }
+            // with listeners attached, LangChain4j 1.20 builds the listener context from the
+            // input text, which media lacks, so every media request would fail inside the
+            // library with an opaque "text cannot be null or blank". addListener wraps the model
+            // in ListeningEmbeddingModel, a package-private class that does not expose its
+            // listeners, hence the check by name beside the listeners() one
+            // TODO drop the class-name check once a LangChain4j release after 1.20 returns the wrapped
+            // listeners from listeners() or builds the context without text
+            if ("dev.langchain4j.model.embedding.ListeningEmbeddingModel".equals(model.getClass().getName())
+                    || (model.listeners() != null && !model.listeners().isEmpty())) {
+                throw new IllegalArgumentException(
+                        "Ingestion pipeline '" + pipeline + "': modality=media, but the embedding model has"
+                                                   + " EmbeddingModelListeners attached. LangChain4j builds the"
+                                                   + " listener context from the input text, which media lacks, so"
+                                                   + " every request would fail; use a model without listeners.");
+            }
+            if (contentType != null) {
+                // one type for every document: a medium the model lacks fails here, not per document
+                requireSupported(contentType, "the contentType option");
+            }
+            mediaService = new MediaIngestService(
+                    pipeline, store, model, configuration.getMaxDocumentSize(), configuration.getMinDocumentSize());
+            LOG.debug("Ingestion pipeline '{}': modality=media, maxDocumentSize={} and minDocumentSize={} count bytes",
+                    pipeline, configuration.getMaxDocumentSize(), configuration.getMinDocumentSize());
+        } else if (configuration.getDocumentSplitter() != null) {
+            textService = new IngestService(
+                    pipeline, store, model, configuration.getDocumentSplitter(),
+                    configuration.getEmbeddingBatchSize(), configuration.getMaxDocumentSize(),
+                    configuration.getMinDocumentSize());
+        } else {
+            textService = new IngestService(
+                    pipeline, store, model, configuration.getMaxSegmentSize(),
+                    configuration.getMaxOverlapSize(), configuration.getEmbeddingBatchSize(),
+                    configuration.getMaxDocumentSize(), configuration.getMinDocumentSize());
+        }
 
         IdempotentRepository repository = configuration.getIdempotentRepository();
         if (repository != null) {
@@ -152,10 +221,19 @@ public class LangChain4jIngestProducer extends DefaultProducer {
             exchange.getMessage().setBody(filtered(documentId));
             return;
         }
+        // the media type depends on the id alone, so it is resolved here as well: a document
+        // whose type cannot be told, or whose medium the model lacks, never occupies its id and
+        // never pays for the payload
+        String mimeType = null;
+        ContentType medium = null;
+        if (media) {
+            mimeType = mediaTypeOf(documentId);
+            medium = requireSupported(mimeType, "document '" + documentId + "'");
+        }
 
         IdempotentRepository repository = configuration.getIdempotentRepository();
         if (repository == null) {
-            exchange.getMessage().setBody(ingestUnlessFiltered(exchange, documentId));
+            exchange.getMessage().setBody(ingestUnlessFiltered(exchange, documentId, mimeType, medium));
             return;
         }
 
@@ -166,12 +244,12 @@ public class LangChain4jIngestProducer extends DefaultProducer {
         // consumer EIP - a repository overriding only those variants is not bypassed
         if (!repository.add(exchange, documentId)) {
             exchange.getMessage().setBody(
-                    new IngestResult(service.pipeline(), documentId, 0, IngestResult.Outcome.SKIPPED));
+                    new IngestResult(endpoint.getPipelineName(), documentId, 0, IngestResult.Outcome.SKIPPED));
             return;
         }
         IngestResult result;
         try {
-            result = ingestUnlessFiltered(exchange, documentId);
+            result = ingestUnlessFiltered(exchange, documentId, mimeType, medium);
         } catch (Exception e) {
             // a failed write must not keep the claim, or the delivery could never be retried.
             // An Error (an OutOfMemoryError, say) is deliberately not caught: under a VM-level
@@ -200,18 +278,77 @@ public class LangChain4jIngestProducer extends DefaultProducer {
      * The content filters, in claim scope: the documentFilter predicate sees the body, and minDocumentSize (inside
      * {@link IngestService}) needs the text - both run after the dedup claim, unlike the id patterns.
      */
-    private IngestResult ingestUnlessFiltered(Exchange exchange, String documentId) {
+    private IngestResult ingestUnlessFiltered(Exchange exchange, String documentId, String mimeType, ContentType medium)
+            throws InvalidPayloadException {
         Predicate filter = configuration.getDocumentFilter();
         if (filter != null && !filter.matches(exchange)) {
             return filtered(documentId);
         }
-        return service.ingest(documentId, exchange.getMessage().getBody(String.class));
+        if (media) {
+            // bytes, not a String - a charset conversion would corrupt them. A null body stays
+            // EMPTY; anything else must convert, so a wrong body type (a POJO, say) fails as an
+            // InvalidPayloadException instead of being answered EMPTY by a silent null conversion
+            byte[] bytes = exchange.getMessage().getBody() == null
+                    ? null
+                    : exchange.getMessage().getMandatoryBody(byte[].class);
+            return mediaService.ingest(documentId, bytes, mimeType, medium);
+        }
+        return textService.ingest(documentId, exchange.getMessage().getBody(String.class));
     }
 
     private IngestResult filtered(String documentId) {
         // the endpoint's pipeline name, not service.pipeline(): same value, but valid even
         // if a harness invokes the producer before doStart
         return new IngestResult(endpoint.getPipelineName(), documentId, 0, IngestResult.Outcome.FILTERED);
+    }
+
+    /** The configured contentType, else the type the document id's file extension implies. */
+    private String mediaTypeOf(String documentId) {
+        if (contentType != null) {
+            return contentType;
+        }
+        String type = MediaTypes.fromDocumentId(documentId);
+        if (type == null) {
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + endpoint.getPipelineName() + "': cannot tell the media type of document '"
+                                               + documentId + "' from its extension. Set the contentType endpoint"
+                                               + " option.");
+        }
+        return type;
+    }
+
+    /**
+     * The LangChain4j content type a MIME type belongs to, checked against what the model declares so a medium it
+     * cannot embed is refused before the body is read; fails naming what needed the type.
+     */
+    private ContentType requireSupported(String mimeType, String what) {
+        ContentType type = MediaTypes.contentTypeOf(mimeType);
+        if (type == null) {
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + endpoint.getPipelineName() + "': '" + mimeType + "' (" + what
+                                               + ") is not a media type this pipeline can embed: audio/*, image/*,"
+                                               + " video/* or application/pdf.");
+        }
+        if (!supportedTypes.contains(type)) {
+            throw new IllegalArgumentException(
+                    "Ingestion pipeline '" + endpoint.getPipelineName() + "': the embedding model does not support "
+                                               + type + " input, needed for " + what + " (its supportedContentTypes()"
+                                               + " are " + supportedTypes + ").");
+        }
+        return type;
+    }
+
+    /**
+     * Trimmed, lower-cased (RFC 2045 types are case-insensitive) and without parameters, the form an embedding provider
+     * expects: {@code Audio/WAV; rate=16000} is handed to the model as {@code audio/wav}. Blank means unset.
+     */
+    private static String normalizeContentType(String value) {
+        if (value == null) {
+            return null;
+        }
+        int semicolon = value.indexOf(';');
+        String type = (semicolon < 0 ? value : value.substring(0, semicolon)).trim().toLowerCase(Locale.ROOT);
+        return type.isEmpty() ? null : type;
     }
 
     /** Exclusion wins over inclusion; with includeId set, only matching ids pass. */
