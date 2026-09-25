@@ -421,7 +421,7 @@
         <mcp-java-sdk-version>2.0.1</mcp-java-sdk-version>
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
-        <openai-java-version>4.65.0</openai-java-version>
+        <openai-java-version>4.67.0</openai-java-version>
         <openapi-generator-version>7.25.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.8.0</opensearch-rest-client-version>
