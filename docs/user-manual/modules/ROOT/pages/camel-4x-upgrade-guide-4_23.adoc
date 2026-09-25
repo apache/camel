@@ -2862,6 +2862,7 @@ redelivery now follows `negativeAckRedeliveryDelayMicros`, which defaults to 60 
 `negativeAckRedeliveryBackoff` when one is configured.
 
 A route that wants the previous timing can set `negativeAckRedeliveryDelayMicros=10000000`.
+
 === camel-seda - multipleConsumers broadcasts to consumers with different uri options
 
 With `multipleConsumers=true` every consumer of a SEDA queue now receives a copy of each message, also when the consumers
