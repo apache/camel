@@ -653,7 +653,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setAdditionalSensitiveKeywords(String additionalSensitiveKeywords) {
         this.additionalSensitiveKeywords = additionalSensitiveKeywords;
-        // re-configure sensitive keywords asap so they take effect immediately
+        // add the keywords to the ones used when sanitizing uris, they apply to the whole JVM and cannot be removed
         URISupport.addSanitizeKeywords(additionalSensitiveKeywords);
     }
 

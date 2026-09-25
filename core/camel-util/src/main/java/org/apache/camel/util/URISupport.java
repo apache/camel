@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +35,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.apache.camel.util.CamelURIParser.URI_ALREADY_NORMALIZED;
@@ -51,31 +53,22 @@ public final class URISupport {
     public static final char[] RAW_TOKEN_START = { '(', '{' };
     public static final char[] RAW_TOKEN_END = { ')', '}' };
 
-    @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
-    private static final String PRE_SECRETS_FORMAT = "([?&][^=]*(?:%s)[^=]*)=(RAW(([{][^}]*[}])|([(][^)]*[)]))|[^&]*)";
+    // Match the key of a query parameter as first capture group (the value starts after the = sign)
+    private static final Pattern QUERY_PARAMETER_KEY = Pattern.compile("[?&]([^?&=]*)=");
 
-    // Match any key-value pair in the URI query string whose key contains
-    // "passphrase" or "password" or secret key (case-insensitive).
-    // First capture group is the key, second is the value.
-    private static final Pattern ALL_SECRETS
-            = Pattern.compile(PRE_SECRETS_FORMAT.formatted(SensitiveUtils.getSensitivePattern()),
-                    Pattern.CASE_INSENSITIVE);
+    // Match any of the sensitive keywords (such as passphrase, password or secret key) in a query parameter key
+    private static final Pattern SENSITIVE_KEYWORDS
+            = Pattern.compile(SensitiveUtils.getSensitivePattern(), Pattern.CASE_INSENSITIVE);
 
-    // Match the user password in the URI as second capture group
-    // (applies to URI with authority component and userinfo token in the form
-    // "user:password").
-    private static final Pattern USERINFO_PASSWORD = Pattern.compile("(.*://.*?:)(.*)(@)");
-
-    // Match the user password in the URI path as second capture group
-    // (applies to URI path with authority component and userinfo token in the
-    // form "user:password").
-    private static final Pattern PATH_USERINFO_PASSWORD = Pattern.compile("(.*?:)(.*)(@)");
+    // use xxxxxx as replacement as that works well with JMX also
+    private static final String MASK = "xxxxxx";
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private static final String EMPTY_QUERY_STRING = "";
 
-    private static Pattern EXTRA_SECRETS;
+    // custom keywords (lower case and without dashes) added by addSanitizeKeywords
+    private static volatile Set<String> extraKeywords = Set.of();
 
     private URISupport() {
         // Helper class
@@ -88,16 +81,26 @@ public final class URISupport {
      * @param keywords keywords separated by comma
      */
     public static synchronized void addSanitizeKeywords(String keywords) {
-        StringJoiner pattern = new StringJoiner("|");
+        if (keywords == null) {
+            return;
+        }
+        Set<String> answer = new LinkedHashSet<>(extraKeywords);
         for (String key : keywords.split(",")) {
-            // skip existing keys
-            key = key.toLowerCase(Locale.ROOT).trim();
-            if (!SensitiveUtils.containsSensitive(key)) {
-                pattern.add("\\Q" + key.toLowerCase(Locale.ROOT) + "\\E");
+            // keys are matched without dashes, the same way as the parameter names
+            key = key.toLowerCase(Locale.ROOT).trim().replace("-", "");
+            // skip empty and existing keys
+            if (!key.isEmpty() && !SensitiveUtils.containsSensitive(key)) {
+                answer.add(key);
             }
         }
-        EXTRA_SECRETS = Pattern.compile(PRE_SECRETS_FORMAT.formatted(pattern),
-                Pattern.CASE_INSENSITIVE);
+        extraKeywords = Set.copyOf(answer);
+    }
+
+    /**
+     * Removes the keywords added by {@link #addSanitizeKeywords(String)}. Only for testing.
+     */
+    static synchronized void resetSanitizeKeywords() {
+        extraKeywords = Set.of();
     }
 
     /**
@@ -106,19 +109,102 @@ public final class URISupport {
      * @param  uri The uri to sanitize.
      * @return     Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey
      *             sanitized.
-     * @see        #ALL_SECRETS and #USERINFO_PASSWORD for the matched pattern
+     * @see        SensitiveUtils#maskUserInfoCredentials(String, String) for how the userinfo password is found
      */
     public static String sanitizeUri(String uri) {
-        // use xxxxx as replacement as that works well with JMX also
         String sanitized = uri;
         if (uri != null) {
-            sanitized = ALL_SECRETS.matcher(sanitized).replaceAll("$1=xxxxxx");
-            if (EXTRA_SECRETS != null) {
-                sanitized = EXTRA_SECRETS.matcher(sanitized).replaceFirst("$1=xxxxxx");
-            }
-            sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
+            sanitized = sanitizeQueryParameters(sanitized);
+            sanitized = SensitiveUtils.maskUserInfo(sanitized, MASK, false);
         }
         return sanitized;
+    }
+
+    /**
+     * Returns a copy of the parameters where the values of sensitive parameters (such as passwords) are masked, using
+     * the same rules as {@link #sanitizeUri(String)}.
+     *
+     * @param  parameters the parameters
+     * @return            null if the parameters are null, otherwise a copy of the parameters with the sensitive values
+     *                    masked
+     */
+    public static Map<String, Object> sanitizeParameters(Map<String, Object> parameters) {
+        if (parameters == null) {
+            return null;
+        }
+        Map<String, Object> answer = new LinkedHashMap<>(parameters.size());
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            Object value = entry.getValue();
+            answer.put(entry.getKey(), value != null && isSensitiveKey(entry.getKey()) ? MASK : value);
+        }
+        return answer;
+    }
+
+    private static String sanitizeQueryParameters(String uri) {
+        StringBuilder sb = null;
+        int copied = 0;
+        int pos = 0;
+        Matcher matcher = QUERY_PARAMETER_KEY.matcher(uri);
+        while (matcher.find(pos)) {
+            // the value starts after the = sign
+            pos = matcher.end();
+            if (isSensitiveKey(matcher.group(1))) {
+                int end = valueEnd(uri, pos);
+                if (sb == null) {
+                    sb = new StringBuilder(uri.length());
+                }
+                sb.append(uri, copied, pos).append(MASK);
+                copied = end;
+                pos = end;
+            }
+            // otherwise continue searching from the start of the value, as it can contain another uri
+        }
+        if (sb == null) {
+            return uri;
+        }
+        return sb.append(uri, copied, uri.length()).toString();
+    }
+
+    private static boolean isSensitiveKey(String key) {
+        // ignore dashes the same way as SensitiveUtils.containsSensitive, as options can be configured in dash case
+        String text = key.toLowerCase(Locale.ROOT).replace("-", "");
+        if (SENSITIVE_KEYWORDS.matcher(text).find()) {
+            return true;
+        }
+        for (String keyword : extraKeywords) {
+            if (text.contains(keyword)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int valueEnd(String uri, int start) {
+        int open = start + RAW_TOKEN_PREFIX.length();
+        if (uri.startsWith(RAW_TOKEN_PREFIX, start) && open < uri.length()) {
+            for (int i = 0; i < RAW_TOKEN_START.length; i++) {
+                if (uri.charAt(open) == RAW_TOKEN_START[i]) {
+                    return rawValueEnd(uri, open + 1, RAW_TOKEN_END[i]);
+                }
+            }
+        }
+        int end = uri.indexOf('&', start);
+        return end != -1 ? end : uri.length();
+    }
+
+    private static int rawValueEnd(String uri, int from, char tokenEnd) {
+        // a RAW value ends at the closing bracket that is followed by & or the end, the same way as URIScanner parses it
+        int last = -1;
+        for (int i = from; i < uri.length(); i++) {
+            if (uri.charAt(i) == tokenEnd) {
+                if (i + 1 == uri.length() || uri.charAt(i + 1) == '&') {
+                    return i + 1;
+                }
+                last = i;
+            }
+        }
+        // no such bracket, which happens when the uri is part of a longer text, so mask up to the last closing bracket
+        return last != -1 ? last + 1 : uri.length();
     }
 
     public static String textBlockToSingleLine(String uri) {
@@ -159,7 +245,7 @@ public final class URISupport {
     public static String sanitizePath(String path) {
         String sanitized = path;
         if (path != null) {
-            sanitized = PATH_USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
+            sanitized = SensitiveUtils.maskPathUserInfo(sanitized, MASK);
         }
         return sanitized;
     }
