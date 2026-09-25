@@ -7578,6 +7578,46 @@ public class StaticEndpointBuilders {
         return HiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * HiveMQ MQTT 3.1.1 (camel-hivemq311)
+     * Camel HiveMQ MQTT Client support for MQTT 3.1.1
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq311
+     * 
+     * Syntax: <code>hivemq311:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * The MQTT topic name or pattern to subscribe to or publish on.
+     * 
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static HiveMQ311EndpointBuilderFactory.HiveMQ311EndpointBuilder hivemq311(String path) {
+        return hivemq311("hivemq311", path);
+    }
+    /**
+     * HiveMQ MQTT 3.1.1 (camel-hivemq311)
+     * Camel HiveMQ MQTT Client support for MQTT 3.1.1
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq311
+     * 
+     * Syntax: <code>hivemq311:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * The MQTT topic name or pattern to subscribe to or publish on.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static HiveMQ311EndpointBuilderFactory.HiveMQ311EndpointBuilder hivemq311(String componentName, String path) {
+        return HiveMQ311EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 
