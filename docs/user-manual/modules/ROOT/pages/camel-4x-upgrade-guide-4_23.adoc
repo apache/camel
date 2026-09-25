@@ -945,6 +945,20 @@ The same default is now also applied to the `ClientConfig` that Camel builds for
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
 
+=== camel-netty - NettyConverter.toByteArray returns a copy of the buffer's readable bytes
+
+The `ByteBuf` to `byte[]` type converter (`NettyConverter.toByteArray`, also used when converting a Netty
+HTTP response body and by `camel-hl7`, `camel-lumberjack` and `camel-syslog`) now always returns a copy of
+exactly the buffer's readable region (`readerIndex()`..`readableBytes()`).
+
+Previously, for an array-backed (heap) buffer it returned the buffer's whole backing array directly. That
+could include bytes outside the readable region and, for a pooled buffer, bytes belonging to other
+allocations; the returned array was also a live reference into a buffer that could later be recycled.
+
+If your code relied on mutating the returned `byte[]` to write through to the original `ByteBuf`, that no
+longer has any effect. The converter now behaves consistently for heap and direct, pooled and unpooled
+buffers.
+
 === camel-http, camel-http-common, camel-netty-http, camel-undertow, camel-vertx-http - property placeholders in HTTP URI override headers
 
 The HTTP producers no longer resolve property placeholders (`{{...}}`) in the message-supplied
