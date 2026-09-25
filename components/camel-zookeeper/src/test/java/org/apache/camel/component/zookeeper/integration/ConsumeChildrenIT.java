@@ -47,6 +47,13 @@ public class ConsumeChildrenIT extends ZooKeeperITSupport {
         } };
     }
 
+    @Override
+    public void doPreSetup() throws Exception {
+        System.out.println("ConsumeChildrenIT start doPreSetup");
+        super.doPreSetup();
+        System.out.println("ConsumeChildrenIT end doPreSetup");
+    }
+
     @Test
     public void shouldAwaitCreationAndGetDataNotification() throws Exception {
         System.out.println("begin test ConsumeChildrenIT.shouldAwaitCreationAndGetDataNotification");
