@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ZooKeeperITSupport extends CamelTestSupport {
     @RegisterExtension
-    static ZooKeeperService service = ZooKeeperServiceFactory.createSingletonService();
+    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 
     protected String testPayload = "This is a test";
     protected byte[] testPayloadBytes = testPayload.getBytes();
