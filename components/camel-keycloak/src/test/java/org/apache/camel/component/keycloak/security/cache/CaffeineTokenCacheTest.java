@@ -18,11 +18,13 @@ package org.apache.camel.component.keycloak.security.cache;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.keycloak.security.KeycloakTokenIntrospector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CaffeineTokenCacheTest {
@@ -198,5 +200,65 @@ class CaffeineTokenCacheTest {
         assertNotNull(defaultCache.get("token"));
 
         defaultCache.close();
+    }
+
+    @Test
+    void testExpiredResultNotServed() {
+        // A result whose token has already expired is given a 0 lifetime by IntrospectionExpiry
+        // (expiryNanos returns 0), so it is evicted immediately rather than kept for the TTL. The TTL
+        // bounding for a not-yet-expired token is covered by testResultExpiringBeforeTtlNotServedAfterExp.
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("active", true);
+        claims.put("sub", "test-user");
+        claims.put("exp", System.currentTimeMillis() / 1000 - 60); // expired 60 seconds ago
+        KeycloakTokenIntrospector.IntrospectionResult expired
+                = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+
+        cache.put("expired-token", expired);
+        cache.getCaffeineCache().cleanUp();
+
+        assertNull(cache.get("expired-token"));
+    }
+
+    @Test
+    void testResultWithFutureExpirationServed() {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("active", true);
+        claims.put("sub", "test-user");
+        claims.put("exp", System.currentTimeMillis() / 1000 + 300); // valid for 5 more minutes
+        KeycloakTokenIntrospector.IntrospectionResult valid
+                = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+
+        cache.put("valid-token", valid);
+
+        KeycloakTokenIntrospector.IntrospectionResult retrieved = cache.get("valid-token");
+        assertNotNull(retrieved);
+        assertTrue(retrieved.isActive());
+    }
+
+    @Test
+    void testResultExpiringBeforeTtlNotServedAfterExp() {
+        // The token's exp lands inside the TTL window (~2s vs a 300s TTL), so the entry must expire at exp,
+        // not at the configured TTL. This exercises IntrospectionExpiry.expiryNanos()'s min(ttl, remaining):
+        // returning maxTtlNanos unconditionally would keep the entry served for 300s and fail this test.
+        CaffeineTokenCache longTtlCache = new CaffeineTokenCache(300, 100, true);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("active", true);
+        claims.put("sub", "test-user");
+        claims.put("exp", System.currentTimeMillis() / 1000 + 2); // expires in ~2 seconds
+        KeycloakTokenIntrospector.IntrospectionResult shortLived
+                = new KeycloakTokenIntrospector.IntrospectionResult(claims);
+
+        try {
+            longTtlCache.put("short-lived-token", shortLived);
+            assertNotNull(longTtlCache.get("short-lived-token"));
+
+            await().atMost(10, TimeUnit.SECONDS).until(() -> {
+                longTtlCache.getCaffeineCache().cleanUp();
+                return longTtlCache.get("short-lived-token") == null;
+            });
+        } finally {
+            longTtlCache.close();
+        }
     }
 }

@@ -64,9 +64,28 @@ public class ConcurrentMapTokenCache implements TokenCache {
 
     @Override
     public void put(String token, KeycloakTokenIntrospector.IntrospectionResult result) {
-        cache.put(token, new CachedEntry(result, ttlMillis));
+        if (result.isExpired()) {
+            // Never cache a result whose token has already expired: it must not be served on a later hit.
+            LOG.trace("Token already expired; skipping cache put");
+            return;
+        }
+        cache.put(token, new CachedEntry(result, effectiveTtlMillis(result)));
         LOG.trace("Token introspection result cached");
         cleanupExpiredEntries();
+    }
+
+    /**
+     * Computes the effective time-to-live for a result, bounding the configured TTL by the token's own remaining
+     * validity so a cached result is never returned after the token's {@code exp}. Results without an {@code exp} claim
+     * keep the configured TTL.
+     */
+    private long effectiveTtlMillis(KeycloakTokenIntrospector.IntrospectionResult result) {
+        Long expSeconds = result.getExpiration();
+        if (expSeconds == null) {
+            return ttlMillis;
+        }
+        long remainingMillis = expSeconds * 1000L - System.currentTimeMillis();
+        return Math.min(ttlMillis, remainingMillis);
     }
 
     @Override
