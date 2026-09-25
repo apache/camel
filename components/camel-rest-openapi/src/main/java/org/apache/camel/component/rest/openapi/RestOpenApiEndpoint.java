@@ -817,11 +817,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         throw new IllegalStateException(
-        "Unable to determine destination host for requests. The OpenAPI specification"
-                                + " does not specify `scheme` and `host` parameters, the specification URI is not absolute with `http` or"
-                                + " `https` scheme, and no RestConfigurations configured with `scheme`, `host` and `port` were found for `"
-                                + (determineComponentName() != null ? determineComponentName() : "default")
-                                + "` component and there is no global RestConfiguration with those properties");
+            "Unable to determine destination host for requests. The OpenAPI specification"
+                    + " does not specify `scheme` and `host` parameters, the specification URI is not absolute with `http` or"
+                    + " `https` scheme, and no RestConfigurations configured with `scheme`, `host` and `port` were found for `"
+                    + (determineComponentName() != null ? determineComponentName() : "default")
+                    + "` component and there is no global RestConfiguration with those properties");
     }
 
     private Set<URI> getURIs(List<Server> servers) {
