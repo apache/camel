@@ -1,0 +1,1 @@
+../../../../../components/camel-hivemq311/src/main/docs/hivemq311-component.adoc

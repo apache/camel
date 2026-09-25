@@ -200,6 +200,7 @@
 *** xref:hazelcast-set-component.adoc[Hazelcast Set]
 *** xref:hazelcast-topic-component.adoc[Hazelcast Topic]
 ** xref:hivemq-component.adoc[HiveMQ]
+** xref:hivemq311-component.adoc[HiveMQ MQTT 3.1.1]
 ** xref:http-component.adoc[HTTP]
 ** xref:hwcloud-summary.adoc[Huawei Cloud]
 *** xref:hwcloud-frs-component.adoc[Huawei Cloud Face Recognition Service (FRS)]
