@@ -56,7 +56,13 @@ class FileBasedKeyLifecycleManagerPathTest {
         assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata("/etc/evil"));
         assertThrows(IllegalArgumentException.class,
                 () -> manager.getKeyMetadata(tempDir.resolve("abs").toString()));
+        assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata("sub/evil"));
+        assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata("/etc/evil"));
+        assertThrows(IllegalArgumentException.class,
+                () -> manager.getKeyMetadata(tempDir.resolve("abs").toString()));
         assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata(""));
+        // NUL character — caught by character guard
+        assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata("evil\0inject"));
     }
 
     @Test
