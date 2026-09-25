@@ -30,6 +30,7 @@ import com.nimbusds.jwt.SignedJWT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -79,15 +80,59 @@ class UserProfileTest {
         assertNotNull(profile);
     }
 
+    @Test
+    void accessTokenRejectedBeforeNotBefore() throws Exception {
+        JsonObject json = new JsonObject();
+        json.addProperty("access_token", signedToken(new Date(System.currentTimeMillis() + 3_600_000L)));
+
+        // The signature verifies, but the token must not be accepted for another hour.
+        OAuthException ex = assertThrows(OAuthException.class, () -> UserProfile.fromJson(verifyingConfig(), json));
+        assertEquals("Token is not yet valid (nbf)", ex.getMessage());
+    }
+
+    @Test
+    void accessTokenAcceptedOnceNotBeforeHasPassed() throws Exception {
+        JsonObject json = new JsonObject();
+        json.addProperty("access_token", signedToken(new Date(System.currentTimeMillis() - 60_000L)));
+
+        assertNotNull(UserProfile.fromJson(verifyingConfig(), json));
+    }
+
+    @Test
+    void accessTokenNotBeforeAllowsConfiguredLeeway() throws Exception {
+        OAuthConfig config = verifyingConfig();
+        config.getJWTOptions().setLeeway(60);
+
+        JsonObject withinLeeway = new JsonObject();
+        withinLeeway.addProperty("access_token", signedToken(new Date(System.currentTimeMillis() + 30_000L)));
+        assertNotNull(UserProfile.fromJson(config, withinLeeway));
+
+        JsonObject beyondLeeway = new JsonObject();
+        beyondLeeway.addProperty("access_token", signedToken(new Date(System.currentTimeMillis() + 3_600_000L)));
+        assertThrows(OAuthException.class, () -> UserProfile.fromJson(config, beyondLeeway));
+    }
+
+    private OAuthConfig verifyingConfig() {
+        OAuthConfig config = new OAuthConfig().setClientId("my-client");
+        config.setJWKSet(new JWKSet(rsaKey.toPublicJWK()));
+        return config;
+    }
+
     private String signedToken() throws Exception {
-        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+        return signedToken(null);
+    }
+
+    private String signedToken(Date notBefore) throws Exception {
+        JWTClaimsSet.Builder claims = new JWTClaimsSet.Builder()
                 .subject("user1")
                 .issuer("https://idp.example.com")
                 .audience("my-client")
                 .expirationTime(new Date(System.currentTimeMillis() + 300_000L))
-                .issueTime(new Date())
-                .build();
-        SignedJWT jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(KID).build(), claims);
+                .issueTime(new Date());
+        if (notBefore != null) {
+            claims.notBeforeTime(notBefore);
+        }
+        SignedJWT jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(KID).build(), claims.build());
         jwt.sign(new RSASSASigner(rsaKey));
         return jwt.serialize();
     }

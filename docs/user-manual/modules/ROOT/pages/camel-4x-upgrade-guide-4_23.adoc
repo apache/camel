@@ -1844,6 +1844,18 @@ identity provider.
 Note that `nonce` and PKCE (`code_challenge`) are still not sent, and the session cookie is still
 `SameSite=None; Secure`.
 
+=== camel-oauth
+
+The Jakarta servlet backend (`ServletOAuth`) now evaluates the `nbf` (not before) claim of the tokens it
+validates, and rejects a token before that time as RFC 7519 section 4.1.5 requires. This covers the bearer
+token that `OAuthBearerTokenProcessor` authenticates as well as the tokens received from the identity
+provider. Previously only `exp` was evaluated, so a token was accepted before its `nbf` time.
+
+The comparison allows for the leeway configured on the `JWTOptions` of the OAuth configuration, which
+defaults to `0`. That matches the Vert.x backend, which already evaluated `nbf`, and the default of the
+`clock-skew-seconds` option of incoming bearer token validation. Tokens without an `nbf` claim are not
+affected.
+
 === camel-platform-http-vertx
 
 The CORS handler used to send `Access-Control-Allow-Credentials: true` on every response to a request
