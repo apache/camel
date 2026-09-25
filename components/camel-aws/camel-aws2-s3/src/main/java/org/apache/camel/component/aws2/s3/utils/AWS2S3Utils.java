@@ -41,11 +41,15 @@ public final class AWS2S3Utils {
     /**
      * Reads the bucket name from the header of the given exchange. If not provided, it's read from the endpoint
      * configuration.
+     * <p>
+     * Only the configured {@code bucketName} may be a dynamic Simple expression; a bucket name supplied through the
+     * {@code CamelAwsS3OverrideBucketName} header is used literally and is never evaluated. A configured
+     * {@code bucketName} whose Simple expression resolves to {@code null} fails fast here.
      *
-     * @param  exchange                 The exchange to read the header from
+     * @param  exchange                 The exchange to read the bucket name from
      * @param  configuration            The AWS2 S3 configuration
      * @return                          The bucket name.
-     * @throws IllegalArgumentException if the header could not be determined.
+     * @throws IllegalArgumentException if the bucket name is not set or resolves to {@code null}.
      */
     public static String determineBucketName(final Exchange exchange, AWS2S3Configuration configuration) {
         String bucketName = exchange.getIn().getHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, String.class);
@@ -135,6 +139,19 @@ public final class AWS2S3Utils {
         }
     }
 
+    /**
+     * Reads the object key from the header of the given exchange. If not provided, it's read from the endpoint
+     * configuration.
+     * <p>
+     * Only the configured {@code keyName} may be a dynamic Simple expression; a key supplied through the
+     * {@code CamelAwsS3Key} header is used literally and is never evaluated. A configured {@code keyName} whose Simple
+     * expression resolves to {@code null} fails fast here instead of passing a null key to the AWS SDK.
+     *
+     * @param  exchange                 The exchange to read the key from
+     * @param  configuration            The AWS2 S3 configuration
+     * @return                          The object key.
+     * @throws IllegalArgumentException if the key is not set or resolves to {@code null}.
+     */
     public static String determineKey(final Exchange exchange, AWS2S3Configuration configuration) {
         String key = exchange.getIn().getHeader(AWS2S3Constants.KEY, String.class);
         if (ObjectHelper.isEmpty(key)) {
