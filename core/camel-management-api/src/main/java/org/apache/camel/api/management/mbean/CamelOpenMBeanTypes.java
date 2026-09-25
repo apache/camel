@@ -152,11 +152,12 @@ public final class CamelOpenMBeanTypes {
     public static CompositeType listAwaitThreadsCompositeType() throws OpenDataException {
         return new CompositeType(
                 "threads", "Threads",
-                new String[] { "id", "name", "exchangeId", "routeId", "nodeId", "duration" },
-                new String[] { "Thread Id", "Thread name", "ExchangeId", "RouteId", "NodeId", "Duration" },
+                new String[] { "id", "name", "exchangeId", "routeId", "nodeId", "nodeSource", "duration" },
+                new String[] {
+                        "Thread Id", "Thread name", "ExchangeId", "RouteId", "NodeId", "NodeSource", "Duration" },
                 new OpenType[] {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                        SimpleType.STRING });
+                        SimpleType.STRING, SimpleType.STRING });
     }
 
     public static TabularType listEipsTabularType() throws OpenDataException {
@@ -182,11 +183,12 @@ public final class CamelOpenMBeanTypes {
     public static CompositeType listInflightExchangesCompositeType() throws OpenDataException {
         return new CompositeType(
                 "exchanges", "Exchanges",
-                new String[] { "exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration" },
-                new String[] { "Exchange Id", "From RouteId", "RouteId", "NodeId", "Elapsed", "Duration" },
+                new String[] { "exchangeId", "fromRouteId", "routeId", "nodeId", "nodeSource", "elapsed", "duration" },
+                new String[] {
+                        "Exchange Id", "From RouteId", "RouteId", "NodeId", "NodeSource", "Elapsed", "Duration" },
                 new OpenType[] {
                         SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                        SimpleType.STRING });
+                        SimpleType.STRING, SimpleType.STRING });
     }
 
     public static TabularType choiceTabularType() throws OpenDataException {

@@ -43,6 +43,8 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxConcurrentRequests": getOrCreateConfiguration(target).setMaxConcurrentRequests(property(camelContext, int.class, value)); return true;
         case "model": getOrCreateConfiguration(target).setModel(property(camelContext, java.lang.String.class, value)); return true;
         case "questions": getOrCreateConfiguration(target).setQuestions(property(camelContext, java.lang.String.class, value)); return true;
+        case "questionsresource":
+        case "questionsResource": getOrCreateConfiguration(target).setQuestionsResource(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "resultproperty":
@@ -72,6 +74,8 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxConcurrentRequests": return int.class;
         case "model": return java.lang.String.class;
         case "questions": return java.lang.String.class;
+        case "questionsresource":
+        case "questionsResource": return java.lang.String.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "resultproperty":
@@ -102,6 +106,8 @@ public class TypeSafeAiComponentConfigurer extends PropertyConfigurerSupport imp
         case "maxConcurrentRequests": return getOrCreateConfiguration(target).getMaxConcurrentRequests();
         case "model": return getOrCreateConfiguration(target).getModel();
         case "questions": return getOrCreateConfiguration(target).getQuestions();
+        case "questionsresource":
+        case "questionsResource": return getOrCreateConfiguration(target).getQuestionsResource();
         case "requesttimeout":
         case "requestTimeout": return getOrCreateConfiguration(target).getRequestTimeout();
         case "resultproperty":

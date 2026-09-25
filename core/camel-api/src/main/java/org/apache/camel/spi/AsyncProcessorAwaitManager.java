@@ -122,6 +122,18 @@ public interface AsyncProcessorAwaitManager extends StaticService {
         @Nullable
         String getNodeId();
 
+        /**
+         * Where the node is in the source, such as {@code orders.camel.yaml:18}
+         * <p/>
+         * Is <tt>null</tt> if message history or source location is disabled.
+         *
+         * @since 4.23
+         */
+        @Nullable
+        default String getNodeSource() {
+            return null;
+        }
+
     }
 
     /**

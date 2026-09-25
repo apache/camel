@@ -629,7 +629,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         reactiveExecutor.schedule(callback);
 
                         // create log message
-                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                         msg = msg + ". Caught: " + caught;
                         if (isDeadLetterChannel && deadLetterUri != null) {
                             msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
@@ -672,7 +672,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     reactiveExecutor.schedule(callback);
 
                     // create log message
-                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     msg = msg + ". Caught: " + caught;
                     if (processor != null) {
                         if (deadLetterUri != null) {
@@ -898,7 +898,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             if (redeliveryPolicy.isLogExhausted()) {
                 // create log message
-                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 msg = msg + ". Exhausted after delivery attempt: 1 caught: " + exchange.getException();
 
                 // log that we failed delivery as we are exhausted
@@ -916,7 +916,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
-                String msg = "Rollback " + ExchangeHelper.logIds(exchange);
+                String msg = "Rollback " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 Throwable cause = exchange.getException() != null
                         ? exchange.getException() : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
@@ -996,13 +996,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         @Override
         public void prepare(Exchange exchange, AsyncCallback callback) {
-            this.retryWhilePredicate = retryWhilePolicy;
-            this.currentRedeliveryPolicy = redeliveryPolicy;
-            this.handledPredicate = getDefaultHandledPredicate();
-            this.useOriginalInMessage = useOriginalMessagePolicy;
-            this.useOriginalInBody = useOriginalBodyPolicy;
-            this.onRedeliveryProcessor = redeliveryProcessor;
-            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
+            useErrorHandlerDefaults();
             // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
             // original Exchange is being redelivered, and not a mutated Exchange
             this.original = redeliveryEnabled ? defensiveCopyExchangeIfNeeded(exchange) : null;
@@ -1010,10 +1004,27 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             this.callback = callback;
         }
 
+        /**
+         * Uses the behaviour configured on the error handler itself, which an exception policy (onException) matching
+         * the caught exception can then override.
+         */
+        private void useErrorHandlerDefaults() {
+            this.retryWhilePredicate = retryWhilePolicy;
+            this.currentRedeliveryPolicy = redeliveryPolicy;
+            this.failureProcessor = null;
+            this.handledPredicate = getDefaultHandledPredicate();
+            this.continuedPredicate = null;
+            this.useOriginalInMessage = useOriginalMessagePolicy;
+            this.useOriginalInBody = useOriginalBodyPolicy;
+            this.onRedeliveryProcessor = redeliveryProcessor;
+            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
+        }
+
         @Override
         public void reset() {
             this.retryWhilePredicate = null;
             this.currentRedeliveryPolicy = null;
+            this.failureProcessor = null;
             this.handledPredicate = null;
             this.continuedPredicate = null;
             this.useOriginalInMessage = false;
@@ -1257,7 +1268,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
 
             // create log message
-            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
             msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
             msg = msg + ". Handled and continue routing.";
 
@@ -1331,6 +1342,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // store the original caused exception in a property, so we can restore it later
             exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
 
+            // the exception may differ from the one caught on a previous attempt, so start over from the
+            // error handler defaults and do not keep what a previous exception policy set (CAMEL-24981)
+            useErrorHandlerDefaults();
+
             // find the error handler to use (if any)
             ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, e);
             if (exceptionPolicy != null) {
@@ -1370,18 +1385,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
             }
 
+            // store the route, node and location where the exception happened, before any failure processor
+            // (onException, dead letter channel, ...) runs and adds its own entries to the message history,
+            // and before the message below is built so that it can say where the failure is (CAMEL-24974)
+            ExchangeHelper.captureFailureOrigin(exchange);
+
             // only log if not failure handled or not an exhausted unit of work
             if (!ExchangeHelper.isFailureHandled(exchange) && !ExchangeHelper.isUnitOfWorkExhausted(exchange)) {
-                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange)
+                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange)
                              + ". On delivery attempt: " + redeliveryCounter + " caught: " + e;
                 logFailedDelivery(true, false, false, false, isDeadLetterChannel(), exchange, msg, e);
             }
 
             redeliveryCounter = incrementRedeliveryCounter(exchange);
-
-            // store the route, node and location where the exception happened, before any failure processor
-            // (onException, dead letter channel, ...) runs and adds its own entries to the message history
-            ExchangeHelper.captureFailureOrigin(exchange);
         }
 
         /**
@@ -1545,7 +1561,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         reactiveExecutor.schedule(callback);
 
                         // create log message
-                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                         msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
                         if (isDeadLetterChannel && deadLetterUri != null) {
                             msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
@@ -1588,7 +1604,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     reactiveExecutor.schedule(callback);
 
                     // create log message
-                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
                     if (processor != null) {
                         if (deadLetterUri != null) {
@@ -1761,7 +1777,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 }
                 String msg = message;
                 if (msg == null) {
-                    msg = "New exception " + ExchangeHelper.logIds(exchange);
+                    msg = "New exception " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                     // special for logging the new exception
                     if (e != null) {
                         msg = msg + " due: " + e.getMessage();
@@ -1774,7 +1790,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     logger.log(msg, newLogLevel);
                 }
             } else if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
-                String msg = "Rollback " + ExchangeHelper.logIds(exchange);
+                String msg = "Rollback " + ExchangeHelper.logIds(exchange) + failureOrigin(exchange);
                 Throwable cause = exchange.getException() != null
                         ? exchange.getException() : exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
@@ -2022,6 +2038,34 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(deadLetter, output, outputAsync, taskFactory);
+    }
+
+    /**
+     * Where the failure happened, as the route and node the exchange was at and where that node is in the source, such
+     * as {@code at route1[to3] orders.camel.yaml:18}. Empty when nothing was captured - message history or source
+     * location can be off - so the message keeps its shape (CAMEL-24974).
+     */
+    private static String failureOrigin(Exchange exchange) {
+        String routeId = exchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, String.class);
+        String nodeId = exchange.getProperty(ExchangePropertyKey.FAILURE_NODE_ID, String.class);
+        String location = exchange.getProperty(ExchangePropertyKey.FAILURE_LOCATION, String.class);
+        if (routeId == null && nodeId == null && location == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(64).append(" at ");
+        if (routeId != null) {
+            sb.append(routeId);
+        }
+        if (nodeId != null) {
+            sb.append("[").append(nodeId).append("]");
+        }
+        if (location != null) {
+            if (routeId != null || nodeId != null) {
+                sb.append(" ");
+            }
+            sb.append(location);
+        }
+        return sb.toString();
     }
 
 }

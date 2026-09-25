@@ -25,6 +25,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.SimpleExpressionParser;
 import org.apache.camel.language.simple.SimplePredicateParser;
+import org.apache.camel.language.simple.SimpleSyntaxHints;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -332,91 +333,18 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         if (conditionText.contains("${")) {
             return conditionText;
         }
-
-        // the condition may be several comparisons joined by a logical operator, and each of them needs its
-        // functions wrapped, not only the first (CAMEL-24920)
-        StringBuilder answer = new StringBuilder();
-        int from = 0;
-        for (int at = logicalOperator(conditionText, 0); at >= 0; at = logicalOperator(conditionText, from)) {
-            // the operator matched with its trailing space, so the next space is at most two characters away
-            int end = conditionText.indexOf(' ', at + 1);
-            answer.append(wrapComparison(conditionText.substring(from, at).trim()));
-            answer.append(' ').append(conditionText, at, end).append(' ');
-            from = end + 1;
-        }
-        answer.append(wrapComparison(conditionText.substring(from).trim()));
-        return answer.toString();
-    }
-
-    /**
-     * The index of the next logical operator ({@code &&} or {@code ||}) outside quotes, or -1. Simple has no word
-     * forms: {@code and} and {@code or} are refused by the parser with a message that says so.
-     */
-    private static int logicalOperator(String text, int from) {
-        boolean single = false;
-        boolean dubble = false;
-        for (int i = from; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c == '\'' && !dubble) {
-                single = !single;
-            } else if (c == '"' && !single) {
-                dubble = !dubble;
-            } else if (!single && !dubble && c == ' ') {
-                for (String op : new String[] { "&& ", "|| " }) {
-                    if (text.startsWith(op, i + 1)) {
-                        return i + 1;
-                    }
-                }
-            }
-        }
-        return -1;
-    }
-
-    /** Wraps the left hand side of one comparison with ${} when it is a function reference. */
-    private String wrapComparison(String conditionText) {
-        // Find the operator in the condition
-        String[] operators = {
-                " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",
-                " contains ", " !contains ", " ~~ ", " !~~ ", " regex ", " !regex ",
-                " in ", " !in ", " is ", " !is ", " range ", " !range ",
-                " startsWith ", " !startsWith ", " endsWith ", " !endsWith " };
-
-        for (String op : operators) {
-            int opIdx = conditionText.indexOf(op);
-            if (opIdx > 0) {
-                String leftSide = conditionText.substring(0, opIdx).trim();
-                String rightSide = conditionText.substring(opIdx + op.length()).trim();
-
-                // Wrap the left side with ${} if it looks like a function reference
-                if (!leftSide.startsWith("${") && !leftSide.startsWith("'") && !leftSide.startsWith("\"")
-                        && !isNumeric(leftSide) && !"true".equalsIgnoreCase(leftSide)
-                        && !"false".equalsIgnoreCase(leftSide) && !"null".equalsIgnoreCase(leftSide)) {
-                    leftSide = "${" + leftSide + "}";
-                }
-
-                return leftSide + op + rightSide;
-            }
-        }
-
-        // No operator found, return as-is
-        return conditionText;
-    }
-
-    private boolean isNumeric(String str) {
-        if (str == null || str.isEmpty()) {
-            return false;
-        }
-        try {
-            Double.parseDouble(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        // the same wrapping a predicate written inside ${ } gets, so the two cannot drift (CAMEL-24920)
+        return SimpleSyntaxHints.wrapFunctions(conditionText);
     }
 
     /**
      * Find the index of the ternary operator character, skipping nested ${}, quotes, etc.
      */
+    private static boolean surroundedByWhitespace(String text, int index) {
+        return index > 0 && index < text.length() - 1
+                && Character.isWhitespace(text.charAt(index - 1)) && Character.isWhitespace(text.charAt(index + 1));
+    }
+
     private int findTernaryOperator(String text, char operator) {
         int depth = 0;
         boolean inSingleQuote = false;
@@ -443,7 +371,9 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                     inDoubleQuote = true;
                     continue;
                 }
-                if (c == operator && depth == 0) {
+                if (c == operator && depth == 0 && surroundedByWhitespace(text, i)) {
+                    // like the tokenizer, the operator must have whitespace around it,
+                    // so ${bean:svc?method=at(10:30)} is not a ternary
                     return i;
                 }
             } else if (inSingleQuote && c == '\'') {

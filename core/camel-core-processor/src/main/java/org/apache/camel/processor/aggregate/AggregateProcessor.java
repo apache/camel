@@ -448,19 +448,22 @@ public class AggregateProcessor extends BaseProcessorSupport
         removeFlagCompleteAllGroups(copy);
         removeFlagCompleteAllGroupsInclusive(copy);
 
-        List<Exchange> aggregated = null;
+        List<Exchange> aggregated = new ArrayList<>();
         lock.lock();
         try {
-            aggregated = doAggregation(key, copy);
+            // check again under the lock (and on every optimistic locking retry), as the key may have been closed
+            // by a completion that happened after the check in doProcess(Exchange, AsyncCallback)
+            if (closedCorrelationKeys != null && closedCorrelationKeys.containsKey(key)) {
+                throw new ClosedCorrelationKeyException(key, exchange);
+            }
+            doAggregation(key, copy, aggregated);
         } catch (CamelExchangeException e) {
             exchange.setException(e);
         } finally {
             lock.unlock();
-        }
-
-        // we are completed so do that work outside the lock
-        if (aggregated != null) {
-            // we are completed so submit to completion
+            // we are completed so submit to completion outside the lock. This must also be done when the aggregation
+            // failed, or must be retried due to optimistic locking, after a group was completed (such as a group
+            // completed by pre-completion), as that group has already been removed from the repository
             aggregated.forEach(agg -> onSubmitCompletion(key, agg));
         }
 
@@ -511,20 +514,19 @@ public class AggregateProcessor extends BaseProcessorSupport
      * <p/>
      * This method <b>must</b> be run synchronized as we cannot aggregate the same correlation key in parallel.
      * <p/>
-     * The returned {@link Exchange} should be send downstream using the
+     * The completed {@link Exchange}(s) are added to the given list as soon as they are completed (and removed from the
+     * repository), also if this method fails afterwards. They should be send downstream using the
      * {@link #onSubmitCompletion(String, org.apache.camel.Exchange)} method which sends out the aggregated and
      * completed {@link Exchange}.
      *
      * @param  key                                     the correlation key
      * @param  newExchange                             the exchange
-     * @return                                         the aggregated exchange(s) which is complete, or <tt>null</tt> if
-     *                                                 not yet complete
+     * @param  list                                    the list to add the aggregated exchange(s) which are complete to
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
-    private List<Exchange> doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
+    private void doAggregation(String key, Exchange newExchange, List<Exchange> list) throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
-        List<Exchange> list = new ArrayList<>();
         String complete = null;
 
         Exchange answer;
@@ -606,7 +608,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                 answer = oldExchange;
                 if (answer == null) {
                     // first message in group failed during aggregation and we should just discard this
-                    return null;
+                    return;
                 }
             } else {
                 // must catch any exception from aggregation
@@ -658,7 +660,6 @@ public class AggregateProcessor extends BaseProcessorSupport
         }
 
         LOG.trace("onAggregation +++  end  +++ with correlation key: {}", key);
-        return list;
     }
 
     protected void doAggregationComplete(

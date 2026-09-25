@@ -16,6 +16,9 @@
  */
 package org.apache.camel.converter;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.TypeConverter;
@@ -24,6 +27,7 @@ import org.apache.camel.support.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TypeCoerceCompareTest extends ContextTestSupport {
@@ -39,6 +43,45 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
         assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.5", "7.5"));
         assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.5", "7.5"));
         assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "7.0", "7"));
+    }
+
+    @Test
+    void testCompareNumbersOfDifferentTypesWithDecimals() {
+        TypeConverter tc = context.getTypeConverter();
+        // the decimals must not be dropped when the two numbers have different types
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, 2.5d, 2) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, 2, 2.5d) < 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, -0.9d, 0) < 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, 0.01d, 0L) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, 2.5f, 2L) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, new BigDecimal("100.50"), 100) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, new BigDecimal("2.5"), 2.0d) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, new BigDecimal("2.5"), "2") > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, "2", new BigDecimal("2.5")) < 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, new BigInteger("12345678901234567890"), Long.MAX_VALUE) > 0);
+        // equal values of different types are still equal
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 2.0d, 2));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, new BigDecimal("2.50"), 2.5d));
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, 0.1f, 0.1d));
+        // there is no fast path for two BigDecimal or two BigInteger values either
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, new BigDecimal("2.5"), new BigDecimal("2.4")) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, new BigInteger("18446744073709551617"), BigInteger.TWO) > 0);
+        // infinity against a finite value that is too large for a double
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, Double.POSITIVE_INFINITY, new BigDecimal("1e400")) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, new BigDecimal("-1e400"), Double.NEGATIVE_INFINITY) > 0);
+    }
+
+    @Test
+    void testEqualsNumbersOfDifferentTypesWithDecimals() {
+        TypeConverter tc = context.getTypeConverter();
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, 2.5d, 2));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, 2, 2.5d));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("99.99"), 99L));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 2.0d, 2));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, 2, 2.0f));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("2.50"), 2.5d));
+        assertTrue(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("2.50"), new BigDecimal("2.5")));
+        assertFalse(ObjectHelper.typeCoerceEquals(tc, new BigDecimal("2.51"), new BigDecimal("2.5")));
     }
 
     @Test

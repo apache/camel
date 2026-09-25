@@ -152,7 +152,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
             }
             if (definition.get(RedeliveryOption.redeliveryDelay) != null) {
                 answer.setRedeliveryDelay(
-                        CamelContextHelper.parseLong(context, definition.get(RedeliveryOption.redeliveryDelay)));
+                        CamelContextHelper.parseDuration(context, definition.get(RedeliveryOption.redeliveryDelay)).toMillis());
             }
             if (definition.get(RedeliveryOption.asyncDelayedRedelivery) != null) {
                 answer.setAsyncDelayedRedelivery(
@@ -188,7 +188,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
             }
             if (definition.get(RedeliveryOption.maximumRedeliveryDelay) != null) {
                 answer.setMaximumRedeliveryDelay(
-                        CamelContextHelper.parseLong(context, definition.get(RedeliveryOption.maximumRedeliveryDelay)));
+                        CamelContextHelper.parseDuration(context, definition.get(RedeliveryOption.maximumRedeliveryDelay))
+                                .toMillis());
             }
             if (definition.get(RedeliveryOption.logStackTrace) != null) {
                 answer.setLogStackTrace(

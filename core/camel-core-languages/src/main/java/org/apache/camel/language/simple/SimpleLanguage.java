@@ -44,9 +44,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleLanguage.class);
 
-    // singleton for expressions without a result type
-    private static final SimpleLanguage SIMPLE = new SimpleLanguage();
-
     // a special prefix to avoid cache clash
     private static final String CACHE_KEY_PREFIX = "@SIMPLE@";
 
@@ -87,9 +84,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void start() {
-        if (getCamelContext() != null) {
-            SIMPLE.setCamelContext(getCamelContext());
-        }
+        // noop
     }
 
     @Override

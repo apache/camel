@@ -23,6 +23,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.UnaryOperatorType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.ObjectHelper;
@@ -70,7 +71,9 @@ public class LogicalExpression extends BaseSimpleNode {
     private static boolean isValidPredicateOperand(SimpleNode node) {
         return node instanceof BinaryExpression
                 || node instanceof LogicalExpression
-                || node instanceof SimpleFunctionStart;
+                || node instanceof SimpleFunctionStart
+                // a negated function is a predicate too; ++ and -- are numeric (CAMEL-24984)
+                || node instanceof UnaryExpression unary && unary.getOperator() == UnaryOperatorType.NOT;
     }
 
     public LogicalOperatorType getOperator() {
@@ -93,40 +96,22 @@ public class LogicalExpression extends BaseSimpleNode {
         final Expression leftExp = left.createExpression(camelContext, expression);
         final Expression rightExp = right.createExpression(camelContext, expression);
 
+        // build the predicate once, not for every message
+        final Predicate leftPredicate = ExpressionToPredicateAdapter.toPredicate(leftExp);
+        final Predicate rightPredicate = ExpressionToPredicateAdapter.toPredicate(rightExp);
         if (operator == LogicalOperatorType.AND) {
-            return createAndExpression(leftExp, rightExp);
+            return createExpression(PredicateBuilder.and(leftPredicate, rightPredicate));
         } else if (operator == LogicalOperatorType.OR) {
-            return createOrExpression(leftExp, rightExp);
+            return createExpression(PredicateBuilder.or(leftPredicate, rightPredicate));
         }
 
         throw new SimpleParserException("Unknown logical operator " + operator, token.getIndex());
     }
 
-    private Expression createAndExpression(final Expression leftExp, final Expression rightExp) {
+    private Expression createExpression(final Predicate predicate) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Predicate predicate = ExpressionToPredicateAdapter.toPredicate(leftExp);
-                predicate = PredicateBuilder.and(predicate, ExpressionToPredicateAdapter.toPredicate(rightExp));
-
-                boolean answer = predicate.matches(exchange);
-                return exchange.getContext().getTypeConverter().convertTo(type, answer);
-            }
-
-            @Override
-            public String toString() {
-                return left + " " + token.getText() + " " + right;
-            }
-        };
-    }
-
-    private Expression createOrExpression(final Expression leftExp, final Expression rightExp) {
-        return new Expression() {
-            @Override
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Predicate predicate = ExpressionToPredicateAdapter.toPredicate(leftExp);
-                predicate = PredicateBuilder.or(predicate, ExpressionToPredicateAdapter.toPredicate(rightExp));
-
                 boolean answer = predicate.matches(exchange);
                 return exchange.getContext().getTypeConverter().convertTo(type, answer);
             }

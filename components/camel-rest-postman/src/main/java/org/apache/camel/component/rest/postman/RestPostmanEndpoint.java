@@ -209,6 +209,11 @@ public class RestPostmanEndpoint extends DefaultEndpoint {
             if (advice != null) {
                 ip.removeAdvice(advice);
             }
+            // remove the advice from a previous start of the route, as the consumer is created again when restarted
+            RestPostmanProcessorAdvice existing = ip.getAdvice(RestPostmanProcessorAdvice.class);
+            if (existing != null) {
+                ip.removeAdvice(existing);
+            }
             ip.addAdvice(new RestPostmanProcessorAdvice(restPostmanProcessor));
         }
 

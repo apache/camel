@@ -53,6 +53,7 @@ public class SamplingThrottler extends BaseProcessorSupport implements Traceable
     private long periodInMillis;
     private TimeUnit units;
     private long timeOfLastExchange;
+    private boolean sampledOnce;
     private final StopProcessor stopper = new StopProcessor();
     private final Lock calculationLock = new ReentrantLock();
     private final SampleStats sampled = new SampleStats();
@@ -145,7 +146,9 @@ public class SamplingThrottler extends BaseProcessorSupport implements Traceable
                 }
             } else {
                 long now = Duration.ofNanos(System.nanoTime()).toMillis();
-                if (now >= timeOfLastExchange + periodInMillis) {
+                // System.nanoTime() has an arbitrary origin, so the first exchange cannot be compared with a time
+                if (!sampledOnce || now >= timeOfLastExchange + periodInMillis) {
+                    sampledOnce = true;
                     doSend = true;
                     if (LOG.isTraceEnabled()) {
                         LOG.trace(sampled.sample());

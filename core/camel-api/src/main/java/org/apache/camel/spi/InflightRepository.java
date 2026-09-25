@@ -69,6 +69,18 @@ public interface InflightRepository extends StaticService {
         String getNodeId();
 
         /**
+         * Where the node is in the source, such as {@code orders.camel.yaml:18}
+         * <p/>
+         * Is <tt>null</tt> if message history or source location is disabled.
+         *
+         * @since 4.23
+         */
+        @Nullable
+        default String getNodeSource() {
+            return null;
+        }
+
+        /**
          * The id of the route where the exchange originates (started)
          */
         String getFromRouteId();

@@ -43,6 +43,7 @@ public class InflightConsole extends AbstractDevConsole {
             @Metadata(description = "Whether the exchange originated from a remote endpoint") boolean fromRemoteEndpoint,
             @Metadata(description = "The route ID where the exchange currently is") String atRouteId,
             @Metadata(description = "The node ID where the exchange currently is") String nodeId,
+            @Metadata(description = "Where the node is in the source, such as orders.camel.yaml:18") String nodeSource,
             @Metadata(description = "Elapsed time in milliseconds since the exchange started") long elapsed,
             @Metadata(description = "Duration in milliseconds the exchange has been at the current node") long duration) {
     }
@@ -70,9 +71,10 @@ public class InflightConsole extends AbstractDevConsole {
         if (repo.isInflightBrowseEnabled()) {
             for (InflightRepository.InflightExchange ie : repo.browse(filter, max, false)) {
                 String age = TimeUtils.printDuration(ie.getDuration(), true);
-                sb.append(String.format("%n    %s (from: %s at: %s/%s remote: %b age: %s)",
+                String source = ie.getNodeSource() != null ? " source: " + ie.getNodeSource() : "";
+                sb.append(String.format("%n    %s (from: %s at: %s/%s%s remote: %b age: %s)",
                         ie.getExchange().getExchangeId(), ie.getFromRouteId(), ie.getAtRouteId(), ie.getNodeId(),
-                        ie.isFromRemoteEndpoint(), age));
+                        source, ie.isFromRemoteEndpoint(), age));
             }
         }
 
@@ -93,7 +95,7 @@ public class InflightConsole extends AbstractDevConsole {
             for (InflightRepository.InflightExchange ie : repo.browse(filter, max, false)) {
                 exchanges.add(new Exchange(
                         ie.getExchange().getExchangeId(), ie.getFromRouteId(), ie.isFromRemoteEndpoint(),
-                        ie.getAtRouteId(), ie.getNodeId(), ie.getElapsed(), ie.getDuration()));
+                        ie.getAtRouteId(), ie.getNodeId(), ie.getNodeSource(), ie.getElapsed(), ie.getDuration()));
             }
         }
 

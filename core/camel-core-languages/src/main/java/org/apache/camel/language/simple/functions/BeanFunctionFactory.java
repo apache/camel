@@ -91,6 +91,17 @@ public final class BeanFunctionFactory implements SimpleLanguageFunctionFactory 
             if (doubleColonIndex > 0 && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
                 ref = remainder.substring(0, doubleColonIndex);
                 method = remainder.substring(doubleColonIndex + 2);
+            } else if (remainder.startsWith("type:")) {
+                // type:com.foo.MyClass.myMethod: the class name has dots, so the method is the last part
+                // when it starts with a lower case letter, as Java method names do
+                String beforeParams = beginOfParameterDeclaration > 0
+                        ? remainder.substring(0, beginOfParameterDeclaration) : remainder;
+                int idx = beforeParams.lastIndexOf('.');
+                if (idx > 0 && idx + 1 < beforeParams.length()
+                        && Character.isLowerCase(beforeParams.charAt(idx + 1))) {
+                    ref = remainder.substring(0, idx);
+                    method = remainder.substring(idx + 1);
+                }
             } else {
                 int idx = remainder.indexOf('.');
                 if (idx > 0) {

@@ -17,10 +17,16 @@
 
 package org.apache.camel.impl.converter;
 
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConvertible;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Helper methods for resolving the type conversions. This is an internal API and not meant for public usages.
@@ -63,6 +69,10 @@ final class TypeResolverHelper {
 
         // try with base converters first
         final TypeConverter typeConverter = converters.get(typeConvertible);
+        if (typeConverter == CoreTypeConverterRegistry.MISS_CONVERTER) {
+            // we have previously found no type converter for this pair of types
+            return null;
+        }
         if (typeConverter != null) {
             return typeConverter;
         }
@@ -87,7 +97,7 @@ final class TypeResolverHelper {
             }
 
             final TypeConverter objConverter = converters.get(new TypeConvertible<>(Object.class, typeConvertible.getTo()));
-            if (objConverter != null) {
+            if (objConverter != null && objConverter != CoreTypeConverterRegistry.MISS_CONVERTER) {
                 return objConverter;
             }
         }
@@ -115,6 +125,9 @@ final class TypeResolverHelper {
          matching both the "from type" and the "to type" which are NOT Object (we usually try this later).
          */
         for (var entry : converters.entrySet()) {
+            if (entry.getValue() == CoreTypeConverterRegistry.MISS_CONVERTER) {
+                continue;
+            }
             final TypeConvertible<?, ?> key = entry.getKey();
             if (key.isAssignableMatch(typeConvertible)) {
                 return entry.getValue();
@@ -129,7 +142,12 @@ final class TypeResolverHelper {
     }
 
     /**
-     * Try to resolve the TypeConverter by forcing a costly and slow recursive check.
+     * Try to resolve the TypeConverter by looking for a converter from a super type (super class or interface) of the
+     * "from" type.
+     * <p>
+     * The type hierarchy is traversed breadth-first, so the nearest super type wins, and at each level the interfaces
+     * are tried before the super class. {@link Object} is tried last. This makes the resolution deterministic, as it
+     * does not depend on the iteration order of the converters map.
      *
      * @param  typeConvertible the type converter pair
      * @param  converters      the map of all known converters
@@ -137,19 +155,12 @@ final class TypeResolverHelper {
      */
     static TypeConverter tryMatch(
             TypeConvertible<?, ?> typeConvertible, Map<TypeConvertible<?, ?>, TypeConverter> converters) {
-        for (var entry : converters.entrySet()) {
-            if (entry.getKey().matches(typeConvertible)) {
-                return entry.getValue();
-            }
-
-        }
-
-        return null;
+        return tryHierarchy(typeConvertible.getFrom(), typeConvertible.getTo(), converters);
     }
 
     /**
-     * Try to resolve the TypeConverter by forcing a costly and slow recursive check that takes into consideration that
-     * the target type may have a primitive data type
+     * Try to resolve the TypeConverter by looking for a converter from a super type of the "from" type, taking into
+     * consideration that the target type may be a primitive type.
      *
      * @param  typeConvertible the type converter pair
      * @param  converters      the map of all known converters
@@ -157,14 +168,37 @@ final class TypeResolverHelper {
      */
     static TypeConverter tryPrimitive(
             TypeConvertible<?, ?> typeConvertible, Map<TypeConvertible<?, ?>, TypeConverter> converters) {
-        for (var entry : converters.entrySet()) {
-            if (entry.getKey().matchesPrimitive(typeConvertible)) {
-                return entry.getValue();
+        Class<?> to = ObjectHelper.convertPrimitiveTypeToWrapperType(typeConvertible.getTo());
+        return tryHierarchy(typeConvertible.getFrom(), to, converters);
+    }
+
+    private static TypeConverter tryHierarchy(
+            Class<?> from, Class<?> to, Map<TypeConvertible<?, ?>, TypeConverter> converters) {
+        Deque<Class<?>> queue = new ArrayDeque<>();
+        Set<Class<?>> visited = new HashSet<>();
+        queue.add(from);
+        while (!queue.isEmpty()) {
+            Class<?> type = queue.poll();
+            if (type == Object.class || !visited.add(type)) {
+                continue;
             }
-
+            TypeConverter answer = getConverter(type, to, converters);
+            if (answer != null) {
+                return answer;
+            }
+            Collections.addAll(queue, type.getInterfaces());
+            if (type.getSuperclass() != null) {
+                queue.add(type.getSuperclass());
+            }
         }
+        // the least specific type is tried last
+        return from.isInterface() ? null : getConverter(Object.class, to, converters);
+    }
 
-        return null;
+    private static TypeConverter getConverter(
+            Class<?> from, Class<?> to, Map<TypeConvertible<?, ?>, TypeConverter> converters) {
+        TypeConverter answer = converters.get(new TypeConvertible<>(from, to));
+        return answer != CoreTypeConverterRegistry.MISS_CONVERTER ? answer : null;
     }
 
 }

@@ -54,10 +54,12 @@ public class ArrayTypeConverter extends TypeConverterSupport {
                 }
                 return (T) answer;
             }
-        } else if (Collection.class.isAssignableFrom(type)) {
+        } else if (Collection.class.isAssignableFrom(type) && type.isAssignableFrom(ArrayList.class)) {
+            // only for collection types a list can be assigned to (such as not a Set)
             if (value != null) {
-                if (value instanceof Object[]) {
-                    return (T) Arrays.asList((Object[]) value);
+                if (value instanceof Object[] arr) {
+                    List<Object> list = Arrays.asList(arr);
+                    return (T) (type.isInstance(list) ? list : new ArrayList<>(list));
                 } else if (value.getClass().isArray()) {
                     int size = Array.getLength(value);
                     List<Object> answer = new ArrayList<>(size);

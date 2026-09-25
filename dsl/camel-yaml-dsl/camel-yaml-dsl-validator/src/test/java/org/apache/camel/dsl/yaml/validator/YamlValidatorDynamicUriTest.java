@@ -126,7 +126,7 @@ public class YamlValidatorDynamicUriTest {
 
     @Test
     public void testAComponentWhosePathIsEvaluatedIsFine() {
-        // micrometer evaluates the metric name for each message
+        // CAMEL-24918: micrometer evaluates the metric name for each message, and its catalog metadata says so
         String yaml = """
                 - route:
                     from:
@@ -140,7 +140,7 @@ public class YamlValidatorDynamicUriTest {
 
     @Test
     public void testAComponentWhosePathIsAnAddressIsReported() {
-        // xslt takes a resource name: a stylesheet per message needs toD
+        // xslt takes a resource name, not an expression: a stylesheet per message needs toD
         String yaml = """
                 - route:
                     from:

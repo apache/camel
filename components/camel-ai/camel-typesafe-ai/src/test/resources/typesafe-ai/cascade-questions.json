@@ -1,0 +1,5 @@
+{
+  "invented_value": {"type":"noul","instructions":{"question":"Does `extracted` contain a value that does not appear in, and cannot be derived from, `source_text`?","inspect":"extracted","focus":"A value the source never states. Reformatting a supported value is not an invention."},"criteria":{"true":"At least one field states something the source does not support","false":"Every field traces back to the source"}},
+  "wrong_total": {"type":"noul","instructions":"Does the `total` in `extracted` disagree with the amounts in `source_text`?","criteria":{"true":"The total does not match the source or its line items","false":"The total matches the source"}},
+  "missing_field": {"type":"noul","instructions":{"question":"Is any field named in `required_fields` absent or empty in `extracted`?","focus":"Only the listed fields matter."},"criteria":{"true":"A required field is absent or blank","false":"Every required field is present and filled"}}
+}
