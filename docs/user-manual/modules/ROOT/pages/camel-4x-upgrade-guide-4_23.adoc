@@ -2793,6 +2793,18 @@ are unaffected. Routes that set the header by its literal string name, or that u
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
 
+=== camel-debezium - a failed embedded engine is now reported
+
+The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops
+with an error - for example because the connector cannot reach the database, or the offset store cannot be
+read - the failure is passed to the consumer's `ExceptionHandler`, and the consumer's health check reports
+`DOWN` with that error.
+
+Previously the engine reported such failures only through its own logger, so the route stayed started and
+healthy while no longer receiving any change event. Deployments that use readiness or liveness probes will
+now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
+The engine is still not restarted automatically.
+
 === camel-seda - purging the queue completes the discarded exchanges
 
 When a SEDA queue is purged (with `purgeWhenStopping=true` or the `purgeQueue` JMX operation), the discarded exchanges
