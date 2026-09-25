@@ -21,6 +21,8 @@ import java.util.concurrent.CountDownLatch;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import org.apache.camel.Consumer;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.DefaultConsumer;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +52,14 @@ abstract class MongoAbstractConsumerThread implements Runnable {
         this.cursorRegenerationDelayEnabled = !(this.cursorRegenerationDelay == 0);
     }
 
+    /**
+     * The exception handler of the consumer this thread feeds, so that a failure reaches the configured handler and
+     * {@code bridgeErrorHandler} rather than being discarded on the consumer thread.
+     */
+    protected ExceptionHandler getExceptionHandler() {
+        return ((DefaultConsumer) consumer).getExceptionHandler();
+    }
+
     protected abstract MongoCursor<Document> initializeCursor();
 
     protected abstract void init() throws Exception;
@@ -70,8 +80,10 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                     doRun();
                 } catch (Exception e) {
                     if (keepRunning) {
+                        // this one repeats for as long as the cause persists, so it is the branch that
+                        // needs the stack trace, not the one below
                         log.warn("Exception from consuming from MongoDB caused by {}. Will try again on next poll.",
-                                e.getMessage());
+                                e.getMessage(), e);
                     } else {
                         log.warn("Exception from consuming from MongoDB caused by {}. ConsumerThread will be stopped.",
                                 e.getMessage(), e);

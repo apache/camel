@@ -116,10 +116,11 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
                         log.trace("Sending exchange: {}, ObjectId: {}", exchange, dbObj.get(MONGO_ID));
                     }
                     consumer.getProcessor().process(exchange);
+                    // only once the route accepted it, so a failed record is not recorded as consumed
+                    tailTracking.setLastVal(dbObj);
                 } catch (Exception e) {
-                    // do nothing
+                    getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 }
-                tailTracking.setLastVal(dbObj);
             }
         } catch (MongoCursorNotFoundException e) {
             // we only log the warning if we are not stopping, otherwise it is
