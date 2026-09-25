@@ -110,7 +110,7 @@ public abstract class JBangTestSupport {
             } catch (Exception | AssertionError e) {
                 logger.debug("failed to clean up test files from /home/jbang: {}", e.getMessage());
             }
-            for (String key : new String[]{"runtime", "gav", "directory"}) {
+            for (String key : new String[] { "runtime", "gav", "directory" }) {
                 try {
                     execute("config unset " + key);
                 } catch (Exception | AssertionError e) {
