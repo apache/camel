@@ -71,6 +71,12 @@ public class OpaEndpoint extends DefaultEndpoint {
         super.doStart();
         String mode = configuration.getEvaluationMode();
         if (WASM_MODE.equalsIgnoreCase(mode)) {
+            if (configuration.isBatch()) {
+                throw new IllegalArgumentException(
+                        "batch is not supported with evaluationMode=wasm: it saves the per-element HTTP round-trip via"
+                                                   + " OPA's batch API, which has no meaning for in-process evaluation."
+                                                   + " Use evaluationMode=rest.");
+            }
             warnAboutIgnoredServerOptions();
             evaluator = createWasmEvaluator();
         } else if (!REST_MODE.equalsIgnoreCase(mode)) {

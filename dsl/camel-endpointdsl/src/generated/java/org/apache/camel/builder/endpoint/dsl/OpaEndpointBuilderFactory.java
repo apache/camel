@@ -66,6 +66,54 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Authorize a whole collection in one call. When enabled the producer
+         * expects a List body, evaluates one input document per element - each
+         * element as the body, sharing the exchange's headers and properties -
+         * and returns the per-element verdicts in the CamelOpaBatchDecision
+         * header, a List parallel to the input. An element whose evaluation
+         * could not be reached is denied, unless failOpen is set; the batch is
+         * never allowed or denied as a whole because one element failed. Only
+         * for {code evaluationMode=rest}: it saves the per-element HTTP
+         * round-trip via OPA's batch API, which has no meaning for in-process
+         * wasm.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param batch the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder batch(boolean batch) {
+            doSetProperty("batch", batch);
+            return this;
+        }
+        /**
+         * Authorize a whole collection in one call. When enabled the producer
+         * expects a List body, evaluates one input document per element - each
+         * element as the body, sharing the exchange's headers and properties -
+         * and returns the per-element verdicts in the CamelOpaBatchDecision
+         * header, a List parallel to the input. An element whose evaluation
+         * could not be reached is denied, unless failOpen is set; the batch is
+         * never allowed or denied as a whole because one element failed. Only
+         * for {code evaluationMode=rest}: it saves the per-element HTTP
+         * round-trip via OPA's batch API, which has no meaning for in-process
+         * wasm.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param batch the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder batch(String batch) {
+            doSetProperty("batch", batch);
+            return this;
+        }
+        /**
          * The compiled entrypoint to evaluate in wasm mode. This is not the
          * same thing as the policy path: an entrypoint is fixed when the bundle
          * is built, with {code opa build -e}. Defaults to the endpoint's policy
@@ -689,6 +737,21 @@ public interface OpaEndpointBuilderFactory {
          */
         public String opaDecisionFailedOpen() {
             return "CamelOpaDecisionFailedOpen";
+        }
+        /**
+         * The per-element allow/deny verdicts of a batch evaluation
+         * (batch=true), as a List of Boolean parallel to the List body. Always
+         * overwritten by the component. An element whose evaluation could not
+         * be reached is denied, unless failOpen is set.
+         * 
+         * The option is a: {@code java.util.List<Boolean>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpaBatchDecision}.
+         */
+        public String opaBatchDecision() {
+            return "CamelOpaBatchDecision";
         }
     }
     static OpaEndpointBuilder endpointBuilder(String componentName, String path) {
