@@ -473,7 +473,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
             throw new IllegalArgumentException("keyId must not be null or empty");
         }
         if (keyId.indexOf('/') >= 0 || keyId.indexOf('\\') >= 0 || keyId.indexOf('\0') >= 0) {
-            throw new IllegalArgumentException("keyId must not contain path separators: '" + keyId + "'");
+            throw new IllegalArgumentException("keyId must not contain path separators (length: " + keyId.length() + ")");
         }
         Path resolved = keyDirectory.resolve(keyId + suffix).normalize();
         if (!resolved.startsWith(keyDirectory)) {
