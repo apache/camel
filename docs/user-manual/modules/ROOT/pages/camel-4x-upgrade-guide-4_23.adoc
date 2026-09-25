@@ -2818,6 +2818,7 @@ allocation; a declared length outside 0–1024 is now rejected instead of attemp
 Not changed: the HMAC key is still derived from the same key material as the cipher. Separating them
 would change the MAC written into the message and so could not be read by earlier versions; that is
 tracked separately.
+
 === camel-seda - purging the queue completes the discarded exchanges
 
 When a SEDA queue is purged (with `purgeWhenStopping=true` or the `purgeQueue` JMX operation), the discarded exchanges
