@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GridFsConsumerIT extends AbstractMongoDbITSupport {
+class GridFsConsumerIT extends AbstractMongoDbITSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -49,36 +49,37 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
                         .to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-pts");
 
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()).convertBodyTo(String.class)
-                        .to("mock:test");
+                        .to("mock:test-ts");
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-a&queryStrategy=FileAttribute")
-                        .convertBodyTo(String.class).to("mock:test");
+                        .convertBodyTo(String.class).to("mock:test-a");
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()
                      + "-pts&queryStrategy=PersistentTimestamp")
-                        .convertBodyTo(String.class).to("mock:test");
+                        .convertBodyTo(String.class).to("mock:test-pts");
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=customFileFilterTest&queryStrategy=TimeStampAndFileAttribute&query="
                      + String.format("{'%s': '%s'}", GRIDFS_FILE_KEY_FILENAME, FILE_NAME))
-                        .convertBodyTo(String.class).to("mock:test");
+                        .convertBodyTo(String.class).to("mock:test-custom");
             }
         };
     }
 
     @Test
-    public void testTimestamp() throws Exception {
-        runTest("direct:create", gridFSBucket);
+    void testTimestamp() throws Exception {
+        runTest("direct:create", gridFSBucket, "mock:test-ts");
     }
 
     @Test
-    public void testAttribute() throws Exception {
-        runTest("direct:create-a", GridFSBuckets.create(mongo.getDatabase("test"), getBucket() + "-a"));
+    void testAttribute() throws Exception {
+        runTest("direct:create-a", GridFSBuckets.create(mongo.getDatabase("test"), getBucket() + "-a"), "mock:test-a");
     }
 
     @Test
-    public void testPersistentTS() throws Exception {
-        runTest("direct:create-pts", GridFSBuckets.create(mongo.getDatabase("test"), getBucket() + "-pts"));
+    void testPersistentTS() throws Exception {
+        runTest("direct:create-pts", GridFSBuckets.create(mongo.getDatabase("test"), getBucket() + "-pts"),
+                "mock:test-pts");
     }
 
     @Test
-    public void testCustomFileQuery() throws Exception {
+    void testCustomFileQuery() throws Exception {
         Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.FILE_NAME, FILE_NAME);
 
@@ -94,7 +95,7 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
         ObjectId objectId = result.getMessage().getHeader(GridFsConstants.GRIDFS_OBJECT_ID, ObjectId.class);
         assertNotNull(objectId);
 
-        MockEndpoint mock = getMockEndpoint("mock:test");
+        MockEndpoint mock = getMockEndpoint("mock:test-custom");
         mock.expectedBodiesReceived(FILE_DATA);
         mock.assertIsSatisfied();
 
@@ -108,8 +109,8 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
         assertEquals(0, count);
     }
 
-    public void runTest(String target, GridFSBucket gridfs) throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:test");
+    void runTest(String target, GridFSBucket gridfs, String mockUri) throws Exception {
+        MockEndpoint mock = getMockEndpoint(mockUri);
         mock.expectedBodiesReceived(FILE_DATA);
         mock.expectedHeaderReceived(GridFsConstants.GRIDFS_METADATA, "{\"contentType\": \"text/plain\"}");
 

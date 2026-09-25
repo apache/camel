@@ -23,7 +23,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -43,6 +45,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -51,6 +55,11 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * Rest producer for calling remote REST services.
  */
 public class RestProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestProducer.class);
+
+    /** The path parameters already warned about, so a misconfigured route says it once and not per message. */
+    private final Set<String> warnedParameters = ConcurrentHashMap.newKeySet();
 
     private final CamelContext camelContext;
     private final RestConfiguration configuration;
@@ -167,6 +176,16 @@ public class RestProducer extends DefaultAsyncProducer {
                     }
                 }
                 resolvedUriTemplate = uriTemplateBuilder.toString();
+
+                // the request is sent with the placeholder still in the path, and the service answers 404 for a
+                // path that holds a {name}, so say which parameter had no value (CAMEL-24986)
+                String unresolved = firstPlaceholder(resolvedUriTemplate);
+                if (unresolved != null && warnedParameters.add(unresolved)) {
+                    LOG.warn("The path parameter {{}} of {} has no value: set the header {}, or an exchange variable"
+                             + " of that name, before the call. The request is sent with {{}} in the path, which the"
+                             + " service is unlikely to answer. This is logged once per parameter.",
+                            unresolved, resolvedUriTemplate, unresolved, unresolved);
+                }
             }
         }
 
@@ -219,6 +238,27 @@ public class RestProducer extends DefaultAsyncProducer {
         if (isEmpty(exchange.getMessage().getHeader(RestConstants.ACCEPT)) && isNotEmpty(consumes)) {
             exchange.getMessage().setHeader(RestConstants.ACCEPT, consumes);
         }
+    }
+
+    /**
+     * The name of the first {@code {name}} left in the template, or null when every one of them was resolved. Only a
+     * name counts, so a uri that holds braces for another reason is left alone (CAMEL-24986).
+     */
+    private static String firstPlaceholder(String uriTemplate) {
+        int start = uriTemplate.indexOf('{');
+        while (start >= 0) {
+            int end = uriTemplate.indexOf('}', start);
+            if (end < 0) {
+                return null;
+            }
+            String name = uriTemplate.substring(start + 1, end);
+            if (!name.isEmpty() && name.chars().allMatch(
+                    c -> Character.isLetterOrDigit(c) || c == '_' || c == '-' || c == '.')) {
+                return name;
+            }
+            start = uriTemplate.indexOf('{', end);
+        }
+        return null;
     }
 
     /**

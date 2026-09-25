@@ -340,6 +340,11 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     /**
      * Find the index of the ternary operator character, skipping nested ${}, quotes, etc.
      */
+    private static boolean surroundedByWhitespace(String text, int index) {
+        return index > 0 && index < text.length() - 1
+                && Character.isWhitespace(text.charAt(index - 1)) && Character.isWhitespace(text.charAt(index + 1));
+    }
+
     private int findTernaryOperator(String text, char operator) {
         int depth = 0;
         boolean inSingleQuote = false;
@@ -366,7 +371,9 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                     inDoubleQuote = true;
                     continue;
                 }
-                if (c == operator && depth == 0) {
+                if (c == operator && depth == 0 && surroundedByWhitespace(text, i)) {
+                    // like the tokenizer, the operator must have whitespace around it,
+                    // so ${bean:svc?method=at(10:30)} is not a ternary
                     return i;
                 }
             } else if (inSingleQuote && c == '\'') {

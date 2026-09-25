@@ -17,7 +17,6 @@
 package org.apache.camel.language.simple;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -81,31 +80,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             if (SimpleInitBlockTokenizer.hasInitBlock(expression)) {
                 SimpleInitBlockParser initParser
                         = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
-                // the init block should be parsed in predicate mode as that is needed to fully parse with all the operators and functions
                 init = initParser.parseExpression();
-                String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
-                if (part.startsWith("\n")) {
-                    // skip newline after ending init block
-                    part = part.substring(1);
-                }
-                this.expression = part;
-                // use $$key as local variable in the expression afterwards.
-                // Sort by descending length so a longer key (e.g. "$ab") is replaced before any
-                // shorter prefix (e.g. "$a"), preventing "$ab" from becoming "${variable.a}b".
-                List<String> sortedKeys = new ArrayList<>(initParser.getInitKeys());
-                sortedKeys.sort(Comparator.comparingInt(String::length).reversed());
-                for (String key : sortedKeys) {
-                    this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
-                }
-                // use $$key() as local function in the expression afterwards
-                List<String> sortedFunctions = new ArrayList<>(initParser.getInitFunctions());
-                sortedFunctions.sort(Comparator.comparingInt(String::length).reversed());
-                for (String key : sortedFunctions) {
-                    // no-arg functions
-                    this.expression = this.expression.replace("$" + key + "()", "${function(" + key + ")}");
-                    // arg functions
-                    this.expression = this.expression.replace("${" + key + "(", "${function(" + key + ",");
-                }
+                this.expression = initParser.rewriteExpressionAfterInitBlock(expression);
             }
 
             // parse simple expression

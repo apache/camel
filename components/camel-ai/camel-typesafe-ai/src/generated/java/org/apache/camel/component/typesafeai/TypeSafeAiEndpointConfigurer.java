@@ -33,6 +33,8 @@ public class TypeSafeAiEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxConcurrentRequests": target.getConfiguration().setMaxConcurrentRequests(property(camelContext, int.class, value)); return true;
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
         case "questions": target.getConfiguration().setQuestions(property(camelContext, java.lang.String.class, value)); return true;
+        case "questionsresource":
+        case "questionsResource": target.getConfiguration().setQuestionsResource(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "resultproperty":
@@ -59,6 +61,8 @@ public class TypeSafeAiEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxConcurrentRequests": return int.class;
         case "model": return java.lang.String.class;
         case "questions": return java.lang.String.class;
+        case "questionsresource":
+        case "questionsResource": return java.lang.String.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "resultproperty":
@@ -86,6 +90,8 @@ public class TypeSafeAiEndpointConfigurer extends PropertyConfigurerSupport impl
         case "maxConcurrentRequests": return target.getConfiguration().getMaxConcurrentRequests();
         case "model": return target.getConfiguration().getModel();
         case "questions": return target.getConfiguration().getQuestions();
+        case "questionsresource":
+        case "questionsResource": return target.getConfiguration().getQuestionsResource();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "resultproperty":

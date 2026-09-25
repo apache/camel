@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>
-            <version>${keycloak-client-version}</version>
+            <version>${keycloak-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>

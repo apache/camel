@@ -138,6 +138,23 @@ public interface TypesafeAiComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Camel resource URI for a UTF-8 JSON object mapping question names to
+         * Noul, Choice or Score questions. Loaded and validated when the
+         * endpoint starts. Cannot be combined with questions.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param questionsResource the value to set
+         * @return the dsl builder
+         */
+        default TypesafeAiComponentBuilder questionsResource(java.lang.String questionsResource) {
+            doSetProperty("questionsResource", questionsResource);
+            return this;
+        }
+    
         
         /**
          * The timeout in milliseconds for the complete HTTP request and
@@ -329,6 +346,7 @@ public interface TypesafeAiComponentBuilderFactory {
             case "maxConcurrentRequests": getOrCreateConfiguration((TypeSafeAiComponent) component).setMaxConcurrentRequests((int) value); return true;
             case "model": getOrCreateConfiguration((TypeSafeAiComponent) component).setModel((java.lang.String) value); return true;
             case "questions": getOrCreateConfiguration((TypeSafeAiComponent) component).setQuestions((java.lang.String) value); return true;
+            case "questionsResource": getOrCreateConfiguration((TypeSafeAiComponent) component).setQuestionsResource((java.lang.String) value); return true;
             case "requestTimeout": getOrCreateConfiguration((TypeSafeAiComponent) component).setRequestTimeout((long) value); return true;
             case "state": getOrCreateConfiguration((TypeSafeAiComponent) component).setState((java.lang.String) value); return true;
             case "lazyStartProducer": ((TypeSafeAiComponent) component).setLazyStartProducer((boolean) value); return true;

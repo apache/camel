@@ -37,6 +37,7 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
 import org.apache.camel.language.simple.types.TokenType;
+import org.apache.camel.language.simple.types.UnaryOperatorType;
 
 /**
  * Base class for Simple language parser.
@@ -198,10 +199,23 @@ public abstract class BaseSimpleParser {
     protected void prepareUnaryExpressions(List<SimpleNode> nodes) {
         Deque<SimpleNode> stack = new ArrayDeque<>();
 
+        UnaryExpression pending = null;
         for (SimpleNode node : nodes) {
+            if (pending != null) {
+                // a prefix operator works on the node that follows it (CAMEL-24984)
+                pending.acceptRight(node);
+                pending = null;
+                continue;
+            }
             if (node instanceof UnaryExpression token) {
                 // remember the logical operator
                 String operator = token.getOperator().toString();
+
+                if (token.getOperator() == UnaryOperatorType.NOT) {
+                    pending = token;
+                    stack.push(node);
+                    continue;
+                }
 
                 SimpleNode previous = stack.isEmpty() ? null : stack.pop();
                 if (previous == null) {
@@ -212,6 +226,10 @@ public abstract class BaseSimpleParser {
                 }
             }
             stack.push(node);
+        }
+        if (pending != null) {
+            throw new SimpleParserException(
+                    "Unary operator ! has no token to negate on its right hand side", pending.getToken().getIndex());
         }
 
         // replace nodes from the stack

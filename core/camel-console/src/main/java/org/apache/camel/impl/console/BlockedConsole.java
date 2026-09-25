@@ -35,6 +35,7 @@ public class BlockedConsole extends AbstractDevConsole {
             @Metadata(description = "The exchange ID") String exchangeId,
             @Metadata(description = "The route ID") String routeId,
             @Metadata(description = "The node ID") String nodeId,
+            @Metadata(description = "Where the node is in the source, such as orders.camel.yaml:18") String nodeSource,
             @Metadata(description = "The wait duration in milliseconds") long duration) {
     }
 
@@ -55,8 +56,9 @@ public class BlockedConsole extends AbstractDevConsole {
         sb.append(String.format("%n    Blocked: %s", am.size()));
         for (AsyncProcessorAwaitManager.AwaitThread at : am.browse()) {
             String age = TimeUtils.printDuration(at.getWaitDuration(), true);
-            sb.append(String.format("%n    %s (at: %s/%s age: %s)",
-                    at.getExchange().getExchangeId(), at.getRouteId(), at.getNodeId(), age));
+            String source = at.getNodeSource() != null ? " source: " + at.getNodeSource() : "";
+            sb.append(String.format("%n    %s (at: %s/%s%s age: %s)",
+                    at.getExchange().getExchangeId(), at.getRouteId(), at.getNodeId(), source, age));
         }
 
         return sb.toString();
@@ -69,7 +71,8 @@ public class BlockedConsole extends AbstractDevConsole {
         List<Entry> entries = new ArrayList<>();
         for (AsyncProcessorAwaitManager.AwaitThread at : am.browse()) {
             entries.add(new Entry(
-                    at.getExchange().getExchangeId(), at.getRouteId(), at.getNodeId(), at.getWaitDuration()));
+                    at.getExchange().getExchangeId(), at.getRouteId(), at.getNodeId(), at.getNodeSource(),
+                    at.getWaitDuration()));
         }
 
         Response response = new Response(am.size(), entries.isEmpty() ? null : entries);

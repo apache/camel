@@ -82,6 +82,18 @@ public class SimplePredicateInBracesTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testAnOperatorWordInAValueIsNotAPredicate() {
+        // CAMEL-24963: the operator word is in a property default or a bracket key, which is text, not an operator
+        assertExpression("${properties:msg:value is not set}", "value is not set");
+        assertExpression("${properties:msg:a == b}", "a == b");
+        exchange.getIn().setHeader("order in progress", "yes");
+        assertExpression("${header[order in progress]}", "yes");
+        // a closed bracket key can still be compared
+        exchange.getIn().setHeader("n", 5);
+        assertPredicate("${header[n] == 5}", true);
+    }
+
+    @Test
     public void testTheTernaryStillWins() {
         exchange.getIn().setHeader("n", 5);
         assertExpression("${header.n > 0 ? 'positive' : 'negative'}", "positive");

@@ -1,0 +1,260 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.impl.converter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.TypeConvertible;
+import org.apache.camel.support.TypeConverterSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class CoreTypeConverterRegistryTest extends ContextTestSupport {
+
+    @Test
+    public void testConvertWrapperToOtherPrimitive() throws Exception {
+        TypeConverter tc = context.getTypeConverter();
+
+        assertInstanceOf(Integer.class, tc.convertTo(int.class, 5L));
+        assertInstanceOf(Long.class, tc.convertTo(long.class, 5));
+        assertInstanceOf(Double.class, tc.convertTo(double.class, 5));
+        assertInstanceOf(Integer.class, tc.mandatoryConvertTo(int.class, 5L));
+        assertInstanceOf(Long.class, tc.mandatoryConvertTo(long.class, 7));
+        assertInstanceOf(Double.class, tc.tryConvertTo(double.class, 7));
+        assertInstanceOf(Integer.class, tc.tryConvertTo(int.class, 7L));
+
+        int i = tc.convertTo(int.class, 5L);
+        assertEquals(5, i);
+        long l = tc.convertTo(long.class, 5);
+        assertEquals(5L, l);
+
+        // same wrapper type is returned as-is
+        assertInstanceOf(Integer.class, tc.convertTo(int.class, 5));
+        assertInstanceOf(Long.class, tc.convertTo(long.class, 5L));
+    }
+
+    @Test
+    public void testTryConvertToPrimitiveBoolean() {
+        TypeConverter tc = context.getTypeConverter();
+
+        assertNull(tc.tryConvertTo(boolean.class, "abc"));
+        assertNull(tc.tryConvertTo(boolean.class, new Object()));
+        assertEquals(Boolean.TRUE, tc.tryConvertTo(boolean.class, "true"));
+    }
+
+    @Test
+    public void testBeanWithIntParameterAndLongBody() {
+        assertEquals("int:5", template.requestBody("direct:int", 5L));
+        assertEquals("long:5", template.requestBody("direct:long", 5));
+    }
+
+    @Test
+    public void testFallbackStillTriedAfterMiss() {
+        context.getTypeConverterRegistry().addFallbackTypeConverter(new FooFallback(), false);
+        TypeConverter tc = context.getTypeConverter();
+
+        // the fallback cannot convert this value, which is recorded as a miss
+        assertNull(tc.convertTo(Foo.class, "bar"));
+        // but it can convert this value of the same type
+        assertEquals("b", tc.convertTo(Foo.class, "foo:b").value);
+        assertNull(tc.convertTo(Foo.class, "baz"));
+        assertEquals("c", tc.tryConvertTo(Foo.class, "foo:c").value);
+    }
+
+    @Test
+    public void testFallbackAddedAfterMiss() {
+        TypeConverter tc = context.getTypeConverter();
+
+        assertNull(tc.convertTo(Foo.class, "foo:x"));
+        context.getTypeConverterRegistry().addFallbackTypeConverter(new FooFallback(), false);
+        assertEquals("x", tc.convertTo(Foo.class, "foo:x").value);
+    }
+
+    @Test
+    public void testConverterAddedAfterMiss() {
+        TypeConverter tc = context.getTypeConverter();
+
+        assertNull(tc.convertTo(Foo.class, new Sub()));
+        context.getTypeConverterRegistry().addTypeConverter(Foo.class, Base.class, new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+                return type.cast(new Foo("base"));
+            }
+        });
+        // converter for the super class is used for the sub class that previously missed
+        assertEquals("base", tc.convertTo(Foo.class, new Sub()).value);
+    }
+
+    @Test
+    public void testMissOnSuperClassDoesNotAffectSubClass() {
+        context.getTypeConverterRegistry().addFallbackTypeConverter(new TypeConverterSupport() {
+            @Override
+            public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+                return value instanceof Sub && type == Foo.class ? type.cast(new Foo("sub")) : null;
+            }
+        }, false);
+        TypeConverter tc = context.getTypeConverter();
+
+        assertNull(tc.convertTo(Foo.class, new Base()));
+        assertEquals("sub", tc.convertTo(Foo.class, new Sub()).value);
+    }
+
+    @Test
+    public void testLookupDoesNotReturnMiss() {
+        TypeConverterRegistry registry = context.getTypeConverterRegistry();
+
+        assertNull(context.getTypeConverter().convertTo(Foo.class, new Base()));
+        assertNull(registry.lookup(Foo.class, Base.class));
+        assertNull(registry.lookup(Foo.class, Sub.class));
+        assertTrue(registry.lookup(Foo.class).isEmpty());
+    }
+
+    @Test
+    public void testSuperTypeMatchIsDeterministic() {
+        TypeConverter fromFirst = new NamedConverter("first");
+        TypeConverter fromSecond = new NamedConverter("second");
+        TypeConverter fromBase = new NamedConverter("base");
+        TypeConverter fromObject = new NamedConverter("object");
+
+        // regardless of the order the converters are registered, the nearest super type wins
+        for (boolean reverse : List.of(false, true)) {
+            Map<TypeConvertible<?, ?>, TypeConverter> converters = new LinkedHashMap<>();
+            List<Object[]> entries = new ArrayList<>(
+                    List.of(new Object[] { Object.class, fromObject }, new Object[] { Base.class, fromBase },
+                            new Object[] { SecondIface.class, fromSecond }, new Object[] { FirstIface.class, fromFirst }));
+            if (reverse) {
+                Collections.reverse(entries);
+            }
+            for (Object[] e : entries) {
+                converters.put(new TypeConvertible<>((Class<?>) e[0], Foo.class), (TypeConverter) e[1]);
+            }
+
+            // interfaces are tried in declared order
+            assertSame(fromFirst, TypeResolverHelper.tryMatch(new TypeConvertible<>(TwoIfaces.class, Foo.class), converters));
+            // the super class is nearer than the object converter
+            assertSame(fromBase, TypeResolverHelper.tryMatch(new TypeConvertible<>(Sub.class, Foo.class), converters));
+            // the interface of the super class is nearer than object
+            assertSame(fromSecond,
+                    TypeResolverHelper.tryMatch(new TypeConvertible<>(SubOfSecond.class, Foo.class), converters));
+            // object is the last resort
+            assertSame(fromObject, TypeResolverHelper.tryMatch(new TypeConvertible<>(String.class, Foo.class), converters));
+        }
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:int").bean(MyNumberBean.class, "intArg");
+                from("direct:long").bean(MyNumberBean.class, "longArg");
+            }
+        };
+    }
+
+    public static class MyNumberBean {
+        public String intArg(int x) {
+            return "int:" + x;
+        }
+
+        public String longArg(long x) {
+            return "long:" + x;
+        }
+    }
+
+    public static class Foo {
+        private final String value;
+
+        public Foo(String value) {
+            this.value = value;
+        }
+    }
+
+    public static class Base {
+    }
+
+    public static class Sub extends Base {
+    }
+
+    /**
+     * Fallback that depends on the value: it can only convert strings that start with foo:
+     */
+    private static class FooFallback extends TypeConverterSupport {
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+            if (type == Foo.class && value instanceof String s && s.startsWith("foo:")) {
+                return type.cast(new Foo(s.substring(4)));
+            }
+            return null;
+        }
+    }
+
+    public interface FirstIface {
+    }
+
+    public interface SecondIface {
+    }
+
+    public static class TwoIfaces implements FirstIface, SecondIface {
+    }
+
+    public static class ImplOfSecond implements SecondIface {
+    }
+
+    public static class SubOfSecond extends ImplOfSecond {
+    }
+
+    private static class NamedConverter extends TypeConverterSupport {
+        private final String name;
+
+        NamedConverter(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+            return type.cast(new Foo(name));
+        }
+    }
+
+    @Test
+    public void testArrayToCollectionTypes() {
+        TypeConverter tc = context.getTypeConverter();
+
+        assertInstanceOf(List.class, tc.convertTo(List.class, new String[] { "a", "b" }));
+        assertInstanceOf(ArrayList.class, tc.convertTo(ArrayList.class, new String[] { "a", "b" }));
+        assertInstanceOf(List.class, tc.convertTo(List.class, new int[] { 1, 2 }));
+        // a set is not a list
+        assertInstanceOf(Set.class, tc.convertTo(Set.class, new String[] { "a", "b" }));
+        assertNull(tc.convertTo(Set.class, new int[] { 1, 2 }));
+    }
+}

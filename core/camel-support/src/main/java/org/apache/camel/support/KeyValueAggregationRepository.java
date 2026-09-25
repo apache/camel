@@ -124,9 +124,12 @@ public class KeyValueAggregationRepository extends ServiceSupport
         LOG.trace("Removing an Exchange with ID {} for key {}", exchange.getExchangeId(), key);
         DefaultExchangeHolder holder = (DefaultExchangeHolder) repository.delete(AGGREGATE_PREFIX + key);
         if (useRecovery && holder != null) {
-            // Store under the exchangeId for potential recovery
+            // Store the given exchange under the exchangeId for potential recovery. The removed holder is not used as
+            // it can be older than the exchange: when a group is completed by an incoming exchange, the last
+            // aggregated exchange is not added to the repository before it is removed.
             LOG.trace("Moving Exchange with ID {} to completed (pending confirmation)", exchange.getExchangeId());
-            repository.put(COMPLETED_PREFIX + exchange.getExchangeId(), holder);
+            repository.put(COMPLETED_PREFIX + exchange.getExchangeId(),
+                    DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders));
         }
     }
 

@@ -44,6 +44,9 @@ public final class FutureTypeConverter extends TypeConverterSupport {
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         try {
             return doConvertTo(type, exchange, value);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new TypeConversionException(value, type, e);
         } catch (Exception e) {
             throw new TypeConversionException(value, type, e);
         }

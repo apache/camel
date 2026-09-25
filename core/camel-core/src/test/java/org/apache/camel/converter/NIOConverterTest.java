@@ -223,4 +223,14 @@ class NIOConverterTest extends ContextTestSupport {
         assertEquals("Hello", IOConverter.toString(is, null));
     }
 
+    @Test
+    public void testToByteBufferWithCharsetHeader() {
+        Exchange exchange = context.getEndpoint("direct:start").createExchange();
+        exchange.getIn().setHeader(Exchange.CHARSET_NAME, "UTF-16BE");
+
+        ByteBuffer bb = NIOConverter.toByteBuffer("A", exchange);
+        assertEquals(2, bb.remaining());
+        assertEquals(0, bb.get());
+        assertEquals('A', bb.get());
+    }
 }

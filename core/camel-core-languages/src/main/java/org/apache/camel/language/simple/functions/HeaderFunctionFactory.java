@@ -19,6 +19,7 @@ package org.apache.camel.language.simple.functions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.OgnlExpressionBuilder;
+import org.apache.camel.language.simple.SimpleFunctionHelper;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -40,13 +41,14 @@ public final class HeaderFunctionFactory implements SimpleLanguageFunctionFactor
         // headerAs
         String remainder = ifStartsWithReturnRemainder("headerAs(", function);
         if (remainder != null) {
-            String keyAndType = StringHelper.before(remainder, ")");
+            int end = SimpleFunctionHelper.indexOfClosingParenthesis(remainder);
+            String keyAndType = end >= 0 ? remainder.substring(0, end) : null;
             if (keyAndType == null) {
                 throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, index);
             }
             String key = StringHelper.before(keyAndType, ",");
             String type = StringHelper.after(keyAndType, ",");
-            remainder = StringHelper.after(remainder, ")");
+            remainder = remainder.substring(end + 1);
             if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isNotEmpty(remainder)) {
                 throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, index);
             }
@@ -71,6 +73,11 @@ public final class HeaderFunctionFactory implements SimpleLanguageFunctionFactor
             }
             if (remainder.startsWith("[") && remainder.endsWith("]")) {
                 remainder = remainder.substring(1, remainder.length() - 1);
+                String unquoted = StringHelper.removeLeadingAndEndingQuotes(remainder);
+                if (!unquoted.equals(remainder)) {
+                    // a quoted key such as ['a.b'] is the name, not an OGNL expression
+                    return ExpressionBuilder.headerExpression(unquoted);
+                }
             }
             String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
 

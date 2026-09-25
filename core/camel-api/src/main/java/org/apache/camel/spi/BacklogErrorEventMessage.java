@@ -126,7 +126,13 @@ public interface BacklogErrorEventMessage extends BacklogEventMessage {
      * The message history trace captured at the time of the error, or {@code null} if message history is not enabled on
      * the CamelContext.
      * <p/>
-     * Each element represents one step in the routing history in the format "routeId[nodeId] (elapsed ms)".
+     * Each element represents one step in the routing history, in the format
+     * {@code routeId[nodeId] source (elapsed ms) bodyType=... bodySize=...} - for example
+     * {@code route1[to3] orders.camel.yaml:18 (12 ms) bodyType=java.util.LinkedHashMap bodySize=214}.
+     * <p/>
+     * Everything after {@code routeId[nodeId]} is conditional: the source is present when source location is enabled
+     * (the dev profile enables it) and the node has one, the elapsed time when it is greater than zero, the body type
+     * when message history recorded it, and the body size only when a MessageSizeStrategy is enabled.
      */
     String @Nullable [] getMessageHistory();
 }

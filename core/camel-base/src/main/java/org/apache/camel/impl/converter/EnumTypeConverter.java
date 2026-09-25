@@ -72,6 +72,13 @@ public class EnumTypeConverter extends TypeConverterSupport implements CamelCont
             String text = value.toString().trim();
             Class<Enum<?>> enumClass = (Class<Enum<?>>) type;
 
+            // prefer an exact match
+            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
+                if (enumValue.name().equals(text)) {
+                    return type.cast(enumValue);
+                }
+            }
+
             // we want to match case insensitive for enums
             for (Enum<?> enumValue : enumClass.getEnumConstants()) {
                 if (enumValue.name().equalsIgnoreCase(text)) {
