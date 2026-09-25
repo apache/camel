@@ -2422,6 +2422,19 @@ Downloads to a configured `localWorkDirectory` now resolve existing filesystem p
 checking that the destination remains inside that directory. Downloads through a symbolic link that
 resolves outside the `localWorkDirectory` are rejected. Valid nested download paths continue to work.
 
+=== camel-file, camel-ftp, camel-smb, camel-mina-sftp and camel-azure-files - a file whose download fails is retried by idempotent consumers
+
+When the consumer cannot download a file (for example a FTP, SFTP or SMB transfer fails with a socket timeout or a
+connection reset), the file is now retried on the next poll also when the consumer is idempotent, which includes every
+consumer with `noop=true`. Consumers that are not idempotent already retried such a file. Previously the idempotent key,
+which is added when the file is polled (`idempotentEager=true`, the default), was kept, so the file was skipped until the
+application was restarted, or for good with a persistent idempotent repository. The exclusive read lock acquired for the
+file is now released as well.
+
+A poll in which the download of every file failed now counts as an idle poll, the same as a poll in which no read lock
+could be acquired. This affects `backoffIdleThreshold`, `sendEmptyMessageWhenIdle` (an empty message is sent) and
+`greedy` (the consumer does not poll again immediately).
+
 === camel-infinispan - the aggregation repository keeps completed exchanges for recovery
 
 `InfinispanAggregationRepository` implements `RecoverableAggregationRepository`, but it had no recovery
