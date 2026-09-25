@@ -36,6 +36,12 @@ import static java.lang.String.format;
 public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOperation<ResultType>
         implements Watcher, WatchedEventProvider {
 
+    // Timeout for waiting for a ZooKeeper watch event. If the async watch registration races with
+    // the triggering event (the event fires before the server has registered our watcher), the
+    // await would block indefinitely. The timeout lets OperationsExecutor detect the stall and
+    // retry via backoffAndThenRestart(), which reinstalls the watcher from scratch.
+    static final long WATCH_TIMEOUT_SECONDS = 30;
+
     private EventType[] awaitedTypes;
 
     private CountDownLatch waitForAnyWatchedType = new CountDownLatch(1);
@@ -73,7 +79,13 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
     public OperationResult<ResultType> get() throws ExecutionException, InterruptedException {
         installWatch();
         waitingThreads.add(Thread.currentThread());
-        waitForAnyWatchedType.await();
+        if (!waitForAnyWatchedType.await(WATCH_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+            throw new ExecutionException(
+                    format("Timed out after %ds waiting for ZooKeeper event %s on node '%s'. "
+                           + "The async watch may have been registered after the triggering event fired.",
+                            WATCH_TIMEOUT_SECONDS, Arrays.toString(awaitedTypes), node),
+                    null);
+        }
         return result;
     }
 
