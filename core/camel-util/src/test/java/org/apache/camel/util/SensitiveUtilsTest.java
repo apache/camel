@@ -112,6 +112,9 @@ class SensitiveUtilsTest {
                 .isEqualTo("ftp://joe:xxxxx@host/in");
         assertThat(SensitiveUtils.maskUserInfoCredentials("ftp://joe:pa/ss@host/dir", "xxxxx"))
                 .isEqualTo("ftp://joe:xxxxx@host/dir");
+        // the user may contain an @, such as an email address
+        assertThat(SensitiveUtils.maskUserInfoCredentials("ftp://user@corp.com:pw@host/in", "xxxxx"))
+                .isEqualTo("ftp://user@corp.com:xxxxx@host/in");
         // an @ in the query is not the end of a password
         assertThat(SensitiveUtils.maskUserInfoCredentials("smtp://host:25?to=ops@example.com", "xxxxx"))
                 .isEqualTo("smtp://host:25?to=ops@example.com");
