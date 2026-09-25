@@ -2121,7 +2121,9 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private List<String> buildDoclingCommand(String inputPath, String outputFormat, Exchange exchange, String outputDirectory) {
+    // package-private so DoclingOutputPathValidationTest can assert the built command without reflection
+    List<String> buildDoclingCommand(String inputPath, String outputFormat, Exchange exchange, String outputDirectory)
+            throws IOException {
         List<String> command = new ArrayList<>();
         command.add(configuration.getDoclingCommand());
 
@@ -2282,15 +2284,42 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private void addOutputDirectoryArguments(List<String> command, Exchange exchange, String outputDirectory) {
+    private void addOutputDirectoryArguments(List<String> command, Exchange exchange, String outputDirectory)
+            throws IOException {
         String outputPath = exchange.getIn().getHeader(DoclingHeaders.OUTPUT_FILE_PATH, String.class);
+        command.add("--output");
         if (outputPath != null) {
-            command.add("--output");
-            command.add(outputPath);
+            // the header is caller-provided, so it gets the same normalization and optional base-directory
+            // containment as input paths do, instead of reaching the CLI verbatim
+            command.add(resolveWithinOutputBaseDirectory(outputPath).toString());
         } else {
-            command.add("--output");
             command.add(outputDirectory);
         }
+    }
+
+    /**
+     * Normalizes the given output directory and, when {@code outputBaseDirectory} is configured, verifies that it stays
+     * inside that directory. Mirrors {@link #resolveWithinInputBaseDirectory(String)} so that the output directory
+     * carried by the {@link DoclingHeaders#OUTPUT_FILE_PATH} header receives the same treatment as input paths. The
+     * containment check is lexical: symbolic links are not resolved, so - like
+     * {@link #resolveWithinInputBaseDirectory(String)} - a symlink inside the base directory that points outside it is
+     * not detected.
+     */
+    private Path resolveWithinOutputBaseDirectory(String outputPath) throws IOException {
+        String base = configuration.getOutputBaseDirectory();
+        if (base == null || base.isEmpty()) {
+            // no directory restriction: normalize lexically only, and leave relative paths relative so that they keep
+            // resolving the way they did before - against the CLI working directory, when one is set
+            return Paths.get(outputPath).normalize();
+        }
+        Path baseDir = Paths.get(base).toAbsolutePath().normalize();
+        // resolve relative paths against the base directory itself, so that the path checked here is exactly the path
+        // used downstream regardless of the process working directory; an absolute header value that escapes is rejected
+        Path path = baseDir.resolve(Paths.get(outputPath)).normalize();
+        if (!path.startsWith(baseDir)) {
+            throw new IOException("Output path resolves outside of outputBaseDirectory (" + baseDir + "): " + outputPath);
+        }
+        return path;
     }
 
     private String mapToDoclingFormat(String outputFormat) {

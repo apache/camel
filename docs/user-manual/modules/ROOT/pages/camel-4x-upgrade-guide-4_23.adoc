@@ -918,6 +918,13 @@ It is unset by default, which keeps the previous behaviour of accepting any path
 Additionally, a local input path that does not exist is now reported as a `File not found` `IOException`
 before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
 the failure surfaced later, from the Docling process or API call.
+
+The `CamelDoclingOutputFilePath` header, which selects the CLI output directory, is now normalized lexically
+(redundant separators and `.`/`..` segments are resolved) before it is passed to Docling; a header value
+without such segments is still used as given. A new `outputBaseDirectory` option additionally confines the
+header the same way `inputBaseDirectory` confines input paths - when set, an output path that resolves outside
+it, including an absolute path, is rejected with an `IOException`. `outputBaseDirectory` is unset by default.
+
 === camel-azure-eventgrid
 
 The `CamelAzureEventGridDataVersion` header (`EventGridConstants.DATA_VERSION`) has been removed. The
