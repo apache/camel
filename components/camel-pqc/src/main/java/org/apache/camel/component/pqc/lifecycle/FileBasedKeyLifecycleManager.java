@@ -67,7 +67,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     private final ConcurrentHashMap<String, KeyMetadata> metadataCache = new ConcurrentHashMap<>();
 
     public FileBasedKeyLifecycleManager(String keyDirectoryPath) throws IOException {
-        this.keyDirectory = Paths.get(keyDirectoryPath);
+        this.keyDirectory = Paths.get(keyDirectoryPath).toAbsolutePath().normalize();
         this.objectMapper = new ObjectMapper();
         this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         Files.createDirectories(keyDirectory);
@@ -442,19 +442,44 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     }
 
     private Path getPrivateKeyFile(String keyId) {
-        return keyDirectory.resolve(keyId + ".private.json");
+        return resolveKeyFile(keyId, ".private.json");
     }
 
     private Path getPublicKeyFile(String keyId) {
-        return keyDirectory.resolve(keyId + ".public.json");
+        return resolveKeyFile(keyId, ".public.json");
     }
 
     private Path getMetadataFile(String keyId) {
-        return keyDirectory.resolve(keyId + ".metadata");
+        return resolveKeyFile(keyId, ".metadata");
     }
 
     private Path getLegacyKeyFile(String keyId) {
-        return keyDirectory.resolve(keyId + ".key");
+        return resolveKeyFile(keyId, ".key");
+    }
+
+    /**
+     * Resolves a key file inside the configured key directory, confining it to that directory. keyId values arrive from
+     * message headers (CamelPQCKeyId / CamelPQCNewKeyId), so a value containing path separators, parent references or
+     * an absolute path could otherwise resolve to a location outside the key directory. keyId is therefore constrained
+     * to a single flat file-name segment, and the resolved path is checked to lie textually under the key directory
+     * (which is stored absolute and normalized in the constructor).
+     * <p/>
+     * The {@code startsWith} check is textual and does not follow symbolic links, so a symlink placed inside the key
+     * directory could still point elsewhere. Creating such a link requires write access to the operator-controlled key
+     * directory, which is outside the header-supplied keyId threat this guards against.
+     */
+    private Path resolveKeyFile(String keyId, String suffix) {
+        if (keyId == null || keyId.isBlank()) {
+            throw new IllegalArgumentException("keyId must not be null or empty");
+        }
+        if (keyId.indexOf('/') >= 0 || keyId.indexOf('\\') >= 0 || keyId.indexOf('\0') >= 0) {
+            throw new IllegalArgumentException("keyId must not contain path separators (length: " + keyId.length() + ")");
+        }
+        Path resolved = keyDirectory.resolve(keyId + suffix).normalize();
+        if (!resolved.startsWith(keyDirectory)) {
+            throw new IllegalArgumentException("keyId must resolve inside the key directory: '" + keyId + "'");
+        }
+        return resolved;
     }
 
     /**
