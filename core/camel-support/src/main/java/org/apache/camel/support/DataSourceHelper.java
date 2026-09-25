@@ -53,9 +53,11 @@ public final class DataSourceHelper {
         // so that the caller does not need a compile-time dependency on HikariCP.
         try {
             Method getPoolMXBean = ds.getClass().getMethod("getHikariPoolMXBean");
+            getPoolMXBean.setAccessible(true);
             Object poolMXBean = getPoolMXBean.invoke(ds);
             if (poolMXBean != null) {
                 Method softEvict = poolMXBean.getClass().getMethod("softEvictConnections");
+                softEvict.setAccessible(true);
                 softEvict.invoke(poolMXBean);
                 LOG.info("Secret rotation (source={}): HikariCP softEvictConnections() called on {}", source, ds);
                 return;
