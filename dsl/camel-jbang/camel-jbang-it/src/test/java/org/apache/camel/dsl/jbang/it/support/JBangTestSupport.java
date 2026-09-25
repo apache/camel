@@ -127,8 +127,6 @@ public abstract class JBangTestSupport {
             } catch (Exception | AssertionError e) {
                 logger.debug("failed to reset camel-version: {}", e.getMessage());
             }
-                logger.debug("failed to reset config: {}", e.getMessage());
-            }
             logger.debug("clean up data folder");
             if (containerDataFolder != null) {
                 FileUtil.removeDir(new File(containerDataFolder));
