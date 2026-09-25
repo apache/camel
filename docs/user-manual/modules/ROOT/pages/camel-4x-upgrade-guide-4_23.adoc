@@ -3350,6 +3350,42 @@ Previously it read the `SessionID` header when the route completed, so a route t
 which session received the reply. A route that changed the `SessionID` header to send the reply to another session
 must now send that message with a QuickFIX/J producer endpoint that sets the `sessionID` option.
 
+=== camel-xslt / camel-xslt-saxon - external document() access is denied by default
+
+Camel's default XSLT transformer factory (`XMLConverterHelper`) sets `ACCESS_EXTERNAL_DTD` and
+`ACCESS_EXTERNAL_STYLESHEET` to the empty (deny-all) value. JAXP enforces `ACCESS_EXTERNAL_STYLESHEET`
+only when no `URIResolver` returns a `Source`, but the `xslt` component always installs its own
+`XsltUriResolver` on the transformer, so that resolver used to resolve external `http:`, `https:`,
+`ftp:` and `file:` references regardless — the factory's deny-all setting silently did nothing at
+transform time.
+
+The resolver installed on the transformer now honours the factory's `ACCESS_EXTERNAL_STYLESHEET`
+value. As a result, when a stylesheet's `document()` function resolves an external `http:`, `https:`,
+`ftp:` or `file:` URI at transform time, the reference is now **refused by default**: the resolver
+throws, so the transform fails with a document-retrieval error (and the reason is logged as a
+warning) instead of reading the resource. This matches what plain JAXP does with
+`ACCESS_EXTERNAL_STYLESHEET=""`, and closes a gap where an untrusted message header — bound as a
+stylesheet parameter and passed into `document()` — could make the transform read an attacker-chosen
+external resource.
+
+This also affects a **relative** `document()` when the stylesheet itself was loaded from `file:`
+(for example `xslt:file:/opt/xsl/t.xsl` with `document('codes.xml')`, which resolves to
+`file:/opt/xsl/codes.xml`): that is the route author's own lookup file, but it is an external `file:`
+reference and is denied by default (plain JAXP would deny it too). Stylesheets loaded from
+`classpath:` are unaffected, because a relative `document()` there resolves to a `classpath:` URI,
+which is outside the JAXP external-access model.
+
+`camel-xslt-saxon` is affected in the same way: `XsltSaxonEndpoint` sets the same deny-all attribute,
+Saxon reports it through `getAttribute`, and `XsltSaxonBuilder` extends `XsltBuilder`.
+
+If a route legitimately needs `document()` to read an external resource, supply a custom
+`TransformerFactory` via the `transformerFactory` option whose `ACCESS_EXTERNAL_STYLESHEET` permits
+the required protocols (set the attribute to a comma-separated protocol list such as `file` or
+`http,https`, or to `all`). Camel's internal `classpath:`, `ref:` and `bean:` schemes are outside the
+JAXP external-access model and remain resolvable. Stylesheet `xsl:include` / `xsl:import` references
+are resolved at compile time (they are part of the route definition, authored by the route author)
+and are unaffected by this change.
+
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
