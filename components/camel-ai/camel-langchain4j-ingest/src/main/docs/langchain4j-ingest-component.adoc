@@ -171,6 +171,10 @@ from("file:/var/data/reports?noop=true&readLock=changed")
     .to("langchain4j-ingest:reports");
 ----
 
+Each format needs its Tika parser module on the classpath: camel-tika ships the HTML and text
+modules only, so a PDF needs `org.apache.tika:tika-parser-pdf-module`. A format without its
+module parses to nothing and the document is answered `EMPTY`.
+
 `TikaTextDecode` ships with this component for exactly this route shape: it decodes Tika's
 text output as the pinned UTF-8 without consulting the exchange — a plain
 `getBody(String.class)` resolves its charset from the `CamelCharsetName` *header* first (then
