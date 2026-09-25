@@ -18,10 +18,12 @@ package org.apache.camel.component.aws2.s3.utils;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
+import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AWS2S3UtilsTest extends CamelTestSupport {
 
@@ -83,5 +85,105 @@ public class AWS2S3UtilsTest extends CamelTestSupport {
         // no suffix set — null
 
         assertEquals("", AWS2S3Utils.evaluateDestinationBucketSuffix(exchange, config));
+    }
+
+    // ---- determineKey ----
+
+    @Test
+    void keyFromHeaderIsUsedLiterallyAndNotEvaluated() {
+        Exchange exchange = createExchangeWithBody("body");
+        // a key coming from the header (e.g. inherited from a consumed object name) must be used as-is
+        exchange.getIn().setHeader(AWS2S3Constants.KEY, "${sys.user.name}.txt");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+
+        assertEquals("${sys.user.name}.txt", AWS2S3Utils.determineKey(exchange, config));
+    }
+
+    @Test
+    void keyFromConfigurationIsEvaluatedAsSimpleExpression() {
+        Exchange exchange = createExchangeWithBody("body");
+        exchange.getIn().setHeader("name", "report");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setKeyName("${header.name}.txt");
+
+        assertEquals("report.txt", AWS2S3Utils.determineKey(exchange, config));
+    }
+
+    @Test
+    void keyFromHeaderTakesPrecedenceOverConfiguration() {
+        Exchange exchange = createExchangeWithBody("body");
+        exchange.getIn().setHeader(AWS2S3Constants.KEY, "literal-key");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setKeyName("${header.name}.txt");
+
+        assertEquals("literal-key", AWS2S3Utils.determineKey(exchange, config));
+    }
+
+    @Test
+    void keyMissingFromHeaderAndConfigurationThrows() {
+        Exchange exchange = createExchangeWithBody("body");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+
+        assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineKey(exchange, config));
+    }
+
+    @Test
+    void keyFromConfigurationResolvingToNullThrows() {
+        Exchange exchange = createExchangeWithBody("body");
+        // a configured keyName whose simple expression resolves to null fails fast at the producer
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setKeyName("${header.missing}");
+
+        assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineKey(exchange, config));
+    }
+
+    // ---- determineBucketName ----
+
+    @Test
+    void bucketFromOverrideHeaderIsUsedLiterallyAndNotEvaluated() {
+        Exchange exchange = createExchangeWithBody("body");
+        exchange.getIn().setHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, "${sys.user.name}-bucket");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setBucketName("configured-bucket");
+
+        assertEquals("${sys.user.name}-bucket", AWS2S3Utils.determineBucketName(exchange, config));
+    }
+
+    @Test
+    void bucketFromConfigurationIsEvaluatedAsSimpleExpression() {
+        Exchange exchange = createExchangeWithBody("body");
+        exchange.getIn().setHeader("env", "prod");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setBucketName("bucket-${header.env}");
+
+        assertEquals("bucket-prod", AWS2S3Utils.determineBucketName(exchange, config));
+    }
+
+    @Test
+    void bucketOverrideHeaderTakesPrecedenceOverConfiguration() {
+        Exchange exchange = createExchangeWithBody("body");
+        exchange.getIn().setHeader(AWS2S3Constants.OVERRIDE_BUCKET_NAME, "header-bucket");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setBucketName("configured-bucket");
+
+        assertEquals("header-bucket", AWS2S3Utils.determineBucketName(exchange, config));
+    }
+
+    @Test
+    void bucketMissingFromHeaderAndConfigurationThrows() {
+        Exchange exchange = createExchangeWithBody("body");
+        AWS2S3Configuration config = new AWS2S3Configuration();
+
+        assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineBucketName(exchange, config));
+    }
+
+    @Test
+    void bucketFromConfigurationResolvingToNullThrows() {
+        Exchange exchange = createExchangeWithBody("body");
+        // a configured bucketName whose simple expression resolves to null fails fast at the producer
+        AWS2S3Configuration config = new AWS2S3Configuration();
+        config.setBucketName("${header.missing}");
+
+        assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineBucketName(exchange, config));
     }
 }
