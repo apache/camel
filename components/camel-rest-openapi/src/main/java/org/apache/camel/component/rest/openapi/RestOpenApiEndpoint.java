@@ -817,12 +817,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         throw new IllegalStateException(
-                "Unable to determine destination host for requests. The OpenApi specification"
-                                        + " does not specify `scheme` and `host` parameters, the specification URI is not absolute with `http` or"
-                                        + " `https` scheme, and no RestConfigurations configured with `scheme`, `host` and `port` were found for `"
-                                        + (determineComponentName() != null
-                                                ? determineComponentName() : "default" + "` component")
-                                        + " and there is no global RestConfiguration with those properties");
+        "Unable to determine destination host for requests. The OpenAPI specification"
+                                + " does not specify `scheme` and `host` parameters, the specification URI is not absolute with `http` or"
+                                + " `https` scheme, and no RestConfigurations configured with `scheme`, `host` and `port` were found for `"
+                                + (determineComponentName() != null ? determineComponentName() : "default")
+                                + "` component and there is no global RestConfiguration with those properties");
     }
 
     private Set<URI> getURIs(List<Server> servers) {
@@ -1017,14 +1016,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             }
         } catch (Exception e) {
             throw new IllegalArgumentException(
-                    "The given OpenApi specification cannot be loaded from: " + uri, e);
+                    "Failed to load OpenAPI specification from: " + uri, e);
         } finally {
             IOHelper.close(is);
         }
 
         // In theory there should be a message in the parse result, but it has disappeared...
         throw new IllegalArgumentException(
-                "The given OpenApi specification cannot be loaded from: " + uri);
+                "Could not deserialize OpenAPI specification from: " + uri);
     }
 
     static String pickBestScheme(final String specificationScheme, final List<String> schemes) {
