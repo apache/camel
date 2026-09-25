@@ -122,9 +122,10 @@
 
         <sonar.java.source>${jdk.version}</sonar.java.source>
         <!-- NOTE: this is required to correctly map each module coverage in Sonarqube. The ${maven.multiModuleProjectDirectory} may require some change
-            when upgrading to Maven 4.x, according to any of the new variables that will replace this one. -->
+            when upgrading to Maven 4.x, according to any of the new variables that will replace this one.
+            Two sources: per-module reports (from jacoco:report) and the aggregated report (from coverage module). -->
         <sonar.coverage.jacoco.xmlReportPaths>
-            ${maven.multiModuleProjectDirectory}/coverage/target/site/jacoco-aggregate/jacoco.xml
+            ${project.build.directory}/site/jacoco/jacoco.xml,${maven.multiModuleProjectDirectory}/coverage/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.cpd.exclusions>
             components/camel-jackson3/**,components/camel-jackson3xml/**,components/camel-test/camel-test-junit6/**
