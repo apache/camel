@@ -539,7 +539,9 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             newLines.add(":shortname: " + shortName);
 
             if (model instanceof ArtifactModel<?>) {
-                newLines.add(":artifactid: " + ((ArtifactModel<?>) model).getArtifactId());
+                ArtifactModel<?> artifactModel = (ArtifactModel<?>) model;
+                newLines.add(":groupid: " + artifactModel.getGroupId());
+                newLines.add(":artifactid: " + artifactModel.getArtifactId());
             }
             newLines.add(":description: " + model.getDescription());
             newLines.add(":since: " + model.getFirstVersionShort());

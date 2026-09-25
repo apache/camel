@@ -1,6 +1,7 @@
 = Webhook Component
 :doctitle: Webhook
 :shortname: webhook
+:groupid: org.apache.camel
 :artifactid: camel-webhook
 :description: Expose webhook endpoints to receive push notifications for other Camel components.
 :since: 3.0

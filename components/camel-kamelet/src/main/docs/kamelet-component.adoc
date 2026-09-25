@@ -1,6 +1,7 @@
 = Kamelet Component
 :doctitle: Kamelet
 :shortname: kamelet
+:groupid: org.apache.camel
 :artifactid: camel-kamelet
 :description: To call Kamelets
 :since: 3.8

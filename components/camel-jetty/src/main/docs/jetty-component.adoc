@@ -1,6 +1,7 @@
 = Jetty Component
 :doctitle: Jetty
 :shortname: jetty
+:groupid: org.apache.camel
 :artifactid: camel-jetty
 :description: Expose HTTP endpoints using Jetty 12.
 :since: 1.2

@@ -1,6 +1,7 @@
 = AI Tool Component
 :doctitle: AI Tool
 :shortname: ai-tool
+:groupid: org.apache.camel
 :artifactid: camel-ai-tool
 :description: Framework-agnostic consumer endpoint that registers a Camel route as an LLM tool in the shared AiToolRegistry.
 :since: 4.22

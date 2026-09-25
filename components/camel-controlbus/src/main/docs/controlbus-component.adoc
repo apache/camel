@@ -1,6 +1,7 @@
 = Control Bus Component
 :doctitle: Control Bus
 :shortname: controlbus
+:groupid: org.apache.camel
 :artifactid: camel-controlbus
 :description: Manage and monitor Camel routes.
 :since: 2.11

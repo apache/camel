@@ -1,6 +1,7 @@
 = Validator Component
 :doctitle: Validator
 :shortname: validator
+:groupid: org.apache.camel
 :artifactid: camel-validator
 :description: Validate the payload using XML Schema and JAXP Validation.
 :since: 1.1

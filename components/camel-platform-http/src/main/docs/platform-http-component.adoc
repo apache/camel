@@ -1,6 +1,7 @@
 = Platform HTTP Component
 :doctitle: Platform HTTP
 :shortname: platform-http
+:groupid: org.apache.camel
 :artifactid: camel-platform-http
 :description: Expose HTTP endpoints using the HTTP server available in the current platform.
 :since: 3.0

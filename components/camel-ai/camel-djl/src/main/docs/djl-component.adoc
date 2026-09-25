@@ -1,6 +1,7 @@
 = Deep Java Library Component
 :doctitle: Deep Java Library
 :shortname: djl
+:groupid: org.apache.camel
 :artifactid: camel-djl
 :description: Infer Deep Learning models from message exchanges data using Deep Java Library (DJL).
 :since: 3.3
@@ -571,4 +572,3 @@ context.getRegistry().bind("MyTranslator", translator);
 from("file:/data/mnist/0/10.png")
     .to("djl:cv/image_classification?model=MyModel&translator=MyTranslator");
 ----
-

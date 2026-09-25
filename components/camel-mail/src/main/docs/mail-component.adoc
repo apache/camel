@@ -1,6 +1,7 @@
 = Mail Component
 :doctitle: Mail
 :shortname: imap
+:groupid: org.apache.camel
 :artifactid: camel-mail
 :description: Send and receive emails using imap, pop3 and smtp protocols.
 :since: 1.0

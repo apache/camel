@@ -1,6 +1,7 @@
 = Undertow Component
 :doctitle: Undertow
 :shortname: undertow
+:groupid: org.apache.camel
 :artifactid: camel-undertow
 :description: Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
 :since: 2.16

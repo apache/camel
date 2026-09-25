@@ -1,6 +1,7 @@
 = Spring AI Vector Store Component
 :doctitle: Spring AI Vector Store
 :shortname: spring-ai-vector-store
+:groupid: org.apache.camel
 :artifactid: camel-spring-ai-vector-store
 :description: Spring AI Vector Store
 :since: 4.17
@@ -292,4 +293,3 @@ IMPORTANT: Make sure your vector store is configured with an embedding model to 
 * `topK` - Maximum number of results (default: 5)
 * `similarityThreshold` - Minimum similarity score 0-1 (default: 0.0)
 * `filterExpression` - Metadata-based filter expression
-

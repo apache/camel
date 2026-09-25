@@ -1,6 +1,7 @@
 = AI Observability Component
 :doctitle: AI Observability
 :shortname: ai-observability
+:groupid: org.apache.camel
 :artifactid: camel-ai-observability
 :description: GenAI observability support for Camel AI components (OpenTelemetry and Micrometer)
 :since: 4.23

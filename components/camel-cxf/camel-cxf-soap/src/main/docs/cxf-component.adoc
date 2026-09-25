@@ -1,6 +1,7 @@
 = CXF Component
 :doctitle: CXF
 :shortname: cxf
+:groupid: org.apache.camel
 :artifactid: camel-cxf-soap
 :description: Expose SOAP WebServices using Apache CXF or connect to external WebServices using CXF WS client.
 :since: 1.0

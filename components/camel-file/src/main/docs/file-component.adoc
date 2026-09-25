@@ -1,6 +1,7 @@
 = File Component
 :doctitle: File
 :shortname: file
+:groupid: org.apache.camel
 :artifactid: camel-file
 :description: Read and write files.
 :since: 1.0

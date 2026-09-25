@@ -1,6 +1,7 @@
 = Language Component
 :doctitle: Language
 :shortname: language
+:groupid: org.apache.camel
 :artifactid: camel-language
 :description: Execute scripts in any of the languages supported by Camel.
 :since: 2.5

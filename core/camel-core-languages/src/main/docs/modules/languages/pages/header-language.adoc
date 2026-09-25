@@ -1,6 +1,7 @@
 = Header Language
 :doctitle: Header
 :shortname: header
+:groupid: org.apache.camel
 :artifactid: camel-core-languages
 :description: Gets a header from the Exchange
 :since: 1.5

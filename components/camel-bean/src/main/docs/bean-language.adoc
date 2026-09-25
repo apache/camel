@@ -1,6 +1,7 @@
 = Bean Method Language
 :doctitle: Bean Method
 :shortname: bean
+:groupid: org.apache.camel
 :artifactid: camel-bean
 :description: Calls a Java bean method
 :since: 1.3
