@@ -39,6 +39,8 @@ public class HiveMQComponentConfigurer extends PropertyConfigurerSupport impleme
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.hivemq.HiveMQConfiguration.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": getOrCreateConfiguration(target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -64,6 +66,8 @@ public class HiveMQComponentConfigurer extends PropertyConfigurerSupport impleme
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.hivemq.HiveMQConfiguration.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -90,6 +94,8 @@ public class HiveMQComponentConfigurer extends PropertyConfigurerSupport impleme
         case "clientid":
         case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "configuration": return target.getConfiguration();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return getOrCreateConfiguration(target).getHeaderFilterStrategy();
         case "host": return getOrCreateConfiguration(target).getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

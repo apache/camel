@@ -24,6 +24,7 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,9 +80,19 @@ public class HiveMQConsumer extends DefaultConsumer {
     private void onMessage(Mqtt5Publish publish) {
         Exchange exchange = createExchange(false);
         exchange.getIn().setBody(publish.getPayloadAsBytes());
-        exchange.getIn().setHeader(HiveMQConstants.MQTT_TOPIC, publish.getTopic().toString());
-        exchange.getIn().setHeader(HiveMQConstants.MQTT_QOS, publish.getQos());
-        exchange.getIn().setHeader(HiveMQConstants.MQTT_RETAINED, publish.isRetain());
+        HeaderFilterStrategy strategy = endpoint.getHeaderFilterStrategy();
+        String topic = publish.getTopic().toString();
+        if (!strategy.applyFilterToExternalHeaders(HiveMQConstants.MQTT_TOPIC, topic, exchange)) {
+            exchange.getIn().setHeader(HiveMQConstants.MQTT_TOPIC, topic);
+        }
+        Object qos = publish.getQos();
+        if (!strategy.applyFilterToExternalHeaders(HiveMQConstants.MQTT_QOS, qos, exchange)) {
+            exchange.getIn().setHeader(HiveMQConstants.MQTT_QOS, qos);
+        }
+        boolean retained = publish.isRetain();
+        if (!strategy.applyFilterToExternalHeaders(HiveMQConstants.MQTT_RETAINED, retained, exchange)) {
+            exchange.getIn().setHeader(HiveMQConstants.MQTT_RETAINED, retained);
+        }
 
         ExecutorService worker = executor;
         if (worker == null) {
