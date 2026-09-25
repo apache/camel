@@ -73,6 +73,8 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     private final List<Resource> previousSources = new ArrayList<>();
     /** The content of the sources of the last successful reload, by location: what a failed reload goes back to. */
     private final Map<String, byte[]> lastGoodContent = new ConcurrentHashMap<>();
+    /** The sources of the last failed reload: retried when the properties change, as a missing property may be why. */
+    private final List<Resource> failedSources = new ArrayList<>();
 
     public RouteWatcherReloadStrategy() {
     }
@@ -204,7 +206,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 pr.onReload(resource.getLocation(), changed);
                 // trigger all routes to be reloaded
                 if (reloadRoutes) {
-                    onRouteReload(null, false);
+                    retryFailedOrReloadAll();
                 }
             } else {
                 // this may be a new properties file, so we need to add as new known location
@@ -222,6 +224,27 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             }
         }
         return reloaded;
+    }
+
+    /**
+     * Reloads the routes after the properties changed. A file whose reload failed before is loaded from disk again
+     * rather than left on the content that last ran: a missing property is a common reason for that failure, and the
+     * property may be what just changed. Without this the file only loads on its next save, so an application whose
+     * route uses a property added afterwards keeps running the previous route (CAMEL-25032).
+     */
+    private void retryFailedOrReloadAll() {
+        if (failedSources.isEmpty()) {
+            onRouteReload(null, false);
+            return;
+        }
+        List<Resource> retry = new ArrayList<>(failedSources);
+        LOG.info("Reloading {} file(s) that failed to load before the properties changed", retry.size());
+        try {
+            onRouteReload(retry, false);
+        } catch (Exception e) {
+            // the retry failed for its own reason, which restorePreviousRoutes logged; the properties did reload
+            LOG.debug("Retrying the failed reload after the properties changed failed too: {}", e.getMessage(), e);
+        }
     }
 
     private String getPropertiesByLocation(String loc) {
@@ -327,6 +350,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
             // update okay, so clear as we do not need to remember those anymore
             previousSources.clear();
+            failedSources.clear();
             if (removeEverything) {
                 // the route files are gone and nothing runs: the remembered content goes with them, so a later
                 // failed reload cannot put a deleted file back (CAMEL-24899)
@@ -401,8 +425,13 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         } catch (Exception e) {
             // the routes that ran before were removed above and the new ones failed to load: the app has no routes
             // until the next successful reload. Restore the previous routes now, without the failed resources, so a
-            // mistake in one file leaves the rest running (CAMEL-24860); the failed file loads on its next save
+            // mistake in one file leaves the rest running (CAMEL-24860); the failed file loads on its next save,
+            // or when the properties change and a missing property was the reason it failed (CAMEL-25032)
             restorePreviousRoutes(resources, e);
+            failedSources.clear();
+            if (resources != null) {
+                failedSources.addAll(resources);
+            }
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
     }

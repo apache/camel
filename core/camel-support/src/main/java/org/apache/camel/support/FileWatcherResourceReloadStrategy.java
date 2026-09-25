@@ -28,6 +28,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -222,6 +223,16 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         return "Starting ReloadStrategy to watch directory: " + dir;
     }
 
+    /**
+     * The properties of a batch are reloaded before the routes are. A reload is per file, and a route is built with the
+     * properties of the moment, so a route saved together with a property it uses fails with "Property with key [x] not
+     * found" when the route goes first - and the watch service reports the files of a batch in no particular order. The
+     * sort is stable, so files of the same kind keep the order they were reported in.
+     */
+    static void orderPropertiesFirst(List<File> changed) {
+        changed.sort(Comparator.comparingInt(f -> f.getName().endsWith(".properties") ? 0 : 1));
+    }
+
     private WatchKey registerPathToWatcher(WatchEvent.Modifier modifier, Path path, WatchService watcher) throws IOException {
         WatchKey key;
         if (modifier != null) {
@@ -374,6 +385,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         }
                         changed.add(file);
                     }
+                    orderPropertiesFirst(changed);
                     for (File file : changed) {
                         String name = FileUtil.compactPath(file.getPath());
                         LOG.debug("Detected Modified/Created file: {}", name);
