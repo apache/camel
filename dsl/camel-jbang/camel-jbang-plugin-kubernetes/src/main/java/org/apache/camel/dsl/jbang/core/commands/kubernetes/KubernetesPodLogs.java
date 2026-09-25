@@ -152,6 +152,7 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
         try {
             Thread.sleep(2000L);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             printer().printf("Interrupted while waiting for pod - %s%n", e.getMessage());
         }
     }

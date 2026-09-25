@@ -95,6 +95,7 @@ public class ConcurrentRequestsThrottler extends AbstractThrottler {
             return doProcess(exchange, callback, state, queuedStart, doneSync);
 
         } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
             return handleInterrupt(exchange, callback, e, doneSync);
         } catch (final Exception t) {
             return handleException(exchange, callback, t, doneSync);
