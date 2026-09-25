@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
 import com.styra.opa.OPAClient;
+import com.styra.opa.OPAResult;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -77,5 +79,29 @@ public class OpaRestEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
         // the SDK reports an undefined decision as an exception, which the base turns into a fail-closed error;
         // the WASM engine is made to behave identically
         return client.evaluate(getPolicyPath(), input, Object.class);
+    }
+
+    @Override
+    protected Map<String, BatchElement> evaluateBatchDecisions(Map<String, Map<String, Object>> inputs)
+            throws Exception {
+        // one HTTP round-trip via OPA's batch endpoint; the SDK falls back to sequential calls if the server does
+        // not implement it. Each entry carries its own decision or its own failure, so one bad element does not sink
+        // the batch.
+        Map<String, Object> batchInputs = new LinkedHashMap<>(inputs);
+        Map<String, OPAResult> results = client.evaluateBatch(getPolicyPath(), batchInputs);
+        Map<String, BatchElement> outcomes = new LinkedHashMap<>();
+        for (Map.Entry<String, OPAResult> entry : results.entrySet()) {
+            OPAResult result = entry.getValue();
+            if (result != null && result.success()) {
+                outcomes.put(entry.getKey(), new BatchElement(result.getValue(), null));
+            } else {
+                Exception failure = result != null ? result.getException() : null;
+                if (failure == null) {
+                    failure = new IllegalStateException("no result returned for batch element " + entry.getKey());
+                }
+                outcomes.put(entry.getKey(), new BatchElement(null, failure));
+            }
+        }
+        return outcomes;
     }
 }

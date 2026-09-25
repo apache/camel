@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.netty;
 
+import java.nio.charset.StandardCharsets;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Utility test to verify netty type converter.
@@ -62,6 +66,33 @@ public class NettyConverterTest extends CamelTestSupport {
         String result = context.getTypeConverter().convertTo(String.class, buf);
         assertNotNull(result);
         assertEquals(PAYLOAD, result);
+    }
+
+    /**
+     * A heap (array-backed) buffer whose backing array is larger than the readable region, and whose reader index has
+     * been advanced past a prefix, must convert to exactly the readable bytes - not the whole backing array. Converting
+     * via buffer.array() used to return the full backing array (prefix + payload + spare capacity).
+     */
+    @Test
+    public void testConversionHeapBufferReturnsOnlyReadableBytes() {
+        byte[] payload = PAYLOAD.getBytes(StandardCharsets.UTF_8);
+        byte[] prefix = "SKIP".getBytes(StandardCharsets.UTF_8);
+        // Heap buffer with spare capacity so its backing array is larger than the readable region
+        ByteBuf heap = Unpooled.buffer(prefix.length + payload.length + 32);
+        try {
+            heap.writeBytes(prefix);
+            heap.writeBytes(payload);
+            // Skip the prefix: only "payload" is readable now
+            heap.readerIndex(prefix.length);
+
+            assertTrue(heap.hasArray(), "expected an array-backed heap buffer for this test");
+
+            byte[] result = NettyConverter.toByteArray(heap, null);
+            assertEquals(payload.length, result.length);
+            assertEquals(PAYLOAD, new String(result, StandardCharsets.UTF_8));
+        } finally {
+            heap.release();
+        }
     }
 
 }

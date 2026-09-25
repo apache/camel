@@ -613,6 +613,24 @@ structurally significant in Camel's own `key=value&key=value` query syntax.
 Code that asserts a literal, fully-normalized endpoint URI string containing one of those characters in a
 query value may need to update the expected string to the (now consistently) unencoded form.
 
+=== camel-core - masking of sensitive values in endpoint URIs
+
+`URISupport.sanitizeUri()`, which masks secrets in endpoint URIs shown in logs, events, JMX names and error
+messages, now masks some values it used to miss, so the masked form of a URI can differ from earlier releases:
+
+* option names are matched ignoring dashes, so `access-key` is masked like `accessKey`
+* a `RAW(...)` or `RAW{...}` value is masked up to the bracket that ends it, also when the value contains that bracket
+* the userinfo password of every URI in a text is masked, not only the last one
+* the `Unknown parameters=[...]` message of an endpoint that cannot be created masks the values of sensitive parameters
+
+The keywords added with `camel.main.additionalSensitiveKeywords` (or `URISupport.addSanitizeKeywords()`) now apply to
+every matching parameter, not only the first one, and they are added to the keywords configured earlier instead of
+replacing them. The keywords apply to the whole JVM and cannot be removed.
+
+`SensitiveUtils.maskUserInfoCredentials()`, used when masking log messages, uses the same userinfo rule: the userinfo
+ends at the last `@` before the path, so a password may contain `@`, and an `@` in the query of a URI is no longer
+taken as the end of a password.
+
 === camel-core - property placeholders in pollEnrich
 
 Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
@@ -918,6 +936,13 @@ It is unset by default, which keeps the previous behaviour of accepting any path
 Additionally, a local input path that does not exist is now reported as a `File not found` `IOException`
 before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
 the failure surfaced later, from the Docling process or API call.
+
+The `CamelDoclingOutputFilePath` header, which selects the CLI output directory, is now normalized lexically
+(redundant separators and `.`/`..` segments are resolved) before it is passed to Docling; a header value
+without such segments is still used as given. A new `outputBaseDirectory` option additionally confines the
+header the same way `inputBaseDirectory` confines input paths - when set, an output path that resolves outside
+it, including an absolute path, is rejected with an `IOException`. `outputBaseDirectory` is unset by default.
+
 === camel-azure-eventgrid
 
 The `CamelAzureEventGridDataVersion` header (`EventGridConstants.DATA_VERSION`) has been removed. The
@@ -944,6 +969,20 @@ without supplying their own `hazelcastInstance` must now provide a `Config` with
 The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
+=== camel-netty - NettyConverter.toByteArray returns a copy of the buffer's readable bytes
+
+The `ByteBuf` to `byte[]` type converter (`NettyConverter.toByteArray`, also used when converting a Netty
+HTTP response body and by `camel-hl7`, `camel-lumberjack` and `camel-syslog`) now always returns a copy of
+exactly the buffer's readable region (`readerIndex()`..`readableBytes()`).
+
+Previously, for an array-backed (heap) buffer it returned the buffer's whole backing array directly. That
+could include bytes outside the readable region and, for a pooled buffer, bytes belonging to other
+allocations; the returned array was also a live reference into a buffer that could later be recycled.
+
+If your code relied on mutating the returned `byte[]` to write through to the original `ByteBuf`, that no
+longer has any effect. The converter now behaves consistently for heap and direct, pooled and unpooled
+buffers.
 
 === camel-http, camel-http-common, camel-netty-http, camel-undertow, camel-vertx-http - property placeholders in HTTP URI override headers
 
@@ -2746,6 +2785,18 @@ was published as a second, undocumented spelling of the same setting. Routes tha
 `databaseOutServerName` should use `xstreamOutServerName` instead; it configures the same XStream outbound
 server and is unchanged.
 
+=== camel-pulsar - the producer no longer replaces the body with the message id
+
+After sending, the producer used to overwrite the message body with the `MessageId` returned by the
+broker, so every step after the `to("pulsar:...")` saw a `MessageId` instead of the payload, and a route
+such as `.to("pulsar:a").to("pulsar:b")` published a Java-serialized `MessageId` to the second topic.
+That behaviour dates from the asynchronous send added in 3.20 (CAMEL-16030).
+
+The body is now left untouched, and the assigned id is reported on the new
+`CamelPulsarProducerMessageId` header instead.
+
+A route that read the `MessageId` from the body must read that header instead.
+
 === camel-jolt - switch from unmaintained bazaarvoice jolt to the jolt-community fork
 
 The JOLT library dependency has been migrated from `com.bazaarvoice.jolt:jolt-core` to
@@ -2818,6 +2869,17 @@ allocation; a declared length outside 0–1024 is now rejected instead of attemp
 Not changed: the HMAC key is still derived from the same key material as the cipher. Separating them
 would change the MAC written into the message and so could not be read by earlier versions; that is
 tracked separately.
+=== camel-debezium - a failed embedded engine is now reported
+
+The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops
+with an error - for example because the connector cannot reach the database, or the offset store cannot be
+read - the failure is passed to the consumer's `ExceptionHandler`, and the consumer's health check reports
+`DOWN` with that error.
+
+Previously the engine reported such failures only through its own logger, so the route stayed started and
+healthy while no longer receiving any change event. Deployments that use readiness or liveness probes will
+now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
+The engine is still not restarted automatically.
 
 === camel-seda - purging the queue completes the discarded exchanges
 

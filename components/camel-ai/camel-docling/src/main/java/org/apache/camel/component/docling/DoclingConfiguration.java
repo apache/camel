@@ -91,6 +91,14 @@ public class DoclingConfiguration implements Cloneable {
                             + " restriction is applied.")
     private String inputBaseDirectory;
 
+    @UriParam(label = "security")
+    @Metadata(description = "When set, the output directory passed to the docling CLI must resolve inside this"
+                            + " directory once normalized. Applies to the CamelDoclingOutputFilePath header. The"
+                            + " check is lexical and does not resolve symbolic links, matching inputBaseDirectory."
+                            + " When empty, no directory restriction is applied and the header value is only"
+                            + " normalized.")
+    private String outputBaseDirectory;
+
     @UriParam
     @Metadata(description = "Include the content of the output file in the exchange body and delete the output file",
               defaultValue = "false")
@@ -360,6 +368,14 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setInputBaseDirectory(String inputBaseDirectory) {
         this.inputBaseDirectory = inputBaseDirectory;
+    }
+
+    public String getOutputBaseDirectory() {
+        return outputBaseDirectory;
+    }
+
+    public void setOutputBaseDirectory(String outputBaseDirectory) {
+        this.outputBaseDirectory = outputBaseDirectory;
     }
 
     public boolean isContentInBody() {
