@@ -78,7 +78,7 @@ public class HiveMQConfiguration implements Cloneable {
     /**
      * Whether to enable SSL/TLS encryption for the broker connection.
      */
-    @UriParam(defaultValue = "false")
+    @UriParam(defaultValue = "false", label = "security", security = "insecure:ssl", insecureValue = "false")
     private boolean ssl;
 
     public String getHost() {
