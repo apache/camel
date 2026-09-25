@@ -2844,6 +2844,31 @@ are unaffected. Routes that set the header by its literal string name, or that u
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
 
+=== camel-crypto
+
+Three changes to `CryptoDataFormat`, none of which affects the format of data already written.
+
+*A per-message initialization vector when inlining.* `marshal` used to throw
+`Inlining cannot be performed, as no initialization vector was specified` when
+`shouldInlineInitializationVector` was set without a statically configured vector — which pushed routes
+into reusing one vector for every message, the thing inlining exists to avoid. A fresh vector is now
+generated per message when none is supplied. Because the vector is written into the message, readers pick
+it up from the stream and need no change. A vector supplied explicitly, by configuration or by the
+`CamelCryptoInitVector` header, is still used as given.
+
+*Authentication failures report uniformly.* A tampered message previously surfaced two distinguishable
+outcomes: `Given final block not properly padded` from the cipher, or `Expected mac did not match actual
+mac` from the MAC check. A caller able to submit ciphertext and observe which one came back can use that
+distinction to recover plaintext. Both now report `Message authentication failed`, and the message no
+longer includes the expected and computed MAC values — the computed one is `HMAC_k` over the plaintext
+just produced. Code matching on the old text must be updated.
+
+*The inlined vector length is bounded.* The length prefix is read from the message and used to size an
+allocation; a declared length outside 0–1024 is now rejected instead of attempted.
+
+Not changed: the HMAC key is still derived from the same key material as the cipher. Separating them
+would change the MAC written into the message and so could not be read by earlier versions; that is
+tracked separately.
 === camel-debezium - a failed embedded engine is now reported
 
 The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops
