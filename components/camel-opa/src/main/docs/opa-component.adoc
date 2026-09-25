@@ -87,6 +87,26 @@ from("platform-http:/orders")
 The decision headers are set here too, so an `onException(CamelAuthorizationException.class)` handler can read
 `CamelOpaDecision` to build a meaningful error response.
 
+The policy can also evaluate a WebAssembly bundle in-process, which is the mode to prefer for a hot path such as
+authorizing an AI tool call, where a network hop per decision is not wanted:
+
+[source,java]
+------------------------------------------------------------
+OpaSecurityPolicy opaPolicy = new OpaSecurityPolicy();
+opaPolicy.setPolicyPath("authz/orders/allow");
+opaPolicy.setEvaluationMode("wasm");
+opaPolicy.setPolicyBundle("classpath:orders-bundle.tar.gz");
+
+from("platform-http:/orders")
+    .policy(opaPolicy)
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+The decision contract is identical to `rest` mode - the same `CamelOpaDecision` headers, and a
+`CamelAuthorizationException` on a deny - so a route need not know which engine evaluated it. `serverUrl`,
+`bearerToken` and the readiness check do not apply in `wasm` mode; the *Evaluation modes* section below covers
+building a bundle and what each mode gives up.
+
 == The input document
 
 Camel sends OPA an `input` document shaped like this:
