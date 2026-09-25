@@ -97,6 +97,7 @@ public class CamelCliDebuggerFactory implements DebuggerFactory {
                         watch.restart();
                     }
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     return null;
                 }
             }

@@ -80,7 +80,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             // wait for initialization in case consumer is active before startup listener above has been executed
             initialized.await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            // ignore
+            Thread.currentThread().interrupt();
         }
         LOG.debug("Received an alertNotification {}", alertNotification);
 
@@ -104,7 +104,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             // wait for initialization in case consumer is active before startup listener above has been executed
             initialized.await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            // ignore
+            Thread.currentThread().interrupt();
         }
         LOG.debug("Received a deliverSm {}", deliverSm);
 
@@ -137,7 +137,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             // wait for initialization in case consumer is active before startup listener above has been executed
             initialized.await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            // ignore
+            Thread.currentThread().interrupt();
         }
         LOG.debug("Received a dataSm {}", dataSm);
 
