@@ -402,13 +402,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                         if (!metadata.deprecationNote().isEmpty()) {
                             o.setDeprecationNote(metadata.deprecationNote());
                         }
-                        o.setSecret(metadata.secret());
-                        String sec = metadata.security();
-                        if (Strings.isNullOrEmpty(sec) && metadata.secret()) {
-                            sec = "secret";
-                        }
-                        o.setSecurity(sec);
-                        o.setInsecureValue(metadata.insecureValue());
+                        applySecurityMetadata(o, metadata);
                         o.setJavaType(metadata.javaType());
                         // special if the property is for input (such as AGGREGATION_COMPLETE_CURRENT_GROUP)
                         if (labels.startsWith("consumer,")) {
@@ -601,6 +595,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         EipOptionModel ep = createOption(name, displayName, "attribute", fieldTypeName,
                 required, defaultValue, label, docComment, deprecated, deprecationNote, isEnum, enums,
                 null, false, isDuration, important);
+        applySecurityMetadata(ep, metadata);
         eipOptions.add(ep);
 
         return false;
@@ -658,6 +653,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         EipOptionModel ep = createOption(name, displayName, "value", fieldTypeName, required,
                 defaultValue, label, docComment, deprecated, deprecationNote, false, null,
                 null, false, isDuration, important);
+        applySecurityMetadata(ep, metadata);
         eipOptions.add(ep);
     }
 
@@ -747,6 +743,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, label,
                     docComment, deprecated, deprecationNote, isEnum, enums,
                     oneOfTypes, asPredicate, isDuration, important);
+            applySecurityMetadata(ep, metadata);
             eipOptions.add(ep);
         }
     }
@@ -795,6 +792,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             EipOptionModel ep = createOption(name, displayName, kind, fieldTypeName, required, defaultValue, label, docComment,
                     deprecated, deprecationNote, false, null, oneOfTypes,
                     false, false, important);
+            applySecurityMetadata(ep, metadata);
             eipOptions.add(ep);
         }
     }
@@ -1497,6 +1495,32 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setAsPredicate(asPredicate);
         option.setImportant(important);
         return option;
+    }
+
+    /**
+     * Copy the security metadata off {@code @Metadata} onto the option.
+     * <p/>
+     * {@link EndpointSchemaGeneratorMojo} does the equivalent for component options. Without this the marker is
+     * silently dropped for every model, dataformat and language option, which in turn keeps them out of the generated
+     * {@code SecurityUtils} and {@code SensitiveUtils} tables - so the option gets no prod-profile enforcement, no
+     * scanner coverage and no value masking, with nothing in the build to signal it.
+     * <p/>
+     * The resolution mirrors the component one: {@code secret = true} and {@code security = "secret"} each imply the
+     * other. This is not folded into {@link #createOption} because most of its callers build synthetic options (such as
+     * {@code routes} or {@code autoStartup}) that have no annotation to read.
+     */
+    static void applySecurityMetadata(EipOptionModel option, Metadata metadata) {
+        if (metadata == null) {
+            return;
+        }
+        String security = metadata.security();
+        boolean secret = metadata.secret() || "secret".equals(security);
+        if (Strings.isNullOrEmpty(security) && secret) {
+            security = "secret";
+        }
+        option.setSecret(secret);
+        option.setSecurity(Strings.isNullOrEmpty(security) ? null : security);
+        option.setInsecureValue(Strings.isNullOrEmpty(metadata.insecureValue()) ? null : metadata.insecureValue());
     }
 
     private boolean hasSuperClass(Class<?> classElement, String superClassName) {

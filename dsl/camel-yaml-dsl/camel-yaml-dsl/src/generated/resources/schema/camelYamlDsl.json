@@ -11220,7 +11220,8 @@
           "keyPassword" : {
             "type" : "string",
             "title" : "Key Password",
-            "description" : "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption."
+            "description" : "The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.",
+            "format" : "password"
           },
           "mgfAlgorithm" : {
             "type" : "string",
@@ -11237,7 +11238,8 @@
           "passPhrase" : {
             "type" : "string",
             "title" : "Pass Phrase",
-            "description" : "A String used as passPhrase to encrypt/decrypt content."
+            "description" : "A String used as passPhrase to encrypt/decrypt content.",
+            "format" : "password"
           },
           "passPhraseByte" : {
             "type" : "string",

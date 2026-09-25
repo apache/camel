@@ -52,6 +52,7 @@
   "oauthtokenurl",
   "p12filename",
   "passphrase",
+  "passphrasebyte",
   "password",
   "personalaccesstoken",
   "postmanapikey",
