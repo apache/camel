@@ -31,6 +31,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * content-length handling.
  *
  */
+@Disabled("MinIO was deprecated in 4.23. The upstream project is closed and container images were aggressively removed from registries.")
 class MinioPutObjectBodyTypesIT extends MinioIntegrationTestSupport {
 
     private static final String BUCKET = "test-body-types";
