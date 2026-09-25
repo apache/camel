@@ -34,7 +34,7 @@ public class ConsumeDataIT extends ZooKeeperITSupport {
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] { new RouteBuilder() {
             public void configure() {
-                from("zookeeper://{{zookeeper.connection.string}}/camel?repeat=true")
+                from("zookeeper://{{zookeeper.connection.string}}/camel-ConsumeDataIT?repeat=true")
                         .to("mock:zookeeper-data");
             }
         } };
@@ -64,7 +64,7 @@ public class ConsumeDataIT extends ZooKeeperITSupport {
         updateNode(10);
 
         delay(500);
-        client.deleteAll("/camel");
+        client.deleteAll("/camel-ConsumeDataIT");
 
         MockEndpoint.assertIsSatisfied(30, TimeUnit.SECONDS);
 
@@ -90,7 +90,7 @@ public class ConsumeDataIT extends ZooKeeperITSupport {
         delay(500);
 
         // by now we are back waiting for a change so delete the node
-        client.deleteAll("/camel");
+        client.deleteAll("/camel-ConsumeDataIT");
 
         // recreate and update a number of times.
         createCamelNode();
@@ -98,20 +98,20 @@ public class ConsumeDataIT extends ZooKeeperITSupport {
 
         MockEndpoint.assertIsSatisfied(30, TimeUnit.SECONDS);
 
-        client.deleteAll("/camel");
+        client.deleteAll("/camel-ConsumeDataIT");
     }
 
     private void updateNode(int times) throws Exception {
         for (int x = 1; x < times; x++) {
             delay(500);
-            client.setData("/camel", testPayload + "_" + x, -1);
+            client.setData("/camel-ConsumeDataIT", testPayload + "_" + x, -1);
         }
     }
 
     private void createCamelNode() throws Exception {
         try {
             delay(1000);
-            client.create("/camel", testPayload + "_0");
+            client.create("/camel-ConsumeDataIT", testPayload + "_0");
         } catch (NodeExistsException e) {
         }
     }
