@@ -39,6 +39,7 @@ import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -668,7 +669,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                         getEndpoint(), "There are " + copy.size()
                                        + " scheduler parameters that couldn't be set on the endpoint."
                                        + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                                       + " Unknown parameters=[" + copy + "]");
+                                       + " Unknown parameters=[" + URISupport.sanitizeParameters(copy) + "]");
             }
         }
         afterConfigureScheduler(scheduler, newScheduler);

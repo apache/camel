@@ -613,6 +613,24 @@ structurally significant in Camel's own `key=value&key=value` query syntax.
 Code that asserts a literal, fully-normalized endpoint URI string containing one of those characters in a
 query value may need to update the expected string to the (now consistently) unencoded form.
 
+=== camel-core - masking of sensitive values in endpoint URIs
+
+`URISupport.sanitizeUri()`, which masks secrets in endpoint URIs shown in logs, events, JMX names and error
+messages, now masks some values it used to miss, so the masked form of a URI can differ from earlier releases:
+
+* option names are matched ignoring dashes, so `access-key` is masked like `accessKey`
+* a `RAW(...)` or `RAW{...}` value is masked up to the bracket that ends it, also when the value contains that bracket
+* the userinfo password of every URI in a text is masked, not only the last one
+* the `Unknown parameters=[...]` message of an endpoint that cannot be created masks the values of sensitive parameters
+
+The keywords added with `camel.main.additionalSensitiveKeywords` (or `URISupport.addSanitizeKeywords()`) now apply to
+every matching parameter, not only the first one, and they are added to the keywords configured earlier instead of
+replacing them. The keywords apply to the whole JVM and cannot be removed.
+
+`SensitiveUtils.maskUserInfoCredentials()`, used when masking log messages, uses the same userinfo rule: the userinfo
+ends at the last `@` before the path, so a password may contain `@`, and an `@` in the query of a URI is no longer
+taken as the end of a password.
+
 === camel-core - property placeholders in pollEnrich
 
 Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
