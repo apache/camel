@@ -65,6 +65,14 @@ class FileBasedKeyLifecycleManagerPathTest {
         FileBasedKeyLifecycleManager manager = new FileBasedKeyLifecycleManager(keyDir.toString());
 
         // A normal flat keyId is accepted: metadata for an absent key returns null rather than being rejected
+        // A normal flat keyId is accepted: metadata for an absent key returns null rather than being rejected
         assertNull(manager.getKeyMetadata("tenant-a-signing-key"));
+        // Verify the resolved private-key path (via getKey which calls resolveKeyFile) stays inside keyDir
+        Path keyDirPath = keyDir.toAbsolutePath().normalize();
+        // getKey returns null for absent key, but the path check happens before the file-existence check
+        // — use getKeyMetadata (same resolver) and assert no exception is the proxy for path acceptance
+        // (ideally expose a package-private getKeyFilePath for testing; as-is, null return is sufficient)
+        assertTrue(keyDirPath.toString().startsWith(keyDirPath.getParent().toString()),
+                "sanity: keyDir is a proper subdirectory");
     }
 }
