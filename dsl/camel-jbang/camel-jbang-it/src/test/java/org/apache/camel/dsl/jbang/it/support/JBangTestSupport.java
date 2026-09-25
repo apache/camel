@@ -110,17 +110,23 @@ public abstract class JBangTestSupport {
             } catch (Exception | AssertionError e) {
                 logger.debug("failed to clean up test files from /home/jbang: {}", e.getMessage());
             }
+            for (String key : new String[]{"runtime", "gav", "directory"}) {
+                try {
+                    execute("config unset " + key);
+                } catch (Exception | AssertionError e) {
+                    logger.debug("failed to unset config key {}: {}", key, e.getMessage());
+                }
+            }
             try {
-                execute("config unset runtime");
-                execute("config unset gav");
-                execute("config unset directory");
                 String forceRunVersion = System.getProperty(CliProperties.FORCE_RUN_VERSION, "");
                 if (!forceRunVersion.isEmpty()) {
                     execute("version set " + forceRunVersion);
                 } else {
                     execute("config unset camel-version");
                 }
-            } catch (Exception e) {
+            } catch (Exception | AssertionError e) {
+                logger.debug("failed to reset camel-version: {}", e.getMessage());
+            }
                 logger.debug("failed to reset config: {}", e.getMessage());
             }
             logger.debug("clean up data folder");
