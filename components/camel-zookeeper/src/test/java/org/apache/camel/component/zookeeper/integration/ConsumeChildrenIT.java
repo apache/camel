@@ -49,26 +49,36 @@ public class ConsumeChildrenIT extends ZooKeeperITSupport {
 
     @Test
     public void shouldAwaitCreationAndGetDataNotification() throws Exception {
+        System.out.println("begin test ConsumeChildrenIT.shouldAwaitCreationAndGetDataNotification");
         MockEndpoint mock = getMockEndpoint("mock:zookeeper-data");
         mock.expectedMessageCount(5);
 
+        System.out.println("Create persistent");
         client.createPersistent("/grimm", "parent");
+        System.out.println("Create hansel child");
         client.create("/grimm/hansel", "child");
+        System.out.println("Create gretel child");
         client.create("/grimm/gretel", "child");
+        System.out.println("Delete hansel child");
         client.delete("/grimm/hansel");
+        System.out.println("Delete gretel child");
         client.delete("/grimm/gretel");
 
         MockEndpoint.assertIsSatisfied(context);
+        System.out.println("5 messages received");
 
         validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"),
                 createChildListing("hansel", "gretel"), createChildListing("gretel"),
                 createChildListing());
+        System.out.println("End test ConsumeChildrenIT.shouldAwaitCreationAndGetDataNotification");
     }
 
     private void validateExchangesContainListings(MockEndpoint mock, List<?>... expected)
             throws CamelExchangeException {
+        System.out.println("start validation of exchange");
         int index = 0;
         for (Exchange received : mock.getReceivedExchanges()) {
+            System.out.println("received Exchange: " + received);
             Watcher.Event.EventType expectedEvent;
             if (index == 0) {
                 expectedEvent = Watcher.Event.EventType.NodeCreated;
@@ -77,6 +87,9 @@ public class ConsumeChildrenIT extends ZooKeeperITSupport {
             }
             List<?> actual = received.getIn().getMandatoryBody(List.class);
             assertEquals(expected[index++], actual);
+            System.out.println(
+                    "Event type header: " + ExchangeHelper.getMandatoryHeader(received, ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE,
+                            Watcher.Event.EventType.class));
             assertEquals(expectedEvent, ExchangeHelper.getMandatoryHeader(received, ZooKeeperMessage.ZOOKEEPER_EVENT_TYPE,
                     Watcher.Event.EventType.class));
             validateChildrenCountChangesEachTime(mock);
