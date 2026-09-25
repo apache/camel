@@ -97,12 +97,16 @@ counted as inflight and its unit of work not done. The same now happens when the
 An exception thrown from the `after` method of an advice no longer replaces the exception the exchange has already
 failed with. Instead, it is added as a suppressed exception to the existing exception.
 
-=== @PropertyInject - an invalid property value is an error
+=== @PropertyInject - an invalid property value is an error (Breaking change)
 
 When a property injected with `@PropertyInject` has a value that cannot be converted to the type of the field or
 parameter, the injection now fails. Prior to Camel 4.23 the `defaultValue` was silently used instead, so a mistake in
 the configured value (such as `port=80a` for an `int`) went unnoticed. The `defaultValue` is still used when the
 property does not exist.
+
+This can break an application that has such an invalid value configured and worked because the `defaultValue` was
+good enough, as it now fails when starting. To keep the previous result, correct the configured value, or remove the
+property so the `defaultValue` is used.
 
 === Circuit Breaker EIP
 
