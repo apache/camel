@@ -79,7 +79,7 @@ public final class ZooKeeperClusteredRoutePolicyFactoryIT {
             ZooKeeperClusterService service = new ZooKeeperClusterService();
             service.setId("node-" + id);
             service.setNodes(connectString);
-            service.setBasePath("/camel");
+            service.setBasePath("/camel-ZooKeeperClusteredRoutePolicyFactoryIT");
 
             context.disableJMX();
             context.getCamelContextExtension().setName("context-" + id);
