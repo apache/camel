@@ -923,7 +923,11 @@ be closed as `not a vulnerability`.
   `circuitBreaker`, `resilience4j`, JVM heap limits, and the relevant
   component-level options. Algorithmic-complexity attacks in third-party
   libraries are reported to the upstream project unless Camel exposes the
-  parser in a way that bypasses the library's own limits.
+  parser in a way that bypasses the library's own limits. A resource limit
+  that Camel itself offers, such as `maxDecompressedSize` on the Zip File and
+  Tar File data formats, is defence in depth for a property the framework
+  does not claim: a defect that stops it enforcing its documented value is a
+  bug, fixed as `VALID-HARDENING` rather than published as a CVE.
 * *A deployer placing `camel-management`, the developer console,
   `camel-jolokia`, JMX or another management surface on a public network.*
   These are management surfaces; they assume a trusted network. The
