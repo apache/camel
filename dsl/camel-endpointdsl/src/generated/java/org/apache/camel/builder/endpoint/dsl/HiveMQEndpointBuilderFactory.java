@@ -197,12 +197,26 @@ public interface HiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Password for authentication with the HiveMQ broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
          * Whether to enable SSL/TLS encryption for the broker connection.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param ssl the value to set
          * @return the dsl builder
@@ -217,27 +231,13 @@ public interface HiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param ssl the value to set
          * @return the dsl builder
          */
         default HiveMQEndpointConsumerBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
-            return this;
-        }
-        /**
-         * Password for authentication with the HiveMQ broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default HiveMQEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
             return this;
         }
         /**
@@ -548,12 +548,26 @@ public interface HiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Password for authentication with the HiveMQ broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
          * Whether to enable SSL/TLS encryption for the broker connection.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param ssl the value to set
          * @return the dsl builder
@@ -568,27 +582,13 @@ public interface HiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param ssl the value to set
          * @return the dsl builder
          */
         default HiveMQEndpointProducerBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
-            return this;
-        }
-        /**
-         * Password for authentication with the HiveMQ broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default HiveMQEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
             return this;
         }
         /**
@@ -828,12 +828,26 @@ public interface HiveMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Password for authentication with the HiveMQ broker.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
          * Whether to enable SSL/TLS encryption for the broker connection.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param ssl the value to set
          * @return the dsl builder
@@ -848,27 +862,13 @@ public interface HiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: common
+         * Group: security
          * 
          * @param ssl the value to set
          * @return the dsl builder
          */
         default HiveMQEndpointBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
-            return this;
-        }
-        /**
-         * Password for authentication with the HiveMQ broker.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default HiveMQEndpointBuilder password(String password) {
-            doSetProperty("password", password);
             return this;
         }
         /**
