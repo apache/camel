@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -73,6 +74,9 @@ public class XsltBuilder implements Processor {
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
     private boolean failOnNullBody = true;
     private URIResolver uriResolver;
+    // the resolver installed on the transformer for runtime document() resolution; enforces the factory's
+    // ACCESS_EXTERNAL_STYLESHEET restriction while stylesheet compilation (xsl:include/import) stays unrestricted
+    private volatile URIResolver runtimeUriResolver;
     private boolean deleteOutputFile;
     private ErrorListener errorListener;
     private EntityResolver entityResolver;
@@ -479,7 +483,7 @@ public class XsltBuilder implements Processor {
         if (uriResolver == null) {
             uriResolver = new XsltUriResolver(exchange.getContext(), null);
         }
-        transformer.setURIResolver(uriResolver);
+        transformer.setURIResolver(resolveRuntimeUriResolver());
         if (errorListener == null) {
             // set our error listener, so we can capture errors and report them back on the exchange
             transformer.setErrorListener(new DefaultTransformErrorHandler(exchange));
@@ -496,6 +500,43 @@ public class XsltBuilder implements Processor {
         transformer.setParameter("exchange", exchange);
         transformer.setParameter("in", exchange.getIn());
         transformer.setParameter("out", exchange.getOut());
+    }
+
+    /**
+     * Resolves the resolver to install on the transformer for runtime {@code document()} resolution. When Camel's own
+     * {@link XsltUriResolver} is in use and the transformer factory restricts external stylesheet access, a restricted
+     * copy is installed so {@code document()} honours {@code ACCESS_EXTERNAL_STYLESHEET}. Stylesheet compilation
+     * ({@code xsl:include} / {@code xsl:import}) keeps using the unrestricted resolver on the factory, so a route
+     * author's own includes are unaffected. The result is cached as the factory configuration is fixed once the builder
+     * is initialized.
+     */
+    private URIResolver resolveRuntimeUriResolver() {
+        URIResolver runtime = runtimeUriResolver;
+        if (runtime == null) {
+            runtime = uriResolver;
+            if (uriResolver instanceof XsltUriResolver xsltUriResolver) {
+                Set<String> allowedExternalProtocols = resolveAllowedExternalProtocols();
+                if (allowedExternalProtocols != null) {
+                    runtime = xsltUriResolver.withAllowedExternalProtocols(allowedExternalProtocols);
+                }
+            }
+            runtimeUriResolver = runtime;
+        }
+        return runtime;
+    }
+
+    /**
+     * Reads the transformer factory's {@code ACCESS_EXTERNAL_STYLESHEET} attribute as the set of external protocols the
+     * runtime resolver may load. Returns {@code null} (unrestricted) when the attribute is unset, {@code "all"}, or not
+     * supported by the factory.
+     */
+    private Set<String> resolveAllowedExternalProtocols() {
+        try {
+            Object value = converter.getTransformerFactory().getAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET);
+            return XsltUriResolver.parseAllowedProtocols(value != null ? value.toString() : null);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     protected void addParameters(Transformer transformer, Map<String, Object> map) {
