@@ -49,6 +49,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
     private final Exchange exchange;
     private boolean allowEmptyDirectory;
+    private long maxDecompressedSize = -1;
     private volatile ZipArchiveInputStream zipInputStream;
     private volatile ZipArchiveEntry currentEntry;
     private volatile List<CachedOutputStream> cachedOutputStreamsToClose = new ArrayList<>();
@@ -153,7 +154,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                     }
                 } else {
                     CachedOutputStream cos = new CachedOutputStream(exchange);
-                    IOHelper.copy(zipInputStream, cos);
+                    IOHelper.copy(zipInputStream, cos, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
                     answer.setBody(cos.getInputStream());
                     cachedOutputStreamsToClose.add(cos);
                 }
@@ -213,5 +214,13 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
     public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
         this.allowEmptyDirectory = allowEmptyDirectory;
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 }
