@@ -2332,6 +2332,19 @@ public interface ComponentsBuilderFactory {
         return HivemqComponentBuilderFactory.hivemq();
     }
     /**
+     * HiveMQ MQTT 3.1.1 (camel-hivemq311)
+     * Camel HiveMQ MQTT Client support for MQTT 3.1.1
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq311
+     * 
+     * @return the dsl builder
+     */
+    static Hivemq311ComponentBuilderFactory.Hivemq311ComponentBuilder hivemq311() {
+        return Hivemq311ComponentBuilderFactory.hivemq311();
+    }
+    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 

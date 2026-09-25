@@ -159,6 +159,7 @@
         <module>camel-hashicorp-vault</module>
         <module>camel-hazelcast</module>
         <module>camel-hivemq</module>
+        <module>camel-hivemq311</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
         <module>camel-ibm</module>
