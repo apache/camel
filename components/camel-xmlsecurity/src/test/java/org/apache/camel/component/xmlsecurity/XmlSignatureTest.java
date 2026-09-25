@@ -355,7 +355,8 @@ public class XmlSignatureTest extends CamelTestSupport {
                         .to(
                                 "mock:result");
             }
-        }, createDetachedRoute(), createRouteForEnvelopedWithParentXpath(), createEnforceReferenceCoverageRoute() };
+        }, createDetachedRoute(), createRouteForEnvelopedWithParentXpath(), createEnforceReferenceCoverageRoute(),
+                createEnforceReferenceCoverageAcceptanceRoute() };
     }
 
     RouteBuilder createDetachedRoute() {
@@ -403,6 +404,22 @@ public class XmlSignatureTest extends CamelTestSupport {
         };
     }
 
+    RouteBuilder createEnforceReferenceCoverageAcceptanceRoute() {
+        return new RouteBuilder() {
+            public void configure() {
+                onException(XmlSignatureException.class).handled(true).to("mock:enforceCoverageException");
+                // enveloped signature whose reference covers the whole document (URI="" with the enveloped-signature
+                // transform), verified with enforceReferenceCoverage on - the document element is covered, so it passes
+                from("direct:enforceCoverageAccept")
+                        .to("xmlsecurity-sign:enforceCoverageAccept?keyAccessor=#accessor"
+                            + "&parentLocalName=root&parentNamespace=http://test/test")
+                        .to("xmlsecurity-verify:enforceCoverageAccept?keySelector=#selector"
+                            + "&xmlSignature2Message=#enforceCoverageMapper")
+                        .to("mock:enforceCoverageResult");
+            }
+        };
+    }
+
     @Test
     void enforceReferenceCoverageRejectsASignatureCoveringOnlyASubElement() throws Exception {
         // a detached signature legitimately covers a sub-element while the whole document is emitted - the same shape
@@ -418,6 +435,24 @@ public class XmlSignatureTest extends CamelTestSupport {
 
         TestSupport.sendBody(this.template, "direct:enforceCoverage", detachedPayload,
                 Collections.singletonMap(XmlSignatureConstants.HEADER_CONTENT_REFERENCE_URI, (Object) "#myID"));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void enforceReferenceCoverageAcceptsAWholeDocumentReference() throws Exception {
+        // the acceptance counterpart of the rejection test: an enveloped signature references the whole document
+        // (URI="" with the enveloped-signature transform), so the emitted document element is signed and
+        // enforceReferenceCoverage must let it through the full sign -> verify -> mapToMessage pipeline. Without this,
+        // only the rejection path is exercised end-to-end, and a regression that inverted the enforceReferenceCoverage
+        // guard while leaving the call wired would go unnoticed. Uses a dedicated enveloped route because the detached
+        // route above signs a sub-element by id and cannot produce a whole-document reference.
+        MockEndpoint exceptionMock = getMockEndpoint("mock:enforceCoverageException");
+        exceptionMock.expectedMessageCount(0);
+        MockEndpoint resultMock = getMockEndpoint("mock:enforceCoverageResult");
+        resultMock.expectedMessageCount(1);
+
+        TestSupport.sendBody(this.template, "direct:enforceCoverageAccept", payload);
 
         MockEndpoint.assertIsSatisfied(context);
     }
