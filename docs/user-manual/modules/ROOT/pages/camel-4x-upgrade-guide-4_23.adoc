@@ -81,6 +81,12 @@ A review of the simple language fixed a number of edge cases. These change what 
 * A hidden file name has no extension: for `.bashrc` then `${file:name.ext}` is `null` (it used to be `bashrc`), and
   for `.route.yaml` then `${file:name.noext}` is `.route`. This comes from `FileUtil.onlyExt` and `FileUtil.stripExt`.
 * The chain operator `~>` needs a space on both sides, as the other operators do, so `A~>B` is text.
+* Comparing two numbers of different types, such as a `Double` or `BigDecimal` header and an integer literal, no
+  longer drops the decimals: `${header.amount} > 100` is `true` for a `BigDecimal` of `100.50` (it used to be `false`),
+  `${header.price} == 2` is `false` for a `Double` of `2.5`, and `${header.price} range '1..2'` is `false` for `2.5`.
+  The same applies to two `BigDecimal` or two `BigInteger` values, to a number compared with a numeric `String`, and to
+  the Java DSL predicates such as `header("amount").isGreaterThan(100)`. Two `BigDecimal` values with a different scale,
+  such as `2.50` and `2.5`, are now equal.
 * Inside `${ }` the ternary `?` and `:` need whitespace around them, so `${bean:svc?method=at(10:30)}` is not a
   ternary.
 
