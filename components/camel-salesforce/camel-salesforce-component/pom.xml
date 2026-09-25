@@ -34,15 +34,47 @@
 
     <properties>
         <salesforce.component.root>..</salesforce.component.root>
+        <cometd-java-api-client-version>9.0.1</cometd-java-api-client-version>
+        <cometd-java-api-common-version>9.0.1</cometd-java-api-common-version>
+        <cometd-java-client-common-version>9.0.1</cometd-java-client-common-version>
+        <cometd-java-common-version>9.0.1</cometd-java-common-version>
+        <jetty-http-version>12.1.13</jetty-http-version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-http</artifactId>
+                <version>${jetty-http-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cometd.java</groupId>
+                <artifactId>cometd-java-client-common</artifactId>
+                <version>${cometd-java-client-common-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cometd.java</groupId>
+                <artifactId>cometd-java-api-client</artifactId>
+                <version>${cometd-java-api-client-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cometd.java</groupId>
+                <artifactId>cometd-java-api-common</artifactId>
+                <version>${cometd-java-api-common-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cometd.java</groupId>
+                <artifactId>cometd-java-common</artifactId>
+                <version>${cometd-java-common-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
     <dependencies>
 
         <!-- requires camel-core -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-engine</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -52,11 +84,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>${jetty-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util-ajax</artifactId>
             <version>${jetty-version}</version>
         </dependency>
         <dependency>
@@ -109,11 +136,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>${jakarta-annotation-api-version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
@@ -150,6 +172,54 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-client-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-api-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-api-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>

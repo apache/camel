@@ -48,6 +48,10 @@
             <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

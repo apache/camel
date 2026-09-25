@@ -35,6 +35,7 @@
     <properties>
 
         <camel-prepare-component>false</camel-prepare-component>
+        <cxf-core-version>4.2.3</cxf-core-version>
 
     </properties>
 
@@ -42,10 +43,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-attachments</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -76,6 +73,16 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+            <version>${cxf-core-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
             <version>${spring-version}</version>
         </dependency>
 

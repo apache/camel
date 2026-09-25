@@ -32,9 +32,25 @@
     <description>Camel PDF support</description>
 
     <properties>
+        <fontbox-version>3.0.8</fontbox-version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>fontbox</artifactId>
+                <version>${fontbox-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
@@ -43,6 +59,10 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>fontbox</artifactId>
         </dependency>
 
         <dependency>
@@ -58,9 +78,8 @@
             <version>${bouncycastle-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcmail-jdk18on</artifactId>
-            <version>${bouncycastle-version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

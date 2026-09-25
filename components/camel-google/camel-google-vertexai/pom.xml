@@ -34,7 +34,25 @@
 
     <properties>
         <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
+        <gax-version>2.85.0</gax-version>
+        <proto-google-cloud-aiplatform-v1-version>3.98.0</proto-google-cloud-aiplatform-v1-version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.api.grpc</groupId>
+                <artifactId>proto-google-cloud-aiplatform-v1</artifactId>
+                <version>${proto-google-cloud-aiplatform-v1-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api</groupId>
+                <artifactId>gax</artifactId>
+                <version>${gax-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -97,6 +115,42 @@
             <version>${google-auth-library-oauth2-http-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api.grpc</groupId>
+            <artifactId>proto-google-common-protos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api.grpc</groupId>
+            <artifactId>proto-google-cloud-aiplatform-v1</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>gax</artifactId>
+        </dependency>
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -41,7 +41,15 @@
         <!-- needed for file cluster support -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cluster</artifactId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <dependency>

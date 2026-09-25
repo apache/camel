@@ -31,13 +31,19 @@
     <packaging>jar</packaging>
     <name>Camel :: Git</name>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
@@ -46,6 +52,10 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

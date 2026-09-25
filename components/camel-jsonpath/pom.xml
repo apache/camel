@@ -32,8 +32,6 @@
     <name>Camel :: JSon Path</name>
     <description>Camel JSON Path Language</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

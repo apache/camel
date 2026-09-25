@@ -40,6 +40,9 @@
         <!-- ArangoDB container is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
+        <core.version>7.28.0</core.version>
+        <http-protocol.version>7.28.0</http-protocol.version>
+        <vertx-core.version>4.5.33</vertx-core.version>
     </properties>
 
     <dependencies>
@@ -57,6 +60,33 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>core</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.arangodb</groupId>
+            <artifactId>http-protocol</artifactId>
+            <version>${http-protocol.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>${vertx-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

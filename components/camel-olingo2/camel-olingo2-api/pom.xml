@@ -34,6 +34,8 @@
 
     <properties>
         <firstVersion>2.14.0</firstVersion>
+        <httpclient-version>4.5.13</httpclient-version>
+        <httpcore-version>4.4.15</httpcore-version>
     </properties>
 
     <dependencies>
@@ -65,6 +67,16 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${httpcore-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient-version}</version>
         </dependency>
     </dependencies>
 

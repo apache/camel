@@ -45,9 +45,69 @@
         <!-- Make use of native access during unit and IT test execution only -->
         <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
         <camel.failsafe.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
+        <api-common-version>2.68.0</api-common-version>
+        <gax-grpc-version>2.85.0</gax-grpc-version>
+        <gax-version>2.85.0</gax-version>
+        <proto-google-cloud-pubsub-v1-version>1.155.0</proto-google-cloud-pubsub-v1-version>
+        <threetenbp-version>1.7.0</threetenbp-version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.api.grpc</groupId>
+                <artifactId>proto-google-cloud-pubsub-v1</artifactId>
+                <version>${proto-google-cloud-pubsub-v1-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api</groupId>
+                <artifactId>api-common</artifactId>
+                <version>${api-common-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api</groupId>
+                <artifactId>gax</artifactId>
+                <version>${gax-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api</groupId>
+                <artifactId>gax-grpc</artifactId>
+                <version>${gax-grpc-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.threeten</groupId>
+                <artifactId>threetenbp</artifactId>
+                <version>${threetenbp-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>com.google.api.grpc</groupId>
+            <artifactId>proto-google-cloud-pubsub-v1</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>api-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>gax</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api</groupId>
+            <artifactId>gax-grpc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-common</artifactId>
@@ -66,6 +126,22 @@
                     <artifactId>jsr305</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.threeten</groupId>
+            <artifactId>threetenbp</artifactId>
         </dependency>
 
         <dependency>

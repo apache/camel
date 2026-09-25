@@ -32,10 +32,12 @@
     <name>Camel :: AWS2 SQS</name>
     <description>Consume and produce messages through AWS SQS Service</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws-common</artifactId>
@@ -43,6 +45,24 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>regions</artifactId>
+            <version>${aws-java-sdk2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sdk-core</artifactId>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>

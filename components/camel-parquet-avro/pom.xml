@@ -35,6 +35,9 @@
         <enforcer.phase>none</enforcer.phase><!-- hadoop-common seems to require com.sun.xml.bind:jaxb-impl via com.github.pjfanning:jersey-json -->
         <!-- Make use of native access during unit test execution only -->
         <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
+        <avro-version>1.11.5</avro-version>
+        <hadoop-hdfs-client-version>3.5.0</hadoop-hdfs-client-version>
+        <parquet-hadoop-version>1.18.1</parquet-hadoop-version>
     </properties>
 
     <dependencies>
@@ -80,6 +83,33 @@
         </dependency>
 
         <!-- logging -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.parquet</groupId>
+            <artifactId>parquet-hadoop</artifactId>
+            <version>${parquet-hadoop-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs-client</artifactId>
+            <version>${hadoop-hdfs-client-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>

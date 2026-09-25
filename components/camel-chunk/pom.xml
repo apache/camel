@@ -31,8 +31,6 @@
     <name>Camel :: Chunk</name>
     <description>Camel Chunk support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 
@@ -52,6 +50,14 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

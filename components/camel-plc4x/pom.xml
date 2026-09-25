@@ -32,6 +32,10 @@
     <description>Camel PLC4X support</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -39,6 +43,10 @@
         </dependency>
 
         <!-- PLC4J dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.plc4x</groupId>
             <artifactId>plc4j-api</artifactId>
@@ -57,6 +65,10 @@
         </dependency>
 
         <!-- Include all drivers -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.plc4x</groupId>
             <artifactId>plc4j-driver-ab-eth</artifactId>

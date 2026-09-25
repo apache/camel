@@ -65,6 +65,11 @@
             <artifactId>camel-core-xml</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${jakarta-annotation-api-version}</version>
+        </dependency>
         <!-- for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -142,11 +147,6 @@
             <artifactId>hamcrest</artifactId>
             <version>${hamcrest-version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>${jakarta-annotation-api-version}</version>
         </dependency>
 
         <!-- assertj and woostox are used for a few tests -->

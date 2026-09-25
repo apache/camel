@@ -34,8 +34,26 @@
 
     <properties>
         <firstVersion>3.0.0</firstVersion>
+        <microprofile-health-api-version>4.0.1</microprofile-health-api-version>
+        <smallrye-health-api-version>4.3.0</smallrye-health-api-version>
         <label>microservice</label>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.eclipse.microprofile.health</groupId>
+                <artifactId>microprofile-health-api</artifactId>
+                <version>${microprofile-health-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.smallrye</groupId>
+                <artifactId>smallrye-health-api</artifactId>
+                <version>${smallrye-health-api-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
     <dependencies>
 
@@ -43,12 +61,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-health</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>${jboss-logging-version}</version>
         </dependency>
         <dependency>
             <groupId>io.smallrye</groupId>
@@ -74,6 +86,26 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.health</groupId>
+            <artifactId>microprofile-health-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye</groupId>
+            <artifactId>smallrye-health-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

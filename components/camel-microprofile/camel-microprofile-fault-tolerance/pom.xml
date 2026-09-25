@@ -34,12 +34,34 @@
 
     <properties>
         <firstVersion>3.3.0</firstVersion>
+        <microprofile-fault-tolerance-api-version>4.1.2</microprofile-fault-tolerance-api-version>
+        <smallrye-fault-tolerance-api-version>6.11.4</smallrye-fault-tolerance-api-version>
         <label>eip,microservice</label>
 
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.smallrye</groupId>
+                <artifactId>smallrye-fault-tolerance-api</artifactId>
+                <version>${smallrye-fault-tolerance-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+                <artifactId>microprofile-fault-tolerance-api</artifactId>
+                <version>${microprofile-fault-tolerance-api-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>io.smallrye</groupId>
+            <artifactId>smallrye-fault-tolerance-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -47,7 +69,15 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -60,6 +90,26 @@
             <version>${smallrye-fault-tolerance-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-processor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+            <artifactId>microprofile-fault-tolerance-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>

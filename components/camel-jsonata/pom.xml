@@ -32,8 +32,6 @@
     <name>Camel :: JSONATA</name>
     <description>Camel JSONATA Support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -57,6 +55,14 @@
         </dependency>
 
         <!-- testing -->
+       <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-api</artifactId>
+       </dependency>
+       <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-util</artifactId>
+       </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

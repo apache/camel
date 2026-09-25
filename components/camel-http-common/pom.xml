@@ -34,9 +34,29 @@
 
     <properties>
         <firstVersion>2.16.0</firstVersion>
+      <jakarta.activation-api-version>2.1.4</jakarta.activation-api-version>
     </properties>
 
+  <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>jakarta.activation</groupId>
+        <artifactId>jakarta.activation-api</artifactId>
+        <version>${jakarta.activation-api-version}</version>
+      </dependency>
+    </dependencies>
+
+  </dependencyManagement>
+
+    <dependencies>
+      <dependency>
+        <groupId>jakarta.activation</groupId>
+        <artifactId>jakarta.activation-api</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-api</artifactId>
+      </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -49,6 +69,14 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-attachments</artifactId>
         </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-util</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+      </dependency>
 
         <dependency>
             <groupId>jakarta.servlet</groupId>

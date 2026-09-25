@@ -32,10 +32,16 @@
     <name>Camel :: Ehcache</name>
     <description>Camel Ehcache support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
@@ -43,7 +49,7 @@
         <!-- jaxb is required by ehcache -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xml-jaxb</artifactId>
+            <artifactId>camel-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ehcache</groupId>
@@ -59,6 +65,10 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

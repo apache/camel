@@ -34,8 +34,36 @@
     <name>Camel :: Smooks :: Parent</name>
     <description>Camel Smooks Component</description>
 
+    <properties>
+        <jakarta.annotation-api-version>2.1.1</jakarta.annotation-api-version>
+        <smooks-api-version>2.2.1</smooks-api-version>
+        <xercesImpl-version>2.12.2</xercesImpl-version>
+        <xml-apis-version>1.4.01</xml-apis-version>
+
+    </properties>
+
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.smooks</groupId>
+                <artifactId>smooks-api</artifactId>
+                <version>${smooks-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>${xml-apis-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xercesImpl-version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.smooks</groupId>
                 <artifactId>smooks-bom</artifactId>
@@ -62,6 +90,42 @@
         <dependency>
             <groupId>org.smooks.cartridges.edi</groupId>
             <artifactId>smooks-edi-cartridge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.smooks</groupId>
+            <artifactId>smooks-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.smooks</groupId>
+            <artifactId>smooks-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.smooks</groupId>

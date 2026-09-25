@@ -33,16 +33,24 @@
 
     <properties>
         <camel.surefire.fork.additional-vmargs>-Djava.net.preferIPv4Stack=true</camel.surefire.fork.additional-vmargs>
+        <jgroups-version>5.4.11.Final</jgroups-version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jgroups</groupId>
+                <artifactId>jgroups</artifactId>
+                <version>${jgroups-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cluster</artifactId>
         </dependency>
 
         <dependency>
@@ -52,6 +60,22 @@
         </dependency>
 
         <!-- Testing dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -65,6 +89,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-master</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cluster</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

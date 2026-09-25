@@ -41,16 +41,40 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-base-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core-engine</artifactId>
 		</dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-languages</artifactId>
         </dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-management-api</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-management</artifactId>
@@ -64,23 +88,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-browse</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-controlbus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-dataformat</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-dataset</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-direct</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -92,15 +100,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-log</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-mock</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-ref</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -125,14 +125,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-timer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xpath</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

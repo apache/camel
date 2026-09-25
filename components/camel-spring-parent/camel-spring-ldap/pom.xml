@@ -30,10 +30,12 @@
     <name>Camel :: Spring LDAP</name>
     <description>Camel support for Spring LDAP</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
@@ -41,18 +43,12 @@
 
         <!-- spring LDAP -->
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core</artifactId>
-            <version>${spring-ldap-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ldap</groupId>
-            <artifactId>spring-ldap-odm</artifactId>
-            <version>${spring-ldap-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ldap</groupId>
-            <artifactId>spring-ldap-ldif-core</artifactId>
             <version>${spring-ldap-version}</version>
         </dependency>
 

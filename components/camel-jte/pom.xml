@@ -33,9 +33,29 @@
 
     <properties>
         <camel.surefire.parallel>false</camel.surefire.parallel>
+        <jte-runtime-version>3.2.4</jte-runtime-version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gg.jte</groupId>
+                <artifactId>jte-runtime</artifactId>
+                <version>${jte-runtime-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>gg.jte</groupId>
+            <artifactId>jte-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -48,6 +68,14 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

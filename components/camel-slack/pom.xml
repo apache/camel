@@ -32,11 +32,43 @@
     <name>Camel :: Slack</name>
     <description>Camel Slack Support</description>
 
+    <properties>
+        <slack-api-model-version>1.51.0</slack-api-model-version>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.slack.api</groupId>
+                <artifactId>slack-api-model</artifactId>
+                <version>${slack-api-model-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.slack.api</groupId>
+            <artifactId>slack-api-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

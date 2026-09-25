@@ -31,6 +31,22 @@
     <name>Camel :: Debezium :: SQL Server</name>
     <description>Camel Debezium SQL Server support</description>
 
+    <properties>
+        <debezium-config-version>3.6.3.Final</debezium-config-version>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.debezium</groupId>
+                <artifactId>debezium-config</artifactId>
+                <version>${debezium-config-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
         <!-- camel -->
         <dependency>
@@ -51,6 +67,18 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.debezium</groupId>
+            <artifactId>debezium-config</artifactId>
+        </dependency>
         <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -32,8 +32,6 @@
     <name>Camel :: Groovy</name>
     <description>Camel Groovy support</description>
 
-    <properties>
-    </properties>
 
     <dependencies>
 

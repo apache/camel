@@ -33,10 +33,34 @@
 
     <properties>
         <firstVersion>4.15.0</firstVersion>
+    	<httpcore5-version>5.4.3</httpcore5-version>
+    	<jakarta.ws.rs-api-version>3.1.0</jakarta.ws.rs-api-version>
+    	<keycloak-client-common-synced-version>26.0.12</keycloak-client-common-synced-version>
         <label>security</label>
         <!-- Container images not available on these architectures -->
         <skipITs.s390x>true</skipITs.s390x>
     </properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.keycloak</groupId>
+				<artifactId>keycloak-client-common-synced</artifactId>
+				<version>${keycloak-client-common-synced-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.ws.rs</groupId>
+				<artifactId>jakarta.ws.rs-api</artifactId>
+				<version>${jakarta.ws.rs-api-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents.core5</groupId>
+				<artifactId>httpcore5</artifactId>
+				<version>${httpcore5-version}</version>
+			</dependency>
+		</dependencies>
+
+	</dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -69,6 +93,38 @@
         </dependency>
 
         <!-- test dependencies -->
+    	<dependency>
+    		<groupId>org.apache.camel</groupId>
+    		<artifactId>camel-api</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.apache.camel</groupId>
+    		<artifactId>camel-util</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.slf4j</groupId>
+    		<artifactId>slf4j-api</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.keycloak</groupId>
+    		<artifactId>keycloak-client-common-synced</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>jakarta.ws.rs</groupId>
+    		<artifactId>jakarta.ws.rs-api</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>com.fasterxml.jackson.core</groupId>
+    		<artifactId>jackson-databind</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.apache.httpcomponents.core5</groupId>
+    		<artifactId>httpcore5</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>com.github.ben-manes.caffeine</groupId>
+    		<artifactId>caffeine</artifactId>
+    	</dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

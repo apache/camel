@@ -32,6 +32,22 @@
   <name>Camel :: Huawei Cloud :: IAM</name>
   <description>To securely manage users on Huawei Cloud</description>
 
+  <properties>
+    <huaweicloud-sdk-core.version>3.1.217</huaweicloud-sdk-core.version>
+
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.huaweicloud.sdk</groupId>
+        <artifactId>huaweicloud-sdk-core</artifactId>
+        <version>${huaweicloud-sdk-core.version}</version>
+      </dependency>
+    </dependencies>
+
+  </dependencyManagement>
+
   <dependencies>
 
     <!-- camel -->
@@ -59,6 +75,26 @@
     </dependency>
 
     <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.huaweicloud.sdk</groupId>
+      <artifactId>huaweicloud-sdk-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-junit6</artifactId>

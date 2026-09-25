@@ -33,9 +33,41 @@
     <description>Camel PubNub Support</description>
 
     <properties>
+        <annotations-version>24.1.0</annotations-version>
+        <pubnub-gson-api-version>13.4.3</pubnub-gson-api-version>
+        <pubnub-kotlin-core-api-jvm-version>13.4.3</pubnub-kotlin-core-api-jvm-version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.pubnub</groupId>
+                <artifactId>pubnub-gson-api</artifactId>
+                <version>${pubnub-gson-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pubnub</groupId>
+                <artifactId>pubnub-kotlin-core-api-jvm</artifactId>
+                <version>${pubnub-kotlin-core-api-jvm-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${annotations-version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>com.pubnub</groupId>
+            <artifactId>pubnub-gson-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.pubnub</groupId>
+            <artifactId>pubnub-kotlin-core-api-jvm</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -58,6 +90,22 @@
         </dependency>
 
         <!-- logging -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>

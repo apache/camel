@@ -35,18 +35,32 @@
         <!-- Couchbase container is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
+        <core-io-version>3.12.3</core-io-version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.couchbase.client</groupId>
+            <artifactId>core-io</artifactId>
+            <version>${core-io-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.couchbase.client</groupId>
             <artifactId>java-client</artifactId>
             <version>${couchbase-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <dependency>
