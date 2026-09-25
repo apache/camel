@@ -44,6 +44,12 @@ class SagaExchangeCopyTest extends ContextTestSupport {
         assertItemsCompensated("direct:multicast", 2);
     }
 
+    @Test
+    void testStepAfterMulticastJoinsSaga() throws Exception {
+        // the multicast copies the result of its last copy back to the exchange, which must keep the saga
+        assertItemsCompensated("direct:after-multicast", 1);
+    }
+
     private void assertItemsCompensated(String uri, int items) throws Exception {
         getMockEndpoint("mock:compensate").expectedMessageCount(1);
         getMockEndpoint("mock:item").expectedMessageCount(items);
@@ -72,6 +78,12 @@ class SagaExchangeCopyTest extends ContextTestSupport {
                 from("direct:multicast")
                         .saga().compensation("mock:compensate")
                         .multicast().to("direct:required-item", "direct:required-item").end()
+                        .throwException(new IllegalStateException("payment declined"));
+
+                from("direct:after-multicast")
+                        .saga().compensation("mock:compensate")
+                        .multicast().to("mock:a", "mock:b").end()
+                        .to("direct:mandatory-item")
                         .throwException(new IllegalStateException("payment declined"));
 
                 from("direct:mandatory-item")
