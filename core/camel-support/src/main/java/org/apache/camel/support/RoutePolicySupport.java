@@ -18,9 +18,11 @@ package org.apache.camel.support;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicy;
@@ -120,6 +122,26 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      */
     public boolean resumeOrStartConsumer(Consumer consumer) throws Exception {
         return ServiceHelper.resumeService(consumer);
+    }
+
+    /**
+     * Whether this policy may resume or start the consumer of the route, after it has suspended or stopped the consumer
+     * itself (for example to throttle).
+     * <p/>
+     * This is not allowed when the route controller has suspended or stopped the route, or is suspending or stopping
+     * it, or when Camel is shutting down, as the consumer must then stay suspended or stopped.
+     *
+     * @param  route the route
+     * @return       <tt>true</tt> if the consumer may be resumed or started, <tt>false</tt> otherwise
+     */
+    protected boolean isResumeOrStartConsumerAllowed(Route route) {
+        CamelContext context = route.getCamelContext();
+        if (context.isStopping() || context.isStopped()) {
+            return false;
+        }
+        ServiceStatus status = controller(route).getRouteStatus(route.getId());
+        return status != null && !status.isSuspending() && !status.isSuspended() && !status.isStopping()
+                && !status.isStopped();
     }
 
     public void startRoute(Route route) throws Exception {
