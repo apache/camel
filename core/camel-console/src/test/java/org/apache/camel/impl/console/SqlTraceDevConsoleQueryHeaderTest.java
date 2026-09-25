@@ -60,8 +60,19 @@ public class SqlTraceDevConsoleQueryHeaderTest extends ContextTestSupport {
         Assertions.assertEquals(HEADER_QUERY, tracedQuery(true));
     }
 
+    @Test
+    public void testHeaderQueryIsIgnoredWhenUseMessageBodyForSqlWins() throws Exception {
+        // SqlProducer reads the statement from the body before it looks at the header, so the header
+        // is not the statement that ran even though allowQueryFromHeader is enabled
+        Assertions.assertEquals(ENDPOINT_QUERY, tracedQuery(true, true));
+    }
+
     private String tracedQuery(boolean allowQueryFromHeader) throws Exception {
-        context.addComponent("sql", new FakeSqlComponent(allowQueryFromHeader));
+        return tracedQuery(allowQueryFromHeader, false);
+    }
+
+    private String tracedQuery(boolean allowQueryFromHeader, boolean useMessageBodyForSql) throws Exception {
+        context.addComponent("sql", new FakeSqlComponent(allowQueryFromHeader, useMessageBodyForSql));
 
         DevConsole con = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("sql-trace");
         Assertions.assertNotNull(con);
@@ -83,8 +94,8 @@ public class SqlTraceDevConsoleQueryHeaderTest extends ContextTestSupport {
 
         private final PropertyConfigurer configurer;
 
-        private FakeSqlComponent(boolean allowQueryFromHeader) {
-            this.configurer = new AllowQueryFromHeaderConfigurer(allowQueryFromHeader);
+        private FakeSqlComponent(boolean allowQueryFromHeader, boolean useMessageBodyForSql) {
+            this.configurer = new SqlOptionsConfigurer(allowQueryFromHeader, useMessageBodyForSql);
         }
 
         @Override
@@ -120,12 +131,14 @@ public class SqlTraceDevConsoleQueryHeaderTest extends ContextTestSupport {
         }
     }
 
-    private static final class AllowQueryFromHeaderConfigurer implements PropertyConfigurer, PropertyConfigurerGetter {
+    private static final class SqlOptionsConfigurer implements PropertyConfigurer, PropertyConfigurerGetter {
 
-        private final boolean allow;
+        private final boolean allowQueryFromHeader;
+        private final boolean useMessageBodyForSql;
 
-        private AllowQueryFromHeaderConfigurer(boolean allow) {
-            this.allow = allow;
+        private SqlOptionsConfigurer(boolean allowQueryFromHeader, boolean useMessageBodyForSql) {
+            this.allowQueryFromHeader = allowQueryFromHeader;
+            this.useMessageBodyForSql = useMessageBodyForSql;
         }
 
         @Override
@@ -135,12 +148,19 @@ public class SqlTraceDevConsoleQueryHeaderTest extends ContextTestSupport {
 
         @Override
         public Class<?> getOptionType(String name, boolean ignoreCase) {
-            return "allowQueryFromHeader".equals(name) ? boolean.class : null;
+            return switch (name) {
+                case "allowQueryFromHeader", "useMessageBodyForSql" -> boolean.class;
+                default -> null;
+            };
         }
 
         @Override
         public Object getOptionValue(Object target, String name, boolean ignoreCase) {
-            return "allowQueryFromHeader".equals(name) ? allow : null;
+            return switch (name) {
+                case "allowQueryFromHeader" -> allowQueryFromHeader;
+                case "useMessageBodyForSql" -> useMessageBodyForSql;
+                default -> null;
+            };
         }
     }
 }

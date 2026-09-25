@@ -2394,7 +2394,11 @@ Observability follows the gate. The `db.statement` span tag set by the `sql` spa
 the deprecated camel-tracing) is now taken from the `CamelSqlQuery` header only when the endpoint sets
 `allowQueryFromHeader=true`; otherwise the tag is omitted rather than reporting a statement that was never
 executed. A route that reads `db.statement` from a `sql:` span and relies on the header value must set
-`allowQueryFromHeader=true`.
+`allowQueryFromHeader=true`. The same gate applies to the `sql-trace` developer console, which reports the
+endpoint-configured query instead of the header when the header is not honoured. Note that
+`useMessageBodyForSql=true` takes precedence over `allowQueryFromHeader`, because the producer reads the statement
+from the message body before it looks at the header; with both options enabled the header is therefore still not
+reported.
 
 === camel-core - the inheritErrorHandler attribute on circuitBreaker and failoverLoadBalancer is now a String
 

@@ -58,6 +58,16 @@ public class SqlSpanDecoratorTest {
     }
 
     @Test
+    public void testPreIgnoresTheQueryHeaderWhenUseMessageBodyForSqlWins() {
+        MockSpanAdapter span = decorate(endpointWithOptions(true, true));
+
+        // SqlProducer reads the statement from the body before it looks at the header, so even with
+        // allowQueryFromHeader enabled the header is not what reached the database
+        assertEquals("sql", span.tags().get(TagConstants.DB_SYSTEM));
+        assertNull(span.tags().get(TagConstants.DB_STATEMENT));
+    }
+
+    @Test
     public void testPreIgnoresTheQueryHeaderForAnEndpointWithoutTheOption() {
         // e.g. jdbc, which takes its query from the message body
         MockSpanAdapter span = decorate(Mockito.mock(Endpoint.class));
@@ -89,8 +99,13 @@ public class SqlSpanDecoratorTest {
     }
 
     private static Endpoint endpointAllowingQueryHeader(boolean allow) {
+        return endpointWithOptions(allow, false);
+    }
+
+    private static Endpoint endpointWithOptions(boolean allowQueryFromHeader, boolean useMessageBodyForSql) {
         Component component = Mockito.mock(Component.class);
-        Mockito.when(component.getEndpointPropertyConfigurer()).thenReturn(new AllowQueryFromHeaderConfigurer(allow));
+        Mockito.when(component.getEndpointPropertyConfigurer())
+                .thenReturn(new SqlOptionsConfigurer(allowQueryFromHeader, useMessageBodyForSql));
 
         DefaultEndpoint endpoint = Mockito.mock(DefaultEndpoint.class);
         Mockito.when(endpoint.getComponent()).thenReturn(component);
@@ -100,12 +115,14 @@ public class SqlSpanDecoratorTest {
     /**
      * Stands in for the generated {@code SqlEndpointConfigurer}, which camel-tracing cannot depend on.
      */
-    private static class AllowQueryFromHeaderConfigurer implements PropertyConfigurer, PropertyConfigurerGetter {
+    private static class SqlOptionsConfigurer implements PropertyConfigurer, PropertyConfigurerGetter {
 
-        private final boolean allow;
+        private final boolean allowQueryFromHeader;
+        private final boolean useMessageBodyForSql;
 
-        AllowQueryFromHeaderConfigurer(boolean allow) {
-            this.allow = allow;
+        SqlOptionsConfigurer(boolean allowQueryFromHeader, boolean useMessageBodyForSql) {
+            this.allowQueryFromHeader = allowQueryFromHeader;
+            this.useMessageBodyForSql = useMessageBodyForSql;
         }
 
         @Override
@@ -115,12 +132,19 @@ public class SqlSpanDecoratorTest {
 
         @Override
         public Class<?> getOptionType(String name, boolean ignoreCase) {
-            return "allowQueryFromHeader".equals(name) ? boolean.class : null;
+            return switch (name) {
+                case "allowQueryFromHeader", "useMessageBodyForSql" -> boolean.class;
+                default -> null;
+            };
         }
 
         @Override
         public Object getOptionValue(Object target, String name, boolean ignoreCase) {
-            return "allowQueryFromHeader".equals(name) ? allow : null;
+            return switch (name) {
+                case "allowQueryFromHeader" -> allowQueryFromHeader;
+                case "useMessageBodyForSql" -> useMessageBodyForSql;
+                default -> null;
+            };
         }
     }
 }

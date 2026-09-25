@@ -30,13 +30,17 @@ import org.apache.camel.support.DefaultEndpoint;
  * surfacing the header value would attribute a statement to the exchange that never ran, and would place
  * sender-controlled text into telemetry.
  * <p/>
- * The option is read through the endpoint's generated {@link PropertyConfigurer} rather than by casting, because the
- * tracing modules must not depend on camel-sql. An endpoint that does not declare the option at all (jdbc, for
- * instance) never honours the header.
+ * {@code useMessageBodyForSql} takes precedence over both: the producer reads the statement from the message body
+ * before it ever looks at the header, so the header is not honoured when that option is enabled either.
+ * <p/>
+ * The options are read through the endpoint's generated {@link PropertyConfigurer} rather than by casting, because the
+ * tracing modules must not depend on camel-sql. An endpoint that does not declare them at all (jdbc, for instance)
+ * never honours the header.
  */
 final class SqlQueryHeaderHelper {
 
     private static final String ALLOW_QUERY_FROM_HEADER = "allowQueryFromHeader";
+    private static final String USE_MESSAGE_BODY_FOR_SQL = "useMessageBodyForSql";
 
     private SqlQueryHeaderHelper() {
     }
@@ -50,6 +54,10 @@ final class SqlQueryHeaderHelper {
             return false;
         }
         if (component.getEndpointPropertyConfigurer() instanceof PropertyConfigurerGetter getter) {
+            // the body wins over the header in SqlProducer, so the header never reaches the database
+            if (Boolean.TRUE.equals(getter.getOptionValue(endpoint, USE_MESSAGE_BODY_FOR_SQL, true))) {
+                return false;
+            }
             return Boolean.TRUE.equals(getter.getOptionValue(endpoint, ALLOW_QUERY_FROM_HEADER, true));
         }
         return false;
