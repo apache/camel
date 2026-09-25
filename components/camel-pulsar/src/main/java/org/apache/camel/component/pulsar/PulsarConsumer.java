@@ -41,6 +41,11 @@ import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopExecutors;
 public class PulsarConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumer.class);
 
+    /**
+     * How long a consumer thread waits after a failure it cannot classify, before polling again.
+     */
+    private static final long ERROR_RETRY_DELAY_MILLIS = 1000;
+
     private final PulsarEndpoint pulsarEndpoint;
     private final ConsumerCreationStrategyFactory consumerCreationStrategyFactory;
 
@@ -128,6 +133,10 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
                 try {
                     Message<byte[]> msg = consumer.receive();
                     listener.received(consumer, msg);
+                } catch (PulsarClientException.AlreadyClosedException e) {
+                    // the consumer is gone, so there is nothing left for this loop to poll
+                    LOGGER.info("Pulsar consumer is closed, exiting");
+                    running = false;
                 } catch (PulsarClientException e) {
                     if (e.getCause() instanceof InterruptedException) {
                         // this means that our executor is shutting down
@@ -136,11 +145,31 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
                         // by exiting the loop. We make it explicit instead of breaking the loop.
                         running = false;
                     } else {
-                        endpoint.getExceptionHandler().handleException(e);
+                        getExceptionHandler().handleException("Error consuming from pulsar", e);
+                        running = waitBeforeRetry();
                     }
                 } catch (Exception e) {
-                    endpoint.getExceptionHandler().handleException(e);
+                    getExceptionHandler().handleException("Error consuming from pulsar", e);
+                    running = waitBeforeRetry();
                 }
+            }
+        }
+
+        /**
+         * Waits before polling again, so that a failure which does not clear - an unreachable broker, a consumer in
+         * Failed state - does not turn this into a hot loop on every consumer thread, reporting the same error to the
+         * exception handler as fast as the CPU allows.
+         *
+         * @return {@code false} when the wait was interrupted, which is how a stopping consumer leaves the loop
+         */
+        private boolean waitBeforeRetry() {
+            try {
+                Thread.sleep(ERROR_RETRY_DELAY_MILLIS);
+                return true;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOGGER.info("Received shutdown signal, exiting");
+                return false;
             }
         }
     }
