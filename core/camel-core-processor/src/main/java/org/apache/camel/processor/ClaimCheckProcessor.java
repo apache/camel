@@ -167,8 +167,7 @@ public class ClaimCheckProcessor extends BaseProcessorSupport implements IdAware
     }
 
     private static void operationPushHandler(Exchange exchange, String claimKey, ClaimCheckRepository repo) {
-        // copy exchange, and do not share the unit of work
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        Exchange copy = createClaimCheckCopy(exchange);
         LOG.debug("Push: {} -> {}", claimKey, copy);
         repo.push(copy);
     }
@@ -198,14 +197,27 @@ public class ClaimCheckProcessor extends BaseProcessorSupport implements IdAware
     }
 
     private static void operationSetHandler(Exchange exchange, String claimKey, ClaimCheckRepository repo) {
-
-        // copy exchange, and do not share the unit of work
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        Exchange copy = createClaimCheckCopy(exchange);
         boolean addedNew = repo.add(claimKey, copy);
         if (addedNew) {
             LOG.debug("Add: {} -> {}", claimKey, copy);
         } else {
             LOG.debug("Override: {} -> {}", claimKey, copy);
+        }
+    }
+
+    private static Exchange createClaimCheckCopy(Exchange exchange) {
+        // the stored copy must not carry the repository: it does not need it, and it must not replace the repository of
+        // the exchange when an aggregation strategy returns the stored copy as the result. So detach the repository
+        // while copying, instead of copying it (which would copy all its claim checks on every Set or Push)
+        Object repo = exchange.removeProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY);
+        try {
+            // copy exchange, and do not share the unit of work
+            return ExchangeHelper.createCorrelatedCopy(exchange, false);
+        } finally {
+            if (repo != null) {
+                exchange.setProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, repo);
+            }
         }
     }
 

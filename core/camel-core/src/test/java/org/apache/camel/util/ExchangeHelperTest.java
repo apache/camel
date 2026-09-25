@@ -23,12 +23,15 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.processor.DefaultClaimCheckRepository;
+import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
@@ -297,6 +300,25 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertEquals("new", exchange.getMessage().getBody(String.class));
         // the old IN message is no longer referenced by the exchange and must be detached
         assertNull(in.getExchange());
+    }
+
+    @Test
+    public void testCopyExchangeWithPropertiesDoesNotShareClaimCheckRepository() {
+        DefaultClaimCheckRepository repo = new DefaultClaimCheckRepository();
+        Exchange stored = new DefaultExchange(context);
+        repo.add("original", stored);
+        exchange.setProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, repo);
+
+        Exchange copy = ExchangeHelper.copyExchangeWithProperties(exchange, context);
+
+        ClaimCheckRepository copyRepo
+                = copy.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, ClaimCheckRepository.class);
+        assertNotSame(repo, copyRepo, "The copy should get its own claim check repository");
+        assertSame(stored, copyRepo.get("original"), "The copy should get the claim checks of the exchange");
+
+        copyRepo.add("part", new DefaultExchange(context));
+        assertFalse(repo.contains("part"), "A claim check stored by the copy should not be visible to the exchange");
+        assertSame(repo, exchange.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY));
     }
 
     @Override

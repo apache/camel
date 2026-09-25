@@ -49,6 +49,7 @@ import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.VariableAware;
@@ -844,6 +845,14 @@ public final class ExchangeHelper {
         }
     }
 
+    private static void setClaimCheckRepository(Exchange target, Exchange source) {
+        // the claim check repository is scoped per exchange, so the copy must not share it (as in Exchange.copy())
+        final Object repo = source.getProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY);
+        if (repo instanceof SafeCopyProperty scp) {
+            target.setProperty(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY, scp.safeCopy());
+        }
+    }
+
     /**
      * Copies the exchange but the copy will be tied to the given context
      *
@@ -854,6 +863,7 @@ public final class ExchangeHelper {
         Exchange answer = exchange.getExchangeExtension().createCopyWithProperties(context);
 
         setMessageHistory(answer, exchange);
+        setClaimCheckRepository(answer, exchange);
 
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {
