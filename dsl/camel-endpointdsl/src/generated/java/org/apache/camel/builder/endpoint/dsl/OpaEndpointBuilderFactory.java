@@ -723,6 +723,22 @@ public interface OpaEndpointBuilderFactory {
             return "CamelOpaPolicyPath";
         }
         /**
+         * Set to true only when the exchange proceeded because failOpen is
+         * enabled and the policy could not be evaluated - nothing authorized
+         * it. Absent on every decision an actual policy made, so a route or an
+         * audit trail can tell the two apart rather than seeing the same
+         * CamelOpaDecisionAllow=true for both.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpaDecisionFailedOpen}.
+         */
+        public String opaDecisionFailedOpen() {
+            return "CamelOpaDecisionFailedOpen";
+        }
+        /**
          * The per-element allow/deny verdicts of a batch evaluation
          * (batch=true), as a List of Boolean parallel to the List body. Always
          * overwritten by the component. An element whose evaluation could not
