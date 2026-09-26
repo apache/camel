@@ -26,13 +26,17 @@ class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.Consumer
     private final String path;
     private final Operation consumer;
     private final RestBindingAdvice binding;
+    private final String consumes;
+    private final String produces;
 
     public RestOpenApiConsumerPath(String verb, String path, Operation consumer,
-                                   RestBindingAdvice binding) {
+                                   RestBindingAdvice binding, String consumes, String produces) {
         this.verb = verb;
         this.path = path;
         this.consumer = consumer;
         this.binding = binding;
+        this.consumes = consumes;
+        this.produces = produces;
     }
 
     @Override
@@ -57,5 +61,13 @@ class RestOpenApiConsumerPath implements RestConsumerContextPathMatcher.Consumer
 
     public RestBindingAdvice getBinding() {
         return binding;
+    }
+
+    public String getConsumes() {
+        return consumes;
+    }
+
+    public String getProduces() {
+        return produces;
     }
 }

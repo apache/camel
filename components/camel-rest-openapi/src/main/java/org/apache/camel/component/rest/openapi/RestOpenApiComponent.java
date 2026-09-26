@@ -142,6 +142,11 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     private String mockIncludePattern = "classpath:camel-mock/**";
     @Metadata(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
     private String apiContextPath;
+    @Metadata(label = "consumer,advanced", defaultValue = "platform", enums = "platform,camel",
+              description = "Who answers requests that match no operation in the OpenAPI specification: the HTTP layer"
+                            + " (platform) or Camel via the unmatched request handler (camel). Can be overridden in endpoint"
+                            + " configuration.")
+    private String unmatchedRequestHandling = "platform";
     @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
     private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
     @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
@@ -179,6 +184,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
         }
         endpoint.setMissingOperation(getMissingOperation());
         endpoint.setMockIncludePattern(getMockIncludePattern());
+        endpoint.setUnmatchedRequestHandling(getUnmatchedRequestHandling());
         if (restOpenapiProcessorStrategy != null) {
             endpoint.setRestOpenapiProcessorStrategy(restOpenapiProcessorStrategy);
         } else {
@@ -278,6 +284,14 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
 
     public void setApiContextPath(String apiContextPath) {
         this.apiContextPath = apiContextPath;
+    }
+
+    public String getUnmatchedRequestHandling() {
+        return unmatchedRequestHandling;
+    }
+
+    public void setUnmatchedRequestHandling(String unmatchedRequestHandling) {
+        this.unmatchedRequestHandling = unmatchedRequestHandling;
     }
 
     public void setBasePath(final String basePath) {
