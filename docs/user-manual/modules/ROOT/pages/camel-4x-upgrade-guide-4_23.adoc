@@ -2913,6 +2913,13 @@ producer were never stopped.
 With `parallelProcessing`, a recipient whose task had not started yet when the Recipient List completed is now
 skipped instead of being sent to afterwards. As before, recipients that had already started keep running.
 
+=== camel-quickfix - InOut replies are sent on the session the request arrived on
+
+With `exchangePattern=InOut`, the QuickFIX/J consumer now sends the reply on the session the request was received on.
+Previously it read the `SessionID` header when the route completed, so a route that changed that header also changed
+which session received the reply. A route that changed the `SessionID` header to send the reply to another session
+must now send that message with a QuickFIX/J producer endpoint that sets the `sessionID` option.
+
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
