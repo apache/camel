@@ -468,7 +468,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         final String name = target.getAbsoluteFilePath();
         try {
             if (isRetrieveFile()) {
-                if (!tryRetrievingFile(exchange, name, target, absoluteFileName, file)) {
+                if (!retrieveFileOrAbort(exchange, name, target, absoluteFileName, file)) {
                     return false;
                 }
             } else {
@@ -511,6 +511,73 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         return true;
+    }
+
+    /**
+     * Retrieves the file, and aborts if the file could not be retrieved (or cannot be retrieved and is ignored).
+     * <p/>
+     * The read lock has already been acquired by the begin strategy, and no {@link GenericFileOnCompletion} is
+     * registered yet, so the abort must release the read lock here. The idempotent key, when it was added eagerly, is
+     * removed here as well, for the original file: the begin strategy may have pre moved the file and bound the pre
+     * moved file to the exchange (preMove), so the key cannot be derived from the exchange file later. Returning
+     * <tt>false</tt> marks the file as not started, so the file can be retried on a later poll (the same as when the
+     * read lock could not be acquired).
+     *
+     * @return <tt>true</tt> if the file was retrieved, <tt>false</tt> if the file was not retrieved and processing was
+     *         aborted
+     */
+    private boolean retrieveFileOrAbort(
+            Exchange exchange, String name, GenericFile<T> target, String absoluteFileName, GenericFile<T> file) {
+        Exception retrieveCause = null;
+        boolean retrieved = false;
+        try {
+            retrieved = tryRetrievingFile(exchange, name, target, absoluteFileName, file);
+        } catch (Exception e) {
+            retrieveCause = e;
+        }
+        if (retrieved) {
+            return true;
+        }
+
+        LOG.debug("{} cannot retrieve file: {}", endpoint, target);
+        Exception abortCause = null;
+        try {
+            processStrategy.abort(operations, endpoint, exchange, target);
+        } catch (Exception e) {
+            abortCause = e;
+        } finally {
+            // the file is no longer in progress
+            endpoint.getInProgressRepository().remove(absoluteFileName);
+            removeEagerIdempotentKey(exchange, absoluteFileName);
+        }
+        if (retrieveCause != null) {
+            String msg = "Error processing file " + file + " due to " + retrieveCause.getMessage();
+            handleException(msg, exchange, retrieveCause);
+        }
+        if (abortCause != null) {
+            String msg2 = endpoint + " cannot abort processing file: " + target + " due to: " + abortCause.getMessage();
+            handleException(msg2, exchange, abortCause);
+        }
+        return false;
+    }
+
+    /**
+     * Removes the idempotent key that was added eagerly while polling the file, so the file can be consumed again.
+     * <p/>
+     * Uses the key of the original file (as {@link GenericFileOnCompletion} does on rollback), and not the file bound
+     * to the exchange, which is the pre moved file when using preMove.
+     */
+    private void removeEagerIdempotentKey(Exchange exchange, String absoluteFileName) {
+        if (Boolean.TRUE.equals(endpoint.isIdempotent()) && endpoint.isIdempotentEager()
+                && endpoint.getIdempotentRepository() != null) {
+            String key = absoluteFileName;
+            if (endpoint.getIdempotentKey() != null) {
+                key = exchange.getProperty(Exchange.FILE_IDEMPOTENT_KEY, absoluteFileName, String.class);
+            }
+            if (key != null) {
+                endpoint.getIdempotentRepository().remove(key);
+            }
+        }
     }
 
     boolean tryRetrievingFile(
