@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -101,6 +102,71 @@ public final class CatalogDocs {
      * @param  docPage        a language doc sub-page (simple: functions, operators, ognl, advanced) to return as text
      * @return                the JSON result, an {@code error} object when nothing matches
      */
+
+    /** How much of a component's documentation prose is carried in the answer by default (CAMEL-25040). */
+    static final int DOC_EXCERPT_BUDGET = 1400;
+
+    private static final Pattern XREF = Pattern.compile("xref:[^\\[]*\\[([^]]*)]");
+    private static final Pattern INTERNAL_REF = Pattern.compile("<<[^,>]*,([^>]*)>>");
+
+    /**
+     * The prose of a component's documentation page, trimmed to a budget, or null when the page has none.
+     * <p/>
+     * The option list says what can be set, and nothing else: syntax that is not an option is invisible in it. The
+     * {@code sql} component is the clearest case -- that a named parameter is written {@code :#name} appears nowhere in
+     * its options, only in its page, which an author who does not already know the answer has no reason to ask for
+     * (CAMEL-25040). So the page's own prose comes along, from its first section, which is where a component page
+     * explains its URI and the essentials.
+     * <p/>
+     * Left out: the title and attribute header, the Maven dependency stanza, and the {@code include::} directives that
+     * pull in the generated option tables, which the answer already carries as options. A cross-reference is reduced to
+     * the words it links, so the excerpt reads as text rather than as AsciiDoc.
+     */
+    static String docExcerpt(String asciiDoc, int budget) {
+        if (asciiDoc == null || asciiDoc.isBlank()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        boolean started = false;
+        boolean fenced = false;
+        for (String line : asciiDoc.split("\n", -1)) {
+            String trimmed = line.strip();
+            if (!started) {
+                // the page's own header, its intro and the dependency stanza come before the first section, and the
+                // description and Maven coordinates of the answer already say what they say
+                started = trimmed.startsWith("== ");
+                if (!started) {
+                    continue;
+                }
+            }
+            if (trimmed.startsWith("include::") || trimmed.startsWith("ifdef::") || trimmed.startsWith("endif::")
+                    || trimmed.startsWith("ifndef::")) {
+                continue;
+            }
+            if (trimmed.startsWith("----")) {
+                fenced = !fenced;
+            } else if (!fenced) {
+                // asciidoc decoration that carries nothing on its own
+                if (trimmed.equals("====") || trimmed.equals("|===") || trimmed.startsWith("[tabs]")
+                        || trimmed.startsWith("[width=") || trimmed.startsWith("[cols=")
+                        || trimmed.startsWith("[source,") || trimmed.startsWith("[NOTE]")
+                        || trimmed.startsWith("[TIP]") || trimmed.startsWith("[IMPORTANT]")
+                        || trimmed.startsWith("[WARNING]") || trimmed.startsWith("[CAUTION]")
+                        || (trimmed.startsWith(":") && trimmed.indexOf(':', 1) > 0)) {
+                    continue;
+                }
+            }
+            String text = XREF.matcher(line).replaceAll("$1");
+            text = INTERNAL_REF.matcher(text).replaceAll("$1");
+            if (sb.length() + text.length() + 1 > budget) {
+                break;
+            }
+            sb.append(text).append('\n');
+        }
+        String answer = sb.toString().strip();
+        return answer.isEmpty() ? null : answer;
+    }
+
     public static JsonObject catalogDoc(
             CamelCatalog catalog, String name, String endpoint, String kind, String optionsFilter,
             String includeOptions, boolean includeHeaders, boolean includeDoc, String docPage) {
@@ -120,8 +186,10 @@ public final class CatalogDocs {
         if (kind == null || "component".equals(kind)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-component") : null;
-                return componentDoc(cm, lowerFilter, scope, includeHeaders, doc);
+                String adoc = catalog.asciiDoc(name + "-component");
+                // the whole page when it was asked for, else its first section, which the options cannot say
+                return componentDoc(cm, lowerFilter, scope, includeHeaders, includeDoc ? adoc : null,
+                        includeDoc ? null : docExcerpt(adoc, DOC_EXCERPT_BUDGET));
             }
             JsonObject group = mainOptionsGroup(catalog, name);
             if (group != null) {
@@ -949,7 +1017,8 @@ public final class CatalogDocs {
     }
 
     private static JsonObject componentDoc(
-            ComponentModel model, String filter, OptionScope scope, boolean includeHeaders, String doc) {
+            ComponentModel model, String filter, OptionScope scope, boolean includeHeaders, String doc,
+            String docExcerpt) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -1025,6 +1094,11 @@ public final class CatalogDocs {
         }
         if (doc != null) {
             result.put("doc", doc);
+        }
+        if (docExcerpt != null) {
+            // what the options cannot say: the syntax and the essentials, from the component's own page
+            result.put("documentation", docExcerpt);
+            result.put("documentationHint", "the start of the component's documentation page; includeDoc=true for all of it");
         }
         return result;
     }
