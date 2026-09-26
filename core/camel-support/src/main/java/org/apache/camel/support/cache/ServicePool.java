@@ -26,8 +26,10 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NonManagedService;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
@@ -188,6 +190,27 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     /**
      * Stops the service safely
      */
+    /**
+     * Whether the endpoint is (still) in use by the routes, and must therefore not be stopped when its producer is
+     * evicted: an endpoint that is static in the endpoint registry (resolved when the routes were setup), or that a
+     * route is consuming from.
+     */
+    private static boolean isEndpointInUse(Endpoint endpoint) {
+        CamelContext context = endpoint.getCamelContext();
+        if (context == null) {
+            return false;
+        }
+        if (context.getEndpointRegistry().isStatic(endpoint.getEndpointUri())) {
+            return true;
+        }
+        for (Route route : context.getRoutes()) {
+            if (route.getEndpoint() == endpoint) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static <S extends Service> void stop(S s) {
         try {
             s.stop();
@@ -271,7 +294,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 for (Map.Entry<Endpoint, Pool<S>> entry : singlePoolEvicted.entrySet()) {
                     Endpoint e = entry.getKey();
                     Pool<S> p = entry.getValue();
-                    doStop(e);
+                    if (!isEndpointInUse(e)) {
+                        // stop the endpoint as well (such as a dynamic endpoint from toD) to free its resources
+                        doStop(e);
+                    }
                     p.stop();
                     singlePoolEvicted.remove(e);
                 }
