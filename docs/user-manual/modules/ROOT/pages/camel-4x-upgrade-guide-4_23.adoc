@@ -765,6 +765,20 @@ unknown property of a bean created through its builder names the properties the 
 `PropertyBindingSupport.setPropertiesOnTarget` now reports an unknown property with the property name and value, as
 it rethrew the `PropertyBindingException` with its null cause since 4.21, which surfaced as `NullPointerException: e`.
 
+=== camel-core - Claim Check EIP - exchange copies get their own claim check repository
+
+The Claim Check EIP keeps its claim checks in a repository that belongs to the exchange. The javadoc of
+`ClaimCheckProcessor` already says that the repository is "not shared among Exchanges", but a copy of an exchange
+used the same repository instance as the exchange it was copied from. This only happened when the exchange had used
+the Claim Check before the copy was made, because the repository is created on first use. The exchanges created by
+the Splitter, Multicast, Recipient List and Wire Tap EIPs, and the exchanges sent to a SEDA or Disruptor queue, then shared the
+repository of the parent, so with parallel processing a Get or Pop could return the message of another part.
+
+Such a copy now gets its own copy of the repository. It starts with the claim checks of the parent, so a part can
+still get what the parent stored, but what a part stores, removes, pushes or pops is no longer visible to the parent
+or to the other parts. After a Multicast or Recipient List, the parent continues with the repository of the result
+exchange (the exchange that the aggregation strategy returned), as it already did for the other exchange properties.
+
 === camel-core - Splitter unwraps Exchange parts
 
 The Splitter EIP now unwraps parts of type `org.apache.camel.Exchange`, the same way it already unwrapped parts of

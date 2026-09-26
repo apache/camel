@@ -22,15 +22,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.ClaimCheckRepository;
 
 /**
  * The default {@link ClaimCheckRepository} implementation that is an in-memory storage.
+ * <p/>
+ * The repository is not thread-safe, as it is scoped per exchange. When an exchange is copied (such as by the Splitter,
+ * Multicast, Recipient List or Wire Tap EIPs), then the copy gets its own repository, which starts with the same claim
+ * checks, via {@link #safeCopy()}.
  */
-public class DefaultClaimCheckRepository implements ClaimCheckRepository {
+public class DefaultClaimCheckRepository implements ClaimCheckRepository, SafeCopyProperty {
 
-    private final Map<String, Exchange> map = new HashMap<>();
-    private final Deque<Exchange> stack = new ArrayDeque<>();
+    private final Map<String, Exchange> map;
+    private final Deque<Exchange> stack;
+
+    public DefaultClaimCheckRepository() {
+        this.map = new HashMap<>();
+        this.stack = new ArrayDeque<>();
+    }
+
+    private DefaultClaimCheckRepository(DefaultClaimCheckRepository source) {
+        this.map = new HashMap<>(source.map);
+        this.stack = new ArrayDeque<>(source.stack);
+    }
+
+    @Override
+    public DefaultClaimCheckRepository safeCopy() {
+        return new DefaultClaimCheckRepository(this);
+    }
 
     @Override
     public boolean add(String key, Exchange exchange) {

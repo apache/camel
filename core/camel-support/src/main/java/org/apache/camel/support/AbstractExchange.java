@@ -173,6 +173,9 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
             exchange.internalProperties.computeIfPresent(ExchangePropertyKey.MESSAGE_HISTORY,
                     (k, v) -> new CopyOnWriteArrayList<>((List<MessageHistory>) v));
         }
+        // the claim check repository is scoped per exchange, so the copy must not share it
+        exchange.internalProperties.computeIfPresent(ExchangePropertyKey.CLAIM_CHECK_REPOSITORY,
+                (k, v) -> v instanceof SafeCopyProperty scp ? scp.safeCopy() : v);
 
         return exchange;
     }
