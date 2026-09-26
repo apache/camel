@@ -24,12 +24,13 @@ public class HiveMQEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(15);
         props.add("bridgeErrorHandler");
         props.add("cleanStart");
         props.add("clientId");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("headerFilterStrategy");
         props.add("host");
         props.add("lazyStartProducer");
         props.add("password");

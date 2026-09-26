@@ -18,9 +18,11 @@ package org.apache.camel.component.hivemq;
 
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 @UriParams
 public class HiveMQConfiguration implements Cloneable {
@@ -74,6 +76,12 @@ public class HiveMQConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     @Metadata(label = "security", secret = true)
     private String password;
+
+    /**
+     * To use a custom HeaderFilterStrategy to filter headers.
+     */
+    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter headers.")
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     /**
      * Whether to enable SSL/TLS encryption for the broker connection.
@@ -151,6 +159,17 @@ public class HiveMQConfiguration implements Cloneable {
 
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom HeaderFilterStrategy to filter headers.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public HiveMQConfiguration copy() {

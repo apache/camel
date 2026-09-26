@@ -262,6 +262,23 @@ public interface HivemqComponentBuilderFactory {
         }
     
         /**
+         * To use a custom HeaderFilterStrategy to filter headers.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default HivemqComponentBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+    
+        /**
          * Password for authentication with the HiveMQ broker.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -322,6 +339,7 @@ public interface HivemqComponentBuilderFactory {
             case "bridgeErrorHandler": ((HiveMQComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((HiveMQComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((HiveMQComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "headerFilterStrategy": getOrCreateConfiguration((HiveMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "password": getOrCreateConfiguration((HiveMQComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((HiveMQComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;

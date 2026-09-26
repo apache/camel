@@ -37,6 +37,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -47,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 @UriEndpoint(firstVersion = "4.23.0", scheme = "hivemq", title = "HiveMQ", syntax = "hivemq:topic",
              category = { Category.MESSAGING, Category.IOT }, headersClass = HiveMQConstants.class)
-public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLocation, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HiveMQEndpoint.class);
 
@@ -194,6 +196,16 @@ public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLo
 
     public void setConfiguration(HiveMQConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return configuration.getHeaderFilterStrategy();
+    }
+
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        configuration.setHeaderFilterStrategy(headerFilterStrategy);
     }
 
     @Override
