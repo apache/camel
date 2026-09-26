@@ -914,6 +914,17 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
 
+=== camel-bean - parameter values in the method name
+
+A parameter value in the method name that is a Simple expression, such as `+bean(MyBean.class, "process(${body})")+`
+or `+to("bean:foo?method=check(${header.ETag})")+`, is now passed to the method as-is. Previously, when the value was a
+String that started and ended with the same quote (single or double), the quotes were removed, and a value that was the
+text `null` was passed as a Java `null`. For example the `ETag` value `"33a64df5"` was passed as `33a64df5`.
+
+Quoted String parameters such as `process('World')` still have their quotes removed, and the parameter `null` still
+passes `null`, as before. An expression that evaluates to `null` also still passes `null`. If a method relied on the old
+behavior for a value from an expression, then it must remove the quotes, or check for the text `null`, itself.
+
 === camel-debezium-oracle (breaking change)
 
 The parameters `logMiningBufferEhcacheRollbacksConfig`, `logMiningBufferInfinispanCacheRollbacks` have been removed due to the upgrade of Debezium to 3.6.3.Final.
