@@ -27,6 +27,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -60,6 +62,8 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     private final List<StepEnlistment> enlistments;
     private final List<ScheduledFuture<?>> timeoutFutures;
     private final AtomicReference<Status> currentStatus;
+    // makes the status check and the enlistment of a step atomic with the change of status that ends the saga
+    private final Lock lock = new ReentrantLock();
 
     public InMemorySagaCoordinator(CamelContext camelContext, InMemorySagaService sagaService, String sagaId) {
         this.camelContext = ObjectHelper.notNull(camelContext, "camelContext");
@@ -102,16 +106,30 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
                 }
             }
         }
-        this.enlistments.add(new StepEnlistment(step, values));
 
-        if (step.getTimeoutInMilliseconds().isPresent()) {
-            ScheduledFuture<?> timeoutFuture = sagaService.getExecutorService().schedule(() -> {
-                boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
-                if (doAction) {
-                    doCompensate(exchange);
-                }
-            }, step.getTimeoutInMilliseconds().get(), TimeUnit.MILLISECONDS);
-            timeoutFutures.add(timeoutFuture);
+        lock.lock();
+        try {
+            // check again, as the saga may have been completed, compensated or timed out while the options were
+            // evaluated, and then the step would not be finalized
+            status = currentStatus.get();
+            if (status != Status.RUNNING) {
+                CompletableFuture<Void> res = new CompletableFuture<>();
+                res.completeExceptionally(new IllegalStateException("Cannot begin: status is " + status));
+                return res;
+            }
+            this.enlistments.add(new StepEnlistment(step, values));
+
+            if (step.getTimeoutInMilliseconds().isPresent()) {
+                ScheduledFuture<?> timeoutFuture = sagaService.getExecutorService().schedule(() -> {
+                    List<StepEnlistment> steps = end(Status.COMPENSATING);
+                    if (steps != null) {
+                        doCompensate(exchange, steps);
+                    }
+                }, step.getTimeoutInMilliseconds().get(), TimeUnit.MILLISECONDS);
+                timeoutFutures.add(timeoutFuture);
+            }
+        } finally {
+            lock.unlock();
         }
 
         return CompletableFuture.completedFuture(null);
@@ -119,11 +137,11 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
     @Override
     public CompletableFuture<Void> compensate(Exchange exchange) {
-        boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPENSATING);
+        List<StepEnlistment> steps = end(Status.COMPENSATING);
 
-        if (doAction) {
+        if (steps != null) {
             cancelTimeouts();
-            return doCompensate(exchange).thenApply(res -> {
+            return doCompensate(exchange, steps).thenApply(res -> {
                 if (!res) {
                     throw new RuntimeCamelException(
                             "Unable to compensate all required steps of the saga " + sagaId);
@@ -144,11 +162,11 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
 
     @Override
     public CompletableFuture<Void> complete(Exchange exchange) {
-        boolean doAction = currentStatus.compareAndSet(Status.RUNNING, Status.COMPLETING);
+        List<StepEnlistment> steps = end(Status.COMPLETING);
 
-        if (doAction) {
+        if (steps != null) {
             cancelTimeouts();
-            return doComplete(exchange).thenApply(res -> {
+            return doComplete(exchange, steps).thenApply(res -> {
                 if (!res) {
                     throw new RuntimeCamelException(
                             "Unable to complete all required steps of the saga " + sagaId);
@@ -167,8 +185,29 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         return CompletableFuture.completedFuture(null);
     }
 
+    /**
+     * Changes the status from RUNNING to the given status, and returns the steps enlisted at that time, or
+     * <tt>null</tt> if the saga is not running. This holds the lock that beginStep holds while it checks the status and
+     * enlists a step, so every step that began is in the returned list, and is finalized.
+     */
+    private List<StepEnlistment> end(Status status) {
+        lock.lock();
+        try {
+            if (currentStatus.compareAndSet(Status.RUNNING, status)) {
+                return new ArrayList<>(enlistments);
+            }
+            return null;
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public CompletableFuture<Boolean> doCompensate(final Exchange exchange) {
-        return doFinalize(exchange, CamelSagaStep::getCompensation, "compensation")
+        return doCompensate(exchange, enlistments);
+    }
+
+    private CompletableFuture<Boolean> doCompensate(final Exchange exchange, List<StepEnlistment> steps) {
+        return doFinalize(exchange, steps, CamelSagaStep::getCompensation, "compensation")
                 .whenComplete((res, ex) -> {
                     if (ex != null || !Boolean.TRUE.equals(res)) {
                         LOG.warn("Saga {} compensation did not fully succeed — manual intervention may be needed", sagaId);
@@ -179,7 +218,11 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     }
 
     public CompletableFuture<Boolean> doComplete(final Exchange exchange) {
-        return doFinalize(exchange, CamelSagaStep::getCompletion, "completion")
+        return doComplete(exchange, enlistments);
+    }
+
+    private CompletableFuture<Boolean> doComplete(final Exchange exchange, List<StepEnlistment> steps) {
+        return doFinalize(exchange, steps, CamelSagaStep::getCompletion, "completion")
                 .whenComplete((res, ex) -> {
                     if (ex != null || !Boolean.TRUE.equals(res)) {
                         LOG.warn("Saga {} completion did not fully succeed — manual intervention may be needed", sagaId);
@@ -192,8 +235,14 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
     public CompletableFuture<Boolean> doFinalize(
             final Exchange exchange,
             Function<CamelSagaStep, Optional<Endpoint>> endpointExtractor, String description) {
+        return doFinalize(exchange, enlistments, endpointExtractor, description);
+    }
+
+    private CompletableFuture<Boolean> doFinalize(
+            final Exchange exchange, List<StepEnlistment> steps,
+            Function<CamelSagaStep, Optional<Endpoint>> endpointExtractor, String description) {
         CompletableFuture<Boolean> result = CompletableFuture.completedFuture(true);
-        for (StepEnlistment enlistment : reversed(enlistments)) {
+        for (StepEnlistment enlistment : reversed(steps)) {
             Optional<Endpoint> endpoint = endpointExtractor.apply(enlistment.step);
             if (endpoint.isPresent()) {
                 result = result.thenCompose(
