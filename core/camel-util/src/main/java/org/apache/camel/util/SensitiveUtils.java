@@ -91,6 +91,7 @@ public final class SensitiveUtils {
                     "oauthtokenurl",
                     "p12filename",
                     "passphrase",
+                    "passphrasebyte",
                     "password",
                     "personalaccesstoken",
                     "postmanapikey",
@@ -197,6 +198,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qoauthtokenurl\\E"
                                                     + "|\\Qp12filename\\E"
                                                     + "|\\Qpassphrase\\E"
+                                                    + "|\\Qpassphrasebyte\\E"
                                                     + "|\\Qpassword\\E"
                                                     + "|\\Qpersonalaccesstoken\\E"
                                                     + "|\\Qpostmanapikey\\E"

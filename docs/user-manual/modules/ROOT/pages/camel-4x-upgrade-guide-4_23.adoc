@@ -2913,6 +2913,20 @@ producer were never stopped.
 With `parallelProcessing`, a recipient whose task had not started yet when the Recipient List completed is now
 skipped instead of being sent to afterwards. As before, recipients that had already started keep running.
 
+=== camel-xmlsecurity, camel-avro - data format options now carry their security metadata
+
+The `security` and `secret` attributes of `@Metadata` were never written to the generated metadata of data format,
+language and model options, only to that of component options. They are now generated for all of them.
+
+Two data formats are affected. On `xmlSecurity` the `passPhrase`, `passPhraseByte` and `keyPassword` options are now
+reported as secret, and on `avro` the `serializablePackages` option is now reported under the `insecure:serialization`
+category. No option changed its default or its meaning.
+
+This is visible in two places. `passPhraseByte` is now masked as `xxxxxx` wherever Camel sanitizes values, such as in
+logged endpoint URIs and route dumps; `passPhrase` and `keyPassword` were already masked because other components
+declare options with the same names. The YAML DSL JSON schema now also marks `passPhrase` and `keyPassword` with
+`"format": "password"`, so editors that consume the schema render them as password fields.
+
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
