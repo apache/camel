@@ -1,6 +1,7 @@
 = Azure Functions Component
 :doctitle: Azure Functions
 :shortname: azure-functions
+:groupid: org.apache.camel
 :artifactid: camel-azure-functions
 :description: Invoke and manage Azure Functions.
 :since: 4.19

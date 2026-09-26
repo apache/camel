@@ -1,6 +1,7 @@
 = CoAP Component
 :doctitle: CoAP
 :shortname: coap
+:groupid: org.apache.camel
 :artifactid: camel-coap
 :description: Send and receive messages to/from CoAP (Constrained Application Protocol) capable devices.
 :since: 2.16

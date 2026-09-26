@@ -1,6 +1,7 @@
 = JMS Component
 :doctitle: JMS
 :shortname: jms
+:groupid: org.apache.camel
 :artifactid: camel-jms
 :description: Send and receive messages to/from JMS message brokers.
 :since: 1.0

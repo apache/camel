@@ -1,6 +1,7 @@
 = LangChain4j Tokenizer Component
 :doctitle: LangChain4j Tokenizer
 :shortname: langchain4j-tokenizer
+:groupid: org.apache.camel
 :artifactid: camel-langchain4j-tokenizer
 :description: LangChain4j Tokenizer
 :since: 4.8

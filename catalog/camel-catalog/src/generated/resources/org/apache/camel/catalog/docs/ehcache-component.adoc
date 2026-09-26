@@ -1,6 +1,7 @@
 = Ehcache Component
 :doctitle: Ehcache
 :shortname: ehcache
+:groupid: org.apache.camel
 :artifactid: camel-ehcache
 :description: Perform caching operations using Ehcache.
 :since: 2.18

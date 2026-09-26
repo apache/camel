@@ -1,6 +1,7 @@
 = Platform Http Main Component
 :doctitle: Platform Http Main
 :shortname: platform-http-main
+:groupid: org.apache.camel
 :artifactid: camel-platform-http-main
 :description: Platform HTTP for standalone Camel Main applications
 :since: 4.0

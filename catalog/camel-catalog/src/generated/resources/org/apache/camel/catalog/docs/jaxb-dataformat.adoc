@@ -1,6 +1,7 @@
 = JAXB DataFormat
 :doctitle: JAXB
 :shortname: jaxb
+:groupid: org.apache.camel
 :artifactid: camel-jaxb
 :description: Unmarshal XML payloads to POJOs and back using JAXB2 XML marshalling standard
 :since: 1.0

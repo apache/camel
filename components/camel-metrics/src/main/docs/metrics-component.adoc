@@ -1,6 +1,7 @@
 = Metrics Component
 :doctitle: Metrics
 :shortname: metrics
+:groupid: org.apache.camel
 :artifactid: camel-metrics
 :description: Collect various metrics directly from Camel routes using the DropWizard metrics library.
 :since: 2.14

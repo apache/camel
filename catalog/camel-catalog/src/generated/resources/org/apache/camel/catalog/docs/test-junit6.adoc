@@ -1,6 +1,7 @@
 = Test JUnit6 Component
 :doctitle: Test JUnit6
 :shortname: test-junit6
+:groupid: org.apache.camel
 :artifactid: camel-test-junit6
 :description: Camel unit testing with JUnit 6
 :since: 4.17

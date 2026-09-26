@@ -1,6 +1,7 @@
 = Google BigQuery Standard SQL Component
 :doctitle: Google BigQuery Standard SQL
 :shortname: google-bigquery-sql
+:groupid: org.apache.camel
 :artifactid: camel-google-bigquery
 :description: Access Google Cloud BigQuery service using SQL queries.
 :since: 2.23
@@ -263,5 +264,3 @@ BigQuery result types are mapped to Java types:
 |null
 |
 |===
-
-

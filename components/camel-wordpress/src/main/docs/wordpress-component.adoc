@@ -1,6 +1,7 @@
 = WordPress Component
 :doctitle: WordPress
 :shortname: wordpress
+:groupid: org.apache.camel
 :artifactid: camel-wordpress
 :description: Manage posts and users using the WordPress API.
 :since: 2.21

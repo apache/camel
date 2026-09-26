@@ -1,6 +1,7 @@
 = Spring Security Component
 :doctitle: Spring Security
 :shortname: spring-security
+:groupid: org.apache.camel
 :artifactid: camel-spring-security
 :description: Security using Spring Security
 :since: 2.3

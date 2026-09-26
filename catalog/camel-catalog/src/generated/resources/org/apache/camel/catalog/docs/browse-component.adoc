@@ -1,6 +1,7 @@
 = Browse Component
 :doctitle: Browse
 :shortname: browse
+:groupid: org.apache.camel
 :artifactid: camel-browse
 :description: Inspect the messages received on endpoints supporting BrowsableEndpoint.
 :since: 1.3

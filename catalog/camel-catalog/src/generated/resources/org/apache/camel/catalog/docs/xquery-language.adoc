@@ -1,6 +1,7 @@
 = XQuery Language
 :doctitle: XQuery
 :shortname: xquery
+:groupid: org.apache.camel
 :artifactid: camel-saxon
 :description: Evaluates an XQuery expressions against an XML payload
 :since: 1.0

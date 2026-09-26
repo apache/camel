@@ -1,6 +1,7 @@
 = PubNub Component
 :doctitle: PubNub
 :shortname: pubnub
+:groupid: org.apache.camel
 :artifactid: camel-pubnub
 :description: Send and receive messages to/from PubNub data stream network for connected devices.
 :since: 2.19

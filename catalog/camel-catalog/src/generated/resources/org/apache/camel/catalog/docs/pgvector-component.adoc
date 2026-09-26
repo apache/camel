@@ -1,6 +1,7 @@
 = PGVector Component
 :doctitle: PGVector
 :shortname: pgvector
+:groupid: org.apache.camel
 :artifactid: camel-pgvector
 :description: Perform operations on the PostgreSQL pgvector Vector Database.
 :since: 4.19

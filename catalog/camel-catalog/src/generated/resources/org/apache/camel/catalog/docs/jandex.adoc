@@ -1,6 +1,7 @@
 = Jandex Component
 :doctitle: Jandex
 :shortname: jandex
+:groupid: org.apache.camel
 :artifactid: camel-jandex
 :description: Custom class and resource loader using jandex.idx
 :since: 4.12

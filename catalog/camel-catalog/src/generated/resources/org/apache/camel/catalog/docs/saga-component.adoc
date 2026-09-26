@@ -1,6 +1,7 @@
 = Saga Component
 :doctitle: Saga
 :shortname: saga
+:groupid: org.apache.camel
 :artifactid: camel-saga
 :description: Execute custom actions within a route using the Saga EIP.
 :since: 2.21

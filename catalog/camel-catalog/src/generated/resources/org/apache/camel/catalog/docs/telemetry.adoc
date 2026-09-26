@@ -1,6 +1,7 @@
 = Telemetry Component
 :doctitle: Telemetry
 :shortname: telemetry
+:groupid: org.apache.camel
 :artifactid: camel-telemetry
 :description: Distributed telemetry common interfaces
 :since: 4.11

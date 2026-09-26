@@ -1,6 +1,7 @@
 = Oauth Component
 :doctitle: Oauth
 :shortname: oauth
+:groupid: org.apache.camel
 :artifactid: camel-oauth
 :description: Camel OAuth (Preview)
 :since: 4.12

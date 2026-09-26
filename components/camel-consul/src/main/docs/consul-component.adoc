@@ -1,6 +1,7 @@
 = Consul Component
 :doctitle: Consul
 :shortname: consul
+:groupid: org.apache.camel
 :artifactid: camel-consul
 :description: Integrate with Consul service discovery and configuration store.
 :since: 2.18

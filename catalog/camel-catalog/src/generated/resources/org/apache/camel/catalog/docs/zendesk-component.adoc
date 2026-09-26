@@ -1,6 +1,7 @@
 = Zendesk Component
 :doctitle: Zendesk
 :shortname: zendesk
+:groupid: org.apache.camel
 :artifactid: camel-zendesk
 :description: Manage Zendesk tickets, users, organizations, etc.
 :since: 2.19

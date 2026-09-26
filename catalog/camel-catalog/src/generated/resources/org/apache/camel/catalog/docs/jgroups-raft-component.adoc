@@ -1,6 +1,7 @@
 = JGroups raft Component
 :doctitle: JGroups raft
 :shortname: jgroups-raft
+:groupid: org.apache.camel
 :artifactid: camel-jgroups-raft
 :description: Exchange messages with JGroups-raft clusters.
 :since: 2.24

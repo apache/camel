@@ -1,6 +1,7 @@
 = Stub Component
 :doctitle: Stub
 :shortname: stub
+:groupid: org.apache.camel
 :artifactid: camel-stub
 :description: Stub out any physical endpoints while in development or testing.
 :since: 2.10

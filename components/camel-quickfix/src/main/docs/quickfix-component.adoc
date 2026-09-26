@@ -1,6 +1,7 @@
 = QuickFix Component
 :doctitle: QuickFix
 :shortname: quickfix
+:groupid: org.apache.camel
 :artifactid: camel-quickfix
 :description: Open a Financial Interchange (FIX) session using an embedded QuickFix/J engine.
 :since: 2.1

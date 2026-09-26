@@ -1,6 +1,7 @@
 = MLLP Component
 :doctitle: MLLP
 :shortname: mllp
+:groupid: org.apache.camel
 :artifactid: camel-mllp
 :description: Communicate with external systems using the MLLP protocol.
 :since: 2.17

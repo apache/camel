@@ -1,6 +1,7 @@
 = Bean Component
 :doctitle: Bean
 :shortname: bean
+:groupid: org.apache.camel
 :artifactid: camel-bean
 :description: Invoke methods of Java beans stored in Camel registry.
 :since: 1.0

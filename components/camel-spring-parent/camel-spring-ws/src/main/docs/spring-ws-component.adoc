@@ -1,6 +1,7 @@
 = Spring WebService Component
 :doctitle: Spring WebService
 :shortname: spring-ws
+:groupid: org.apache.camel
 :artifactid: camel-spring-ws
 :description: Access external web services as a client or expose your own web services.
 :since: 2.6
@@ -698,5 +699,3 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
     .to("mock:example")
     .marshal(jaxb);
 ----
-
-

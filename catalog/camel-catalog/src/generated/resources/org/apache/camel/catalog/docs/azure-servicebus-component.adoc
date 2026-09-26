@@ -1,6 +1,7 @@
 = Azure ServiceBus Component
 :doctitle: Azure ServiceBus
 :shortname: azure-servicebus
+:groupid: org.apache.camel
 :artifactid: camel-azure-servicebus
 :description: Send and receive messages to/from Azure Service Bus.
 :since: 3.12
@@ -239,4 +240,3 @@ YAML::
             uri: mock:result
 ----
 ====
-

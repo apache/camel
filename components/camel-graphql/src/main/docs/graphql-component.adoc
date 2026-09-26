@@ -1,6 +1,7 @@
 = GraphQL Component
 :doctitle: GraphQL
 :shortname: graphql
+:groupid: org.apache.camel
 :artifactid: camel-graphql
 :description: Send GraphQL queries and mutations to external systems.
 :since: 3.0

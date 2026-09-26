@@ -1,6 +1,7 @@
 = iCal DataFormat
 :doctitle: iCal
 :shortname: ical
+:groupid: org.apache.camel
 :artifactid: camel-ical
 :description: Marshal and unmarshal iCal (*.ics) documents to/from model objects
 :since: 2.12

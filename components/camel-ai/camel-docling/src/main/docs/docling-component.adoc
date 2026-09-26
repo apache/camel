@@ -1,6 +1,7 @@
 = Docling Component
 :doctitle: Docling
 :shortname: docling
+:groupid: org.apache.camel
 :artifactid: camel-docling
 :description: Process documents using Docling library for parsing and conversion.
 :since: 4.15

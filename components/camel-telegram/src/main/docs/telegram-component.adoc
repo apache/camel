@@ -1,6 +1,7 @@
 = Telegram Component
 :doctitle: Telegram
 :shortname: telegram
+:groupid: org.apache.camel
 :artifactid: camel-telegram
 :description: Send and receive messages using the Telegram Bot API.
 :since: 2.18

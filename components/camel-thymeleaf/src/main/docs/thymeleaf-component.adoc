@@ -1,6 +1,7 @@
 = Thymeleaf Component
 :doctitle: Thymeleaf
 :shortname: thymeleaf
+:groupid: org.apache.camel
 :artifactid: camel-thymeleaf
 :description: Transform messages using a Thymeleaf template.
 :since: 4.1

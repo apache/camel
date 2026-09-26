@@ -1,6 +1,7 @@
 = Tahu Host Application Component
 :doctitle: Tahu Host Application
 :shortname: tahu-host
+:groupid: org.apache.camel
 :artifactid: camel-tahu
 :description: Sparkplug B Host Application support over MQTT using Eclipse Tahu
 :since: 4.8

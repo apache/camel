@@ -1,6 +1,7 @@
 = Tokenize Language
 :doctitle: Tokenize
 :shortname: tokenize
+:groupid: org.apache.camel
 :artifactid: camel-core-languages
 :description: Tokenize text payloads using delimiter patterns
 :since: 2.0

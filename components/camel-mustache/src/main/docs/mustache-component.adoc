@@ -1,6 +1,7 @@
 = Mustache Component
 :doctitle: Mustache
 :shortname: mustache
+:groupid: org.apache.camel
 :artifactid: camel-mustache
 :description: Transform messages using a Mustache template.
 :since: 2.12

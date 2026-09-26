@@ -1,6 +1,7 @@
 = A2A Component
 :doctitle: A2A
 :shortname: a2a
+:groupid: org.apache.camel
 :artifactid: camel-a2a
 :description: A2A endpoint for agent-to-agent communication.
 :since: 4.21

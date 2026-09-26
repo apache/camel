@@ -1,6 +1,7 @@
 = MyBatis Bean Component
 :doctitle: MyBatis Bean
 :shortname: mybatis-bean
+:groupid: org.apache.camel
 :artifactid: camel-mybatis
 :description: Perform queries, inserts, updates or deletes in a relational database using MyBatis.
 :since: 2.22

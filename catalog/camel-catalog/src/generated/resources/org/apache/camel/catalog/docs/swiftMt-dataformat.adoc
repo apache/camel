@@ -1,6 +1,7 @@
 = SWIFT MT DataFormat
 :doctitle: SWIFT MT
 :shortname: swiftMt
+:groupid: org.apache.camel
 :artifactid: camel-swift
 :description: Encode and decode SWIFT MT messages
 :since: 3.20

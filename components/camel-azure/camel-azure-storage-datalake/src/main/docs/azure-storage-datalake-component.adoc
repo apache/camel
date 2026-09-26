@@ -1,6 +1,7 @@
 = Azure Storage Data Lake Service Component
 :doctitle: Azure Storage Data Lake Service
 :shortname: azure-storage-datalake
+:groupid: org.apache.camel
 :artifactid: camel-azure-storage-datalake
 :description: Sends and receives files to/from Azure Data Lake Storage.
 :since: 3.8
@@ -805,4 +806,3 @@ You can also skip the integration test and run only basic unit test by using the
 ----
 mvn test
 ----
-

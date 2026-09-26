@@ -1,6 +1,7 @@
 = LangChain4j Web Search Component
 :doctitle: LangChain4j Web Search
 :shortname: langchain4j-web-search
+:groupid: org.apache.camel
 :artifactid: camel-langchain4j-web-search
 :description: LangChain4j Web Search Engine
 :since: 4.8

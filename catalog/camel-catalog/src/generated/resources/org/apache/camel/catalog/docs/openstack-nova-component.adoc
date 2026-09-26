@@ -1,6 +1,7 @@
 = OpenStack Nova Component
 :doctitle: OpenStack Nova
 :shortname: openstack-nova
+:groupid: org.apache.camel
 :artifactid: camel-openstack
 :description: Access OpenStack to manage compute resources.
 :since: 2.19
@@ -105,4 +106,3 @@ If you need more precise server settings, you can create a new object of the typ
 |`delete` | Delete the keypair.
 
 |=========================================================================
-

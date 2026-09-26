@@ -1,6 +1,7 @@
 = Kubernetes HPA Component
 :doctitle: Kubernetes HPA
 :shortname: kubernetes-hpa
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get notified on HPA changes.
 :since: 2.23
@@ -143,5 +144,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` - Watch all HorizontalPodAutoscalers in the specified namespace.
 - `namespace` + `resourceName` - Watch the HorizontalPodAutoscaler with the specified name in the given namespace.
 - `namespace` + `labelKey` + `labelValue` - Watch HorizontalPodAutoscalers with the specified label in the given namespace.
-
-

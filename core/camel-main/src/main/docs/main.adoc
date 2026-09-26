@@ -1,6 +1,7 @@
 = Main Component
 :doctitle: Main
 :shortname: main
+:groupid: org.apache.camel
 :artifactid: camel-main
 :description: Camel Main
 :since: 3.0

@@ -1,6 +1,7 @@
 = Netty Component
 :doctitle: Netty
 :shortname: netty
+:groupid: org.apache.camel
 :artifactid: camel-netty
 :description: Socket level networking using TCP or UDP with Netty 4.x.
 :since: 2.14

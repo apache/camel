@@ -1,6 +1,7 @@
 = XPath Language
 :doctitle: XPath
 :shortname: xpath
+:groupid: org.apache.camel
 :artifactid: camel-xpath
 :description: Evaluates an XPath expression against an XML payload
 :since: 1.1

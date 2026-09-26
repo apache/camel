@@ -1,6 +1,7 @@
 = OpenShift Deployment Configs Component
 :doctitle: OpenShift Deployment Configs
 :shortname: openshift-deploymentconfigs
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on OpenShift Deployment Configs and get notified on Deployment Config changes.
 :since: 3.18
@@ -144,5 +145,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` - Watch all DeploymentConfigs in the specified namespace.
 - `namespace` + `resourceName` - Watch the DeploymentConfig with the specified name in the given namespace.
 - `namespace` + `labelKey` + `labelValue` - Watch DeploymentConfigs with the specified label in the given namespace.
-
-

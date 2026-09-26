@@ -1,6 +1,7 @@
 = Attachments Component
 :doctitle: Attachments
 :shortname: attachments
+:groupid: org.apache.camel
 :artifactid: camel-attachments
 :description: Support for attachments on Camel messages
 :since: 3.0

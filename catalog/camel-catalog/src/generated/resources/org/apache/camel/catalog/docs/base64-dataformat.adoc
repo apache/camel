@@ -1,6 +1,7 @@
 = Base64 DataFormat
 :doctitle: Base64
 :shortname: base64
+:groupid: org.apache.camel
 :artifactid: camel-base64
 :description: Encode and decode data using Base64
 :since: 2.11

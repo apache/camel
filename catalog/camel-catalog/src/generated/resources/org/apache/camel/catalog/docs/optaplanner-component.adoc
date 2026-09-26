@@ -1,6 +1,7 @@
 = OptaPlanner Component
 :doctitle: OptaPlanner
 :shortname: optaplanner
+:groupid: org.apache.camel
 :artifactid: camel-optaplanner
 :description: Solve planning problems with OptaPlanner.
 :since: 2.13

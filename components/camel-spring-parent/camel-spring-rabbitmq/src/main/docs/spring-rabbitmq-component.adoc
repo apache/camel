@@ -1,6 +1,7 @@
 = Spring RabbitMQ Component
 :doctitle: Spring RabbitMQ
 :shortname: spring-rabbitmq
+:groupid: org.apache.camel
 :artifactid: camel-spring-rabbitmq
 :description: Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
 :since: 3.8
@@ -361,5 +362,3 @@ from("spring-rabbitmq:%s?queues=%s&acknowledgeMode=MANUAL")
         channel.basicAck(deliveryTag, false);
     })
 ----
-
-

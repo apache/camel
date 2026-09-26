@@ -1,6 +1,7 @@
 = Printer Component
 :doctitle: Printer
 :shortname: lpr
+:groupid: org.apache.camel
 :artifactid: camel-printer
 :description: Send print jobs to printers.
 :since: 2.1

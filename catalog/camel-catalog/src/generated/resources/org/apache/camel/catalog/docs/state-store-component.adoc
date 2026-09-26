@@ -1,6 +1,7 @@
 = State Store Component
 :doctitle: State Store
 :shortname: state-store
+:groupid: org.apache.camel
 :artifactid: camel-state-store
 :description: Perform key-value operations against a pluggable KeyValueRepository backend.
 :since: 4.23

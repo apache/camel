@@ -1,6 +1,7 @@
 = HashiCorp Vault Component
 :doctitle: HashiCorp Vault
 :shortname: hashicorp-vault
+:groupid: org.apache.camel
 :artifactid: camel-hashicorp-vault
 :description: Manage secrets in HashiCorp Vault Service
 :since: 3.18

@@ -1,6 +1,7 @@
 = Stripe Component
 :doctitle: Stripe
 :shortname: stripe
+:groupid: org.apache.camel
 :artifactid: camel-stripe
 :description: Interact with the Stripe payment platform.
 :since: 4.17

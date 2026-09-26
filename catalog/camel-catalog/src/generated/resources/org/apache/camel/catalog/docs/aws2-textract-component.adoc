@@ -1,6 +1,7 @@
 = AWS Textract Component
 :doctitle: AWS Textract
 :shortname: aws2-textract
+:groupid: org.apache.camel
 :artifactid: camel-aws2-textract
 :description: Extract text and data from documents using AWS Textract and AWS SDK version 2.x.
 :since: 4.15
@@ -84,5 +85,3 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-

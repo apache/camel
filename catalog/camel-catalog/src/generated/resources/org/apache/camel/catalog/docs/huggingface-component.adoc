@@ -1,6 +1,7 @@
 = Hugging Face Component
 :doctitle: Hugging Face
 :shortname: huggingface
+:groupid: org.apache.camel
 :artifactid: camel-huggingface
 :description: Integration with Hugging Face's Model Hub by using the Deep Java Library (DJL) Python bridge
 :since: 4.19

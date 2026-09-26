@@ -1,6 +1,7 @@
 = Jira Component
 :doctitle: Jira
 :shortname: jira
+:groupid: org.apache.camel
 :artifactid: camel-jira
 :description: Interact with JIRA issue tracker.
 :since: 3.0

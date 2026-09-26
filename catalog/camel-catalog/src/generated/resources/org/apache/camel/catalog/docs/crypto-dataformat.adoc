@@ -1,6 +1,7 @@
 = Crypto (Java Cryptographic Extension) DataFormat
 :doctitle: Crypto (Java Cryptographic Extension)
 :shortname: crypto
+:groupid: org.apache.camel
 :artifactid: camel-crypto
 :description: Encrypt and decrypt messages using Java Cryptography Extension (JCE)
 :since: 2.3

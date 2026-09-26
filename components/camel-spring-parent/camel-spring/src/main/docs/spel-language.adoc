@@ -1,6 +1,7 @@
 = SpEL Language
 :doctitle: SpEL
 :shortname: spel
+:groupid: org.apache.camel
 :artifactid: camel-spring
 :description: Evaluates a Spring expression (SpEL)
 :since: 2.7

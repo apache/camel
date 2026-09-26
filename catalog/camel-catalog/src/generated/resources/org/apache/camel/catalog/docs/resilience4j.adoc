@@ -1,6 +1,7 @@
 = Resilience4j Component
 :doctitle: Resilience4j
 :shortname: resilience4j
+:groupid: org.apache.camel
 :artifactid: camel-resilience4j
 :description: Circuit Breaker EIP using Resilience4j
 :since: 3.0

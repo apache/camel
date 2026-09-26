@@ -1,6 +1,7 @@
 = Qdrant Component
 :doctitle: Qdrant
 :shortname: qdrant
+:groupid: org.apache.camel
 :artifactid: camel-qdrant
 :description: Perform operations on the Qdrant Vector Database.
 :since: 4.5
@@ -165,5 +166,3 @@ from("direct:in")
     .to("qdrant:myCollection");
 ----
 ====
-
-

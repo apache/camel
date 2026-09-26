@@ -1,6 +1,7 @@
 = Alibaba Simple Log Service (SLS) Component
 :doctitle: Alibaba Simple Log Service (SLS)
 :shortname: alibaba-sls
+:groupid: org.apache.camel
 :artifactid: camel-alibaba-sls
 :description: Manage logs on Alibaba Cloud Simple Log Service (SLS).
 :since: 4.23

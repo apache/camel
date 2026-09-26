@@ -1,6 +1,7 @@
 = Camunda Component
 :doctitle: Camunda
 :shortname: camunda
+:groupid: org.apache.camel
 :artifactid: camel-camunda
 :description: Interact with Camunda 8 Orchestration Clusters using the Camunda Java Client.
 :since: 4.19

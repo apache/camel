@@ -1,6 +1,7 @@
 = Alibaba EventBridge Component
 :doctitle: Alibaba EventBridge
 :shortname: alibaba-eventbridge
+:groupid: org.apache.camel
 :artifactid: camel-alibaba-eventbridge
 :description: Publish events to Alibaba Cloud EventBridge.
 :since: 4.23

@@ -1,6 +1,7 @@
 = ExchangeProperty Language
 :doctitle: ExchangeProperty
 :shortname: exchangeProperty
+:groupid: org.apache.camel
 :artifactid: camel-core-languages
 :description: Gets a property from the Exchange
 :since: 2.0

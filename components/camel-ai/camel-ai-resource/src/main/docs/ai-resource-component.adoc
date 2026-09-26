@@ -1,6 +1,7 @@
 = AI Resource Component
 :doctitle: AI Resource
 :shortname: ai-resource
+:groupid: org.apache.camel
 :artifactid: camel-ai-resource
 :description: Framework-agnostic consumer endpoint that registers a Camel route as a read-only AI resource in the shared AiResourceRegistry.
 :since: 4.23

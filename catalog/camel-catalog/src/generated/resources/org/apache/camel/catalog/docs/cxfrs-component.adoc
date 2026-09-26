@@ -1,6 +1,7 @@
 = CXF-RS Component
 :doctitle: CXF-RS
 :shortname: cxfrs
+:groupid: org.apache.camel
 :artifactid: camel-cxf-rest
 :description: Expose JAX-RS REST services using Apache CXF or connect to external REST services using CXF REST client.
 :since: 2.0

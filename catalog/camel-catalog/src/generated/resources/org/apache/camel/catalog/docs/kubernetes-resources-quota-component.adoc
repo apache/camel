@@ -1,6 +1,7 @@
 = Kubernetes Resources Quota Component
 :doctitle: Kubernetes Resources Quota
 :shortname: kubernetes-resources-quota
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Resources Quotas.
 :since: 2.17
@@ -99,5 +100,3 @@ from("direct:listByLabels")
 ----
 
 This operation returns a list of resource quotas from your cluster using a label selector (with key1 and key2, with value value1 and value2)
-
-

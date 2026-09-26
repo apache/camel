@@ -1,6 +1,7 @@
 = Vert.x Component
 :doctitle: Vert.x
 :shortname: vertx
+:groupid: org.apache.camel
 :artifactid: camel-vertx
 :description: Send and receive messages to/from Vert.x Event Bus.
 :since: 2.12

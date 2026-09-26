@@ -1,6 +1,7 @@
 = Bonita Component
 :doctitle: Bonita
 :shortname: bonita
+:groupid: org.apache.camel
 :artifactid: camel-bonita
 :description: Communicate with a remote Bonita BPM process engine.
 :since: 2.19

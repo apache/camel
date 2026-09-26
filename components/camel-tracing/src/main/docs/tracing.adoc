@@ -1,6 +1,7 @@
 = Tracing Component (deprecated)
 :doctitle: Tracing
 :shortname: tracing
+:groupid: org.apache.camel
 :artifactid: camel-tracing
 :description: Distributed tracing common interfaces
 :since: 3.5

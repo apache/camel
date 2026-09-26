@@ -1,6 +1,7 @@
 = Huawei Object Storage Service (OBS) Component
 :doctitle: Huawei Object Storage Service (OBS)
 :shortname: hwcloud-obs
+:groupid: org.apache.camel
 :artifactid: camel-huaweicloud-obs
 :description: To provide stable, secure, efficient, and easy-to-use cloud storage service on Huawei Cloud
 :since: 3.12
@@ -266,5 +267,3 @@ YAML::
               serviceKeys: "#myServiceKeyConfig"
 ----
 ====
-
-

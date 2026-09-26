@@ -1,6 +1,7 @@
 = Kubernetes Nodes Component
 :doctitle: Kubernetes Nodes
 :shortname: kubernetes-nodes
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Nodes and get notified on Node changes.
 :since: 2.17
@@ -143,5 +144,3 @@ You can narrow the scope of the consumer using the following query parameter com
 
 - `labelKey` + `labelValue` - Watch Nodes with the specified label.
 - `resourceName` - Watch the Nodes with the specified name.
-
-

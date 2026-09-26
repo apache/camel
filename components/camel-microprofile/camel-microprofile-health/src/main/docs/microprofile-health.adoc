@@ -1,6 +1,7 @@
 = Microprofile Health Component
 :doctitle: Microprofile Health
 :shortname: microprofile-health
+:groupid: org.apache.camel
 :artifactid: camel-microprofile-health
 :description: Expose Camel health checks via MicroProfile Health
 :since: 3.0

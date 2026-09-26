@@ -1,6 +1,7 @@
 = OPA Component
 :doctitle: OPA
 :shortname: opa
+:groupid: org.apache.camel
 :artifactid: camel-opa
 :description: Evaluate Open Policy Agent (Rego) policies against an Exchange and record the allow/deny decision on it.
 :since: 4.23

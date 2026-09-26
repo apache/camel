@@ -1,6 +1,7 @@
 = Spring Batch Component
 :doctitle: Spring Batch
 :shortname: spring-batch
+:groupid: org.apache.camel
 :artifactid: camel-spring-batch
 :description: Send messages to Spring Batch for further processing.
 :since: 2.10
@@ -295,5 +296,3 @@ JMS queue.
   </batch:listeners>
 </batch:job>
 ----
-
-

@@ -1,6 +1,7 @@
 = Dataset Component
 :doctitle: Dataset
 :shortname: dataset
+:groupid: org.apache.camel
 :artifactid: camel-dataset
 :description: Provide data for load and soak testing of your Camel application.
 :since: 1.3

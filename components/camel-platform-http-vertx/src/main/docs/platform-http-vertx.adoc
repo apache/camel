@@ -1,6 +1,7 @@
 = Platform Http Vertx Component
 :doctitle: Platform Http Vertx
 :shortname: platform-http-vertx
+:groupid: org.apache.camel
 :artifactid: camel-platform-http-vertx
 :description: Implementation of the Platform HTTP Engine based on Vert.x Web
 :since: 3.2

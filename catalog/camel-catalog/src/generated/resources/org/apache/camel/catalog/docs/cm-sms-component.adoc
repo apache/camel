@@ -1,6 +1,7 @@
 = CM SMS Gateway Component
 :doctitle: CM SMS Gateway
 :shortname: cm-sms
+:groupid: org.apache.camel
 :artifactid: camel-cm-sms
 :description: Send SMS messages via CM SMS Gateway.
 :since: 2.18

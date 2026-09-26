@@ -1,6 +1,7 @@
 = Undertow Spring Security Component
 :doctitle: Undertow Spring Security
 :shortname: undertow-spring-security
+:groupid: org.apache.camel
 :artifactid: camel-undertow-spring-security
 :description: Spring Security Provider for camel-undertow
 :since: 3.3

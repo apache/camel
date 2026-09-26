@@ -1,6 +1,7 @@
 = AWS Security Hub Component
 :doctitle: AWS Security Hub
 :shortname: aws-security-hub
+:groupid: org.apache.camel
 :artifactid: camel-aws-security-hub
 :description: Manage and interact with AWS Security Hub for security findings.
 :since: 4.18

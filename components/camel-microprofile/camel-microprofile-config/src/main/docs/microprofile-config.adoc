@@ -1,6 +1,7 @@
 = Microprofile Config Component
 :doctitle: Microprofile Config
 :shortname: microprofile-config
+:groupid: org.apache.camel
 :artifactid: camel-microprofile-config
 :description: Bridging Eclipse MicroProfile Config with Camel properties
 :since: 3.0

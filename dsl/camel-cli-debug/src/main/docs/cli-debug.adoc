@@ -1,6 +1,7 @@
 = CLI Debug Component
 :doctitle: CLI Debug
 :shortname: cli-debug
+:groupid: org.apache.camel
 :artifactid: camel-cli-debug
 :description: Remote CLI debugger
 :since: 4.17

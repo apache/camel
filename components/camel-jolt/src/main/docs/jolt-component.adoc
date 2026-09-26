@@ -1,6 +1,7 @@
 = JOLT Component
 :doctitle: JOLT
 :shortname: jolt
+:groupid: org.apache.camel
 :artifactid: camel-jolt
 :description: JSON to JSON transformation using JOLT.
 :since: 2.16

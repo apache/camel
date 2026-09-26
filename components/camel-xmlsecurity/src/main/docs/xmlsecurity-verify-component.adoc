@@ -1,6 +1,7 @@
 = XML Security Verify Component
 :doctitle: XML Security Verify
 :shortname: xmlsecurity-verify
+:groupid: org.apache.camel
 :artifactid: camel-xmlsecurity
 :description: Verify XML payloads using the XML signature specification.
 :since: 2.12

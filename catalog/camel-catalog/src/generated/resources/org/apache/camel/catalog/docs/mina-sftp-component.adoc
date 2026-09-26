@@ -1,6 +1,7 @@
 = MINA SFTP Component
 :doctitle: MINA SFTP
 :shortname: mina-sftp
+:groupid: org.apache.camel
 :artifactid: camel-mina-sftp
 :description: Upload and download files to/from SFTP servers using Apache MINA SSHD.
 :since: 4.18

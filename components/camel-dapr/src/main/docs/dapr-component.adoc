@@ -1,6 +1,7 @@
 = Dapr Component
 :doctitle: Dapr
 :shortname: dapr
+:groupid: org.apache.camel
 :artifactid: camel-dapr
 :description: Dapr component which interfaces with Dapr Building Blocks.
 :since: 4.12

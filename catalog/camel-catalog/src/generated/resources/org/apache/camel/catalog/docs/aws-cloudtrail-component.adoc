@@ -1,6 +1,7 @@
 = AWS CloudTrail Component
 :doctitle: AWS CloudTrail
 :shortname: aws-cloudtrail
+:groupid: org.apache.camel
 :artifactid: camel-aws-cloudtrail
 :description: Consume events from Amazon CloudTrail using AWS SDK version 2.x.
 :since: 3.19
@@ -72,5 +73,3 @@ This method will only take into account management events like create/update/del
 This means you won't consume the events registered in the CloudTrail logs stored on S3, in case of creation of a new Trail.
 
 This is important to notice, and it must be taken into account when using this component.
-
-

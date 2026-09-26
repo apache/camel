@@ -1,6 +1,7 @@
 = Git Component
 :doctitle: Git
 :shortname: git
+:groupid: org.apache.camel
 :artifactid: camel-git
 :description: Perform operations on git repositories.
 :since: 2.16

@@ -1,6 +1,7 @@
 = Openapi Java Component
 :doctitle: Openapi Java
 :shortname: openapi-java
+:groupid: org.apache.camel
 :artifactid: camel-openapi-java
 :description: Rest DSL support for using OpenApi doc
 :since: 3.1

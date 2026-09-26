@@ -1,6 +1,7 @@
 = Alibaba Message Service (MNS) Component
 :doctitle: Alibaba Message Service (MNS)
 :shortname: alibaba-mns
+:groupid: org.apache.camel
 :artifactid: camel-alibaba-mns
 :description: Send and receive messages to/from Alibaba Cloud Message Service (MNS).
 :since: 4.23

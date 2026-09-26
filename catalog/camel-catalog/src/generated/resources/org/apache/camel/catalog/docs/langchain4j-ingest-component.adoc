@@ -1,6 +1,7 @@
 = LangChain4j Ingest Component
 :doctitle: LangChain4j Ingest
 :shortname: langchain4j-ingest
+:groupid: org.apache.camel
 :artifactid: camel-langchain4j-ingest
 :description: Ingest documents into a LangChain4j EmbeddingStore: split, embed and store the message body.
 :since: 4.23

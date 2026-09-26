@@ -1,6 +1,7 @@
 = Hazelcast Ringbuffer Component
 :doctitle: Hazelcast Ringbuffer
 :shortname: hazelcast-ringbuffer
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed ringbuffer.
 :since: 2.16
@@ -123,5 +124,3 @@ YAML::
             uri: seda:out
 ----
 ====
-
-

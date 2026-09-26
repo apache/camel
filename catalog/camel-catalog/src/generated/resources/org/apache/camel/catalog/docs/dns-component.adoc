@@ -1,6 +1,7 @@
 = DNS Component
 :doctitle: DNS
 :shortname: dns
+:groupid: org.apache.camel
 :artifactid: camel-dns
 :description: Perform DNS queries using DNSJava.
 :since: 2.7

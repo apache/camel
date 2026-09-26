@@ -1,6 +1,7 @@
 = SEDA Component
 :doctitle: SEDA
 :shortname: seda
+:groupid: org.apache.camel
 :artifactid: camel-seda
 :description: Asynchronously call another endpoint from any Camel Context in the same JVM.
 :since: 1.1

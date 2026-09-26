@@ -1,6 +1,7 @@
 = Java Language
 :doctitle: Java
 :shortname: java
+:groupid: org.apache.camel
 :artifactid: camel-joor
 :description: Evaluates a Java (Java compiled once at runtime) expression
 :since: 4.3

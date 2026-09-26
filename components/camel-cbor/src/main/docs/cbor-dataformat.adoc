@@ -1,6 +1,7 @@
 = CBOR DataFormat
 :doctitle: CBOR
 :shortname: cbor
+:groupid: org.apache.camel
 :artifactid: camel-cbor
 :description: Unmarshal a CBOR payload to POJO and back
 :since: 3.0

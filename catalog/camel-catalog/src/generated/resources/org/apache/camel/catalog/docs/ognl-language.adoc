@@ -1,6 +1,7 @@
 = OGNL Language (deprecated)
 :doctitle: OGNL
 :shortname: ognl
+:groupid: org.apache.camel
 :artifactid: camel-ognl
 :description: Evaluates an OGNL expression (Apache Commons OGNL)
 :since: 1.1

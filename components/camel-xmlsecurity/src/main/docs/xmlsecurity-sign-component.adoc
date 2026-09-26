@@ -1,6 +1,7 @@
 = XML Security Sign Component
 :doctitle: XML Security Sign
 :shortname: xmlsecurity-sign
+:groupid: org.apache.camel
 :artifactid: camel-xmlsecurity
 :description: Sign XML payloads using the XML signature specification.
 :since: 2.12

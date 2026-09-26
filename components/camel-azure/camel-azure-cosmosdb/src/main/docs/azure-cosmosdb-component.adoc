@@ -1,6 +1,7 @@
 = Azure CosmosDB Component
 :doctitle: Azure CosmosDB
 :shortname: azure-cosmosdb
+:groupid: org.apache.camel
 :artifactid: camel-azure-cosmosdb
 :description: To read and write records to the CosmosDB database on Azure cloud platform.
 :since: 3.10
@@ -888,5 +889,3 @@ To run the integration tests, on this component directory, run the following mav
 mvn clean install -Dendpoint={{dbaddress}} -DaccessKey={{accessKey}}
 ----
 Whereby `endpoint` is your Azure CosmosDB endpoint name and `accessKey` is the access key being generated from Azure CosmosDB portal.
-
-

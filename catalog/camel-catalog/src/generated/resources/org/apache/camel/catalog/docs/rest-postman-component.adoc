@@ -1,6 +1,7 @@
 = REST Postman Component
 :doctitle: REST Postman
 :shortname: rest-postman
+:groupid: org.apache.camel
 :artifactid: camel-rest-postman
 :description: To call and expose REST services using a Postman Collection as contract.
 :since: 4.23

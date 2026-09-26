@@ -1,6 +1,7 @@
 = JavaScript Language
 :doctitle: JavaScript
 :shortname: js
+:groupid: org.apache.camel
 :artifactid: camel-javascript
 :description: Evaluates a JavaScript expression
 :since: 3.20

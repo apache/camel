@@ -1,6 +1,7 @@
 = Grok DataFormat
 :doctitle: Grok
 :shortname: grok
+:groupid: org.apache.camel
 :artifactid: camel-grok
 :description: Unmarshal unstructured data to objects using Logstash based Grok patterns
 :since: 3.0

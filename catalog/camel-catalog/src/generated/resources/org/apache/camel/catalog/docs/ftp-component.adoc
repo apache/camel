@@ -1,6 +1,7 @@
 = FTP Component
 :doctitle: FTP
 :shortname: ftp
+:groupid: org.apache.camel
 :artifactid: camel-ftp
 :description: Upload and download files to/from FTP servers.
 :since: 1.1

@@ -1,6 +1,7 @@
 = Kubernetes Pods Component
 :doctitle: Kubernetes Pods
 :shortname: kubernetes-pods
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Pods and get notified on Pod changes.
 :since: 2.17
@@ -145,5 +146,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` - Watch all Pods in the specified namespace.
 - `namespace` + `resourceName` - Watch the Pod with the specified name in the given namespace.
 - `namespace` + `labelKey` + `labelValue` - Watch Pods with the specified label in the given namespace.
-
-

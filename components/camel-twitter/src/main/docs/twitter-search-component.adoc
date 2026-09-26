@@ -1,6 +1,7 @@
 = Twitter Search Component
 :doctitle: Twitter Search
 :shortname: twitter-search
+:groupid: org.apache.camel
 :artifactid: camel-twitter
 :description: Access Twitter Search.
 :since: 2.10

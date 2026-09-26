@@ -1,6 +1,7 @@
 = Jactl Language
 :doctitle: Jactl
 :shortname: jactl
+:groupid: org.apache.camel
 :artifactid: camel-jactl
 :description: Evaluates a Jactl script
 :since: 4.22

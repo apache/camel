@@ -1,6 +1,7 @@
 = Google Sheets Stream Component
 :doctitle: Google Sheets Stream
 :shortname: google-sheets-stream
+:groupid: org.apache.camel
 :artifactid: camel-google-sheets
 :description: Poll for changes in Google Sheets.
 :since: 2.23
@@ -80,5 +81,3 @@ with one of the enum values:
 
 For more information on the endpoints and options see API documentation
 at: https://developers.google.com/sheets/api/reference/rest/[https://developers.google.com/sheets/api/reference/rest/]
-
-

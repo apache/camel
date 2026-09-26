@@ -1,6 +1,7 @@
 = Ignite Messaging Component
 :doctitle: Ignite Messaging
 :shortname: ignite-messaging
+:groupid: org.apache.camel
 :artifactid: camel-ignite
 :description: Send and receive messages from an Ignite topic.
 :since: 2.17
@@ -21,4 +22,3 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
-

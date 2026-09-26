@@ -1,6 +1,7 @@
 = Cloudevents Component
 :doctitle: Cloudevents
 :shortname: cloudevents
+:groupid: org.apache.camel
 :artifactid: camel-cloudevents
 :description: Camel support for the CloudEvents specification
 :since: 3.15

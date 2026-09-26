@@ -1,6 +1,7 @@
 = Groovy Language
 :doctitle: Groovy
 :shortname: groovy
+:groupid: org.apache.camel
 :artifactid: camel-groovy
 :description: Evaluates a Groovy script
 :since: 1.3

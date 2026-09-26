@@ -1,6 +1,7 @@
 = JPA Component
 :doctitle: JPA
 :shortname: jpa
+:groupid: org.apache.camel
 :artifactid: camel-jpa
 :description: Store and retrieve Java objects from databases using Java Persistence API (JPA).
 :since: 1.0

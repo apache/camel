@@ -1,6 +1,7 @@
 = LangChain4j Chat Component
 :doctitle: LangChain4j Chat
 :shortname: langchain4j-chat
+:groupid: org.apache.camel
 :artifactid: camel-langchain4j-chat
 :description: LangChain4j Chat component
 :since: 4.5

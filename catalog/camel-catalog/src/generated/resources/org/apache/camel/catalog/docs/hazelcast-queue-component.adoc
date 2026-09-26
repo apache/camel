@@ -1,6 +1,7 @@
 = Hazelcast Queue Component
 :doctitle: Hazelcast Queue
 :shortname: hazelcast-queue
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed queue.
 :since: 2.7
@@ -674,5 +675,3 @@ YAML::
                     message: "fail!"
 ----
 ====
-
-

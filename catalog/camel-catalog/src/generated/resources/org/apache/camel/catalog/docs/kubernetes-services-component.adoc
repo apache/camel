@@ -1,6 +1,7 @@
 = Kubernetes Services Component
 :doctitle: Kubernetes Services
 :shortname: kubernetes-services
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Services and get notified on Service changes.
 :since: 2.17
@@ -144,5 +145,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` - Watch all Services in the specified namespace.
 - `namespace` + `resourceName` - Watch the Service with the specified name in the given namespace.
 - `namespace` + `labelKey` + `labelValue` - Watch Services with the specified label in the given namespace.
-
-

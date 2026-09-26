@@ -1,6 +1,7 @@
 = Data Format Component
 :doctitle: Data Format
 :shortname: dataformat
+:groupid: org.apache.camel
 :artifactid: camel-dataformat
 :description: Use a Camel Data Format as a regular Camel Component.
 :since: 2.12

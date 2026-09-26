@@ -1,6 +1,7 @@
 = YAML SnakeYAML DataFormat
 :doctitle: YAML SnakeYAML
 :shortname: snakeYaml
+:groupid: org.apache.camel
 :artifactid: camel-snakeyaml
 :description: Marshal and unmarshal Java objects to and from YAML using SnakeYAML
 :since: 2.17

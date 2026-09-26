@@ -1,6 +1,7 @@
 = MCP Server Component
 :doctitle: MCP Server
 :shortname: mcp-server
+:groupid: org.apache.camel
 :artifactid: camel-mcp-server
 :description: Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP
 :since: 4.22

@@ -1,6 +1,7 @@
 = Kafka Component
 :doctitle: Kafka
 :shortname: kafka
+:groupid: org.apache.camel
 :artifactid: camel-kafka
 :description: Send and receive messages to/from an Apache Kafka broker.
 :since: 2.13

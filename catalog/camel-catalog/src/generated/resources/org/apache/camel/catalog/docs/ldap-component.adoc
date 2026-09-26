@@ -1,6 +1,7 @@
 = LDAP Component
 :doctitle: LDAP
 :shortname: ldap
+:groupid: org.apache.camel
 :artifactid: camel-ldap
 :description: Perform searches on LDAP servers.
 :since: 1.5

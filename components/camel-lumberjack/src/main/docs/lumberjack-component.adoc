@@ -1,6 +1,7 @@
 = Lumberjack Component
 :doctitle: Lumberjack
 :shortname: lumberjack
+:groupid: org.apache.camel
 :artifactid: camel-lumberjack
 :description: Receive logs messages using the Lumberjack protocol.
 :since: 2.18

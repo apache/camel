@@ -1,6 +1,7 @@
 = Protobuf Jackson 3 DataFormat
 :doctitle: Protobuf Jackson 3
 :shortname: protobufJackson3
+:groupid: org.apache.camel
 :artifactid: camel-jackson3-protobuf
 :description: Marshal POJOs to Protobuf and back using Jackson.
 :since: 4.19

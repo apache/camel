@@ -1,6 +1,7 @@
 = Jasypt Component
 :doctitle: Jasypt
 :shortname: jasypt
+:groupid: org.apache.camel
 :artifactid: camel-jasypt
 :description: Security using Jasypt
 :since: 2.5

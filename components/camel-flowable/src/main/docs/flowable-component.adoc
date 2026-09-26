@@ -1,6 +1,7 @@
 = Flowable Component
 :doctitle: Flowable
 :shortname: flowable
+:groupid: org.apache.camel
 :artifactid: camel-flowable
 :description: Send and receive messages from the Flowable BPMN and CMMN engines.
 :since: 4.9

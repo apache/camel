@@ -1,6 +1,7 @@
 = StAX Component
 :doctitle: StAX
 :shortname: stax
+:groupid: org.apache.camel
 :artifactid: camel-stax
 :description: Process XML payloads by a SAX ContentHandler.
 :since: 2.9

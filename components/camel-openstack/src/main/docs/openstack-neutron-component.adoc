@@ -1,6 +1,7 @@
 = OpenStack Neutron Component
 :doctitle: OpenStack Neutron
 :shortname: openstack-neutron
+:groupid: org.apache.camel
 :artifactid: camel-openstack
 :description: Access OpenStack Neutron for network services.
 :since: 2.19
@@ -130,4 +131,3 @@ If you need more precise subnet settings, you can create a new object of the typ
 |`detachInterface` | Detach an interface.
 
 |=========================================================================
-

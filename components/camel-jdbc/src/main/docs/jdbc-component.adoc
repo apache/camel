@@ -1,6 +1,7 @@
 = JDBC Component
 :doctitle: JDBC
 :shortname: jdbc
+:groupid: org.apache.camel
 :artifactid: camel-jdbc
 :description: Access databases through SQL and JDBC.
 :since: 1.2

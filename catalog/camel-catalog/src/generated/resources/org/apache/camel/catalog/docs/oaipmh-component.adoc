@@ -1,6 +1,7 @@
 = OAI-PMH Component
 :doctitle: OAI-PMH
 :shortname: oaipmh
+:groupid: org.apache.camel
 :artifactid: camel-oaipmh
 :description: Harvest metadata using OAI-PMH protocol
 :since: 3.5

@@ -1,6 +1,7 @@
 = Test Spring JUnit6 Component
 :doctitle: Test Spring JUnit6
 :shortname: test-spring-junit6
+:groupid: org.apache.camel
 :artifactid: camel-test-spring-junit6
 :description: Camel unit testing with Spring and JUnit 6
 :since: 4.17

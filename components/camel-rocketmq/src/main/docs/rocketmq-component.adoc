@@ -1,6 +1,7 @@
 = RocketMQ Component
 :doctitle: RocketMQ
 :shortname: rocketmq
+:groupid: org.apache.camel
 :artifactid: camel-rocketmq
 :description: Send and receive messages from RocketMQ cluster.
 :since: 3.20

@@ -1,6 +1,7 @@
 = Google Storage Component
 :doctitle: Google Storage
 :shortname: google-storage
+:groupid: org.apache.camel
 :artifactid: camel-google-storage
 :description: Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
 :since: 3.9
@@ -633,5 +634,3 @@ YAML::
 ====
 
 In this case, the objects consumed will be moved to myCamelProcessedBucket bucket and deleted from the original one (because of deleteAfterRead).
-
-

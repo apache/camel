@@ -1,6 +1,7 @@
 = Thrift DataFormat
 :doctitle: Thrift
 :shortname: thrift
+:groupid: org.apache.camel
 :artifactid: camel-thrift
 :description: Serialize and deserialize messages using Apache Thrift binary data format
 :since: 2.20

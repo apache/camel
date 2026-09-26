@@ -1,6 +1,7 @@
 = UBL DataFormat
 :doctitle: UBL
 :shortname: ubl
+:groupid: org.apache.camel
 :artifactid: camel-ubl
 :description: Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.
 :since: 4.23

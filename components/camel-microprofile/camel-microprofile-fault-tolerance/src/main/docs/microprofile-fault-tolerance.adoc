@@ -1,6 +1,7 @@
 = Microprofile Fault Tolerance Component
 :doctitle: Microprofile Fault Tolerance
 :shortname: microprofile-fault-tolerance
+:groupid: org.apache.camel
 :artifactid: camel-microprofile-fault-tolerance
 :description: Circuit Breaker EIP using MicroProfile Fault Tolerance
 :since: 3.3

@@ -1,6 +1,7 @@
 = Write Ahead Log Strategy for Resume API Component
 :doctitle: Write Ahead Log Strategy for Resume API
 :shortname: wal
+:groupid: org.apache.camel
 :artifactid: camel-wal
 :description: Write Ahead Log Strategy for Resume API
 :since: 3.20

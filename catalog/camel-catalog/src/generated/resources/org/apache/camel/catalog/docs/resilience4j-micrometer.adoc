@@ -1,6 +1,7 @@
 = Resilience4j Micrometer Component
 :doctitle: Resilience4j Micrometer
 :shortname: resilience4j-micrometer
+:groupid: org.apache.camel
 :artifactid: camel-resilience4j-micrometer
 :description: Micrometer statistics for Resilience4j
 :since: 4.15

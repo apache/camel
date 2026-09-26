@@ -1,6 +1,7 @@
 = Alibaba Short Message Service (SMS) Component
 :doctitle: Alibaba Short Message Service (SMS)
 :shortname: alibaba-sms
+:groupid: org.apache.camel
 :artifactid: camel-alibaba-sms
 :description: Send SMS messages using Alibaba Cloud Short Message Service (SMS).
 :since: 4.23

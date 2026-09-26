@@ -1,6 +1,7 @@
 = Spring XML Component
 :doctitle: Spring XML
 :shortname: spring-xml
+:groupid: org.apache.camel
 :artifactid: camel-spring-xml
 :description: Camel Spring with XML DSL
 :since: 3.9

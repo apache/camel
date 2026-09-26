@@ -1,6 +1,7 @@
 = Spring AI Embeddings Component
 :doctitle: Spring AI Embeddings
 :shortname: spring-ai-embeddings
+:groupid: org.apache.camel
 :artifactid: camel-spring-ai-embeddings
 :description: Spring AI Embeddings
 :since: 4.17
@@ -152,4 +153,3 @@ When processing a List<String>, the component returns:
 ** `CamelSpringAiEmbeddings` - List of Embedding objects
 ** `CamelSpringAiEmbeddingInputTexts` - The original input texts as List<String>
 ** `CamelSpringAiEmbeddingMetadata` - Response metadata
-

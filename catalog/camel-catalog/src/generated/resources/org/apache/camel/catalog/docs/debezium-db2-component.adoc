@@ -1,6 +1,7 @@
 = Debezium DB2 Connector Component
 :doctitle: Debezium DB2 Connector
 :shortname: debezium-db2
+:groupid: org.apache.camel
 :artifactid: camel-debezium-db2
 :description: Capture changes from a DB2 database.
 :since: 3.17
@@ -178,4 +179,3 @@ This component is a thin wrapper around Debezium Engine as mentioned.
 Therefore, before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior.
 This is especially true in regard to https://debezium.io/documentation/reference/1.8/operations/embedded.html#_handling_failures[handling failures].
 ====
-

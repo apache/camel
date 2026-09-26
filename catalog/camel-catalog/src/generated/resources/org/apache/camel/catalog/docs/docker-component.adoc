@@ -1,6 +1,7 @@
 = Docker Component
 :doctitle: Docker
 :shortname: docker
+:groupid: org.apache.camel
 :artifactid: camel-docker
 :description: Manage Docker containers.
 :since: 2.15

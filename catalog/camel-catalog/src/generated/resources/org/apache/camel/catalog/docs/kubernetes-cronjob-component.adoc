@@ -1,6 +1,7 @@
 = Kubernetes Cronjob Component
 :doctitle: Kubernetes Cronjob
 :shortname: kubernetes-cronjob
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes CronJob.
 :since: 4.3
@@ -32,4 +33,3 @@ include::partial$component-endpoint-headers.adoc[]
 - `createCronJob`
 - `updateCronJob`
 - `deleteCronJob`
-

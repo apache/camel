@@ -1,6 +1,7 @@
 = JCR Component
 :doctitle: JCR
 :shortname: jcr
+:groupid: org.apache.camel
 :artifactid: camel-jcr
 :description: Read and write nodes to/from a JCR compliant content repository.
 :since: 1.3

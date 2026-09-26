@@ -1,6 +1,7 @@
 = DHIS2 Component
 :doctitle: DHIS2
 :shortname: dhis2
+:groupid: org.apache.camel
 :artifactid: camel-dhis2
 :description: Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web API.
 :since: 4.0

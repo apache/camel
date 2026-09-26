@@ -1,6 +1,7 @@
 = SCP Component
 :doctitle: SCP
 :shortname: scp
+:groupid: org.apache.camel
 :artifactid: camel-jsch
 :description: Copy files to/from remote hosts using the secure copy protocol (SCP).
 :since: 2.10

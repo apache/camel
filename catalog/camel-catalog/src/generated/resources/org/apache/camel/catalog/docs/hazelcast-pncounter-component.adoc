@@ -1,6 +1,7 @@
 = Hazelcast PN Counter Component
 :doctitle: Hazelcast PN Counter
 :shortname: hazelcast-pncounter
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Increment, decrement, get, etc. operations on a Hazelcast PN Counter (CRDT counter).
 :since: 4.19

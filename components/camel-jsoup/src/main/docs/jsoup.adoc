@@ -1,6 +1,7 @@
 = Jsoup Component
 :doctitle: Jsoup
 :shortname: jsoup
+:groupid: org.apache.camel
 :artifactid: camel-jsoup
 :description: Cleanup HTML content
 :since: 4.21

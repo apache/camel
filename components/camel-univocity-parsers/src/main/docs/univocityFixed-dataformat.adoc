@@ -1,6 +1,7 @@
 = uniVocity Fixed Length DataFormat
 :doctitle: uniVocity Fixed Length
 :shortname: univocityFixed
+:groupid: org.apache.camel
 :artifactid: camel-univocity-parsers
 :description: Marshal and unmarshal Java objects from and to fixed length records using UniVocity Parsers
 :since: 2.15

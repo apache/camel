@@ -1,6 +1,7 @@
 = Web3j Ethereum Blockchain Component
 :doctitle: Web3j Ethereum Blockchain
 :shortname: web3j
+:groupid: org.apache.camel
 :artifactid: camel-web3j
 :description: Interact with Ethereum nodes using web3j client API.
 :since: 2.22

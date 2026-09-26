@@ -1,6 +1,7 @@
 = REST Component
 :doctitle: REST
 :shortname: rest
+:groupid: org.apache.camel
 :artifactid: camel-rest
 :description: Expose REST services or call external REST services.
 :since: 2.14

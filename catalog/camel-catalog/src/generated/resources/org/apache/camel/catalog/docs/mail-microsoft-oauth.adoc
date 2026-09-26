@@ -1,6 +1,7 @@
 = Mail Microsoft Oauth Component
 :doctitle: Mail Microsoft Oauth
 :shortname: mail-microsoft-oauth
+:groupid: org.apache.camel
 :artifactid: camel-mail-microsoft-oauth
 :description: Camel Mail OAuth2 Authenticator for Microsoft Exchange Online
 :since: 3.18.4

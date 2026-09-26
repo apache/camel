@@ -1,6 +1,7 @@
 = Paho MQTT 5 Component
 :doctitle: Paho MQTT 5
 :shortname: paho-mqtt5
+:groupid: org.apache.camel
 :artifactid: camel-paho-mqtt5
 :description: Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
 :since: 3.8

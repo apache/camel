@@ -1,6 +1,7 @@
 = GitHub2 Component
 :doctitle: GitHub2
 :shortname: github2
+:groupid: org.apache.camel
 :artifactid: camel-github2
 :description: Interact with the GitHub API.
 :since: 4.18

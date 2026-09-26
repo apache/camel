@@ -1,6 +1,7 @@
 = JMX Component
 :doctitle: JMX
 :shortname: jmx
+:groupid: org.apache.camel
 :artifactid: camel-jmx
 :description: Receive JMX notifications.
 :since: 2.6

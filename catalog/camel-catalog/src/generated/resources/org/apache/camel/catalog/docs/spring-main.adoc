@@ -1,6 +1,7 @@
 = Spring Main Component
 :doctitle: Spring Main
 :shortname: spring-main
+:groupid: org.apache.camel
 :artifactid: camel-spring-main
 :description: Camel Spring Main support
 :since: 3.2

@@ -1,6 +1,7 @@
 = Milvus Component
 :doctitle: Milvus
 :shortname: milvus
+:groupid: org.apache.camel
 :artifactid: camel-milvus
 :description: Perform operations on the Milvus Vector Database.
 :since: 4.5
@@ -212,5 +213,3 @@ This is particularly important when you design your Milvus database.
 
 The transformer only supports insert/upsert objects, so the only operation you can set via header are INSERT and UPSERT,
 otherwise the transformer will fail with an error log.
-
-

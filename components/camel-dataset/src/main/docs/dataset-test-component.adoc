@@ -1,6 +1,7 @@
 = DataSet Test Component
 :doctitle: DataSet Test
 :shortname: dataset-test
+:groupid: org.apache.camel
 :artifactid: camel-dataset
 :description: Extends the mock component by pulling messages from another endpoint on startup to set the expected message bodies.
 :since: 1.3

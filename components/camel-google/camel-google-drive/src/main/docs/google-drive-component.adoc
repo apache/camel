@@ -1,6 +1,7 @@
 = Google Drive Component
 :doctitle: Google Drive
 :shortname: google-drive
+:groupid: org.apache.camel
 :artifactid: camel-google-drive
 :description: Manage files in Google Drive.
 :since: 2.14
@@ -76,5 +77,3 @@ override the API call. See xref:manual::security-model.adoc[the Camel security m
 
 For more information on the endpoints and options see API documentation
 at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
-
-

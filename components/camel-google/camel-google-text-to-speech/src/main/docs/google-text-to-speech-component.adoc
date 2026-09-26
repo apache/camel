@@ -1,6 +1,7 @@
 = Google Cloud Text To Speech Component
 :doctitle: Google Cloud Text To Speech
 :shortname: google-text-to-speech
+:groupid: org.apache.camel
 :artifactid: camel-google-text-to-speech
 :description: Synthesize speech from text using the Google Cloud Text-to-Speech API
 :since: 4.19

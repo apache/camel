@@ -1,6 +1,7 @@
 = OpenSearch Component
 :doctitle: OpenSearch
 :shortname: opensearch
+:groupid: org.apache.camel
 :artifactid: camel-opensearch
 :description: Send requests to OpenSearch via Java Client API.
 :since: 4.0

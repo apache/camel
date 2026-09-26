@@ -1,6 +1,7 @@
 = Solr Component
 :doctitle: Solr
 :shortname: solr
+:groupid: org.apache.camel
 :artifactid: camel-solr
 :description: Perform operations against Apache Lucene Solr.
 :since: 4.8

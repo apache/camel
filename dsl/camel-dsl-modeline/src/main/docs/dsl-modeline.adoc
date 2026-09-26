@@ -1,6 +1,7 @@
 = DSL Modeline Component
 :doctitle: DSL Modeline
 :shortname: dsl-modeline
+:groupid: org.apache.camel
 :artifactid: camel-dsl-modeline
 :description: Camel DSL modeline
 :since: 3.16

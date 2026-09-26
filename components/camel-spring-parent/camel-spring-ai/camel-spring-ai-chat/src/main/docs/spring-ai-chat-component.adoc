@@ -1,6 +1,7 @@
 = Spring AI Chat Component
 :doctitle: Spring AI Chat
 :shortname: spring-ai-chat
+:groupid: org.apache.camel
 :artifactid: camel-spring-ai-chat
 :description: Perform chat operations using Spring AI.
 :since: 4.17
@@ -1445,4 +1446,3 @@ See xref:ai-llm-integration-guide.adoc#_structured_error_exchange_properties[AI 
 * xref:spring-ai-embeddings-component.adoc[Spring AI Embeddings Component]
 * xref:spring-ai-vector-store-component.adoc[Spring AI VectorStore Component]
 * xref:spring-ai-image-component.adoc[Spring AI Image Component]
-

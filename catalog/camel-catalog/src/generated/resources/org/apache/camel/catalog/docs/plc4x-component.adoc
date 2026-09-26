@@ -1,6 +1,7 @@
 = PLC4X Component
 :doctitle: PLC4X
 :shortname: plc4x
+:groupid: org.apache.camel
 :artifactid: camel-plc4x
 :description: Read and write to PLC devices
 :since: 3.20

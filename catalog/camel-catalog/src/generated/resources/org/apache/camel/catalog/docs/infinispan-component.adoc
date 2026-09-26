@@ -1,6 +1,7 @@
 = Infinispan Component
 :doctitle: Infinispan
 :shortname: infinispan
+:groupid: org.apache.camel
 :artifactid: camel-infinispan
 :description: Read and write from/to Infinispan distributed key/value store and data grid.
 :since: 2.13

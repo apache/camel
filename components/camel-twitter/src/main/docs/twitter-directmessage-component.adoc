@@ -1,6 +1,7 @@
 = Twitter Direct Message Component
 :doctitle: Twitter Direct Message
 :shortname: twitter-directmessage
+:groupid: org.apache.camel
 :artifactid: camel-twitter
 :description: Send and receive Twitter direct messages.
 :since: 2.10

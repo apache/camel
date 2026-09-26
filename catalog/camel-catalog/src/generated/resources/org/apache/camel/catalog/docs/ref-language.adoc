@@ -1,6 +1,7 @@
 = Ref Language
 :doctitle: Ref
 :shortname: ref
+:groupid: org.apache.camel
 :artifactid: camel-core-languages
 :description: Uses an existing expression from the registry
 :since: 2.8

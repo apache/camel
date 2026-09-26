@@ -1,6 +1,7 @@
 = Robot Framework Component
 :doctitle: Robot Framework
 :shortname: robotframework
+:groupid: org.apache.camel
 :artifactid: camel-robotframework
 :description: Pass camel exchanges to acceptance test written in Robot DSL.
 :since: 3.0

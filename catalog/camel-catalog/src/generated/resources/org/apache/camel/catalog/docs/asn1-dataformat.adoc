@@ -1,6 +1,7 @@
 = ASN.1 File DataFormat
 :doctitle: ASN.1 File
 :shortname: asn1
+:groupid: org.apache.camel
 :artifactid: camel-asn1
 :description: Encode and decode data structures using Abstract Syntax Notation One (ASN.1)
 :since: 2.20

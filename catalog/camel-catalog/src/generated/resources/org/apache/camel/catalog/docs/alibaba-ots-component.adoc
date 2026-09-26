@@ -1,6 +1,7 @@
 = Alibaba Tablestore (OTS) Component
 :doctitle: Alibaba Tablestore (OTS)
 :shortname: alibaba-ots
+:groupid: org.apache.camel
 :artifactid: camel-alibaba-ots
 :description: Perform row operations on Alibaba Cloud Tablestore (OTS).
 :since: 4.23

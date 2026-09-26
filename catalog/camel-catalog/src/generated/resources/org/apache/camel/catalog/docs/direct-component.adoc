@@ -1,6 +1,7 @@
 = Direct Component
 :doctitle: Direct
 :shortname: direct
+:groupid: org.apache.camel
 :artifactid: camel-direct
 :description: Call another endpoint from the same Camel Context synchronously.
 :since: 1.0

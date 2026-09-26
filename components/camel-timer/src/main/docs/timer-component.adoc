@@ -1,6 +1,7 @@
 = Timer Component
 :doctitle: Timer
 :shortname: timer
+:groupid: org.apache.camel
 :artifactid: camel-timer
 :description: Generate messages in specified intervals using java.util.Timer.
 :since: 1.0

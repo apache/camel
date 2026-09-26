@@ -1,6 +1,7 @@
 = HiveMQ Component
 :doctitle: HiveMQ
 :shortname: hivemq
+:groupid: org.apache.camel
 :artifactid: camel-hivemq
 :description: Camel HiveMQ MQTT Client support
 :since: 4.23

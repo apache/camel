@@ -1,6 +1,7 @@
 = Platform HTTP Jolokia Component
 :doctitle: Platform HTTP Jolokia
 :shortname: platform-http-jolokia
+:groupid: org.apache.camel
 :artifactid: camel-platform-http-jolokia
 :description: Jolokia plugin for standalone Camel HTTP Platform
 :since: 4.5

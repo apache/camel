@@ -1,6 +1,7 @@
 = CSV DataFormat
 :doctitle: CSV
 :shortname: csv
+:groupid: org.apache.camel
 :artifactid: camel-csv
 :description: Handle CSV (Comma Separated Values) payloads
 :since: 1.3

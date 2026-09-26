@@ -1,6 +1,7 @@
 = Spring LDAP Component
 :doctitle: Spring LDAP
 :shortname: spring-ldap
+:groupid: org.apache.camel
 :artifactid: camel-spring-ldap
 :description: Perform searches in LDAP servers using filters as the message payload.
 :since: 2.11
@@ -110,5 +111,3 @@ in `org.apache.camel.springldap.SpringLdapProducer`:
 * `public static final String MODIFICATION_ITEMS = "modificationItems";`
 * `public static final String FUNCTION = "function";`
 * `public static final String REQUEST = "request";`
-
-

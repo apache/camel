@@ -1,6 +1,7 @@
 = Kudu Component
 :doctitle: Kudu
 :shortname: kudu
+:groupid: org.apache.camel
 :artifactid: camel-kudu
 :description: Interact with Apache Kudu, a free and open source column-oriented data store of the Apache Hadoop ecosystem.
 :since: 3.0

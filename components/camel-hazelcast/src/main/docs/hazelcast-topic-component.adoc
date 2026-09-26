@@ -1,6 +1,7 @@
 = Hazelcast Topic Component
 :doctitle: Hazelcast Topic
 :shortname: hazelcast-topic
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Send and receive messages to/from Hazelcast distributed topic.
 :since: 2.15
@@ -131,5 +132,3 @@ YAML::
                     message: "...this should never have happened"
 ----
 ====
-
-

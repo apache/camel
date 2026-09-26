@@ -1,6 +1,7 @@
 = IBM Cloud Object Storage Component
 :doctitle: IBM Cloud Object Storage
 :shortname: ibm-cos
+:groupid: org.apache.camel
 :artifactid: camel-ibm-cos
 :description: Store and retrieve objects from IBM Cloud Object Storage.
 :since: 4.16
@@ -998,4 +999,3 @@ Maven users will need to add the following dependency to their `pom.xml`.
 ----
 
 where `x.x.x` is the version number of Camel.
-

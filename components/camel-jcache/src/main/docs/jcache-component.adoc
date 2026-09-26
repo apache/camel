@@ -1,6 +1,7 @@
 = JCache Component
 :doctitle: JCache
 :shortname: jcache
+:groupid: org.apache.camel
 :artifactid: camel-jcache
 :description: Perform caching operations against JSR107/JCache.
 :since: 2.17

@@ -1,6 +1,7 @@
 = Thrift Component
 :doctitle: Thrift
 :shortname: thrift
+:groupid: org.apache.camel
 :artifactid: camel-thrift
 :description: Call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism.
 :since: 2.20

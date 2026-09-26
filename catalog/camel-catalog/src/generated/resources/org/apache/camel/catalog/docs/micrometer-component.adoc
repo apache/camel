@@ -1,6 +1,7 @@
 = Micrometer Component
 :doctitle: Micrometer
 :shortname: micrometer
+:groupid: org.apache.camel
 :artifactid: camel-micrometer
 :description: Collect various metrics directly from Camel routes using the Micrometer library.
 :since: 2.22

@@ -1,6 +1,7 @@
 = SMPP Component
 :doctitle: SMPP
 :shortname: smpp
+:groupid: org.apache.camel
 :artifactid: camel-smpp
 :description: Send and receive SMS messages using a SMSC (Short Message Service Center).
 :since: 2.2
