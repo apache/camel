@@ -206,8 +206,10 @@ public final class IOHelper {
      * @param  output           the output stream buffer
      * @param  bufferSize       the size of the buffer used for the copies
      * @param  flushOnEachWrite whether to flush the data everytime that data is written to the buffer
-     * @return                  the number of bytes copied
-     * @throws IOException      for I/O errors
+     * @param  maxSize          the maximum number of bytes allowed to be copied, or 0 or less for no limit
+     * @return                  the number of bytes copied, or {@link Integer#MAX_VALUE} if more bytes than that were
+     *                          copied
+     * @throws IOException      for I/O errors, or if more than maxSize bytes are copied
      */
     public static int copy(
             final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite,
@@ -236,7 +238,8 @@ public final class IOHelper {
                     bufferSize, flushOnEachWrite);
         }
 
-        int total = 0;
+        // count in a long so that a maxSize of 2 GiB or more is enforced (an int would wrap around)
+        long total = 0;
         final byte[] buffer = new byte[bufferSize];
         int n = input.read(buffer);
 
@@ -266,7 +269,7 @@ public final class IOHelper {
             // flush at end, if we didn't do it during the writing
             output.flush();
         }
-        return total;
+        return (int) Math.min(total, Integer.MAX_VALUE);
     }
 
     /**

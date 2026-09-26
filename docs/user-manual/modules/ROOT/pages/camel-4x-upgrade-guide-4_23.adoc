@@ -2590,6 +2590,17 @@ To restore the previous behaviour and allow external entity resolution, set the 
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
 
+=== camel-zipfile, camel-tarfile - a maxDecompressedSize of 2 GiB or more is now enforced
+
+The `maxDecompressedSize` option of the Zip File and Tar File data formats (and of `ZipSplitter`) was not
+enforced when set to 2 GiB (`Integer.MAX_VALUE` bytes) or more, because the byte count behind the check
+wrapped around. The limit is now enforced for any value: unmarshalling an entry that decompresses to more
+than the configured `maxDecompressedSize` fails with an `IOException`, as documented. The default limit
+(1 GiB) is unchanged, and `-1` still disables the limit.
+
+`IOHelper.copy(InputStream, OutputStream, int, boolean, long)` now returns `Integer.MAX_VALUE`, instead of a
+negative number, when it copies more than `Integer.MAX_VALUE` bytes.
+
 === camel-core - resolveResource option on expressions
 
 Every expression has a new option `resolveResource` (default `false`). When `true` and the expression's result is a
