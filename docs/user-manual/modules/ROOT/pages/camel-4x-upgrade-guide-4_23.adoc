@@ -123,6 +123,15 @@ Prior to Camel 4.23 the property was only set when there was no fallback and was
 so a fallback that tested it for `null` must now test for `true` or `false` instead.
 `CamelCircuitBreakerResponseShortCircuited` is unchanged and remains `true` whenever the fallback runs, whatever the cause.
 
+=== Convert Body, Convert Header and Convert Variable EIPs
+
+When a charset is configured, such as `convertBodyTo(String.class, "UTF-8")`, then the conversion now uses that charset
+also when the message has a `CamelCharsetName` header. Previously the header took precedence, so the configured charset
+was ignored. The header is kept on the message unchanged.
+
+The `CamelCharsetName` exchange property is now also restored when the conversion fails. Previously the configured charset
+was left on the exchange, where the error handler would use it.
+
 === Error handler - onException when the exception changes during redelivery
 
 When a redelivery attempt fails with a different exception than the previous attempt, the error handler now uses
