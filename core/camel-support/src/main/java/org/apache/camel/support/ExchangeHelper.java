@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.VariableAware;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.BrowsableVariableRepository;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.VariableRepository;
@@ -1225,13 +1227,45 @@ public final class ExchangeHelper {
         }
         final VariableAware va = getVariableAware(exchange, repo);
 
+        // the headers are stored as header:name.key (in a route or group repository the name is id:name, so the key
+        // is header:id:name.key). Remove the headers of a previous message stored in this variable, so a header that
+        // this message does not have is not kept with its old value
+        String prefix = "header:" + name + ".";
+        removeVariables(exchange, repo, prefix);
+
         // set body and headers as variables
         Object body = message.getBody();
         va.setVariable(name, body);
         for (Map.Entry<String, Object> header : message.getHeaders().entrySet()) {
-            String key = "header:" + name + "." + header.getKey();
+            String key = prefix + header.getKey();
             Object value = header.getValue();
             va.setVariable(key, value);
+        }
+    }
+
+    private static void removeVariables(Exchange exchange, VariableRepository repo, String prefix) {
+        Map<String, Object> variables = null;
+        if (repo == null) {
+            if (exchange.hasVariables()) {
+                variables = exchange.getVariables();
+            }
+        } else if (repo instanceof BrowsableVariableRepository browsable) {
+            variables = browsable.getVariables();
+        }
+        if (variables != null) {
+            List<String> keys = new ArrayList<>();
+            for (String key : variables.keySet()) {
+                if (key.startsWith(prefix)) {
+                    keys.add(key);
+                }
+            }
+            for (String key : keys) {
+                if (repo != null) {
+                    repo.removeVariable(key);
+                } else {
+                    exchange.removeVariable(key);
+                }
+            }
         }
     }
 
