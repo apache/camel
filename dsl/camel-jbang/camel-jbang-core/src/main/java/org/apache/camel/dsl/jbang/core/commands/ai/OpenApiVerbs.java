@@ -44,24 +44,7 @@ public final class OpenApiVerbs {
     private static final Pattern SPECIFICATION = Pattern.compile(
             "openApi:\\s*\\n\\s*(?:[a-zA-Z]+:[^\\n]*\\n\\s*)*?specification:\\s*[\"']?([^\"'\\s]+)[\"']?");
 
-    /** Client-side OpenAPI producer URI: {@code rest-openapi:specification#operationId(?params)}. */
-    public static final Pattern REST_OPENAPI_URI_PATTERN
-            = Pattern.compile("rest-openapi:([^#\\s\"']+)#([^#?\\s\"']+)(?:\\?[^\\s\"']*)?");
-
-    /** The specification file and operation selected by a client-side {@code rest-openapi:} URI. */
-    public record RestOpenApiUri(String specification, String operationId) {
-    }
-
     private OpenApiVerbs() {
-    }
-
-    /** Parses a client-side {@code rest-openapi:specification#operationId} URI, or returns {@code null}. */
-    public static RestOpenApiUri parseRestOpenApiUri(String uri) {
-        if (uri == null) {
-            return null;
-        }
-        Matcher matcher = REST_OPENAPI_URI_PATTERN.matcher(uri);
-        return matcher.matches() ? new RestOpenApiUri(matcher.group(1), matcher.group(2)) : null;
     }
 
     /**
@@ -94,41 +77,6 @@ public final class OpenApiVerbs {
                         if (WITHOUT_BODY.contains(verb) && operation.getValue() instanceof Map<?, ?> details
                                 && details.get("operationId") != null) {
                             answer.add("direct:" + details.get("operationId"));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // Catching Exception handles unreadable and unparseable JSON or YAML specifications.
-            }
-        }
-        // A producer URI carries its own operation reference. Read its spec as well so its verb is
-        // resolved using the same rules as a rest binding (in particular, do not infer from the URI).
-        Matcher producer = REST_OPENAPI_URI_PATTERN.matcher(content);
-        while (producer.find()) {
-            String specName = producer.group(1);
-            String targetOpId = producer.group(2);
-            Path spec = directory.resolve(specName);
-            if (!Files.isRegularFile(spec)) {
-                continue;
-            }
-            try {
-                Map<?, ?> paths = paths(Files.readString(spec));
-                if (paths == null) {
-                    continue;
-                }
-                for (Object path : paths.values()) {
-                    if (!(path instanceof Map<?, ?> operations)) {
-                        continue;
-                    }
-                    for (Map.Entry<?, ?> operation : operations.entrySet()) {
-                        if (operation.getValue() instanceof Map<?, ?> details
-                                && targetOpId.equals(details.get("operationId"))) {
-                            String verb = String.valueOf(operation.getKey()).toLowerCase(java.util.Locale.ROOT);
-                            if (WITHOUT_BODY.contains(verb)) {
-                                // It is a body-less request operation. Its HTTP response remains a
-                                // body-producing step in the YAML flow validator.
-                                answer.add("rest-openapi:" + specName + "#" + targetOpId);
-                            }
                         }
                     }
                 }

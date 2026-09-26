@@ -132,7 +132,7 @@ class OpenApiBodyFlowTest {
     }
 
     @Test
-    void restOpenApiProducerQueryParametersDoNotChangeOperationId(@TempDir Path dir) throws Exception {
+    void restOpenApiProducerWithQueryParametersSetsResponseBody(@TempDir Path dir) throws Exception {
         Files.writeString(dir.resolve("stock-api.json"), SPEC);
         String routes = """
                 - route:
@@ -145,12 +145,10 @@ class OpenApiBodyFlowTest {
                               jsonpath:
                                 expression: "$.name"
                 """;
+        Files.writeString(dir.resolve("routes.camel.yaml"), routes);
 
-        assertThat(OpenApiVerbs.parseRestOpenApiUri(
-                "rest-openapi:stock-api.json#getStock?host=https://api.example.com"))
-                .isEqualTo(new OpenApiVerbs.RestOpenApiUri("stock-api.json", "getStock"));
-        assertThat(OpenApiVerbs.bodylessEndpoints(routes, dir))
-                .contains("rest-openapi:stock-api.json#getStock");
+        assertThat(SourceValidator.validate("routes.camel.yaml", routes, new DefaultCamelCatalog(), null, dir))
+                .noneMatch(m -> m.contains("reads the message body"));
     }
 
     @Test

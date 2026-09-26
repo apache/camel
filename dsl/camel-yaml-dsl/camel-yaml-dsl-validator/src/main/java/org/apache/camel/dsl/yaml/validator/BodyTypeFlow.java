@@ -55,7 +55,7 @@ final class BodyTypeFlow {
     /** The steps that work on the body itself, and have nothing to work on when there is none. */
     private static final Set<String> STEPS_THAT_NEED_THE_BODY = Set.of("unmarshal", "marshal", "convertBodyTo");
 
-    /** Steps that put something in the body, whatever it is. A producer call replaces the request with its response. */
+    // "to" and "toD" (including rest-openapi: producers) set the exchange body with the response.
     private static final Set<String> SETS_THE_BODY = Set.of("setBody", "transform", "unmarshal", "marshal",
             "convertBodyTo", "convertVariableTo", "poll", "pollEnrich", "enrich", "process", "bean", "to", "toD",
             "recipientList", "serviceCall", "claimCheck", "aggregate", "split", "loadBalance", "removeBody");
@@ -263,13 +263,6 @@ final class BodyTypeFlow {
         }
         for (var it = node.fieldNames(); it.hasNext();) {
             String name = it.next();
-            // A rest-openapi producer returns the HTTP response as the exchange body. Keep this
-            // explicit because its request verb (which may be GET) does not describe its response.
-            if (("to".equals(name) || "toD".equals(name))
-                    && endpointOf(node.get(name)) != null
-                    && endpointOf(node.get(name)).startsWith("rest-openapi:")) {
-                return true;
-            }
             if (SETS_THE_BODY.contains(name)) {
                 return true;
             }
