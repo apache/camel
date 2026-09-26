@@ -14567,6 +14567,88 @@ public class StaticEndpointBuilders {
         return SagaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Salesforce (camel-salesforce)
+     * Communicate with Salesforce using Java DTOs.
+     * 
+     * Category: cloud,saas
+     * Since: 2.12
+     * Maven coordinates: org.apache.camel:camel-salesforce
+     * 
+     * Syntax: <code>salesforce:operationName:topicName</code>
+     * 
+     * Path parameter: operationName (required)
+     * The operation to use
+     * There are 69 enums and the value can be one of: getVersions,
+     * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
+     * createSObject, updateSObject, deleteSObject, getSObjectWithId,
+     * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
+     * queryAll, search, apexCall, recent, getEventSchema, createJob, getJob,
+     * closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest,
+     * getResults, createBatchQuery, getQueryResultIds, getQueryResult,
+     * getRecentReports, getReportDescription, executeSyncReport,
+     * executeAsyncReport, getReportInstances, getReportResults, limits,
+     * approval, approvals, composite-tree, composite-batch, composite,
+     * compositeRetrieveSObjectCollections, compositeCreateSObjectCollections,
+     * compositeUpdateSObjectCollections, compositeUpsertSObjectCollections,
+     * compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob,
+     * bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob,
+     * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
+     * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
+     * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
+     * bulk2DeleteQueryJob, raw, subscribe, pubSubSubscribe, pubSubPublish
+     * 
+     * Path parameter: topicName
+     * The name of the topic/channel to use
+     * 
+     * @param path operationName:topicName
+     * @return the dsl builder
+     */
+    public static SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(String path) {
+        return salesforce("salesforce", path);
+    }
+    /**
+     * Salesforce (camel-salesforce)
+     * Communicate with Salesforce using Java DTOs.
+     * 
+     * Category: cloud,saas
+     * Since: 2.12
+     * Maven coordinates: org.apache.camel:camel-salesforce
+     * 
+     * Syntax: <code>salesforce:operationName:topicName</code>
+     * 
+     * Path parameter: operationName (required)
+     * The operation to use
+     * There are 69 enums and the value can be one of: getVersions,
+     * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
+     * createSObject, updateSObject, deleteSObject, getSObjectWithId,
+     * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
+     * queryAll, search, apexCall, recent, getEventSchema, createJob, getJob,
+     * closeJob, abortJob, createBatch, getBatch, getAllBatches, getRequest,
+     * getResults, createBatchQuery, getQueryResultIds, getQueryResult,
+     * getRecentReports, getReportDescription, executeSyncReport,
+     * executeAsyncReport, getReportInstances, getReportResults, limits,
+     * approval, approvals, composite-tree, composite-batch, composite,
+     * compositeRetrieveSObjectCollections, compositeCreateSObjectCollections,
+     * compositeUpdateSObjectCollections, compositeUpsertSObjectCollections,
+     * compositeDeleteSObjectCollections, bulk2GetAllJobs, bulk2CreateJob,
+     * bulk2GetJob, bulk2CreateBatch, bulk2CloseJob, bulk2AbortJob,
+     * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
+     * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
+     * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
+     * bulk2DeleteQueryJob, raw, subscribe, pubSubSubscribe, pubSubPublish
+     * 
+     * Path parameter: topicName
+     * The name of the topic/channel to use
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operationName:topicName
+     * @return the dsl builder
+     */
+    public static SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(String componentName, String path) {
+        return SalesforceEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
      * 
