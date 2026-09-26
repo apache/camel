@@ -2935,3 +2935,28 @@ This is the intended behaviour and makes the `keepOpen` toggle deterministic, bu
 relied on the setter being inert until an exchange arrived must be aware of the change.
 Setting `keepOpen` back to `false` remains deferred: the half-open timer attempts to close the circuit on
 its next tick (after `halfOpenAfter` milliseconds, default 30 s).
+
+=== camel-xslt - external document() access is denied by default
+
+Camel's default XSLT transformer factory (`XMLConverterHelper`) sets `ACCESS_EXTERNAL_DTD` and
+`ACCESS_EXTERNAL_STYLESHEET` to the empty (deny-all) value. JAXP enforces `ACCESS_EXTERNAL_STYLESHEET`
+only when no `URIResolver` returns a `Source`, but the `xslt` component always installs its own
+`XsltUriResolver` on the transformer, so that resolver used to resolve external `http:`, `https:`,
+`ftp:` and `file:` references regardless — the factory's deny-all setting silently did nothing at
+transform time.
+
+The resolver installed on the transformer now honours the factory's `ACCESS_EXTERNAL_STYLESHEET`
+value. As a result, a `document()` call in a stylesheet that resolves an external `http:`, `https:`,
+`ftp:` or `file:` URI at transform time is now **refused by default**: the reference resolves to an
+empty document (so `document()` yields an empty node-set instead of the resource content) and a
+warning is logged. This closes a gap where an untrusted message header, bound as a stylesheet
+parameter and passed into `document()`, could make the transform read an attacker-chosen external
+resource.
+
+If a route legitimately needs `document()` to read an external resource, supply a custom
+`TransformerFactory` via the `transformerFactory` option whose `ACCESS_EXTERNAL_STYLESHEET` permits
+the required protocols (set the attribute to a comma-separated protocol list such as `file` or
+`http,https`, or to `all`). Camel's internal `classpath:`, `ref:` and `bean:` schemes are outside the
+JAXP external-access model and remain resolvable. Stylesheet `xsl:include` / `xsl:import` references
+are resolved at compile time (they are part of the route definition, authored by the route author)
+and are unaffected by this change.

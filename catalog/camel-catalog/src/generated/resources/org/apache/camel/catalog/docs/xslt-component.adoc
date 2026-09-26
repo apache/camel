@@ -220,9 +220,42 @@ available:
 <xsl: ...... >
 
    <xsl:param name="myParam"/>
-  
+
     <xsl:template ...>
 ----
+
+[WARNING]
+====
+The automatic binding adds *every* message header as a stylesheet parameter, including headers
+that arrived from outside the route (for example HTTP query parameters, or headers set by an
+upstream sender). A stylesheet that passes a parameter into the XPath `document()` function
+therefore lets an external sender influence which resource the transform reads.
+
+When the `xslt` endpoint is reachable from an untrusted source and the stylesheet is not meant to
+take parameters from the wire, strip the incoming headers before the `xslt` step, keeping only the
+parameters the stylesheet expects:
+
+[source,java]
+----
+from("jetty:http://0.0.0.0:8080/transform")
+    // keep only the parameters the stylesheet declares; drop everything that arrived on the wire
+    .removeHeaders("*", "myParam")
+    .to("xslt:MyTransform.xsl");
+----
+
+Separately, Camel's default XSLT transformer factory already denies external resource access — it
+sets `ACCESS_EXTERNAL_DTD` and `ACCESS_EXTERNAL_STYLESHEET` to the empty (deny-all) value. Since
+Camel 4.23 the always-installed resolver honours that setting, so a `document()` call that resolves
+an external `http:`, `https:`, `ftp:` or `file:` URI at transform time is refused by default: the
+reference resolves to an empty document (an empty node-set) and a warning is logged, instead of the
+resource being read. To permit specific external protocols, supply your own `TransformerFactory`
+(through the `transformerFactory` option) whose `ACCESS_EXTERNAL_STYLESHEET` allows them — set the
+attribute to a comma-separated protocol list (such as `file` or `http,https`) or to `all`. Camel's
+internal `classpath:`, `ref:` and `bean:` schemes are resource lookups outside the JAXP
+external-access model and remain available. A stylesheet's `xsl:include` / `xsl:import` references are
+resolved when the stylesheet is compiled (they are part of the route definition) and are not affected
+by this runtime check.
+====
 
 == Spring XML versions
 
