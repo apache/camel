@@ -774,6 +774,62 @@ public class DefaultMessageHeaderTest {
         assertEquals(1, copy.getHeaders().size());
     }
 
+    @Test
+    public void testCopyOnWriteEntrySetValue() {
+        DefaultMessage original = new DefaultMessage(camelContext);
+        original.setHeader("foo", "bar");
+
+        DefaultMessage copy = new DefaultMessage(camelContext);
+        copy.copyFrom(original);
+
+        // changing a value through the entry set of the copy must not change the original
+        for (Map.Entry<String, Object> entry : copy.getHeaders().entrySet()) {
+            assertEquals("bar", entry.setValue("changed"));
+            assertEquals("changed", entry.getValue());
+        }
+
+        assertEquals("changed", copy.getHeader("foo"));
+        assertEquals("bar", original.getHeader("foo"));
+    }
+
+    @Test
+    public void testCopyOnWriteEntrySetToArraySetValue() {
+        DefaultMessage original = new DefaultMessage(camelContext);
+        original.setHeader("foo", "bar");
+
+        DefaultMessage copy = new DefaultMessage(camelContext);
+        copy.copyFrom(original);
+
+        // the same through the entries from toArray
+        for (Object o : copy.getHeaders().entrySet().toArray()) {
+            @SuppressWarnings("unchecked")
+            Map.Entry<String, Object> entry = (Map.Entry<String, Object>) o;
+            entry.setValue("changed");
+        }
+
+        assertEquals("changed", copy.getHeader("foo"));
+        assertEquals("bar", original.getHeader("foo"));
+    }
+
+    @Test
+    public void testCopyOnWriteEntrySetTypedToArraySetValue() {
+        DefaultMessage original = new DefaultMessage(camelContext);
+        original.setHeader("foo", "bar");
+
+        DefaultMessage copy = new DefaultMessage(camelContext);
+        copy.copyFrom(original);
+
+        // the same through the entries from toArray with a typed array
+        @SuppressWarnings("unchecked")
+        Map.Entry<String, Object>[] entries = copy.getHeaders().entrySet().toArray(new Map.Entry[0]);
+        for (Map.Entry<String, Object> entry : entries) {
+            entry.setValue("changed");
+        }
+
+        assertEquals("changed", copy.getHeader("foo"));
+        assertEquals("bar", original.getHeader("foo"));
+    }
+
     // ========== Lazy populated headers tests ==========
 
     private static class LazyPopulatedMessage extends DefaultMessage {
