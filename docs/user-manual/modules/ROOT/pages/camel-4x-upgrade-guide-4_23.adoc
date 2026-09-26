@@ -1950,6 +1950,21 @@ A custom `CamelSagaService` that relies on the header to join sagas started by a
 override the new method. Everything else is unaffected: the header is still set on the exchange, and
 routes reading it continue to work.
 
+=== camel-core - a saga step of a saga that has already ended fails
+
+Since 4.22, the `InMemorySagaService` removes a saga once it is completed or compensated, for example after
+its timeout, or after `saga:complete` for a `MANUAL` saga. A saga step with propagation `REQUIRED` on an exchange
+of such a saga then started a new saga of its own and completed it, and a step with propagation `SUPPORTS` ran
+outside of any saga, although the saga of the exchange had already ended.
+
+Such a step now fails with `IllegalStateException` (`Cannot begin: saga <id> is not active or not known`), as it
+did before 4.22 and as it does while the saga is still being completed or compensated. A step with propagation
+`MANDATORY` fails as before.
+
+The check applies to any `CamelSagaService` that returns no coordinator for the saga id of the exchange. For
+example, a custom saga service that reads the `Long-Running-Action` header, and receives the id of a saga it does
+not know, now fails such a step instead of starting a new saga.
+
 === camel-microprofile-health
 
 The `error.stacktrace` entry of a failed health check is now only included in the response when

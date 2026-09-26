@@ -38,6 +38,7 @@ public class SupportsSagaProcessor extends SagaProcessor {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         getCurrentSagaCoordinator(exchange).whenComplete((coordinator, ex) -> ifNotException(ex, exchange, callback, () -> {
+            checkSagaIsActive(exchange, coordinator);
             if (coordinator != null) {
                 coordinator.beginStep(exchange, step)
                         .whenComplete((done, ex2) -> ifNotException(ex2, exchange, callback, () -> {
