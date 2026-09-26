@@ -23,7 +23,9 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DataSourceHelper;
 import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -35,7 +37,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * queries.
  */
 @Component("sql")
-public class SqlComponent extends HealthCheckComponent {
+public class SqlComponent extends HealthCheckComponent implements SecretRotationAware {
 
     @Metadata(autowired = true)
     private DataSource dataSource;
@@ -149,6 +151,13 @@ public class SqlComponent extends HealthCheckComponent {
         endpoint.setTemplateOptions(templateOptions);
 
         return endpoint;
+    }
+
+    @Override
+    public void onSecretRotation(Object source) throws Exception {
+        if (this.dataSource != null) {
+            DataSourceHelper.evictDataSourceConnections(this.dataSource, source);
+        }
     }
 
     /**

@@ -24,15 +24,17 @@ import javax.sql.DataSource;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DataSourceHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component("jdbc")
-public class JdbcComponent extends DefaultComponent {
+public class JdbcComponent extends DefaultComponent implements SecretRotationAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcComponent.class);
 
@@ -112,6 +114,13 @@ public class JdbcComponent extends DefaultComponent {
      */
     public void setConnectionStrategy(ConnectionStrategy connectionStrategy) {
         this.connectionStrategy = connectionStrategy;
+    }
+
+    @Override
+    public void onSecretRotation(Object source) throws Exception {
+        if (this.dataSource != null) {
+            DataSourceHelper.evictDataSourceConnections(this.dataSource, source);
+        }
     }
 
     private static boolean isDefaultDataSourceName(String remaining) {

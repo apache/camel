@@ -1081,3 +1081,19 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 ----
 
 You should also include the specific database driver, if needed.
+
+== Secret Rotation
+
+The SQL component implements `SecretRotationAware`. When a secret rotation event is triggered
+(e.g. by a vault provider), the component evicts stale connections from the component-level
+DataSource's connection pool so that new connections are created with the updated credentials.
+
+Currently only HikariCP pools are supported for active eviction via `softEvictConnections()`.
+Other pool implementations will pick up the new credentials when existing connections expire naturally.
+
+IMPORTANT: The eviction only closes existing connections — it does *not* update the pool's credentials.
+For pools configured with a static password (e.g. Spring Boot `spring.datasource.password`),
+the pool will re-open connections using the _old_ credentials.
+This feature works out of the box only with pools that resolve credentials dynamically,
+such as `HikariCredentialsProvider`, the AWS JDBC wrapper secrets plugin,
+or a custom `DataSource` that fetches credentials from a vault at connect time.
