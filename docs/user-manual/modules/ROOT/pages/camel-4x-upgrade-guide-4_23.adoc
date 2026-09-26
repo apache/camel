@@ -182,6 +182,13 @@ not complete by timeout until another exchange that has a completion timeout arr
 `AggregationRepository` that does not keep exchange properties never completes a group by timeout. This only affects
 optimistic locking combined with `completionTimeoutExpression`.
 
+=== Variable Receive
+
+When an EIP with `variableReceive` stores a message into a variable that already holds a message, the header variables
+of the previous message (`header:myVar.*`) are now removed first. Previously a header that the new message did not have
+kept its old value, so the body and the header variables of the variable could come from different messages.
+This applies to exchange, global, route and group variables.
+
 === Weighted Load Balancer EIP
 
 The distribution ratios of the weighted load balancer are now validated when the route starts. A negative ratio,
