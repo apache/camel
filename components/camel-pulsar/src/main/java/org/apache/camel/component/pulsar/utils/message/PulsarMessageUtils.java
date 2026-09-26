@@ -41,10 +41,13 @@ public final class PulsarMessageUtils {
     private PulsarMessageUtils() {
     }
 
-    public static Exchange updateExchange(final Message<byte[]> message, final Exchange input) {
-        final Exchange output = input.copy();
-
-        org.apache.camel.Message msg = output.getIn();
+    /**
+     * Populates the given exchange from the Pulsar message and returns it. The exchange is updated in place: copying it
+     * would orphan the exchange the consumer took from the exchange factory, which with a pooled factory is never
+     * returned to the pool.
+     */
+    public static Exchange updateExchange(final Message<byte[]> message, final Exchange exchange) {
+        org.apache.camel.Message msg = exchange.getIn();
 
         msg.setHeader(EVENT_TIME, message.getEventTime());
         msg.setHeader(MESSAGE_ID, message.getMessageId());
@@ -60,9 +63,7 @@ public final class PulsarMessageUtils {
 
         msg.setBody(message.getValue());
 
-        output.setIn(msg);
-
-        return output;
+        return exchange;
     }
 
     public static Exchange updateExchangeWithException(final Exception exception, final Exchange input) {
