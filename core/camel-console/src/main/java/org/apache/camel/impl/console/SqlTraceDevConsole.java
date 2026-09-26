@@ -243,9 +243,11 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
      * <p/>
      * camel-sql gates that header behind the {@code allowQueryFromHeader} option, disabled by default; when it is
      * disabled the endpoint-configured query runs instead, so reporting the header would show a statement that never
-     * executed. The option is read through the generated property configurer rather than by casting, because
-     * camel-console must not depend on camel-sql. Endpoints that do not declare the option at all - jdbc, which takes
-     * its query from the body - never honour the header.
+     * executed. {@code useMessageBodyForSql} takes precedence over both - the producer reads the statement from the
+     * message body before it looks at the header - so the header is not honoured when that option is enabled either.
+     * The options are read through the generated property configurer rather than by casting, because camel-console must
+     * not depend on camel-sql. Endpoints that do not declare them at all - jdbc, which takes its query from the body -
+     * never honour the header.
      */
     private static boolean isQueryHeaderHonoured(Endpoint endpoint) {
         if (!(endpoint instanceof DefaultEndpoint defaultEndpoint)) {
@@ -256,6 +258,10 @@ public class SqlTraceDevConsole extends AbstractDevConsole {
             return false;
         }
         if (component.getEndpointPropertyConfigurer() instanceof PropertyConfigurerGetter getter) {
+            // the body wins over the header in SqlProducer, so the header never reaches the database
+            if (Boolean.TRUE.equals(getter.getOptionValue(endpoint, "useMessageBodyForSql", true))) {
+                return false;
+            }
             return Boolean.TRUE.equals(getter.getOptionValue(endpoint, "allowQueryFromHeader", true));
         }
         return false;
