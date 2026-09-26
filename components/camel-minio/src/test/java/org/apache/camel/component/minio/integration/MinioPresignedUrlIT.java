@@ -27,8 +27,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled("MinIO was deprecated in 4.23. The upstream project is closed and container images were aggressively removed from registries.")
 public class MinioPresignedUrlIT extends MinioIntegrationTestSupport {
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()

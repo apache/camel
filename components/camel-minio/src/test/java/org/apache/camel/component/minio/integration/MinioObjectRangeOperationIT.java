@@ -30,10 +30,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Disabled("MinIO was deprecated in 4.23. The upstream project is closed and container images were aggressively removed from registries.")
 class MinioObjectRangeOperationIT extends MinioIntegrationTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIT.class);

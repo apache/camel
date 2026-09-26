@@ -38,12 +38,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.MinioOperations;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.minio.MinioTestUtils.countObjectsInBucket;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled("MinIO was deprecated in 4.23. The upstream project is closed and container images were aggressively removed from registries.")
 class MinioListObjectsOperationIT extends MinioIntegrationTestSupport {
 
     private static final String BUCKET_NAME = "mycamel2";
