@@ -43,6 +43,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceReload;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -79,6 +80,9 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     boolean isRecursive;
     boolean scheduler = true;
     long pollTimeout = 2000;
+    /** How long a poll that came back empty ends the collecting of one change, and the bound on collecting. */
+    static final long COALESCE_QUIET = 400;
+    static final long COALESCE_MAX = 2000;
 
     public FileWatcherResourceReloadStrategy() {
         setRecursive(false);
@@ -224,10 +228,10 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     }
 
     /**
-     * The properties of a batch are reloaded before the routes are. A reload is per file, and a route is built with the
-     * properties of the moment, so a route saved together with a property it uses fails with "Property with key [x] not
-     * found" when the route goes first - and the watch service reports the files of a batch in no particular order. The
-     * sort is stable, so files of the same kind keep the order they were reported in.
+     * The properties of a change come before the rest. {@link RouteWatcherReloadStrategy} reloads a change as one batch
+     * and does not need this, but a listener reloaded one file at a time does: a route built before the property it
+     * uses was applied fails with "Property with key [x] not found", and the watch service reports the files of one
+     * save in no particular order. The sort is stable, so files of the same kind keep the order they were reported in.
      */
     static void orderPropertiesFirst(List<File> changed) {
         changed.sort(Comparator.comparingInt(f -> f.getName().endsWith(".properties") ? 0 : 1));
@@ -357,65 +361,34 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                 }
 
                 if (key != null) {
-                    Path pathToReload;
-                    if (isRecursive) {
-                        pathToReload = folderKeys.get(key);
-                    } else {
-                        pathToReload = folder;
-                    }
-
-                    // the files of the events, plus the files of a directory created under a watched one
-                    // when recursive (registered here, since the watch service only reports what is registered
-                    // at the time; a class under src/main/java added while running was never seen, CAMEL-24862)
                     List<File> changed = new ArrayList<>();
-                    for (WatchEvent<?> event : key.pollEvents()) {
-                        WatchEvent<Path> we = (WatchEvent<Path>) event;
-                        Path path = we.context();
-                        File file = pathToReload.resolve(path).toFile();
-                        LOG.trace("File watch-event: {} on file: {}", we, file);
-                        if (file.isDirectory()) {
-                            if (isRecursive && we.kind() == ENTRY_CREATE && !isCompileWorkDir(file.toPath())) {
-                                registerNewDirectory(file.toPath(), changed);
-                            }
-                            continue;
-                        }
-                        if (isCompileWorkDir(file.toPath().getParent())) {
-                            // a class file the runtime wrote while compiling: not a change of ours
-                            continue;
-                        }
-                        changed.add(file);
-                    }
-                    orderPropertiesFirst(changed);
-                    for (File file : changed) {
-                        String name = FileUtil.compactPath(file.getPath());
-                        LOG.debug("Detected Modified/Created file: {}", name);
-                        boolean accept = fileFilter == null || fileFilter.accept(file);
-                        if (accept) {
-                            LOG.debug("Accepted Modified/Created file: {}", name);
-                            try {
-                                setLastError(null);
-                                // must use file resource loader as we cannot load from classpath
-                                Resource resource
-                                        = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
-                                getResourceReload().onReload(name, resource);
-                                incSucceededCounter();
-                            } catch (Exception e) {
-                                setLastError(e);
-                                incFailedCounter();
-                                // the same event a failed context reload emits, so a listener can act on the file
-                                EventHelper.notifyContextReloadFailure(getCamelContext(), name, e);
-                                String msg = e.getMessage();
-                                if (msg.endsWith(".")) {
-                                    msg = msg.substring(0, msg.length() - 1);
-                                }
-                                LOG.warn("Error reloading routes from file: {} due to: {}. This exception is ignored.", name,
-                                        msg, e);
-                            }
-                        }
-                    }
-
+                    collect(key, changed);
                     // the key must be reset after processed
                     boolean valid = key.reset();
+
+                    // one save of several files is one change: an editor saving a route and the properties it uses,
+                    // or a tool writing both, may spread them over more than one poll. Keep collecting until a poll
+                    // comes back empty (bounded), so they are reloaded together and a route is built with the
+                    // properties of the same save already applied (CAMEL-25032)
+                    long deadline = System.currentTimeMillis() + COALESCE_MAX;
+                    while (valid && !changed.isEmpty() && System.currentTimeMillis() < deadline) {
+                        WatchKey next;
+                        try {
+                            next = watcher.poll(COALESCE_QUIET, TimeUnit.MILLISECONDS);
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                        if (next == null) {
+                            break;
+                        }
+                        collect(next, changed);
+                        valid = next.reset();
+                    }
+
+                    if (!changed.isEmpty()) {
+                        onReloadBatch(changed);
+                    }
                     if (!valid) {
                         break;
                     }
@@ -425,6 +398,88 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
             running = false;
 
             LOG.debug("FileReloadStrategy is stopping watching folder: {}", folder);
+        }
+
+        /**
+         * The accepted files of one key's events, added to changed: the files of the events, plus the files of a
+         * directory created under a watched one when recursive (registered here, since the watch service only reports
+         * what is registered at the time; a class under src/main/java added while running was never seen, CAMEL-24862).
+         */
+        private void collect(WatchKey key, List<File> changed) {
+            Path pathToReload = isRecursive ? folderKeys.get(key) : folder;
+            if (pathToReload == null) {
+                return;
+            }
+            List<File> found = new ArrayList<>();
+            for (WatchEvent<?> event : key.pollEvents()) {
+                WatchEvent<Path> we = (WatchEvent<Path>) event;
+                Path path = we.context();
+                File file = pathToReload.resolve(path).toFile();
+                LOG.trace("File watch-event: {} on file: {}", we, file);
+                if (file.isDirectory()) {
+                    if (isRecursive && we.kind() == ENTRY_CREATE && !isCompileWorkDir(file.toPath())) {
+                        registerNewDirectory(file.toPath(), found);
+                    }
+                    continue;
+                }
+                if (isCompileWorkDir(file.toPath().getParent())) {
+                    // a class file the runtime wrote while compiling: not a change of ours
+                    continue;
+                }
+                found.add(file);
+            }
+            for (File file : found) {
+                String name = FileUtil.compactPath(file.getPath());
+                LOG.debug("Detected Modified/Created file: {}", name);
+                if (fileFilter != null && !fileFilter.accept(file)) {
+                    continue;
+                }
+                LOG.debug("Accepted Modified/Created file: {}", name);
+                if (!changed.contains(file)) {
+                    changed.add(file);
+                }
+            }
+        }
+    }
+
+    /**
+     * Reloads the files of one change. The default reloads them one at a time, which is what a listener of a single
+     * {@link ResourceReload} expects; {@link RouteWatcherReloadStrategy} overrides it to apply the properties of the
+     * batch and then reload the routes once.
+     */
+    protected void onReloadBatch(List<File> changed) {
+        // the properties first: a listener that rebuilds something from them should see them before the rest.
+        // A copy, as the list the caller passed is theirs and may not be modifiable
+        List<File> files = new ArrayList<>(changed);
+        orderPropertiesFirst(files);
+        for (File file : files) {
+            reloadFile(file);
+        }
+    }
+
+    /**
+     * Reloads one file through the {@link ResourceReload} listener, counting it and reporting a failure the way a
+     * failed context reload is reported, so a listener can act on the file. A failure is logged and not rethrown: one
+     * unreadable file does not stop the watcher.
+     */
+    protected void reloadFile(File file) {
+        String name = FileUtil.compactPath(file.getPath());
+        try {
+            setLastError(null);
+            // must use file resource loader as we cannot load from classpath
+            Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
+            getResourceReload().onReload(name, resource);
+            incSucceededCounter();
+        } catch (Exception e) {
+            setLastError(e);
+            incFailedCounter();
+            // the same event a failed context reload emits, so a listener can act on the file
+            EventHelper.notifyContextReloadFailure(getCamelContext(), name, e);
+            String msg = e.getMessage();
+            if (msg != null && msg.endsWith(".")) {
+                msg = msg.substring(0, msg.length() - 1);
+            }
+            LOG.warn("Error reloading routes from file: {} due to: {}. This exception is ignored.", name, msg, e);
         }
     }
 

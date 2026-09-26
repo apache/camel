@@ -260,6 +260,54 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         return null;
     }
 
+    /**
+     * One save of several files is reloaded as one change: the properties (and any recompiled Groovy) are applied
+     * first, each without reloading the routes, and then the routes of the whole change are reloaded once. A route
+     * saved together with a property it uses is therefore built with that property already in place, instead of failing
+     * on it and being restored (CAMEL-25032).
+     * <p/>
+     * If the batch fails, the files are reloaded one at a time: the reload then fails on the one file that is wrong and
+     * says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
+     */
+    @Override
+    protected void onReloadBatch(List<File> changed) {
+        if (changed.size() < 2) {
+            super.onReloadBatch(changed);
+            return;
+        }
+        List<Resource> routes = new ArrayList<>();
+        boolean others = false;
+        try {
+            setLastError(null);
+            for (File file : changed) {
+                String name = FileUtil.compactPath(file.getPath());
+                Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
+                if (name.endsWith(".properties")) {
+                    others |= onPropertiesReload(resource, false);
+                } else if (name.endsWith(".groovy")) {
+                    others |= onGroovyReload(resource, false);
+                } else {
+                    routes.add(resource);
+                }
+            }
+            if (!routes.isEmpty()) {
+                onRouteReload(routes, false);
+            } else if (others) {
+                // only properties or Groovy changed, so the routes are reloaded to pick them up
+                retryFailedOrReloadAll();
+            }
+            // the counter is files reloaded, as it is when they are reloaded one at a time
+            for (int i = 0; i < changed.size(); i++) {
+                incSucceededCounter();
+            }
+        } catch (Exception e) {
+            LOG.debug("Reloading {} changed file(s) together failed, reloading them one at a time to find the file"
+                      + " that is wrong: {}",
+                    changed.size(), e.getMessage(), e);
+            super.onReloadBatch(changed);
+        }
+    }
+
     protected boolean onGroovyReload(Resource resource, boolean reloadRoutes) throws Exception {
         GroovyScriptCompiler compiler
                 = getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptCompiler.class);
