@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1028,11 +1029,41 @@ final class SourceEditAssist {
         if (nodes == null) {
             return null;
         }
-        return (JsonObject) nodes.get(nodeName);
+        if (!nodeName.startsWith("/")) {
+            return (JsonObject) nodes.get(nodeName);
+        }
+        JsonObject node = (JsonObject) nodes.get("root");
+        String[] path = nodeName.substring(1).split("/");
+        for (String part : path) {
+            if (node != null && "map".equals(node.get("type"))) {
+                node = (JsonObject) nodes.get(node.get("ref"));
+                continue;
+            }
+            JsonObject child = null;
+            if (node != null && node.get("children") instanceof JsonArray children) {
+                String key = URLDecoder.decode(part, StandardCharsets.UTF_8);
+                for (Object item : children) {
+                    JsonObject candidate = (JsonObject) item;
+                    if (key.equals(candidate.get("name"))) {
+                        child = candidate;
+                        break;
+                    }
+                }
+            }
+            node = null;
+            if (child != null) {
+                node = "map".equals(child.get("type")) ? child : (JsonObject) nodes.get(child.get("ref"));
+            }
+            if (node == null) {
+                // Keep the existing lookup for positions whose ancestors are not represented by the tree.
+                return (JsonObject) nodes.get(URLDecoder.decode(path[path.length - 1], StandardCharsets.UTF_8));
+            }
+        }
+        return node;
     }
 
     List<AutocompletePopup.CompletionItem> provideTreeCompletions(String contextAfterPrefix) {
-        // context format: "nodeName" or "nodeName:existingKey1,existingKey2,..."
+        // The node is a name or slash-separated path with URL-encoded keys, optionally followed by :existingKey1,...
         String[] parts = contextAfterPrefix.split(":", 2);
         String nodeName = parts[0];
 
@@ -1089,7 +1120,7 @@ final class SourceEditAssist {
     }
 
     List<AutocompletePopup.CompletionItem> provideTreeValueCompletions(String contextAfterPrefix) {
-        // context format: "nodeName:optionName"
+        // The node is a name or slash-separated path with URL-encoded keys, followed by :optionName.
         String[] parts = contextAfterPrefix.split(":", 2);
         if (parts.length < 2) {
             return List.of();

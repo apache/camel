@@ -1104,9 +1104,10 @@ class SourceViewer {
             return;
         }
 
-        // tree-driven completion — walk up to find parent key, use completion tree
+        // Tree completion uses the full YAML path so named map entries retain their schema context.
         if (autocompleteProvider != null) {
             String parentKey = yaml.findParentYamlKey(row);
+            String parentPath = yaml.findParentYamlPath(row);
             int colonIdx = trimmed.indexOf(':');
 
             if (colonIdx > 0) {
@@ -1120,7 +1121,7 @@ class SourceViewer {
                     valueText = valueText.substring(0, valueText.length() - 1);
                 }
                 if (autocompleteValueProvider != null) {
-                    String context = "yaml-tree-value:" + parentKey + ":" + optionName;
+                    String context = "yaml-tree-value:" + parentPath + ":" + optionName;
                     List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
                     if (values != null && !values.isEmpty()) {
                         autocompletePopup = new AutocompletePopup(values, "", valueText, true);
@@ -1130,7 +1131,7 @@ class SourceViewer {
                 // key completion
                 String filter = trimmed;
                 java.util.Set<String> existing = yaml.collectExistingSiblingKeys(row);
-                String context = "yaml-tree:" + parentKey;
+                String context = "yaml-tree:" + parentPath;
                 if (!existing.isEmpty()) {
                     context += ":" + String.join(",", existing);
                 }

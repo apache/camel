@@ -117,6 +117,10 @@
         "title" : "Validations",
         "description" : "Container for defining data type validator definitions",
         "label" : "validation"
+      }, {
+        "name" : "semantic",
+        "type" : "object",
+        "ref" : "semantic"
       } ]
     },
     "steps" : {
@@ -1290,9 +1294,9 @@
       } ]
     },
     "bean" : {
-      "title" : "Bean Method",
-      "description" : "Calls a Java bean method",
-      "label" : "language,core,java",
+      "title" : "Bean",
+      "description" : "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties",
+      "label" : "eip,endpoint",
       "input" : true,
       "isListItem" : true,
       "children" : [ {
@@ -20363,6 +20367,109 @@
         "name" : "predicateValidator",
         "type" : "object",
         "ref" : "predicateValidator"
+      } ]
+    },
+    "semantic" : {
+      "isListItem" : true,
+      "children" : [ {
+        "name" : "question",
+        "type" : "map",
+        "ref" : "semanticDefinitionDeserializer$QuestionSchema",
+        "required" : true
+      } ]
+    },
+    "semanticDefinitionDeserializer$BooleanSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "object"
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "boolean" ],
+        "required" : true
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "enum",
+        "enum" : [ "fail", "non-match" ]
+      } ]
+    },
+    "semanticDefinitionDeserializer$ChoiceSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "object",
+        "required" : true
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "choice" ],
+        "required" : true
+      } ]
+    },
+    "semanticDefinitionDeserializer$QuestionSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "any"
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "threshold",
+        "type" : "number"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "boolean", "choice", "score" ],
+        "required" : true
+      }, {
+        "name" : "uncertainty",
+        "type" : "number"
+      }, {
+        "name" : "uncertaintyPolicy",
+        "type" : "enum",
+        "enum" : [ "fail", "non-match" ]
+      } ]
+    },
+    "semanticDefinitionDeserializer$ScoreSchema" : {
+      "children" : [ {
+        "name" : "criteria",
+        "type" : "array",
+        "required" : true
+      }, {
+        "name" : "instructions",
+        "type" : "string",
+        "required" : true
+      }, {
+        "name" : "state",
+        "type" : "string"
+      }, {
+        "name" : "type",
+        "type" : "enum",
+        "enum" : [ "score" ],
+        "required" : true
       } ]
     }
   }

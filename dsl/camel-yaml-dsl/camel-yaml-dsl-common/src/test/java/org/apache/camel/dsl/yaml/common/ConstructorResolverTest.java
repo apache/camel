@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.impl.DefaultCamelContext;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.api.lowlevel.Compose;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
@@ -83,6 +85,39 @@ public class ConstructorResolverTest {
 
         assertThat(((MyNode) first.get(0)).message).isEqualTo("first");
         assertThat(((MyNode) second.get(0)).message).isEqualTo("second");
+    }
+
+    @Test
+    void preParseUsesDiscoveredResolversInOrderForResourcesWithoutDeclarations() throws Exception {
+        var calls = new ArrayList<String>();
+        var settings = LoadSettings.builder().build();
+        var root = new Compose(settings).composeString("[]").orElseThrow();
+        try (var context = new DefaultCamelContext(); var ctr = new YamlDeserializationContext(settings)) {
+            ctr.setCamelContext(context);
+            for (int order : List.of(2, 1)) {
+                context.getRegistry().bind("resolver" + order, new YamlDeserializerResolver() {
+                    @Override
+                    public int getOrder() {
+                        return order;
+                    }
+
+                    @Override
+                    public ConstructNode resolve(String id) {
+                        return null;
+                    }
+
+                    @Override
+                    public void preParse(YamlDeserializationContext dc, Node node) {
+                        assertThat(dc).isSameAs(ctr);
+                        assertThat(node).isSameAs(root);
+                        calls.add(Integer.toString(order));
+                    }
+                });
+            }
+            ctr.start();
+            ctr.preParse(root);
+            assertThat(calls).containsExactly("1", "2");
+        }
     }
 
     // ---- inner support classes ----

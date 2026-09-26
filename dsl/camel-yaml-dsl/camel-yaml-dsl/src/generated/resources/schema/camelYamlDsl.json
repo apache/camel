@@ -16360,6 +16360,110 @@
           }
         }
       },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "question" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema"
+            }
+          }
+        },
+        "required" : [ "question" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "threshold" : {
+            "type" : "number"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "boolean" ]
+          },
+          "uncertainty" : {
+            "type" : "number"
+          },
+          "uncertaintyPolicy" : {
+            "type" : "string",
+            "enum" : [ "fail", "non-match" ]
+          }
+        },
+        "required" : [ "instructions", "type" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "choice" ]
+          }
+        },
+        "required" : [ "criteria", "instructions", "type" ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$QuestionSchema" : {
+        "type" : "object",
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$BooleanSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ChoiceSchema"
+          }, {
+            "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema"
+          } ]
+        } ]
+      },
+      "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$ScoreSchema" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "criteria" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "instructions" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "score" ]
+          }
+        },
+        "required" : [ "criteria", "instructions", "type" ]
+      },
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition$Inline" : {
         "type" : "object",
         "properties" : {
@@ -16696,6 +16800,9 @@
       },
       "validators" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.validator.ValidatorsDefinition"
+      },
+      "semantic" : {
+        "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer"
       }
     }
   }
