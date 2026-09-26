@@ -24,8 +24,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * What a {@code rest: openApi:} binding hides: which of its operations carry a body.
@@ -37,12 +39,29 @@ import org.apache.camel.util.json.Jsoner;
 public final class OpenApiVerbs {
 
     /** The verbs whose request carries no body. */
-    private static final Set<String> WITHOUT_BODY = Set.of("get", "delete", "head");
+    private static final Set<String> WITHOUT_BODY = Set.of("get", "delete", "head", "options", "trace");
 
     private static final Pattern SPECIFICATION = Pattern.compile(
             "openApi:\\s*\\n\\s*(?:[a-zA-Z]+:[^\\n]*\\n\\s*)*?specification:\\s*[\"']?([^\"'\\s]+)[\"']?");
 
+    /** Client-side OpenAPI producer URI: {@code rest-openapi:specification#operationId(?params)}. */
+    public static final Pattern REST_OPENAPI_URI_PATTERN
+            = Pattern.compile("rest-openapi:([^#\\s\"']+)#([^#?\\s\"']+)(?:\\?[^\\s\"']*)?");
+
+    /** The specification file and operation selected by a client-side {@code rest-openapi:} URI. */
+    public record RestOpenApiUri(String specification, String operationId) {
+    }
+
     private OpenApiVerbs() {
+    }
+
+    /** Parses a client-side {@code rest-openapi:specification#operationId} URI, or returns {@code null}. */
+    public static RestOpenApiUri parseRestOpenApiUri(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        Matcher matcher = REST_OPENAPI_URI_PATTERN.matcher(uri);
+        return matcher.matches() ? new RestOpenApiUri(matcher.group(1), matcher.group(2)) : null;
     }
 
     /**
@@ -62,34 +81,76 @@ public final class OpenApiVerbs {
                 continue;
             }
             try {
-                String text = Files.readString(spec);
-                if (!text.stripLeading().startsWith("{")) {
-                    continue; // a YAML specification: not read here
-                }
-                JsonObject root = (JsonObject) Jsoner.deserialize(text);
-                JsonObject paths = root.getMap("paths");
+                Map<?, ?> paths = paths(Files.readString(spec));
                 if (paths == null) {
                     continue;
                 }
-                for (Map.Entry<String, Object> path : paths.entrySet()) {
-                    if (!(path.getValue() instanceof Map<?, ?> operations)) {
+                for (Object path : paths.values()) {
+                    if (!(path instanceof Map<?, ?> operations)) {
                         continue;
                     }
                     for (Map.Entry<?, ?> operation : operations.entrySet()) {
                         String verb = String.valueOf(operation.getKey()).toLowerCase(java.util.Locale.ROOT);
-                        if (!WITHOUT_BODY.contains(verb) || !(operation.getValue() instanceof Map<?, ?> details)) {
-                            continue;
-                        }
-                        Object id = details.get("operationId");
-                        if (id != null) {
-                            answer.add("direct:" + id);
+                        if (WITHOUT_BODY.contains(verb) && operation.getValue() instanceof Map<?, ?> details
+                                && details.get("operationId") != null) {
+                            answer.add("direct:" + details.get("operationId"));
                         }
                     }
                 }
             } catch (Exception e) {
-                // an unreadable or unparseable specification says nothing
+                // Catching Exception handles unreadable and unparseable JSON or YAML specifications.
+            }
+        }
+        // A producer URI carries its own operation reference. Read its spec as well so its verb is
+        // resolved using the same rules as a rest binding (in particular, do not infer from the URI).
+        Matcher producer = REST_OPENAPI_URI_PATTERN.matcher(content);
+        while (producer.find()) {
+            String specName = producer.group(1);
+            String targetOpId = producer.group(2);
+            Path spec = directory.resolve(specName);
+            if (!Files.isRegularFile(spec)) {
+                continue;
+            }
+            try {
+                Map<?, ?> paths = paths(Files.readString(spec));
+                if (paths == null) {
+                    continue;
+                }
+                for (Object path : paths.values()) {
+                    if (!(path instanceof Map<?, ?> operations)) {
+                        continue;
+                    }
+                    for (Map.Entry<?, ?> operation : operations.entrySet()) {
+                        if (operation.getValue() instanceof Map<?, ?> details
+                                && targetOpId.equals(details.get("operationId"))) {
+                            String verb = String.valueOf(operation.getKey()).toLowerCase(java.util.Locale.ROOT);
+                            if (WITHOUT_BODY.contains(verb)) {
+                                // It is a body-less request operation. Its HTTP response remains a
+                                // body-producing step in the YAML flow validator.
+                                answer.add("rest-openapi:" + specName + "#" + targetOpId);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Catching Exception handles unreadable and unparseable JSON or YAML specifications.
             }
         }
         return answer;
+    }
+
+    private static Map<?, ?> paths(String text) {
+        try {
+            Object document;
+            if (text.stripLeading().startsWith("{")) {
+                document = Jsoner.deserialize(text);
+            } else {
+                document = new Yaml(new SafeConstructor(new LoaderOptions())).load(text);
+            }
+            return document instanceof Map<?, ?> root && root.get("paths") instanceof Map<?, ?> paths ? paths : null;
+        } catch (Exception e) {
+            // Ignore unreadable or unparseable JSON or YAML specifications.
+            return null;
+        }
     }
 }
