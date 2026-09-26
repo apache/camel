@@ -110,4 +110,61 @@ class OpenApiBodyFlowTest {
         assertThat(SourceValidator.validate("routes.camel.yaml", ROUTES, new DefaultCamelCatalog(), null, dir))
                 .noneMatch(m -> m.contains("reads the message body"));
     }
+
+    @Test
+    void restOpenApiProducerGetOperationSetsResponseBody(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("stock-api.json"), SPEC);
+        String routes = """
+                - route:
+                    from:
+                      uri: direct:fetch
+                      steps:
+                        - to: "rest-openapi:stock-api.json#getStock"
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.name"
+                """;
+        Files.writeString(dir.resolve("routes.camel.yaml"), routes);
+
+        List<String> messages = SourceValidator.validate("routes.camel.yaml", routes, new DefaultCamelCatalog(), null, dir);
+        assertThat(messages).noneMatch(m -> m.contains("reads the message body"));
+    }
+
+    @Test
+    void restOpenApiProducerWithQueryParametersSetsResponseBody(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("stock-api.json"), SPEC);
+        String routes = """
+                - route:
+                    from:
+                      uri: direct:fetch
+                      steps:
+                        - to: "rest-openapi:stock-api.json#getStock?host=https://api.example.com"
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.name"
+                """;
+        Files.writeString(dir.resolve("routes.camel.yaml"), routes);
+
+        assertThat(SourceValidator.validate("routes.camel.yaml", routes, new DefaultCamelCatalog(), null, dir))
+                .noneMatch(m -> m.contains("reads the message body"));
+    }
+
+    @Test
+    void yamlOpenApiSpecificationIsRead(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("stock-api.yaml"), """
+                openapi: 3.0.2
+                paths:
+                  /stock:
+                    get:
+                      operationId: getStock
+                      responses:
+                        '200':
+                          description: ok
+                """);
+
+        assertThat(OpenApiVerbs.bodylessEndpoints(ROUTES.replace("stock-api.json", "stock-api.yaml"), dir))
+                .containsExactly("direct:getStock");
+    }
 }

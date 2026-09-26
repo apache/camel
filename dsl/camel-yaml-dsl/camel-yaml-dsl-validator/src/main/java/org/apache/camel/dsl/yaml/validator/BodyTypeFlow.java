@@ -55,7 +55,7 @@ final class BodyTypeFlow {
     /** The steps that work on the body itself, and have nothing to work on when there is none. */
     private static final Set<String> STEPS_THAT_NEED_THE_BODY = Set.of("unmarshal", "marshal", "convertBodyTo");
 
-    /** Steps that put something in the body, whatever it is. */
+    // "to" and "toD" (including rest-openapi: producers) set the exchange body with the response.
     private static final Set<String> SETS_THE_BODY = Set.of("setBody", "transform", "unmarshal", "marshal",
             "convertBodyTo", "convertVariableTo", "poll", "pollEnrich", "enrich", "process", "bean", "to", "toD",
             "recipientList", "serviceCall", "claimCheck", "aggregate", "split", "loadBalance", "removeBody");
