@@ -1,6 +1,7 @@
 = XSLT Saxon Component
 :doctitle: XSLT Saxon
 :shortname: xslt-saxon
+:groupid: org.apache.camel
 :artifactid: camel-xslt-saxon
 :description: Transform XML payloads using an XSLT template using Saxon.
 :since: 3.0

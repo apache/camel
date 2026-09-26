@@ -1,6 +1,7 @@
 = Geocoder Component
 :doctitle: Geocoder
 :shortname: geocoder
+:groupid: org.apache.camel
 :artifactid: camel-geocoder
 :description: Find geocodes (latitude and longitude) for a given address or the other way round.
 :since: 2.12

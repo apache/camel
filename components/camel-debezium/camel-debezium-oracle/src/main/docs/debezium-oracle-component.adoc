@@ -1,6 +1,7 @@
 = Debezium Oracle Connector Component
 :doctitle: Debezium Oracle Connector
 :shortname: debezium-oracle
+:groupid: org.apache.camel
 :artifactid: camel-debezium-oracle
 :description: Capture changes from an Oracle database.
 :since: 3.17
@@ -176,4 +177,3 @@ This component is a thin wrapper around Debezium Engine as mentioned.
 Therefore, before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior.
 This is especially true in regard to https://debezium.io/documentation/reference/1.9/operations/embedded.html#_handling_failures[handling failures].
 ====
-

@@ -1,6 +1,7 @@
 = SPIFFE Component
 :doctitle: SPIFFE
 :shortname: spiffe
+:groupid: org.apache.camel
 :artifactid: camel-spiffe
 :description: Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID) from the SPIFFE Workload API.
 :since: 4.23

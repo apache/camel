@@ -1,6 +1,7 @@
 = Dynamic Router Control Component
 :doctitle: Dynamic Router Control
 :shortname: dynamic-router-control
+:groupid: org.apache.camel
 :artifactid: camel-dynamic-router
 :description: The Dynamic Router control endpoint for operations that allow routing participants to subscribe or unsubscribe to participate in dynamic message routing.
 :since: 4.4

@@ -1,6 +1,7 @@
 = ServiceNow Component
 :doctitle: ServiceNow
 :shortname: servicenow
+:groupid: org.apache.camel
 :artifactid: camel-servicenow
 :description: Interact with ServiceNow via its REST API.
 :since: 2.18

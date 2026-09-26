@@ -1,6 +1,7 @@
 = Neo4j Component
 :doctitle: Neo4j
 :shortname: neo4j
+:groupid: org.apache.camel
 :artifactid: camel-neo4j
 :description: Perform operations on the Neo4j Graph Database
 :since: 4.10

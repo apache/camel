@@ -1,6 +1,7 @@
 = XSLT Component
 :doctitle: XSLT
 :shortname: xslt
+:groupid: org.apache.camel
 :artifactid: camel-xslt
 :description: Transforms XML payload using an XSLT template.
 :since: 1.3

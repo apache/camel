@@ -1,6 +1,7 @@
 = Spring AI Image Component
 :doctitle: Spring AI Image
 :shortname: spring-ai-image
+:groupid: org.apache.camel
 :artifactid: camel-spring-ai-image
 :description: Spring AI Image Generation
 :since: 4.19

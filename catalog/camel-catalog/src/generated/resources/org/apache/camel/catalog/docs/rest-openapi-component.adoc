@@ -1,6 +1,7 @@
 = REST OpenApi Component
 :doctitle: REST OpenApi
 :shortname: rest-openapi
+:groupid: org.apache.camel
 :artifactid: camel-rest-openapi
 :description: To call and expose REST services using OpenAPI specification as contract.
 :since: 3.1

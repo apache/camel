@@ -1,6 +1,7 @@
 = Ref Component
 :doctitle: Ref
 :shortname: ref
+:groupid: org.apache.camel
 :artifactid: camel-ref
 :description: Route messages to an endpoint looked up dynamically by name in the Camel Registry.
 :since: 1.2

@@ -1,6 +1,7 @@
 = Couchbase Component
 :doctitle: Couchbase
 :shortname: couchbase
+:groupid: org.apache.camel
 :artifactid: camel-couchbase
 :description: Query Couchbase databases using SQL (N1QL) queries or MapReduce Views with a poll strategy and/or perform various operations against Couchbase databases.
 :since: 2.19

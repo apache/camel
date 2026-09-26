@@ -1,6 +1,7 @@
 = JSONPath Language
 :doctitle: JSONPath
 :shortname: jsonpath
+:groupid: org.apache.camel
 :artifactid: camel-jsonpath
 :description: Evaluates a JSONPath expression against a JSON message body
 :since: 2.13

@@ -1,6 +1,7 @@
 = AWS Rekognition Component
 :doctitle: AWS Rekognition
 :shortname: aws2-rekognition
+:groupid: org.apache.camel
 :artifactid: camel-aws2-rekognition
 :description: Manage and invoke AWS Rekognition.
 :since: 4.17

@@ -1,6 +1,7 @@
 = Google Vertex AI Component
 :doctitle: Google Vertex AI
 :shortname: google-vertexai
+:groupid: org.apache.camel
 :artifactid: camel-google-vertexai
 :description: Interact with Google Cloud Vertex AI generative models.
 :since: 4.17
@@ -582,4 +583,3 @@ Add the following dependency:
     <version>x.x.x</version>
 </dependency>
 ----
-

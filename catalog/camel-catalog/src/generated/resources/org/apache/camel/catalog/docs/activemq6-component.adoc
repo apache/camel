@@ -1,6 +1,7 @@
 = ActiveMQ 6.x Component
 :doctitle: ActiveMQ 6.x
 :shortname: activemq6
+:groupid: org.apache.camel
 :artifactid: camel-activemq6
 :description: Send messages to (or consume from) Apache ActiveMQ 6.x. This component extends the Camel JMS component.
 :since: 4.7

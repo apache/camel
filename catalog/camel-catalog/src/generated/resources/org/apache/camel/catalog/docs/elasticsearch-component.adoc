@@ -1,6 +1,7 @@
 = Elasticsearch Component
 :doctitle: Elasticsearch
 :shortname: elasticsearch
+:groupid: org.apache.camel
 :artifactid: camel-elasticsearch
 :description: Send requests to Elasticsearch via Java Client API.
 :since: 3.19

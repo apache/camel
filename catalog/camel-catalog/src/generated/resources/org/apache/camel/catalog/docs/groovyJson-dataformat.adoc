@@ -1,6 +1,7 @@
 = Groovy JSon DataFormat
 :doctitle: Groovy JSon
 :shortname: groovyJson
+:groupid: org.apache.camel
 :artifactid: camel-groovy
 :description: Transform between JSon and java.util.Map or java.util.List objects
 :since: 4.19

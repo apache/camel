@@ -1,6 +1,7 @@
 = Twilio Component
 :doctitle: Twilio
 :shortname: twilio
+:groupid: org.apache.camel
 :artifactid: camel-twilio
 :description: Interact with Twilio REST APIs using Twilio Java SDK.
 :since: 2.20

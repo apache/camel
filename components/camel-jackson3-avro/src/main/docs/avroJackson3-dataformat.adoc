@@ -1,6 +1,7 @@
 = Avro Jackson 3 DataFormat
 :doctitle: Avro Jackson 3
 :shortname: avroJackson3
+:groupid: org.apache.camel
 :artifactid: camel-jackson3-avro
 :description: Marshal POJOs to Avro and back using Jackson.
 :since: 4.19

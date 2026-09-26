@@ -1,6 +1,7 @@
 = gRPC Component
 :doctitle: gRPC
 :shortname: grpc
+:groupid: org.apache.camel
 :artifactid: camel-grpc
 :description: Expose gRPC endpoints and access external gRPC endpoints.
 :since: 2.19

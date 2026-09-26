@@ -1,6 +1,7 @@
 = SAP NetWeaver Component
 :doctitle: SAP NetWeaver
 :shortname: sap-netweaver
+:groupid: org.apache.camel
 :artifactid: camel-sap-netweaver
 :description: Send requests to SAP NetWeaver Gateway using HTTP.
 :since: 2.12

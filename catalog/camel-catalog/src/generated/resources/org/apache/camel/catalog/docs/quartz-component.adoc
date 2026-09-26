@@ -1,6 +1,7 @@
 = Quartz Component
 :doctitle: Quartz
 :shortname: quartz
+:groupid: org.apache.camel
 :artifactid: camel-quartz
 :description: Schedule sending of messages using the Quartz 2.x scheduler.
 :since: 2.12

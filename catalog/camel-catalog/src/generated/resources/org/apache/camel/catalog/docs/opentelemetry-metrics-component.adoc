@@ -1,6 +1,7 @@
 = OpenTelemetry Metrics Component
 :doctitle: OpenTelemetry Metrics
 :shortname: opentelemetry-metrics
+:groupid: org.apache.camel
 :artifactid: camel-opentelemetry-metrics
 :description: Camel metrics based on the Camel Telemetry spec
 :since: 4.17

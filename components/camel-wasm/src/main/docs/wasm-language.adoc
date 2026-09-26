@@ -1,6 +1,7 @@
 = Wasm Language
 :doctitle: Wasm
 :shortname: wasm
+:groupid: org.apache.camel
 :artifactid: camel-wasm
 :description: Call a wasm (web assembly) function
 :since: 4.5

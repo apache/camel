@@ -1,6 +1,7 @@
 = Parquet File DataFormat
 :doctitle: Parquet File
 :shortname: parquetAvro
+:groupid: org.apache.camel
 :artifactid: camel-parquet-avro
 :description: Parquet Avro serialization and de-serialization
 :since: 4.0

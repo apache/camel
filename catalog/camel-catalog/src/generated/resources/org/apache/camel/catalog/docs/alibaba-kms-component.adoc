@@ -1,6 +1,7 @@
 = Alibaba Key Management Service (KMS) Component
 :doctitle: Alibaba Key Management Service (KMS)
 :shortname: alibaba-kms
+:groupid: org.apache.camel
 :artifactid: camel-alibaba-kms
 :description: Encrypt and decrypt data using Alibaba Cloud Key Management Service (KMS).
 :since: 4.23

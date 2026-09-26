@@ -1,6 +1,7 @@
 = Hazelcast Instance Component
 :doctitle: Hazelcast Instance
 :shortname: hazelcast-instance
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Consume join/leave events of a cache instance in a Hazelcast cluster.
 :since: 2.7
@@ -94,4 +95,3 @@ YAML::
                     uri: mock:removed
 ----
 ====
-

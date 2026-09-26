@@ -1,6 +1,7 @@
 = Observability Services Component
 :doctitle: Observability Services
 :shortname: observability-services
+:groupid: org.apache.camel
 :artifactid: camel-observability-services
 :description: Camel Observability Services
 :since: 4.9

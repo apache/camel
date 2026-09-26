@@ -1,6 +1,7 @@
 = Schematron Component
 :doctitle: Schematron
 :shortname: schematron
+:groupid: org.apache.camel
 :artifactid: camel-schematron
 :description: Validate XML payload using the Schematron Library.
 :since: 2.15

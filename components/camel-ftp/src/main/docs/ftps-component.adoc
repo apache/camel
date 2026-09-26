@@ -1,6 +1,7 @@
 = FTPS Component
 :doctitle: FTPS
 :shortname: ftps
+:groupid: org.apache.camel
 :artifactid: camel-ftp
 :description: Upload and download files to/from FTP servers supporting the FTPS protocol.
 :since: 2.2

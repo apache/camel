@@ -1,6 +1,7 @@
 = Azure Storage Queue Service Component
 :doctitle: Azure Storage Queue Service
 :shortname: azure-storage-queue
+:groupid: org.apache.camel
 :artifactid: camel-azure-storage-queue
 :description: Stores and retrieves messages to/from Azure Storage Queue.
 :since: 3.3
@@ -654,5 +655,3 @@ mvn verify -DaccountName=myacc -DaccessKey=mykey
 ----
 
 Whereby `accountName` is your Azure account name and `accessKey` is the access key being generated from Azure portal.
-
-

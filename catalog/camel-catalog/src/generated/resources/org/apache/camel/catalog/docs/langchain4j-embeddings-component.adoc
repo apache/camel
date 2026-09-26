@@ -1,6 +1,7 @@
 = LangChain4j Embeddings Component
 :doctitle: LangChain4j Embeddings
 :shortname: langchain4j-embeddings
+:groupid: org.apache.camel
 :artifactid: camel-langchain4j-embeddings
 :description: LangChain4j Embeddings
 :since: 4.5

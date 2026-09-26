@@ -1,6 +1,7 @@
 = Flink Component
 :doctitle: Flink
 :shortname: flink
+:groupid: org.apache.camel
 :artifactid: camel-flink
 :description: Send DataSet jobs to an Apache Flink cluster.
 :since: 2.18

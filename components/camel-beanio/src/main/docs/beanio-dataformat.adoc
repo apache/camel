@@ -1,6 +1,7 @@
 = BeanIO DataFormat
 :doctitle: BeanIO
 :shortname: beanio
+:groupid: org.apache.camel
 :artifactid: camel-beanio
 :description: Marshal and unmarshal Java beans to and from flat files (such as CSV, delimited, or fixed length formats)
 :since: 2.10

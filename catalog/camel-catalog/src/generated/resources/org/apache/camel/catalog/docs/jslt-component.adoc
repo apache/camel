@@ -1,6 +1,7 @@
 = JSLT Component
 :doctitle: JSLT
 :shortname: jslt
+:groupid: org.apache.camel
 :artifactid: camel-jslt
 :description: Query or transform JSON payloads using JSLT.
 :since: 3.1

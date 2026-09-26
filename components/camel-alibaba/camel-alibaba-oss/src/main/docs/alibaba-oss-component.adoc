@@ -1,6 +1,7 @@
 = Alibaba Object Storage Service (OSS) Component
 :doctitle: Alibaba Object Storage Service (OSS)
 :shortname: alibaba-oss
+:groupid: org.apache.camel
 :artifactid: camel-alibaba-oss
 :description: Alibaba Cloud Object Storage Service (OSS) component
 :since: 4.23

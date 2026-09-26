@@ -1,6 +1,7 @@
 = Twitter Timeline Component
 :doctitle: Twitter Timeline
 :shortname: twitter-timeline
+:groupid: org.apache.camel
 :artifactid: camel-twitter
 :description: Send tweets and receive tweets from user's timeline.
 :since: 2.10

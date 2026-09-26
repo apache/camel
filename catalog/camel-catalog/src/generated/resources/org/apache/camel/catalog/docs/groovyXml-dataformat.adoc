@@ -1,6 +1,7 @@
 = Groovy XML DataFormat
 :doctitle: Groovy XML
 :shortname: groovyXml
+:groupid: org.apache.camel
 :artifactid: camel-groovy
 :description: Transform between XML and Groovy Node (Map structure) objects
 :since: 4.15

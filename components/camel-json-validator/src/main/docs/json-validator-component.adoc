@@ -1,6 +1,7 @@
 = JSON Schema Validator Component
 :doctitle: JSON Schema Validator
 :shortname: json-validator
+:groupid: org.apache.camel
 :artifactid: camel-json-validator
 :description: Validate JSON payloads using NetworkNT JSON Schema.
 :since: 2.20

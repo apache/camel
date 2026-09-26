@@ -1,6 +1,7 @@
 = Dropbox Component
 :doctitle: Dropbox
 :shortname: dropbox
+:groupid: org.apache.camel
 :artifactid: camel-dropbox
 :description: Upload, download and manage files, folders, groups, collaborations, etc on Dropbox.
 :since: 2.14

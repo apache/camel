@@ -1,6 +1,7 @@
 = Test JUnit5 Component
 :doctitle: Test JUnit5
 :shortname: test-junit5
+:groupid: org.apache.camel
 :artifactid: camel-test-junit5
 :description: Camel unit testing with JUnit 5
 :since: 3.0
@@ -147,4 +148,3 @@ public class MyTestClass extends CamelTestSupport {
 
 The same approach can be used for test code that configures the `CamelContext`. However, in this case, the `configureContext`
 method, which receives an instance of `CamelContextConfiguration`, can be used.
-

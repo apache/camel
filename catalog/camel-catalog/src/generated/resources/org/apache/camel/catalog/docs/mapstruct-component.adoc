@@ -1,6 +1,7 @@
 = MapStruct Component
 :doctitle: MapStruct
 :shortname: mapstruct
+:groupid: org.apache.camel
 :artifactid: camel-mapstruct
 :description: Type Conversion using MapStruct
 :since: 3.19

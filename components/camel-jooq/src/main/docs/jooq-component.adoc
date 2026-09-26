@@ -1,6 +1,7 @@
 = JOOQ Component
 :doctitle: JOOQ
 :shortname: jooq
+:groupid: org.apache.camel
 :artifactid: camel-jooq
 :description: Store and retrieve Java objects from an SQL database using JOOQ.
 :since: 3.0

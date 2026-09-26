@@ -1,6 +1,7 @@
 = DFDL DataFormat
 :doctitle: DFDL
 :shortname: dfdl
+:groupid: org.apache.camel
 :artifactid: camel-dfdl
 :description: Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL)
 :since: 4.11

@@ -1,6 +1,7 @@
 = IBM watsonx.data Component
 :doctitle: IBM watsonx.data
 :shortname: ibm-watsonx-data
+:groupid: org.apache.camel
 :artifactid: camel-ibm-watsonx-data
 :description: Interact with IBM watsonx.data lakehouse for catalog, schema, table, and engine management.
 :since: 4.19

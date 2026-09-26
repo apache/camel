@@ -1,6 +1,7 @@
 = Google Pubsub Component
 :doctitle: Google Pubsub
 :shortname: google-pubsub
+:groupid: org.apache.camel
 :artifactid: camel-google-pubsub
 :description: Send and receive messages to/from Google Cloud Platform PubSub Service.
 :since: 2.19

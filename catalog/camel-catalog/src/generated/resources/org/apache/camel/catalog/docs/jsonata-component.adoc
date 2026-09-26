@@ -1,6 +1,7 @@
 = JSONata Component
 :doctitle: JSONata
 :shortname: jsonata
+:groupid: org.apache.camel
 :artifactid: camel-jsonata
 :description: Transforms JSON payload using JSONata transformation.
 :since: 3.5

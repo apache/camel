@@ -3404,19 +3404,6 @@ public class EndpointHeaderBuilders {
         return SagaEndpointBuilderFactory.SagaHeaderNameBuilder.INSTANCE;
     }
     /**
-     * Salesforce (camel-salesforce)
-     * Communicate with Salesforce using Java DTOs.
-     * 
-     * Category: cloud,saas
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-salesforce
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    public static SalesforceEndpointBuilderFactory.SalesforceHeaderNameBuilder salesforce() {
-        return SalesforceEndpointBuilderFactory.SalesforceHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
      * 

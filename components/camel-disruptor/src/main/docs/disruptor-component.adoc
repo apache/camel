@@ -1,6 +1,7 @@
 = Disruptor Component
 :doctitle: Disruptor
 :shortname: disruptor
+:groupid: org.apache.camel
 :artifactid: camel-disruptor
 :description: Provides asynchronous SEDA behavior using LMAX Disruptor.
 :since: 2.12

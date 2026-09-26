@@ -1,6 +1,7 @@
 = AS2 Component
 :doctitle: AS2
 :shortname: as2
+:groupid: org.apache.camel
 :artifactid: camel-as2
 :description: Transfer data securely and reliably using the AS2 protocol (RFC4130).
 :since: 2.22

@@ -1,6 +1,7 @@
 = PostgreSQL Replication Slot Component
 :doctitle: PostgreSQL Replication Slot
 :shortname: pg-replication-slot
+:groupid: org.apache.camel
 :artifactid: camel-pg-replication-slot
 :description: Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming Replication Slots.
 :since: 3.0

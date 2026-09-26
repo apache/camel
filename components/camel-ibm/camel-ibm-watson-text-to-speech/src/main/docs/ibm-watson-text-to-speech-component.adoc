@@ -1,6 +1,7 @@
 = IBM Watson Text to Speech Component
 :doctitle: IBM Watson Text to Speech
 :shortname: ibm-watson-text-to-speech
+:groupid: org.apache.camel
 :artifactid: camel-ibm-watson-text-to-speech
 :description: Convert text to natural-sounding speech using IBM Watson Text to Speech
 :since: 4.17
@@ -568,4 +569,3 @@ Maven users will need to add the following dependency to their `pom.xml`.
 ----
 
 where `x.x.x` is the version number of Camel.
-

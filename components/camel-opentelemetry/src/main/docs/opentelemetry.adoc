@@ -1,6 +1,7 @@
 = OpenTelemetry Component (deprecated)
 :doctitle: OpenTelemetry
 :shortname: opentelemetry
+:groupid: org.apache.camel
 :artifactid: camel-opentelemetry
 :description: Distributed tracing using OpenTelemetry
 :since: 3.5

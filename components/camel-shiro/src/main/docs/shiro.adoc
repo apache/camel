@@ -1,6 +1,7 @@
 = Shiro Component
 :doctitle: Shiro
 :shortname: shiro
+:groupid: org.apache.camel
 :artifactid: camel-shiro
 :description: Security using Shiro
 :since: 2.5

@@ -1,6 +1,7 @@
 = JGroups Component
 :doctitle: JGroups
 :shortname: jgroups
+:groupid: org.apache.camel
 :artifactid: camel-jgroups
 :description: Exchange messages with JGroups clusters.
 :since: 2.13

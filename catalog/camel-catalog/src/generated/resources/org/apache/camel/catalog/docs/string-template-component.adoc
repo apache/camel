@@ -1,6 +1,7 @@
 = String Template Component
 :doctitle: String Template
 :shortname: string-template
+:groupid: org.apache.camel
 :artifactid: camel-stringtemplate
 :description: Transform messages using StringTemplate engine.
 :since: 1.2

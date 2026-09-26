@@ -1,6 +1,7 @@
 = JSON Gson DataFormat
 :doctitle: JSON Gson
 :shortname: gson
+:groupid: org.apache.camel
 :artifactid: camel-gson
 :description: Marshal POJOs to JSON and back using Gson
 :since: 2.10

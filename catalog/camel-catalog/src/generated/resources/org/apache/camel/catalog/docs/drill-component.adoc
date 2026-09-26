@@ -1,6 +1,7 @@
 = Drill Component
 :doctitle: Drill
 :shortname: drill
+:groupid: org.apache.camel
 :artifactid: camel-drill
 :description: Perform queries against an Apache Drill cluster.
 :since: 2.19

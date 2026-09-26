@@ -1,6 +1,7 @@
 = Hazelcast Set Component
 :doctitle: Hazelcast Set
 :shortname: hazelcast-set
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed set.
 :since: 2.7
@@ -34,4 +35,3 @@ The set producer provides seven operations:
 * removeAll
 * retainAll
 * getAll
-

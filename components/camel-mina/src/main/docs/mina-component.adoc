@@ -1,6 +1,7 @@
 = Mina Component
 :doctitle: Mina
 :shortname: mina
+:groupid: org.apache.camel
 :artifactid: camel-mina
 :description: Socket level networking using TCP or UDP with Apache Mina 2.x.
 :since: 2.10

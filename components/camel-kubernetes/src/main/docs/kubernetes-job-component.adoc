@@ -1,6 +1,7 @@
 = Kubernetes Job Component
 :doctitle: Kubernetes Job
 :shortname: kubernetes-job
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Jobs.
 :since: 2.23
@@ -137,5 +138,3 @@ from("timer:foo?delay=1000&repeatCount=1")
     .log("Job created:")
     .to("log:output");
 ----
-
-

@@ -1,6 +1,7 @@
 = Reactive Streams Component
 :doctitle: Reactive Streams
 :shortname: reactive-streams
+:groupid: org.apache.camel
 :artifactid: camel-reactive-streams
 :description: Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
 :since: 2.19

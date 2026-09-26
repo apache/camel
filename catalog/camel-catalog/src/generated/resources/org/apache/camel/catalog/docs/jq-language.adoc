@@ -1,6 +1,7 @@
 = JQ Language
 :doctitle: JQ
 :shortname: jq
+:groupid: org.apache.camel
 :artifactid: camel-jq
 :description: Evaluates a JQ expression against a JSON message body
 :since: 3.18

@@ -1,6 +1,7 @@
 = SNMP Component
 :doctitle: SNMP
 :shortname: snmp
+:groupid: org.apache.camel
 :artifactid: camel-snmp
 :description: Receive traps and poll SNMP (Simple Network Management Protocol) capable devices.
 :since: 2.1

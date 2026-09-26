@@ -1,6 +1,7 @@
 = Azure Event Grid Component
 :doctitle: Azure Event Grid
 :shortname: azure-eventgrid
+:groupid: org.apache.camel
 :artifactid: camel-azure-eventgrid
 :description: Send events to Azure Event Grid topics.
 :since: 4.17

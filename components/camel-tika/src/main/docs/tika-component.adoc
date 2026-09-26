@@ -1,6 +1,7 @@
 = Tika Component
 :doctitle: Tika
 :shortname: tika
+:groupid: org.apache.camel
 :artifactid: camel-tika
 :description: Parse documents and extract metadata and text using Apache Tika.
 :since: 2.19

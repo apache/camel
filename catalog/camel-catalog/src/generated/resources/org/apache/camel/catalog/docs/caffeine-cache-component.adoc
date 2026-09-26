@@ -1,6 +1,7 @@
 = Caffeine Cache Component
 :doctitle: Caffeine Cache
 :shortname: caffeine-cache
+:groupid: org.apache.camel
 :artifactid: camel-caffeine
 :description: Perform caching operations using Caffeine Cache.
 :since: 2.20

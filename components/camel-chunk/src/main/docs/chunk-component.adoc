@@ -1,6 +1,7 @@
 = Chunk Component
 :doctitle: Chunk
 :shortname: chunk
+:groupid: org.apache.camel
 :artifactid: camel-chunk
 :description: Transform messages using Chunk templating engine.
 :since: 2.15

@@ -1,6 +1,7 @@
 = TypeSafe AI Component
 :doctitle: TypeSafe AI
 :shortname: typesafe-ai
+:groupid: org.apache.camel
 :artifactid: camel-typesafe-ai
 :description: Evaluate text and structured state with the TypeSafe AI decision API.
 :since: 4.23

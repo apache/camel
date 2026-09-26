@@ -1,6 +1,7 @@
 = IBM watsonx.ai Component
 :doctitle: IBM watsonx.ai
 :shortname: ibm-watsonx-ai
+:groupid: org.apache.camel
 :artifactid: camel-ibm-watsonx-ai
 :description: Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
 :since: 4.18

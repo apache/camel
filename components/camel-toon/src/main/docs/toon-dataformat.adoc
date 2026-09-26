@@ -1,6 +1,7 @@
 = TOON DataFormat
 :doctitle: TOON
 :shortname: toon
+:groupid: org.apache.camel
 :artifactid: camel-toon
 :description: Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.
 :since: 4.23

@@ -1,6 +1,7 @@
 = SFTP Component
 :doctitle: SFTP
 :shortname: sftp
+:groupid: org.apache.camel
 :artifactid: camel-ftp
 :description: Upload and download files to/from SFTP servers.
 :since: 1.1

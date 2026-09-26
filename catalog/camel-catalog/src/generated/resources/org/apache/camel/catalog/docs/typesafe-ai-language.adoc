@@ -1,6 +1,7 @@
 = TypeSafe AI Language
 :doctitle: TypeSafe AI
 :shortname: typesafe-ai
+:groupid: org.apache.camel
 :artifactid: camel-typesafe-ai
 :description: Evaluate a Noul question with the TypeSafe AI decision API
 :since: 4.23

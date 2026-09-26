@@ -1,6 +1,7 @@
 = Shell Component
 :doctitle: Shell
 :shortname: shell
+:groupid: org.apache.camel
 :artifactid: camel-shell
 :description: Camel Shell component
 :since: 4.21
@@ -145,4 +146,3 @@ from("shell:myapp")
     .to(ExchangePattern.InOnly, "activemq:queue:myqueue")
     .setBody(simple("Sent '${exchangeProperty.input}' to queue"));
 ----
-

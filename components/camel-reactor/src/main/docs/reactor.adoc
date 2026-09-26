@@ -1,6 +1,7 @@
 = Reactor Component
 :doctitle: Reactor
 :shortname: reactor
+:groupid: org.apache.camel
 :artifactid: camel-reactor
 :description: Reactor based back-end for Camel's reactive streams component
 :since: 2.20

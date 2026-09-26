@@ -1,6 +1,7 @@
 = CyberArk Vault Component
 :doctitle: CyberArk Vault
 :shortname: cyberark-vault
+:groupid: org.apache.camel
 :artifactid: camel-cyberark-vault
 :description: Retrieve secrets from CyberArk Conjur Vault.
 :since: 4.17

@@ -1,6 +1,7 @@
 = AMQP Component
 :doctitle: AMQP
 :shortname: amqp
+:groupid: org.apache.camel
 :artifactid: camel-amqp
 :description: Messaging with AMQP protocol using Apache Qpid Client.
 :since: 1.2

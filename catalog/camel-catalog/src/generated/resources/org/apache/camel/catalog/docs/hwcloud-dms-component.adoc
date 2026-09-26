@@ -1,6 +1,7 @@
 = Huawei Distributed Message Service (DMS) Component
 :doctitle: Huawei Distributed Message Service (DMS)
 :shortname: hwcloud-dms
+:groupid: org.apache.camel
 :artifactid: camel-huaweicloud-dms
 :description: To integrate with a fully managed, high-performance message queuing service on Huawei Cloud
 :since: 3.12
@@ -274,5 +275,3 @@ YAML::
               serviceKeys: "#myServiceKeyConfig"
 ----
 ====
-
-

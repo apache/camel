@@ -1,6 +1,7 @@
 = ClickUp Component
 :doctitle: ClickUp
 :shortname: clickup
+:groupid: org.apache.camel
 :artifactid: camel-clickup
 :description: Receives events from ClickUp
 :since: 4.9

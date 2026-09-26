@@ -1,6 +1,7 @@
 = Wasm Component
 :doctitle: Wasm
 :shortname: wasm
+:groupid: org.apache.camel
 :artifactid: camel-wasm
 :description: Invoke Wasm functions.
 :since: 4.4

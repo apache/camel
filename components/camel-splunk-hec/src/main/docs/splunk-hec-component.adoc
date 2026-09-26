@@ -1,6 +1,7 @@
 = Splunk HEC Component
 :doctitle: Splunk HEC
 :shortname: splunk-hec
+:groupid: org.apache.camel
 :artifactid: camel-splunk-hec
 :description: The splunk component allows publishing events in Splunk using the HTTP Event Collector.
 :since: 3.3

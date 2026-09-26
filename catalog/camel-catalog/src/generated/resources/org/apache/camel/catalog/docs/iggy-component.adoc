@@ -1,6 +1,7 @@
 = Iggy Component
 :doctitle: Iggy
 :shortname: iggy
+:groupid: org.apache.camel
 :artifactid: camel-iggy
 :description: Send and receive message to Apache Iggy streaming platform.
 :since: 4.17

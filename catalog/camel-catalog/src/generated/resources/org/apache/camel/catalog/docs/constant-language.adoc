@@ -1,6 +1,7 @@
 = Constant Language
 :doctitle: Constant
 :shortname: constant
+:groupid: org.apache.camel
 :artifactid: camel-core-languages
 :description: A fixed value set only once during the route startup
 :since: 1.5

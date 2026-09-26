@@ -1,6 +1,7 @@
 = JT400 Component
 :doctitle: JT400
 :shortname: jt400
+:groupid: org.apache.camel
 :artifactid: camel-jt400
 :description: Exchanges messages with an IBM i system using data queues, message queues, or program call. IBM i is the replacement for AS/400 and iSeries servers.
 :since: 1.5

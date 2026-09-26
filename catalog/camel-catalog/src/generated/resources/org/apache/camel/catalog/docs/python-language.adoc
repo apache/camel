@@ -1,6 +1,7 @@
 = Python Language
 :doctitle: Python
 :shortname: python
+:groupid: org.apache.camel
 :artifactid: camel-python
 :description: Evaluates a Python expression
 :since: 3.19

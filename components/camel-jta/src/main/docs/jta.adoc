@@ -1,6 +1,7 @@
 = JTA Component
 :doctitle: JTA
 :shortname: jta
+:groupid: org.apache.camel
 :artifactid: camel-jta
 :description: Using Camel With JTA Transaction Manager
 :since: 3.4

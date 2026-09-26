@@ -1,6 +1,7 @@
 = Atmosphere Websocket Component
 :doctitle: Atmosphere Websocket
 :shortname: atmosphere-websocket
+:groupid: org.apache.camel
 :artifactid: camel-atmosphere-websocket
 :description: Expose WebSocket endpoints using the Atmosphere framework.
 :since: 2.14

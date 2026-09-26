@@ -1,6 +1,7 @@
 = AWS Config Service Component
 :doctitle: AWS Config Service
 :shortname: aws-config
+:groupid: org.apache.camel
 :artifactid: camel-aws-config
 :description: Manage AWS Config service.
 :since: 4.3
@@ -66,4 +67,3 @@ You have also the possibility of using Profile Credentials Provider, by specifyi
 Only one of static, default and profile credentials could be used at the same time.
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
-

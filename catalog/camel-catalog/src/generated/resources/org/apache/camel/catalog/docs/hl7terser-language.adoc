@@ -1,6 +1,7 @@
 = HL7 Terser Language
 :doctitle: HL7 Terser
 :shortname: hl7terser
+:groupid: org.apache.camel
 :artifactid: camel-hl7
 :description: Get the value of a HL7 message field specified by terse location specification syntax
 :since: 2.11

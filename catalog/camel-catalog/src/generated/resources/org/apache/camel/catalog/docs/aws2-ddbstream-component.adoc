@@ -1,6 +1,7 @@
 = AWS DynamoDB Streams Component
 :doctitle: AWS DynamoDB Streams
 :shortname: aws2-ddbstream
+:groupid: org.apache.camel
 :artifactid: camel-aws2-ddb
 :description: Receive messages from AWS DynamoDB Stream.
 :since: 3.1
@@ -113,5 +114,3 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-

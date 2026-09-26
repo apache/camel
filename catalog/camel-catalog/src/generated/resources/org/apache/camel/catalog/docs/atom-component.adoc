@@ -1,6 +1,7 @@
 = Atom Component
 :doctitle: Atom
 :shortname: atom
+:groupid: org.apache.camel
 :artifactid: camel-atom
 :description: Poll Atom RSS feeds.
 :since: 1.2

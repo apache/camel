@@ -1,6 +1,7 @@
 = LZF Deflate Compression DataFormat
 :doctitle: LZF Deflate Compression
 :shortname: lzf
+:groupid: org.apache.camel
 :artifactid: camel-lzf
 :description: Compress and decompress streams using LZF deflate algorithm
 :since: 2.17

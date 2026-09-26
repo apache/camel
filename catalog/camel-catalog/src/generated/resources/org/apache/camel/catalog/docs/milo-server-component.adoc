@@ -1,6 +1,7 @@
 = OPC UA Server Component
 :doctitle: OPC UA Server
 :shortname: milo-server
+:groupid: org.apache.camel
 :artifactid: camel-milo
 :description: Make telemetry data available as an OPC UA server.
 :since: 2.19

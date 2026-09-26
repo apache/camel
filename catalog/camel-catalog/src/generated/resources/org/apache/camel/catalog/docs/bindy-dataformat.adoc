@@ -1,6 +1,7 @@
 = Bindy DataFormat
 :doctitle: Bindy
 :shortname: bindy
+:groupid: org.apache.camel
 :artifactid: camel-bindy
 :description: Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy
 :since: 2.0

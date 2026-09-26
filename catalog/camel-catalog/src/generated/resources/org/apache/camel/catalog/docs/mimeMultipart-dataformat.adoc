@@ -1,6 +1,7 @@
 = MIME Multipart DataFormat
 :doctitle: MIME Multipart
 :shortname: mimeMultipart
+:groupid: org.apache.camel
 :artifactid: camel-mail
 :description: Marshal Camel messages with attachments into MIME-Multipart messages and back
 :since: 2.17

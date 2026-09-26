@@ -1,6 +1,7 @@
 = JSonApi DataFormat
 :doctitle: JSonApi
 :shortname: jsonApi
+:groupid: org.apache.camel
 :artifactid: camel-jsonapi
 :description: Marshal and unmarshal JSON:API resources using JSONAPI-Converter library
 :since: 3.0

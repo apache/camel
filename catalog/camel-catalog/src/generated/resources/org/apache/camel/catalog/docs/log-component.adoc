@@ -1,6 +1,7 @@
 = Log Data Component
 :doctitle: Log Data
 :shortname: log
+:groupid: org.apache.camel
 :artifactid: camel-log
 :description: Prints data from the routed message (such as body and headers) to the logger.
 :since: 1.1

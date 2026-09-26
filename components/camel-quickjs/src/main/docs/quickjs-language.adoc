@@ -1,6 +1,7 @@
 = QuickJS Language
 :doctitle: QuickJS
 :shortname: quickjs
+:groupid: org.apache.camel
 :artifactid: camel-quickjs
 :description: Evaluates a JavaScript expression using QuickJS4J
 :since: 4.23

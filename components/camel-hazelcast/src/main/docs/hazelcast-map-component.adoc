@@ -1,6 +1,7 @@
 = Hazelcast Map Component
 :doctitle: Hazelcast Map
 :shortname: hazelcast-map
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed map.
 :since: 2.7
@@ -475,5 +476,3 @@ YAML::
                     message: "fail!"
 ----
 ====
-
-

@@ -1,6 +1,7 @@
 = File Watch Component
 :doctitle: File Watch
 :shortname: file-watch
+:groupid: org.apache.camel
 :artifactid: camel-file-watch
 :description: Get notified about file events in a directory using java.nio.file.WatchService.
 :since: 3.0

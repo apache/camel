@@ -1,6 +1,7 @@
 = AWS Bedrock Agent Runtime Component
 :doctitle: AWS Bedrock Agent Runtime
 :shortname: aws-bedrock-agent-runtime
+:groupid: org.apache.camel
 :artifactid: camel-aws-bedrock
 :description: Invoke Model of AWS Bedrock Agent Runtime service.
 :since: 4.5
@@ -213,5 +214,3 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-

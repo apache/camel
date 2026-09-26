@@ -1,6 +1,7 @@
 = WhatsApp Component
 :doctitle: WhatsApp
 :shortname: whatsapp
+:groupid: org.apache.camel
 :artifactid: camel-whatsapp
 :description: Send messages to WhatsApp.
 :since: 3.19

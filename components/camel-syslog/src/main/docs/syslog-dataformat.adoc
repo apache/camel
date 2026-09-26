@@ -1,6 +1,7 @@
 = Syslog DataFormat
 :doctitle: Syslog
 :shortname: syslog
+:groupid: org.apache.camel
 :artifactid: camel-syslog
 :description: Marshall SyslogMessages to RFC3164 and RFC5424 messages and back
 :since: 2.6

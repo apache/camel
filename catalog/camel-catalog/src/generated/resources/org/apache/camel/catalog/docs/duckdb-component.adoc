@@ -1,6 +1,7 @@
 = DuckDB Component
 :doctitle: DuckDB
 :shortname: duckdb
+:groupid: org.apache.camel
 :artifactid: camel-duckdb
 :description: Interact with DuckDB, the in-process analytical SQL database, for embedded analytics workloads.
 :since: 4.22

@@ -1,6 +1,7 @@
 = Flatpack Component
 :doctitle: Flatpack
 :shortname: flatpack
+:groupid: org.apache.camel
 :artifactid: camel-flatpack
 :description: Parse fixed width and delimited files using the FlatPack library.
 :since: 1.4

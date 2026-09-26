@@ -1,6 +1,7 @@
 = InfluxDB Component
 :doctitle: InfluxDB
 :shortname: influxdb
+:groupid: org.apache.camel
 :artifactid: camel-influxdb
 :description: Interact with InfluxDB v1, a time series database.
 :since: 2.18

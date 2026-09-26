@@ -1,6 +1,7 @@
 = MyBatis Component
 :doctitle: MyBatis
 :shortname: mybatis
+:groupid: org.apache.camel
 :artifactid: camel-mybatis
 :description: Performs a query, poll, insert, update or delete in a relational database using MyBatis.
 :since: 2.7

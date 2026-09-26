@@ -1,6 +1,7 @@
 = Servlet Component
 :doctitle: Servlet
 :shortname: servlet
+:groupid: org.apache.camel
 :artifactid: camel-servlet
 :description: Serve HTTP requests by a Servlet.
 :since: 2.0

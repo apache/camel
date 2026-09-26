@@ -1,6 +1,7 @@
 = Avro RPC Component
 :doctitle: Avro RPC
 :shortname: avro
+:groupid: org.apache.camel
 :artifactid: camel-avro-rpc
 :description: Produce or consume Apache Avro RPC services.
 :since: 2.10

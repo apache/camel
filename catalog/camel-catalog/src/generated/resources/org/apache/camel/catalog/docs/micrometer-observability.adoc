@@ -1,6 +1,7 @@
 = Micrometer Observability 2 Component
 :doctitle: Micrometer Observability 2
 :shortname: micrometer-observability
+:groupid: org.apache.camel
 :artifactid: camel-micrometer-observability
 :description: Micrometer Observability implementation of Camel Telemetry
 :since: 4.15

@@ -1,6 +1,7 @@
 = JSON JSON-B DataFormat
 :doctitle: JSON JSON-B
 :shortname: jsonb
+:groupid: org.apache.camel
 :artifactid: camel-jsonb
 :description: Marshal POJOs to JSON and back using JSON-B.
 :since: 3.7

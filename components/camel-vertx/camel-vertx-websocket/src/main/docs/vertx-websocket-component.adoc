@@ -1,6 +1,7 @@
 = Vert.x WebSocket Component
 :doctitle: Vert.x WebSocket
 :shortname: vertx-websocket
+:groupid: org.apache.camel
 :artifactid: camel-vertx-websocket
 :description: Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x
 :since: 3.5

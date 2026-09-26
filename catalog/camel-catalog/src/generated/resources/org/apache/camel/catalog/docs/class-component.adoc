@@ -1,6 +1,7 @@
 = Class Component
 :doctitle: Class
 :shortname: class
+:groupid: org.apache.camel
 :artifactid: camel-bean
 :description: Invoke methods of Java beans specified by class name.
 :since: 2.4

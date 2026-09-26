@@ -1,6 +1,7 @@
 = Simple Language
 :doctitle: Simple
 :shortname: simple
+:groupid: org.apache.camel
 :artifactid: camel-core-languages
 :description: Evaluates a Camel simple expression
 :since: 1.1

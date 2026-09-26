@@ -1,6 +1,7 @@
 = Paho Component (deprecated)
 :doctitle: Paho
 :shortname: paho
+:groupid: org.apache.camel
 :artifactid: camel-paho
 :description: Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
 :since: 2.16

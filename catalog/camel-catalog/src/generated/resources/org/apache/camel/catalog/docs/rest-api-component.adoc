@@ -1,6 +1,7 @@
 = REST API Component
 :doctitle: REST API
 :shortname: rest-api
+:groupid: org.apache.camel
 :artifactid: camel-rest
 :description: Expose OpenAPI Specification of the REST services defined using Camel REST DSL.
 :since: 2.16

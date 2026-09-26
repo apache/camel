@@ -1,6 +1,7 @@
 = PQC Algorithms Component
 :doctitle: PQC Algorithms
 :shortname: pqc
+:groupid: org.apache.camel
 :artifactid: camel-pqc
 :description: Post Quantum Cryptography Signature and Verification component.
 :since: 4.12

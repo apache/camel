@@ -1,6 +1,7 @@
 = Google Firestore Component
 :doctitle: Google Firestore
 :shortname: google-firestore
+:groupid: org.apache.camel
 :artifactid: camel-google-firestore
 :description: Store and retrieve data from Google Cloud Firestore NoSQL database.
 :since: 4.19

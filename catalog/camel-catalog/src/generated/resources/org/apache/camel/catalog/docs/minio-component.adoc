@@ -1,6 +1,7 @@
 = Minio Component (deprecated)
 :doctitle: Minio
 :shortname: minio
+:groupid: org.apache.camel
 :artifactid: camel-minio
 :description: Store and retrieve objects from Minio Storage Service using Minio SDK.
 :since: 3.5

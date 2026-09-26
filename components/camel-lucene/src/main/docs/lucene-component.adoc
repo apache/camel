@@ -1,6 +1,7 @@
 = Lucene Component
 :doctitle: Lucene
 :shortname: lucene
+:groupid: org.apache.camel
 :artifactid: camel-lucene
 :description: Perform inserts or queries against Apache Lucene databases.
 :since: 2.2

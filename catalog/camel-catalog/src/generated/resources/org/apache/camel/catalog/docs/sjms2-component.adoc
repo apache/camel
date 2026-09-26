@@ -1,6 +1,7 @@
 = Simple JMS2 Component
 :doctitle: Simple JMS2
 :shortname: sjms2
+:groupid: org.apache.camel
 :artifactid: camel-sjms2
 :description: Send and receive messages to/from a JMS Queue or Topic using plain JMS 2.x API.
 :since: 2.19

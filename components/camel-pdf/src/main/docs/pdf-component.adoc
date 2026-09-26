@@ -1,6 +1,7 @@
 = PDF Component
 :doctitle: PDF
 :shortname: pdf
+:groupid: org.apache.camel
 :artifactid: camel-pdf
 :description: Create, modify or extract content from PDF documents.
 :since: 2.16

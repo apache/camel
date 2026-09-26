@@ -1,6 +1,7 @@
 = Bean Validator Component
 :doctitle: Bean Validator
 :shortname: bean-validator
+:groupid: org.apache.camel
 :artifactid: camel-bean-validator
 :description: Validate the message body using the Java Bean Validation API.
 :since: 2.3

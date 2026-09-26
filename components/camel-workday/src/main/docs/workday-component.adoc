@@ -1,6 +1,7 @@
 = Workday Component
 :doctitle: Workday
 :shortname: workday
+:groupid: org.apache.camel
 :artifactid: camel-workday
 :description: Detect and parse documents using Workday.
 :since: 3.1

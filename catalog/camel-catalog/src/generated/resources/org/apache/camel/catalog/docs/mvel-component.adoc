@@ -1,6 +1,7 @@
 = MVEL Component
 :doctitle: MVEL
 :shortname: mvel
+:groupid: org.apache.camel
 :artifactid: camel-mvel
 :description: Transform messages using an MVEL template.
 :since: 2.12

@@ -1,6 +1,7 @@
 = Test Main JUnit5 Component
 :doctitle: Test Main JUnit5
 :shortname: test-main-junit5
+:groupid: org.apache.camel
 :artifactid: camel-test-main-junit5
 :description: Camel unit testing with Main and JUnit 5
 :since: 3.16

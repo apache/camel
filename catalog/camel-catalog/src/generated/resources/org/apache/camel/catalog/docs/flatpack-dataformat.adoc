@@ -1,6 +1,7 @@
 = Flatpack DataFormat
 :doctitle: Flatpack
 :shortname: flatpack
+:groupid: org.apache.camel
 :artifactid: camel-flatpack
 :description: Marshal and unmarshal Java lists and maps to/from flat files (such as CSV, delimited, or fixed length formats) using Flatpack library
 :since: 2.1

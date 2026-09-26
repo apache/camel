@@ -1,6 +1,7 @@
 = Mock Component
 :doctitle: Mock
 :shortname: mock
+:groupid: org.apache.camel
 :artifactid: camel-mock
 :description: Test routes and mediation rules using mocks.
 :since: 1.0

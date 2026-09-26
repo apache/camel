@@ -1,6 +1,7 @@
 = Alibaba Function Compute (FC) Component
 :doctitle: Alibaba Function Compute (FC)
 :shortname: alibaba-fc
+:groupid: org.apache.camel
 :artifactid: camel-alibaba-fc
 :description: Invoke serverless functions on Alibaba Cloud Function Compute (FC).
 :since: 4.23

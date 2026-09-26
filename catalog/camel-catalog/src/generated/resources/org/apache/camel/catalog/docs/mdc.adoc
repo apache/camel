@@ -1,6 +1,7 @@
 = MDC Logging Component
 :doctitle: MDC Logging
 :shortname: mdc
+:groupid: org.apache.camel
 :artifactid: camel-mdc
 :description: Logging MDC (Mapped Diagnostic Context) Service
 :since: 4.15

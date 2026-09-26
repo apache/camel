@@ -1,6 +1,7 @@
 = JFR Component
 :doctitle: JFR
 :shortname: jfr
+:groupid: org.apache.camel
 :artifactid: camel-jfr
 :description: Diagnose Camel applications with Java Flight Recorder
 :since: 3.8

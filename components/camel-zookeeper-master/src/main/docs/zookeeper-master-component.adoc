@@ -1,6 +1,7 @@
 = ZooKeeper Master Component
 :doctitle: ZooKeeper Master
 :shortname: zookeeper-master
+:groupid: org.apache.camel
 :artifactid: camel-zookeeper-master
 :description: Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
 :since: 2.19

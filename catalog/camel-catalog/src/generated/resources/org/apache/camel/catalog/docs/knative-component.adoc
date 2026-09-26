@@ -1,6 +1,7 @@
 = Knative Component
 :doctitle: Knative
 :shortname: knative
+:groupid: org.apache.camel
 :artifactid: camel-knative
 :description: Send and receive events from Knative.
 :since: 3.15

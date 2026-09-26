@@ -1,6 +1,7 @@
 = XML Tokenize Language
 :doctitle: XML Tokenize
 :shortname: xtokenize
+:groupid: org.apache.camel
 :artifactid: camel-stax
 :description: Tokenize XML payloads
 :since: 2.14

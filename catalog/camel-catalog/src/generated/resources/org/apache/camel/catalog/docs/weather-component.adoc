@@ -1,6 +1,7 @@
 = Weather Component
 :doctitle: Weather
 :shortname: weather
+:groupid: org.apache.camel
 :artifactid: camel-weather
 :description: Poll the weather information from Open Weather Map.
 :since: 2.12

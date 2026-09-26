@@ -1,6 +1,7 @@
 = OPC UA Browser Component
 :doctitle: OPC UA Browser
 :shortname: milo-browse
+:groupid: org.apache.camel
 :artifactid: camel-milo
 :description: Connect to OPC UA servers using the binary protocol for browsing the node tree.
 :since: 3.15

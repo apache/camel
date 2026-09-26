@@ -1,6 +1,7 @@
 = OpenStack Swift Component
 :doctitle: OpenStack Swift
 :shortname: openstack-swift
+:groupid: org.apache.camel
 :artifactid: camel-openstack
 :description: Access OpenStack Swift object/blob store.
 :since: 2.19
@@ -99,4 +100,3 @@ or `org.openstack4j.model.storage.object.options.ContainerListOptions` for listi
 |`createUpdateMetadata` | Create/update metadata.
 
 |=========================================================================
-

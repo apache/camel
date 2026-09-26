@@ -1,6 +1,7 @@
 = XML Security DataFormat
 :doctitle: XML Security
 :shortname: xmlSecurity
+:groupid: org.apache.camel
 :artifactid: camel-xmlsecurity
 :description: Encrypt and decrypt XML payloads using Apache Santuario
 :since: 2.0

@@ -1,6 +1,7 @@
 = SQL Stored Procedure Component
 :doctitle: SQL Stored Procedure
 :shortname: sql-stored
+:groupid: org.apache.camel
 :artifactid: camel-sql
 :description: Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
 :since: 2.17

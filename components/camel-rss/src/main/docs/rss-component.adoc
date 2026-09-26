@@ -1,6 +1,7 @@
 = RSS Component
 :doctitle: RSS
 :shortname: rss
+:groupid: org.apache.camel
 :artifactid: camel-rss
 :description: Poll RSS feeds.
 :since: 2.0

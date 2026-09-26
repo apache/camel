@@ -1,6 +1,7 @@
 = Huawei Cloud Face Recognition Service (FRS) Component
 :doctitle: Huawei Cloud Face Recognition Service (FRS)
 :shortname: hwcloud-frs
+:groupid: org.apache.camel
 :artifactid: camel-huaweicloud-frs
 :description: Face Recognition Service (FRS) is an intelligent service that uses computers to process, analyze, and understand facial images based on human facial features.
 :since: 3.15
@@ -251,4 +252,3 @@ YAML::
               region: cn-north-4
 ----
 ====
-

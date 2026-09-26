@@ -1,6 +1,7 @@
 = Kubernetes Deployments Component
 :doctitle: Kubernetes Deployments
 :shortname: kubernetes-deployments
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Deployments and get notified on Deployment changes.
 :since: 2.20
@@ -144,4 +145,3 @@ You can narrow the scope of the consumer using the following query parameter com
 - `namespace` - Watch all Deployments in the specified namespace.
 - `namespace` + `resourceName` - Watch the Deployment with the specified name in the given namespace.
 - `namespace` + `labelKey` + `labelValue` - Watch Deployments with the specified label in the given namespace.
-

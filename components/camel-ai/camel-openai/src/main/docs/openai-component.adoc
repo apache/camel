@@ -1,6 +1,7 @@
 = OpenAI Component
 :doctitle: OpenAI
 :shortname: openai
+:groupid: org.apache.camel
 :artifactid: camel-openai
 :description: OpenAI endpoint for chat completion, Responses API, embeddings, audio transcription, audio translation, and text-to-speech.
 :since: 4.17

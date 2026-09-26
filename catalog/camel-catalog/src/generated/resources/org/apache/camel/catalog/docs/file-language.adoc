@@ -1,6 +1,7 @@
 = File Language
 :doctitle: File
 :shortname: file
+:groupid: org.apache.camel
 :artifactid: camel-core-languages
 :description: File related capabilities for the Simple language
 :since: 1.1

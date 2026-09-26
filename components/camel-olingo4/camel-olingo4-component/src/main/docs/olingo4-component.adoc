@@ -1,6 +1,7 @@
 = Olingo4 Component (deprecated)
 :doctitle: Olingo4
 :shortname: olingo4
+:groupid: org.apache.camel
 :artifactid: camel-olingo4
 :description: Communicate with OData 4.0 services using Apache Olingo OData API.
 :since: 2.19

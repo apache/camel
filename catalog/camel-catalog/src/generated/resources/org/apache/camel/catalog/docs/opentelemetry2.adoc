@@ -1,6 +1,7 @@
 = Opentelemetry2 Component
 :doctitle: Opentelemetry2
 :shortname: opentelemetry2
+:groupid: org.apache.camel
 :artifactid: camel-opentelemetry2
 :description: Implementation of Camel Opentelemetry based on the Camel Telemetry spec
 :since: 4.11

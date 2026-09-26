@@ -1,6 +1,7 @@
 = XChange Component
 :doctitle: XChange
 :shortname: xchange
+:groupid: org.apache.camel
 :artifactid: camel-xchange
 :description: Access market data and trade on Bitcoin and Altcoin exchanges.
 :since: 2.21

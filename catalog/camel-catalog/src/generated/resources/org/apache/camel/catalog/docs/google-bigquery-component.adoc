@@ -1,6 +1,7 @@
 = Google BigQuery Component
 :doctitle: Google BigQuery
 :shortname: google-bigquery
+:groupid: org.apache.camel
 :artifactid: camel-google-bigquery
 :description: Google BigQuery data warehouse for analytics.
 :since: 2.20
@@ -131,5 +132,3 @@ query parameter `useAsInsertId`. As an insert id need to be specified per row in
 be used when the payload is a list.
 If the payload is a list the `GoogleBigQueryConstants.INSERT_ID` will
 be ignored. In that case use the query parameter `useAsInsertId`.
-
-

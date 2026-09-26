@@ -1,6 +1,7 @@
 = Fory DataFormat
 :doctitle: Fory
 :shortname: fory
+:groupid: org.apache.camel
 :artifactid: camel-fory
 :description: Serialize and deserialize messages using Apache Fory
 :since: 4.9

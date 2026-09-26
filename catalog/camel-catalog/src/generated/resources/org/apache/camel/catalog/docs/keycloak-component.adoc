@@ -1,6 +1,7 @@
 = Keycloak Component
 :doctitle: Keycloak
 :shortname: keycloak
+:groupid: org.apache.camel
 :artifactid: camel-keycloak
 :description: Manage Keycloak instances via Admin API.
 :since: 4.15

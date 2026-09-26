@@ -1,6 +1,7 @@
 = OPC UA Client Component
 :doctitle: OPC UA Client
 :shortname: milo-client
+:groupid: org.apache.camel
 :artifactid: camel-milo
 :description: Connect to OPC UA servers using the binary protocol for acquiring telemetry data.
 :since: 2.19

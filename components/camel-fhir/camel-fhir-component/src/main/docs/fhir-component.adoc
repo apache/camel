@@ -1,6 +1,7 @@
 = FHIR Component
 :doctitle: FHIR
 :shortname: fhir
+:groupid: org.apache.camel
 :artifactid: camel-fhir
 :description: Exchange information in the healthcare domain using the FHIR (Fast Healthcare Interoperability Resources) standard.
 :since: 2.23

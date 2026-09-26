@@ -1,6 +1,7 @@
 = JTE Component
 :doctitle: JTE
 :shortname: jte
+:groupid: org.apache.camel
 :artifactid: camel-jte
 :description: Transform messages using a Java based template engine (JTE).
 :since: 4.4

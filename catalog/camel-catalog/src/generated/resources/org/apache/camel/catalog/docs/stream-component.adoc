@@ -1,6 +1,7 @@
 = Stream Component
 :doctitle: Stream
 :shortname: stream
+:groupid: org.apache.camel
 :artifactid: camel-stream
 :description: Read from system-in and write to system-out and system-err streams.
 :since: 1.3

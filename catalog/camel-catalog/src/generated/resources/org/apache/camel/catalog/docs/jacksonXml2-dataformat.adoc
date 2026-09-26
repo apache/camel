@@ -1,6 +1,7 @@
 = Jackson XML 2 DataFormat
 :doctitle: Jackson XML 2
 :shortname: jacksonXml2
+:groupid: org.apache.camel
 :artifactid: camel-jacksonxml
 :description: Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson
 :since: 2.16

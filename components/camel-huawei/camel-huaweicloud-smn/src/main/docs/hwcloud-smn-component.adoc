@@ -1,6 +1,7 @@
 = Huawei Simple Message Notification (SMN) Component
 :doctitle: Huawei Simple Message Notification (SMN)
 :shortname: hwcloud-smn
+:groupid: org.apache.camel
 :artifactid: camel-huaweicloud-smn
 :description: To broadcast messages and connect cloud services through notifications on Huawei Cloud
 :since: 3.8
@@ -199,5 +200,3 @@ from("direct:triggerRoute")
  .setProperty(SmnProperties.NOTIFICATION_TTL, constant(60))
  .to("hwcloud-smn:publishMessageService?operation=publishAsTextMessage&projectId=9071a38e7f6a4ba7b7bcbeb7d4ea6efc&region=cn-north-4&serviceKeys=#myServiceKeyConfig")
 ----
-
-

@@ -1,6 +1,7 @@
 = Azure Files Component
 :doctitle: Azure Files
 :shortname: azure-files
+:groupid: org.apache.camel
 :artifactid: camel-azure-files
 :description: Send and receive files to Azure storage file share
 :since: 3.22

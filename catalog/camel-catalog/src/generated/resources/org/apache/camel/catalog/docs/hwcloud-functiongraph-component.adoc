@@ -1,6 +1,7 @@
 = Huawei FunctionGraph Component
 :doctitle: Huawei FunctionGraph
 :shortname: hwcloud-functiongraph
+:groupid: org.apache.camel
 :artifactid: camel-huaweicloud-functiongraph
 :description: To call serverless functions on Huawei Cloud
 :since: 3.11
@@ -148,5 +149,3 @@ YAML::
               serviceKeys: "#myServiceKeyConfig"
 ----
 ====
-
-

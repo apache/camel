@@ -1,6 +1,7 @@
 = Hazelcast SEDA Component
 :doctitle: Hazelcast SEDA
 :shortname: hazelcast-seda
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
 :since: 2.7
@@ -100,4 +101,3 @@ YAML::
             uri: mock:result
 ----
 ====
-

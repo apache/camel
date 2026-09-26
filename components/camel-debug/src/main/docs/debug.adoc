@@ -1,6 +1,7 @@
 = Debug Component
 :doctitle: Debug
 :shortname: debug
+:groupid: org.apache.camel
 :artifactid: camel-debug
 :description: Enables Camel Route Debugging
 :since: 3.15

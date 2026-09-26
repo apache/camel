@@ -1,6 +1,7 @@
 = Variable Language
 :doctitle: Variable
 :shortname: variable
+:groupid: org.apache.camel
 :artifactid: camel-core-languages
 :description: Gets a variable
 :since: 4.4

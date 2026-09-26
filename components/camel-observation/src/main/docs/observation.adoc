@@ -1,6 +1,7 @@
 = Micrometer Observability Component (deprecated)
 :doctitle: Micrometer Observability
 :shortname: observation
+:groupid: org.apache.camel
 :artifactid: camel-observation
 :description: Observability using Micrometer Observation
 :since: 3.21

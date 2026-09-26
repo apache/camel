@@ -1,6 +1,7 @@
 = Velocity Component
 :doctitle: Velocity
 :shortname: velocity
+:groupid: org.apache.camel
 :artifactid: camel-velocity
 :description: Transform messages using a Velocity template.
 :since: 1.2

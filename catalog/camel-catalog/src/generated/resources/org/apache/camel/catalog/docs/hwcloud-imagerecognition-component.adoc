@@ -1,6 +1,7 @@
 = Huawei Cloud Image Recognition Component
 :doctitle: Huawei Cloud Image Recognition
 :shortname: hwcloud-imagerecognition
+:groupid: org.apache.camel
 :artifactid: camel-huaweicloud-imagerecognition
 :description: To identify objects, scenes, and concepts in images on Huawei Cloud
 :since: 3.12
@@ -207,5 +208,3 @@ YAML::
               region: cn-north-4
 ----
 ====
-
-

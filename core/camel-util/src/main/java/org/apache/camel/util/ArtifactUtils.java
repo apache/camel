@@ -359,7 +359,6 @@ public final class ArtifactUtils {
             Map.entry("rocketmq", "camel-rocketmq"),
             Map.entry("rss", "camel-rss"),
             Map.entry("saga", "camel-saga"),
-            Map.entry("salesforce", "camel-salesforce"),
             Map.entry("sap-netweaver", "camel-sap-netweaver"),
             Map.entry("scheduler", "camel-scheduler"),
             Map.entry("schematron", "camel-schematron"),

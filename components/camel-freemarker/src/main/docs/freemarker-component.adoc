@@ -1,6 +1,7 @@
 = Freemarker Component
 :doctitle: Freemarker
 :shortname: freemarker
+:groupid: org.apache.camel
 :artifactid: camel-freemarker
 :description: Transform messages using FreeMarker templates.
 :since: 2.10

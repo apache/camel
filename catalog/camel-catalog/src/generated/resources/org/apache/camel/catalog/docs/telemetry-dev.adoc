@@ -1,6 +1,7 @@
 = Telemetry Dev Component
 :doctitle: Telemetry Dev
 :shortname: telemetry-dev
+:groupid: org.apache.camel
 :artifactid: camel-telemetry-dev
 :description: Basic implementation of Camel Telemetry useful for development purposes
 :since: 4.11

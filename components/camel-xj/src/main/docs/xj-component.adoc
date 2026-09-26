@@ -1,6 +1,7 @@
 = XJ Component
 :doctitle: XJ
 :shortname: xj
+:groupid: org.apache.camel
 :artifactid: camel-xj
 :description: Transform JSON and XML message using a XSLT.
 :since: 3.0

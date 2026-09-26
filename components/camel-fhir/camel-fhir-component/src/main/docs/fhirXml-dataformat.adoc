@@ -1,6 +1,7 @@
 = FHIR XML DataFormat
 :doctitle: FHIR XML
 :shortname: fhirXml
+:groupid: org.apache.camel
 :artifactid: camel-fhir
 :description: Marshall and unmarshall FHIR objects to/from XML
 :since: 2.21

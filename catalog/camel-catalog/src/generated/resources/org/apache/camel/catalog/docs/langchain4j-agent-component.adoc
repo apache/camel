@@ -1,6 +1,7 @@
 = LangChain4j Agent Component
 :doctitle: LangChain4j Agent
 :shortname: langchain4j-agent
+:groupid: org.apache.camel
 :artifactid: camel-langchain4j-agent
 :description: LangChain4j Agent component
 :since: 4.14

@@ -1,6 +1,7 @@
 = Azure Schema Registry Component
 :doctitle: Azure Schema Registry
 :shortname: azure-schema-registry
+:groupid: org.apache.camel
 :artifactid: camel-azure-schema-registry
 :description: Azure Schema Registry Component for utilities to deal with authentication
 :since: 4.2

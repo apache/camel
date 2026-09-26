@@ -1,6 +1,7 @@
 = Cron Component
 :doctitle: Cron
 :shortname: cron
+:groupid: org.apache.camel
 :artifactid: camel-cron
 :description: A generic interface for triggering events at times specified through the Unix cron syntax.
 :since: 3.1

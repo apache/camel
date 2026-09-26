@@ -1,6 +1,7 @@
 = MongoDB GridFS Component
 :doctitle: MongoDB GridFS
 :shortname: mongodb-gridfs
+:groupid: org.apache.camel
 :artifactid: camel-mongodb-gridfs
 :description: Interact with MongoDB GridFS.
 :since: 2.18

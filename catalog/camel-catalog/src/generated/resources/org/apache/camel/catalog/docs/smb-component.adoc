@@ -1,6 +1,7 @@
 = SMB Component
 :doctitle: SMB
 :shortname: smb
+:groupid: org.apache.camel
 :artifactid: camel-smb
 :description: Read and write files to Server Message Block (SMB) file shares.
 :since: 4.3

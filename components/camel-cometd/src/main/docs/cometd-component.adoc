@@ -1,6 +1,7 @@
 = CometD Component
 :doctitle: CometD
 :shortname: cometd
+:groupid: org.apache.camel
 :artifactid: camel-cometd
 :description: Offers publish/subscribe, peer-to-peer (via a server), and RPC style messaging using the CometD/Bayeux protocol.
 :since: 2.0

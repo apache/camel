@@ -1,6 +1,7 @@
 = Kubernetes Namespaces Component
 :doctitle: Kubernetes Namespaces
 :shortname: kubernetes-namespaces
+:groupid: org.apache.camel
 :artifactid: camel-kubernetes
 :description: Perform operations on Kubernetes Namespaces and get notified on Namespace changes.
 :since: 2.17
@@ -142,5 +143,3 @@ You can narrow the scope of the consumer using the following query parameter com
 
 - `labelKey` + `labelValue` - Watch Namespaces with the specified label.
 - `resourceName` - Watch the Namespace with the specified name.
-
-

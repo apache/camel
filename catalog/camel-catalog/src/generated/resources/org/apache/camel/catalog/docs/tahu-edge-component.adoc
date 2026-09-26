@@ -1,6 +1,7 @@
 = Tahu Edge Node / Device Component
 :doctitle: Tahu Edge Node / Device
 :shortname: tahu-edge
+:groupid: org.apache.camel
 :artifactid: camel-tahu
 :description: Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
 :since: 4.8

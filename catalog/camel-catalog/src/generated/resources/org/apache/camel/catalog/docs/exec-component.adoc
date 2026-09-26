@@ -1,6 +1,7 @@
 = Exec Component
 :doctitle: Exec
 :shortname: exec
+:groupid: org.apache.camel
 :artifactid: camel-exec
 :description: Execute commands on the underlying operating system.
 :since: 2.3

@@ -1,6 +1,7 @@
 = Dynamic Router Component
 :doctitle: Dynamic Router
 :shortname: dynamic-router
+:groupid: org.apache.camel
 :artifactid: camel-dynamic-router
 :description: The Dynamic Router component routes exchanges to recipients, and the recipients (and their rules) may change at runtime.
 :since: 3.15

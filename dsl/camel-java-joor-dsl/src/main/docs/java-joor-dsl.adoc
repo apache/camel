@@ -1,6 +1,7 @@
 = Java DSL (runtime compiled) Component
 :doctitle: Java DSL (runtime compiled)
 :shortname: java-joor-dsl
+:groupid: org.apache.camel
 :artifactid: camel-java-joor-dsl
 :description: Camel Java DSL with jOOR
 :since: 3.9

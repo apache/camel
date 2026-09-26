@@ -1,6 +1,7 @@
 = RSS DataFormat
 :doctitle: RSS
 :shortname: rss
+:groupid: org.apache.camel
 :artifactid: camel-rss
 :description: Transform from ROME SyndFeed Java Objects to XML and vice-versa
 :since: 2.1

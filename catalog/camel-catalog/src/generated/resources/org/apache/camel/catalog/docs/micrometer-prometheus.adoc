@@ -1,6 +1,7 @@
 = Micrometer Prometheus Component
 :doctitle: Micrometer Prometheus
 :shortname: micrometer-prometheus
+:groupid: org.apache.camel
 :artifactid: camel-micrometer-prometheus
 :description: Camel Micrometer Prometheus for Camel Main
 :since: 4.3

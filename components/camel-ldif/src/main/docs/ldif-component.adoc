@@ -1,6 +1,7 @@
 = LDIF Component
 :doctitle: LDIF
 :shortname: ldif
+:groupid: org.apache.camel
 :artifactid: camel-ldif
 :description: Perform updates on an LDAP server from an LDIF body content.
 :since: 2.20

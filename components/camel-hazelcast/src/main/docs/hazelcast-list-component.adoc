@@ -1,6 +1,7 @@
 = Hazelcast List Component
 :doctitle: Hazelcast List
 :shortname: hazelcast-list
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast distributed list.
 :since: 2.7
@@ -294,5 +295,3 @@ YAML::
                     message: "fail!"
 ----
 ====
-
-

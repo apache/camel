@@ -1,6 +1,7 @@
 = XMPP Component
 :doctitle: XMPP
 :shortname: xmpp
+:groupid: org.apache.camel
 :artifactid: camel-xmpp
 :description: Send and receive messages to/from an XMPP chat server.
 :since: 1.0

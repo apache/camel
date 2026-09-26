@@ -1,6 +1,7 @@
 = AWS Bedrock Component
 :doctitle: AWS Bedrock
 :shortname: aws-bedrock
+:groupid: org.apache.camel
 :artifactid: camel-aws-bedrock
 :description: Invoke Model of AWS Bedrock service.
 :since: 4.5
@@ -294,5 +295,3 @@ Maven users will need to add the following dependency to their pom.xml.
 ----
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-

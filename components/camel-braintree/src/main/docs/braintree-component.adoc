@@ -1,6 +1,7 @@
 = Braintree Component
 :doctitle: Braintree
 :shortname: braintree
+:groupid: org.apache.camel
 :artifactid: camel-braintree
 :description: Process payments using Braintree Payments.
 :since: 2.17

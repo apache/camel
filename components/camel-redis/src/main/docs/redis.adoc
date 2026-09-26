@@ -1,6 +1,7 @@
 = Redis Component
 :doctitle: Redis
 :shortname: redis
+:groupid: org.apache.camel
 :artifactid: camel-redis
 :description: Aggregation repository using Redis as datastore
 :since: 3.5

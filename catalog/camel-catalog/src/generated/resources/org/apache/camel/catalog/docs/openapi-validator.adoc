@@ -1,6 +1,7 @@
 = Openapi Validator Component
 :doctitle: Openapi Validator
 :shortname: openapi-validator
+:groupid: org.apache.camel
 :artifactid: camel-openapi-validator
 :description: OpenAPI validator for Camel Rest DSL
 :since: 4.7

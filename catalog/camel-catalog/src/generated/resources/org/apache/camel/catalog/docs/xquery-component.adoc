@@ -1,6 +1,7 @@
 = XQuery Component
 :doctitle: XQuery
 :shortname: xquery
+:groupid: org.apache.camel
 :artifactid: camel-saxon
 :description: Query and/or transform XML payloads using XQuery and Saxon.
 :since: 1.0

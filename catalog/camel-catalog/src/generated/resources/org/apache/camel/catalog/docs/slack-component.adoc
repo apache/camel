@@ -1,6 +1,7 @@
 = Slack Component
 :doctitle: Slack
 :shortname: slack
+:groupid: org.apache.camel
 :artifactid: camel-slack
 :description: Send and receive messages to/from Slack.
 :since: 2.16

@@ -1,6 +1,7 @@
 = Hazelcast Replicated Map Component
 :doctitle: Hazelcast Replicated Map
 :shortname: hazelcast-replicatedmap
+:groupid: org.apache.camel
 :artifactid: camel-hazelcast
 :description: Perform operations on Hazelcast replicated map.
 :since: 2.16
@@ -221,5 +222,3 @@ Header Variables inside the response message:
 
 |`CamelHazelcastCacheType` |`String` |the type of the cache (e.g., replicatedmap)
 |=======================================================================
-
-
