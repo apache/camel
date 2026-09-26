@@ -832,8 +832,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             aggregationRepository.remove(aggregated.getContext(), key, original);
         }
 
-        if (!fromTimeout && timeoutMap != null) {
-            // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
+        // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
+        // but not with optimistic locking: the timeout map is keyed by correlation key, and without a lock the entry
+        // may already belong to a new group for the same key, which would then never time out. An entry left behind
+        // does no harm, as the timeout checker completes a group only if it can remove it from the repository.
+        if (!fromTimeout && timeoutMap != null && !optimisticLocking) {
             LOG.trace("Removing correlation key {} from timeout", key);
             timeoutMap.remove(key);
         }
@@ -1358,7 +1361,9 @@ public class AggregateProcessor extends BaseProcessorSupport
             }
             log.debug("Completion timeout triggered for correlation key: {}", key);
 
-            boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
+            // with optimistic locking the exchange id in the entry can belong to a group that has been completed
+            // while a newer group for the same key is in the repository, so the repository decides (see below)
+            boolean inProgress = !optimisticLocking && inProgressCompleteExchanges.contains(exchangeId);
             if (inProgress) {
                 log.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                 return;
