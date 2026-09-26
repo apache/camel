@@ -2921,3 +2921,17 @@ This is the intended behaviour and makes the `keepOpen` toggle deterministic, bu
 relied on the setter being inert until an exchange arrived must be aware of the change.
 Setting `keepOpen` back to `false` remains deferred: the half-open timer attempts to close the circuit on
 its next tick (after `halfOpenAfter` milliseconds, default 30 s).
+
+== Route reload
+
+Dev-mode route reloading now finds changed files by scanning the watched folder on an interval and comparing each
+file's modification time and length with the previous scan, instead of using the JDK `WatchService`. A scan reports
+all the files of one save together, which is what a reload needs: a route is built with the properties of the moment,
+so a route and a property saved together must be reloaded together. It also removes the macOS penalty, where Java has
+no native file notification and the watch service fell back to a poll of about ten seconds.
+
+`FileWatcherResourceReloadStrategy.setPollTimeout` is now how often the folder is scanned, and its default changed
+from 2000 to 1000 milliseconds. On Linux and Windows a change is therefore noticed within a second rather than
+immediately; on macOS within a second rather than up to ten. A new `setStableTimeout` (default 200 milliseconds)
+leaves a file that was only just modified for the next scan, so a save still being written is not reloaded
+half-finished.

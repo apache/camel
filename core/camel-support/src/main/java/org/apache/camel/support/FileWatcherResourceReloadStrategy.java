@@ -23,66 +23,58 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceReload;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
  * A file based {@link org.apache.camel.spi.ResourceReloadStrategy} which watches a file folder for modified files and
  * reload on file changes.
  * <p/>
- * This implementation uses the JDK {@link WatchService} to watch for when files are created or modified. Mac OS X users
- * should be noted the osx JDK does not support native file system changes and therefore the watch service is much
- * slower than on Linux or Windows systems.
+ * The folder is scanned on an interval and each file's modification time and size compared with the previous scan, the
+ * way the file component finds changed files. A scan therefore reports all the files of one save together, which is
+ * what a reload needs: a route is built with the properties of the moment, so a route and a property saved together
+ * must be reloaded together (CAMEL-25032). The JDK {@link java.nio.file.WatchService} reports one file at a time with
+ * no batch boundary, and on macOS has no native backend at all, where it fell back to a poll of about ten seconds
+ * (CAMEL-25041).
  */
 @ManagedResource(description = "Managed FileWatcherResourceReloadStrategy")
 public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileWatcherResourceReloadStrategy.class);
 
-    WatchService watcher;
     ExecutorService executorService;
     WatchFileChangesTask task;
-    Map<WatchKey, Path> folderKeys;
-    Set<Path> watchedFolders;
-    WatchEvent.Modifier watchModifier;
+    /** The modification time and length of every file of the previous scan, by path: what a change is measured from. */
+    final Map<String, long[]> known = new HashMap<>();
     /** The compile work directory, resolved once at start (null when there is none). */
     Path compileWorkDir;
     FileFilter fileFilter;
     String folder;
     boolean isRecursive;
     boolean scheduler = true;
-    long pollTimeout = 2000;
-    /** How long a poll that came back empty ends the collecting of one change, and the bound on collecting. */
-    static final long COALESCE_QUIET = 400;
-    static final long COALESCE_MAX = 2000;
+    long pollTimeout = 1000;
+    /**
+     * A file modified less than this ago is left for the next scan: a save still being written would otherwise be
+     * reloaded half-finished. The file component leaves a file alone the same way.
+     */
+    long stableTimeout = 200;
 
     public FileWatcherResourceReloadStrategy() {
         setRecursive(false);
@@ -115,10 +107,18 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     }
 
     /**
-     * Sets the poll timeout in millis. The default value is 2000.
+     * Sets how often the folder is scanned for changed files, in millis. The default value is 1000.
      */
     public void setPollTimeout(long pollTimeout) {
         this.pollTimeout = pollTimeout;
+    }
+
+    /**
+     * Sets how long a file must have been unchanged before a scan reports it, in millis. The default value is 200, so
+     * that a save still being written is reloaded once it is complete and not half-finished.
+     */
+    public void setStableTimeout(long stableTimeout) {
+        this.stableTimeout = stableTimeout;
     }
 
     @ManagedAttribute(description = "Folder being watched")
@@ -172,54 +172,16 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                 LOG.info(msg);
             }
 
-            WatchEvent.Modifier modifier = null;
+            this.compileWorkDir = resolveCompileWorkDir();
+            // the files as they are now are the starting point, not a change: record them without reloading
+            known.clear();
+            scan();
 
-            // if its mac OSX then attempt to apply workaround or warn its slower
-            String os = ObjectHelper.getSystemProperty("os.name", "");
-            if (os.toLowerCase(Locale.US).startsWith("mac")) {
-                // this modifier can speedup the scanner on mac osx (as java on mac has no native file notification integration)
-                Class<WatchEvent.Modifier> clazz = getCamelContext().getClassResolver()
-                        .resolveClass("com.sun.nio.file.SensitivityWatchEventModifier", WatchEvent.Modifier.class);
-                if (clazz != null) {
-                    WatchEvent.Modifier[] modifiers = clazz.getEnumConstants();
-                    for (WatchEvent.Modifier mod : modifiers) {
-                        if ("HIGH".equals(mod.name())) {
-                            modifier = mod;
-                            break;
-                        }
-                    }
-                }
-                if (modifier != null) {
-                    LOG.debug(
-                            "On Mac OS X the JDK WatchService is slow by default so enabling SensitivityWatchEventModifier.HIGH as workaround");
-                } else {
-                    LOG.warn(
-                            "On Mac OS X the JDK WatchService is slow and it may take up till 10 seconds to notice file changes");
-                }
-            }
+            task = new WatchFileChangesTask(dir.toPath());
 
-            try {
-                Path path = dir.toPath();
-                watcher = path.getFileSystem().newWatchService();
-                // we cannot support deleting files as we don't know which routes that would be
-                this.watchModifier = modifier;
-                this.compileWorkDir = resolveCompileWorkDir();
-                if (isRecursive) {
-                    this.folderKeys = new HashMap<>();
-                    this.watchedFolders = new HashSet<>();
-                    registerRecursive(watcher, path, modifier);
-                } else {
-                    registerPathToWatcher(modifier, path, watcher);
-                }
-
-                task = new WatchFileChangesTask(watcher, path);
-
-                executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
-                        "FileWatcherReloadStrategy");
-                executorService.submit(task);
-            } catch (IOException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
+            executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    "FileWatcherReloadStrategy");
+            executorService.submit(task);
         }
     }
 
@@ -237,61 +199,84 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         changed.sort(Comparator.comparingInt(f -> f.getName().endsWith(".properties") ? 0 : 1));
     }
 
-    private WatchKey registerPathToWatcher(WatchEvent.Modifier modifier, Path path, WatchService watcher) throws IOException {
-        WatchKey key;
-        if (modifier != null) {
-            key = path.register(watcher, new WatchEvent.Kind<?>[] { ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE }, modifier);
-        } else {
-            key = path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
-        }
-        return key;
-    }
-
-    private void registerRecursive(final WatchService watcher, final Path root, final WatchEvent.Modifier modifier)
-            throws IOException {
-        Files.walkFileTree(root, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                if (isCompileWorkDir(dir)) {
-                    return FileVisitResult.SKIP_SUBTREE;
-                }
-                WatchKey key = registerPathToWatcher(modifier, dir, watcher);
-                folderKeys.put(key, dir);
-                watchedFolders.add(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
-    }
-
     /**
-     * Registers a directory created while watching recursively, and its subdirectories, and collects the files already
-     * in them as changes: a tree such as src/main/java/com/acme is usually created with its first file in it, before
-     * the watcher can see the directory.
+     * The files whose modification time or length changed since the previous scan, plus the files that are gone. The
+     * snapshot is updated as it goes, so a file is reported once per change.
+     * <p/>
+     * A file modified less than {@link #stableTimeout} ago is left for the next scan: a save still being written would
+     * otherwise be reloaded half-finished.
      */
-    private void registerNewDirectory(Path dir, List<File> changed) {
+    protected List<File> scan() {
+        List<File> changed = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
+        Path root = new File(folder).toPath();
         try {
-            Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+            Files.walkFileTree(root, new SimpleFileVisitor<>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) throws IOException {
-                    if (isCompileWorkDir(d) || watchedFolders.contains(d)) {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    if (isCompileWorkDir(dir)) {
+                        // the class files the runtime writes while compiling a Java source are not changes of ours,
+                        // and would trigger a reload, which compiles again, which writes again (CAMEL-24862)
                         return FileVisitResult.SKIP_SUBTREE;
                     }
-                    WatchKey k = registerPathToWatcher(watchModifier, d, watcher);
-                    folderKeys.put(k, d);
-                    watchedFolders.add(d);
-                    LOG.debug("Watching new directory: {}", d);
+                    if (!isRecursive && !dir.equals(root)) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path f, BasicFileAttributes attrs) {
-                    changed.add(f.toFile());
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (!attrs.isRegularFile()) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                    File f = file.toFile();
+                    if (fileFilter != null && !fileFilter.accept(f)) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                    String name = FileUtil.compactPath(f.getPath());
+                    seen.add(name);
+                    long modified = attrs.lastModifiedTime().toMillis();
+                    long length = attrs.size();
+                    long[] previous = known.get(name);
+                    if (previous != null && previous[0] == modified && previous[1] == length) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                    long age = System.currentTimeMillis() - modified;
+                    if (age >= 0 && age < stableTimeout) {
+                        // still being written: leave it, and let the next scan report it. A modification time in the
+                        // future (a clock askew on a network share, a touch -t) is reported now rather than waited out
+                        seen.remove(name);
+                        return FileVisitResult.CONTINUE;
+                    }
+                    known.put(name, new long[] { modified, length });
+                    LOG.debug("Detected Modified/Created file: {}", name);
+                    changed.add(f);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    // a file that went away between the walk and reading it is a change like any other
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException e) {
-            LOG.warn("Cannot watch new directory: {} due to: {}. This exception is ignored.", dir, e.getMessage(), e);
+            LOG.warn("Cannot scan directory: {} due to: {}. This exception is ignored.", folder, e.getMessage(), e);
+            return changed;
         }
+        // what the snapshot has and the scan did not see is gone; a file still being written was taken out of seen,
+        // so only drop what the scan positively did not find
+        for (Iterator<Map.Entry<String, long[]>> it = known.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, long[]> entry = it.next();
+            File f = new File(entry.getKey());
+            if (!seen.contains(entry.getKey()) && !f.exists()) {
+                LOG.debug("Detected Deleted file: {}", entry.getKey());
+                it.remove();
+                changed.add(f);
+            }
+        }
+        return changed;
     }
 
     /**
@@ -319,9 +304,6 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
             executorService = null;
         }
 
-        if (watcher != null) {
-            IOHelper.close(watcher);
-        }
     }
 
     /**
@@ -329,12 +311,10 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
      */
     protected class WatchFileChangesTask implements Runnable {
 
-        private final WatchService watcher;
         private final Path folder;
         private volatile boolean running;
 
-        public WatchFileChangesTask(WatchService watcher, Path folder) {
-            this.watcher = watcher;
+        public WatchFileChangesTask(Path folder) {
             this.folder = folder;
         }
 
@@ -349,96 +329,25 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
             while (isStarting() || isRunAllowed()) {
                 running = true;
 
-                WatchKey key;
                 try {
-                    LOG.trace("FileReloadStrategy is polling for file changes in directory: {}", folder);
-                    // wait for a key to be available
-                    key = watcher.poll(pollTimeout, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException ex) {
-                    LOG.info("Interrupted while polling for file changes");
+                    Thread.sleep(pollTimeout);
+                } catch (InterruptedException e) {
+                    LOG.info("Interrupted while waiting to scan for file changes");
                     Thread.currentThread().interrupt();
                     break;
                 }
 
-                if (key != null) {
-                    List<File> changed = new ArrayList<>();
-                    collect(key, changed);
-                    // the key must be reset after processed
-                    boolean valid = key.reset();
-
-                    // one save of several files is one change: an editor saving a route and the properties it uses,
-                    // or a tool writing both, may spread them over more than one poll. Keep collecting until a poll
-                    // comes back empty (bounded), so they are reloaded together and a route is built with the
-                    // properties of the same save already applied (CAMEL-25032)
-                    long deadline = System.currentTimeMillis() + COALESCE_MAX;
-                    while (valid && !changed.isEmpty() && System.currentTimeMillis() < deadline) {
-                        WatchKey next;
-                        try {
-                            next = watcher.poll(COALESCE_QUIET, TimeUnit.MILLISECONDS);
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
-                        if (next == null) {
-                            break;
-                        }
-                        collect(next, changed);
-                        valid = next.reset();
-                    }
-
-                    if (!changed.isEmpty()) {
-                        onReloadBatch(changed);
-                    }
-                    if (!valid) {
-                        break;
-                    }
+                LOG.trace("FileReloadStrategy is scanning for file changes in directory: {}", folder);
+                List<File> changed = scan();
+                if (!changed.isEmpty()) {
+                    // the files of one scan are the files of one save: reloaded together
+                    onReloadBatch(changed);
                 }
             }
 
             running = false;
 
             LOG.debug("FileReloadStrategy is stopping watching folder: {}", folder);
-        }
-
-        /**
-         * The accepted files of one key's events, added to changed: the files of the events, plus the files of a
-         * directory created under a watched one when recursive (registered here, since the watch service only reports
-         * what is registered at the time; a class under src/main/java added while running was never seen, CAMEL-24862).
-         */
-        private void collect(WatchKey key, List<File> changed) {
-            Path pathToReload = isRecursive ? folderKeys.get(key) : folder;
-            if (pathToReload == null) {
-                return;
-            }
-            List<File> found = new ArrayList<>();
-            for (WatchEvent<?> event : key.pollEvents()) {
-                WatchEvent<Path> we = (WatchEvent<Path>) event;
-                Path path = we.context();
-                File file = pathToReload.resolve(path).toFile();
-                LOG.trace("File watch-event: {} on file: {}", we, file);
-                if (file.isDirectory()) {
-                    if (isRecursive && we.kind() == ENTRY_CREATE && !isCompileWorkDir(file.toPath())) {
-                        registerNewDirectory(file.toPath(), found);
-                    }
-                    continue;
-                }
-                if (isCompileWorkDir(file.toPath().getParent())) {
-                    // a class file the runtime wrote while compiling: not a change of ours
-                    continue;
-                }
-                found.add(file);
-            }
-            for (File file : found) {
-                String name = FileUtil.compactPath(file.getPath());
-                LOG.debug("Detected Modified/Created file: {}", name);
-                if (fileFilter != null && !fileFilter.accept(file)) {
-                    continue;
-                }
-                LOG.debug("Accepted Modified/Created file: {}", name);
-                if (!changed.contains(file)) {
-                    changed.add(file);
-                }
-            }
         }
     }
 
