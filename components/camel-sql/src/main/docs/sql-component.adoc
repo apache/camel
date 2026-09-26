@@ -67,6 +67,11 @@ When using named parameters, Camel will look up the names in the given precedenc
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
+A query that spells a named parameter without the `#`, as `:name` or `:${body.name}`, has no named parameter in
+it as far as Camel is concerned: it is sent to the database as it stands, and the database rejects it with a
+complaint about its own syntax. Camel logs a warning naming the offending text and the supported form when the
+endpoint is created.
+
 You can use xref:languages:simple-language.adoc[Simple] expressions as parameters as shown:
 
 ----

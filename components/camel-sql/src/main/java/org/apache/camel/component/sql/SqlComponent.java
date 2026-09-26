@@ -28,6 +28,8 @@ import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -36,6 +38,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @Component("sql")
 public class SqlComponent extends HealthCheckComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SqlComponent.class);
 
     @Metadata(autowired = true)
     private DataSource dataSource;
@@ -88,6 +92,17 @@ public class SqlComponent extends HealthCheckComponent {
         }
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
         if (usePlaceholder) {
+            // say when the query has what looks like a named parameter without the placeholder: it is passed to the
+            // database as it stands, and the database then complains about its own syntax (CAMEL-25039)
+            String missing = SqlHelper.findParameterMissingPlaceholder(query, parameterPlaceholderSubstitute);
+            if (missing != null) {
+                String named = ":" + parameterPlaceholderSubstitute;
+                LOG.warn("The query of {} has {} which is not a named parameter, so it is sent to the database as it"
+                         + " stands. A named parameter is written {}name, or {} for a Simple expression, and its value"
+                         + " is taken from a Simple expression, the message body when that is a Map, a message header,"
+                         + " or an exchange variable. Query: {}",
+                        uri, missing, named, named + "$" + "{...}", query);
+            }
             query = query.replaceAll(parameterPlaceholderSubstitute, "?");
         }
         String onConsume = getAndRemoveParameter(parameters, "consumer.onConsume", String.class);
