@@ -133,6 +133,12 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         return receive(0);
     }
 
+    /**
+     * Waits until a message is available and then returns it.
+     * <p/>
+     * Returns <tt>null</tt> if this consumer is stopped while waiting, or if the calling thread is interrupted while
+     * waiting. In the latter case the interrupt status of the thread is kept.
+     */
     @Override
     public Exchange receive() {
         // must be started
@@ -150,7 +156,9 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
                         return answer;
                     }
                 } catch (InterruptedException e) {
+                    // the interrupt status is kept, so waiting again would fail at once: stop waiting
                     handleInterruptedException(e);
+                    return null;
                 }
             }
         } finally {
