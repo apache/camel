@@ -331,7 +331,10 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void halfOpenCircuit(Route route) {
         try {
             lock.lock();
-            resumeOrStartConsumer(route.getConsumer());
+            // do not resume the consumer if the route controller has suspended or stopped the route in the meantime
+            if (isResumeOrStartConsumerAllowed(route)) {
+                resumeOrStartConsumer(route.getConsumer());
+            }
             state.set(STATE_HALF_OPEN);
             logState();
         } catch (Exception e) {
@@ -344,7 +347,12 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void closeCircuit(Route route) {
         try {
             lock.lock();
-            resumeOrStartConsumer(route.getConsumer());
+            // only resume the consumer when the circuit is open, as then this policy has suspended the consumer
+            // (when half open the consumer has already been resumed, so if it is suspended now, then by the route
+            // controller), and not if the route controller has suspended or stopped the route in the meantime
+            if (state.get() == STATE_OPEN && isResumeOrStartConsumerAllowed(route)) {
+                resumeOrStartConsumer(route.getConsumer());
+            }
             failures.set(0);
             success.set(0);
             lastFailure = 0;
