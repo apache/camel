@@ -17,13 +17,9 @@
 package org.apache.camel.support;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.apache.camel.spi.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +39,13 @@ public final class DataSourceHelper {
      * HikariCP is tried first via reflection (so the caller does not need a compile-time dependency on it). Any
      * DataSource that does not expose {@code getHikariPoolMXBean()} is left untouched — the pool will pick up the new
      * credentials on its own reconnect cycle when existing connections expire.
+     * <p/>
+     * <b>Important:</b> this method only evicts existing connections from the pool. It does <em>not</em> update the
+     * pool's credentials. For pools configured with a static password (e.g. Spring Boot
+     * {@code spring.datasource.password}, Quarkus {@code quarkus.datasource.jdbc.url}), the pool will re-open
+     * connections using the <em>old</em> credentials unless the credentials provider resolves them dynamically (e.g.
+     * {@code HikariCredentialsProvider}, the AWS JDBC wrapper secrets plugin, or a custom {@code DataSource} that
+     * fetches credentials from a vault at connect time).
      *
      * @param ds     the DataSource whose connections should be evicted
      * @param source an opaque label for the rotation event (used in log messages only)
@@ -53,15 +56,16 @@ public final class DataSourceHelper {
         // so that the caller does not need a compile-time dependency on HikariCP.
         try {
             Method getPoolMXBean = ds.getClass().getMethod("getHikariPoolMXBean");
-            getPoolMXBean.setAccessible(true);
             Object poolMXBean = getPoolMXBean.invoke(ds);
             if (poolMXBean != null) {
                 Method softEvict = poolMXBean.getClass().getMethod("softEvictConnections");
-                softEvict.setAccessible(true);
                 softEvict.invoke(poolMXBean);
                 LOG.info("Secret rotation (source={}): HikariCP softEvictConnections() called on {}", source, ds);
-                return;
+            } else {
+                LOG.debug("Secret rotation (source={}): HikariCP pool on {} is not started yet; nothing to evict",
+                        source, ds);
             }
+            return;
         } catch (NoSuchMethodException e) {
             // Not a HikariCP DataSource — fall through to generic handling
         } catch (Exception e) {
@@ -74,32 +78,5 @@ public final class DataSourceHelper {
                 "Secret rotation (source={}): DataSource {} does not support HikariCP pool eviction; "
                  + "existing connections will be replaced as they expire or are validated",
                 source, ds.getClass().getName());
-    }
-
-    /**
-     * Evicts stale connections from all {@link DataSource} instances visible to the given registry plus the optional
-     * component-owned data source.
-     * <p/>
-     * Uses identity-based deduplication to avoid double-eviction when the same {@code DataSource} object is both
-     * registered in the registry and injected directly on the component (the common Spring/Quarkus setup).
-     *
-     * @param registry            the Camel registry to scan for {@link DataSource} beans
-     * @param componentDataSource an optional DataSource injected directly on the component; may be {@code null}
-     * @param source              an opaque label for the rotation event (used in log messages only)
-     */
-    public static void evictAllDataSourceConnections(Registry registry, DataSource componentDataSource, Object source) {
-        // Use identity-based deduplication to avoid double-eviction when componentDataSource
-        // is the same object instance as a bean registered in the registry.
-        // (equals/hashCode on DataSource wrappers may delegate to the wrapped instance,
-        // causing a regular HashSet to miss duplicates or collapse distinct pools.)
-        Set<DataSource> dataSources = Collections.newSetFromMap(new IdentityHashMap<>());
-        dataSources.addAll(registry.findByType(DataSource.class));
-        if (componentDataSource != null) {
-            dataSources.add(componentDataSource);
-        }
-
-        for (DataSource ds : dataSources) {
-            evictDataSourceConnections(ds, source);
-        }
     }
 }

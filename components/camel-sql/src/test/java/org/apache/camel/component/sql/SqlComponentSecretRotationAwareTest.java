@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.SecretRotationAware;
 import org.apache.camel.support.DataSourceHelper;
 import org.junit.jupiter.api.Test;
@@ -48,25 +49,14 @@ class SqlComponentSecretRotationAwareTest {
         // Arrange: a DataSource that simulates HikariDataSource by exposing getHikariPoolMXBean(),
         // which returns a mock MXBean with softEvictConnections(). This matches the real HikariCP API
         // where softEvictConnections() lives on HikariPoolMXBean, not on HikariDataSource itself.
-        AtomicBoolean softEvictCalled = new AtomicBoolean(false);
-        Object mockMXBean = new Object() {
-            @SuppressWarnings("unused")
-            public void softEvictConnections() {
-                softEvictCalled.set(true);
-            }
-        };
-        DataSource hikariLike = new HikariLikeDataSource() {
-            @SuppressWarnings("unused")
-            public Object getHikariPoolMXBean() {
-                return mockMXBean;
-            }
-        };
+        HikariLikeDataSource hikariLike = new HikariLikeDataSource();
 
         // Act
         DataSourceHelper.evictDataSourceConnections(hikariLike, "test");
 
         // Assert
-        assertTrue(softEvictCalled.get(), "softEvictConnections() should have been called via HikariPoolMXBean");
+        assertTrue(hikariLike.mxBean.softEvictCalled.get(),
+                "softEvictConnections() should have been called via HikariPoolMXBean");
     }
 
     @Test
@@ -79,69 +69,28 @@ class SqlComponentSecretRotationAwareTest {
     }
 
     @Test
-    void onSecretRotation_withRegistryDataSource_evictsConnections() throws Exception {
-        // Arrange
-        AtomicBoolean softEvictCalled = new AtomicBoolean(false);
-        Object mockMXBean = new Object() {
-            @SuppressWarnings("unused")
-            public void softEvictConnections() {
-                softEvictCalled.set(true);
-            }
-        };
-        DataSource hikariLike = new HikariLikeDataSource() {
-            @SuppressWarnings("unused")
-            public Object getHikariPoolMXBean() {
-                return mockMXBean;
-            }
-        };
-
-        SqlComponent component = new SqlComponent();
-        // Use a real CamelContext so we can bind the DataSource to the registry
-        org.apache.camel.impl.DefaultCamelContext ctx = new org.apache.camel.impl.DefaultCamelContext();
-        ctx.getRegistry().bind("myDs", hikariLike);
-        component.setCamelContext(ctx);
-
-        // Act
-        component.onSecretRotation("vault-rotation");
-
-        // Assert
-        assertTrue(softEvictCalled.get(), "DataSource in registry should have been soft-evicted");
-    }
-
-    @Test
     void onSecretRotation_withComponentOwnedDataSource_evictsConnections() throws Exception {
-        // Arrange: DataSource injected directly on the component (not in registry)
-        AtomicBoolean softEvictCalled = new AtomicBoolean(false);
-        Object mockMXBean = new Object() {
-            @SuppressWarnings("unused")
-            public void softEvictConnections() {
-                softEvictCalled.set(true);
-            }
-        };
-        DataSource hikariLike = new HikariLikeDataSource() {
-            @SuppressWarnings("unused")
-            public Object getHikariPoolMXBean() {
-                return mockMXBean;
-            }
-        };
+        // Arrange: DataSource injected directly on the component
+        HikariLikeDataSource hikariLike = new HikariLikeDataSource();
 
         SqlComponent component = new SqlComponent();
         component.setDataSource(hikariLike);
-        org.apache.camel.impl.DefaultCamelContext ctx = new org.apache.camel.impl.DefaultCamelContext();
+        DefaultCamelContext ctx = new DefaultCamelContext();
         component.setCamelContext(ctx);
 
         // Act
         component.onSecretRotation("vault-rotation");
 
         // Assert
-        assertTrue(softEvictCalled.get(), "Component-owned DataSource should have been soft-evicted");
+        assertTrue(hikariLike.mxBean.softEvictCalled.get(),
+                "Component-owned DataSource should have been soft-evicted");
     }
 
     @Test
     void onSecretRotation_withoutDataSource_doesNotThrow() throws Exception {
-        // Arrange: no DataSource in registry or on component
+        // Arrange: no DataSource on component
         SqlComponent component = new SqlComponent();
-        org.apache.camel.impl.DefaultCamelContext ctx = new org.apache.camel.impl.DefaultCamelContext();
+        DefaultCamelContext ctx = new DefaultCamelContext();
         component.setCamelContext(ctx);
 
         // Act — must not throw even with no DataSource configured
@@ -149,14 +98,31 @@ class SqlComponentSecretRotationAwareTest {
     }
 
     // ---------------------------------------------------------------------------
-    // Minimal DataSource stubs
+    // DataSource stubs — public so that reflection in DataSourceHelper
+    // can invoke methods without setAccessible(true)
     // ---------------------------------------------------------------------------
 
+    /** Simulates a HikariPoolMXBean with a trackable {@code softEvictConnections()} call. */
+    public static class MockPoolMXBean {
+        public final AtomicBoolean softEvictCalled = new AtomicBoolean(false);
+
+        public void softEvictConnections() {
+            softEvictCalled.set(true);
+        }
+    }
+
     /**
-     * Base class for the HikariCP-like stub. Subclasses add {@code getHikariPoolMXBean()} to simulate the real
-     * {@code HikariDataSource} API (where {@code softEvictConnections()} lives on the MXBean, not the DataSource).
+     * Simulates a {@code HikariDataSource} by exposing {@code getHikariPoolMXBean()}, which returns a
+     * {@link MockPoolMXBean}. This matches the real HikariCP API where {@code softEvictConnections()} lives on
+     * {@code HikariPoolMXBean}, not on {@code HikariDataSource} itself.
      */
-    private abstract static class HikariLikeDataSource implements DataSource {
+    public static class HikariLikeDataSource implements DataSource {
+        public final MockPoolMXBean mxBean = new MockPoolMXBean();
+
+        public Object getHikariPoolMXBean() {
+            return mxBean;
+        }
+
         @Override
         public Connection getConnection() throws SQLException {
             throw new UnsupportedOperationException();
@@ -201,8 +167,49 @@ class SqlComponentSecretRotationAwareTest {
         }
     }
 
-    /** A plain DataSource without getHikariPoolMXBean(). */
-    private static final class NoOpDataSource extends HikariLikeDataSource {
-        // no getHikariPoolMXBean() — exercises the generic fallback path
+    /** A plain DataSource without getHikariPoolMXBean() — exercises the generic fallback path. */
+    public static class NoOpDataSource implements DataSource {
+        @Override
+        public Connection getConnection() throws SQLException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Connection getConnection(String username, String password) throws SQLException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public PrintWriter getLogWriter() {
+            return null;
+        }
+
+        @Override
+        public void setLogWriter(PrintWriter out) {
+        }
+
+        @Override
+        public void setLoginTimeout(int seconds) {
+        }
+
+        @Override
+        public int getLoginTimeout() {
+            return 0;
+        }
+
+        @Override
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+            throw new SQLFeatureNotSupportedException();
+        }
+
+        @Override
+        public <T> T unwrap(Class<T> iface) throws SQLException {
+            throw new SQLException("Not a wrapper for " + iface);
+        }
+
+        @Override
+        public boolean isWrapperFor(Class<?> iface) {
+            return false;
+        }
     }
 }
