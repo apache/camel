@@ -30,12 +30,22 @@ import java.util.Random;
 import org.apache.camel.dsl.jbang.it.support.InVersion;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 @Tag("container-only")
 public class OpenApiITCase extends JBangTestSupport {
+
+    @AfterEach
+    public void cleanupOpenApiArtifacts() {
+        try {
+            execute("plugin delete generate");
+        } catch (Exception | AssertionError e) {
+            logger.debug("failed to delete generate plugin: {}", e.getMessage());
+        }
+    }
 
     final HttpClient httpClient = HttpClient.newHttpClient();
 
