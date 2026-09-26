@@ -131,18 +131,39 @@ public class ConvertBodyProcessor extends ServiceSupport
         }
 
         String originalCharsetName = null;
+        Object originalCharsetHeader = null;
         if (charset != null) {
             originalCharsetName = exchange.getProperty(ExchangePropertyKey.CHARSET_NAME, String.class);
             // override existing charset with configured charset as that is what the user
             // have explicit configured and expects to be used
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
+            // the charset header takes precedence over the property, so override it as well while converting
+            originalCharsetHeader = exchange.getIn().getHeader(Exchange.CHARSET_NAME);
+            if (originalCharsetHeader != null) {
+                exchange.getIn().setHeader(Exchange.CHARSET_NAME, charset);
+            }
         }
         // use mandatory conversion
         Object value;
-        if (mandatory) {
-            value = old.getMandatoryBody(type);
-        } else {
-            value = old.getBody(type);
+        try {
+            if (mandatory) {
+                value = old.getMandatoryBody(type);
+            } else {
+                value = old.getBody(type);
+            }
+        } finally {
+            // remove or restore charset when we are done (also if the conversion failed) as we should not
+            // propagate that, as that can lead to double converting later on
+            if (charset != null) {
+                if (originalCharsetHeader != null) {
+                    exchange.getIn().setHeader(Exchange.CHARSET_NAME, originalCharsetHeader);
+                }
+                if (originalCharsetName != null && !originalCharsetName.isEmpty()) {
+                    exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, originalCharsetName);
+                } else {
+                    exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
+                }
+            }
         }
 
         // create a new message container so we do not drag specialized message objects along
@@ -158,16 +179,6 @@ public class ConvertBodyProcessor extends ServiceSupport
         } else {
             // no copy needed so set replace value directly
             old.setBody(value);
-        }
-
-        // remove or restore charset when we are done as we should not propagate that,
-        // as that can lead to double converting later on
-        if (charset != null) {
-            if (originalCharsetName != null && !originalCharsetName.isEmpty()) {
-                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, originalCharsetName);
-            } else {
-                exchange.removeProperty(ExchangePropertyKey.CHARSET_NAME);
-            }
         }
     }
 
