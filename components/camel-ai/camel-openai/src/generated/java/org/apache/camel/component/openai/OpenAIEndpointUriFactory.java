@@ -18,6 +18,7 @@ import org.apache.camel.spi.EndpointUriFactory;
 public class OpenAIEndpointUriFactory extends org.apache.camel.support.component.EndpointUriFactorySupport implements EndpointUriFactory {
 
     private static final String BASE = ":operation";
+    private static final String[] SCHEMES = new String[]{"openai", "llm"};
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
@@ -150,7 +151,12 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
 
     @Override
     public boolean isEnabled(String scheme) {
-        return "openai".equals(scheme);
+        for (String s : SCHEMES) {
+            if (s.equals(scheme)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

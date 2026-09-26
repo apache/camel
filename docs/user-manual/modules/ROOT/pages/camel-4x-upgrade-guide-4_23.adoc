@@ -893,6 +893,21 @@ the underlying client exposes it (for example langchain4j-chat); the agent and e
 unavailable. See
 xref:next@components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
 
+=== camel-openai (LLM scheme alias)
+
+The `camel-openai` component now registers the `llm` URI scheme alongside the existing
+`openai` scheme. Both schemes use the same component implementation and Maven artifact
+(`camel-openai`).
+
+* New routes should prefer `llm:chat-completion` (and other `llm:` operations) for discoverability.
+* Existing routes using `openai:chat-completion` continue to work unchanged.
+* Component configuration properties accept both prefixes: `camel.component.llm.*` and
+  `camel.component.openai.*` create independent component instances when both are set.
+
+Java packages, exchange headers (`CamelOpenAI*`), and the Maven artifact id are unchanged.
+
+See xref:components::openai-component.adoc[LLM Component] for details.
+
 === camel-archetypes
 
 The Camel Maven archetypes now generate a `README.md` instead of the previous `ReadMe.txt`, with the
