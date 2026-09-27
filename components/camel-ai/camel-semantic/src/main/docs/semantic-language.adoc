@@ -304,6 +304,9 @@ For example, declare this question alongside routes:
 
 The selected state should contain the approved task and the proposed action. Obtain the
 approved task from trusted application state; do not let the proposed action redefine it.
+Treat the proposed action as untrusted input: its text can attempt to steer the provider
+(prompt injection). A positive semantic decision must never override the application's
+authorization checks.
 In this example, `direct:checkPermissions` performs the application's existing authorization
 and rejects unauthorized requests before semantic evaluation:
 
