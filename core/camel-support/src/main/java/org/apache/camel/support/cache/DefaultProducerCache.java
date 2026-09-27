@@ -381,6 +381,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             try {
                 if (producers != null) {
                     producers.stop();
+                    // the last used producer has been stopped, so it must not be reused
+                    lastUsedProducer = null;
                     producers.start();
                 }
             } catch (Exception e) {

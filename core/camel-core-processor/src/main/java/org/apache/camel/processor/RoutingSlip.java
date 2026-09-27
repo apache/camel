@@ -428,12 +428,13 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
                     // cleanup producer after usage
                     ex.removeProperty(ExchangePropertyKey.SLIP_PRODUCER);
 
+                    // and stop prototype endpoints (also when this step completed asynchronously)
+                    if (prototype) {
+                        ServiceHelper.stopAndShutdownService(endpoint);
+                    }
+
                     // we only have to handle async completion of the routing slip
                     if (doneSync) {
-                        // and stop prototype endpoints
-                        if (prototype) {
-                            ServiceHelper.stopAndShutdownService(endpoint);
-                        }
                         cb.done(true);
                         return;
                     }
