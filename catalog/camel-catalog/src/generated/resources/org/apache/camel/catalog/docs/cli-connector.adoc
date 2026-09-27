@@ -1,6 +1,7 @@
 = CLI Connector Component
 :doctitle: CLI Connector
 :shortname: cli-connector
+:groupid: org.apache.camel
 :artifactid: camel-cli-connector
 :description: Runtime adapter connecting with Camel CLI
 :since: 3.19

@@ -1,6 +1,7 @@
 = Protobuf DataFormat
 :doctitle: Protobuf
 :shortname: protobuf
+:groupid: org.apache.camel
 :artifactid: camel-protobuf
 :description: Serialize and deserialize Java objects using Google's Protocol buffers
 :since: 2.2

@@ -1,6 +1,7 @@
 = Kamelet Main Support Component
 :doctitle: Kamelet Main Support
 :shortname: kamelet-main-support
+:groupid: org.apache.camel
 :artifactid: camel-kamelet-main-support
 :description: Support Module for Kamelet Main
 :since: 4.19

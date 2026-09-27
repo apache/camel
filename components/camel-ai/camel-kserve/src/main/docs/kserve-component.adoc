@@ -1,6 +1,7 @@
 = KServe Component
 :doctitle: KServe
 :shortname: kserve
+:groupid: org.apache.camel
 :artifactid: camel-kserve
 :description: Provide access to AI model servers with the KServe standard to run inference with remote models
 :since: 4.10
@@ -478,4 +479,3 @@ YAML::
             message: "Metadata: ${body}"
 ----
 ====
-

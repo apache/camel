@@ -1,6 +1,7 @@
 = TensorFlow Serving Component
 :doctitle: TensorFlow Serving
 :shortname: tensorflow-serving
+:groupid: org.apache.camel
 :artifactid: camel-tensorflow-serving
 :description: Provide access to TensorFlow Serving model servers to run inference with TensorFlow saved models remotely
 :since: 4.10
@@ -436,4 +437,3 @@ from("direct:predict-with-headers")
     .log("Result2: ${body.getOutputsOrThrow('y').getFloatVal(1)}")
     .log("Result3: ${body.getOutputsOrThrow('y').getFloatVal(2)}");
 ----
-

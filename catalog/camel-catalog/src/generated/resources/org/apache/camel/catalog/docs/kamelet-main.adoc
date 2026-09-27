@@ -1,6 +1,7 @@
 = Kamelet Main Component
 :doctitle: Kamelet Main
 :shortname: kamelet-main
+:groupid: org.apache.camel
 :artifactid: camel-kamelet-main
 :description: Main to run Kamelet standalone
 :since: 3.11

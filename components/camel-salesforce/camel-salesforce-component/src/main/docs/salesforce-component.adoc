@@ -1,6 +1,7 @@
 = Salesforce Component
 :doctitle: Salesforce
 :shortname: salesforce
+:groupid: org.apache.camel
 :artifactid: camel-salesforce
 :description: Communicate with Salesforce using Java DTOs.
 :since: 2.12
