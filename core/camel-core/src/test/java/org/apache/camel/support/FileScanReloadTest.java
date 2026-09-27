@@ -134,6 +134,21 @@ public class FileScanReloadTest extends ContextTestSupport {
     }
 
     @Test
+    public void testADotDirectoryIsNotScanned() throws Exception {
+        // .camel-jbang holds the properties of the run camel-jbang is doing and it rewrites them, which was reloading
+        // the routes; .git and .idea are not ours either (CAMEL-25042)
+        Path state = dir.resolve(".camel-jbang");
+        Files.createDirectories(state);
+        Files.writeString(dir.resolve("shop.yaml"), "one");
+        assertThat(scanNames()).containsExactly("shop.yaml");
+
+        Files.writeString(state.resolve("camel-jbang-run.properties"), "camel.jbang.dev=true");
+        assertThat(scanNames()).isEmpty();
+        Files.writeString(state.resolve("camel-jbang-run.properties"), "camel.jbang.dev=true\ncamel.jbang.x=1");
+        assertThat(scanNames()).isEmpty();
+    }
+
+    @Test
     public void testASaveStillBeingWrittenIsLeftForTheNextScan() throws Exception {
         strategy.setStableTimeout(60_000);
         Files.writeString(dir.resolve("shop.yaml"), "one");
