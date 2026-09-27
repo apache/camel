@@ -26,6 +26,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -578,8 +579,14 @@ public class DefaultModel implements Model {
         // so it has all parameters available
         if (target.getTemplateParameters() != null) {
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
-                if (!routeTemplateContext.hasParameter(temp.getName()) && temp.getDefaultValue() != null) {
-                    routeTemplateContext.setParameter(temp.getName(), temp.getDefaultValue());
+                if (!routeTemplateContext.hasParameter(temp.getName())) {
+                    // same precedence as above: environment variable, then default value
+                    if (routeTemplateContext.hasEnvironmentVariable(temp.getName())) {
+                        routeTemplateContext.setParameter(temp.getName(),
+                                routeTemplateContext.getEnvironmentVariable(temp.getName()));
+                    } else if (temp.getDefaultValue() != null) {
+                        routeTemplateContext.setParameter(temp.getName(), temp.getDefaultValue());
+                    }
                 }
             }
         }
@@ -628,7 +635,13 @@ public class DefaultModel implements Model {
         }
 
         if (target.getConfigurer() != null) {
-            routeTemplateContext.setConfigurer(target.getConfigurer());
+            // the template configurer runs first, and then any configurer from the templated route builder
+            Consumer<RouteTemplateContext> configurer = routeTemplateContext.getConfigurer();
+            if (configurer != null) {
+                routeTemplateContext.setConfigurer(target.getConfigurer().andThen(configurer));
+            } else {
+                routeTemplateContext.setConfigurer(target.getConfigurer());
+            }
         }
 
         // assign ids to the routes and validate that the id's are all unique
