@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.BeanModelHelper;
 import org.apache.camel.model.Model;
@@ -39,8 +40,13 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PojoBeanHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.common.ScalarStyle;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
-import org.snakeyaml.engine.v2.nodes.SequenceNode;
+import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.NodeType;
+import org.snakeyaml.engine.v2.nodes.ScalarNode;
+import org.snakeyaml.engine.v2.nodes.Tag;
 
 @YamlIn
 @YamlType(
@@ -58,13 +64,9 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     @Override
     public Object construct(Node node) {
         final BeansCustomizer answer = new BeansCustomizer();
-        final SequenceNode sn = asSequenceNode(node);
         final YamlDeserializationContext dc = getDeserializationContext(node);
 
-        for (Node item : sn.getValue()) {
-            setDeserializationContext(item, dc);
-
-            BeanFactoryDefinition<?> bean = asType(item, BeanFactoryDefinition.class);
+        for (BeanFactoryDefinition<?> bean : asBeanDefinitions(node)) {
             if (dc != null) {
                 bean.setResource(dc.getResource());
             }
@@ -94,6 +96,56 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             }
         }
 
+        return answer;
+    }
+
+    /**
+     * The beans of a beans: node: a list of beans each with its name, or a map from the bean name to the bean
+     * (CAMEL-24704), read as the list it stands for.
+     */
+    public static List<BeanFactoryDefinition<?>> asBeanDefinitions(Node node) {
+        List<BeanFactoryDefinition<?>> answer = new ArrayList<>();
+        YamlDeserializationContext dc = getDeserializationContext(node);
+        if (node.getNodeType() != NodeType.MAPPING) {
+            for (Node item : asSequenceNode(node).getValue()) {
+                setDeserializationContext(item, dc);
+                answer.add(asType(item, BeanFactoryDefinition.class));
+            }
+            return answer;
+        }
+        Set<String> names = new HashSet<>();
+        for (NodeTuple entry : asMappingNode(node).getValue()) {
+            String name = asText(entry.getKeyNode());
+            Node value = entry.getValueNode();
+            if (!names.add(name)) {
+                throw new YamlDeserializationException(entry.getKeyNode(), "the bean " + name + " is declared twice");
+            }
+            if (value.getNodeType() != NodeType.MAPPING) {
+                throw new YamlDeserializationException(
+                        value,
+                        "a bean written as a map is " + name
+                               + ": followed by its properties (type: ...) indented under the name");
+            }
+            MappingNode bean = (MappingNode) value;
+            for (NodeTuple property : bean.getValue()) {
+                if ("name".equals(asText(property.getKeyNode()))) {
+                    throw new YamlDeserializationException(
+                            property.getKeyNode(),
+                            "the key " + name + " is the bean name: remove name: from the bean");
+                }
+            }
+            // the key is the name: the bean is read as the list item "- name: <key>" followed by its properties
+            Node key = entry.getKeyNode();
+            List<NodeTuple> tuples = new ArrayList<>();
+            tuples.add(new NodeTuple(
+                    new ScalarNode(Tag.STR, true, "name", ScalarStyle.PLAIN, key.getStartMark(), key.getEndMark()),
+                    new ScalarNode(Tag.STR, true, name, ScalarStyle.PLAIN, key.getStartMark(), key.getEndMark())));
+            tuples.addAll(bean.getValue());
+            MappingNode named = new MappingNode(
+                    bean.getTag(), true, tuples, bean.getFlowStyle(), bean.getStartMark(), bean.getEndMark());
+            setDeserializationContext(named, dc);
+            answer.add(asType(named, BeanFactoryDefinition.class));
+        }
         return answer;
     }
 

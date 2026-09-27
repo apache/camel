@@ -90,7 +90,7 @@ public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<T
             }
             case "beans": {
                 List<BeanFactoryDefinition<TemplatedRouteDefinition>> items
-                        = (List) asFlatList(node, BeanFactoryDefinition.class);
+                        = (List) BeansDeserializer.asBeanDefinitions(node);
                 target.setBeans(items);
                 break;
             }
