@@ -114,6 +114,14 @@ This can break an application that has such an invalid value configured and work
 good enough, as it now fails when starting. To keep the previous result, correct the configured value, or remove the
 property so the `defaultValue` is used.
 
+=== Aggregate EIP - optimistic locking retry delay
+
+When optimistic locking is enabled without configuring an `optimisticLockRetryPolicy`, the retry delay between
+attempts is now capped at 1 second, which is the documented default of `maximumRetryDelay`. Prior to Camel 4.23 the
+delay was not capped in that case and doubled on every attempt, so after a few failed attempts an exchange could wait
+minutes or hours before trying again. To keep an uncapped delay, configure an `optimisticLockRetryPolicy` with
+`maximumRetryDelay` set to `0`.
+
 === Circuit Breaker EIP
 
 The exchange property `CamelCircuitBreakerResponseRejected` is now also set inside the `onFallback`,

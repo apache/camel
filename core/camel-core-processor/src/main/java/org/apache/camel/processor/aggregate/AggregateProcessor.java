@@ -1839,13 +1839,11 @@ public class AggregateProcessor extends BaseProcessorSupport
         try {
             Exchange exchange = aggregationRepository.get(camelContext, key);
             if (exchange != null) {
-                total = 1;
                 LOG.trace("Force completion triggered for correlation key: {}", key);
                 // indicate it was completed by a force completion request
                 exchange.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_FORCE);
-                Exchange answer = onCompletion(key, exchange, exchange, false, false);
-                if (answer != null) {
-                    onSubmitCompletion(key, answer);
+                if (forceCompletion(key, exchange)) {
+                    total = 1;
                 }
             }
         } finally {
@@ -1886,10 +1884,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                         LOG.trace("Force completion triggered for correlation key: {}", key);
                         // indicate it was completed by a force completion request
                         exchange.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_FORCE);
-                        Exchange answer = onCompletion(key, exchange, exchange, false, false);
-                        if (answer != null) {
-                            onSubmitCompletion(key, answer);
-                        }
+                        forceCompletion(key, exchange);
                     }
                 }
             } finally {
@@ -1912,10 +1907,10 @@ public class AggregateProcessor extends BaseProcessorSupport
         try {
             Exchange exchange = aggregationRepository.get(camelContext, key);
             if (exchange != null) {
-                total = 1;
                 LOG.trace("Force discarded triggered for correlation key: {}", key);
-                // force discarding by setting aggregate failed as true
-                onCompletion(key, exchange, exchange, false, true);
+                if (forceDiscarding(key, exchange)) {
+                    total = 1;
+                }
             }
         } finally {
             lock.unlock();
@@ -1953,8 +1948,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                     Exchange exchange = aggregationRepository.get(camelContext, key);
                     if (exchange != null) {
                         LOG.trace("Force discarded triggered for correlation key: {}", key);
-                        // force discarding by setting aggregate failed as true
-                        onCompletion(key, exchange, exchange, false, true);
+                        forceDiscarding(key, exchange);
                     }
                 }
             } finally {
@@ -1967,6 +1961,47 @@ public class AggregateProcessor extends BaseProcessorSupport
             LOG.debug("Forcing discarding of all groups with {} exchanges", total);
         }
         return total;
+    }
+
+    /**
+     * Completes the group and sends the aggregated exchange. Must be called while holding the lock.
+     *
+     * @return {@code false} if another Camel instance has already completed the group (optimistic locking)
+     */
+    private boolean forceCompletion(String key, Exchange exchange) {
+        try {
+            Exchange answer = onCompletion(key, exchange, exchange, false, false);
+            if (answer != null) {
+                onSubmitCompletion(key, answer);
+            }
+            return true;
+        } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+            LOG.debug("Another Camel instance has already completed the group with correlation key: {}", key);
+            return false;
+        }
+    }
+
+    /**
+     * Discards the group. Must be called while holding the lock.
+     *
+     * @return {@code false} if another Camel instance has already removed the group from the repository (optimistic
+     *         locking)
+     */
+    private boolean forceDiscarding(String key, Exchange exchange) {
+        try {
+            // force discarding by setting aggregate failed as true
+            Exchange answer = onCompletion(key, exchange, exchange, false, true);
+            if (answer != null) {
+                // onCompletion only discards on aggregation failure when discardOnAggregationFailure is enabled,
+                // so discard here, as otherwise the group is removed without being confirmed (and a recoverable
+                // repository would recover and send it later)
+                discard(key, answer);
+            }
+            return true;
+        } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
+            LOG.debug("Another Camel instance has already completed the group with correlation key: {}", key);
+            return false;
+        }
     }
 
     /**
