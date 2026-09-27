@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.sql;
 
+import java.sql.Connection;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariPoolMXBean;
 import org.apache.camel.support.DataSourceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Integration test for {@link DataSourceHelper#evictDataSourceConnections} against a real {@link HikariDataSource}
@@ -31,34 +36,54 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class DataSourceHelperHikariIntegrationTest {
 
     @Test
-    void evict_startedPool_callsSoftEvictWithoutError() throws Exception {
+    void evict_startedPool_evictsIdleConnections() throws Exception {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:h2:mem:evict_started;DB_CLOSE_DELAY=-1");
         config.setUsername("sa");
         config.setPassword("");
-        config.setMaximumPoolSize(2);
+        config.setMaximumPoolSize(1);
+        config.setMinimumIdle(1);
 
         try (HikariDataSource ds = new HikariDataSource(config)) {
-            // Force pool initialisation by opening a connection
-            try (var conn = ds.getConnection()) {
-                assertNotNull(conn);
+            HikariPoolMXBean poolMXBean = ds.getHikariPoolMXBean();
+            assertNotNull(poolMXBean, "Pool MXBean should be available after pool start");
+
+            // Grab a connection and remember the underlying physical connection
+            Connection physicalBefore;
+            try (Connection conn = ds.getConnection()) {
+                physicalBefore = conn.unwrap(Connection.class);
+                assertNotNull(physicalBefore);
             }
 
-            // Eviction must succeed — real HikariPoolMXBean.softEvictConnections()
-            assertDoesNotThrow(() -> DataSourceHelper.evictDataSourceConnections(ds, "test-rotation"));
+            // Evict — softEvictConnections() marks idle connections for eviction
+            DataSourceHelper.evictDataSourceConnections(ds, "test-rotation");
+
+            // After soft eviction, requesting a new connection forces the pool to
+            // replace the evicted one with a fresh physical connection.
+            Connection physicalAfter;
+            try (Connection conn = ds.getConnection()) {
+                physicalAfter = conn.unwrap(Connection.class);
+                assertNotNull(physicalAfter);
+            }
+
+            // The pool replaced the evicted connection — the physical connection must differ
+            assertNotSame(physicalBefore, physicalAfter,
+                    "After soft eviction, the pool should return a new physical connection");
         }
     }
 
     @Test
     void evict_notStartedPool_handlesNullMXBeanGracefully() {
-        // HikariDataSource built with config — pool is not started until first getConnection()
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:mem:evict_notstarted;DB_CLOSE_DELAY=-1");
-        config.setUsername("sa");
-        config.setPassword("");
+        // Use no-arg constructor + setters — pool is lazy, started on first getConnection()
+        try (HikariDataSource ds = new HikariDataSource()) {
+            ds.setJdbcUrl("jdbc:h2:mem:evict_notstarted;DB_CLOSE_DELAY=-1");
+            ds.setUsername("sa");
+            ds.setPassword("");
 
-        try (HikariDataSource ds = new HikariDataSource(config)) {
-            // Do NOT call getConnection() — pool stays uninitialised, getHikariPoolMXBean() returns null
+            // Pool is NOT started — getHikariPoolMXBean() returns null
+            assertNull(ds.getHikariPoolMXBean(), "Pool MXBean should be null before pool start");
+
+            // Eviction must handle null MXBean gracefully (DEBUG log, no exception)
             assertDoesNotThrow(() -> DataSourceHelper.evictDataSourceConnections(ds, "test-rotation"));
         }
     }
