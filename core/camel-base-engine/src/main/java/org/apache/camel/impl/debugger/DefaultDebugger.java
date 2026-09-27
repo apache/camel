@@ -43,11 +43,15 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of the {@link Debugger}.
  */
 public class DefaultDebugger extends ServiceSupport implements Debugger {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultDebugger.class);
 
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();
@@ -331,7 +335,14 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
     private boolean matchConditions(
             Exchange exchange, Processor processor, NamedNode definition, BreakpointConditions breakpoint, boolean before) {
         for (Condition condition : breakpoint.getConditions()) {
-            if (!condition.matchProcess(exchange, processor, definition, before)) {
+            try {
+                if (!condition.matchProcess(exchange, processor, definition, before)) {
+                    return false;
+                }
+            } catch (Exception e) {
+                // a condition that cannot be evaluated (such as an invalid predicate) must not fail the exchange
+                LOG.warn("Error evaluating breakpoint condition: {} on exchange: {} due to: {}. This breakpoint is skipped.",
+                        condition, exchange.getExchangeId(), e.getMessage(), e);
                 return false;
             }
         }
