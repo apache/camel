@@ -121,6 +121,14 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
                 throw new YamlDeserializationException(entry.getKeyNode(), "the bean " + name + " is declared twice");
             }
             if (value.getNodeType() != NodeType.MAPPING) {
+                if ("name".equals(name)) {
+                    // the "- " of the list form was forgotten: beans: {name: myBean, type: ...} reads as a map
+                    // whose first key is "name", not a bean named "name" (CAMEL-24704 F1)
+                    throw new YamlDeserializationException(
+                            entry.getKeyNode(),
+                            "beans is a list: - name: myBean followed by type: \"#class:com.example.MyBean\""
+                                                + " (indented under the -)");
+                }
                 throw new YamlDeserializationException(
                         value,
                         "a bean written as a map is " + name

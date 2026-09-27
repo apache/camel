@@ -402,6 +402,22 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors).anyMatch(e -> e.getMessage().contains("steps is a list"));
     }
 
+    /** CAMEL-24704 F1: the list form with the "- " forgotten reads as a map whose first key is "name". */
+    @Test
+    public void testMissingDashOnListFormBeanSaysBeansIsAList() throws Exception {
+        List<Error> errors = validator.validate("""
+                - beans:
+                    name: myBean
+                    type: "#class:com.example.MyBean"
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - log:
+                          message: "hi"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("beans is a list"));
+    }
+
     @Test
     public void testBeanItemKeyedByNameSaysHowToWriteIt() throws Exception {
         List<Error> errors = validator.validate("""
@@ -875,6 +891,22 @@ public class YamlValidatorPropertyHintTest {
                           message: "hi"
                 """);
         assertThat(errors).anyMatch(e -> e.getMessage().contains("name instead of id"));
+    }
+
+    /** CAMEL-24704 F3: the id/ref/class hint also fires for a bean written as a map keyed by name. */
+    @Test
+    public void testBeanAsMapWithClassInsteadOfTypeSaysSo() throws Exception {
+        List<Error> errors = validator.validate("""
+                - beans:
+                    myBean:
+                      class: com.example.MyBean
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - log:
+                          message: "hi"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("type instead of class"));
     }
 
     @Test

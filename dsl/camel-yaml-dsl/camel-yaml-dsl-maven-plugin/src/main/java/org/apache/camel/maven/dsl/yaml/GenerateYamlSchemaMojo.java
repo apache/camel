@@ -188,7 +188,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
     }
 
-    private void generate(String type, ClassInfo info, Set<String> inheritedDefinitions, Set<String> inlineDefinitions) {
+    private void generate(String type, ClassInfo info, Set<String> inheritedDefinitions, Set<String> inlineDefinitions)
+            throws MojoFailureException {
         final ObjectNode definition = definitions.withObject("/" + type);
         final List<AnnotationInstance> properties = new ArrayList<>();
 
@@ -550,7 +551,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
      * A list whose items are identified by a property (a bean by its name) may also be written as a map from that
      * property to the rest of the item: beans: {myBean: {type: ...}} (CAMEL-24704).
      */
-    private void allowMapForm(ObjectNode schema, String itemType, String mapKey) {
+    private void allowMapForm(ObjectNode schema, String itemType, String mapKey) throws MojoFailureException {
         schema.remove("type");
         JsonNode items = schema.remove("items");
         ArrayNode oneOf = schema.withArray("oneOf");
@@ -558,7 +559,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         oneOf.addObject().put("type", "object")
                 .withObject("/additionalProperties")
                 .put("$ref", "#/items/definitions/" + keyedName(itemType, mapKey));
-        keyedDefinitions.put(itemType, mapKey);
+        String existingMapKey = keyedDefinitions.put(itemType, mapKey);
+        if (existingMapKey != null && !existingMapKey.equals(mapKey)) {
+            throw new MojoFailureException(
+                    itemType + " is already keyed by " + existingMapKey + ", it cannot also be keyed by " + mapKey);
+        }
     }
 
     private static String keyedName(String itemType, String mapKey) {
@@ -566,9 +571,16 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     }
 
     /** The item definition of the map form: the item's own definition without the key property. */
-    private void generateKeyedDefinitions() {
-        keyedDefinitions.forEach((itemType, mapKey) -> {
-            ObjectNode keyed = definitions.withObject("/" + itemType).deepCopy();
+    private void generateKeyedDefinitions() throws MojoFailureException {
+        for (Map.Entry<String, String> entry : keyedDefinitions.entrySet()) {
+            String itemType = entry.getKey();
+            String mapKey = entry.getValue();
+            JsonNode existing = definitions.get(itemType);
+            if (existing == null) {
+                throw new MojoFailureException(
+                        "No definition found for " + itemType + ", the item type of the map keyed by " + mapKey);
+            }
+            ObjectNode keyed = ((ObjectNode) existing).deepCopy();
             keyed.withObject("/properties").remove(mapKey);
             if (keyed.has("required")) {
                 ArrayNode required = keyed.withArray("required");
@@ -582,7 +594,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 }
             }
             definitions.set(keyedName(itemType, mapKey), keyed);
-        });
+        }
     }
 
     private void collectYamlProperties(List<AnnotationInstance> annotations, ClassInfo info) {

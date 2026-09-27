@@ -48,7 +48,9 @@ public @interface YamlProperty {
 
     /**
      * The name of the property that identifies an item of this list (such as name). When set, the list may also be
-     * written as a map from that property to the rest of the item, which the non-canonical schema accepts.
+     * written as a map from that property to the rest of the item, which the non-canonical schema accepts. Only the
+     * YAML schema generator reads this attribute: the deserializer of the property that carries it must itself accept
+     * the map form (as BeansDeserializer.asBeanDefinitions does for beans:).
      *
      * @since 4.23
      */

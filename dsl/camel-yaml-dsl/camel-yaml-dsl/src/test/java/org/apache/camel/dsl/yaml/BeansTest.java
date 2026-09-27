@@ -459,6 +459,17 @@ class BeansTest extends YamlTestSupport {
     }
 
     @Test
+    void beansAsMapMissingDashOnListFormFails() {
+        // CAMEL-24704 F1: the list form with the "- " forgotten reads as a map whose first key is "name"
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                        name: myBean
+                        type: %s
+                """.formatted(MyBean.class.getName())));
+        assertThat(messages(e)).contains("beans is a list").contains("- name: myBean");
+    }
+
+    @Test
     void beansAsMapWithDuplicateNameFails() {
         Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
                     - beans:
