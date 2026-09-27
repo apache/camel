@@ -112,7 +112,11 @@ public class OnCompletionProcessor extends BaseProcessorSupport
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(processor);
         if (shutdownExecutorService) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            List<Runnable> dropped = getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            if (dropped != null && !dropped.isEmpty()) {
+                // the tasks still queued in the thread pool will never run, so they are no longer pending
+                taskCount.add(-dropped.size());
+            }
         }
     }
 
