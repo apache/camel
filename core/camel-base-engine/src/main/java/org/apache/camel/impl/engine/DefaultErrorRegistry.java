@@ -105,6 +105,10 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         Throwable exception;
         if (handled) {
             exception = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+            // the event means a failure processor (onException, dead letter channel, doCatch) has run, which has
+            // only handled the failure when the exchange no longer has an exception (not with handled(false) or a
+            // doCatch that throws again)
+            handled = exchange.getException() == null;
         } else {
             exception = exchange.getException();
         }
@@ -120,19 +124,6 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         long timestamp = System.currentTimeMillis();
         String exchangeId = correlationId != null ? correlationId : exchange.getExchangeId();
         String routeId = exchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, String.class);
-        if (routeId == null) {
-            routeId = exchange.getFromRouteId();
-        }
-        String fromRouteId = exchange.getFromRouteId();
-        String routeGroup = null;
-        if (routeId != null) {
-            org.apache.camel.Route route = exchange.getContext().getRoute(routeId);
-            if (route != null) {
-                routeGroup = route.getGroup();
-            }
-        }
-        String endpointUri = exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT, String.class);
-
         // capture node id and location where the exchange actually failed
         // (captured up-front by the error handler / doCatch, before any failure processor such as
         // onException or a dead letter channel ran its own processing steps - otherwise those steps
@@ -150,8 +141,25 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                     toNode = last.getNode().getId();
                     location = LoggerHelper.getLineNumberLoggerName(last.getNode());
                 }
+                if (routeId == null) {
+                    // the route of the node (which is not the route the exchange came from when it failed in a
+                    // route it was sent to)
+                    routeId = last.getRouteId();
+                }
             }
         }
+        if (routeId == null) {
+            routeId = exchange.getFromRouteId();
+        }
+        String fromRouteId = exchange.getFromRouteId();
+        String routeGroup = null;
+        if (routeId != null) {
+            org.apache.camel.Route route = exchange.getContext().getRoute(routeId);
+            if (route != null) {
+                routeGroup = route.getGroup();
+            }
+        }
+        String endpointUri = exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT, String.class);
 
         // capture step id (set by Step EIP)
         String stepId = exchange.getProperty(ExchangePropertyKey.STEP_ID, String.class);
@@ -191,16 +199,18 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
                 endpointUri, toNode, stepId, fromEndpointUri, routeUptime, elapsed,
                 threadName, data, exception, handled, messageHistory);
 
-        // deduplicate by exchange ID:
+        // deduplicate the same failure of an exchange (the same exception, or one that wraps the other), as it is
+        // reported by both a correlated copy and the original exchange. Other failures of the same exchange (the
+        // failures of the parts of a split, a failure after a doCatch, a failure in onCompletion) are kept.
         // - correlated copy (inner): has more specific node info (e.g., throwException inside circuit breaker),
-        //   so it replaces any existing entry for the same original exchange
+        //   so it replaces an existing entry of the same failure
         // - original exchange (outer): if already captured from a correlated copy, skip it
         //   since the copy has more specific info about where the error actually occurred
         if (correlationId != null) {
-            entries.removeIf(e -> exchangeId.equals(e.getExchangeId()));
+            entries.removeIf(e -> exchangeId.equals(e.getExchangeId()) && isSameFailure(e.getException(), exception));
         } else {
             for (BacklogErrorEventMessage e : entries) {
-                if (exchangeId.equals(e.getExchangeId())) {
+                if (exchangeId.equals(e.getExchangeId()) && isSameFailure(e.getException(), exception)) {
                     // the copy's entry stays (it names the node), but the original reporting the failure as
                     // handled (a circuit breaker's fallback, a doCatch around a multicast) means the exchange
                     // recovered: the entry is an error that was handled, not an error (CAMEL-24863)
@@ -220,6 +230,24 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         entries.addFirst(entry);
         evictKind(kind);
         evict();
+    }
+
+    /**
+     * Whether the two exceptions are the same failure: the same exception, or one is a cause of the other (such as the
+     * exception of a split part wrapped by the splitter).
+     */
+    private static boolean isSameFailure(Throwable a, Throwable b) {
+        return isCauseOf(a, b) || isCauseOf(b, a);
+    }
+
+    private static boolean isCauseOf(Throwable cause, Throwable exception) {
+        int depth = 0;
+        for (Throwable t = exception; t != null && depth < 20; t = t.getCause(), depth++) {
+            if (t == cause) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -524,6 +552,8 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         @Override
         public void clear() {
             entries.removeIf(entry -> routeId.equals(entry.getRouteId()));
+            // and the counts of the kinds of errors of this route (as clear of the registry does)
+            repeats.keySet().removeIf(kind -> kind.startsWith(routeId + "|"));
         }
     }
 

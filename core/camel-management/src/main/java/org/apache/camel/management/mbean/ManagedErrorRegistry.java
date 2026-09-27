@@ -170,11 +170,12 @@ public class ManagedErrorRegistry extends ManagedService implements ManagedError
                 CompositeData data = new CompositeDataSupport(
                         ct,
                         new String[] {
-                                "exchangeId", "routeId", "routeGroup", "nodeId", "stepId",
+                                "uid", "exchangeId", "routeId", "routeGroup", "nodeId", "stepId",
                                 "endpointUri", "fromEndpointUri", "timestamp",
                                 "routeUptime", "elapsed",
                                 "handled", "exceptionType", "exceptionMessage" },
                         new Object[] {
+                                entry.getUid(),
                                 entry.getExchangeId(),
                                 entry.getRouteId(),
                                 entry.getRouteGroup(),
