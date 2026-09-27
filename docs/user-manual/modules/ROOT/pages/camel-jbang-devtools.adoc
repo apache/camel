@@ -426,6 +426,10 @@ Validation success (files:2)
 against the Camel catalog (`--catalog=false` for the schema only); `--canonical` validates against the canonical
 schema and reports the deprecated compact notation. `camel validate source` validates any file `camel run` would
 load: YAML routes, `.properties` files (the `camel.*` keys), Java (compiles it), XSLT and XML.
+As the routes of an application are spread over the files of its directory, `camel validate source` also reports a
+`direct:` or `seda:` endpoint a YAML route sends to that no route consumes, in that file or in the YAML, Java and
+XML route files next to it: with `direct:` the route would fail to start, with `seda:` the messages would be queued
+and never read. An endpoint only known at runtime (a property placeholder, an expression) is not reported.
 
 === Validating against another Camel version or runtime
 
