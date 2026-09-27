@@ -293,6 +293,13 @@ The `inflight` and `blocked` developer consoles now carry a `nodeSource` field p
 exchange sits at is in the source (such as `orders.camel.yaml:18`). It is `null` when message history or source
 location is disabled. Existing fields are unchanged.
 
+=== Error handler - redelivery options of onException
+
+An `onException` that sets some of the redelivery options (such as `maximumRedeliveries`) now inherits the options it
+does not set from the error handler, as documented. Prior to Camel 4.23 (since Camel 3.17) the options it did not set
+were reset to their defaults: for example with `errorHandler(defaultErrorHandler().redeliveryDelay(0))` and
+`onException(IOException.class).maximumRedeliveries(3)`, the redeliveries were delayed 1 second each and not 0.
+
 === camel-management
 
 The JMX `browse` operation of the `DefaultInflightRepository` MBean and the `listAwaitThreads` data of the
