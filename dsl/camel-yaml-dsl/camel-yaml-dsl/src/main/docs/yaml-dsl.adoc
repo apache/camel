@@ -365,6 +365,23 @@ In addition to the general support for creating beans provided by xref:others:ma
 <2> the full qualified class name of the bean
 <3> the properties of the bean to be set
 
+[NOTE]
+====
+The beans can also be written as a map keyed by the bean name, without `name:`:
+
+[source,yaml]
+----
+- beans:
+    beanFromMap:
+      type: com.acme.MyBean
+      properties:
+        foo: bar
+----
+
+The list shown above is the canonical form: `camel validate yaml --canonical`, the canonical schema and the
+YAML Camel writes all use the list.
+====
+
 A bean declared this way is bound to the Camel registry, so a route in the same file can refer to it by name, such as
 calling it with the xref:eips:bean-eip.adoc[Bean] EIP:
 
