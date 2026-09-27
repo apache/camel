@@ -19,7 +19,13 @@ package org.apache.camel.processor.resequencer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.util.StopWatch;
@@ -28,8 +34,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ResequencerEngineTest extends TestSupport {
 
@@ -87,6 +98,142 @@ class ResequencerEngineTest extends TestSupport {
         assertEquals(3, buffer.poll(5_000));
         assertEquals(4, buffer.poll(5_000));
         assertEquals(4, resequencer.getLastDelivered());
+    }
+
+    @Test
+    void testTimeoutAfterRestart() throws Exception {
+        SequenceBuffer<Integer> out = new SequenceBuffer<>();
+        ResequencerEngine<Integer> engine = new ResequencerEngine<>(new IntegerComparator());
+        engine.setSequenceSender(out);
+        // long enough that the timeout of 4 cannot expire before the stop, even with a pause of the test
+        engine.setTimeout(2000);
+        engine.start();
+        try {
+            engine.setLastDelivered(2);
+            // 3 is missing, so 4 waits for its timeout
+            engine.insert(4);
+            engine.stop();
+            engine.start();
+            engine.insert(5);
+
+            // the timeout of 4 must still expire after the restart
+            await().atMost(10, TimeUnit.SECONDS).until(engine::deliverNext);
+            engine.deliver();
+            assertEquals(4, out.poll(0));
+            assertEquals(5, out.poll(0));
+        } finally {
+            engine.stop();
+        }
+    }
+
+    @Test
+    void testWaitUntilReleasedOnStop() throws Exception {
+        ResequencerEngine<Integer> engine = new ResequencerEngine<>(new IntegerComparator());
+        engine.setSequenceSender(new SequenceBuffer<>());
+        engine.start();
+        engine.insert(4);
+
+        // a caller waiting for free capacity
+        FutureTask<Void> waiter = new FutureTask<>(() -> {
+            engine.waitUntil(s -> s.size() < 1);
+            return null;
+        });
+        Thread thread = new Thread(waiter, "waiter");
+        thread.setDaemon(true);
+        thread.start();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> thread.getState() == Thread.State.WAITING);
+
+        engine.stop();
+        try {
+            waiter.get(5, TimeUnit.SECONDS);
+            fail("waitUntil should fail when the resequencer is stopped");
+        } catch (ExecutionException e) {
+            assertInstanceOf(RejectedExecutionException.class, e.getCause());
+        } catch (TimeoutException e) {
+            thread.interrupt();
+            fail("waitUntil is still blocked after the resequencer was stopped");
+        }
+    }
+
+    @Test
+    void testStopDoesNotWaitForTheReadyBacklog() throws Exception {
+        CountDownLatch sendingFirst = new CountDownLatch(1);
+        CountDownLatch releaseFirst = new CountDownLatch(1);
+        CountDownLatch releaseOthers = new CountDownLatch(1);
+        List<Integer> sent = new CopyOnWriteArrayList<>();
+        ResequencerEngine<Integer> engine = new ResequencerEngine<>(new IntegerComparator());
+        // a slow downstream processor: the first element is held until released, the others until the end of the test
+        engine.setSequenceSender(o -> {
+            sent.add(o);
+            if (o == 1) {
+                sendingFirst.countDown();
+                releaseFirst.await(10, TimeUnit.SECONDS);
+            } else {
+                releaseOthers.await(10, TimeUnit.SECONDS);
+            }
+        });
+        engine.start();
+        engine.setLastDelivered(0);
+        for (int i = 1; i <= 5; i++) {
+            engine.insert(i);
+        }
+
+        FutureTask<Void> delivery = new FutureTask<>(() -> {
+            engine.deliver();
+            return null;
+        });
+        Thread deliveryThread = new Thread(delivery, "delivery");
+        deliveryThread.setDaemon(true);
+        FutureTask<Void> stop = new FutureTask<>(() -> {
+            engine.stop();
+            return null;
+        });
+        Thread stopThread = new Thread(stop, "stop");
+        stopThread.setDaemon(true);
+        try {
+            deliveryThread.start();
+            assertTrue(sendingFirst.await(5, TimeUnit.SECONDS), "the first element was not delivered");
+
+            // the route stops while the downstream processor is busy with the first element
+            stopThread.start();
+            // stop waits for the element being sent
+            await().atMost(5, TimeUnit.SECONDS)
+                    .until(() -> stop.isDone() || stopThread.getState() == Thread.State.WAITING);
+            releaseFirst.countDown();
+
+            // stop returns after the element being sent, without sending the other ready elements
+            try {
+                stop.get(5, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                fail("stop waits for the downstream processing of all ready elements");
+            }
+            delivery.get(5, TimeUnit.SECONDS);
+            assertEquals(List.of(1), sent);
+            assertEquals(4, engine.size());
+        } finally {
+            releaseFirst.countDown();
+            releaseOthers.countDown();
+        }
+    }
+
+    @Test
+    void testInsertRejectedWhenStopped() throws Exception {
+        ResequencerEngine<Integer> engine = new ResequencerEngine<>(new IntegerComparator());
+        engine.setSequenceSender(new SequenceBuffer<>());
+        engine.start();
+        engine.insert(4);
+        engine.stop();
+
+        assertThrows(RejectedExecutionException.class, () -> engine.insert(5));
+        // not queued, so it is not delivered after a restart
+        assertEquals(1, engine.size());
+    }
+
+    @Test
+    void testStopWithoutStart() {
+        // BaseService.start() calls stop() when the start fails before the engine was started
+        ResequencerEngine<Integer> engine = new ResequencerEngine<>(new IntegerComparator());
+        assertDoesNotThrow(engine::stop);
     }
 
     @DisabledIf(value = "isIgnoreLoadTests",
