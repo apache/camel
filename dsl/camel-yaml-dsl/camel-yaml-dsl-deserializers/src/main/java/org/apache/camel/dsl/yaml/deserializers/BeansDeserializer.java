@@ -48,7 +48,8 @@ import org.snakeyaml.engine.v2.nodes.SequenceNode;
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           properties = {
                   @YamlProperty(name = "__extends",
-                                type = "array:org.apache.camel.model.BeanFactoryDefinition")
+                                type = "array:org.apache.camel.model.BeanFactoryDefinition",
+                                mapKey = "name")
           })
 public class BeansDeserializer extends YamlDeserializerSupport implements ConstructNode {
 

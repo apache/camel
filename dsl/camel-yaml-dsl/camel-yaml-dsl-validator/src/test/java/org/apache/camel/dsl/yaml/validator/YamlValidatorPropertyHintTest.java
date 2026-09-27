@@ -372,7 +372,9 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).anyMatch(e -> e.getMessage().contains("array expected") && e.getMessage().contains("- route:"));
 
-        errors = validator.validate("""
+        YamlValidator canonical = new YamlValidator(true);
+        canonical.init();
+        errors = canonical.validate("""
                 - beans:
                     myBean:
                       type: "#class:com.example.MyBean"
@@ -381,6 +383,12 @@ public class YamlValidatorPropertyHintTest {
                     steps:
                       - log:
                           message: "hi"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("beans is a list: - name: myBean"));
+
+        // lenient: a map is fine (CAMEL-24704), a scalar still says how to write it
+        errors = validator.validate("""
+                - beans: myBean
                 """);
         assertThat(errors).anyMatch(e -> e.getMessage().contains("beans is a list: - name: myBean"));
 

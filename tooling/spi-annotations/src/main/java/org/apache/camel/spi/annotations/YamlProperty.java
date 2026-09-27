@@ -45,4 +45,12 @@ public @interface YamlProperty {
     String oneOf() default "";
 
     boolean wrapItem() default false;
+
+    /**
+     * The name of the property that identifies an item of this list (such as name). When set, the list may also be
+     * written as a map from that property to the rest of the item, which the non-canonical schema accepts.
+     *
+     * @since 4.23
+     */
+    String mapKey() default "";
 }

@@ -250,4 +250,40 @@ public class YamlCanonicalValidatorTest {
                 """;
         assertThat(classicValidator.validate(route)).isEmpty();
     }
+
+    private static final String BEANS_AS_MAP = """
+            - beans:
+                myProcessor:
+                  type: "#class:com.example.MyProcessor"
+                  properties:
+                    greeting: hello
+            - routeTemplate:
+                id: myTemplate
+                beans:
+                  templateBean:
+                    type: "#class:com.example.MyBean"
+                from:
+                  uri: direct:a
+                  steps:
+                    - to:
+                        uri: log:a
+            """;
+
+    /** CAMEL-24704: beans may be a map keyed by the bean name; the canonical form stays the list. */
+    @Test
+    public void testBeansAsMapPassClassicButNotCanonicalValidation() throws Exception {
+        assertThat(classicValidator.validate(BEANS_AS_MAP)).isEmpty();
+        assertThat(canonicalValidator.validate(BEANS_AS_MAP)).isNotEmpty();
+    }
+
+    /** In the map form the key is the name, so a name: inside the bean is not accepted. */
+    @Test
+    public void testBeansAsMapRejectNameProperty() throws Exception {
+        assertThat(classicValidator.validate("""
+                - beans:
+                    myProcessor:
+                      name: other
+                      type: "#class:com.example.MyProcessor"
+                """)).isNotEmpty();
+    }
 }

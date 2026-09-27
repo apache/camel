@@ -211,11 +211,17 @@
         }
       },
       "org.apache.camel.dsl.yaml.deserializers.BeansDeserializer" : {
-        "type" : "array",
-        "additionalProperties" : false,
-        "items" : {
-          "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
-        }
+        "oneOf" : [ {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
+          }
+        }, {
+          "type" : "object",
+          "additionalProperties" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinitionByName"
+          }
+        } ]
       },
       "org.apache.camel.dsl.yaml.deserializers.DataFormatsDefinitionDeserializer" : {
         "type" : "array",
@@ -5434,10 +5440,17 @@
         "additionalProperties" : false,
         "properties" : {
           "beans" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
-            }
+            "oneOf" : [ {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
+              }
+            }, {
+              "type" : "object",
+              "additionalProperties" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinitionByName"
+              }
+            } ]
           },
           "description" : {
             "type" : "string"
@@ -6593,10 +6606,17 @@
         "additionalProperties" : false,
         "properties" : {
           "beans" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
-            }
+            "oneOf" : [ {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinition"
+              }
+            }, {
+              "type" : "object",
+              "additionalProperties" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.BeanFactoryDefinitionByName"
+              }
+            } ]
           },
           "group" : {
             "type" : "string"
@@ -16639,6 +16659,76 @@
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
+        }
+      },
+      "org.apache.camel.model.BeanFactoryDefinitionByName" : {
+        "title" : "Bean Factory",
+        "description" : "Defines a custom bean that can be used in Camel routes and other beans. The bean is created by a factory class or method.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "builderClass" : {
+            "type" : "string",
+            "title" : "Builder Class",
+            "description" : "Fully qualified class name of builder class to use for creating and configuring the bean. The builder will use the properties values to configure the bean. Not needed for a type that has no public no-arg constructor but a public static builder() or newBuilder() method (such as Lombok, Immutables, LangChain4j or AWS SDK classes): Camel then infers the builder, sets the properties on it, and creates the bean with its build method."
+          },
+          "builderMethod" : {
+            "type" : "string",
+            "title" : "Builder Method",
+            "description" : "Name of method when using builder class (or an inferred builder). This method is invoked after configuring to create the actual bean. This method is often named build (used by default).",
+            "default" : "build"
+          },
+          "constructors" : {
+            "type" : "object",
+            "title" : "Constructors",
+            "description" : "Optional constructor arguments for creating the bean. Arguments correspond to specific index of the constructor argument list, starting from zero."
+          },
+          "destroyMethod" : {
+            "type" : "string",
+            "title" : "Destroy Method",
+            "description" : "The name of the custom destroy method to invoke on bean shutdown, such as when Camel is shutting down. The method must have no arguments, but may throw any exception."
+          },
+          "factoryBean" : {
+            "type" : "string",
+            "title" : "Factory Bean",
+            "description" : "Name of factory bean (bean id) to use for creating the bean."
+          },
+          "factoryMethod" : {
+            "type" : "string",
+            "title" : "Factory Method",
+            "description" : "Name of method to invoke when creating the bean via a factory bean."
+          },
+          "initMethod" : {
+            "type" : "string",
+            "title" : "Init Method",
+            "description" : "The name of the custom initialization method to invoke after setting bean properties. The method must have no arguments, but may throw any exception."
+          },
+          "properties" : {
+            "type" : "object",
+            "title" : "Properties",
+            "description" : "Optional properties to set on the created bean."
+          },
+          "script" : {
+            "type" : "string",
+            "title" : "Script",
+            "description" : "The script to execute that creates the bean when using scripting languages."
+          },
+          "scriptLanguage" : {
+            "type" : "string",
+            "title" : "Script Language",
+            "description" : "The script language to use when using inlined script for creating the bean, such as groovy, java, javascript etc."
+          },
+          "scriptPropertyPlaceholders" : {
+            "type" : "boolean",
+            "title" : "Script Property Placeholders",
+            "description" : "Whether the script should support using Camel property placeholder syntax {{ }}.",
+            "default" : true
+          },
+          "type" : {
+            "type" : "string",
+            "title" : "Type",
+            "description" : "The class name (fully qualified) of the bean. Required unless the bean is created by a script (scriptLanguage) or a builder (builderClass), where the type is optional and is then the type the bean is registered as."
+          }
         }
       }
     },
