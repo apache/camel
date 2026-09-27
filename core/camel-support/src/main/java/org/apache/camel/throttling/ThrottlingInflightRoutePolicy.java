@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.StatefulService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelLogger;
@@ -188,6 +189,12 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
             }
         }
 
+        // fast path: nothing to resume unless this policy has suspended a consumer (a consumer that this thread has just
+        // suspended above is already in the set, and every later completion checks again)
+        if (suspendedConsumers.isEmpty()) {
+            return;
+        }
+
         // reload size in case a race condition with too many at once being invoked
         // so we need to ensure that we read the most current size and start the consumer if we are already to low
         size = getSize(route, exchange);
@@ -322,8 +329,9 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
     private void stopConsumer(int size, Consumer consumer, int maxInflight) throws Exception {
         // only suspend (and so later resume) a consumer that is started: suspendOrStopConsumer also returns true for a
-        // consumer that is already stopped, such as one the shutdown strategy has stopped, which must stay stopped
-        if (!ServiceHelper.isStarted(consumer)) {
+        // consumer that is already stopped, such as one the shutdown strategy has stopped, which must stay stopped.
+        // A consumer that is not a StatefulService has no state to check, so it is always throttled
+        if (consumer instanceof StatefulService ss && !ServiceHelper.isStarted(ss)) {
             return;
         }
         boolean stopped = suspendOrStopConsumer(consumer);
