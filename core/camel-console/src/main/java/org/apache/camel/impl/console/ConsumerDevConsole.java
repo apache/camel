@@ -32,6 +32,7 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedSchedulePollConsumerMBean;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonRecordSupport;
 
@@ -122,7 +123,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     sb.append(String.format("%n    Remote: %b", mc.isRemoteEndpoint()));
                     sb.append(String.format("%n    Hosted: %b", mc.isHostedService()));
                     sb.append(String.format("%n    Inflight: %d", inflight));
-                    if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {
+                    ManagedSchedulePollConsumerMBean mpc = scheduledPollConsumer(mcc, route);
+                    if (mpc != null) {
                         sb.append(String.format("%n    Polling: %s", mpc.isPolling()));
                         sb.append(String.format("%n    First Poll Done: %s", mpc.isFirstPollDone()));
                         sb.append(String.format("%n    Scheduler Started: %s", mpc.isSchedulerStarted()));
@@ -185,6 +187,17 @@ public class ConsumerDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
+    /**
+     * The managed scheduled poll consumer of the route, or null if it is not a scheduled poll consumer. The managed
+     * consumer is a proxy of the interface it is asked for, so it is not an instance of the scheduled poll interface.
+     */
+    private static ManagedSchedulePollConsumerMBean scheduledPollConsumer(ManagedCamelContext mcc, Route route) {
+        if (route.getConsumer() instanceof ScheduledPollConsumer) {
+            return mcc.getManagedConsumer(route.getId(), ManagedSchedulePollConsumerMBean.class);
+        }
+        return null;
+    }
+
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         final List<ConsumerEntry> list = new ArrayList<>();
@@ -222,9 +235,8 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     Boolean fixedRate = null;
                     Long period = null;
 
-                    // NOTE: this checks mcc (the ManagedCamelContext), not mc (the consumer) - so this branch is
-                    // effectively dead code, but that pre-existing behavior is preserved as-is here
-                    if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {
+                    ManagedSchedulePollConsumerMBean mpc = scheduledPollConsumer(mcc, route);
+                    if (mpc != null) {
                         scheduled = true;
                         polling = mpc.isPolling();
                         firstPollDone = mpc.isFirstPollDone();
