@@ -367,15 +367,15 @@ In addition to the general support for creating beans provided by xref:others:ma
 
 [NOTE]
 ====
-The beans can also be written as a map keyed by the bean name, without `name:`:
+The beans can also be written as a map keyed by the bean name, without `name:`, as the value of `beans:`:
 
 [source,yaml]
 ----
-- beans:
-    beanFromMap:
-      type: com.acme.MyBean
-      properties:
-        foo: bar
+beans:
+  myMapBean:
+    type: com.acme.MyBean
+    properties:
+      foo: bar
 ----
 
 The list shown above is the canonical form: `camel validate yaml --canonical`, the canonical schema and the
