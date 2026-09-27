@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AggregationStrategy;
@@ -44,6 +45,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -57,6 +59,7 @@ public class AggregateOptimisticLockingTimeoutTest extends ContextTestSupport {
     private final CountDownLatch releaseDownstream = new CountDownLatch(1);
     private final CountDownLatch timeoutGate = new CountDownLatch(1);
     private final AtomicBoolean pause = new AtomicBoolean(true);
+    private final AtomicInteger timeoutCheckerRuns = new AtomicInteger();
     private ScheduledExecutorService timeoutChecker;
 
     @Override
@@ -76,6 +79,7 @@ public class AggregateOptimisticLockingTimeoutTest extends ContextTestSupport {
                 return super.scheduleWithFixedDelay(() -> {
                     if (awaitLatch(timeoutGate)) {
                         command.run();
+                        timeoutCheckerRuns.incrementAndGet();
                     }
                 }, initialDelay, delay, unit);
             }
@@ -154,6 +158,68 @@ public class AggregateOptimisticLockingTimeoutTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testLeftoverTimeoutDoesNotCompleteNewGroupWithoutTimeout() throws Exception {
+        MemoryAggregationRepository repository = new MemoryAggregationRepository(true);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(repository)
+                        .optimisticLocking().completionSize(2)
+                        .completionTimeout(header("timeout")).completionTimeoutCheckerInterval(10)
+                        .timeoutCheckerExecutorService(timeoutChecker)
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("a+b", "c+d");
+        mock.message(0).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("size");
+        mock.message(1).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("size");
+
+        // the group [a, b] has a completion timeout (from a), but is completed by size
+        template.sendBodyAndHeaders("direct:start", "a", Map.of("id", "1", "timeout", 1));
+        send("b");
+        // c starts a new group for the same key, whose completion timeout expression returns no timeout
+        send("c");
+
+        // let the timeout checker run twice, so the timeout of a has expired and been processed
+        timeoutGate.countDown();
+        await().atMost(10, TimeUnit.SECONDS).until(() -> timeoutCheckerRuns.get() >= 2);
+        assertEquals(Set.of("1"), repository.getKeys(), "The group [c] has no completion timeout and should not be completed");
+
+        send("d");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testGroupKeepsTimeoutWhenLaterExchangeHasNoTimeout() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        .aggregate(header("id"), new BodyInLatestStrategy()).optimisticLocking().completionSize(3)
+                        .completionTimeout(header("timeout")).completionTimeoutCheckerInterval(10)
+                        .timeoutCheckerExecutorService(timeoutChecker)
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("a+b");
+        mock.message(0).exchangeProperty(Exchange.AGGREGATED_COMPLETED_BY).isEqualTo("timeout");
+
+        // the group has the completion timeout of a, and the stored exchange is b, which has no timeout
+        template.sendBodyAndHeaders("direct:start", "a", Map.of("id", "1", "timeout", 1));
+        send("b");
+
+        timeoutGate.countDown();
+        assertMockEndpointsSatisfied();
+    }
+
     private void addRoute(AggregationRepository repository) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -203,6 +269,20 @@ public class AggregateOptimisticLockingTimeoutTest extends ContextTestSupport {
             oldExchange.getIn().setBody(
                     oldExchange.getIn().getBody(String.class) + "+" + newExchange.getIn().getBody(String.class));
             return oldExchange;
+        }
+    }
+
+    /**
+     * Aggregates the bodies into the latest exchange.
+     */
+    private static class BodyInLatestStrategy implements AggregationStrategy {
+        @Override
+        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+            if (oldExchange != null) {
+                newExchange.getIn().setBody(
+                        oldExchange.getIn().getBody(String.class) + "+" + newExchange.getIn().getBody(String.class));
+            }
+            return newExchange;
         }
     }
 

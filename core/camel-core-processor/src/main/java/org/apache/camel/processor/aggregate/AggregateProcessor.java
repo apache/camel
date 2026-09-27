@@ -550,6 +550,13 @@ public class AggregateProcessor extends BaseProcessorSupport
         // prepare the exchanges for aggregation
         ExchangeHelper.prepareAggregation(oldExchange, newExchange);
 
+        // the group records its completion timeout (see updateGroupTimeout), so only a timeout that this aggregator
+        // tracks for the exchange counts
+        boolean groupTimeout = isGroupTimeout();
+        if (groupTimeout) {
+            newExchange.removeProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
+
         // check if we are pre complete
         if (preCompletion) {
             try {
@@ -655,6 +662,9 @@ public class AggregateProcessor extends BaseProcessorSupport
         }
 
         if (!aggregateFailed && complete == null) {
+            if (groupTimeout) {
+                updateGroupTimeout(newExchange, originalExchange, answer);
+            }
             // only need to update aggregation repository if we are not complete
             doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
         } else {
@@ -789,6 +799,35 @@ public class AggregateProcessor extends BaseProcessorSupport
 
         // not complete
         return null;
+    }
+
+    /**
+     * Whether the group records if it has a completion timeout, and the timeout checker only completes a group that has
+     * one.
+     * <p/>
+     * With optimistic locking the timeout entry of a completed group is not removed (see
+     * {@link #onCompletion(String, Exchange, Exchange, boolean, boolean)}), so it can be left over when a new group for
+     * the same correlation key starts. A new group normally replaces the entry with its own timeout, but with a
+     * completion timeout expression a new group can have no timeout, and the left over entry must then not complete it.
+     */
+    private boolean isGroupTimeout() {
+        return optimisticLocking && completionTimeoutExpression != null;
+    }
+
+    /**
+     * Records the completion timeout of the group on the aggregated exchange, which is stored in the repository: the
+     * timeout tracked for the new exchange, otherwise the timeout of the group so far.
+     */
+    private static void updateGroupTimeout(Exchange newExchange, Exchange originalExchange, Exchange answer) {
+        Object timeout = newExchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        if (timeout == null && originalExchange != null) {
+            timeout = originalExchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
+        if (timeout != null) {
+            answer.setProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT, timeout);
+        } else {
+            answer.removeProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT);
+        }
     }
 
     protected void trackTimeout(String key, Exchange exchange) {
@@ -1378,6 +1417,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             Exchange answer = aggregationRepository.get(camelContext, key);
             if (answer == null) {
                 evictionStolen = true;
+            } else if (isGroupTimeout() && answer.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT) == null) {
+                // the entry is left over from a completed group, and the current group has no completion timeout
+                log.debug("Completion timeout for correlation key: {} is left over from a completed group, as the group"
+                          + " has no completion timeout",
+                        key);
             } else {
                 // indicate it was completed by timeout
                 answer.setProperty(ExchangePropertyKey.AGGREGATED_COMPLETED_BY, COMPLETED_BY_TIMEOUT);
