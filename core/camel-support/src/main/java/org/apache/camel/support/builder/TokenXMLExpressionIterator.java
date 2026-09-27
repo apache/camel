@@ -374,6 +374,22 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         return namespaces;
     }
 
+    private static int skipMarkupDeclaration(String xmlhead, int p) {
+        String end;
+        if (xmlhead.startsWith("<!--", p)) {
+            end = "-->";
+        } else if (xmlhead.startsWith("<![CDATA[", p)) {
+            end = "]]>";
+        } else {
+            // DOCTYPE which may have an internal subset with declarations of its own
+            int bracket = xmlhead.indexOf('[', p);
+            int gt = xmlhead.indexOf('>', p);
+            end = bracket >= 0 && (gt < 0 || bracket < gt) ? "]>" : ">";
+        }
+        int ep = xmlhead.indexOf(end, p);
+        return ep < 0 ? xmlhead.length() : ep + end.length();
+    }
+
     private static String buildXMLTail(String xmlhead) {
         // assume the input text is a portion of a well-formed xml
         List<String> tags = new ArrayList<>();
@@ -386,6 +402,10 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             int nc = xmlhead.charAt(p + 1);
             if (nc == '?') {
                 p++;
+                continue;
+            } else if (nc == '!') {
+                // a comment, CDATA or DOCTYPE is not a tag to close
+                p = skipMarkupDeclaration(xmlhead, p);
                 continue;
             } else if (nc == '/') {
                 p++;
