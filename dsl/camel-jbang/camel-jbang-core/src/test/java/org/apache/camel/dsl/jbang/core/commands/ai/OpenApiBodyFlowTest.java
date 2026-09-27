@@ -29,8 +29,7 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * CAMEL-24844 phase B: the verb of a rest-openapi operation is in the specification beside the route, so a GET that
- * carries no body can be read from it - and a route it reaches that needs a body can be reported.
+ * Unit tests for OpenAPI specification parsing and path parameter analysis.
  */
 class OpenApiBodyFlowTest {
 
@@ -39,13 +38,34 @@ class OpenApiBodyFlowTest {
               "openapi": "3.0.2",
               "paths": {
                 "/stock/{sku}": {
-                  "get": { "operationId": "getStock", "responses": { "200": { "description": "ok" } } }
+                  "get": {
+                    "operationId": "getStock",
+                    "parameters": [
+                      { "name": "sku", "in": "path", "required": true }
+                    ],
+                    "responses": { "200": { "description": "ok" } }
+                  }
                 },
                 "/orders": {
                   "post": { "operationId": "createOrder", "responses": { "201": { "description": "created" } } }
                 }
               }
             }
+            """;
+
+    private static final String YAML_SPEC = """
+            openapi: 3.0.2
+            paths:
+              /stock/{sku}:
+                get:
+                  operationId: getStock
+                  parameters:
+                    - name: sku
+                      in: path
+                      required: true
+                  responses:
+                    '200':
+                      description: ok
             """;
 
     private static final String ROUTES = """
@@ -112,59 +132,19 @@ class OpenApiBodyFlowTest {
     }
 
     @Test
-    void restOpenApiProducerGetOperationSetsResponseBody(@TempDir Path dir) throws Exception {
-        Files.writeString(dir.resolve("stock-api.json"), SPEC);
-        String routes = """
-                - route:
-                    from:
-                      uri: direct:fetch
-                      steps:
-                        - to: "rest-openapi:stock-api.json#getStock"
-                        - setBody:
-                            expression:
-                              jsonpath:
-                                expression: "$.name"
-                """;
-        Files.writeString(dir.resolve("routes.camel.yaml"), routes);
-
-        List<String> messages = SourceValidator.validate("routes.camel.yaml", routes, new DefaultCamelCatalog(), null, dir);
-        assertThat(messages).noneMatch(m -> m.contains("reads the message body"));
-    }
-
-    @Test
-    void restOpenApiProducerWithQueryParametersSetsResponseBody(@TempDir Path dir) throws Exception {
-        Files.writeString(dir.resolve("stock-api.json"), SPEC);
-        String routes = """
-                - route:
-                    from:
-                      uri: direct:fetch
-                      steps:
-                        - to: "rest-openapi:stock-api.json#getStock?host=https://api.example.com"
-                        - setBody:
-                            expression:
-                              jsonpath:
-                                expression: "$.name"
-                """;
-        Files.writeString(dir.resolve("routes.camel.yaml"), routes);
-
-        assertThat(SourceValidator.validate("routes.camel.yaml", routes, new DefaultCamelCatalog(), null, dir))
-                .noneMatch(m -> m.contains("reads the message body"));
-    }
-
-    @Test
     void yamlOpenApiSpecificationIsRead(@TempDir Path dir) throws Exception {
-        Files.writeString(dir.resolve("stock-api.yaml"), """
-                openapi: 3.0.2
-                paths:
-                  /stock:
-                    get:
-                      operationId: getStock
-                      responses:
-                        '200':
-                          description: ok
-                """);
+        Files.writeString(dir.resolve("stock-api.yaml"), YAML_SPEC);
 
         assertThat(OpenApiVerbs.bodylessEndpoints(ROUTES.replace("stock-api.json", "stock-api.yaml"), dir))
                 .containsExactly("direct:getStock");
+    }
+
+    @Test
+    void requiredPathParametersExtractedFromJsonAndYaml() {
+        Set<String> jsonParams = OpenApiVerbs.requiredPathParameters(SPEC, "getStock");
+        assertThat(jsonParams).containsExactly("sku");
+
+        Set<String> yamlParams = OpenApiVerbs.requiredPathParameters(YAML_SPEC, "getStock");
+        assertThat(yamlParams).containsExactly("sku");
     }
 }

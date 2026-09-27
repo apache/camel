@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -85,6 +86,54 @@ public final class OpenApiVerbs {
             }
         }
         return answer;
+    }
+
+    public static Set<String> requiredPathParameters(String specContent, String operationId) {
+        Set<String> pathParams = new java.util.LinkedHashSet<>();
+        try {
+            Map<?, ?> paths = paths(specContent);
+            if (paths == null) {
+                return pathParams;
+            }
+            for (Map.Entry<?, ?> pathEntry : paths.entrySet()) {
+                if (!(pathEntry.getValue() instanceof Map<?, ?> pathDetails)) {
+                    continue;
+                }
+                // Path-level parameters
+                List<?> pathLevelParams = pathDetails.get("parameters") instanceof List<?> list ? list : null;
+
+                for (Map.Entry<?, ?> opEntry : pathDetails.entrySet()) {
+                    if ("parameters".equals(opEntry.getKey())) {
+                        continue;
+                    }
+                    if (!(opEntry.getValue() instanceof Map<?, ?> opDetails)) {
+                        continue;
+                    }
+                    if (operationId.equals(opDetails.get("operationId"))) {
+                        collectPathParameters(pathLevelParams, pathParams);
+                        List<?> opLevelParams = opDetails.get("parameters") instanceof List<?> list ? list : null;
+                        collectPathParameters(opLevelParams, pathParams);
+                        return pathParams;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Ignore unparseable specification content
+        }
+        return pathParams;
+    }
+
+    private static void collectPathParameters(List<?> parameters, Set<String> target) {
+        if (parameters == null) {
+            return;
+        }
+        for (Object item : parameters) {
+            if (item instanceof Map<?, ?> paramMap) {
+                if ("path".equals(paramMap.get("in")) && paramMap.get("name") != null) {
+                    target.add(String.valueOf(paramMap.get("name")));
+                }
+            }
+        }
     }
 
     private static Map<?, ?> paths(String text) {
