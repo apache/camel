@@ -27,7 +27,6 @@ import javax.sql.DataSource;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.SecretRotationAware;
-import org.apache.camel.support.DataSourceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -42,30 +41,6 @@ class JdbcComponentSecretRotationAwareTest {
     @Test
     void implementsSecretRotationAware() {
         assertInstanceOf(SecretRotationAware.class, new JdbcComponent());
-    }
-
-    @Test
-    void evictDataSourceConnections_hikariCpPool_callsSoftEvict() throws Exception {
-        // Arrange: a DataSource that simulates HikariDataSource by exposing getHikariPoolMXBean(),
-        // which returns a mock MXBean with softEvictConnections(). This matches the real HikariCP API
-        // where softEvictConnections() lives on HikariPoolMXBean, not on HikariDataSource itself.
-        HikariLikeDataSource hikariLike = new HikariLikeDataSource();
-
-        // Act
-        DataSourceHelper.evictDataSourceConnections(hikariLike, "test");
-
-        // Assert
-        assertTrue(hikariLike.mxBean.softEvictCalled.get(),
-                "softEvictConnections() should have been called via HikariPoolMXBean");
-    }
-
-    @Test
-    void evictDataSourceConnections_genericPool_doesNotThrow() {
-        // Arrange: a DataSource without getHikariPoolMXBean() — the generic fallback path
-        DataSource generic = new NoOpDataSource();
-
-        // Act — must not throw
-        DataSourceHelper.evictDataSourceConnections(generic, "test");
     }
 
     @Test
@@ -188,49 +163,4 @@ class JdbcComponentSecretRotationAwareTest {
         }
     }
 
-    /** A plain DataSource without getHikariPoolMXBean() — exercises the generic fallback path. */
-    public static class NoOpDataSource implements DataSource {
-        @Override
-        public Connection getConnection() throws SQLException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Connection getConnection(String username, String password) throws SQLException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public PrintWriter getLogWriter() {
-            return null;
-        }
-
-        @Override
-        public void setLogWriter(PrintWriter out) {
-        }
-
-        @Override
-        public void setLoginTimeout(int seconds) {
-        }
-
-        @Override
-        public int getLoginTimeout() {
-            return 0;
-        }
-
-        @Override
-        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-            throw new SQLFeatureNotSupportedException();
-        }
-
-        @Override
-        public <T> T unwrap(Class<T> iface) throws SQLException {
-            throw new SQLException("Not a wrapper for " + iface);
-        }
-
-        @Override
-        public boolean isWrapperFor(Class<?> iface) {
-            return false;
-        }
-    }
 }
