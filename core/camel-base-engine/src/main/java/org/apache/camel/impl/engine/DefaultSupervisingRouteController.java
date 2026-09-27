@@ -750,6 +750,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
         boolean release(RouteHolder route) {
             exceptions.remove(route.getId());
+            // the route is now managed manually, so it is no longer exhausted (and unhealthy) if it was
+            exhausted.remove(route);
             BackOffTimer.Task task = routes.remove(route);
             if (task != null) {
                 LOG.debug("Cancelling restart task for route: {}", route.getId());
