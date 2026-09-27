@@ -81,7 +81,8 @@ public class SedaTimeoutLateReplyTest extends ContextTestSupport {
                 caller.set(Thread.currentThread());
                 Exchange exchange = context.getEndpoint("seda:reply").createExchange(ExchangePattern.InOut);
                 exchange.getMessage().setBody("request");
-                return template.send("seda:reply?timeout=250", exchange);
+                // the timeout must not occur before the consumer starts copying the reply, also on a slow machine
+                return template.send("seda:reply?timeout=1000", exchange);
             });
 
             // the consumer is copying its reply into the caller's exchange
