@@ -103,6 +103,16 @@ counted as inflight and its unit of work not done. The same now happens when the
 An exception thrown from the `after` method of an advice no longer replaces the exception the exchange has already
 failed with. Instead, it is added as a suppressed exception to the existing exception.
 
+=== camel-core - message headers keep the case of their names
+
+A header whose name is the name of a Camel constant in another case, such as `content-type` for
+`Exchange.CONTENT_TYPE` (`Content-Type`) or `camelfilename`, keeps the name it was set with, as it did in Camel 4.20
+and older. From Camel 4.21 to 4.22 the header map stored such a header under the name of the constant, so a header
+set or received as `content-type` was sent on as `Content-Type`. Looking up a header is case-insensitive as before, and
+the first name a header is set with is the one that is kept. Code that iterates the headers and compares their names
+case-sensitively, such as `Exchange.CONTENT_TYPE.equals(key)` or `key.startsWith("Camel")`, no longer matches
+`content-type` or `camelfilename`, as before Camel 4.21.
+
 === @PropertyInject - an invalid property value is an error (Breaking change)
 
 When a property injected with `@PropertyInject` has a value that cannot be converted to the type of the field or

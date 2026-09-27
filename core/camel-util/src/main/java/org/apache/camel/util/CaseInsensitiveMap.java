@@ -56,9 +56,10 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
     private static volatile int knownMask;
 
     /**
-     * Registers a set of well-known header key strings for deduplication. When a key passed to {@link #put} matches one
-     * of these strings (case-insensitive), the canonical reference from this set is stored instead of the caller's
-     * string, reducing memory when many map instances carry the same headers (e.g. deserialized exchanges).
+     * Registers a set of well-known header key strings for deduplication. When a key passed to {@link #put} is equal to
+     * one of these strings, the canonical reference from this set is stored instead of the caller's string, reducing
+     * memory when many map instances carry the same headers (e.g. deserialized exchanges). A key that only differs in
+     * case is stored as given, as the map preserves the original key cases.
      * <p/>
      * This method is intended to be called once during framework startup.
      */
@@ -91,7 +92,8 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
         }
         int idx = tbl[hash & knownMask];
         while (idx != EMPTY) {
-            if (knownEntries[idx].equalsIgnoreCase(key)) {
+            // only an equal key is replaced, so the case of the caller's key is kept
+            if (knownEntries[idx].equals(key)) {
                 return knownEntries[idx];
             }
             idx = knownChainNext[idx];
