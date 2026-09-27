@@ -1255,6 +1255,15 @@ public final class ExchangeHelper {
     }
 
     private static void removeVariables(Exchange exchange, VariableRepository repo, String prefix) {
+        // the route and group repositories only scan the variables of the route or group given in the prefix
+        if (repo instanceof RouteVariableRepository route) {
+            route.removeVariablesWithPrefix(prefix);
+            return;
+        } else if (repo instanceof GroupVariableRepository group) {
+            group.removeVariablesWithPrefix(prefix);
+            return;
+        }
+
         Map<String, Object> variables = null;
         if (repo == null) {
             if (exchange.hasVariables()) {

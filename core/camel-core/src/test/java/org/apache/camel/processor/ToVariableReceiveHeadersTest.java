@@ -65,6 +65,8 @@ class ToVariableReceiveHeadersTest extends ContextTestSupport {
     void testReceiveTwiceRoute() throws Exception {
         getMockEndpoint("mock:route").expectedBodiesReceived("Bye second|200|");
 
+        // route variable resp of another route, which must be kept
+        template.sendBody("direct:route2", "Hello");
         template.sendBody("direct:route", "Hello");
 
         assertMockEndpointsSatisfied();
@@ -72,7 +74,10 @@ class ToVariableReceiveHeadersTest extends ContextTestSupport {
         assertEquals("Bye second", context.getVariable("route:rs:resp"));
         assertEquals(200, context.getVariable("route:header:rs:resp.status"));
         assertNull(context.getVariable("route:header:rs:resp.error"));
-        assertNoErrorHeader("route");
+        // the header variables of another variable of the route, and of the same variable in another route, are kept
+        assertEquals("E42", context.getVariable("route:header:rs:other.error"));
+        assertEquals("E42", context.getVariable("route:header:rs2:resp.error"));
+        assertEquals("Bye first", context.getVariable("route:rs2:resp"));
     }
 
     @Test
@@ -86,7 +91,10 @@ class ToVariableReceiveHeadersTest extends ContextTestSupport {
         assertEquals("Bye second", context.getVariable("group:myGroup:resp"));
         assertEquals(200, context.getVariable("group:header:myGroup:resp.status"));
         assertNull(context.getVariable("group:header:myGroup:resp.error"));
-        assertNoErrorHeader("group");
+        // the header variables of another variable of the group, and of the same variable in another group, are kept
+        assertEquals("E42", context.getVariable("group:header:myGroup:other.error"));
+        assertEquals("E42", context.getVariable("group:header:otherGroup:resp.error"));
+        assertEquals("Bye first", context.getVariable("group:otherGroup:resp"));
     }
 
     private void assertNoErrorHeader(String id) {
@@ -114,13 +122,19 @@ class ToVariableReceiveHeadersTest extends ContextTestSupport {
                         .to("mock:global");
 
                 from("direct:route").routeId("rs")
+                        .setBody(constant("first")).toV("direct:svc", null, "route:other")
                         .setBody(constant("first")).toV("direct:svc", null, "route:resp")
                         .setBody(constant("second")).toV("direct:svc", null, "route:resp")
                         .setBody(simple(
                                 "${variable.route:resp}|${variable.route:header:rs:resp.status}|${variable.route:header:rs:resp.error}"))
                         .to("mock:route");
 
+                from("direct:route2").routeId("rs2")
+                        .setBody(constant("first")).toV("direct:svc", null, "route:resp");
+
                 from("direct:group")
+                        .setBody(constant("first")).toV("direct:svc", null, "group:otherGroup:resp")
+                        .setBody(constant("first")).toV("direct:svc", null, "group:myGroup:other")
                         .setBody(constant("first")).toV("direct:svc", null, "group:myGroup:resp")
                         .setBody(constant("second")).toV("direct:svc", null, "group:myGroup:resp")
                         .setBody(simple(

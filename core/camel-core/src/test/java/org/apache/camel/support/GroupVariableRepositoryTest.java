@@ -104,6 +104,29 @@ public class GroupVariableRepositoryTest {
     }
 
     @Test
+    public void testRemoveVariablesWithPrefix() {
+        repo.setVariable("teamA:foo", "1");
+        repo.setVariable("teamA:foo.a", "2");
+        repo.setVariable("teamA:foo.b", "3");
+        repo.setVariable("teamA:foobar", "4");
+        repo.setVariable("teamB:foo.a", "5");
+
+        repo.removeVariablesWithPrefix("teamA:foo.");
+
+        assertNull(repo.getVariable("teamA:foo.a"));
+        assertNull(repo.getVariable("teamA:foo.b"));
+        assertEquals("1", repo.getVariable("teamA:foo"));
+        assertEquals("4", repo.getVariable("teamA:foobar"));
+        assertEquals("5", repo.getVariable("teamB:foo.a"));
+        assertEquals(3, repo.size());
+
+        // no such group
+        repo.removeVariablesWithPrefix("teamC:foo.");
+        assertEquals(3, repo.size());
+        assertThrows(IllegalArgumentException.class, () -> repo.removeVariablesWithPrefix("noColon"));
+    }
+
+    @Test
     public void testSetNullRemoves() {
         repo.setVariable("teamA:foo", "bar");
         repo.setVariable("teamA:foo", null);
