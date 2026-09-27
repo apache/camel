@@ -420,6 +420,65 @@ public class SourceValidatorBeanRefsTest {
                 .contains("has no package").doesNotContain("//DEPS");
     }
 
+    /** CAMEL-24704: beans written as a map keyed by name declare their names too. */
+    @Test
+    void declaredAsAMapIsFine(@TempDir Path dir) throws IOException {
+        // the type: line is checked against the classpath/directory regardless of list or map form (unrelated to
+        // this task): give it a real sibling class so only the map-form declaredBeans fix is under test here.
+        Files.writeString(dir.resolve("MyAggregator.java"), """
+                package com.example;
+                public class MyAggregator {
+                }
+                """);
+        String declared = """
+                - beans:
+                    myAggregator:
+                      type: "#class:com.example.MyAggregator"
+                      properties:
+                        other: x
+                """ + ROUTE;
+        assertThat(SourceValidator.declaredBeans(declared)).containsExactly("myAggregator");
+        assertThat(SourceValidator.validateYamlBeanRefs(declared,
+                SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"), CATALOG)).isEmpty();
+    }
+
+    /** CAMEL-24704: a nested beans: (routeTemplate) is found by indentation alone, list or map form alike. */
+    @Test
+    void declaredNestedInARouteTemplateIsFine() {
+        String listForm = """
+                - routeTemplate:
+                    id: myTemplate
+                    beans:
+                      - name: myAggregator
+                        type: "#class:com.example.MyAggregator"
+                """;
+        assertThat(SourceValidator.declaredBeans(listForm)).containsExactly("myAggregator");
+
+        String mapForm = """
+                - routeTemplate:
+                    id: myTemplate
+                    beans:
+                      myAggregator:
+                        type: "#class:com.example.MyAggregator"
+                """;
+        assertThat(SourceValidator.declaredBeans(mapForm)).containsExactly("myAggregator");
+    }
+
+    /** CAMEL-24704: a comment before the first map-form bean neither sets the child indent nor is read as a name. */
+    @Test
+    void aCommentBeforeAMapFormBeanIsIgnored() {
+        String content = """
+                - beans:
+                        # a differently indented comment must not set the child indent
+                    myAggregator:
+                      type: "#class:com.example.MyAggregator"
+                    # a comment between beans, at the child indent
+                    other:
+                      type: "#class:com.example.Other"
+                """;
+        assertThat(SourceValidator.declaredBeans(content)).containsExactlyInAnyOrder("myAggregator", "other");
+    }
+
     @Test
     void anInnerClassAsABeanTypeIsNamed(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("Sim.java"), "public class Sim { public static class Leak {} }\n");

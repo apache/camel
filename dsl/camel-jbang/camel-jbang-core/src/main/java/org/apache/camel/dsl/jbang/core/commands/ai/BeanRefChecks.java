@@ -55,6 +55,9 @@ final class BeanRefChecks {
 
     static final Pattern BEAN_TYPE_PATTERN = Pattern.compile("^\\s*type:\\s*[\"']?#class:([\\w.$]+)");
 
+    /** A bean written as a map: the name alone as the key, its properties indented below (CAMEL-24704). */
+    static final Pattern MAP_KEY_PATTERN = Pattern.compile("^(\"[^\"]+\"|'[^']+'|[^\\s:#\"'][^:#]*?):\\s*$");
+
     /** The beans declared under {@code beans:} with a {@code #class:} type, name to fully qualified class name. */
     static Map<String, String> declaredBeanTypes(String content) {
         Map<String, String> types = new LinkedHashMap<>();
@@ -127,7 +130,10 @@ final class BeanRefChecks {
         });
     }
 
-    /** The bean names declared under {@code beans:} in the YAML content. */
+    /**
+     * The bean names declared under {@code beans:} in the YAML content: the canonical list ({@code - name: x}) and,
+     * since CAMEL-24704, a map keyed by bean name.
+     */
     public static Set<String> declaredBeans(String content) {
         Set<String> names = new HashSet<>();
         if (content == null) {
@@ -135,6 +141,7 @@ final class BeanRefChecks {
         }
         String[] lines = content.split("\n", -1);
         int blockIndent = -1;
+        int childIndent = -1;
         for (String line : lines) {
             if (line.isBlank()) {
                 continue;
@@ -143,12 +150,27 @@ final class BeanRefChecks {
             int indent = countLeadingSpaces(line);
             if (blockIndent >= 0 && indent <= blockIndent) {
                 blockIndent = -1;
+                childIndent = -1;
             }
             if (blockIndent < 0) {
                 if (trimmed.equals("- beans:") || trimmed.equals("beans:")) {
                     blockIndent = indent;
+                    childIndent = -1;
                 }
                 continue;
+            }
+            if (trimmed.startsWith("#")) {
+                continue;
+            }
+            if (childIndent < 0) {
+                childIndent = indent;
+            }
+            if (indent == childIndent && !trimmed.startsWith("-")) {
+                Matcher km = MAP_KEY_PATTERN.matcher(trimmed);
+                if (km.find()) {
+                    names.add(unquote(km.group(1)));
+                    continue;
+                }
             }
             Matcher m = BEAN_NAME_PATTERN.matcher(line);
             if (m.find()) {
