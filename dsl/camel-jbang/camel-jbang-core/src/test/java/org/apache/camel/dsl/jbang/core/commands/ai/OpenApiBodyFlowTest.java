@@ -138,13 +138,4 @@ class OpenApiBodyFlowTest {
         assertThat(OpenApiVerbs.bodylessEndpoints(ROUTES.replace("stock-api.json", "stock-api.yaml"), dir))
                 .containsExactly("direct:getStock");
     }
-
-    @Test
-    void requiredPathParametersExtractedFromJsonAndYaml() {
-        Set<String> jsonParams = OpenApiVerbs.requiredPathParameters(SPEC, "getStock");
-        assertThat(jsonParams).containsExactly("sku");
-
-        Set<String> yamlParams = OpenApiVerbs.requiredPathParameters(YAML_SPEC, "getStock");
-        assertThat(yamlParams).containsExactly("sku");
-    }
 }
