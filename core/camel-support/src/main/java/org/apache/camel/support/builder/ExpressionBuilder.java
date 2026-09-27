@@ -175,6 +175,11 @@ public class ExpressionBuilder {
         };
     }
 
+    private static String typeName(Class<?> type) {
+        // the class resolver loads an array type by its canonical name (byte[]) and not by its binary name ([B)
+        return type.isArray() ? type.getCanonicalName() : type.getName();
+    }
+
     /**
      * Returns an expression for the header value with the given name converted to the given type
      * <p/>
@@ -185,7 +190,7 @@ public class ExpressionBuilder {
      * @return            an expression object which will return the header value
      */
     public static <T> Expression headerExpression(final String headerName, final Class<T> type) {
-        return headerExpression(simpleExpression(headerName), constantExpression(type.getName()));
+        return headerExpression(simpleExpression(headerName), constantExpression(typeName(type)));
     }
 
     /**
@@ -318,7 +323,7 @@ public class ExpressionBuilder {
      * @return              an expression object which will return the variable value
      */
     public static <T> Expression variableExpression(final String variableName, final Class<T> type) {
-        return variableExpression(simpleExpression(variableName), constantExpression(type.getName()));
+        return variableExpression(simpleExpression(variableName), constantExpression(typeName(type)));
     }
 
     /**
@@ -1116,6 +1121,7 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 super.init(context);
+                expression.init(context);
                 Language lan = context.resolveLanguage(language);
                 if (lan != null) {
                     pred = lan.createPredicate(value);
@@ -1397,7 +1403,7 @@ public class ExpressionBuilder {
             if (source.startsWith("variable:")) {
                 source = source.substring(9);
             }
-            exp = variableExpression(source);
+            exp = variableExpression(source, true);
         }
         return exp;
     }
@@ -1694,7 +1700,7 @@ public class ExpressionBuilder {
                 if (type != null) {
                     return expression.evaluate(exchange, type);
                 } else {
-                    return expression;
+                    return expression.evaluate(exchange, Object.class);
                 }
             }
 
@@ -1722,7 +1728,7 @@ public class ExpressionBuilder {
                 if (result != null) {
                     return expression.evaluate(exchange, result.getClass());
                 } else {
-                    return expression;
+                    return expression.evaluate(exchange, Object.class);
                 }
             }
 
@@ -1929,14 +1935,17 @@ public class ExpressionBuilder {
                         "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
 
                 StringBuilder sb = new StringBuilder(128);
+                boolean first = true;
                 while (it.hasNext()) {
                     Object o = it.next();
                     if (o != null) {
                         String s = converter.tryConvertTo(String.class, exchange, o);
                         if (s != null) {
-                            if (!sb.isEmpty()) {
+                            // an empty element is still an element that is separated from the others
+                            if (!first) {
                                 sb.append(separator);
                             }
+                            first = false;
                             if (prefix != null) {
                                 sb.append(prefix);
                             }
@@ -2274,7 +2283,10 @@ public class ExpressionBuilder {
                         expression.init(context);
                         if (expression instanceof ConstantExpressionAdapter constantExpressionAdapter) {
                             Object value = constantExpressionAdapter.getValue();
-                            preprocessedExpression.add(String.valueOf(value));
+                            // a null constant adds nothing (as when it is evaluated)
+                            if (value != null) {
+                                preprocessedExpression.add(String.valueOf(value));
+                            }
                         } else {
                             preprocessedExpression.add(expression);
                             constantsOnly = false;
