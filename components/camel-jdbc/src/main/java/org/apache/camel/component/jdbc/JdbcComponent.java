@@ -118,9 +118,12 @@ public class JdbcComponent extends DefaultComponent implements SecretRotationAwa
 
     @Override
     public void onSecretRotation(Object source) throws Exception {
-        if (this.dataSource != null) {
-            DataSourceHelper.evictDataSourceConnections(this.dataSource, source);
-        }
+        DataSourceHelper.evictComponentDataSources(
+                this.dataSource,
+                getCamelContext().getEndpoints(),
+                this,
+                ep -> ep instanceof JdbcEndpoint ? ((JdbcEndpoint) ep).getDataSource() : null,
+                source);
     }
 
     private static boolean isDefaultDataSourceName(String remaining) {

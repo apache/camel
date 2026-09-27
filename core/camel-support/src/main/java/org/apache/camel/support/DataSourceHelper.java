@@ -16,10 +16,17 @@
  */
 package org.apache.camel.support;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
+import org.apache.camel.Component;
+import org.apache.camel.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,18 +41,58 @@ public final class DataSourceHelper {
     }
 
     /**
-     * Evicts stale connections from the given DataSource so that the pool rebuilds them with the rotated credentials.
+     * Collects and evicts stale connections from all DataSources used by a component: the component's own
+     * {@code dataSource} field plus any DataSources held by the component's active endpoints.
+     * <p/>
+     * Identity-based deduplication ensures each DataSource is evicted at most once, even if the same instance is shared
+     * between the component and one or more endpoints.
+     *
+     * @param componentDataSource the component-level DataSource (may be null)
+     * @param endpoints           the component's active endpoints (from {@code getCamelContext().getEndpoints()})
+     * @param componentInstance   the component instance, used to filter endpoints
+     *                            ({@code endpoint.getComponent() == this})
+     * @param endpointDsExtractor a function to extract the DataSource from an endpoint (may return null)
+     * @param source              an opaque label for the rotation event (used in log messages only)
+     */
+    public static void evictComponentDataSources(
+            DataSource componentDataSource,
+            Iterable<Endpoint> endpoints,
+            Component componentInstance,
+            Function<Endpoint, DataSource> endpointDsExtractor,
+            Object source) {
+
+        Set<DataSource> dataSources = Collections.newSetFromMap(new IdentityHashMap<>());
+        if (componentDataSource != null) {
+            dataSources.add(componentDataSource);
+        }
+        if (endpoints != null) {
+            for (Endpoint ep : endpoints) {
+                if (ep.getComponent() == componentInstance) {
+                    DataSource ds = endpointDsExtractor.apply(ep);
+                    if (ds != null) {
+                        dataSources.add(ds);
+                    }
+                }
+            }
+        }
+        for (DataSource ds : dataSources) {
+            evictDataSourceConnections(ds, source);
+        }
+    }
+
+    /**
+     * Evicts stale connections from the given DataSource's connection pool.
      * <p/>
      * HikariCP is tried first via reflection (so the caller does not need a compile-time dependency on it). Any
-     * DataSource that does not expose {@code getHikariPoolMXBean()} is left untouched — the pool will pick up the new
-     * credentials on its own reconnect cycle when existing connections expire.
+     * DataSource that does not expose {@code getHikariPoolMXBean()} is left untouched — a log message is emitted and
+     * the pool will naturally replace connections as they expire or are validated.
      * <p/>
      * <b>Important:</b> this method only evicts existing connections from the pool. It does <em>not</em> update the
      * pool's credentials. For pools configured with a static password (e.g. Spring Boot
-     * {@code spring.datasource.password}, Quarkus {@code quarkus.datasource.jdbc.url}), the pool will re-open
-     * connections using the <em>old</em> credentials unless the credentials provider resolves them dynamically (e.g.
-     * {@code HikariCredentialsProvider}, the AWS JDBC wrapper secrets plugin, or a custom {@code DataSource} that
-     * fetches credentials from a vault at connect time).
+     * {@code spring.datasource.password}), the pool will re-open connections using the <em>old</em> credentials unless
+     * the credentials are resolved dynamically (e.g. {@code HikariCredentialsProvider}, the AWS JDBC wrapper secrets
+     * plugin, or a custom {@code DataSource} that fetches credentials from a vault at connect time). Note that Quarkus
+     * uses Agroal by default, not HikariCP, so this eviction does not apply to Quarkus out of the box.
      *
      * @param ds     the DataSource whose connections should be evicted
      * @param source an opaque label for the rotation event (used in log messages only)
@@ -68,12 +115,16 @@ public final class DataSourceHelper {
             return;
         } catch (NoSuchMethodException e) {
             // Not a HikariCP DataSource — fall through to generic handling
+        } catch (InvocationTargetException e) {
+            LOG.warn("Secret rotation (source={}): softEvictConnections() failed on {}", source, ds,
+                    e.getCause() != null ? e.getCause() : e);
+            return;
         } catch (Exception e) {
-            LOG.warn("Secret rotation (source={}): softEvictConnections() failed on {}: {}", source, ds, e.getMessage());
+            LOG.warn("Secret rotation (source={}): softEvictConnections() failed on {}", source, ds, e);
+            return;
         }
 
         // Generic fallback: log that the pool was not explicitly evicted.
-        // The pool will pick up the new credentials when existing connections expire naturally.
         LOG.info(
                 "Secret rotation (source={}): DataSource {} does not support HikariCP pool eviction; "
                  + "existing connections will be replaced as they expire or are validated",

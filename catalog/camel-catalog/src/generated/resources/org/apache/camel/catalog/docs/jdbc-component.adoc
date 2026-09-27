@@ -340,11 +340,13 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
 == Secret Rotation
 
 The JDBC component implements `SecretRotationAware`. When a secret rotation event is triggered
-(e.g. by a vault provider), the component evicts stale connections from the component-level
-DataSource's connection pool so that new connections are created with the updated credentials.
+(e.g. by a vault provider), the component evicts stale connections from its connection pools.
+This covers the component-level DataSource as well as any DataSources resolved by active endpoints
+(e.g. `jdbc:myDs`), with identity-based deduplication so each pool is evicted at most once.
 
 Currently only HikariCP pools are supported for active eviction via `softEvictConnections()`.
-Other pool implementations will pick up the new credentials when existing connections expire naturally.
+Other pool implementations (including Quarkus Agroal) are not actively evicted — existing connections
+will be replaced as they expire or are validated by the pool.
 
 IMPORTANT: The eviction only closes existing connections — it does *not* update the pool's credentials.
 For pools configured with a static password (e.g. Spring Boot `spring.datasource.password`),

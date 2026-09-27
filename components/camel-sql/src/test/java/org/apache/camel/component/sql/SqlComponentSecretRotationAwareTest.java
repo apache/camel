@@ -87,6 +87,28 @@ class SqlComponentSecretRotationAwareTest {
     }
 
     @Test
+    void onSecretRotation_withEndpointDataSource_evictsEndpointConnections() throws Exception {
+        // Arrange: DataSource only on the endpoint (dataSource=#myDs case)
+        HikariLikeDataSource endpointDs = new HikariLikeDataSource();
+
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        SqlComponent component = new SqlComponent();
+        component.setCamelContext(ctx);
+        // component.dataSource stays null
+
+        SqlEndpoint endpoint = new SqlEndpoint("sql:select 1", component);
+        endpoint.setDataSource(endpointDs);
+        ctx.addEndpoint("sql:select 1", endpoint);
+
+        // Act
+        component.onSecretRotation("vault-rotation");
+
+        // Assert
+        assertTrue(endpointDs.mxBean.softEvictCalled.get(),
+                "Endpoint-owned DataSource should have been soft-evicted");
+    }
+
+    @Test
     void onSecretRotation_withoutDataSource_doesNotThrow() throws Exception {
         // Arrange: no DataSource on component
         SqlComponent component = new SqlComponent();

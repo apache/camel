@@ -87,6 +87,27 @@ class JdbcComponentSecretRotationAwareTest {
     }
 
     @Test
+    void onSecretRotation_withEndpointDataSource_evictsEndpointConnections() throws Exception {
+        // Arrange: DataSource only on the endpoint (not on the component — the typical jdbc:myDs case)
+        HikariLikeDataSource endpointDs = new HikariLikeDataSource();
+
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        JdbcComponent component = new JdbcComponent();
+        component.setCamelContext(ctx);
+        // component.dataSource stays null — matches the default jdbc:myDs usage
+
+        JdbcEndpoint endpoint = new JdbcEndpoint("jdbc:myDs", component, endpointDs);
+        ctx.addEndpoint("jdbc:myDs", endpoint);
+
+        // Act
+        component.onSecretRotation("vault-rotation");
+
+        // Assert
+        assertTrue(endpointDs.mxBean.softEvictCalled.get(),
+                "Endpoint-owned DataSource should have been soft-evicted");
+    }
+
+    @Test
     void onSecretRotation_withoutDataSource_doesNotThrow() throws Exception {
         // Arrange: no DataSource on component
         JdbcComponent component = new JdbcComponent();

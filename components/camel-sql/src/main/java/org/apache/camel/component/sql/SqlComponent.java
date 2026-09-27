@@ -155,9 +155,12 @@ public class SqlComponent extends HealthCheckComponent implements SecretRotation
 
     @Override
     public void onSecretRotation(Object source) throws Exception {
-        if (this.dataSource != null) {
-            DataSourceHelper.evictDataSourceConnections(this.dataSource, source);
-        }
+        DataSourceHelper.evictComponentDataSources(
+                this.dataSource,
+                getCamelContext().getEndpoints(),
+                this,
+                ep -> ep instanceof DefaultSqlEndpoint ? ((DefaultSqlEndpoint) ep).getDataSource() : null,
+                source);
     }
 
     /**
