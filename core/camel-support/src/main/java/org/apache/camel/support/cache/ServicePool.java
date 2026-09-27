@@ -97,8 +97,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
             stopAndRemove(s);
         } else {
-            // the pool has been stopped, which stopped its idle services, so this service is either stopped already
-            // or in use, and then it is stopped when it is released (the pool is gone), not while it is in use
+            // no pool for this endpoint (for example it was stopped, which stopped its idle services, or the
+            // endpoint of the service is not the instance used as the pool key): do not stop the service here, as it
+            // may be in use or idle in a live pool; a service in use is stopped when it is released without a pool
             LOG.trace("Evicted service: {} is no longer in a pool", s);
         }
     }

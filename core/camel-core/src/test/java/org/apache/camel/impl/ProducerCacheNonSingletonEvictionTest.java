@@ -47,6 +47,8 @@ class ProducerCacheNonSingletonEvictionTest extends ContextTestSupport {
     private DefaultProducerCache cache;
     private Endpoint a;
     private Endpoint b;
+    private Endpoint c;
+    private Endpoint d;
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -60,6 +62,8 @@ class ProducerCacheNonSingletonEvictionTest extends ContextTestSupport {
         context.addComponent("pooled", new PooledComponent());
         a = context.getEndpoint("pooled:a");
         b = context.getEndpoint("pooled:b");
+        c = context.getEndpoint("pooled:c");
+        d = context.getEndpoint("pooled:d");
         cache = new DefaultProducerCache(this, context, 2);
         cache.start();
     }
@@ -113,6 +117,54 @@ class ProducerCacheNonSingletonEvictionTest extends ContextTestSupport {
         assertTrue(next2.isStarted(), "Acquired producer should be started");
         cache.releaseProducer(a, next1);
         cache.releaseProducer(a, next2);
+    }
+
+    @Test
+    void testStopPoolWhileProducersInUse() {
+        // b1 is idle in the pool of endpoint b; a1 and a2 are in use and evict b1 from the cache
+        cache.releaseProducer(b, acquire(b));
+        PooledProducer a1 = acquire(a);
+        PooledProducer a2 = acquire(a);
+        cache.cleanUp();
+
+        // c1 evicts a1, and with three pools for a cache size of 2 the pool of endpoint a is stopped
+        cache.releaseProducer(c, acquire(c));
+        cache.cleanUp();
+        assertTrue(a1.isStarted(), "Producer should not be stopped while it is in use");
+        assertTrue(a2.isStarted(), "Producer should not be stopped while it is in use");
+
+        // d1 evicts a2, whose pool no longer exists
+        cache.releaseProducer(d, acquire(d));
+        cache.cleanUp();
+        assertTrue(a2.isStarted(), "Producer should not be stopped while it is in use");
+
+        // when they are released, they are stopped instead of being pooled again
+        cache.releaseProducer(a, a1);
+        cache.releaseProducer(a, a2);
+        assertTrue(a1.isStopped(), "Producer of a stopped pool should be stopped when it is released");
+        assertTrue(a2.isStopped(), "Producer of a stopped pool should be stopped when it is released");
+
+        PooledProducer next = acquire(a);
+        assertNotSame(a1, next);
+        assertNotSame(a2, next);
+        assertTrue(next.isStarted(), "Acquired producer should be started");
+        cache.releaseProducer(a, next);
+    }
+
+    @Test
+    void testStopPoolWithEvictedIdleProducer() {
+        // b1 is idle in the pool of endpoint b, a1 is in use
+        PooledProducer b1 = acquire(b);
+        cache.releaseProducer(b, b1);
+        PooledProducer a1 = acquire(a);
+
+        // c1 evicts b1, and with three pools for a cache size of 2 the pool of endpoint b is stopped,
+        // which must stop the evicted idle producer as the pool is no longer cleaned up afterwards
+        cache.releaseProducer(c, acquire(c));
+        cache.cleanUp();
+        assertTrue(b1.isStopped(), "Evicted idle producer of a stopped pool should be stopped");
+        assertTrue(a1.isStarted(), "Producer should not be stopped while it is in use");
+        cache.releaseProducer(a, a1);
     }
 
     private PooledProducer acquire(Endpoint endpoint) {
