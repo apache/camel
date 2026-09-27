@@ -71,6 +71,12 @@ public class OpaEndpoint extends DefaultEndpoint {
         super.doStart();
         String mode = configuration.getEvaluationMode();
         if (WASM_MODE.equalsIgnoreCase(mode)) {
+            if (configuration.isBatch()) {
+                throw new IllegalArgumentException(
+                        "batch is not supported with evaluationMode=wasm: it saves the per-element HTTP round-trip via"
+                                                   + " OPA's batch API, which has no meaning for in-process evaluation."
+                                                   + " Use evaluationMode=rest.");
+            }
             warnAboutIgnoredServerOptions();
             evaluator = createWasmEvaluator();
         } else if (!REST_MODE.equalsIgnoreCase(mode)) {
@@ -121,13 +127,20 @@ public class OpaEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * {@code serverUrl} and {@code bearerToken} address and authenticate to an OPA server, of which there is none in
-     * {@code wasm} mode, so they are ignored - a startup warning is clearer than silence for an operator who set one
-     * and expects it to take effect. {@code failOpen} is deliberately not among these: a {@code wasm} evaluation can
-     * still fail (a busy pool, a bad bundle), and {@code failOpen} governs that outcome exactly as in {@code rest}
-     * mode, so it applies in both.
+     * {@code opaClient}, {@code serverUrl} and {@code bearerToken} reach and authenticate to an OPA server, of which
+     * there is none in {@code wasm} mode, so they are ignored - a startup warning is clearer than silence for an
+     * operator who set one and expects it to take effect. {@code failOpen} is deliberately not among these: a
+     * {@code wasm} evaluation can still fail (a busy pool, a bad bundle), and {@code failOpen} governs that outcome
+     * exactly as in {@code rest} mode, so it applies in both.
+     * <p/>
+     * Kept in step with {@code OpaSecurityPolicy.warnIgnoredServerOptions}: the two configure the same evaluators, so
+     * an option that is silently dropped by one and warned about by the other is a trap for anyone moving a policy path
+     * between the producer and {@code .policy(...)}.
      */
     private void warnAboutIgnoredServerOptions() {
+        if (configuration.getOpaClient() != null) {
+            LOG.warn("opaClient is ignored when evaluationMode=wasm: the policy is evaluated in-process");
+        }
         if (ObjectHelper.isNotEmpty(configuration.getBearerToken())) {
             LOG.warn("bearerToken is ignored when evaluationMode=wasm: there is no server to authenticate to");
         }
@@ -139,28 +152,11 @@ public class OpaEndpoint extends DefaultEndpoint {
     }
 
     private OpaPolicyEvaluator createWasmEvaluator() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getPolicyBundle())) {
-            throw new IllegalArgumentException(
-                    "policyBundle is required when evaluationMode=wasm; build one with"
-                                               + " opa build -t wasm -e <entrypoint> <policy.rego>");
-        }
-        if (configuration.getPoolSize() < 1) {
-            // OpaPolicyPool.create rejects this too, but as "maxSize must be positive" - naming its own parameter
-            // rather than the option the operator set, on a component where poolSize is the only pool they see
-            throw new IllegalArgumentException(
-                    "poolSize must be at least 1 when evaluationMode=wasm, was " + configuration.getPoolSize());
-        }
-        // the entrypoint is fixed at build time and is not the same thing as a data path, but opa build names it
-        // after the rule, so the policy path is the right default
-        String entrypoint = ObjectHelper.isNotEmpty(configuration.getEntrypoint())
-                ? configuration.getEntrypoint() : policyPath;
-        OpaWasmEvaluator.Bundle bundle
-                = OpaWasmEvaluator.loadPolicy(getCamelContext(), configuration.getPolicyBundle());
-        return new OpaWasmEvaluator(
-                bundle.wasm(), bundle.data(), entrypoint, configuration.getPoolSize(),
-                configuration.getBorrowTimeout(), policyPath, configuration.getAllowKey(),
-                configuration.getIncludeHeaders(), configuration.getIncludeProperties(),
-                configuration.isIncludeBody(), configuration.isFailOpen());
+        return OpaWasmEvaluator.create(
+                getCamelContext(), configuration.getPolicyBundle(), configuration.getEntrypoint(),
+                configuration.getPoolSize(), configuration.getBorrowTimeout(), policyPath, configuration.getAllowKey(),
+                configuration.getIncludeHeaders(), configuration.getIncludeProperties(), configuration.isIncludeBody(),
+                configuration.isFailOpen());
     }
 
     @Override

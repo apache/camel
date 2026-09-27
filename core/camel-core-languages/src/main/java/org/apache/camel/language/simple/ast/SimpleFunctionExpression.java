@@ -136,12 +136,42 @@ public class SimpleFunctionExpression extends LiteralExpression {
         };
     }
 
+    /** The function without its leading {@code !}, answering the opposite of what it answers (CAMEL-24984). */
+    private Expression createNegatedExpression(CamelContext camelContext, String function) {
+        final String name = function.substring(1).trim();
+        final Expression exp = doCreateSimpleExpression(camelContext, name);
+        return new Expression() {
+            @Override
+            public void init(CamelContext context) {
+                exp.init(context);
+            }
+
+            @Override
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                Object value = exp.evaluate(exchange, Object.class);
+                // the same rule the language uses for a predicate on its own (CAMEL-24984)
+                boolean matches = ObjectHelper.evaluateValuePredicate(value);
+                return exchange.getContext().getTypeConverter().convertTo(type, exchange, !matches);
+            }
+
+            @Override
+            public String toString() {
+                return "!${" + name + "}";
+            }
+        };
+    }
+
     private Expression doCreateSimpleExpression(CamelContext camelContext, String function) {
         // ${body != null && body.size() > 0}: the braces hold a predicate, which is what they hold in EL,
         // Groovy and a JavaScript template, so read it as one (CAMEL-24921)
         Expression predicate = createPredicateExpression(camelContext, function);
         if (predicate != null) {
             return predicate;
+        }
+        // ${!body.isEmpty()}: a ! in front of a single function negates what it answers. It is read after the
+        // predicate above, so a ! in ${!a && b} negates a and not the whole predicate (CAMEL-24984)
+        if (function.length() > 1 && function.charAt(0) == '!') {
+            return createNegatedExpression(camelContext, function);
         }
         // return the function directly if we can create function without analyzing the prefix
         Expression answer = DIRECT_FACTORY.createFunction(camelContext, function, token.getIndex());

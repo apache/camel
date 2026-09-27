@@ -59,6 +59,7 @@ public final class DateTimeConverter {
             case "MINUTES" -> TimeUnit.MINUTES;
             case "SECONDS" -> TimeUnit.SECONDS;
             case "MILLISECONDS" -> TimeUnit.MILLISECONDS;
+            case "MICROSECONDS" -> TimeUnit.MICROSECONDS;
             case "NANOSECONDS" -> TimeUnit.NANOSECONDS;
             default -> throw new IllegalStateException("Unexpected value: " + unit);
         };

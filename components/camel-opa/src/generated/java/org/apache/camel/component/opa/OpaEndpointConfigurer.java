@@ -25,6 +25,7 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowkey":
         case "allowKey": target.getConfiguration().setAllowKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "batch": target.getConfiguration().setBatch(property(camelContext, boolean.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "borrowtimeout":
@@ -70,6 +71,7 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowkey":
         case "allowKey": return java.lang.String.class;
+        case "batch": return boolean.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
         case "borrowtimeout":
@@ -111,6 +113,7 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowkey":
         case "allowKey": return target.getConfiguration().getAllowKey();
+        case "batch": return target.getConfiguration().isBatch();
         case "bearertoken":
         case "bearerToken": return target.getConfiguration().getBearerToken();
         case "borrowtimeout":

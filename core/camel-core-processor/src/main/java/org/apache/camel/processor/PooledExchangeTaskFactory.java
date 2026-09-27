@@ -23,8 +23,10 @@ import org.apache.camel.spi.PooledObjectFactory;
 /**
  * Factory to create {@link PooledExchangeTask}.
  *
- * @see PooledExchangeTask
+ * @see        PooledExchangeTask
+ * @deprecated Exchange pooling is deprecated and will be removed in a future release.
  */
+@Deprecated(since = "4.23.0")
 public interface PooledExchangeTaskFactory extends PooledObjectFactory<PooledExchangeTask> {
 
     /**

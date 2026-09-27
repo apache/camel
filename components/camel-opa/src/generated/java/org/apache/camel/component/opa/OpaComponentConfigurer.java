@@ -34,6 +34,7 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "allowKey": getOrCreateConfiguration(target).setAllowKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "batch": getOrCreateConfiguration(target).setBatch(property(camelContext, boolean.class, value)); return true;
         case "bearertoken":
         case "bearerToken": getOrCreateConfiguration(target).setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "borrowtimeout":
@@ -88,6 +89,7 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "allowKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "batch": return boolean.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
         case "borrowtimeout":
@@ -138,6 +140,7 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "allowKey": return getOrCreateConfiguration(target).getAllowKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "batch": return getOrCreateConfiguration(target).isBatch();
         case "bearertoken":
         case "bearerToken": return getOrCreateConfiguration(target).getBearerToken();
         case "borrowtimeout":

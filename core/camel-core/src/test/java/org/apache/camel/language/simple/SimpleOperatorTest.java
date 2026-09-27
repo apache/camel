@@ -659,6 +659,20 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    void testCompareDecimalWithInteger() {
+        exchange.getIn().setHeader("amount", new BigDecimal("100.50"));
+        exchange.getIn().setHeader("price", 2.5d);
+        assertPredicate("${header.amount} > 100", true);
+        assertPredicate("${header.amount} == 100", false);
+        assertPredicate("${header.amount} != 100", true);
+        assertPredicate("${header.amount} <= 100", false);
+        assertPredicate("${header.price} > 2", true);
+        assertPredicate("${header.price} == 2", false);
+        assertPredicate("${header.price} range '1..2'", false);
+        assertPredicate("${header.price} range '2..3'", true);
+    }
+
+    @Test
     public void testRange() {
         assertPredicate("${in.header.bar} range '100..200'", true);
         assertPredicate("${in.header.bar} range '200..300'", false);

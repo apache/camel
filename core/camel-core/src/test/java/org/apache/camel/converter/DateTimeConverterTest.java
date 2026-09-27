@@ -59,5 +59,6 @@ public class DateTimeConverterTest extends ContextTestSupport {
     public void testToTimeUnit() {
         assertEquals(TimeUnit.DAYS, context.getTypeConverter().convertTo(TimeUnit.class, "DAYS"));
         assertEquals(TimeUnit.MILLISECONDS, context.getTypeConverter().convertTo(TimeUnit.class, "MILLISECONDS"));
+        assertEquals(TimeUnit.MICROSECONDS, context.getTypeConverter().convertTo(TimeUnit.class, "MICROSECONDS"));
     }
 }

@@ -55,6 +55,12 @@
             <artifactId>camel-tooling-model</artifactId>
         </dependency>
 
+        <!-- required logging api dependency -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>

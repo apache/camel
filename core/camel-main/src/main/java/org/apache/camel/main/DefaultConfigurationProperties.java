@@ -145,9 +145,12 @@ public abstract class DefaultConfigurationProperties<T> {
     private String groovyScriptPattern = "classpath:camel-groovy/*,classpath:camel-groovy-compiled/*";
     @Metadata(label = "advanced")
     private boolean groovyPreloadCompiled;
+    @Deprecated(since = "4.23.0")
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
+    @Deprecated(since = "4.23.0")
     private int exchangeFactoryCapacity = 100;
+    @Deprecated(since = "4.23.0")
     private boolean exchangeFactoryStatisticsEnabled;
     @Metadata(enums = "xml,yaml,json,png")
     private String dumpRoutes;
@@ -1539,6 +1542,10 @@ public abstract class DefaultConfigurationProperties<T> {
         this.groovyPreloadCompiled = groovyPreloadCompiled;
     }
 
+    /**
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
+     */
+    @Deprecated(since = "4.23.0")
     public String getExchangeFactory() {
         return exchangeFactory;
     }
@@ -1547,32 +1554,48 @@ public abstract class DefaultConfigurationProperties<T> {
      * Controls whether to pool (reuse) exchanges or create new exchanges (prototype). Using pooled will reduce JVM
      * garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives. The
      * default is prototype mode.
+     *
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
      */
+    @Deprecated(since = "4.23.0")
     public void setExchangeFactory(String exchangeFactory) {
         this.exchangeFactory = exchangeFactory;
     }
 
     /**
      * The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100.
+     *
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
      */
+    @Deprecated(since = "4.23.0")
     public int getExchangeFactoryCapacity() {
         return exchangeFactoryCapacity;
     }
 
     /**
      * The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100.
+     *
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
      */
+    @Deprecated(since = "4.23.0")
     public void setExchangeFactoryCapacity(int exchangeFactoryCapacity) {
         this.exchangeFactoryCapacity = exchangeFactoryCapacity;
     }
 
+    /**
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
+     */
+    @Deprecated(since = "4.23.0")
     public boolean isExchangeFactoryStatisticsEnabled() {
         return exchangeFactoryStatisticsEnabled;
     }
 
     /**
      * Configures whether statistics is enabled on exchange factory.
+     *
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
      */
+    @Deprecated(since = "4.23.0")
     public void setExchangeFactoryStatisticsEnabled(boolean exchangeFactoryStatisticsEnabled) {
         this.exchangeFactoryStatisticsEnabled = exchangeFactoryStatisticsEnabled;
     }
@@ -2813,7 +2836,10 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Controls whether to pool (reuse) exchanges or create new fresh exchanges (default). Using pooled will reduce JVM
      * garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives.
+     *
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
      */
+    @Deprecated(since = "4.23.0")
     public T withExchangeFactory(String exchangeFactory) {
         this.exchangeFactory = exchangeFactory;
         return (T) this;
@@ -2821,7 +2847,10 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100.
+     *
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
      */
+    @Deprecated(since = "4.23.0")
     public T withExchangeFactoryCapacity(int exchangeFactoryCapacity) {
         this.exchangeFactoryCapacity = exchangeFactoryCapacity;
         return (T) this;
@@ -2829,7 +2858,10 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * Configures whether statistics is enabled on exchange factory.
+     *
+     * @deprecated Exchange pooling is deprecated and will be removed in a future release.
      */
+    @Deprecated(since = "4.23.0")
     public T withExchangeFactoryStatisticsEnabled(boolean exchangeFactoryStatisticsEnabled) {
         this.exchangeFactoryStatisticsEnabled = exchangeFactoryStatisticsEnabled;
         return (T) this;

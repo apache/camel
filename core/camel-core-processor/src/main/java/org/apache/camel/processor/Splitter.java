@@ -292,8 +292,7 @@ public class Splitter extends MulticastProcessor {
         // tracks individual (raw) item count, independent of grouping
         private final AtomicInteger rawItemCount = new AtomicInteger();
         // tracks whether the primary (processing) iterator has been created;
-        // subsequent iterators (e.g. the drain in MulticastProcessor.doDone)
-        // must not update the watermark count (CAMEL-24139)
+        // any subsequent iterator must not update the watermark count (CAMEL-24139)
         private boolean primaryIteratorCreated;
 
         private SplitterIterable(Exchange exchange, Object value) {
@@ -363,7 +362,7 @@ public class Splitter extends MulticastProcessor {
         @Override
         public Iterator<ProcessorExchangePair> iterator() {
             // only the first (primary) iterator tracks watermark count;
-            // subsequent iterators (drain in doDone) must not inflate it (CAMEL-24139)
+            // subsequent iterators must not inflate it (CAMEL-24139)
             boolean isPrimary = !primaryIteratorCreated;
             primaryIteratorCreated = true;
 
@@ -440,7 +439,7 @@ public class Splitter extends MulticastProcessor {
                             }
                         }
                         // eagerly update watermark count for items actually routed (primary iterator only)
-                        // so the drain loop in MulticastProcessor.doDone cannot inflate it (CAMEL-24139)
+                        // so a subsequent iterator cannot inflate it (CAMEL-24139)
                         if (isPrimary && resumeStrategy != null && watermarkKey != null && watermarkExpression == null) {
                             original.setProperty(SPLIT_WATERMARK_COUNT, rawItemCount.get());
                         }

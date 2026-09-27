@@ -22,8 +22,10 @@ import org.apache.camel.Exchange;
 /**
  * A task that EIPs and internal routing engine uses to store state when processing an {@link Exchange}.
  *
- * @see org.apache.camel.processor.PooledExchangeTaskFactory
+ * @see        org.apache.camel.processor.PooledExchangeTaskFactory
+ * @deprecated since 4.23.0 - Exchange pooling is deprecated and will be removed in a future release.
  */
+@Deprecated(since = "4.23.0")
 public interface PooledExchangeTask extends Runnable {
 
     /**

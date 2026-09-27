@@ -46,6 +46,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "iggyheaderoptions":
+        case "iggyHeaderOptions": target.getConfiguration().setIggyHeaderOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxtopicsize":
@@ -63,8 +65,6 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pollingstrategy":
         case "pollingStrategy": target.getConfiguration().setPollingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.getConfiguration().setPort(property(camelContext, int.class, value)); return true;
-        case "replicationfactor":
-        case "replicationFactor": target.getConfiguration().setReplicationFactor(property(camelContext, java.lang.Short.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": target.getConfiguration().setShutdownTimeout(property(camelContext, int.class, value)); return true;
         case "sslcontextparameters":
@@ -110,6 +110,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "host": return java.lang.String.class;
+        case "iggyheaderoptions":
+        case "iggyHeaderOptions": return java.util.Map.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxtopicsize":
@@ -127,8 +129,6 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pollingstrategy":
         case "pollingStrategy": return java.lang.String.class;
         case "port": return int.class;
-        case "replicationfactor":
-        case "replicationFactor": return java.lang.Short.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return int.class;
         case "sslcontextparameters":
@@ -175,6 +175,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "host": return target.getConfiguration().getHost();
+        case "iggyheaderoptions":
+        case "iggyHeaderOptions": return target.getConfiguration().getIggyHeaderOptions();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxtopicsize":
@@ -192,8 +194,6 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pollingstrategy":
         case "pollingStrategy": return target.getConfiguration().getPollingStrategy();
         case "port": return target.getConfiguration().getPort();
-        case "replicationfactor":
-        case "replicationFactor": return target.getConfiguration().getReplicationFactor();
         case "shutdowntimeout":
         case "shutdownTimeout": return target.getConfiguration().getShutdownTimeout();
         case "sslcontextparameters":
@@ -209,6 +209,15 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "tlsenabled":
         case "tlsEnabled": return target.getConfiguration().isTlsEnabled();
         case "username": return target.getConfiguration().getUsername();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "iggyheaderoptions":
+        case "iggyHeaderOptions": return java.lang.String.class;
         default: return null;
         }
     }

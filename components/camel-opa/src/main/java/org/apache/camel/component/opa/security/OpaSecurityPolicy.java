@@ -30,6 +30,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.opa.OpaHttpClient;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
 import org.apache.camel.component.opa.OpaRestEvaluator;
+import org.apache.camel.component.opa.OpaWasmEvaluator;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -57,7 +58,11 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpaSecurityPolicy.class);
 
-    private String serverUrl = "http://localhost:8181";
+    private static final String WASM_MODE = "wasm";
+    private static final String REST_MODE = "rest";
+    private static final String DEFAULT_SERVER_URL = "http://localhost:8181";
+
+    private String serverUrl = DEFAULT_SERVER_URL;
     private String policyPath;
     private String allowKey = "allow";
     private String includeHeaders = "*";
@@ -65,6 +70,11 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     private boolean includeBody;
     private String bearerToken;
     private boolean failOpen;
+    private String evaluationMode = REST_MODE;
+    private String policyBundle;
+    private String entrypoint;
+    private int poolSize = 8;
+    private long borrowTimeout = 30000;
     private OPAClient opaClient;
 
     private boolean healthCheckEnabled = true;
@@ -92,20 +102,10 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         this.camelContext = route.getCamelContext();
         if (evaluator == null) {
             StringHelper.notEmpty(policyPath, "policyPath", this);
-            OpaHttpClient transport = null;
-            if (opaClient == null) {
-                // createClient moved to OpaRestEvaluator when the evaluator became an abstract base
-                sslContext = createSslContext(route.getCamelContext());
-                transport = OpaRestEvaluator.createTransport(
-                        bearerToken, connectionTimeout, requestTimeout, sslContext);
-                opaClient = OpaRestEvaluator.createClient(serverUrl, transport);
-                ownsClient = true;
-            }
-            evaluator = new OpaRestEvaluator(
-                    opaClient, transport, policyPath, allowKey, includeHeaders, includeProperties, includeBody,
-                    failOpen);
-            // a Policy has no stop hook of its own, so the transport would outlive the routes it was built for.
-            // Registering the evaluator as a service hands its close() to the context's shutdown
+            evaluator = buildEvaluator(route.getCamelContext());
+            // a Policy has no stop hook of its own, so the evaluator - its HTTP transport in rest mode, or its
+            // WebAssembly instance pool in wasm mode - would outlive the routes it was built for. Registering it as a
+            // service hands its close() to the context's shutdown.
             try {
                 route.getCamelContext().addService(evaluator);
             } catch (Exception e) {
@@ -115,6 +115,60 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         // The health check is registered and unregistered from the wrapped processors' lifecycle
         // (onProcessorStart/onProcessorStop), not here: beforeWrap does not run again when a route is merely
         // restarted, so a check registered here would be left behind when the guarded routes stop (CAMEL-24751).
+        // In wasm mode nothing sets ownsClient, so registerHealthCheck skips anyway - the policy is evaluated
+        // in-process and there is no server to probe (consistent with CAMEL-24743).
+    }
+
+    /**
+     * Builds the evaluator for the configured {@code evaluationMode}. Both share {@link OpaPolicyEvaluator}, so the
+     * decision contract - the {@code CamelOpaDecision} headers and a fail-closed default - is identical whichever
+     * engine runs.
+     */
+    private OpaPolicyEvaluator buildEvaluator(CamelContext camelContext) {
+        if (WASM_MODE.equalsIgnoreCase(evaluationMode)) {
+            warnIgnoredServerOptions();
+            try {
+                return OpaWasmEvaluator.create(camelContext, policyBundle, entrypoint, poolSize, borrowTimeout,
+                        policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+            } catch (RuntimeException e) {
+                // the validation messages (policyBundle, poolSize) already read correctly; do not bury them
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Could not load the wasm policy bundle for policy " + policyPath, e);
+            }
+        }
+        if (!REST_MODE.equalsIgnoreCase(evaluationMode)) {
+            throw new IllegalArgumentException(
+                    "Unknown evaluationMode '" + evaluationMode + "'; expected one of " + REST_MODE + ", " + WASM_MODE);
+        }
+        OpaHttpClient transport = null;
+        if (opaClient == null) {
+            // createClient moved to OpaRestEvaluator when the evaluator became an abstract base
+            sslContext = createSslContext(camelContext);
+            transport = OpaRestEvaluator.createTransport(bearerToken, connectionTimeout, requestTimeout, sslContext);
+            opaClient = OpaRestEvaluator.createClient(serverUrl, transport);
+            ownsClient = true;
+        }
+        return new OpaRestEvaluator(
+                opaClient, transport, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+    }
+
+    /**
+     * Warns at startup when options that only make sense for the REST engine are set in {@code wasm} mode, matching
+     * {@code OpaEndpoint.warnAboutIgnoredServerOptions} so both entry points behave alike. {@code failOpen} is not
+     * among them - it still governs a {@code wasm} evaluation failure. {@code serverUrl}, {@code bearerToken} and an
+     * injected {@code opaClient} address, authenticate to or replace a server there is none of in {@code wasm} mode.
+     */
+    private void warnIgnoredServerOptions() {
+        if (opaClient != null) {
+            LOG.warn("opaClient is ignored when evaluationMode=wasm: the policy is evaluated in-process");
+        }
+        if (ObjectHelper.isNotEmpty(bearerToken)) {
+            LOG.warn("bearerToken is ignored when evaluationMode=wasm: there is no server to authenticate to");
+        }
+        if (ObjectHelper.isNotEmpty(serverUrl) && !DEFAULT_SERVER_URL.equals(serverUrl)) {
+            LOG.warn("serverUrl '{}' is ignored when evaluationMode=wasm: the policy is evaluated in-process", serverUrl);
+        }
     }
 
     /**
@@ -270,6 +324,71 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      */
     public void setFailOpen(boolean failOpen) {
         this.failOpen = failOpen;
+    }
+
+    public String getEvaluationMode() {
+        return evaluationMode;
+    }
+
+    /**
+     * How the policy is evaluated. {@code rest} (the default) asks a running OPA server; {@code wasm} evaluates a
+     * WebAssembly bundle in-process, with no server involved - preferred for a hot path such as authorizing an AI tool
+     * call. {@code serverUrl}, {@code bearerToken} and the readiness check do not apply in {@code wasm} mode;
+     * {@code failOpen} still governs an evaluation failure in both.
+     */
+    public void setEvaluationMode(String evaluationMode) {
+        this.evaluationMode = evaluationMode;
+    }
+
+    public String getPolicyBundle() {
+        return policyBundle;
+    }
+
+    /**
+     * The WebAssembly policy to evaluate in {@code wasm} mode, as produced by {@code opa build -t wasm}. Accepts a
+     * {@code file:}, {@code classpath:} or {@code http:} location holding either the {@code bundle.tar.gz} that
+     * {@code opa build} emits or a bare {@code .wasm} module. Required when {@code evaluationMode=wasm}.
+     */
+    public void setPolicyBundle(String policyBundle) {
+        this.policyBundle = policyBundle;
+    }
+
+    public String getEntrypoint() {
+        return entrypoint;
+    }
+
+    /**
+     * The compiled entrypoint to evaluate in {@code wasm} mode, fixed when the bundle is built with {@code opa build
+     * -e}. This is not the same thing as the policy path; it defaults to the policy path, which is the name
+     * {@code opa build} gives it.
+     */
+    public void setEntrypoint(String entrypoint) {
+        this.entrypoint = entrypoint;
+    }
+
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    /**
+     * How many WebAssembly evaluation instances to pool in {@code wasm} mode. They carry mutable state and are not
+     * thread-safe, so this bounds how many exchanges are authorized at once; an exchange that arrives when all are busy
+     * waits up to {@code borrowTimeout}.
+     */
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
+    }
+
+    public long getBorrowTimeout() {
+        return borrowTimeout;
+    }
+
+    /**
+     * How long, in milliseconds, an exchange waits for a free WebAssembly instance in {@code wasm} mode before the
+     * evaluation fails. That failure is not a deny: it fails closed, or proceeds under {@code failOpen}.
+     */
+    public void setBorrowTimeout(long borrowTimeout) {
+        this.borrowTimeout = borrowTimeout;
     }
 
     /**

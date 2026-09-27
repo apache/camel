@@ -42,7 +42,10 @@ permissions:
 
 jobs:
   dep-check:
-    if: github.repository == 'apache/camel'
+    # Temporarily disabled — pilot:dependencies produces false positives on SNAPSHOT build plugins
+    # (camel-yaml-dsl-validator-maven-plugin etc.) causing spurious red marks on PR checks.
+    # Re-enable once the upstream pilot issues are fixed. See: CAMEL-24985
+    if: false
     name: Dependency Analysis (non-blocking)
     runs-on: ubuntu-latest
     continue-on-error: true

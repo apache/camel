@@ -25,13 +25,17 @@ package org.apache.camel.language.simple.types;
 public enum UnaryOperatorType {
 
     INC,
-    DEC;
+    DEC,
+    /** Negates a predicate, and unlike INC and DEC it is written before what it works upon (CAMEL-24984). */
+    NOT;
 
     public static UnaryOperatorType asOperator(String text) {
         if ("++".equals(text)) {
             return INC;
         } else if ("--".equals(text)) {
             return DEC;
+        } else if ("!".equals(text)) {
+            return NOT;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -41,6 +45,8 @@ public enum UnaryOperatorType {
             return "++";
         } else if (operator == DEC) {
             return "--";
+        } else if (operator == NOT) {
+            return "!";
         }
         return "";
     }

@@ -155,6 +155,22 @@ public interface IggyComponentBuilderFactory {
         }
     
         /**
+         * Options provided when creating a topic.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param iggyHeaderOptions the value to set
+         * @return the dsl builder
+         */
+        default IggyComponentBuilder iggyHeaderOptions(java.util.Map<java.lang.String, java.lang.String> iggyHeaderOptions) {
+            doSetProperty("iggyHeaderOptions", iggyHeaderOptions);
+            return this;
+        }
+    
+        /**
          * Maximum topic size in bytes (0 means unlimited).
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
@@ -230,21 +246,6 @@ public interface IggyComponentBuilderFactory {
          */
         default IggyComponentBuilder port(int port) {
             doSetProperty("port", port);
-            return this;
-        }
-    
-        /**
-         * Replication factor for the topic.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Short&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param replicationFactor the value to set
-         * @return the dsl builder
-         */
-        default IggyComponentBuilder replicationFactor(java.lang.Short replicationFactor) {
-            doSetProperty("replicationFactor", replicationFactor);
             return this;
         }
     
@@ -616,12 +617,12 @@ public interface IggyComponentBuilderFactory {
             case "compressionAlgorithm": getOrCreateConfiguration((IggyComponent) component).setCompressionAlgorithm((org.apache.iggy.topic.CompressionAlgorithm) value); return true;
             case "configuration": ((IggyComponent) component).setConfiguration((org.apache.camel.component.iggy.IggyConfiguration) value); return true;
             case "host": getOrCreateConfiguration((IggyComponent) component).setHost((java.lang.String) value); return true;
+            case "iggyHeaderOptions": getOrCreateConfiguration((IggyComponent) component).setIggyHeaderOptions((java.util.Map) value); return true;
             case "maxTopicSize": getOrCreateConfiguration((IggyComponent) component).setMaxTopicSize((java.lang.Long) value); return true;
             case "messageExpiry": getOrCreateConfiguration((IggyComponent) component).setMessageExpiry((java.lang.Long) value); return true;
             case "partitionsCount": getOrCreateConfiguration((IggyComponent) component).setPartitionsCount((java.lang.Long) value); return true;
             case "password": getOrCreateConfiguration((IggyComponent) component).setPassword((java.lang.String) value); return true;
             case "port": getOrCreateConfiguration((IggyComponent) component).setPort((int) value); return true;
-            case "replicationFactor": getOrCreateConfiguration((IggyComponent) component).setReplicationFactor((java.lang.Short) value); return true;
             case "streamId": getOrCreateConfiguration((IggyComponent) component).setStreamId((java.lang.Long) value); return true;
             case "streamName": getOrCreateConfiguration((IggyComponent) component).setStreamName((java.lang.String) value); return true;
             case "autoCommit": getOrCreateConfiguration((IggyComponent) component).setAutoCommit((boolean) value); return true;

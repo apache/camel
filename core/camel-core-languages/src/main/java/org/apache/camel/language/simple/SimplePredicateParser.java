@@ -63,6 +63,11 @@ import org.apache.camel.support.builder.PredicateBuilder;
  */
 public class SimplePredicateParser extends BaseSimpleParser {
 
+    {
+        // a ! in front of a function negates it, in a predicate only (CAMEL-24984)
+        tokenizer.setNotOperator(true);
+    }
+
     // use caches to avoid re-parsing the same expressions over and over again
     private final Map<String, Expression> cacheExpression;
     private boolean skipFileFunctions;
@@ -658,6 +663,11 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     protected boolean unaryOperator() {
         if (accept(TokenType.unaryOperator)) {
+            if ("!".equals(token.getText())) {
+                // ! is written in front of what it negates, and the tokenizer only makes it an operator when a
+                // function follows it, so leave that function to the next round of the grammar
+                return true;
+            }
             nextToken();
             // there should be a whitespace after the operator
             expect(TokenType.whiteSpace);
@@ -838,6 +848,11 @@ public class SimplePredicateParser extends BaseSimpleParser {
             nextToken();
             // there should be at least one whitespace after the operator
             expectAndAcceptMore(TokenType.whiteSpace);
+
+            // the right hand side may be negated, and the function it negates follows it (CAMEL-24984)
+            if (accept(TokenType.unaryOperator) && "!".equals(token.getText())) {
+                nextToken();
+            }
 
             // then we expect either some quoted text, another function, or a numeric, boolean or null value
             if (singleQuotedLiteralWithFunctionsText()

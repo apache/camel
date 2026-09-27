@@ -60,4 +60,7 @@ public interface PulsarMessageHeaders {
     @Metadata(label = "producer", description = "Deliver the message after a given delayed time (millis).",
               javaType = "Long")
     String DELIVER_AFTER = "CamelPulsarProducerMessageDeliverAfter";
+    @Metadata(label = "producer", description = "The message id the broker assigned to the published message.",
+              javaType = "org.apache.pulsar.client.api.MessageId")
+    String PRODUCER_MESSAGE_ID = "CamelPulsarProducerMessageId";
 }

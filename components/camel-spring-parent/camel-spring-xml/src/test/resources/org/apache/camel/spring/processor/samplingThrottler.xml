@@ -41,6 +41,12 @@
             <sample messageFrequency="5"/>
             <to uri="mock:result"/>
         </route>
+        <route>
+            <from uri="direct:sample-long-period"/>
+            <!-- 36500 days -->
+            <sample samplePeriod="3153600000000"/>
+            <to uri="mock:result"/>
+        </route>
         <!-- END SNIPPET: e1 -->
 
     </camelContext>

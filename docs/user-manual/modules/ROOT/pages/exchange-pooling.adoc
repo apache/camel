@@ -1,5 +1,8 @@
 = Exchange Pooling
 
+CAUTION: Exchange pooling is *deprecated* since Camel 4.23 and will be removed in a future release.
+Please remove any `camel.main.exchange-factory=pooled` configuration from your application.
+
 The routing engine keeps the state of each message, tracking the message flow, and where the messages are going next. The routing engine also handles complex tasks such as error handling, capturing metrics, and many other things. A small number of Java objects are allocated on the heap for each processing step during routing.
 
 Because of this routing bookkeeping and processing, Apache Camel requires a tiny resource overhead when routing messages.

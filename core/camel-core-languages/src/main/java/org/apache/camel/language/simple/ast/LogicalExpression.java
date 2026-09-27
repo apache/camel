@@ -23,6 +23,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.UnaryOperatorType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.ObjectHelper;
@@ -70,7 +71,9 @@ public class LogicalExpression extends BaseSimpleNode {
     private static boolean isValidPredicateOperand(SimpleNode node) {
         return node instanceof BinaryExpression
                 || node instanceof LogicalExpression
-                || node instanceof SimpleFunctionStart;
+                || node instanceof SimpleFunctionStart
+                // a negated function is a predicate too; ++ and -- are numeric (CAMEL-24984)
+                || node instanceof UnaryExpression unary && unary.getOperator() == UnaryOperatorType.NOT;
     }
 
     public LogicalOperatorType getOperator() {

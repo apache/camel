@@ -279,40 +279,41 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     public Object getInjectionPropertyValue(
             Class<?> type, Type genericType, String propertyName, String propertyDefaultValue, String separator) {
+        String key;
+        String prefix = PropertiesComponent.PREFIX_TOKEN;
+        String suffix = PropertiesComponent.SUFFIX_TOKEN;
+        if (!propertyName.contains(prefix)) {
+            // must enclose the property name with prefix/suffix to have it resolved
+            key = prefix + propertyName + suffix;
+        } else {
+            // key has already prefix/suffix so use it as-is as it may be a compound key
+            key = propertyName;
+        }
+
+        String value;
         try {
-            String key;
-            String prefix = PropertiesComponent.PREFIX_TOKEN;
-            String suffix = PropertiesComponent.SUFFIX_TOKEN;
-            if (!propertyName.contains(prefix)) {
-                // must enclose the property name with prefix/suffix to have it resolved
-                key = prefix + propertyName + suffix;
-            } else {
-                // key has already prefix/suffix so use it as-is as it may be a compound key
-                key = propertyName;
-            }
-            String value = getCamelContext().resolvePropertyPlaceholders(key);
-            if (value != null) {
-                if (separator != null && !separator.isBlank()) {
-                    Object values = convertValueUsingSeparator(camelContext, type, genericType, value, separator);
-                    return getCamelContext().getTypeConverter().mandatoryConvertTo(type, values);
-                }
-                return getCamelContext().getTypeConverter().mandatoryConvertTo(type, value);
-            } else {
-                return null;
-            }
+            value = getCamelContext().resolvePropertyPlaceholders(key);
         } catch (Exception e) {
+            // the property could not be resolved (such as not existing), so use the default value if any
             if (ObjectHelper.isNotEmpty(propertyDefaultValue)) {
-                try {
-                    if (separator != null && !separator.isBlank()) {
-                        Object values
-                                = convertValueUsingSeparator(camelContext, type, genericType, propertyDefaultValue, separator);
-                        return getCamelContext().getTypeConverter().mandatoryConvertTo(type, values);
-                    }
-                    return getCamelContext().getTypeConverter().mandatoryConvertTo(type, propertyDefaultValue);
-                } catch (Exception e2) {
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e2);
-                }
+                value = propertyDefaultValue;
+            } else {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
+        }
+        if (value == null) {
+            return null;
+        }
+
+        // a value that cannot be converted to the type is an error (the default value is not used instead, as that
+        // would hide a mistake in the configured value)
+        try {
+            if (separator != null && !separator.isBlank()) {
+                Object values = convertValueUsingSeparator(camelContext, type, genericType, value, separator);
+                return getCamelContext().getTypeConverter().mandatoryConvertTo(type, values);
+            }
+            return getCamelContext().getTypeConverter().mandatoryConvertTo(type, value);
+        } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }

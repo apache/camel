@@ -1009,6 +1009,26 @@ public interface DoclingComponentBuilderFactory {
             doSetProperty("oauthProfile", oauthProfile);
             return this;
         }
+    
+        /**
+         * When set, the output directory passed to the docling CLI must resolve
+         * inside this directory once normalized. Applies to the
+         * CamelDoclingOutputFilePath header. The check is lexical and does not
+         * resolve symbolic links, matching inputBaseDirectory. When empty, no
+         * directory restriction is applied and the header value is only
+         * normalized.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param outputBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder outputBaseDirectory(java.lang.String outputBaseDirectory) {
+            doSetProperty("outputBaseDirectory", outputBaseDirectory);
+            return this;
+        }
     }
 
     class DoclingComponentBuilderImpl
@@ -1086,6 +1106,7 @@ public interface DoclingComponentBuilderFactory {
             case "inputBaseDirectory": getOrCreateConfiguration((DoclingComponent) component).setInputBaseDirectory((java.lang.String) value); return true;
             case "maxFileSize": getOrCreateConfiguration((DoclingComponent) component).setMaxFileSize((long) value); return true;
             case "oauthProfile": getOrCreateConfiguration((DoclingComponent) component).setOauthProfile((java.lang.String) value); return true;
+            case "outputBaseDirectory": getOrCreateConfiguration((DoclingComponent) component).setOutputBaseDirectory((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -87,6 +87,26 @@ from("platform-http:/orders")
 The decision headers are set here too, so an `onException(CamelAuthorizationException.class)` handler can read
 `CamelOpaDecision` to build a meaningful error response.
 
+The policy can also evaluate a WebAssembly bundle in-process, which is the mode to prefer for a hot path such as
+authorizing an AI tool call, where a network hop per decision is not wanted:
+
+[source,java]
+------------------------------------------------------------
+OpaSecurityPolicy opaPolicy = new OpaSecurityPolicy();
+opaPolicy.setPolicyPath("authz/orders/allow");
+opaPolicy.setEvaluationMode("wasm");
+opaPolicy.setPolicyBundle("classpath:orders-bundle.tar.gz");
+
+from("platform-http:/orders")
+    .policy(opaPolicy)
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+The decision contract is identical to `rest` mode - the same `CamelOpaDecision` headers, and a
+`CamelAuthorizationException` on a deny - so a route need not know which engine evaluated it. `serverUrl`,
+`bearerToken` and the readiness check do not apply in `wasm` mode; the *Evaluation modes* section below covers
+building a bundle and what each mode gives up.
+
 == The input document
 
 Camel sends OPA an `input` document shaped like this:
@@ -159,6 +179,37 @@ boolean verdict read out of it:
 
 Both headers are written on every evaluation, so a verdict set by an inbound message never survives into the
 route.
+
+== Batch evaluation
+
+A route that splits a payload and authorizes each element pays one OPA round-trip per element. Set `batch=true` and
+hand the producer a `List` instead: it builds one input document per element - each element as the `body`, sharing
+the exchange's headers and properties - and evaluates them in a single call through OPA's batch API (the SDK falls
+back to sequential requests when the server does not implement it).
+
+[source,java]
+------------------------------------------------------------
+from("direct:orders")
+    // the body is a List of orders to authorize
+    .to("opa:authz/orders/allow?batch=true")
+    // CamelOpaBatchDecision is now a List<Boolean> parallel to the body
+    .process(dropTheDeniedOrders);
+------------------------------------------------------------
+
+The per-element verdicts arrive in `CamelOpaBatchDecision`, a `List<Boolean>` parallel to the input list: element
+_i_ is allowed when entry _i_ is `true`. Neither `CamelOpaDecisionAllow` nor `CamelOpaDecision` is set in batch
+mode - there is no single verdict, and no single decision document - and both are cleared on entry like the other
+decision headers, so a value an inbound message supplied never survives. `CamelOpaPolicyPath` *is* set, to the same
+value a single evaluation records, so tooling can read it either way.
+
+Fail-closed applies *per element*: an element whose evaluation could not be reached is denied (`false`), or allowed
+when `failOpen` is set, while every other element decides normally. The batch is never denied as a whole because
+one element failed, nor allowed because most of it succeeded. A call that fails entirely - the server could not be
+reached at all - fails the exchange rather than denying each element: it carries no verdict at all, not a list of
+`false`. Under `failOpen` that same failure allows every element instead.
+
+`batch` requires `evaluationMode=rest`: it saves the per-element HTTP round-trip, which has no meaning for in-process
+`wasm` evaluation, and the endpoint rejects the combination at startup.
 
 [#authorizing-an-identity]
 == Authorizing an identity

@@ -18,6 +18,7 @@ package org.apache.camel.component.seda;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -317,16 +318,18 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 consumerMulticastProcessor = null;
             }
 
-            int size = getConsumers().size();
-            if (size >= 1) {
+            // the consumer threads of this endpoint multicast to every consumer of the (shared) queue,
+            // which includes consumers on other endpoints for the same queue name that use different uri options
+            if (!getConsumers().isEmpty()) {
                 if (multicastExecutor == null) {
                     // create multicast executor as we need it when we have more than 1 processor
                     multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this,
                             URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
                 }
                 // create list of consumers to multicast to
-                List<Processor> processors = new ArrayList<>(size);
-                for (SedaConsumer consumer : getConsumers()) {
+                Set<SedaConsumer> queueConsumers = getQueueConsumers();
+                List<Processor> processors = new ArrayList<>(queueConsumers.size());
+                for (SedaConsumer consumer : queueConsumers) {
                     processors.add(consumer.getProcessor());
                 }
                 // create multicast processor
@@ -338,6 +341,40 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             }
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * Gets the active consumers of this endpoint and of the other multiple consumers endpoints that share the same
+     * queue, as they may be using the same queue name with different uri options.
+     */
+    private Set<SedaConsumer> getQueueConsumers() {
+        Set<SedaConsumer> answer = new LinkedHashSet<>(getConsumers());
+        QueueReference queueReference = ref;
+        if (queueReference != null) {
+            for (SedaEndpoint endpoint : queueReference.getEndpoints()) {
+                if (endpoint != this && endpoint.isMultipleConsumers()) {
+                    answer.addAll(endpoint.getConsumers());
+                }
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Updates the multicast processor of this endpoint, and of the other multiple consumers endpoints with active
+     * consumers that share the same queue, so they all multicast to the current set of consumers of the queue.
+     */
+    private void updateMulticastProcessors() throws Exception {
+        updateMulticastProcessor();
+        QueueReference queueReference = ref;
+        if (queueReference != null) {
+            for (SedaEndpoint endpoint : queueReference.getEndpoints()) {
+                if (endpoint != this && endpoint.isMultipleConsumers() && endpoint.hasConsumers()) {
+                    // do not hold the lock of this endpoint while updating the other endpoint
+                    endpoint.updateMulticastProcessor();
+                }
+            }
         }
     }
 
@@ -631,14 +668,14 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         consumers.add(consumer);
         registerQueueIfStale();
         if (isMultipleConsumers()) {
-            updateMulticastProcessor();
+            updateMulticastProcessors();
         }
     }
 
     void onStopped(SedaConsumer consumer) throws Exception {
         consumers.remove(consumer);
         if (isMultipleConsumers()) {
-            updateMulticastProcessor();
+            updateMulticastProcessors();
         }
     }
 

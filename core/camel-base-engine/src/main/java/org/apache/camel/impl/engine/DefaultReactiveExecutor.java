@@ -163,12 +163,15 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
         private void tryExecuteReactiveWork(Runnable runnable, boolean sync) {
             if (!running || sync) {
+                // a sync task can run while this worker is already running (nested), so restore the running state
+                // afterwards, as otherwise the outer run would no longer be regarded as running
+                final boolean wasRunning = running;
                 running = true;
                 incrementRunningWorkers();
                 try {
                     executeReactiveWork();
                 } finally {
-                    running = false;
+                    running = wasRunning;
                     decrementRunningWorkers();
                 }
             } else {

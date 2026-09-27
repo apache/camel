@@ -26,8 +26,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class SimpleTokenizer {
 
+    private static final String NOT_OPERATOR = "!";
+
+    private boolean notOperator;
+
     // keep this number in sync with tokens list
-    private static final int NUMBER_OF_TOKENS = 56;
+    private static final int NUMBER_OF_TOKENS = 57;
 
     private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
@@ -110,6 +114,10 @@ public class SimpleTokenizer {
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
         KNOWN_TOKENS[55] = new SimpleTokenType(TokenType.minusValue, "-");
+
+        // the ! that negates a predicate, last so every operator that starts with one (!=, !contains, ...)
+        // is matched first, and only offered to a predicate (CAMEL-24984)
+        KNOWN_TOKENS[56] = new SimpleTokenType(TokenType.unaryOperator, "!");
     }
 
     /**
@@ -148,6 +156,14 @@ public class SimpleTokenizer {
      * @param  filter      defines the accepted token types to be returned (character is always used as fallback)
      * @return             the created token, will always return a token
      */
+    /**
+     * Whether a {@code !} in front of a function negates it. Only a predicate parser turns this on: in an expression a
+     * {@code !} is ordinary text, as in {@code Hello ${body}!}, and must never become an operator (CAMEL-24984).
+     */
+    public void setNotOperator(boolean notOperator) {
+        this.notOperator = notOperator;
+    }
+
     public SimpleToken nextToken(String expression, int index, boolean allowEscape, TokenType... filter) {
         return doNextToken(expression, index, allowEscape, filter);
     }
@@ -188,6 +204,10 @@ public class SimpleTokenizer {
         String text = expression.substring(index);
         for (int i = 0; i < NUMBER_OF_TOKENS; i++) {
             SimpleTokenType token = KNOWN_TOKENS[i];
+            if (NOT_OPERATOR.equals(token.getValue()) && !notOperator) {
+                // a predicate parser enables it; in an expression a ! is text, as in "Hello World!"
+                continue;
+            }
             if (acceptType(token.getType(), filters)
                     && acceptToken(token, text, expression, index)) {
                 onToken(token, index);
@@ -327,6 +347,17 @@ public class SimpleTokenizer {
 
     private static boolean evalUnary(SimpleTokenType token, String text, String expression, int index) {
         int endLen = 1;
+
+        if (NOT_OPERATOR.equals(token.getValue())) {
+            // ! is written before what it negates, so the rule is the mirror of ++ and --: the next must be a
+            // function, and the previous must be nothing, a space or an opening parenthesis, which keeps a ! that
+            // belongs to text ("Hello!", "Warning!${body}") out of it
+            if (!text.startsWith("!${")) {
+                return false;
+            }
+            String before = index > 0 ? expression.substring(index - 1, index) : "";
+            return before.isEmpty() || " ".equals(before) || "(".equals(before);
+        }
 
         // special check for unary as the previous must be a function end, and the next a whitespace
         // to ensure unary operators is only applied on functions as intended

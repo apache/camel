@@ -359,6 +359,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             option.setDeprecated(opt.isDeprecated());
             option.setDeprecationNote(opt.getDeprecationNote());
             option.setSecret(opt.isSecret());
+            option.setSecurity(opt.getSecurity());
+            option.setInsecureValue(opt.getInsecureValue());
             option.setDefaultValue(opt.getDefaultValue());
             option.setDefaultValueNote(opt.getDefaultValueNote());
             option.setAsPredicate(opt.isAsPredicate());

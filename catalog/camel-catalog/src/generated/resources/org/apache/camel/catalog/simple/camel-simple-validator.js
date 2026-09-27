@@ -189,6 +189,7 @@ const OPERATORS = {
   '!equals': { kind: 'binary', description: 'Tests whether the left operand string does not equal the right operand string, compared as text without numeric coercion.' },
   '++': { kind: 'unary', description: 'Increments the numeric value by one. Must immediately follow a function closing brace.' },
   '--': { kind: 'unary', description: 'Decrements the numeric value by one. Must immediately follow a function closing brace.' },
+  '!': { kind: 'logical', description: 'Logical NOT. Negates the function that follows it, answering the opposite of what that function answers as a predicate: a value that is not null and not false is true. Written directly in front of the function, in a predicate only: in an expression a ! is text, as in Hello ${body}!' },
   '&&': { kind: 'logical', description: 'Logical AND. Both left and right predicates must evaluate to true.' },
   '||': { kind: 'logical', description: 'Logical OR. At least one of the left or right predicates must evaluate to true.' },
   '? :': { kind: 'ternary', description: 'Ternary conditional operator. Evaluates the predicate and returns trueValue if true, falseValue if false. Requires spaces around both ? and : tokens.' },

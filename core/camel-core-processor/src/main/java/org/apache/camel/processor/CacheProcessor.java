@@ -215,7 +215,10 @@ public class CacheProcessor extends BaseProcessorSupport
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopService(processor, keyValueRepository);
+        // the repository may be shared with other routes or EIPs, so do not stop it when the route is stopped
+        // (stopping an in-memory repository clears it); it is stopped when the route is removed or CamelContext
+        // is stopped (doShutdown)
+        ServiceHelper.stopService(processor);
     }
 
     @Override

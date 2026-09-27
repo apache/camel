@@ -110,6 +110,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "ocrlanguage":
         case "ocrLanguage": target.getConfiguration().setOcrLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.docling.DoclingOperations.class, value)); return true;
+        case "outputbasedirectory":
+        case "outputBaseDirectory": target.getConfiguration().setOutputBaseDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "outputformat":
         case "outputFormat": target.getConfiguration().setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "pdfbackend":
@@ -223,6 +225,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "ocrlanguage":
         case "ocrLanguage": return java.lang.String.class;
         case "operation": return org.apache.camel.component.docling.DoclingOperations.class;
+        case "outputbasedirectory":
+        case "outputBaseDirectory": return java.lang.String.class;
         case "outputformat":
         case "outputFormat": return java.lang.String.class;
         case "pdfbackend":
@@ -337,6 +341,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "ocrlanguage":
         case "ocrLanguage": return target.getConfiguration().getOcrLanguage();
         case "operation": return target.getConfiguration().getOperation();
+        case "outputbasedirectory":
+        case "outputBaseDirectory": return target.getConfiguration().getOutputBaseDirectory();
         case "outputformat":
         case "outputFormat": return target.getConfiguration().getOutputFormat();
         case "pdfbackend":
