@@ -14585,45 +14585,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-server",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Server Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "a3163057e836664fdd9773ca8b852143"
+          "content" : "fc41363ef58a4184571c2a7e24b52975"
         },
         {
           "alg" : "SHA-1",
-          "content" : "32cd62528f52dc0df2513388072b0b544a7ff6c0"
+          "content" : "ff303f5274bf4f9ba91588de595ce8689cb1f34c"
         },
         {
           "alg" : "SHA-256",
-          "content" : "48f4ce26568844d153eef3512337e72a8ebbbf7bea47715a9442713bba0e3097"
+          "content" : "9ba04bb8d011444a10873a51b1cb8297c04f70db55c8a8d9efcc3a9b97896787"
         },
         {
           "alg" : "SHA-512",
-          "content" : "ebb7d6b4f62426665c2c4efb4df5e63c0f95aa0d99cf39c3d49a52c87d540b8343d5c0f47794bfaccf5b48cd21b22cde41283916d6b6ffcc772273437c88ff13"
+          "content" : "2863778ebbdf4bddf6059bcc29a79ee48bd2eacd3bf6c5ecf8ed5e9cf649e3a0d4e3fd5961a2656048fa4aab98d0e1429d3fb39aa5345ed52356db13a5f17744"
         },
         {
           "alg" : "SHA-384",
-          "content" : "5082fa32357197798b0257b3ce29ef60f9360996871694884e693a980f4568cec18d53d56e909d8d9df084e849510722"
+          "content" : "06f9e5f987f45e3ed06dcbdcb64065d2caed1cba72144f0ca789f222cbd36fbb1fab33df12028be11557bdb23dd213aa"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "f02acb93b96617b4ef035f58136fa0bc19c7a8166fe1fcfb4c9f1262236171331cb01f36c74e571362fcade89d1823fb"
+          "content" : "05504afc20db473bb05be00ca1ce4272abc35914ad1fe1a58f614e1cf0f5144daf8cba8908b6e6678ade06edfc7b96e6"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "dc032b90eb677cc03d2a8e3225280178d81cd05c48d3aa8b22a0110cd94d200b"
+          "content" : "9c4ff86377cf813275941c559213de5b8a0b6ab669f80195bf5a02d2ad0618a4"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "bad85e11ea35254c21e5655e4371f8c871e3dfc6320b4fb16f19bf11032ecc533b013a4875fc1262e4a2ba2cabda4d754586f101245ac60823cd5ef2376ba5d8"
+          "content" : "2177bf3f83fc10a118c18723e4516f61e28824f3afe41d4e13fd965ddea2d3d0aa358744c679917e00a278cfa410e1ad32364f3b3cc6d6ff46971a4bf8050edf"
         }
       ],
       "licenses" : [
@@ -14640,7 +14640,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -14666,45 +14666,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-http",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty HTTP Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "3c13c57dbfa142c17edae009542869e1"
+          "content" : "dc7377b12dd40b471772ce93edee1f95"
         },
         {
           "alg" : "SHA-1",
-          "content" : "93a0340dd3825d8660dde606dd775c2fd7a38223"
+          "content" : "18e79d9da43b31fe7004621f5dbf4ba92b9edd19"
         },
         {
           "alg" : "SHA-256",
-          "content" : "95da292bc6bdc0f184670317c90edfa3edadfd34da2269efce63e1a3c23eeeeb"
+          "content" : "5476e16ef7e28883dba3669ee06491021e4a9aeba9a76f901a3f5c2bb5252a3e"
         },
         {
           "alg" : "SHA-512",
-          "content" : "39e079e684b8fa7e4fa71bd0870d61a36d451640410eaac0d91df8cbac62b04ad0a9a01d2317317ac13acacd6ca1f91aaf2ad33aa2cfe91f78dccad96b153563"
+          "content" : "db9810353818ab2ab29b50c5ac659a41cd312462618d2b6298c2c819f6a3c1b12731c264ae4ad14aaa3502f8b489089cf68317e7bed2180728aa1586479a2777"
         },
         {
           "alg" : "SHA-384",
-          "content" : "59ae7638ab06e0fc063a4b51db683fc32cd74c4c77bdec29e5e74a5eb52df65cab7c1225d9734c1d0150f763cf3fe7fb"
+          "content" : "015a3921027935aacbd454874f69af061d7a7bd7f5cc08b1cc505dff29feb4b29010e343b95a0903e205893db0236ad4"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "4d0bbb38039b6c06062e9290fa75a990e28e9411b5c5ffe841a947fd32e3423afe9a19c345fdf0ed5cceb24b87f48ab7"
+          "content" : "bf490114d3206719c0fde248966547e75948b21c97775321ed772a8c0d203c7fe403318ddb4822f485ae65366d4dc0ee"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "92c1e3db600b766489f0befa611bda196bf9cb31bc10219841fdf92aae81a02c"
+          "content" : "c40aba1b41cb512bd1d4908446010854ab66618aa3ab57b555b29d9b07abf5e9"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "655e90ed0ab07a0a0e0d655ee32724ad0635b7b9bc0c9ebcf1f4d0959a2f9f555846e183d23cacc4d6da76c2f49cf9af58f8c2aacbaf9eb4a8c953a9dd4e9e30"
+          "content" : "60e3f43369df206ca3812647cebf2c198869d7de09ab13e93a33d6a84cb8bbbc146b7fcf8739ebc99a31874871c9973d14b176b33b3a8c19bfe9012517c122c5"
         }
       ],
       "licenses" : [
@@ -14721,7 +14721,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -14747,45 +14747,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-io",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty I/O Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "3bf5d17dc33bf99ae1feeb3c41a365e5"
+          "content" : "a8f5eb6234948453ec1a7cfcaa782fec"
         },
         {
           "alg" : "SHA-1",
-          "content" : "2b31ccc4b657b4c70d567229b4d54a160b8b72f1"
+          "content" : "99703c1359bc6114b30fefdd0fa6db2fa26355f5"
         },
         {
           "alg" : "SHA-256",
-          "content" : "a3ff0177d094cceda66a9fa70da3fe6a6899bf8df09d44e885a4c5f2088ee1d0"
+          "content" : "a809a6a534adccfaa08bca94aa54328e3ac858973ccddbda770f7e9e0f5099fc"
         },
         {
           "alg" : "SHA-512",
-          "content" : "4548a01c02efed0e9b320e057e0140c652a9617586b39c8d722751c1ea96d622f9c3525ce426d527467f2bd06353413462f83c25843b37c970ba516f04acb5e5"
+          "content" : "3f3ba37425090e028522463c92d2983498f0965b4343cd0c2a5b052c4f5ea85f16359cf520edbca9572d2fa35ad170b8850a3ce681ff3d2009748aca6929cf7a"
         },
         {
           "alg" : "SHA-384",
-          "content" : "2a59a022c01c9207243acd6fb7c860772993a5b7c8ff3f3a81f17e11dac6191ece42febf26b2fd6d08a55f98b1490805"
+          "content" : "f749717033a879aaab91b64994d56bb474600136be6f270ad7c8ff8982b360dc22516702098f0a1c07246c32067356be"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "94c29e1a735402b17ec53faefdeb59580106abe0e246958704866ed040dcc72de48d2c04c609fe52b4d6839a73f148d9"
+          "content" : "7a888777d750c6f8d8518bc0375999491c374a710992e97427c4d975dffe4606b5e5497e80ad9a173dc2d6a4f8c51c7d"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "1d712bc49b258ba6bd0e44f5975bf984091a03c3b29013c0a2a392be4458c020"
+          "content" : "2acf1501417fdd1647ddc88635e06e8c2155bd619110682e6ce83d14a676db8e"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "5aa4084357c903e4da9737045d6c6facc0b30f288d0abaec6afe9033ebd7360dfac0b05f4acc5bb082541b6a492aaa5394b404e707085444b9567d6d242ad59e"
+          "content" : "5790f17fcf60eaf1bab337599d3e94a91bb2c2bfa735b8fdfa5c63f3e872047d1640a1a59b173f982aba08342ec20f45713fcdff8293506c8e2de39f00ea0fc6"
         }
       ],
       "licenses" : [
@@ -14802,7 +14802,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -14828,45 +14828,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10",
       "name" : "jetty-ee10-servlet",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Servlet Container",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "571fc7da11576db08d1d45711c6394eb"
+          "content" : "e469a911bc4acd20133034bad63b2359"
         },
         {
           "alg" : "SHA-1",
-          "content" : "5ecd5b1cdae3fa760f507d946b9bafa67c1a38c0"
+          "content" : "617e81d9b9112f83057bf3dea5dc7bb8e652e52d"
         },
         {
           "alg" : "SHA-256",
-          "content" : "7b3884ccb24e38cfe7a2581971931e47fe2fc280387dc5476bbefc128543318d"
+          "content" : "021375ea80d84b5f9d46260916fc0450dc4fae5a95ce80f8289e87a0db07de47"
         },
         {
           "alg" : "SHA-512",
-          "content" : "0d30e0c2346da63fa5366968053335e09a065c946c56cafeb49deed23927de24ff4c1349816206efb2890b4a724fd91e8e279b263f933b95a653501ab5c1fc63"
+          "content" : "3b92eaf42df420d14758c2ec8c5135a6cdbff51989680813d5a2a2d0b42424e5485a1c243d7dea04ce892997d6be41fe42d9ed5b0720d0da10f9bce951365c41"
         },
         {
           "alg" : "SHA-384",
-          "content" : "e8620d87ad8a859e56029164d8be39cad159540e3c02551654b91249b8fe0a00528c4de4106a98b88d917e2b85dd3a3c"
+          "content" : "8bec43abd0c1490c4791d7768e2e6842326d3139b9e626edfc16e31a241f4f376d4b40b5117029f0f1f81261e2a6eeba"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "7b8d95fdfc9559ea62b0f029c4025cd0105d763bfc7459024b59ab5a4a9967cc119155356f9ded003714bef233a5a88f"
+          "content" : "1b13b12cd91db65901a322964c006147a954480685184cef7ef42c29d93a71aaee5d729d53673acd00f1ce3f70e3396f"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "35eb79bc87dd0db69a6a21f1cc94403bd8fac4c155b7d9a1019a589c2d19ddad"
+          "content" : "837fbed760dccef993e40ca352847cec3845fcf3a7da8d6df3bc463d34701b07"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "86781e508acac7f748dc112be3e40c5e51dff00c13a4e63b1476f0aef093f67db81e09b8b7dd1df463a27e3e35de7a7f786d1ecd46c720ec552a63133c234b65"
+          "content" : "eb383fa49f5aea278a96e121c58f50c1c82abd2b422f333cf0f3b19558f22dab6a0490fdd050db33e947856441a2a107b2cf1ab98661b5d6aef00c046b2c3c6c"
         }
       ],
       "licenses" : [
@@ -14883,7 +14883,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -14909,45 +14909,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-session@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-session@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-session",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Session Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "61632b4908879b19965bdc705e593e58"
+          "content" : "2352895ffab6e38c7b8c14cb5b25d68f"
         },
         {
           "alg" : "SHA-1",
-          "content" : "36b10ceea9d6052482976e0e20c681dfb62c6daf"
+          "content" : "df924fc0f60f96b6acd1cd267c24c8679f10ffea"
         },
         {
           "alg" : "SHA-256",
-          "content" : "e961aaee43532087074ff27216b4756c4cbf3a2d4540fa494bf325efd0581da1"
+          "content" : "73aea4cdd91f2027da1a09cd5953b661625017971d53d8e1ff342f8547752b06"
         },
         {
           "alg" : "SHA-512",
-          "content" : "77c4db16e6e299820cab79fe090fd85bb0c0db0000d2517da2efb83780eb9cfdecd6b851c4968ccbd280f367a51f6cc02b2a94d420eecdc9ca8fee6964bc14e0"
+          "content" : "f6df9feefa065f25679fd322b0181dbfe0d3e9de1f95c8513ab03ce8911c33d6d1ad42ec30518c9f366d25a6ca5272d82cd7994b77e5e1982a263acd8f5d9b49"
         },
         {
           "alg" : "SHA-384",
-          "content" : "53e002ffaebed77633db12891741d633f3ad526f6562ec93d353b3e63378ee7fc9768b58b143b537a1e990406ecbceb3"
+          "content" : "2b60217fa6937ba8faa7efc27225d7f7d0c47d38cb42aaa6be020df7d891f8d0e113a6777bfeb293196db5834888c6e1"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "4a0d07ee82640d55200d80a44607d174b46a94a209968bde2f58edfec47fb4578aaf1abad133464917c441a667574847"
+          "content" : "c3b7bc0f49aa1c71327aea3519049a4e122f6158acea1bb3c1bc495df9addcd286675252140b491b242e57cd2284ee81"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "aa12cb904ebec6bf508282e88420fdf85992567c9f0a64b972cb04f8e94ec358"
+          "content" : "75deff3c1fc690c4180f04b5740d59366570eb37981d93ca127b26387a231e07"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "f1caafbb9d7b1210872b8f4776f0932c3f6cb953bd6214d5ca89d6ce0497c65f16feb5cb1ae7e27a84261a30f13aaaf545cdb97f5b4950badd10133c18741533"
+          "content" : "bc466201a79fe3eb8399ce6730957a6f1529e2e472e45eb375726a1e0d987856d790dc92dadb5d212ea65fe4998fe005eaa70d28476d1e4340fa11384478106b"
         }
       ],
       "licenses" : [
@@ -14964,7 +14964,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-session@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-session@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -14990,45 +14990,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-security@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-security@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-security",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Server Security Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "aee465c798166c40f8adc516692809ba"
+          "content" : "02140347c194c3a8fd60dba0967d857a"
         },
         {
           "alg" : "SHA-1",
-          "content" : "8ea76a8174ebb038f32e6a2e1faa83d9f18acfb4"
+          "content" : "336bf8d287b649400d9fad16ecf39593b17b23a4"
         },
         {
           "alg" : "SHA-256",
-          "content" : "3129731e3220bded651ca0a5fbbc549a2d9eb7b37399abd02e151c13b1fa594f"
+          "content" : "fcc0206c1ac66b632ef29a59ccf76c3f3737a62ef54694b1d111eeb2e6efe804"
         },
         {
           "alg" : "SHA-512",
-          "content" : "85046485f362333e1acba6cbd27b4cab936461da74ee1868b60c243f9864193ef0944d18cc98c1ecaab8ebc77eb647a504238d7d6bb6953c9ff0fad763b6f257"
+          "content" : "04eb3f2e7b4582fb585df3c8113588d442a00c9ab9c21d74f710c731dd60b541fd1c79d167a6f723f9439bbd4ceb98ceb0d20ba1b509f2b2ec7fe0bc1d09e87a"
         },
         {
           "alg" : "SHA-384",
-          "content" : "bfb233835f6094dbf14079a54a3efd86dda4e61a3bdde384b128168a10eae266e814b43e1e7b4a58d50c402ad1c60734"
+          "content" : "721c1b3171c2b29fcb67a8e00bab092fe5a70035b8efc9bc852efd05a13f19ce0d90895c50fe33a9981061fc629e350b"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "9536d5d8958d87c6e35e07335f08a15a926544482655e07cd0fff4f7e5610a6a05abd1e74c88b68984d8ca3a84889e77"
+          "content" : "cad8ca7035f0a97559b6e8810ff4c243bfdccd5a6801f63097b5b3978f6b402ee02e96e97e666879df29349201dfc935"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "4d3ea6d1fb8bb443dd8fb328d2465e7a280a5067ee128719fbcea80bbf6b4f90"
+          "content" : "f24af4805da0c3fafd58e58c8edb65d185af9325c1d7d149b91d57d10e15f4ad"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "befacdbd9689247e22e9af98a3c189a892dd5a158d93114fd0d1263015c424d2cab301456bc061c787ffeb15ac55077df3e42f2a2658e2ca3828a310534a34b9"
+          "content" : "6879f278e3a9cd498fd3b48b94eab685e7e95c1b76acfc931777428949f41c0fb49133cbe3e79bcecb0c207620e74529ebd10af76a5799e6f5da1daa8ca5e76d"
         }
       ],
       "licenses" : [
@@ -15045,7 +15045,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-security@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-security@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -15071,45 +15071,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10",
       "name" : "jetty-ee10-servlets",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Utility Servlets from Jetty",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "9ff3e76b1add30ac7aa09e7de3a6ce6f"
+          "content" : "f39409c078c0b1548722bf9e786abfe0"
         },
         {
           "alg" : "SHA-1",
-          "content" : "b98b10fb37cecf765312f82917ca6c2700a53176"
+          "content" : "e3bfb6176f7073b2ec35fdd718865649ebf75369"
         },
         {
           "alg" : "SHA-256",
-          "content" : "5bd1cd4a11566e8df3bb76f9974c3179c43551974e18fdcea558b9bf21eddd71"
+          "content" : "4266f6ede0cb0a3fef2214d5749f69360440e1325dfd52fda8577c16d483b24c"
         },
         {
           "alg" : "SHA-512",
-          "content" : "60977cbbb541d88f28e5120a03642253a5b36adb42eeb9bf493bc295ff342706f1c6780772d830b0c36221818848f0b774d2e68735a39840c38ca285ba1e19ee"
+          "content" : "bd098ad8974dce173161d7c8602c35231b4433776684271dd68b6c13967501da33f386a5b361072757f62dce2eca1a7fe5d32ed6a7bead815d23f495fcf814e5"
         },
         {
           "alg" : "SHA-384",
-          "content" : "5051b7a2b234ae45ddbe55f168c45536be542f40110f0c68fb9780bc0e35187f4a77b5a2f55ea2c0a307a24813bc14aa"
+          "content" : "5f16ad849df05b5e1f4ac7c38b937ff266c7b2858b6f710f31b98ce8086fd48dab6ba3891a9fa14a4488d6cb57a37118"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "047ed13d3caefe3cbfb528cbf348b141e88e37a770c795c158f125468f3df3fed477e98a7fef8d612e5889fdf03b979d"
+          "content" : "fa2367ececd6bbb676a9add25d9323ccc0562dabcacdf2a856c8fb5cdfca05209f64c86828acfad2162351280b9f624f"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "99046a3cb27292b1ff963f3bbd2ee9d6f9d9de4a2d550fac16b760455947d674"
+          "content" : "303441b1e28017aa7d85c927aac100e68cce4d45e568abdc2dae7ba68150b711"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "757bb5254b3afcc2ed23b8dcf970c8e5d73bd5d63802c13464271e6bf3305d4c4e45c926bf5e3dc73dda34ee14273329f7d1f0501bc8978a12d151ab41a64123"
+          "content" : "48a335a5d1fa6261fc5b89a5860c434f36c054a37834912707a1fba2efb2e9ca62ae058dfd517dc63f7f2756ebabf302876a8a3c22537402f04e7c66944ac21d"
         }
       ],
       "licenses" : [
@@ -15126,7 +15126,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -15152,45 +15152,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-util",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Utilities Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "da16bf9110a7780b2379f41c358a1b83"
+          "content" : "db0ce60e5e65b6cece5c9c8b01c0f7fa"
         },
         {
           "alg" : "SHA-1",
-          "content" : "c02959cd2d9c023474073a5b33bed09a8455b991"
+          "content" : "1f6c7ee04775b812ebf35cbea57abecbd6c70903"
         },
         {
           "alg" : "SHA-256",
-          "content" : "ce7648c44c0dff0efc066fa899937421366784cc32042a9443ef67bb1d05ea59"
+          "content" : "f6fbfa61cfcca032ff82ad8ff3b66a14374047f15486521dbc89a6c0df19ccf2"
         },
         {
           "alg" : "SHA-512",
-          "content" : "c7fa3ac8ec63c82f178c185b187534220b1439c340015ceb20c9931c1d3368ad4216521358df3f7a099869031f6ff5934004033e259cf54ab9ff90fc04044e9c"
+          "content" : "38b636809da105f60653fcb595f6aaacba7ca81f5f1fe47f9664d00abbf32e6e2b84b4ea7a4c6391681df5f936f396d698c0b083b3ba96f13360c77a2fa05a17"
         },
         {
           "alg" : "SHA-384",
-          "content" : "e9748d4c112288ed7630a818957761e455fe8fcbe05bfb9d54dffecff7252f17594f52e37355f8c224ade064a5e7d62e"
+          "content" : "ac2e9a557aac09197a977adda87cea2960edc0725d348806943dcf3852e30094d7b73be75fbb3ae21afe502000158799"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "eef20cc2806447fa527d3617b1fe5d7da874bfea15aecb42fb901aa5b2b3ef4f40b858acbf79a0bb2bbb170475bfbf43"
+          "content" : "b9e3661f402837391c1546a71d2dc81ee6d2bf82f914b52102f40fa606d34335e2435c881f9d2df6f4cee8632321feda"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "09d911306d19bc67077bafcf3d8bfd0d1c31919f9021b96cfa00d87acc29a33b"
+          "content" : "139db1d4e8768b537e34be5029e5c9c2ebc35620a823abc4201efbf9ed1e00e9"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "24df2c931fd8af618649af72b47d2460c1d5a778641b2320ac4d16d865c1a74ed294bc0cc2a7bdca35a9cd90be566d32ed02d65bd36f4924d42bf4adb5702fc4"
+          "content" : "f3c0684a03aa1543fc84425a0ec0d3df68f6af98af22c579251a7abd7183b0b5e81fe6d7a4ce96b92dd1002b431798794350205af879eca7b4deee4bdf700b57"
         }
       ],
       "licenses" : [
@@ -15207,7 +15207,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -15233,45 +15233,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-client",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Client API and HTTP/1.1 Implementation Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "8b2ca36db15d05abc5d04f470338bf57"
+          "content" : "2657827ba402bfe8f3a16a9cd2229a42"
         },
         {
           "alg" : "SHA-1",
-          "content" : "6f61c61185e04e04cca1b5923e4039286bc0bd8a"
+          "content" : "c0cfbdc78ef2724233e476e1c0fbc8fcd8ef4a5b"
         },
         {
           "alg" : "SHA-256",
-          "content" : "f327a52ac8f1625da9b6d57685ebc03b48d963ce8171f27b5183531c95bb177e"
+          "content" : "d3888e13a893faafda80863c4ef8ea6f9fc3d4a59435997a600407c2d8b2b3d6"
         },
         {
           "alg" : "SHA-512",
-          "content" : "07dcc61aea1a83e2b7effb9c064a2d2e4afa4dc3da0cc0404694791bb5ab860632ee24ea6bbfedee7dc1474cf28e1299fa56fb22ca1016a1ca91207a6cf53940"
+          "content" : "2c313560170f38cec887c2fa43529567dcfe02454abb4e9b53d530991fda002655fbd56b6938ef803cfecc11075295103feaf773cd2966dd32d6d4e5b22cdd74"
         },
         {
           "alg" : "SHA-384",
-          "content" : "bbd23746762ec2a2553e467cdc0a0da4952ea095155f2cbdb7637db1b55b645fc8009dd5622423c948186e1ac3805c55"
+          "content" : "f45720a148d0dc135192df8ef5cee5c09b13ef92554ac1927710fa64596004f2462eb6081ca64463c1f9ca663cf71e12"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "1145d1f2a5221e0ed0cc74459e219549b82a449c89834225b0770ba4719fdab76df38430fc66cb36f9ced0e86703831e"
+          "content" : "0123ad664f126ca97144abc06ce43e5b9bb22e35b964f2aec062ca6f713f50ff39695310b47bd391c1b4ff321acf4df3"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "6923e12197d648e78d6b6a18bb23473b233022e1ded0db307c68739d58474378"
+          "content" : "50fab75d7028824401b0eea1e852e4c8097cc639dc1408ce0946a707888766f4"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "ce8e29f5514af7ee8e4eae1807e70fe51dc5c4d4cfbf223bb93c4c219179c29e5447213bf89e0c44fbc78d23e2c3befb15e022d1e332f925dcb6bb6e8299435e"
+          "content" : "fa49f536ed319e7cceaeca899ab2972f40d31dd16924b0a1d167faf18ae354d324bc4d1f9192da49f49e04423e907d232458ba4d24e6e3a4e271001398934204"
         }
       ],
       "licenses" : [
@@ -15288,7 +15288,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -15314,45 +15314,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-alpn-client@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-alpn-client@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-alpn-client",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty ALPN Client API Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "294a398d5901eaec5abdd8aeb393682c"
+          "content" : "632f6eaf62aaf1f9c104ff9b2d625bce"
         },
         {
           "alg" : "SHA-1",
-          "content" : "98d8e05b82d736cbcd777ad5f45b30e3062264a0"
+          "content" : "29c4f0f60f75fc4454cbe6f039e44ff9402f6e95"
         },
         {
           "alg" : "SHA-256",
-          "content" : "c9aa5abd54fcb007b9a86cd015b0099f77b16b77177b5f9abe6976be28a60ef1"
+          "content" : "24a38f8a33903ffc9379a22982bb66f0d0b27d1a932ebe7eed323f91353a4513"
         },
         {
           "alg" : "SHA-512",
-          "content" : "138ccb0747151b44c2efd44f94e5ba624c85d523234de47146c45e5acd4974f6d3644078e2582cd51b77e541ef0d8d1d8bc06a0a1e9e579f4fa16a5de8d0377c"
+          "content" : "7ff46e744ec0a7ac75dec71e1e13ae76fd06bf747b7a215aae2d6fe65e4d4639fdae5de063ab5bf5d2a321d11e25c92cfc8153cab133bdccb44f137b71900715"
         },
         {
           "alg" : "SHA-384",
-          "content" : "287dfdf06451c9833849b652b6f896337e3df7b45aea7bbcf7aa0f56e711b7593f7a31e3c18acdc1bb16e884b25631a7"
+          "content" : "7fcde46f3c1b6db33a47693a24eafef26d90196f1bdf5917e8d7bae4a6bfee17be802199e7cf2a92d0926084a35ebe34"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "e49bf1ae55f53e1887d36e9ababd79da3f94eb323d11d6432656fdeb9388440a0a0c9425dc4f8314f60a18f63e36ca1e"
+          "content" : "9d866a744a5015a6f1cbc15a053b65b75dabbf3dc65e18ff3afcfd4de550c4ecf5ed8ea6965faa4a59d5d1ea8ffe115f"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "b9ff50bc695d5d72a33e6064ce8888fb7c2caaf29cf62a2989af226b08d2eb32"
+          "content" : "3276faca656a9d82f11a9ebcca53ea315930c0d2cef1736d09251fa364d652ae"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "36f907806f855a27449b5e2cdbe448bf96b511757f27e2de8c2c635f9f214b1dcf97c08d69051f481360fa413a889dfdfb00d85f55b826e8d30f7393ebea69c2"
+          "content" : "48e01a4b15c3e2e85014336b8e594fcac7596b8fae5e6a7ab66cb3718c7e8eb759c6881fd1784eaca9a78c964afe8b684f1c5a21e018a373c56c049ff4f00148"
         }
       ],
       "licenses" : [
@@ -15369,7 +15369,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-alpn-client@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-alpn-client@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -15395,45 +15395,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-gzip@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-gzip@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.compression",
       "name" : "jetty-compression-gzip",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Compression Gzip Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "8eb4a9e968830dab0b83e387cd702a79"
+          "content" : "38488fe879d1dcd31c81d72aa12073aa"
         },
         {
           "alg" : "SHA-1",
-          "content" : "49941a6f807bf5f016f823258219ad412add57e1"
+          "content" : "f34786b7ea7c8eb6949dd359b973f7644147fbd0"
         },
         {
           "alg" : "SHA-256",
-          "content" : "8f7fd4b36506112cc9926925d490bbf72d00017b609f46afcdb0ba28da3a6aa4"
+          "content" : "71315ebfed13187554daaa7fdc41b143f7d3eebdebc8b230b41a96bcb1bc7d04"
         },
         {
           "alg" : "SHA-512",
-          "content" : "e2f97cf4cf91c5563525340e91bda14f5162ea3c7c5f8b0a0cf18d2f335ad41720a6f78e4259c3b93db45b4f617ab1751f2bd9573711a702fe422246c20c454c"
+          "content" : "9af903ffe3206362a45de9dc88df12a1de0903279cf2de9154bafbf442d450a8075c7836996a6929752d52c5b384068ec4216bc616389c0bc0f35dab1c7ceac9"
         },
         {
           "alg" : "SHA-384",
-          "content" : "eb0aaa763883693b3c72f363942c0cd8cfadb4aaa515d10302ec2a8ba2ac99840fc4ed92a6dec0013f10df2c3d59d036"
+          "content" : "1a74e820ffc74bc26c075ed557cd77d27946372013d10f150e29233d196008571b7b27f1e4b66fe5fe5da6ff11e08d83"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "0f8f84a8be2bd5c3a6f7c1000c78ab42654e962f02f4a6a70061bacf4eb1cd96e1d1e7f85555f777a5b940d566cc6d4d"
+          "content" : "e2a73aaf35187a3c59b39717ce6dfb96f76c86cdc4fcda505f847e8f23b683b65baef77102ef75723d06ce615eeef11c"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "8a5d9d8408c2933bc19fbee9edddb1416002ed2375edad71e871dae91fc00646"
+          "content" : "0518f0e1775f1ea7449cc5ddf6d119ccf4399bb9e2643c17f9949cd9e47ed1d8"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "29437c039084ed94ecdc638c6e9a3a59083a627dd187e57a6979909866310d551e6995527fec911fcae34e77575dd540555f7034d8b8a5e4a8e764aea4c529a2"
+          "content" : "05efeb351d73d96570f0d24a13ce395bbdb65c4d3eb8412404739e9763e789f6e54388c77a1e46ffeba33e5090184a3a26de685df1e1ceb7744a51168fef32d9"
         }
       ],
       "licenses" : [
@@ -15450,7 +15450,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-gzip@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-gzip@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -15476,45 +15476,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-common@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-common@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.compression",
       "name" : "jetty-compression-common",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Compression Common Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "e5fefb28c845113ea734d70975b1a9cf"
+          "content" : "d3a3775ad64f64bf56c88164bba6334e"
         },
         {
           "alg" : "SHA-1",
-          "content" : "2fc54912c279a460cefc2e3a0ce39e744c7a66b8"
+          "content" : "5b072d5fb3c68f06dab87bdf6148424fdcfca481"
         },
         {
           "alg" : "SHA-256",
-          "content" : "2de2d0cb72ec71fcbb528fcacfcf551577f94eaedb922f1901bbf6c41508808e"
+          "content" : "a563077b2d760022fc0de241fec29ebd5b31ed629060235c395b0389f304a148"
         },
         {
           "alg" : "SHA-512",
-          "content" : "5f27c008ff335e14cc8422a1d85aba115f2735da347022b96010e517dfd51e6eb289f5bd971a0b04c0f9adaee15345ae8b04a8df93760fd441b02b863179eaac"
+          "content" : "3058e0938a3afbcc6861aabc7fbf949b8c7fbdf0ac58e5b24e65328ccb4d5bb30f0a9e30058ce2f61f7d3d971bd892e81d1fe178d26b34c8d7574faaae6692cf"
         },
         {
           "alg" : "SHA-384",
-          "content" : "c6b68fb24903fd370adb5d3694f79c8d43a588f1fa6d9abd250b3883ad05e5f42480728d649e3c4e1a1730936aba58b4"
+          "content" : "c2f05ab795ec147e887f5454ab5b127bae7ad94b25653ae6a579bbc911e2101176b3c5dfc9b7e038fd935fa389900aa9"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "58ecd6c92e3688935756c5a068bf328feee7b36ef2f734b74be8d31a2e61f89a48fa4038e3169d81b843fa7dd35006d8"
+          "content" : "73c52e73ea3374272acfd2eb9b22f6af02f616e6d169713cc7681b3425cec7dfb273980545bf97f08c27492dc94388c6"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "0ac3709edae28d0ea6d0eb33753c7d37ab39ffe6a3f56c5f2567f32b77b71e78"
+          "content" : "1d89f7e67c1ac364e9ede0e223d741e3aa104cab3d2f9621c9781aea2680e89e"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "fa45fe0683110228e76dc4e779ce28d2082bec6af61b55ae3b57fc4219ee704dcb5102816ca20309889587417a39db6c8cde3852e75405981647a7428bf10965"
+          "content" : "dab46bfd279288421f09a1364f543b60733b6fe384977861b84134ce3527bc5f6769dfd15bda547bdbbe5b9122df3c81437621e69a7084302704a716832f34b5"
         }
       ],
       "licenses" : [
@@ -15531,7 +15531,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-common@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-common@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -15557,45 +15557,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-jmx",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty JMX Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "096274b9153747eabaea8334c8dd4ae1"
+          "content" : "11a666c45afeeee6de050c329088318f"
         },
         {
           "alg" : "SHA-1",
-          "content" : "5b063bb5a4eb8e48db5935c90509a0fcd6db6692"
+          "content" : "da63239eacde2c2f4b92aeeac8fd419f5ea9ace4"
         },
         {
           "alg" : "SHA-256",
-          "content" : "e414d09dcd6093e6006638253e8d48be60100eebffc93583a738de2bd1b396e7"
+          "content" : "21c9e70b26ec32c3f4c06af36538c17f86d835561de41575741058ded8c73a43"
         },
         {
           "alg" : "SHA-512",
-          "content" : "357c5cd7b94f4ffbda33c1408c37e0e97803515c60cfdb59aff42d2616f244b0bd3034289f3bfff48709fd8512438d1db06fdc9ca02c6e662a5b48f4460bae8b"
+          "content" : "32448597400200e024a0a5ce37c20c8e138d82b996286c01c4e81c904137b3a68ade9553cc4213846b94fb459f43dbf5206180ff4d5cd973c038f93b29d90718"
         },
         {
           "alg" : "SHA-384",
-          "content" : "96f58cf009ed2a395cce95bba6a1ec17b3c1b675263e89a08cd63f72d04a387915dacebdc0863bdf080ef78b8ab59d10"
+          "content" : "cdc380d6665aa8a42c02cbc82f1520f9105ea792b9cb6ce272d9b68b47993170f87804c3b715b5c8f17da45cb9cad31a"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "1eaa0c263de5af3ca4f2fb3c3d09eb36d056af4c47709be78d6beed15bb3630d69fe4a3391efe1390c809fd69d088f02"
+          "content" : "55e705f83f3a6eab369dbffac8163d71deea78ef71161802d58719dbca1176d91334fe45eb28387c9de437d35c93d682"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "c9709fb4d3cf56102adde0ff978de0891a5536d26b675ea9b108f891bbe18c69"
+          "content" : "8f6bee23e378efa764a64f0d1ba2b9aa955f0646dd35f6276b0cded2d20dbde2"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "f7b6ebde7b4f224fc0217eb28724ee93ce1c7e1a408a197e58b6b0d7b8eb5d11ea9cd7c9ca1866ed4b8e1d97852b4f35a6174605dcc67d7f00f8dfe69e7be054"
+          "content" : "0ddd99cd493cca5899084d84572a42d9639270c9b154f061915e108749282528f9edd8d8f5b0dd6792600a2cdc3c7eb437a2ad731058b8c4184c786757455001"
         }
       ],
       "licenses" : [
@@ -15612,7 +15612,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -16429,45 +16429,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10",
       "name" : "jetty-ee10-webapp",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty web application support",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "4fce72ba52fbb92275f23bf331fcfade"
+          "content" : "5f45cfa9b477e146674a098509165402"
         },
         {
           "alg" : "SHA-1",
-          "content" : "840896141325416f0f537b9f5f2bef4000626dce"
+          "content" : "13e353e3eb349dae826ddbb66181b03e3ff46c39"
         },
         {
           "alg" : "SHA-256",
-          "content" : "5c32c622f104d2aeeaa25916dde8d0593524f77ac50b2edf0240321cbf67503c"
+          "content" : "84de1014bb79f957f0fc66d3db9b2bc7eec19f01c8ace4e250b4707af0eed0f3"
         },
         {
           "alg" : "SHA-512",
-          "content" : "acd548388c58054bd373586405e4b0f10c79e8a15d0e003d6035ad6c07378518d324d50443a5bbe0853108a248f286e83572c2308f642e48f19720afc6b4728d"
+          "content" : "5ac8dd9b47ab781043672f6885a53ac5a1f54e86ebb793532c825bca8a58b35862116c7ced180630ac6f630592f47f6618eb3d8aabf1ea54c4e0c5aef2bfba17"
         },
         {
           "alg" : "SHA-384",
-          "content" : "89d7880b92f050a9d25d110bd7347c550d4b98e4629f55616454da55fe218f1f0d8b287d740d025277da2b8a169ca4c2"
+          "content" : "e85c1bfb479becadc89eb0cc3df0cf6dab243a8e63b5b59a98e96e57b41b3fbca0789a9a9845d4e3e0bba3861f575d6c"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "e97460a74b462473440f40ed14a352fd84e634b14077dae169a9538fb2efdff3ad58d79a23851930ab996e2ffcfae474"
+          "content" : "df08242c0dc543562a7d85d561c9325a3f9deb84e8f82785f1020600153ce739bf8d66279e6489b79d99b82de6c464d0"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "eee60dd616c603aec9814602dc6f6a410cb75adf05e50ff40220049fe9a699b9"
+          "content" : "bc6c89247d2ae4f4f2d788df114a71dbae72d46a0cc82355edc5a787d97e992d"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "20bc237e433bca999a9927a3da5d91e41b078307d7c21727207d5a02e3f0d5de307c36cb9f3af47752cb0697291a7a45a1bd11daf91496486c240f61abe2ff22"
+          "content" : "d1c8d486b2c393c4662aa0642e3a8235defa87c9c3cfdd4b5777456b02a5b422cb91864494acd15714012b710b4e32eab2492317ba2b09aa86907f9767ff875b"
         }
       ],
       "licenses" : [
@@ -16484,7 +16484,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -16510,45 +16510,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-xml@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-xml@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-xml",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty XML Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "f1dcacb8fd588279a188d8146581dc9f"
+          "content" : "68fd5ca835655fc48e77fd0d58ffbe56"
         },
         {
           "alg" : "SHA-1",
-          "content" : "757a3b2e1b7ae32a1a3b4dae48008ccbbe523ad5"
+          "content" : "93b96de8663bd9065f22e894d5c4929dc900e822"
         },
         {
           "alg" : "SHA-256",
-          "content" : "93303f66029cd85be366992175c907accb01da8120164ddc95c332bf13c16530"
+          "content" : "1c7b6320e3ad4ccca861ecfd1347f10ac6130ca2c2eb788a6b5dff3ab0c0f532"
         },
         {
           "alg" : "SHA-512",
-          "content" : "0cd63b439a1c47ba2f488997a1a5ff19bfdf23b053cb5bdc8b41614e2397790535652915e4096957b06a111dc60f11e8bfdd2455f9befc6e06de8043da83f473"
+          "content" : "37eb62fe9d41e734d46f108169ff04ff827701053eea50eaa8e21a31634d315f04a144bda90eb7440af62fe4b27239306d49ac67f96dd1c6afa30d8b86aca272"
         },
         {
           "alg" : "SHA-384",
-          "content" : "4d76f3bed1fce50a09d3bc6f9223ea52c571b10d1d6f8ee9ff8cf0b9a81146151c6665401c858a343d92ae59efe04dd0"
+          "content" : "a2a58176f2c1ab0e4de9105e9abede9ca6fc8ad1228810bd7d99e92b6b103494f95c6dd18b3f72ff49ee16bdd812a879"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "1503099eae02d2bf4ba68c69946d1360fd9a1ce3d439f632285c234a7b0d74c0fbfb8dbc3767aaa52d05e7c751060924"
+          "content" : "d6d9ccf82be801ee9ea4a926bdf6f0990014e617c3a0e6f6a89acc985bf6120c972563744caf9e1cea6feab32f439c07"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "e65f2d8736513c92d8f0e635686deefd9928686969fcab36e97c9aeeeb9b4409"
+          "content" : "b6b2498585214acb650789dd1280d1fa85e7df8f3c870a718d60a6ae5da86fd1"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "82463a7610ed0fa7ef3c579177d4f71c40becf1c886501f111413861b129c5d2f451eefa85aac3006be3d63c391eb6c2992546e765ca2b66e8fbed0017d59063"
+          "content" : "a3d2b5b66a108a665c1829a1df5be2a04e96f2767ee7ad98f10cdf47fd402ca5c509f749fced4c4fa39f758b26bbce8ee38f1b86b9fbee01ac96f77366ef6952"
         }
       ],
       "licenses" : [
@@ -16565,7 +16565,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-xml@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-xml@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -16591,45 +16591,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee/jetty-ee-webapp@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee/jetty-ee-webapp@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee",
       "name" : "jetty-ee-webapp",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty EE Web Application Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "36fcb8ebe7a0c9b5a6d3aee3111ee80a"
+          "content" : "62e401dd8f9fb6d5dcb0d4f8bf659d29"
         },
         {
           "alg" : "SHA-1",
-          "content" : "52061f49f84d793b9002db74aa4fabb6c4187ab3"
+          "content" : "a8dc02828144d6327090e915a00e11246e3d052f"
         },
         {
           "alg" : "SHA-256",
-          "content" : "890aa64cfc36170c0f3e6ae1712cd8d4814778127abdab344e914dfcc5a7af24"
+          "content" : "f70d9b30fdfd970e8bbc462b9d6b4cb85f850428d8640529fcc1f1912b2941b4"
         },
         {
           "alg" : "SHA-512",
-          "content" : "6cdd937850d50264807b96a8ad9569eebd5a62f95a425a488a4ce25dd8580fdcfaa53d677f01c5289946540d9ded7f0c0def3e24bd3a54a44f4f0c54fc106601"
+          "content" : "0966021955928a272062043eee40294540011035f27e2825fccbfc7f756f2c0b9b77b08958d341893441a1b72205eb868d566e777643206aeb0e5358a5fa70a5"
         },
         {
           "alg" : "SHA-384",
-          "content" : "abba6d30185da74dd8f75117d6af5698ba5113ed14df85b79ec8e8ac833be64ab8f17e11342fd7d78af871eccb80d359"
+          "content" : "5d3b914410e7d223eab106f5c5f98e8ddb1f199e4ea529f12955b37d92aa52ea4c55bc80c4cdeb2506110f404741cc33"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "65e8ab077dd1ebc21f45e3b058b6eae2568423ff2d2047bc7449cf5e25737db17c6edb07f6f717de1d07aacbe2fb35f3"
+          "content" : "0da4f5211107daa7b2d61485fb4d05a16ef1a51265adb3fb46e9e7f8ba48cc48f5273e8ae54ef6d3f40a91d9cdc34cbd"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "a6dc8c2ecb9c95ed27781620dc524d136dedab89c9ea63e6cf4c13798956b330"
+          "content" : "f75f3512e6fb8210ba8a2c3aaf1e048e10803c47e6cf72710b0ddaf6801222ae"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "aea714d79afb5f4f71d24f7664cc1f4bee749e96931428fb171514ea56c2d57e2fc11a7e49d94eb2afbcdecda9368859de243d86707a10c2ce65254077dc3eb5"
+          "content" : "dcca4026d660e97dd0f9451939f5bafaada22f4a26093945b5acdf22719b738eb6d70843d444a8d2400a1b5623581d548fd6643e2d85c2abb98a7db0209579aa"
         }
       ],
       "licenses" : [
@@ -16646,7 +16646,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee/jetty-ee-webapp@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee/jetty-ee-webapp@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -16751,45 +16751,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-server@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-server@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10.websocket",
       "name" : "jetty-ee10-websocket-jakarta-server",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "The Eclipse Jetty Project",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "055809806908d5c2220c00753313d1e5"
+          "content" : "f1c96451cca4c5560559131eac22f910"
         },
         {
           "alg" : "SHA-1",
-          "content" : "3b6933237b0ef06c87c81ada350649af631af24e"
+          "content" : "4107db61946b887bbde714ae87dbef2ec812bf11"
         },
         {
           "alg" : "SHA-256",
-          "content" : "5de6e09b617ec2f47bda4e3fc471662422ca8f9f3da36961171506f60331fd0c"
+          "content" : "b57683bb51a818f4e0e991b75352fece9d90bf052b7e246d47f6c0ca615d7dfc"
         },
         {
           "alg" : "SHA-512",
-          "content" : "9ca8beaf1eb65605986e9c03fb8a6525111ead0d4836af48b8c16068e6c6ad6516d622b5420fec4caab54acd49388e6ced7363f6df7e896dad3b37d44eabac02"
+          "content" : "e45594084f989e923e112079b6e3f89729a42222baf739e4afb4754adfbfafdacee41249dc99f0f4faedc4eb28a5d325ed5d2362872d3efaa9ed124944f08f91"
         },
         {
           "alg" : "SHA-384",
-          "content" : "c6058fc1affaa566d5e10534166268c553b9bcfd979e0bed189fbb58f79f400b37cb8dd07ad6d4c1364971a2d7fbbf53"
+          "content" : "9b8eee171d9b4ee9c29291e97411048162915d7264afccb5df0a9141fa400623aad462a3d9df4f9c7fcc8956cf29c172"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "79e15ee0023135ca8e6c63279aa3805b7beaf91f5e9e960fc5efee6287aef4ccbec5300ef799528057f0bbee7e40b4f0"
+          "content" : "6221ade85057b5af60d1cc293ecc28a634d238909e059868004ea27afbf60a91d6c7aa980086c897582b848eed131843"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "6b742ab64647b2465d025e446a4117654ddb627a3b2b9f963a02a6a00f0a6b3c"
+          "content" : "93d6d01925dc0e8714fc689844779b44d303bd4ec396a4da228ec32a6fb85973"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "8d5f218daa673a4a99d7bc7b462511e761d9fc74378de6fa8865cedea682417615f1e4509e194d6fe647568e690eb163e4213dd59f22a71856a683dd8161f952"
+          "content" : "07cb665fa26e6071f7aab8a8e1edba37bf730a72d184318893274739dd776fe36d03df2ec6c136043349a3072cecd05c85bba2db02b7049f31234fa51157ec30"
         }
       ],
       "licenses" : [
@@ -16806,7 +16806,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-server@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-server@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -16912,45 +16912,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-annotations@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-annotations@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10",
       "name" : "jetty-ee10-annotations",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Annotation support for deploying servlets in jetty.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "02a74739fdf03b2ad4bd215858468c78"
+          "content" : "667e4d7627f803057aef1fb69fe73ee3"
         },
         {
           "alg" : "SHA-1",
-          "content" : "7f002e60590bf58bd83b98087e90a0679c2655de"
+          "content" : "0893d44e8b2d19a19a244896e90ba009624478e9"
         },
         {
           "alg" : "SHA-256",
-          "content" : "bafdc14161e8ce58d11cafbacd55a465a08e1ff69a4697991978f18c7653c30b"
+          "content" : "c45ba9ff724845ef5848f86cf164c87824d4be18095216b9cba66a94a72b83b6"
         },
         {
           "alg" : "SHA-512",
-          "content" : "c5d7f473774f20420f90e0dfb0c319036028d2d8c8fe6f7406a79437f198ac4322e77811f3dc2d2a30d3bec709e4ff3bb7d7655534b5bd68ab3557fba34599ad"
+          "content" : "9034ac3dda41ef6c682f33be08a6238e7b1c2df41011e322ceb4eeb27e1050631e3a72df0561cc28eb31c073076591820737d95d0208a2e9ae617687d375ee46"
         },
         {
           "alg" : "SHA-384",
-          "content" : "01fc1dc64c02f61a1241a4e3933b9cc168539ab1ba4df39957c461191d7675fed8a23a19c25d71f33986c72f74ab052a"
+          "content" : "f9f0f3afc5e745ae654ad433e4207a8d70056a6e2fae29f1a9d06e2358c1b2d1106781c6d25594473e61c06eeafa46dd"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "1c4865cabbaa66964b794f1fb67dd63a1055baa817550bb29e62a1c855a20a8dae78c72b637686b3be4e50c6d31089a4"
+          "content" : "41c533946a1ed5d0144bb95be6e9cde884202993de122dc519bf831985a366b1cca672ea8cdaca5f87f7aebd9a9dd8b2"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "95e026ca6a1fdd1c636a27029621d6642cfc86fd4186385ccc00e1148d09e008"
+          "content" : "d992a14b54dd612f5aa4da9eaed364ec87a81d97e36a539ccde6a4dd1ade0690"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "af08307b0346462a700294d6f747c6aef3a8ca6071704879ecc74870e995e3676863f43e63c432f560ea68849520a0eef96920e169475819d4a5f81d12c9b191"
+          "content" : "6710ddab70cfa0172d64eaf342bd0a9f21b3d17449c05f0be1852c06709a5719d5abdfbdda29e6edf8849b7779d12bcf02b9233bd736dd9da82777f5b058fff9"
         }
       ],
       "licenses" : [
@@ -16967,7 +16967,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-annotations@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-annotations@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -17072,45 +17072,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-annotations@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-annotations@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-annotations",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Annotations Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "0e6f53872f8143731fc49f31b234fc69"
+          "content" : "0f6c1d457b1a70713fd46242f447f2f3"
         },
         {
           "alg" : "SHA-1",
-          "content" : "dfbf6210096c27026671dd66118b97c8550c3e14"
+          "content" : "394bf358ca370c7df917954f25714d6c8865d1c6"
         },
         {
           "alg" : "SHA-256",
-          "content" : "4edbf7707884d3e8784aa0d2cc8faa138c2b0c2e1470116892b978f84320d71f"
+          "content" : "ce51d231435cdd774336abcb44a7817195fd12487ed213327e8d43db172af467"
         },
         {
           "alg" : "SHA-512",
-          "content" : "a3b3b6f2de22f567829a9714bdff41c89d010bc749e753823d206c9c32551fee6f1d8152a5a5c02addda2cc4d6986bba0be32db35201fe61929185b4ff57c3c6"
+          "content" : "cf72f82e2c54115704c6e430b95354eba07bc58c6b534759557909e2e46f230cbc73479d0449e2367b12be28b2aaa305086a42e7e7ade7a796a89cf45698cb03"
         },
         {
           "alg" : "SHA-384",
-          "content" : "97f78e9708932c68cf5cc2dd4c0e4daa31aedd0a8402e38e151eb7f4befd67da6f1c592e45efb48218103c1b3f2ee499"
+          "content" : "93ca0aa0cd581b448f09544d18abceb98a591427003a0eae580f1afcc9eadb4af1647f8fab935399a3778980c4f3a0e7"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "7060089b95dc21f24527b959d92fc3335c111508cf998d6bb2970a769c567683848b1ddd505cd97e9ff52a07ed4141b4"
+          "content" : "7a7e0f65c51c67b1742e4e26558d53a8d8d7505c15845d4ee1f3fb72066a20f6da832a53d4ce8f05f64ed47f116b897a"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "6b6cf3a70ec5eb9b423b633765934f06ac586ec25eb55afcd30f9b05d889abec"
+          "content" : "727939bc893c0e5064af9c4705f02b485f956ae4d09fcef603c42cf2bfe653bf"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "a7f0861a6677c3a136843b9815d1523108235780d6331d7bdddb56ebc44777f79a72423de89cd74c4f7a29fd574e88a7f05c409360b0eadc8523aa3537b7eea6"
+          "content" : "d0e6f01dbfe719e410ca66fbd2b80090b84484676d2c9f268e5585884d8b54b20f60abb1cac7a6fcba2da09e6b9aad14c43b7a13d61c29c85670cb46214f2ab9"
         }
       ],
       "licenses" : [
@@ -17127,7 +17127,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-annotations@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-annotations@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -17153,45 +17153,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-plus@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-plus@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10",
       "name" : "jetty-ee10-plus",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty JavaEE style services",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "88a92c63e98ad43cec6828d86e36665c"
+          "content" : "e8eaf34fa59ba9277365cc40d433b0b4"
         },
         {
           "alg" : "SHA-1",
-          "content" : "62e60beef608a70228a38108ee6406a4c0b9ac3b"
+          "content" : "0c89a138a99c7a82e9c14f55fa83826c4ef5351d"
         },
         {
           "alg" : "SHA-256",
-          "content" : "0ab02160837ce7310ce4732776c5d59c40aa7b24b2adc42dcd2a88b15b158418"
+          "content" : "80d050384ef31c921e0fbeeded3c70fc8d35a29b7951511a9ccfaeb06b5e29c7"
         },
         {
           "alg" : "SHA-512",
-          "content" : "4c2606209717bbeacf97a7be55b52c3cc9c82cacf5c0b957a17979a873e9122a39320a4656dc64f67edad966e736108611e6a1a0e99e1590460d8f7995f157c9"
+          "content" : "6d99f52b111088e65e8bb34184f34935a47bb4202235b9445d57eb327bf9c8d0c315e057ee410bbe555771f322a1012fe5ceff6543b59db7d98249b0a7fd3a74"
         },
         {
           "alg" : "SHA-384",
-          "content" : "464eb9b4dc3486b6154a00d28103727a19d1e222ddf54cee17a61f52971788d68eb64c200db300fa3da98f46c34203e6"
+          "content" : "e0ae8f05e541d05e32f2ce89c71368040afe31d12218b179cd972226210a6aa87cc39094e7f82d07c2f094e6b8e37a79"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "5468113b58e978bfd2d1a74be4f77b1b80e4b8ebaa36e0089d2815ce40d989f6d8ac32ec3220bf17ac33f6a3e868114f"
+          "content" : "d831086363b6bf69ed6606bbaf9ce721e45c1134b5afb4370095a4264969f240f389289fd45e7696d306261c98526bf1"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "db95b88973742b101c0a88142c9493d1a116409ad67c6cff77690af8fe95b653"
+          "content" : "4a51fc41e3c93fa9021a53cc66903ad7a60f842af3129bf9089bc2c0124f0fe2"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "83c6202c7c3f2cff63d7979cd72f6e9a86203c8729992ce05d275637e35ed53ba497584a08b7b7ec1dfcbd939c3cf6237ed9739c37927e2ee383276500bcbebc"
+          "content" : "d9aecc20f44dd00c55df54665948ec1e9a37616875f8e40ef53c59321333709846a9e3748217b4feedf37805650ce7652542710c5d0ba90e07bb272498e175a7"
         }
       ],
       "licenses" : [
@@ -17208,7 +17208,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-plus@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-plus@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -17616,45 +17616,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-jndi@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-jndi@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-jndi",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty JNDI Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "ef3e25069d908621f9756a7a140577e4"
+          "content" : "8c0c63c2552ebcf1ff7d7385336b536e"
         },
         {
           "alg" : "SHA-1",
-          "content" : "e703f0755c87a3d2bb92a6559e66e5e28688fa6e"
+          "content" : "10c9118cf90e9bf1c697513bee2dc8beb7e6a72f"
         },
         {
           "alg" : "SHA-256",
-          "content" : "de0c10ead11aeae8f2be973d3eab4912923208a90ea8fca231ebfc36514e85f8"
+          "content" : "a701368f9810433103836f0f2c0c0f6a2ca49f951d25d155e4e507821cb54b43"
         },
         {
           "alg" : "SHA-512",
-          "content" : "df24abbe5701307ada5d8ecac03f9db32dddcaa9a301a1fd9d17246489c38a82f329fa07cd875bc945eac33322112390df2e73a19123b868b9a7f71e6358ef91"
+          "content" : "f9cb11c82c1e4b039a9af026ff112b8de2497b5dc1ab0ce3977fbfd1cc7a6642983ed394b6facf35f6caa5a7c950f1c5d54fdea8478b2e2e834251933f863943"
         },
         {
           "alg" : "SHA-384",
-          "content" : "7a2f69231bbd1377cccd2ae26deb41071bb77e2154ce8487782769a2bccea677e00e510312fb8543d2b47b91bc837421"
+          "content" : "1adf22326639e374601751a2ab0674a468795ea34b23f139a42aebb71c405b00c8911c0dffba41983e1b5d9e583a4f70"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "839cc6e64fd3b97e93a94467f24d50821dc932e4cc425766ef71d721ec13316df172e5d5c7930ae476646de58ade8b95"
+          "content" : "3d2688ec0a52e7c2143019619b3efbcfbf51873cdb27cd418467e7512003e7652c878a1a8bdae0c64613b4f61eb98feb"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "3d21b50e12b7b38a6b7c64257af0f19734c6f6e63b55ed13d2f13a2086dc23c1"
+          "content" : "2760d7de27c9b8371817908c6b0b554e4638e87ee2c9e1016bc5e5dc45393f06"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "e6f34335e1ad137c81e929e9bf406a03bda4564995a1cbaf539ce3f4fa641ca2f8439ade25506e046f7af79440427824c7303a22bff6b810423302c3bfee04ae"
+          "content" : "55063fbab9f841ca79c4f279d691006e61d25cf7816197fd3c0c5c8642dfa1441f155ebcc2e04683dd31fd33db0b158bec767d56866dd2dc6e2eb702ce02f08d"
         }
       ],
       "licenses" : [
@@ -17671,7 +17671,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-jndi@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-jndi@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -17697,45 +17697,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-plus@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-plus@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-plus",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty JNDI and Annotation Support Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "45f027198834f7d4fc668d167ad120e7"
+          "content" : "1f18fe19f30d8b7dda2d6f1c5064f5ef"
         },
         {
           "alg" : "SHA-1",
-          "content" : "3c04e747825fcdb029b6a4513241879de6cdc255"
+          "content" : "8a2dca49e0c27ea08767205a6c435eec1597bfa4"
         },
         {
           "alg" : "SHA-256",
-          "content" : "374a5009678b8e13758fdaebe3cd4159a398a5cfc91d7b3f4ac46ebe95d580ec"
+          "content" : "0e29a87abf5b651f77e5c3e7c726f0ecef30a9bc57a5e0aa5aa3f784cfc0a7bd"
         },
         {
           "alg" : "SHA-512",
-          "content" : "cc8e5cfa147dd0da67291ab5aaeb9a944cba7ab831777786f5c758a16c61e733803ab6c94b2320a3c701d3703ac8dbadb178344eac76bfa89581d65e370fb7f0"
+          "content" : "1516e2abcee42fbd26889a10d9cc4664b450ad98a57eefc8c8fc90ee99fd915a8281b83645cfb5d5bdcb91efcd170657abf0fec2d0d2b64a5b1b52f217d4c47d"
         },
         {
           "alg" : "SHA-384",
-          "content" : "a7b7b9066e724b98411f9ecb1268cfde7aa2984f340121d4a6ae69cfc176e897a9af820b13004d69e62465201e3c3cd2"
+          "content" : "3adc3b838023f82091d0e657d8e07418b59cb71b99f725e8a03d40462352afc8a4b2b2a017b40f14c49fd8fe260eeb8f"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "588505fb0c2d0ea9b2f84e3896e07c85d24e98418bfb77e7162a2f2c7ee8d832ac68135e49eb7aebc1d6a178db7474c7"
+          "content" : "6e4920f962cf2a3387a787192e44bbd998ed7f58267e22015bff9f095a8d4b6e9554b718897116a292e0fc62bd5ef943"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "1ffb95bf82581ed1f060a522f43728a9c09ea70adbea8d4d18b1c9b9a7da0daf"
+          "content" : "8fabdbc6a2266d84fe52671c77c5a1bbda8ab3f5b15172f7ad06f8a8ec3303e9"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "cf6eeaadba5c76950d228976db6c42eb20dee7e4000c5b8a1f409394a1d90e6ec22f7fb4652e0a28bf3942f388596197daa8058d6e331f23df78f9d588b185f5"
+          "content" : "a34bbebdc9bee79f34a4d40c35cb6353b52be8f80fb43e74da118595845907556d787bc08680202740d63aaaf044fde4c3220e9f59d3abe80e8dc3733603f0ac"
         }
       ],
       "licenses" : [
@@ -17752,7 +17752,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-plus@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-plus@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -17778,45 +17778,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.ow2.asm/asm@9.9.1?type=jar",
+      "bom-ref" : "pkg:maven/org.ow2.asm/asm@9.10.1?type=jar",
       "publisher" : "OW2",
       "group" : "org.ow2.asm",
       "name" : "asm",
-      "version" : "9.9.1",
+      "version" : "9.10.1",
       "description" : "ASM, a very small and fast Java bytecode manipulation framework",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "1888ad1f49038441bb2d12aa6dffe396"
+          "content" : "9cb72080438acf27f2607002e1444a7b"
         },
         {
           "alg" : "SHA-1",
-          "content" : "2ceea6ab43bcae1979b2a6d85fc0ca429877e5ab"
+          "content" : "ada2141c0cc52ee8f5c48cd5fa4ce0e794f22236"
         },
         {
           "alg" : "SHA-256",
-          "content" : "6f3828a215c920059a5efa2fb55c233d6c54ec5cadca99ce1b1bdd10077c7ddd"
+          "content" : "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb"
         },
         {
           "alg" : "SHA-512",
-          "content" : "bb43eaca8777c7b2b4bce9fc19f9be5742a736a23415e271643c3e14d3d82f565f6de0e29ebac570ce66b3921ece1ebd4de06abeb633ae28c17891de56973807"
+          "content" : "8db6efa37d4d569bf2b95d90931b8064f87ed928d20bbf8d8e7fa6182e9a11d32e6a2cc034a3d173a38ee70ce2ea9f20f52f9d8730d9401d2bc6060674c18928"
         },
         {
           "alg" : "SHA-384",
-          "content" : "9448b1eeafccfe061a7533a633b3cf7445312f916d372a3b6bbae8747267b6d6a9387fd100aec22bc22160007a819fa9"
+          "content" : "451863dca686c04151bef6e632df2ee3c8c67ca97d191cdee3d7c4f9350f8a096011cadc1c79b4ba012b3f2179ef2bbe"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "b684b8c0bc4d7cb21245b2d9e20e103460686e80b16d2b4ea5452c82948ba74fc2bcb093f4ab1d6b010448da5dc12457"
+          "content" : "faa7b5fa7a5fefaae6d320ad43c09d588d6deecd41b2a3ebec36a4143a2b90373b2d01936c0733413a01f451c9740bc8"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "f59abda303b133b832ad3d81076241d924dce6304dce5a1a60f8d816797dbbc2"
+          "content" : "e37aa694329cbbfcd0a81a735270166386aceff3797af2c391fd8484baa5a576"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "d42ab2d7dfb1e11b896a1aad31d945639b5aa85ac9b5c2e33fc2e9174c4333eaa018217b58147930fb8017c7f569a6390c242c0e500f5b70600a2100bd08035b"
+          "content" : "1d660ebc24411c38b0928b543f402e7cb09747b7c522047f36b57865acfb83d25c9348c1d70af78e3d26e1ad220f10055d63eeb2965f7b6966cb2fbd29b47671"
         }
       ],
       "licenses" : [
@@ -17827,7 +17827,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.ow2.asm/asm@9.9.1?type=jar",
+      "purl" : "pkg:maven/org.ow2.asm/asm@9.10.1?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -17853,45 +17853,195 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-client@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.ow2.asm/asm-commons@9.10.1?type=jar",
+      "publisher" : "OW2",
+      "group" : "org.ow2.asm",
+      "name" : "asm-commons",
+      "version" : "9.10.1",
+      "description" : "Usefull class adapters based on ASM, a very small and fast Java bytecode manipulation framework",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "8eee0b1bdd046baf472eb83dd5e6bb44"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "4229e4c55fd8e01c23f9fe9884075cc628aacc50"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "6d0abefb7cbf972ea16edb37ec14835372505063a45f976ab7ea889ed9497895"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "8540a8f9a63b22bae54fc501f2da405c2c1c45fa13921a1193629cfbfbb716473f8a19984559af7b0b1ea3814d439ec445ea1cfeb159bf922bb7e60a40acf823"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "f5af3084db87003010b4b46ef666ba2b981e1e09dd4c232de731cb71e5e1fd8166e93ad96d63a85f359c82da93c7b7a9"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "e0825b7c5e5815d196d5d2eeebd89221ac2ccac24976892d4ea46413c836e06c015d3c7aec708203a1cdcb2c8041bf97"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "00c38b6149e09b247b84aaae5b01cca589f5464ae76bedc03edfd3bf8c96fe8e"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "80587f5518e9a24fb1a9e2d81d7a96ad35545bbc8e50a162d3b199040536a0457ceb9342b8d4ef762efa4455314e8c6f7d8eefc68afcb84c89365781d0bad83c"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "BSD-3-Clause",
+            "url" : "https://opensource.org/licenses/BSD-3-Clause"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.ow2.asm/asm-commons@9.10.1?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://asm.ow2.io/"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://repository.ow2.org/nexus/service/local/staging/deploy/maven2"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://gitlab.ow2.org/asm/asm/issues"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "https://mail.ow2.org/wws/arc/asm/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://gitlab.ow2.org/asm/asm/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.ow2.asm/asm-tree@9.10.1?type=jar",
+      "publisher" : "OW2",
+      "group" : "org.ow2.asm",
+      "name" : "asm-tree",
+      "version" : "9.10.1",
+      "description" : "Tree API of ASM, a very small and fast Java bytecode manipulation framework",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "62541e1dc62331408ef31317555bf4fa"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "e244332a17564c1d1572449399a842de35881be2"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "3dfb0d5b6a106cd40b5b250e39935fbf2f927f4477546a5369a3ac609cf0506b"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "2ffe5bbfac53bbacc1e4e474628b4247fb1c5f592017f393a327b3f2d2a72a338263f2f6549a42cea57a42f676b967153a10a22aae46affed83608f74daf3768"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "847b70b47e73412531dbe8a4d2d8249accbc26ee6c51878f2d49ba16d6d7b7cebde1f09d1b2810b3b3f9ccf1fe50bdbf"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "15b57ecebed0cd80a0bba96ba7bb45ccc0c88ba76fb7b721a37407899c7d9f7f6ff6a1608b04a83d4c84f6fc1c777fc0"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "caa1fbee0889f0a23d84920e0b129c63f04f0b9f459a46f1e4759f8071756f3f"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "d7439f4f4d4b34caf02932ea6434f80748038a16375241ac8f28e145e06dc79d4a15d12585f533dfccf86440f55bc7001f6ad6f696e0b2c78f9741be35d12b2e"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "BSD-3-Clause",
+            "url" : "https://opensource.org/licenses/BSD-3-Clause"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.ow2.asm/asm-tree@9.10.1?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://asm.ow2.io/"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://repository.ow2.org/nexus/service/local/staging/deploy/maven2"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://gitlab.ow2.org/asm/asm/issues"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "https://mail.ow2.org/wws/arc/asm/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://gitlab.ow2.org/asm/asm/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-client@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10.websocket",
       "name" : "jetty-ee10-websocket-jakarta-client",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "The Eclipse Jetty Project",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "5474749852b2c9517caac4183ea73f30"
+          "content" : "36f4b675d67b08446b2830f8b738bfa2"
         },
         {
           "alg" : "SHA-1",
-          "content" : "5a8e7f79c0fb93b7f9e462e2d2f018664b934728"
+          "content" : "523cc961cc160a2e22248ed95fa3214677c6c74a"
         },
         {
           "alg" : "SHA-256",
-          "content" : "388a0a53ded62a65ebd123017e69860b9fab3c959bfa3f6c88a930e68c4ae520"
+          "content" : "30a1a78bd72b85751969e09e2105d626f96174bd2ad7e8227d6d4c223bc45c0b"
         },
         {
           "alg" : "SHA-512",
-          "content" : "f9057555265822cda49cb7708c693b6b1a4d5ee71b5d8a1fdd661f6ae0b1c1721df7ebabb9ec1625849dec2e4f34931cece90d33a24b56db5250741cc2fe4585"
+          "content" : "2c6bad63e2c61aee8ff86fc0c0168a458f5a5bf35c4aaf917a4ed1b2778da2ec86ea83cb8837f5810023a49509c582a6c504d54186d72935e4c04109c1792f98"
         },
         {
           "alg" : "SHA-384",
-          "content" : "3c3fb2fa1ebff4f1f06c580575811d9387c572518bad90cf2f01c08865320f6dff0f9b09bd00238d01325d0407b4440d"
+          "content" : "b8d5782d9664be413eeabf601dc1762628a869012c77fb96cf4c5e6bef895b3716304e20c1d451e0f14fc380965ad585"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "537313d17730ae6826e82675c90b9ada4423f3998a8701cd3e3a72db1c3a74ae019e5d7b2e96883c67468fcfcc9d46eb"
+          "content" : "7859b575b5ec68422d3c35169ad4e97cd430df2d8a10ac640d31549c030a74baeb5d30bb24419c8727f68edd2e0159c0"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "bf7bc3360db940902e50d8dc62f45e38f574761d21b29369e7bbc6bf66a2399c"
+          "content" : "afa375654f495c1f600d465741908efaf4a22fa1373e8907176f600cfa804e7f"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "c13d48e7951fe8443e0910206604f2ce40fe7e60b4f5ec511c9269883fb0a5c5981f636441f009d2a44f883777e53e21e3174b6adf194fb82a4f785a877acd08"
+          "content" : "734b46db62d0c60cadd554c839b9e157f892a74116d2c325ae3e17a8a79ed16d98199d22426479b0d11aea7e3c07580204708cacbc20799c1e6a0cd4bc7e2b7c"
         }
       ],
       "licenses" : [
@@ -17908,7 +18058,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-client@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-client@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -18014,45 +18164,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-common@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-common@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10.websocket",
       "name" : "jetty-ee10-websocket-jakarta-common",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "The Eclipse Jetty Project",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "ac0e66e9d705e36c4c29565560a69c64"
+          "content" : "3193cbd9c8de281c1afa84b2895324ac"
         },
         {
           "alg" : "SHA-1",
-          "content" : "585ba588fc175c589d9cc0f8d2f54133c2293d00"
+          "content" : "05bf116fbd7db1e774daa82f9b44797df3afffd0"
         },
         {
           "alg" : "SHA-256",
-          "content" : "cd5944ef8e3a6a25fa7e8f12a78fde62970699f4a2e9f7ef43196971af20ca04"
+          "content" : "78fa8ab5d14c1510534f58c6f1612c975e958d79530243c04add9542d2771b9d"
         },
         {
           "alg" : "SHA-512",
-          "content" : "36a2c26c341710e8574bedf7bb217f098273918288b22fead3c106fc3a456bfbdedfb8e67ed5a4bbae1d148895c8291ea7e5918d9545194bb0d1d458d14d05fa"
+          "content" : "2e01e1137ddd1617b88d55f4b8da1671e11f8d145916682f5dfc68ad54659e1745634390ab59e41ef2a2b526f97432525ca2dce92dfaafee9161cb46d8e3d91d"
         },
         {
           "alg" : "SHA-384",
-          "content" : "5c2023867cdeb2045acf5eca77fffda4f25cf55da596606a6046e1811fc3ed87c15396394318c93585e2ccb5433e78a1"
+          "content" : "b54b2083b1d1eb5dcd0549010f9c18ac55676949efdfad4abdbfd4aeac55df01898c201c062463d5c6d450716865c483"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "59c7ab2aa29440f7bbb52fe41674f865fcbfc384db7c2ed7b0fc8a21dec65f36a90e81bd621789a1ea900c23e06ff9a5"
+          "content" : "25b56ee19a92fa157531863c455dc26b8f1ac9f84c005fc363cf772413bbc944e99bb96e8eb99c357a84f3c4448856e8"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "1943ab5640890c129f196643bd6c065a1124972bb4e0f023bb3ba90b1460194a"
+          "content" : "803fabe084cb0681dfe60a4e78d8741b1a4aecd212942aa2fdc816bc70e81caf"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "c736676545f80cd4d82da4757016195dfe5b586e89eb5102e8ba5c74c91d5f0cba101ff17c3fdf5f89e1b2e208749f0c8ad6d28fdfc1c198f99a03be3a43cf63"
+          "content" : "61ef2e64fb12b698c8dbc123928dd1289fb8767655d8bdc06229c006cd80af5c8bfe7753d1c6b7b4b8f86b976a061344e995a89b7d94125af08dee8f96dcea38"
         }
       ],
       "licenses" : [
@@ -18069,7 +18219,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-common@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-common@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -18095,45 +18245,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.websocket",
       "name" : "jetty-websocket-core-client",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Core WebSocket Client Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "eea9afc10baeee36424647c990928349"
+          "content" : "ba3cc264c13fbe0db1be7566ae7accf6"
         },
         {
           "alg" : "SHA-1",
-          "content" : "e4b0e012034881bb8c2fd86482d80a332ce84558"
+          "content" : "58a6d44445c32eef70dad94de5211c2f77ab9112"
         },
         {
           "alg" : "SHA-256",
-          "content" : "a875472e80ba1fe12c8ee3698223caef42df2fcd90b545544be32ff68a0bda38"
+          "content" : "14f2da57077bacdd892fa442d6c76bfbaea51e7771f5ebf35ed6da18b1e5b7bf"
         },
         {
           "alg" : "SHA-512",
-          "content" : "b80ed4be0b5abd4bb22080aea23e47af018f2b5543b563f2a3b87a99587dc9efd19b4879ccb942ae2e222aae22fe58401106a6f44c0b13ab824c0733c3e11229"
+          "content" : "8eaa272f399704c6b5dd616d5ebb96acdc0ace6e72aa58c5dec998e9fddbbfc3a1b3f4af19d2e91dc79adb5b981d625ad8aa74f68edba03e230e8bdc78259c05"
         },
         {
           "alg" : "SHA-384",
-          "content" : "446e63eb8a5850de35acd7c13717f2de15f301ff2020f1f9c5f4492332685021b5f31b8c74a2a1c9a12fbcdd2651e054"
+          "content" : "b542a66dab19df5524b95fd08c9c145031b69c21354eafb2d0f9f1849a43a6f54e167c65ced3cfb0547c641d99ade116"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "283d11d4213b625fad4cdfbe4adcce2e9d1cb840e69cfb41dc9a44b688f2c34d92214b48d7a878f43cb14282606c3b69"
+          "content" : "46b7905ec61bb84c9b6f79f69365dc66a4a7b6e41c07886cd2240d37eba31bbcb051f1b45e94f6a1e195442e6e987f35"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "6973b04b79c4f03bb513a679d9deaef282520bf0fdab13eae512b2dd8b434a57"
+          "content" : "b61ae99c58c3233f7df304e16c443fbb8315d43b4c5d9c9b9b63e098bf34c6da"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "5ba06ca5c290c21b7b5b03c961192063a5cb7006e85e66263249fdf95bb1ac38c85ee52c39b0c02e7cf36c90f256715213efba9b4d69c4ed1f19740418676013"
+          "content" : "ed260980234d324cb30703328f74d7e35e5cac15e53a715c3b5c0d79986d206855f7e8559eb396782eeadd6c58b8517f40f2870f4ffff8a6c8849cca7d0549e1"
         }
       ],
       "licenses" : [
@@ -18150,7 +18300,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -18176,45 +18326,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-servlet@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-servlet@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.ee10.websocket",
       "name" : "jetty-ee10-websocket-servlet",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "The Eclipse Jetty Project",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "052fda7f9da17d7bc3793774eaa1469b"
+          "content" : "c2ecab296d4375a0a7f4719deb79a5d1"
         },
         {
           "alg" : "SHA-1",
-          "content" : "7559f9b872dbe1547eafa3170135e18bdb1786b6"
+          "content" : "6491d85c636ace2715f232f70982583bb8ee844b"
         },
         {
           "alg" : "SHA-256",
-          "content" : "87794a64023a7b373f30ae7c5b0982f21c8e5b954034315cc551a1b1582fd663"
+          "content" : "83a58b4ee3bf6d0284c50304725cf93b694a67b1b1cc139af72500296dbf7359"
         },
         {
           "alg" : "SHA-512",
-          "content" : "e0780b0780a0a44b753fccdf01bcd5f3b2b57238eb9b48a40479bc4a8244a6b873172ab79734914bb13d5833a8de1f6ff5c20ccbe1022dcfe1b12df2762cef58"
+          "content" : "cbac89160bd9cfaa06743d610f757c15f707122e5a55dfa533b55e41f158201a935408a2303f3690ac5c6dccaf6a14ed319298309ba9be2c7a23891a2cfbf7f3"
         },
         {
           "alg" : "SHA-384",
-          "content" : "2df8268bb34bd1d0b0fa20ea9d2452f296de4ca6e55d2b70b8e4b59e21bc8aec190a5f1ce67b3ee697f160a19160c139"
+          "content" : "dddbe018885f1b9b2a1884768730d0a6c81d723d67b56f9900deb1223253badcd4ff188630bd56b5a2af67c8df550d71"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "76428a79bcf2d0aeca36b4d8ffa652252db76b427544ffd2853df75312ba6ce142ea50e3c34cac81a3287fe52c985aa4"
+          "content" : "287545bacdad8539529db95ba523f392bdee71c84676eaae705f37786748fa8220d28def8459833c4e1a1c369c259c5b"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "c777866a3be0e4ca6cc3835b01f766468fda5d896edff513075859171bd4749a"
+          "content" : "c860da66c1904d76ca442c21d06753f3f9d2d236c35a66f8771a6b01a8d4f80d"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "e384708708fa716afb365a1be8efd2685ca53282ad782a036a6a576998ae8eb0ff827f8127a9ea28dbd65e7000d88296978ea5970d45fb675078a58c765f825f"
+          "content" : "acea26ba5a7f552d0bd8261c6309ffdec1da4bad001deaf742c289ff640ffee63516b6457eb670ef7825082aec62ced503a9251ef15f8422f591c4a565f34a39"
         }
       ],
       "licenses" : [
@@ -18231,7 +18381,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-servlet@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-servlet@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -18257,45 +18407,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.websocket",
       "name" : "jetty-websocket-jetty-server",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty WebSocket Server Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "f9322e72389d4cf0466010330f240f97"
+          "content" : "b80892311cfee857b1a0a0ef327e28a5"
         },
         {
           "alg" : "SHA-1",
-          "content" : "120f716528f5db50532892c69dca63c2ea1eabf7"
+          "content" : "45c37acef6e93a5afdc00eff5fb25772f8e63237"
         },
         {
           "alg" : "SHA-256",
-          "content" : "aa0ef75cf0d3ce8da5f2f0226a1dc30d185bbed8d4ef225bd4bf8d67a6df47ed"
+          "content" : "0b189ffab87b02a4da1187dc4022410c5f235b5a1a7ccfeea3cc4846a8e80664"
         },
         {
           "alg" : "SHA-512",
-          "content" : "3ab010e2b70f9d6bb547e35c963dccfaaa2567e6d7b86d3cc4b4cc19c670284396c60038ed20c20281a62fbb3d43e20d1b2c69cb6322ecc44773638a48f1cbb2"
+          "content" : "1b69c7a78d2208e73102ce3c2deaa0dd48aac000ac95f5fcc67a651b2584a20e854904e162e0d10822985f09ad20aaa9da056e74abf61888e5f667afd998c3e8"
         },
         {
           "alg" : "SHA-384",
-          "content" : "76c3480ebff22d89439ba0f8eef1a4c5101d33b67c138546d4253a69c888f4b0cf9558ae68af610f53e705757ceb5561"
+          "content" : "76860191b62b741e8f7849987be7ce614a75f1e6ad1b8e257b8dd39dd052992ce3dde08d39377e962f8446692dbb16c2"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "4eb0c72201c9c41ca84c18043a7f88fbb9b45e8b3a3e0126296cef0a8a4165113690d154e6fa5b0c205109745100c680"
+          "content" : "c43b303524e298e10720e6b7615b796862c065b2b652df9407152ebbd58c00cbe09167f24bf9402325ce4692f6f6a768"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "c6719ba89f0220e7491cb54ec294c44b45a8d69014c2133a8f880fdb14278487"
+          "content" : "4a9b4056b69be358bfcfba2aa9d0316dfdc6af92e458d236657b2db03cf6073c"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "84b13a764f694410f26c6ceb797a3c3bc93690a6f8b76e000bdf9dcd7739d6e2154ce8c555c1e1893541a02c9091307b6dc26e4851e8c2c919c1d28172806e53"
+          "content" : "54930c085458ef4ca3c316b4577ad99a6631cc9ade705a0e34a733a258cb3e86f5177fabe814d477e9e8d017fefc180d63d828b48adf182e3ec5bb5ee18ae9be"
         }
       ],
       "licenses" : [
@@ -18312,7 +18462,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -18338,45 +18488,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.websocket",
       "name" : "jetty-websocket-core-server",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Core WebSocket Server Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "ac750e88496edfde8699809614691317"
+          "content" : "22b2d27cf87fc59fc3dfb822c26161ec"
         },
         {
           "alg" : "SHA-1",
-          "content" : "9e5fc7150a7392b8c5678acd80208efa2b8e069d"
+          "content" : "dfc760fe022a18b7f227ba3552a9a7494afdda34"
         },
         {
           "alg" : "SHA-256",
-          "content" : "28e969d93f0d8e2630fbe1a9b5a1ff5744040330cf5c9a7cb734489e71693575"
+          "content" : "d91becae70e7b15e6200f40d02239d8315f8b26c90d4ab38348fcdad41c0ebf5"
         },
         {
           "alg" : "SHA-512",
-          "content" : "85962ea3a56380bdf246ae4082c2f0d6cd9f8c5ee71f55efae1540feb9c55cff3e2fd90c4924c0f9a115dc1d6bdc722e46782742e09ad63d19f86bce37705a9a"
+          "content" : "513ceb04374a7d526d29c19da012f1440132c75ea485bf8d8555754b9fcd514f902727afc2e6f3a4431e2cbc04c0e83914f8a0cb04ae0e7fa8c5f939841c7eca"
         },
         {
           "alg" : "SHA-384",
-          "content" : "c8a6ba034def730f2afbc69881aa9baf41fd8d5a2ec15a3219150610dab2c2c3b3fa9de2947f707540dfbd4f1e9e32a5"
+          "content" : "27e9cd854cd28f9b99eb979b83e9ecf31762cff24155f5fe90dcd651919f572a41498e6b82f311d35cc3e8304ba2f3b7"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "014003b1195ac542dc1ae5c59fe2104b4a46c757f0175ba9a0d3f636220954aa204ddab4fcb0677b936a02dc172d76bb"
+          "content" : "4f71d00895f34311870f80ce235449a455c0a23564dab087d3b1ca0e89f7aa73f1e69f3acc9fe8b607cfd97bfe1eb6ba"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "9023d020480f5bb9a3f0e8f3c40b0d997930d23312a801da68c8a701e846db78"
+          "content" : "4f2724ee656b6768f137616696813bd43c98fb4f79a121a852d1d4319f921979"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "1ebc76cfa39c1bac01b993698d1a4f886a273d70a6539c4a4f807924cf3e561c1ec8a84f3873cab5311a4a995347e9049b13d30fcea94d2092e2d1b760ce880a"
+          "content" : "71d82bc7e5021841299f57f37194f99e8fb8c38079acc64ad87062df2c87f96ce0cba4b6602b4b88ebe2dad2edd43232dfa1ecfdf634726cc8d25f64480d20ed"
         }
       ],
       "licenses" : [
@@ -18393,7 +18543,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -18419,45 +18569,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.websocket",
       "name" : "jetty-websocket-core-common",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty Core WebSocket Common Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "8d2feb605713e50f4c9fb31172d82c97"
+          "content" : "5c5779cbf4359aaed394e9101abfbbc9"
         },
         {
           "alg" : "SHA-1",
-          "content" : "4d0f1d67f1b46f3ebe9e57ba66e2e2f332a81c77"
+          "content" : "07b17a921a090495e0dc86f82bbff0cf8e9af466"
         },
         {
           "alg" : "SHA-256",
-          "content" : "d6d494ccae1a39044b63c1f02341c2647d856c03f3eedaeb8c542c8a684f57be"
+          "content" : "a1ef0c79a4b8b9e4ce969e70d8de9fbed4776625863bdbd5eb5f69fb70208399"
         },
         {
           "alg" : "SHA-512",
-          "content" : "0c4e85dd374b3a058552d1592b85d2c9b6f22f4a43aecf0d79c821bb4787601674984d760496496890b9ea195b012a4651c7c88ac2c2f192aa7cc53ab1cc808b"
+          "content" : "bb21e4332dd9846c7ac3783fa08717d814bc1f7b592125d028bc8bbc67a9750f06d814d14daebcdbbf2166a231a87f731fb4d9afc5d1baef282c6f0d9a99e7e2"
         },
         {
           "alg" : "SHA-384",
-          "content" : "416ea0f1a340a764a60ed0143393f0dca72d738ff31285b13a6eb3c539163a863ce55dedcc1f93e139bd4f6bb0f6586d"
+          "content" : "b1764b3b3891a5fa4de9289a1d18bcba2fcba5432354e2632ccd2d80b92f786055bced7a7fc43bc095f6f0c30188b879"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "b0ac6dc5f1ed825e65b3a24d588c6ea58330f4c27df76adf7690b7078193fbdb9d2f3e5e1b11c588e13989638d83bdda"
+          "content" : "5fef9508c7fe05ce2ee85ef25dda3487d2eeb982e44e410efcdb52beea4f35aae8399e5456dd83767cdc23a8c4506b59"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "95e5e0e5da37ac946f3142c53f5dfdd4032db47b95b4ebc8ed28f9c56491d471"
+          "content" : "4ba25b95a22e4e89e25fe0e91d6de05db14692595f60d855aac978c27beb344b"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "b03e23222cb01a36d6e6d9e35e947eca97c2f9b0f5d201daa3dbd19d4193958c5fdcb35b39602cf94b9d914b423e1c1a3736c4e6fed5ca2df9ccaf00042bdeaa"
+          "content" : "fb68a24a3625caaa481f4f2cdd9c0f2c93497648614bcbe551ff8d3cadd712a9050c95f8496a48af56d94484ff57703e0df1158075172d2248a4bd1a6bfcd4c4"
         }
       ],
       "licenses" : [
@@ -18474,7 +18624,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -18500,45 +18650,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.websocket",
       "name" : "jetty-websocket-jetty-common",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty WebSocket Common Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "f7c7477a88d1602b7f1dbf2b64d67a62"
+          "content" : "44fefbd17e2ca8f7dd7f9ca2790b4291"
         },
         {
           "alg" : "SHA-1",
-          "content" : "e6f58256261c8b7bfadf18293484952f613d0089"
+          "content" : "bfd146470e20a1cfaf07367bb8dc5f13ee2c79ed"
         },
         {
           "alg" : "SHA-256",
-          "content" : "7b88d46f59a11bb4d9b78e277882c6533da66e20d7879ce8132ecfa28460a5d6"
+          "content" : "933d05b566effad97f84b5d986be810a2928685c875d7fb90f301163f24d2718"
         },
         {
           "alg" : "SHA-512",
-          "content" : "4e0af65570f3d4eb129c257569a02a861a99e1e93a4a92c4f432d114ec93e7d6f06ff9dc75b7b16a475b673d5c50b36dcc1e8bb78444724602f8f0767ac2ddab"
+          "content" : "760103ad33831fdcd4f343edff91ebb98adf41154ae0a2ff06c5f75716cd9a3a01e04571cba9ce1ee70bbb2f4b80d615b0e4fc73d8bfe4b40e5f578cafd48c0d"
         },
         {
           "alg" : "SHA-384",
-          "content" : "16800dbac0ad7de6988b1a56d9d8fdac45363665542862ed1c888472a3f10d0c41a65f524fd867a444d81c31abc63520"
+          "content" : "da120b84f6044692623151218fe267fb2d5072aa87c153f634891e57d67a59289869eb203c94dc693278b6ee85ba6e3b"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "f3e8f1711b09a4cd61ba3ae623bbb931ae7a0e0c74aee6f8af412ba4e58bedd30a01b10846d4745678e04c8a56a55090"
+          "content" : "5e95eed4dc3a927352c330dd41d32d1e858830f6b81c955056335a98de5ae326f88ed45eee2f81764df3b0674cc7076d"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "df34ddf449f4d97a649581a1243c7d14f7cb6a5ce9200969d0d03bafc0c5774c"
+          "content" : "7d747e69e0ac193570d9f10db7a1a54560bf8149bfb5552f12899972ee4fb86c"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "a811d993f5b6dd82ba73363c670c61a321c46c19cd62e3b16aeab7136b2efbacbfe2320a941d8ad439c71839e0c07e242cc4c42517f4556b9c979781b8a7f7e3"
+          "content" : "b673353d3c9aa29c98ad244648a4a7bb59f9414295c763151570452fcabe8334e9c5451526c04d5b2834e001b6a43b824229b8aeba62f157826786a1a46360fb"
         }
       ],
       "licenses" : [
@@ -18555,7 +18705,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -18581,45 +18731,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-api@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-api@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty.websocket",
       "name" : "jetty-websocket-jetty-api",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty WebSocket API Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "c465ea350866c8df03350abdd8ade775"
+          "content" : "07535d16dec790d76b5072e502a7cc3d"
         },
         {
           "alg" : "SHA-1",
-          "content" : "cd739732eed24db2d53162ea0a923b58f12c4893"
+          "content" : "014cb6ada7d514f8818868c88898f04343642f36"
         },
         {
           "alg" : "SHA-256",
-          "content" : "1b36bd8fdabfea67edee75d2dd78d063ed27f5ead3ec2511a412f600fcdb1586"
+          "content" : "887090638bf758dce9268478a3ccf168929de52dcdecdddb4eaff62263cbd961"
         },
         {
           "alg" : "SHA-512",
-          "content" : "f61d146f3fb6c60206dd99f307edfa670c537f5c30c8fb1713b9bd134e2466c3de287e854b303ddccd91223ecc1629de0e1095349e69a20820e8f81b943639e6"
+          "content" : "d4af19fa1813afeb0dfe48bc2fdd6b105ac38e4f85a22d4b974e17bdb1deb267c6e1a7de27eeac29953940478edcc5d8a49194d16e11f800cdf0bf8071015cf2"
         },
         {
           "alg" : "SHA-384",
-          "content" : "2cabbb43fa063bc97b9c3507cdd282cf5289dff18eeda7cd461c15a21e8dfd3aac8f3d4f718695b9bf7ea1c77c2ab415"
+          "content" : "ae97239cc7b2fa6919ee677323c9cc1c2e8eb34c30fa22f1f08c034fd239bf993644516b16802300f997422e4e95eb81"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "14eb7f0aa463486c08f2204ecdc0b8afb0c6eccbf4a91179d4234115f6de263916793c0ac0389b24252ddefc31a4d1a6"
+          "content" : "047e6b1eeef53cadf29359f958027edb4b0d4df45ccc4a9e338d569bd762ce82a7069ab3bfa20ceee359e678cf60d46e"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "0a0229249fb6fdc07585ffaaac3551392aa878ec9434403eb0e6864039307b9c"
+          "content" : "8f9eca377a918b0c0b20719d46b679bf7b4cc206601788ed6197edbbf41b47c1"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "c060658828c09d5ce2ae9a8fde1fec80c811b259b55781e808c35ec5f57e06ef2c16de65db49c712b8ec4acf261788a1289a743e6b8797c6739b9811c5089841"
+          "content" : "948563aeb1641f911e4e95742b0f1caa126a8cad854d91d9d0beb51e3ab5c22a50ef1a839b1182068b890fed9c8951d4555b931aca42ae6ebe76546fe6f553c4"
         }
       ],
       "licenses" : [
@@ -18636,7 +18786,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-api@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-api@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -55350,6 +55500,81 @@
     },
     {
       "type" : "library",
+      "bom-ref" : "pkg:maven/org.ow2.asm/asm@9.9.1?type=jar",
+      "publisher" : "OW2",
+      "group" : "org.ow2.asm",
+      "name" : "asm",
+      "version" : "9.9.1",
+      "description" : "ASM, a very small and fast Java bytecode manipulation framework",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "1888ad1f49038441bb2d12aa6dffe396"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "2ceea6ab43bcae1979b2a6d85fc0ca429877e5ab"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "6f3828a215c920059a5efa2fb55c233d6c54ec5cadca99ce1b1bdd10077c7ddd"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "bb43eaca8777c7b2b4bce9fc19f9be5742a736a23415e271643c3e14d3d82f565f6de0e29ebac570ce66b3921ece1ebd4de06abeb633ae28c17891de56973807"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "9448b1eeafccfe061a7533a633b3cf7445312f916d372a3b6bbae8747267b6d6a9387fd100aec22bc22160007a819fa9"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "b684b8c0bc4d7cb21245b2d9e20e103460686e80b16d2b4ea5452c82948ba74fc2bcb093f4ab1d6b010448da5dc12457"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "f59abda303b133b832ad3d81076241d924dce6304dce5a1a60f8d816797dbbc2"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "d42ab2d7dfb1e11b896a1aad31d945639b5aa85ac9b5c2e33fc2e9174c4333eaa018217b58147930fb8017c7f569a6390c242c0e500f5b70600a2100bd08035b"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "BSD-3-Clause",
+            "url" : "https://opensource.org/licenses/BSD-3-Clause"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.ow2.asm/asm@9.9.1?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://asm.ow2.io/"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://repository.ow2.org/nexus/service/local/staging/deploy/maven2"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://gitlab.ow2.org/asm/asm/issues"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "https://mail.ow2.org/wws/arc/asm/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://gitlab.ow2.org/asm/asm/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
       "bom-ref" : "pkg:maven/org.apache.cxf/cxf-rt-bindings-xml@4.1.5?type=jar",
       "publisher" : "The Apache Software Foundation",
       "group" : "org.apache.cxf",
@@ -87377,45 +87602,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.6?type=jar",
+      "bom-ref" : "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.12?type=jar",
       "publisher" : "Webtide",
       "group" : "org.eclipse.jetty",
       "name" : "jetty-util-ajax",
-      "version" : "12.1.6",
+      "version" : "12.1.12",
       "description" : "Jetty JSON Utilities Artifact",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "8b6c0f5cbbb3c3b9eff37a51b86c7e06"
+          "content" : "350c327260f2cf3453a6542166be2b8c"
         },
         {
           "alg" : "SHA-1",
-          "content" : "e8fb992fea59f824d3438f5e0d4c0657786b6305"
+          "content" : "f0dd2ee98eef10cc7836c9d1d9fcac2b9861c6ba"
         },
         {
           "alg" : "SHA-256",
-          "content" : "8371c08631dd4315b9ea08d46d189be56a5a9d566f7206c58bcd8e210d4e0b33"
+          "content" : "ca4d49183b8f92af96c04dab7a40e70cc2ebac554e6de010e1b9a983ae342cb2"
         },
         {
           "alg" : "SHA-512",
-          "content" : "e4c03ef4c116b412fea48ea8fe38ce9bc9a2258cd8fcd01c9e597c9505d8631cafd7dfbd662a04b11c038c28bb1d5df6dcd26d7acaf8257fb6cd6bdfbed227d5"
+          "content" : "8618a97615e0fafe4fcd822c98a935e6c67052e7773ffd16ab329788da06dac43c7497333925f69026a4eb583f23b22be522bd0675da340d88eaf238e8c68794"
         },
         {
           "alg" : "SHA-384",
-          "content" : "019ecf64d09c5b59501940626c0ffe28465ccfe2ab4816e51d52144770a4937fcc483fb7cf1e9533920ceace2a1bdc1c"
+          "content" : "82812fa037bf157decbb8782d87b75f9923b4bcc2b76c1888aba8733380992c2e4f9e1c7d70e94105e43473d4b22a4d0"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "6f0d9ee1a3e59db9cf83d105d32ed48a57c76924389fb9f01f42f624bad738811908ea3da5dd62dab14e9ae0e3d1238d"
+          "content" : "b70b0c38f3c048ee8c2eb584d7a55ff9cc43296e86c7d83a612151cacc113bbace5f53f04e645f8f39740da650a8ec3d"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "53eae669410aafc495ab07438c9c904d3191fdef03592eacf4fc77cc3eb73435"
+          "content" : "11164814d32a92cd911028869be84e49f76ea552bbe2086547f1aae5f9090095"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "49b5650cef936576d864126760579fd90725f1c582f41255bab3d27805035e0ff6b62a4b1a77e1affc07b0af789bf53fdcf46337c52463c437e608ed7a9fc828"
+          "content" : "e6d1813e0f1083ec0c7539e056920f82dab4770feea7b67b229deabcbfe54120dd1bbc6a2595d91897591c873dbbbf4dcf59a4c445af3e4bf6ca9042227f1bcb"
         }
       ],
       "licenses" : [
@@ -87432,7 +87657,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.6?type=jar",
+      "purl" : "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.12?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -220589,111 +220814,111 @@
         "pkg:maven/org.apache.camel/camel-cloud@4.18.5-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-http-common@4.18.5-SNAPSHOT?type=jar",
         "pkg:maven/jakarta.servlet/jakarta.servlet-api@6.1.0?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-security@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-security@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.12?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
       "dependsOn" : [
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
       "dependsOn" : [
         "pkg:maven/jakarta.servlet/jakarta.servlet-api@6.1.0?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-security@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-session@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-security@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-session@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-security@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-security@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-session@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-session@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-alpn-client@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.compression/jetty-compression-gzip@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-alpn-client@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.compression/jetty-compression-gzip@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-alpn-client@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-alpn-client@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-gzip@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-gzip@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty.compression/jetty-compression-common@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty.compression/jetty-compression-common@12.1.12?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-common@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.compression/jetty-compression-common@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -220840,11 +221065,11 @@
         "pkg:maven/org.apache.camel/camel-test-infra-common@4.18.5-SNAPSHOT?classifier=tests&type=test-jar",
         "pkg:maven/org.apache.camel/camel-util@4.18.5-SNAPSHOT?type=jar",
         "pkg:maven/org.awaitility/awaitility@4.3.0?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.12?type=jar",
         "pkg:maven/org.apache.camel/spi-annotations@4.18.5-SNAPSHOT?type=jar"
       ]
     },
@@ -220866,26 +221091,26 @@
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-session@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-xml@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee/jetty-ee-webapp@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-session@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-xml@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee/jetty-ee-webapp@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-xml@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-xml@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee/jetty-ee-webapp@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee/jetty-ee-webapp@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -220894,12 +221119,12 @@
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-server@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-server@12.1.12?type=jar",
       "dependsOn" : [
         "pkg:maven/jakarta.websocket/jakarta.websocket-api@2.1.1?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-annotations@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-client@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-servlet@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-annotations@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-client@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-servlet@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -220908,15 +221133,15 @@
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-annotations@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-annotations@12.1.12?type=jar",
       "dependsOn" : [
         "pkg:maven/jakarta.annotation/jakarta.annotation-api@2.1.1?type=jar",
         "pkg:maven/jakarta.servlet/jakarta.servlet-api@6.0.0?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-annotations@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-plus@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.6?type=jar",
-        "pkg:maven/org.ow2.asm/asm@9.9.1?type=jar",
-        "pkg:maven/org.ow2.asm/asm-commons@9.9.1?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-annotations@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-plus@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.12?type=jar",
+        "pkg:maven/org.ow2.asm/asm@9.10.1?type=jar",
+        "pkg:maven/org.ow2.asm/asm-commons@9.10.1?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -220925,29 +221150,42 @@
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-annotations@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-annotations@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
-        "pkg:maven/org.ow2.asm/asm@9.9.1?type=jar",
-        "pkg:maven/org.ow2.asm/asm-commons@9.9.1?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
+        "pkg:maven/org.ow2.asm/asm@9.10.1?type=jar",
+        "pkg:maven/org.ow2.asm/asm-commons@9.10.1?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.ow2.asm/asm@9.9.1?type=jar",
+      "ref" : "pkg:maven/org.ow2.asm/asm@9.10.1?type=jar",
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-plus@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.ow2.asm/asm-commons@9.10.1?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.ow2.asm/asm@9.10.1?type=jar",
+        "pkg:maven/org.ow2.asm/asm-tree@9.10.1?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.ow2.asm/asm-tree@9.10.1?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.ow2.asm/asm@9.10.1?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-plus@12.1.12?type=jar",
       "dependsOn" : [
         "pkg:maven/jakarta.enterprise/jakarta.enterprise.cdi-api@4.0.1?type=jar",
         "pkg:maven/jakarta.enterprise/jakarta.enterprise.lang-model@4.0.1?type=jar",
         "pkg:maven/jakarta.inject/jakarta.inject-api@2.0.1?type=jar",
         "pkg:maven/jakarta.interceptor/jakarta.interceptor-api@2.1.0?type=jar",
         "pkg:maven/jakarta.transaction/jakarta.transaction-api@2.0.1?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-jndi@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-plus@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-jndi@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-plus@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-webapp@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -220974,28 +221212,28 @@
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-jndi@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-jndi@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-plus@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-plus@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-security@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-security@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-client@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-client@12.1.12?type=jar",
       "dependsOn" : [
         "pkg:maven/jakarta.websocket/jakarta.websocket-api@2.1.1?type=jar",
         "pkg:maven/jakarta.websocket/jakarta.websocket-client-api@2.1.1?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-common@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-common@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.12?type=jar"
       ]
     },
     {
@@ -221003,61 +221241,61 @@
       "dependsOn" : [ ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-common@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-jakarta-common@12.1.12?type=jar",
       "dependsOn" : [
         "pkg:maven/jakarta.websocket/jakarta.websocket-api@2.1.1?type=jar",
         "pkg:maven/jakarta.websocket/jakarta.websocket-client-api@2.1.1?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-client@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.12?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-servlet@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.ee10.websocket/jetty-ee10-websocket-servlet@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.12?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.12?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-api@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-api@12.1.12?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-api@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-api@12.1.12?type=jar",
       "dependsOn" : [ ]
     },
     {
@@ -221104,13 +221342,13 @@
         "pkg:maven/org.apache.camel/camel-support@4.18.5-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-http-common@4.18.5-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-jetty-common@4.18.5-SNAPSHOT?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-security@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-security@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-jmx@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar"
       ]
     },
     {
@@ -225875,6 +226113,10 @@
     },
     {
       "ref" : "pkg:maven/wsdl4j/wsdl4j@1.6.3?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.ow2.asm/asm@9.9.1?type=jar",
       "dependsOn" : [ ]
     },
     {
@@ -230652,20 +230894,20 @@
       "ref" : "pkg:maven/org.apache.camel/camel-cometd@4.18.5-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.18.5-SNAPSHOT?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlet@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty.ee10/jetty-ee10-servlets@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.12?type=jar",
         "pkg:maven/org.cometd.java/cometd-java-server-websocket-jetty@9.0.0?type=jar",
         "pkg:maven/org.cometd.java/cometd-java-server-http-jakarta@9.0.0?type=jar",
         "pkg:maven/jakarta.servlet/jakarta.servlet-api@6.1.0?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.6?type=jar",
+      "ref" : "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.12?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -230683,7 +230925,7 @@
         "pkg:maven/org.cometd.java/cometd-java-api-server@9.0.0?type=jar",
         "pkg:maven/org.cometd.java/cometd-java-common@9.0.0?type=jar",
         "pkg:maven/org.cometd.java/cometd-java-server-common@9.0.0?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -230707,7 +230949,7 @@
       "ref" : "pkg:maven/org.cometd.java/cometd-java-common@9.0.0?type=jar",
       "dependsOn" : [
         "pkg:maven/org.cometd.java/cometd-java-api-client@9.0.0?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -230721,7 +230963,7 @@
     {
       "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-server@12.1.2?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
         "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.2?type=jar",
         "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-jetty-common@12.1.2?type=jar"
       ]
@@ -230729,15 +230971,15 @@
     {
       "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-server@12.1.2?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-server@12.1.12?type=jar",
         "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.2?type=jar"
       ]
     },
     {
       "ref" : "pkg:maven/org.eclipse.jetty.websocket/jetty-websocket-core-common@12.1.2?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
         "pkg:maven/org.slf4j/slf4j-api@2.0.17?type=jar"
       ]
     },
@@ -242585,10 +242827,10 @@
       "ref" : "pkg:maven/org.apache.camel/camel-salesforce@4.18.5-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-core-engine@4.18.5-SNAPSHOT?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.6?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.6?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-util-ajax@12.1.12?type=jar",
+        "pkg:maven/org.eclipse.jetty/jetty-io@12.1.12?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-annotations@2.21?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.21.4?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4?type=jar",
@@ -242621,7 +242863,7 @@
       "ref" : "pkg:maven/org.cometd.java/cometd-java-client-http-jetty@9.0.0?type=jar",
       "dependsOn" : [
         "pkg:maven/org.cometd.java/cometd-java-client-http-common@9.0.0?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-client@12.1.12?type=jar"
       ]
     },
     {
@@ -242635,7 +242877,7 @@
       "dependsOn" : [
         "pkg:maven/org.cometd.java/cometd-java-api-client@9.0.0?type=jar",
         "pkg:maven/org.cometd.java/cometd-java-common@9.0.0?type=jar",
-        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.6?type=jar"
+        "pkg:maven/org.eclipse.jetty/jetty-http@12.1.12?type=jar"
       ]
     },
     {
