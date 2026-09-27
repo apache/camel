@@ -219,6 +219,14 @@ packages not inferred from the configured protocol.
 
 Do not use `*`, as it disables Avro's class-loading protection.
 
+=== Rest DSL - consumes and produces from the binding mode of the rest configuration
+
+When a verb has `type` or `outType` and the binding mode is `json`, `xml` or `json_xml`, the verb's `consumes` and
+`produces` are set to the matching media types if they are not already set. This now also happens when the binding
+mode is only set with `restConfiguration()`, as it already did when it is set on the `rest` or the verb.
+With `clientRequestValidation` enabled, such a verb now rejects a request with another `Content-Type` (415) or
+`Accept` (406) header.
+
 === CamelEvent JSON serialization
 
 `CamelEvent` now provides `asJSon()` and `toJSon(int indent)` with default implementations that

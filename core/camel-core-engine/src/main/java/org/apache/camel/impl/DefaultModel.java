@@ -280,7 +280,10 @@ public class DefaultModel implements Model {
                                     r.setOutputType(toBeInlined.getOutputType());
                                     r.setLogMask(toBeInlined.getLogMask());
                                     r.setMessageHistory(toBeInlined.getMessageHistory());
-                                    r.setStreamCache(toBeInlined.getStreamCache());
+                                    if (toBeInlined.getStreamCache() != null) {
+                                        // keep stream caching from the rest verb unless the inlined route sets it
+                                        r.setStreamCache(toBeInlined.getStreamCache());
+                                    }
                                     r.setTrace(toBeInlined.getTrace());
                                     r.setStartupOrder(toBeInlined.getStartupOrder());
                                     r.setRoutePolicyRef(toBeInlined.getRoutePolicyRef());

@@ -37,20 +37,14 @@ public final class RestUtil {
             return true;
         }
 
-        //  content-type is before optional charset
-        target = StringHelper.before(target, ";", target);
-
         valid = valid.toLowerCase(Locale.ENGLISH);
         target = target.toLowerCase(Locale.ENGLISH);
 
-        if (valid.contains(target)) {
-            return true;
-        }
-
-        // try each part of the target
+        // try each part of the target (such as an accept header with more media types)
         for (String part : target.split(",")) {
-            part = part.trim();
-            if (valid.contains(part)) {
+            // the media type is before its optional parameters (such as charset or q)
+            part = StringHelper.before(part, ";", part).trim();
+            if (!part.isEmpty() && valid.contains(part)) {
                 return true;
             }
         }
