@@ -1969,6 +1969,19 @@ A custom `CamelSagaService` that relies on the header to join sagas started by a
 override the new method. Everything else is unaffected: the header is still set on the exchange, and
 routes reading it continue to work.
 
+=== camel-saga
+
+The `saga:complete` and `saga:compensate` endpoints now follow the same rule as the Saga EIP: when the
+exchange is not bound to a saga, the `Long-Running-Action` message header is consulted only if the
+configured `CamelSagaService` returns `true` from `isLongRunningActionHeaderSupported()`, as
+`LRASagaService` does. With the default `InMemorySagaService` the header is ignored, and sending an
+exchange that is not bound to a saga to these endpoints fails with `IllegalStateException`.
+
+Exchanges created inside a saga, including copies made by EIPs such as Wire Tap, Multicast or SEDA,
+stay bound to it and are not affected. A route that completes or compensates an in-memory saga from an
+unrelated exchange must bind it explicitly from trusted code, for example with
+`exchange.getExchangeExtension().setSagaLongRunningAction(id)`.
+
 === camel-microprofile-health
 
 The `error.stacktrace` entry of a failed health check is now only included in the response when
