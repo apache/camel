@@ -188,9 +188,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     /**
-     * Stops the service safely
-     */
-    /**
      * Whether the endpoint is (still) in use by the routes, and must therefore not be stopped when its producer is
      * evicted: an endpoint that is static in the endpoint registry (resolved when the routes were setup), or that a
      * route is consuming from.
@@ -211,6 +208,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         return false;
     }
 
+    /**
+     * Stops the service safely
+     */
     private static <S extends Service> void stop(S s) {
         try {
             s.stop();
