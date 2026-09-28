@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.minio.services;
 
 import org.apache.camel.test.infra.minio.common.MinioProperties;
 
+@Deprecated(since = "4.23")
 public class MinioRemoteInfraService implements MinioInfraService {
 
     @Override
