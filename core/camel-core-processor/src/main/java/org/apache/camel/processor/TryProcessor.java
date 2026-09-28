@@ -92,6 +92,13 @@ public class TryProcessor extends BaseProcessorSupport
         final AsyncCallback callback;
         final Iterator<Processor> processors;
         final Object lastHandled;
+        // the previous try route block (such as when this doTry is nested in another doTry)
+        final Object lastTryRouteBlock;
+        // the failure details of an earlier failure (before this doTry), which the doFinally must not remove
+        final Object lastFailureEndpoint;
+        final Object lastFailureRouteId;
+        final Object lastFailureNodeId;
+        final Object lastFailureLocation;
         boolean failureOriginCaptured;
 
         public TryState(Exchange exchange, AsyncCallback callback) {
@@ -99,6 +106,11 @@ public class TryProcessor extends BaseProcessorSupport
             this.callback = callback;
             this.processors = next().iterator();
             this.lastHandled = exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED);
+            this.lastTryRouteBlock = exchange.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+            this.lastFailureEndpoint = exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT);
+            this.lastFailureRouteId = exchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID);
+            this.lastFailureNodeId = exchange.getProperty(ExchangePropertyKey.FAILURE_NODE_ID);
+            this.lastFailureLocation = exchange.getProperty(ExchangePropertyKey.FAILURE_LOCATION);
             exchange.removeProperty(ExchangePropertyKey.EXCEPTION_HANDLED);
         }
 
@@ -125,12 +137,30 @@ public class TryProcessor extends BaseProcessorSupport
                 async.process(exchange, doneSync -> reactiveExecutor.schedule(this));
             } else {
                 ExchangeHelper.prepareOutToIn(exchange);
-                exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+                // restore the previous try route block, so an outer doTry is still in its try block
+                if (lastTryRouteBlock != null) {
+                    exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, lastTryRouteBlock);
+                } else {
+                    exchange.removeProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK);
+                }
                 exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, lastHandled);
+                if (exchange.getException() == null) {
+                    // restore the failure details of an earlier failure (which the doFinally removed)
+                    restoreProperty(ExchangePropertyKey.FAILURE_ENDPOINT, lastFailureEndpoint);
+                    restoreProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, lastFailureRouteId);
+                    restoreProperty(ExchangePropertyKey.FAILURE_NODE_ID, lastFailureNodeId);
+                    restoreProperty(ExchangePropertyKey.FAILURE_LOCATION, lastFailureLocation);
+                }
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 }
                 callback.done(false);
+            }
+        }
+
+        private void restoreProperty(ExchangePropertyKey key, Object value) {
+            if (value != null) {
+                exchange.setProperty(key, value);
             }
         }
 

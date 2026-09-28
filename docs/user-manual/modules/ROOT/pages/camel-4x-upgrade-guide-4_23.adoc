@@ -3095,6 +3095,24 @@ endpoint-configured query instead of the header when the header is not honoured.
 from the message body before it looks at the header; with both options enabled the header is therefore still not
 reported.
 
+=== camel-core - doTry, doCatch and doFinally
+
+A `doTry` must have one or more `doCatch` or `doFinally` blocks, otherwise the route fails to start with
+`doTry must have one or more doCatch or doFinally blocks`. Previously such a `doTry` was accepted (which turned off
+the route error handler for its steps).
+
+In the Java DSL, `onWhen` on a `doCatch` now only applies to that `doCatch`. Previously `onWhen` was set on every
+`doCatch` of the `doTry` (including the `doCatch` blocks of nested `doTry` blocks), so the `onWhen` of the last
+`doCatch` replaced the `onWhen` of the earlier `doCatch` blocks. Routes now behave as written.
+
+When an exception is thrown in a `doFinally` block while an exception from the `doTry` block is not handled, then the
+original exception is kept and the exception from the `doFinally` block is added as a suppressed exception.
+Previously the exception from the `doFinally` block was lost.
+
+A nested `doTry` (or a `doTry` in a route called from a `doTry`) no longer ends the outer `doTry` block. Previously
+steps such as a `recipientList`, `multicast` or `split` after the nested `doTry` used the route error handler
+(such as redeliveries and the dead letter channel), instead of the `doCatch` of the outer `doTry`.
+
 === camel-core - the inheritErrorHandler attribute on circuitBreaker and failoverLoadBalancer is now a String
 
 `CircuitBreakerDefinition.inheritErrorHandler` and `FailoverLoadBalancerDefinition.inheritErrorHandler` are now
