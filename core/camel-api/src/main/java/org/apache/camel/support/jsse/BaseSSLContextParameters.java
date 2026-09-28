@@ -17,6 +17,8 @@
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -27,8 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,6 +87,116 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     private static final String SSL_SOCKET_PROTOCOL_LOG_MSG = createProtocolLogMessage("SSLSocket");
 
     private static final String SSL_SERVER_SOCKET_PROTOCOL_LOG_MSG = createProtocolLogMessage("SSLServerSocket");
+
+    private static final String SSL_ENGINE_NAMED_GROUP_LOG_MSG = createNamedGroupLogMessage("SSLEngine");
+
+    private static final String SSL_SOCKET_NAMED_GROUP_LOG_MSG = createNamedGroupLogMessage("SSLSocket");
+
+    private static final String SSL_SERVER_SOCKET_NAMED_GROUP_LOG_MSG = createNamedGroupLogMessage("SSLServerSocket");
+
+    private static final String SSL_ENGINE_SIGNATURE_SCHEME_LOG_MSG = createSignatureSchemeLogMessage("SSLEngine");
+
+    private static final String SSL_SOCKET_SIGNATURE_SCHEME_LOG_MSG = createSignatureSchemeLogMessage("SSLSocket");
+
+    private static final String SSL_SERVER_SOCKET_SIGNATURE_SCHEME_LOG_MSG
+            = createSignatureSchemeLogMessage("SSLServerSocket");
+
+    private static volatile boolean namedGroupsNotSupportedWarned;
+    private static volatile boolean signatureSchemesNotSupportedWarned;
+
+    // Reflection handles for JDK 19/20 SSLParameters methods (not available on JDK 17)
+    private static final @Nullable Method GET_NAMED_GROUPS;
+    private static final @Nullable Method SET_NAMED_GROUPS;
+    private static final @Nullable Method GET_SIGNATURE_SCHEMES;
+    private static final @Nullable Method SET_SIGNATURE_SCHEMES;
+
+    static {
+        Method gng = null, sng = null, gss = null, sss = null;
+        try {
+            gng = SSLParameters.class.getMethod("getNamedGroups");
+            sng = SSLParameters.class.getMethod("setNamedGroups", String[].class);
+            gss = SSLParameters.class.getMethod("getSignatureSchemes");
+            sss = SSLParameters.class.getMethod("setSignatureSchemes", String[].class);
+        } catch (NoSuchMethodException e) {
+            // JDK < 19/20 — these methods don't exist, features will be silently skipped
+        }
+        GET_NAMED_GROUPS = gng;
+        SET_NAMED_GROUPS = sng;
+        GET_SIGNATURE_SCHEMES = gss;
+        SET_SIGNATURE_SCHEMES = sss;
+    }
+
+    static String @Nullable [] getNamedGroupsFromParams(SSLParameters params) {
+        if (GET_NAMED_GROUPS == null) {
+            return null;
+        }
+        try {
+            return (String[]) GET_NAMED_GROUPS.invoke(params);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static void setNamedGroupsOnParams(SSLParameters params, String[] namedGroups) {
+        if (SET_NAMED_GROUPS == null) {
+            if (!namedGroupsNotSupportedWarned) {
+                namedGroupsNotSupportedWarned = true;
+                LOG.warn("The named groups cannot be configured as this JVM does not support it (requires JDK 20 or newer)");
+            }
+            return;
+        }
+        invokeSetter(SET_NAMED_GROUPS, params, namedGroups, "named groups");
+    }
+
+    private static void invokeSetter(Method method, SSLParameters params, String[] values, String name) {
+        try {
+            method.invoke(params, (Object) values);
+        } catch (InvocationTargetException e) {
+            // the configured values must not be silently ignored (the JVM defaults would be used instead)
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            throw new IllegalArgumentException(
+                    "Cannot configure the " + name + " " + Arrays.toString(values) + " due to: " + cause.getMessage(), cause);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Trims the values, and removes blank and duplicate values (keeping the order), as the JVM does not allow blank or
+     * duplicate named groups and signature schemes.
+     */
+    static List<String> normalizeValues(List<String> values) {
+        Set<String> answer = new LinkedHashSet<>();
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                answer.add(value.trim());
+            }
+        }
+        return new ArrayList<>(answer);
+    }
+
+    private static String @Nullable [] getSignatureSchemesFromParams(SSLParameters params) {
+        if (GET_SIGNATURE_SCHEMES == null) {
+            return null;
+        }
+        try {
+            return (String[]) GET_SIGNATURE_SCHEMES.invoke(params);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static void setSignatureSchemesOnParams(SSLParameters params, String[] signatureSchemes) {
+        if (SET_SIGNATURE_SCHEMES == null) {
+            if (!signatureSchemesNotSupportedWarned) {
+                signatureSchemesNotSupportedWarned = true;
+                LOG.warn(
+                        "The signature schemes cannot be configured as this JVM does not support it (requires JDK 19 or newer)");
+            }
+            return;
+        }
+        invokeSetter(SET_SIGNATURE_SCHEMES, params, signatureSchemes, "signature schemes");
+    }
 
     /**
      * The optional explicitly configured cipher suites for this configuration.
@@ -766,6 +881,89 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         }
 
         return matches;
+    }
+
+    /**
+     * Resolves the named groups to configure based on explicit values or filter patterns. Returns {@code null} if no
+     * named groups configuration is needed (both parameters are {@code null}).
+     *
+     * @param  currentNamedGroups         the currently available named groups from the SSL object
+     * @param  enabledNamedGroups         the optional explicit named groups list
+     * @param  enabledNamedGroupsPatterns the optional filter patterns
+     *
+     * @return                            the filtered named groups array, or {@code null} if no configuration is needed
+     */
+    private String @Nullable [] resolveNamedGroups(
+            String @Nullable [] currentNamedGroups, @Nullable List<String> enabledNamedGroups,
+            @Nullable Patterns enabledNamedGroupsPatterns) {
+
+        if (enabledNamedGroups == null && enabledNamedGroupsPatterns == null) {
+            return null;
+        }
+
+        if (currentNamedGroups == null) {
+            currentNamedGroups = new String[0];
+        }
+
+        Collection<String> filteredNamedGroups;
+        if (enabledNamedGroups != null) {
+            filteredNamedGroups = normalizeValues(enabledNamedGroups);
+        } else if (enabledNamedGroupsPatterns != null) {
+            filteredNamedGroups = this.filter(
+                    null, Arrays.asList(currentNamedGroups),
+                    enabledNamedGroupsPatterns.getIncludes(), enabledNamedGroupsPatterns.getExcludes());
+        } else {
+            filteredNamedGroups = new ArrayList<>();
+        }
+
+        return filteredNamedGroups.toArray(new String[0]);
+    }
+
+    /**
+     * Resolves the signature schemes to configure based on explicit values or filter patterns. Returns {@code null} if
+     * no signature schemes configuration is needed (both parameters are {@code null}).
+     *
+     * @param  currentSignatureSchemes         the currently available signature schemes from the SSL object
+     * @param  enabledSignatureSchemes         the optional explicit signature schemes list
+     * @param  enabledSignatureSchemesPatterns the optional filter patterns
+     *
+     * @return                                 the filtered signature schemes array, or {@code null} if no configuration
+     *                                         is needed
+     */
+    private String @Nullable [] resolveSignatureSchemes(
+            String @Nullable [] currentSignatureSchemes, @Nullable List<String> enabledSignatureSchemes,
+            @Nullable Patterns enabledSignatureSchemesPatterns) {
+
+        if (enabledSignatureSchemes == null && enabledSignatureSchemesPatterns == null) {
+            return null;
+        }
+
+        if (currentSignatureSchemes == null && enabledSignatureSchemes == null) {
+            // the JVM does not tell its default signature schemes (null), so there is nothing to filter, and
+            // configuring an empty list would fail every handshake
+            if (!signatureSchemesFilterWarned) {
+                signatureSchemesFilterWarned = true;
+                LOG.warn("The signature schemes filter cannot be applied as the JVM does not provide its default"
+                         + " signature schemes. Configure the signature schemes explicitly instead of using a filter.");
+            }
+            return null;
+        }
+        if (currentSignatureSchemes == null) {
+            currentSignatureSchemes = new String[0];
+        }
+
+        Collection<String> filteredSignatureSchemes;
+        if (enabledSignatureSchemes != null) {
+            filteredSignatureSchemes = normalizeValues(enabledSignatureSchemes);
+        } else if (enabledSignatureSchemesPatterns != null) {
+            filteredSignatureSchemes = this.filter(
+                    null, Arrays.asList(currentSignatureSchemes),
+                    enabledSignatureSchemesPatterns.getIncludes(), enabledSignatureSchemesPatterns.getExcludes());
+        } else {
+            filteredSignatureSchemes = new ArrayList<>();
+        }
+
+        return filteredSignatureSchemes.toArray(new String[0]);
     }
 
     /**
