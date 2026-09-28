@@ -878,7 +878,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties properties = new OrderedLocationProperties();
 
         for (String key : prop.stringPropertyNames()) {
-            if (key.startsWith("camel.startupcondition.")) {
+            if (startsWithIgnoreCase(key, "camel.startupcondition.")) {
                 int dot = key.indexOf('.', 22);
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
@@ -1897,8 +1897,13 @@ public abstract class BaseMainSupport extends BaseService {
         for (Map.Entry<Object, Object> entry : routeTemplateProperties.entrySet()) {
             String key = entry.getKey().toString();
             String id = StringHelper.between(key, "[", "]");
-            key = StringHelper.after(key, "].");
-            source.addParameter(id, key, entry.getValue());
+            String name = StringHelper.after(key, "].");
+            if (id == null || name == null) {
+                throw new IllegalArgumentException(
+                        "Invalid route template property: camel.routeTemplate" + key
+                                                   + " (must be camel.routeTemplate[id].name=value)");
+            }
+            source.addParameter(id, name, entry.getValue());
         }
         camelContext.getRegistry().bind("CamelMainRouteTemplateParametersSource", RouteTemplateParameterSource.class, source);
 
