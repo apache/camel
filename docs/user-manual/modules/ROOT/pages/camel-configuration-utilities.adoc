@@ -87,7 +87,7 @@ present, the default patterns applied are:
 [source,text]
 ----
 Includes .\*;
-Excludes .*_NULL_.*, .\*_anon_.*, .\*DES.*, .\*EXPORT.*, .\*MD5, .*RC4.*
+Excludes .*_NULL_.*, .\*_anon_.*, .\*_EXPORT_.*, .\*_DES_.*, .\*_3DES_.*, .\*MD5, .*RC4.*
 ----
 
 secureSocketProtocols::
@@ -111,7 +111,28 @@ are:
 [source,text]
 ----
 Includes .*
+Excludes SSL.*, TLSv1, TLSv1\.1
 ----
+
+This means TLSv1.2 is the minimum protocol by default. To enable an older protocol (not recommended) it must
+be configured explicitly in secureSocketProtocols.
+
+namedGroups::
+This optional property represents a collection of explicitly named
+TLS named groups (key exchange algorithms) to enable on both the client
+and server side as well as in the SSLEngine. Named groups control which
+key exchange algorithms are available during the TLS handshake, including
+post-quantum hybrid groups such as `X25519MLKEM768`. These values take
+precedence over filters supplied in namedGroupsFilter. The utility
+attempts to enable the listed named groups regardless of whether the
+JSSE provider actually supports them or not. No default filtering is
+applied to named groups.
+namedGroupsFilter::
+This optional property represents a collection of include and exclude
+patterns for named groups to enable on both the client and server side
+as well as in the SSLEngine. The patterns are applied over only the
+available named groups. The excludes patterns have precedence over the
+includes patterns. No default filtering is applied to named groups.
 
 keyManagers::
 This optional property configures the source of key material for
