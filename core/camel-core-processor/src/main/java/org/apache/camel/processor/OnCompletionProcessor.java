@@ -16,8 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -32,6 +35,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -40,6 +44,7 @@ import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +74,8 @@ public class OnCompletionProcessor extends BaseProcessorSupport
     private final boolean afterConsumer;
     private final boolean routeScoped;
     private final LongAdder taskCount = new LongAdder();
+    // the parallel onCompletion tasks that have been submitted but have not started yet
+    private final Set<ParallelTask> pendingTasks = ConcurrentHashMap.newKeySet();
 
     public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
                                  boolean shutdownExecutorService,
@@ -112,10 +119,12 @@ public class OnCompletionProcessor extends BaseProcessorSupport
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(processor);
         if (shutdownExecutorService) {
-            List<Runnable> dropped = getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
-            if (dropped != null && !dropped.isEmpty()) {
-                // the tasks still queued in the thread pool will never run, so they are no longer pending
-                taskCount.add(-dropped.size());
+            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            // the tasks that have not started (the tasks still queued in the thread pool, which shutdownNow dropped, and
+            // a task a thread has taken from the queue but not started) will never run, so they are no longer pending,
+            // and what their copies hold is released
+            for (ParallelTask task : pendingTasks) {
+                task.discard();
             }
         }
     }
@@ -188,26 +197,64 @@ public class OnCompletionProcessor extends BaseProcessorSupport
     }
 
     /**
-     * Submits the onCompletion task to the thread pool (parallel processing). The task is counted as pending from when
-     * it is submitted until it is done, so a graceful shutdown waits for it.
+     * Submits the onCompletion task of the given copy to the thread pool (parallel processing). The task is counted as
+     * pending from when it is submitted until it is done, so a graceful shutdown waits for it.
+     * <p>
+     * The copy may hold its own reference to a stream cache (see {@link #prepareExchange(Exchange)}), which is released
+     * when the copy is done. When the task never runs (the thread pool rejects it, discards it because it is shut down,
+     * or drops it when the processor shuts its thread pool down), it is no longer counted as pending and the reference
+     * is released instead, as otherwise a spooled file would be kept until the stream caching strategy is stopped.
      */
     @SuppressWarnings("deprecation")
-    private void submitTask(Runnable task) {
+    private void submitTask(Exchange copy, Runnable task) {
+        ParallelTask parallelTask = new ParallelTask(copy, task);
         taskCount.increment();
-        Runnable counted = () -> {
-            try {
-                task.run();
-            } finally {
-                taskCount.decrement();
-            }
-        };
+        pendingTasks.add(parallelTask);
         try {
             // Deprecated since 4.19.0
-            executorService.submit(prepareMDCParallelTask(camelContext, counted));
+            executorService.submit(prepareMDCParallelTask(camelContext, parallelTask));
         } catch (RuntimeException e) {
             // the task will not run
-            taskCount.decrement();
+            parallelTask.discard();
             throw e;
+        }
+        if (executorService.isShutdown()) {
+            // a thread pool that is shut down may discard the task without failing (such as with the CallerRuns policy)
+            parallelTask.discard();
+        }
+    }
+
+    /**
+     * A parallel onCompletion task. Either the thread pool runs it, or it is discarded because it will not run, never
+     * both: whichever comes first removes it from the pending tasks. Both stop counting it as pending.
+     */
+    private final class ParallelTask implements Runnable {
+
+        private final Exchange copy;
+        private final Runnable task;
+
+        private ParallelTask(Exchange copy, Runnable task) {
+            this.copy = copy;
+            this.task = task;
+        }
+
+        @Override
+        public void run() {
+            // a task that was discarded (when the thread pool was shut down) must not be processed
+            if (pendingTasks.remove(this)) {
+                try {
+                    task.run();
+                } finally {
+                    taskCount.decrement();
+                }
+            }
+        }
+
+        void discard() {
+            if (pendingTasks.remove(this)) {
+                taskCount.decrement();
+                UnitOfWorkHelper.doneSynchronizations(copy, copy.getExchangeExtension().handoverCompletions());
+            }
         }
     }
 
@@ -309,6 +356,20 @@ public class OnCompletionProcessor extends BaseProcessorSupport
             }
             // set MEP to InOnly as this onCompletion is a fire and forget
             answer.setPattern(ExchangePattern.InOnly);
+            // the copy is routed when the original exchange is done (or in parallel with its completion), so it must
+            // hold its own reference to a stream cache, as a spooled file is deleted when the original exchange is
+            // done (same as the Wire Tap EIP does)
+            answer.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
+            if (answer.getIn().getBody() instanceof StreamCache sc) {
+                try {
+                    StreamCache copied = sc.copy(answer);
+                    if (copied != null) {
+                        answer.getIn().setBody(copied);
+                    }
+                } catch (IOException e) {
+                    answer.setException(e);
+                }
+            }
         } else {
             // use the exchange as-is
             answer = exchange;
@@ -339,8 +400,8 @@ public class OnCompletionProcessor extends BaseProcessorSupport
 
         @Override
         public int getOrder() {
-            // we want to be last
-            return Ordered.LOWEST;
+            // we want to be last, but before the stream cache clean up (Ordered.LOWEST), so we can read a spooled body
+            return Ordered.LOWEST - 1;
         }
 
         @Override
@@ -381,7 +442,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                     LOG.debug("Processing onComplete: {}", copy);
                     doProcess(processor, copy);
                 };
-                submitTask(task);
+                submitTask(copy, task);
             } else {
                 // run without thread-pool
                 LOG.debug("Processing onComplete: {}", copy);
@@ -411,7 +472,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                     // restore exception after processing
                     copy.setException(original);
                 };
-                submitTask(task);
+                submitTask(copy, task);
             } else {
                 // run without thread-pool
                 LOG.debug("Processing onFailure: {}", copy);
@@ -538,7 +599,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport
                             LOG.debug("Processing onAfterRoute: {}", copy);
                             doProcess(processor, copy);
                         };
-                        submitTask(task);
+                        submitTask(copy, task);
                     } else {
                         // run without thread-pool
                         LOG.debug("Processing onAfterRoute: {}", copy);
