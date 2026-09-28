@@ -670,6 +670,17 @@ placeholder belongs there:
 entirely at runtime and may legitimately carry a placeholder that comes from configuration, so they
 continue to resolve `{{...}}` in the computed recipient.
 
+=== camel-core - a circular reference through an optional property placeholder is an error
+
+A property placeholder that refers back to itself through an optional placeholder, such as
+`timeout={{?timeout:5000}}`, or two optional placeholders that refer to each other (`a={{?b}}` and `b={{?a}}`),
+now fail with the same `Circular reference detected` error as a circular reference through required placeholders.
+Before, resolving such a placeholder never returned, and the thread (for example the one starting the `CamelContext`)
+kept running at full CPU without any log. No configuration that worked before is affected.
+
+To take a value from somewhere else and otherwise a default, use another key for the override, such as
+`timeout={{?timeout.override:5000}}`.
+
 === camel-core - XmlConverter SAX parser factory
 
 `XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
