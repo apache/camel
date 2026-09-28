@@ -3167,6 +3167,17 @@ This is a bug fix (CAMEL-24747). Routes that relied on `toD` passing the encoded
 component will now see the original raw value instead. For all other components (`useRawUri()` returns
 `false`), behaviour is unchanged.
 
+=== camel-core - default TLS protocols and cipher suites of SSLContextParameters
+
+The default secure socket protocols filter of `SSLContextParameters` now also excludes `TLSv1` and `TLSv1.1` (so
+`TLSv1.2` is the minimum), and the default cipher suites filter also excludes the `3DES` cipher suites. The default
+filters of an `SSLServerSocket` are now applied over the default (enabled) protocols and cipher suites of the JVM, as
+they already were for an `SSLSocket` and `SSLEngine`. Previously they were applied over all the supported protocols
+and cipher suites, which enabled `TLSv1` and `TLSv1.1` on a server socket (unless disabled in the JVM security
+configuration).
+
+To use an older protocol (not recommended) configure it explicitly using `secureSocketProtocols`.
+
 === camel-elasticsearch, camel-opensearch - the maxRetryTimeout option is deprecated
 
 The `maxRetryTimeout` endpoint and component option is deprecated in both `camel-elasticsearch` and

@@ -65,13 +65,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             = List.of(".*");
 
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_EXCLUDE
-            = List.of(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*MD5", ".*RC4.*");
+            = List.of(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*", ".*_3DES_.*", ".*MD5", ".*RC4.*");
 
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE
             = List.of(".*");
 
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_EXCLUDE
-            = List.of("SSL.*");
+            = List.of("SSL.*", "TLSv1", "TLSv1\\.1");
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
 
@@ -965,7 +965,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             public SSLServerSocket configure(SSLServerSocket socket) {
 
                 Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
-                        .filter(enabledCipherSuites, Arrays.asList(socket.getSupportedCipherSuites()),
+                        .filter(enabledCipherSuites, Arrays.asList(socket.getSSLParameters().getCipherSuites()),
                                 Arrays.asList(socket.getEnabledCipherSuites()),
                                 enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
                                 !allowPassthrough);
@@ -975,7 +975,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             socket,
                             enabledCipherSuites,
                             enabledCipherSuitePatterns,
-                            socket.getSupportedCipherSuites(),
+                            socket.getSSLParameters().getCipherSuites(),
                             socket.getEnabledCipherSuites(),
                             defaultEnabledCipherSuitePatterns,
                             filteredCipherSuites);
@@ -984,7 +984,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[0]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
-                        .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSupportedProtocols()),
+                        .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSSLParameters().getProtocols()),
                                 Arrays.asList(socket.getEnabledProtocols()),
                                 enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
                                 !allowPassthrough);
@@ -994,7 +994,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             socket,
                             enabledSecureSocketProtocols,
                             enabledSecureSocketProtocolsPatterns,
-                            socket.getSupportedProtocols(),
+                            socket.getSSLParameters().getProtocols(),
                             socket.getEnabledProtocols(),
                             defaultEnabledSecureSocketProtocolsPatterns,
                             filteredSecureSocketProtocols);
