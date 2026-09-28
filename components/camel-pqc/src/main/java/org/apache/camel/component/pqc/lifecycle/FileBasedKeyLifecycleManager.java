@@ -468,7 +468,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
      * directory could still point elsewhere. Creating such a link requires write access to the operator-controlled key
      * directory, which is outside the header-supplied keyId threat this guards against.
      */
-    private Path resolveKeyFile(String keyId, String suffix) {
+    Path resolveKeyFile(String keyId, String suffix) {
         if (keyId == null || keyId.isBlank()) {
             throw new IllegalArgumentException("keyId must not be null or empty");
         }
@@ -477,7 +477,8 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         }
         Path resolved = keyDirectory.resolve(keyId + suffix).normalize();
         if (!resolved.startsWith(keyDirectory)) {
-            throw new IllegalArgumentException("keyId must resolve inside the key directory: '" + keyId + "'");
+            throw new IllegalArgumentException(
+                    "keyId must resolve inside the key directory (length: " + keyId.length() + ")");
         }
         return resolved;
     }

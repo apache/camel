@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,10 +57,6 @@ class FileBasedKeyLifecycleManagerPathTest {
         assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata("/etc/evil"));
         assertThrows(IllegalArgumentException.class,
                 () -> manager.getKeyMetadata(tempDir.resolve("abs").toString()));
-        assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata("sub/evil"));
-        assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata("/etc/evil"));
-        assertThrows(IllegalArgumentException.class,
-                () -> manager.getKeyMetadata(tempDir.resolve("abs").toString()));
         assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata(""));
         // NUL character — caught by character guard
         assertThrows(IllegalArgumentException.class, () -> manager.getKeyMetadata("evil\0inject"));
@@ -71,14 +68,10 @@ class FileBasedKeyLifecycleManagerPathTest {
         FileBasedKeyLifecycleManager manager = new FileBasedKeyLifecycleManager(keyDir.toString());
 
         // A normal flat keyId is accepted: metadata for an absent key returns null rather than being rejected
-        // A normal flat keyId is accepted: metadata for an absent key returns null rather than being rejected
         assertNull(manager.getKeyMetadata("tenant-a-signing-key"));
-        // Verify the resolved private-key path (via getKey which calls resolveKeyFile) stays inside keyDir
-        Path keyDirPath = keyDir.toAbsolutePath().normalize();
-        // getKey returns null for absent key, but the path check happens before the file-existence check
-        // — use getKeyMetadata (same resolver) and assert no exception is the proxy for path acceptance
-        // (ideally expose a package-private getKeyFilePath for testing; as-is, null return is sufficient)
-        assertTrue(keyDirPath.toString().startsWith(keyDirPath.getParent().toString()),
-                "sanity: keyDir is a proper subdirectory");
+        // and its key file resolves directly inside the key directory
+        Path resolved = manager.resolveKeyFile("tenant-a-signing-key", ".private.json");
+        assertEquals(keyDir.toAbsolutePath().normalize(), resolved.getParent());
+        assertEquals("tenant-a-signing-key.private.json", resolved.getFileName().toString());
     }
 }
