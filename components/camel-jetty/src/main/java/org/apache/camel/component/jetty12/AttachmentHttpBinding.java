@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Locale;
 import java.util.Map;
 
 import jakarta.activation.DataHandler;
@@ -38,7 +37,6 @@ import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,30 +97,6 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                 throw new RuntimeCamelException("Cannot populate attachments", e);
             }
         }
-    }
-
-    private boolean isFileNameAccepted(String fileName) {
-        String whitelist = getFileNameExtWhitelist();
-        if (whitelist == null) {
-            return true;
-        }
-        String ext = FileUtil.onlyExt(fileName);
-        if (ext == null) {
-            return true;
-        }
-        ext = ext.toLowerCase(Locale.US);
-        whitelist = whitelist.toLowerCase(Locale.US);
-        if (whitelist.equals("*")) {
-            return true;
-        }
-        // compare against each comma-separated extension exactly, not as a substring: a whitelist of "txt"
-        // must not accept an upload named "evil.x" just because "txt".contains("x")
-        for (String allowed : whitelist.split(",")) {
-            if (allowed.trim().equals(ext)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

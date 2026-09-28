@@ -54,7 +54,7 @@ class ZooKeeperClusterViewLeadershipLostIT {
             ZooKeeperClusterService clusterService = new ZooKeeperClusterService();
             clusterService.setId("node-1");
             clusterService.setNodes(service.serverUrls());
-            clusterService.setBasePath("/camel");
+            clusterService.setBasePath("/camel-ZooKeeperClusterViewLeadershipLostIT");
 
             clusterService.setSessionTimeout(5000);
 

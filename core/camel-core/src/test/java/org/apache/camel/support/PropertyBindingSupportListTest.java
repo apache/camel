@@ -24,10 +24,13 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -172,6 +175,153 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
     }
 
     @Test
+    public void testPropertiesListNestedMoreThanTenElements() {
+        Foo foo = new Foo();
+
+        // the keys are sorted as strings, so works[10] and works[11] are bound before works[2]
+        Map<String, Object> prop = new LinkedHashMap<>();
+        for (int i = 0; i < 12; i++) {
+            prop.put("bar.works[" + i + "].id", String.valueOf(100 + i));
+            prop.put("bar.works[" + i + "].name", "Company " + i);
+        }
+
+        PropertyBindingSupport.build().bind(context, foo, prop);
+
+        List<Company> works = foo.getBar().getWorks();
+        assertEquals(12, works.size());
+        for (int i = 0; i < 12; i++) {
+            assertEquals(100 + i, works.get(i).getId());
+            assertEquals("Company " + i, works.get(i).getName());
+        }
+    }
+
+    @Test
+    public void testPropertiesListNestedWithGapsNoDeclaration() {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new LinkedHashMap<>();
+        prop.put("bar.works[1].id", "123");
+        prop.put("bar.works[1].name", "Acme");
+
+        PropertyBindingSupport.build().bind(context, foo, prop);
+
+        List<Company> works = foo.getBar().getWorks();
+        assertEquals(2, works.size());
+        assertNull(works.get(0));
+        assertEquals(123, works.get(1).getId());
+        assertEquals("Acme", works.get(1).getName());
+    }
+
+    @Test
+    public void testPropertiesListNestedSparse() {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new LinkedHashMap<>();
+        prop.put("bar.works[0].name", "Zero");
+        prop.put("bar.works[5].id", "5");
+        prop.put("bar.works[5].name", "Five");
+
+        PropertyBindingSupport.build().bind(context, foo, prop);
+
+        List<Company> works = foo.getBar().getWorks();
+        assertEquals(6, works.size());
+        assertEquals("Zero", works.get(0).getName());
+        for (int i = 1; i < 5; i++) {
+            assertNull(works.get(i));
+        }
+        assertEquals(5, works.get(5).getId());
+        assertEquals("Five", works.get(5).getName());
+    }
+
+    @Test
+    public void testPropertiesListNestedFromOne() {
+        Foo foo = new Foo();
+
+        // numbered from 1: the element at index 0 is null
+        Map<String, Object> prop = new LinkedHashMap<>();
+        prop.put("bar.works[1].name", "One");
+        prop.put("bar.works[2].name", "Two");
+
+        PropertyBindingSupport.build().bind(context, foo, prop);
+
+        List<Company> works = foo.getBar().getWorks();
+        assertEquals(3, works.size());
+        assertNull(works.get(0));
+        assertEquals("One", works.get(1).getName());
+        assertEquals("Two", works.get(2).getName());
+    }
+
+    @Test
+    public void testPropertiesListNestedWithGapsViaConfigurer() {
+        context.getRegistry().bind(Company.class.getName(), new CompanyConfigurer());
+
+        Cluster cluster = new Cluster();
+
+        Map<String, Object> prop = new LinkedHashMap<>();
+        prop.put("servers[1].id", "1");
+        prop.put("servers[1].name", "One");
+        prop.put("servers[3].id", "3");
+        prop.put("servers[3].name", "Three");
+
+        // no reflection so the configurers must do all the work
+        PropertyBindingSupport.build().withConfigurer(new ClusterConfigurer()).withReflection(false)
+                .bind(context, cluster, prop);
+
+        List<Company> servers = cluster.getServers();
+        assertEquals(4, servers.size());
+        assertNull(servers.get(0));
+        assertEquals(1, servers.get(1).getId());
+        assertEquals("One", servers.get(1).getName());
+        assertNull(servers.get(2));
+        assertEquals(3, servers.get(3).getId());
+        assertEquals("Three", servers.get(3).getName());
+    }
+
+    @Test
+    public void testPropertiesListLast() {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, mapOf(
+                "bar.works[0]", "#bean:company1",
+                "bar.works[1]", "#class:" + Company.class.getName(),
+                "bar.names[0]", "a",
+                "bar.names[1]", "b"));
+        assertEquals(2, foo.getBar().getWorks().size());
+        assertEquals(2, foo.getBar().getNames().size());
+
+        // last refers to the last element of the list
+        PropertyBindingSupport.build().bind(context, foo, mapOf(
+                "bar.works[last].id", "789",
+                "bar.works[last].name", "Last",
+                "bar.names[last]", "z"));
+
+        List<Company> works = foo.getBar().getWorks();
+        assertEquals(2, works.size());
+        assertEquals(123, works.get(0).getId());
+        assertEquals("Acme", works.get(0).getName());
+        assertEquals(789, works.get(1).getId());
+        assertEquals("Last", works.get(1).getName());
+        assertEquals(List.of("a", "z"), foo.getBar().getNames());
+    }
+
+    @Test
+    public void testPropertiesListLastEmpty() {
+        Foo foo = new Foo();
+
+        // last on an empty list creates the first element
+        PropertyBindingSupport.build().bind(context, foo, mapOf(
+                "bar.works[last].id", "789",
+                "bar.works[last].name", "Last",
+                "bar.names[last]", "z"));
+
+        List<Company> works = foo.getBar().getWorks();
+        assertEquals(1, works.size());
+        assertEquals(789, works.get(0).getId());
+        assertEquals("Last", works.get(0).getName());
+        assertEquals(List.of("z"), foo.getBar().getNames());
+    }
+
+    @Test
     public void testPropertiesNotList() {
         Foo foo = new Foo();
 
@@ -216,6 +366,7 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private List<Company> works; // should auto-create this via the setter
+        private List<String> names;
         private boolean goldCustomer;
 
         public int getAge() {
@@ -242,12 +393,97 @@ public class PropertyBindingSupportListTest extends ContextTestSupport {
             this.works = works;
         }
 
+        public List<String> getNames() {
+            return names;
+        }
+
+        public void setNames(List<String> names) {
+            this.names = names;
+        }
+
         public boolean isGoldCustomer() {
             return goldCustomer;
         }
 
         public void setGoldCustomer(boolean goldCustomer) {
             this.goldCustomer = goldCustomer;
+        }
+    }
+
+    public static class Cluster {
+        private List<Company> servers;
+
+        public List<Company> getServers() {
+            return servers;
+        }
+
+        public void setServers(List<Company> servers) {
+            this.servers = servers;
+        }
+    }
+
+    private static class ClusterConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+            if ("servers".equals(name)) {
+                ((Cluster) target).setServers((List<Company>) value);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Class<?> getOptionType(String name, boolean ignoreCase) {
+            return "servers".equals(name) ? List.class : null;
+        }
+
+        @Override
+        public Object getOptionValue(Object target, String name, boolean ignoreCase) {
+            return "servers".equals(name) ? ((Cluster) target).getServers() : null;
+        }
+
+        @Override
+        public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+            return "servers".equals(name) ? Company.class : null;
+        }
+    }
+
+    private static class CompanyConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+
+        @Override
+        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+            Company company = (Company) target;
+            if ("id".equals(name)) {
+                company.setId(Integer.parseInt(value.toString()));
+                return true;
+            } else if ("name".equals(name)) {
+                company.setName(value.toString());
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Class<?> getOptionType(String name, boolean ignoreCase) {
+            if ("id".equals(name)) {
+                return int.class;
+            } else if ("name".equals(name)) {
+                return String.class;
+            }
+            return null;
+        }
+
+        @Override
+        public Object getOptionValue(Object target, String name, boolean ignoreCase) {
+            Company company = (Company) target;
+            if ("id".equals(name)) {
+                return company.getId();
+            } else if ("name".equals(name)) {
+                return company.getName();
+            }
+            return null;
         }
     }
 

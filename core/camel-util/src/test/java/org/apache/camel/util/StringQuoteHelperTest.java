@@ -54,4 +54,54 @@ public class StringQuoteHelperTest {
         Assertions.assertEquals(" String.class Mars   ", arr[1]);
     }
 
+    @Test
+    public void testSplitNested() {
+        // a comma inside parenthesis or curly brackets is not a separator
+        Assertions.assertArrayEquals(new String[] { "${body.substring(0, 3)}" },
+                StringQuoteHelper.splitSafeQuote("${body.substring(0, 3)}", ',', true, true, true));
+        Assertions.assertArrayEquals(new String[] { "${body}", "${header.v.replace('a', 'b')}" },
+                StringQuoteHelper.splitSafeQuote("${body}, ${header.v.replace('a', 'b')}", ',', true, true, true));
+        Assertions.assertArrayEquals(new String[] { "${body.substring(0, 4).substring(1, 3)}", "${replace(a,z,${header.v})}" },
+                StringQuoteHelper.splitSafeQuote("${body.substring(0, 4).substring(1, 3)} , ${replace(a,z,${header.v})}",
+                        ',', true, true, true));
+        Assertions.assertArrayEquals(new String[] { "String.class ${body.substring(0, 3)}", "5" },
+                StringQuoteHelper.splitSafeQuote("String.class ${body.substring(0, 3)}, 5", ',', true, true, true));
+        Assertions.assertArrayEquals(new String[] { "{a, b}", "c" },
+                StringQuoteHelper.splitSafeQuote("{a, b}, c", ',', true, true, true));
+        // without nested the comma splits
+        Assertions.assertArrayEquals(new String[] { "${body.substring(0", "3)}" },
+                StringQuoteHelper.splitSafeQuote("${body.substring(0, 3)}", ',', true, true, false));
+        // brackets inside quotes are text
+        Assertions.assertArrayEquals(new String[] { "'a(b'", "c" },
+                StringQuoteHelper.splitSafeQuote("'a(b', c", ',', true, true, true));
+        Assertions.assertArrayEquals(new String[] { "\"{\"", "c" },
+                StringQuoteHelper.splitSafeQuote("\"{\", c", ',', true, true, true));
+        // a closing bracket without an opening bracket does not stop the splitting
+        Assertions.assertArrayEquals(new String[] { "a)", "b", "c}", "d" },
+                StringQuoteHelper.splitSafeQuote("a), b, c}, d", ',', true, true, true));
+        // no trim and no keep quotes
+        Assertions.assertArrayEquals(new String[] { "f(a, b)", " 'x, y'" },
+                StringQuoteHelper.splitSafeQuote("f(a, b), 'x, y'", ',', false, true, true));
+        Assertions.assertArrayEquals(new String[] { "f(a, b)", "x, y" },
+                StringQuoteHelper.splitSafeQuote("f(a, b), 'x, y'", ',', true, false, true));
+    }
+
+    @Test
+    public void testSplitNestedSameAsNotNestedWithoutCommaInBrackets() {
+        String[] inputs = {
+                "${body}, ${header.foo}", "'a,b', 5", "${body}, ${header.foo?['key']}", "*, true", "'World'",
+                "String.class ${body}, String.class Mars", "  String.class ${body}  , String.class Mars   ",
+                "null, 'a,b'", "'', ${body}", "\"\", 'x'", "${body.substring(1)}, ${header.foo.toUpperCase()}", "a,,b",
+                ", a,", "'it''s', b" };
+        for (String input : inputs) {
+            for (boolean trim : new boolean[] { true, false }) {
+                for (boolean keepQuotes : new boolean[] { true, false }) {
+                    Assertions.assertArrayEquals(StringQuoteHelper.splitSafeQuote(input, ',', trim, keepQuotes),
+                            StringQuoteHelper.splitSafeQuote(input, ',', trim, keepQuotes, true), input);
+                }
+            }
+        }
+        Assertions.assertNull(StringQuoteHelper.splitSafeQuote(null, ',', true, true, true));
+    }
+
 }

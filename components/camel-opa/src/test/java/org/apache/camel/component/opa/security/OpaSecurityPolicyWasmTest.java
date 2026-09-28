@@ -16,87 +16,21 @@
  */
 package org.apache.camel.component.opa.security;
 
-import java.util.List;
-
-import org.apache.camel.CamelAuthorizationException;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.health.HealthCheck;
-import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * {@link OpaSecurityPolicy} enforcing a route with an in-process WebAssembly bundle. The decision contract is the same
- * as the REST engine - a match proceeds, a non-match throws {@code CamelAuthorizationException} - and no server
- * readiness check is registered, because the policy is evaluated in-process (CAMEL-24830).
+ * The {@code wasm} misconfigurations that fail an {@link OpaSecurityPolicy} route at startup.
+ * <p/>
+ * These stay unit tests deliberately: none of them needs a bundle that loads and evaluates, so they need no compiled
+ * artifact and no container. Everything that evaluates a policy lives in {@link OpaSecurityPolicyWasmIT}, where the
+ * bundle is compiled from the Rego under test rather than committed beside it (CAMEL-24742).
  */
 public class OpaSecurityPolicyWasmTest extends CamelTestSupport {
-
-    private final OpaSecurityPolicy wasmPolicy = new OpaSecurityPolicy();
-    private final OpaSecurityPolicy restPolicy = new OpaSecurityPolicy();
-
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        wasmPolicy.setEvaluationMode("wasm");
-        wasmPolicy.setPolicyBundle("classpath:authz.wasm");
-        wasmPolicy.setPolicyPath("authz/allow");
-
-        // a rest-mode policy is the positive control for the readiness-check assertion: it registers a check, the
-        // wasm one must not
-        restPolicy.setServerUrl("http://opa-rest:8181");
-        restPolicy.setPolicyPath("authz/allow");
-
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:wasm").policy(wasmPolicy).to("mock:allowed");
-                from("direct:rest").policy(restPolicy).to("mock:rest");
-            }
-        };
-    }
-
-    @Test
-    void allowsWhenTheWasmPolicyMatches() throws Exception {
-        MockEndpoint allowed = getMockEndpoint("mock:allowed");
-        allowed.expectedMessageCount(1);
-
-        template.sendBodyAndHeader("direct:wasm", "payload", "user", "alice");
-
-        allowed.assertIsSatisfied();
-    }
-
-    @Test
-    void deniesWhenTheWasmPolicyDoesNotMatch() throws Exception {
-        MockEndpoint allowed = getMockEndpoint("mock:allowed");
-        allowed.expectedMessageCount(0);
-
-        assertThatThrownBy(() -> template.sendBodyAndHeader("direct:wasm", "payload", "user", "mallory"))
-                .isInstanceOf(CamelExecutionException.class)
-                .hasCauseInstanceOf(CamelAuthorizationException.class);
-
-        allowed.assertIsSatisfied();
-    }
-
-    @Test
-    void registersOnlyTheRestPolicysReadinessCheck() {
-        HealthCheckRegistry registry = HealthCheckRegistry.get(context);
-        assertThat(registry).isNotNull();
-        List<HealthCheck> checks = registry.stream()
-                .filter(hc -> hc.getId().startsWith("security-policy:opa-"))
-                .toList();
-
-        // exactly one, and it is the rest policy's - the wasm policy evaluates in-process with no server to probe.
-        // Assert the full ID contract, not just the hostname, so a refactor of the ID-building logic cannot pass here
-        // silently: OpaSecurityPolicyHealthCheck builds it as "security-policy:opa-" + sanitized serverUrl/policyPath.
-        assertThat(checks).hasSize(1);
-        assertThat(checks.get(0).getId()).startsWith("security-policy:opa-").contains("opa-rest");
-    }
 
     @Test
     void failsRouteStartOnABundleThatLoadsButIsNotAValidModule() {
@@ -155,9 +89,10 @@ public class OpaSecurityPolicyWasmTest extends CamelTestSupport {
 
     @Test
     void failsRouteStartOnAPoolSizeBelowOne() {
+        // rejected before the bundle is resolved, so the location here is never opened
         OpaSecurityPolicy badPool = new OpaSecurityPolicy();
         badPool.setEvaluationMode("wasm");
-        badPool.setPolicyBundle("classpath:authz.wasm");
+        badPool.setPolicyBundle("file:unused.wasm");
         badPool.setPolicyPath("authz/allow");
         badPool.setPoolSize(0);
 

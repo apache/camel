@@ -13,6 +13,14 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== camel-core - Rest DSL response Content-Type
+
+Under json or xml binding, a response without a Content-Type header again takes it from the `produces` of the rest
+verb, as before Camel 4.18.4 and 4.22.0. Those releases used `application/json` (or `application/xml`) whenever the
+binding mode allowed it and marshalled the body, so a verb producing `text/plain` answered with a json-quoted body and
+a binary body failed. When `produces` lists several media types, the first json (or xml) type is used, otherwise the
+first one. Wildcards such as `*/*` are skipped, falling back to `application/json` or `application/xml`.
+
 === camel-core - Exchange Pooling deprecated
 
 Exchange pooling (`exchangeFactory=pooled`) is deprecated and will be removed in a future release.
@@ -36,6 +44,25 @@ The following `camel.main` configuration properties are deprecated:
 To migrate, remove the `camel.main.exchange-factory=pooled` property (and any related capacity/statistics
 properties) from your `application.properties`. Camel will use the default prototype mode which creates a
 new exchange per message. A `WARN` is logged at startup if pooled mode is still configured.
+
+=== http and https resources are now resolved with a timeout
+
+Loading a resource from an `http:` or `https:` location - a Groovy script, an XSLT stylesheet, a Velocity template,
+or anything else resolved through `ResourceHelper` - previously used the JDK defaults, which are to wait indefinitely
+for both the connection and every read. A server that accepted the connection and then stopped answering would stall
+`CamelContext` startup with no way to bound the wait.
+
+Such a resource is now read with a 10 second connect timeout and a 30 second read timeout, and fails with a
+`java.net.SocketTimeoutException` instead of hanging. The read timeout applies per read rather than to the transfer as
+a whole, so a large resource arriving slowly is unaffected as long as data keeps coming.
+
+Both values can be changed, in milliseconds, and `0` restores the previous wait-forever behaviour:
+
+[source,properties]
+----
+camel.resource.http.connect-timeout = 10000
+camel.resource.http.read-timeout = 30000
+----
 
 === camel-oauth
 
@@ -161,6 +188,25 @@ The redelivery counter is not reset when the exception changes, so the new `onEx
 redeliveries and which fails 4 times before the exception changes leaves the new policy a counter of 4, so an
 `onException(IllegalArgumentException.class).maximumRedeliveries(2)` is already exhausted and the message goes to
 the dead letter channel on the next failure.
+
+=== Aggregate EIP - completion timeout with optimistic locking
+
+When the aggregator uses optimistic locking together with `completionTimeoutExpression`, a group now records its
+completion timeout in the `CamelAggregatedTimeout` exchange property of the aggregated exchange stored in the
+aggregation repository, and a group only completes by timeout when it has this property. This prevents the timeout of
+an already completed group from completing a new group for the same correlation key.
+
+A group that was persisted in the aggregation repository before the upgrade does not have this property, so it does
+not complete by timeout until another exchange that has a completion timeout arrives for the group. A custom
+`AggregationRepository` that does not keep exchange properties never completes a group by timeout. This only affects
+optimistic locking combined with `completionTimeoutExpression`.
+
+=== Variable Receive
+
+When an EIP with `variableReceive` stores a message into a variable that already holds a message, the header variables
+of the previous message (`header:myVar.*`) are now removed first. Previously a header that the new message did not have
+kept its old value, so the body and the header variables of the variable could come from different messages.
+This applies to exchange, global, route and group variables.
 
 === Weighted Load Balancer EIP
 
@@ -771,6 +817,22 @@ kept running at full CPU without any log. No configuration that worked before is
 To take a value from somewhere else and otherwise a default, use another key for the override, such as
 `timeout={{?timeout.override:5000}}`.
 
+=== camel-support - property binding creates a nested list element at its index
+
+When a property key goes through a list element that does not exist yet, such as
+`camel.beans.cluster.servers[1].host`, the element is now created at its index, and the list is padded with `null`
+up to that index, as a single key such as `names[3]=x` and an array property already did. Before, the new element
+was appended to the end of the list whatever its index was. So the keys of one element could end up on several
+elements, and a list of 11 or more nested elements lost some of them, because the keys are sorted as strings
+(`servers[10].host` is bound before `servers[2].host`).
+
+A configuration that numbers its elements from 1, or leaves a gap, with one key per element, such as
+`servers[1].host=a` and `servers[2].host=b`, used to give a list without the gap (`[a, b]`). It now gives
+`[null, a, b]`. Number the elements from 0 without gaps, or make the code that uses the list skip `null` elements.
+
+The list key `last`, which was documented but failed with a `NumberFormatException`, now refers to the last element
+of a list (index 0 when the list is empty). Arrays still need a number.
+
 === camel-core - XmlConverter SAX parser factory
 
 `XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
@@ -940,6 +1002,17 @@ seen, and a repository backed by a remote store keeps its connection while the r
 forget the ids, clear the repository with `IdempotentRepository.clear()` (or the `clear` JMX operation of
 the Idempotent Consumer).
 
+=== camel-core - a graceful shutdown waits for the parallel onCompletion tasks
+
+With `onCompletion().parallelProcessing()`, stopping or suspending a route (and stopping `CamelContext`) now waits
+for the onCompletion tasks that are running or queued in its thread pool, up to the shutdown timeout, just as it
+waits for the inflight exchanges. Previously the shutdown did not wait for them, and when the thread pool was shut
+down, the queued tasks were dropped and the running ones were interrupted.
+
+An onCompletion with `parallelProcessing` that synchronously stops its own route now waits for itself until the
+shutdown timeout occurs, and the route is then stopped forcibly. Stop the route asynchronously instead, for example
+from a separate thread or with the Control Bus `async=true` option.
+
 === Component deprecation
 
 ==== camel-minio
@@ -1026,6 +1099,21 @@ LangChain4j components also expose request model names on new exchange headers
 the underlying client exposes it (for example langchain4j-chat); the agent and embeddings producers omit it when
 unavailable. See
 xref:next@components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
+
+=== camel-openai (LLM scheme alias)
+
+The `camel-openai` component now registers the `llm` URI scheme alongside the existing
+`openai` scheme. Both schemes use the same component implementation and Maven artifact
+(`camel-openai`).
+
+* New routes should prefer `llm:chat-completion` (and other `llm:` operations) for discoverability.
+* Existing routes using `openai:chat-completion` continue to work unchanged.
+* Component configuration properties accept both prefixes: `camel.component.llm.*` and
+  `camel.component.openai.*` create independent component instances when both are set.
+
+Java packages, exchange headers (`CamelOpenAI*`), and the Maven artifact id are unchanged.
+
+See xref:components::openai-component.adoc[LLM Component] for details.
 
 === camel-archetypes
 
@@ -1530,6 +1618,7 @@ from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
 
 Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
 Camel then no longer controls how the payload is read.
+
 === camel-langchain4j
 
 The legacy `sse` `transportType` has been removed. It follows the support removal in 
@@ -1574,6 +1663,7 @@ Ordinary listings are unaffected, as a listed name is normally a single path seg
 resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
 server that reports names navigating above the polled directory, and a `fileName` expression (used when
 `useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+
 === camel-salesforce
 
 The `camel-salesforce-maven-plugin` now supports JWT and Client Credentials authentication in addition to
@@ -1995,6 +2085,29 @@ identity provider.
 Note that `nonce` and PKCE (`code_challenge`) are still not sent, and the session cookie is still
 `SameSite=None; Secure`.
 
+=== camel-oauth
+
+The Jakarta servlet backend (`ServletOAuth`) now evaluates the `nbf` (not before) claim of the tokens it
+validates, and rejects a token before that time as RFC 7519 section 4.1.5 requires. This covers the bearer
+token that `OAuthBearerTokenProcessor` authenticates as well as the tokens received from the identity
+provider. Previously only `exp` was evaluated, so a token was accepted before its `nbf` time.
+
+The comparison allows for the leeway, in seconds, configured on the `JWTOptions` of the OAuth
+configuration, which defaults to `0`. That matches the Vert.x backend, which already evaluated `nbf`, and
+the default of the `clock-skew-seconds` property of incoming token validation. Tokens without an `nbf`
+claim are not affected.
+
+The servlet backend does not read this leeway from configuration, and `clock-skew-seconds` does not apply
+to it. If the identity provider's clock runs ahead of the Camel host and it issues tokens whose `nbf`
+equals `iat`, raise the leeway on the `OAuth` instance:
+
+[source,java]
+----
+OAuthFactory factory = OAuthFactory.lookupFactory(camelContext);
+OAuth oauth = factory.findOAuth().orElseGet(factory::createOAuth);
+oauth.getOAuthConfig().getJWTOptions().setLeeway(30);
+----
+
 === camel-platform-http-vertx
 
 The CORS handler used to send `Access-Control-Allow-Credentials: true` on every response to a request
@@ -2094,6 +2207,21 @@ overrides it to `true`, so LRA interoperability is unchanged.
 A custom `CamelSagaService` that relies on the header to join sagas started by another participant must
 override the new method. Everything else is unaffected: the header is still set on the exchange, and
 routes reading it continue to work.
+
+=== camel-core - a saga step of a saga that has already ended fails
+
+Since 4.22, the `InMemorySagaService` removes a saga once it is completed or compensated, for example after
+its timeout, or after `saga:complete` for a `MANUAL` saga. A saga step with propagation `REQUIRED` on an exchange
+of such a saga then started a new saga of its own and completed it, and a step with propagation `SUPPORTS` ran
+outside of any saga, although the saga of the exchange had already ended.
+
+Such a step now fails with `IllegalStateException` (`Cannot begin: saga <id> is not active or not known`), as it
+did before 4.22 and as it does while the saga is still being completed or compensated. A step with propagation
+`MANDATORY` fails as before.
+
+The check applies to any `CamelSagaService` that returns no coordinator for the saga id of the exchange. For
+example, a custom saga service that reads the `Long-Running-Action` header, and receives the id of a saga it does
+not know, now fails such a step instead of starting a new saga.
 
 === camel-saga
 
@@ -2554,6 +2682,19 @@ for the lifetime of the executor. Callers that inspect the returned `Future` wil
 return `true` after the task is done, where it previously stayed live. Callers that already cancel the
 `Future` themselves are unaffected.
 
+=== camel-support - the throttling route policies only resume a consumer they suspended
+
+`ThrottlingInflightRoutePolicy` now only resumes a consumer that it suspended itself. It also no longer resumes the
+consumer while the route is being stopped or suspended (for example while `stopRoute` waits for the inflight
+exchanges), or while Camel is stopping. `ThrottlingExceptionRoutePolicy` no longer resumes the consumer of a route that
+was suspended through the route controller while the circuit was open.
+
+For a consumer that is not `Suspendable`, `ThrottlingInflightRoutePolicy` previously called `start` on the consumer (and
+logged that it resumed the consumer) whenever an exchange completed below the resume threshold, even when it had not
+stopped the consumer. It now only starts a consumer that it stopped itself, so it no longer restarts a consumer that was
+stopped by the route controller or by other means. Such a consumer is still stopped and started to throttle the route,
+as before.
+
 === camel-master
 
 The `backOffMaxAttempts` option now bounds the attempts to start the delegated consumer as documented.
@@ -2701,6 +2842,9 @@ as successful. When it waits for space in a full queue (`blockWhenFull=true`, wi
 as the message was not added to the queue. When it waits for the reply without a timeout (`waitForTaskToComplete` with
 `timeout=0`), the exchange fails with the `InterruptedException`, instead of returning the request as the reply.
 Camel itself interrupts such threads when a route is forced to stop after the graceful shutdown timeout.
+A reply that arrives after the producer timed out, or was interrupted, is now ignored; previously it could still be
+copied into the caller's exchange after the producer had returned. If the reply is already being copied when the timeout
+or the interrupt occurs, the producer waits for the copy to complete and returns the reply.
 
 === camel-servlet, camel-jetty - the multipart upload whitelist is enforced against the submitted file name
 
@@ -2727,6 +2871,14 @@ stored with, and only for parts that carry a file name — a plain form field is
 two names differed, that header never carried a usable `DataHandler` in the first place; only when the
 names happened to be equal did it resolve, and then the name is unchanged. A route that expected the
 attachment header under the uploaded file name should read it under the multipart field name.
+
+Both bindings now share this check through `DefaultHttpBinding` in `camel-http-common`. `DefaultHttpBinding`
+also carried an older copy of it for uploads that arrive as request attributes, which matched each
+extension as a substring of the whitelist, so for example a whitelist of `txt` accepted an upload named
+`evil.x`, and it replaced the configured `fileNameExtWhitelist` with its lower-cased value. It now uses
+the shared check: each comma-separated entry is compared exactly and case-insensitively, `*` still
+accepts every file, and the configured value is left unchanged. An upload whose extension only matched
+as part of a longer entry is now rejected.
 
 === camel-tensorflow-serving - the Target and Credentials headers are deprecated
 
@@ -2767,6 +2919,17 @@ Documents carrying an internal DTD subset still parse.
 To restore the previous behaviour and allow external entity resolution, set the new
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
+
+=== camel-zipfile, camel-tarfile - a maxDecompressedSize of 2 GiB or more is now enforced
+
+The `maxDecompressedSize` option of the Zip File and Tar File data formats (and of `ZipSplitter`) was not
+enforced when set to 2 GiB (`Integer.MAX_VALUE` bytes) or more, because the byte count behind the check
+wrapped around. The limit is now enforced for any value: unmarshalling an entry that decompresses to more
+than the configured `maxDecompressedSize` fails with an `IOException`, as documented. The default limit
+(1 GiB) is unchanged, and `-1` still disables the limit.
+
+`IOHelper.copy(InputStream, OutputStream, int, boolean, long)` now returns `Integer.MAX_VALUE`, instead of a
+negative number, when it copies more than `Integer.MAX_VALUE` bytes.
 
 === camel-core - resolveResource option on expressions
 
@@ -2996,6 +3159,20 @@ Due to the package rename from `com.bazaarvoice.jolt` to `io.joltcommunity.jolt`
 `io.joltcommunity.jolt.ContextualTransform`.
 Users referencing `Removr` directly also need to update their import to `io.joltcommunity.jolt.removr.Removr`.
 
+=== camel-jcr - internal Camel headers are now filtered when mapping node properties
+
+The `jcr` producer now applies a `HeaderFilterStrategy` when converting between JCR node properties and
+Camel message headers. With the default strategy, header names starting with `Camel` or `camel`
+(case-insensitively) are no longer copied in either direction:
+
+* the `CamelJcrGetById` operation no longer maps a node property whose name is a Camel internal header
+(for example `CamelHttpUri`) onto the message;
+* the insert operation no longer persists Camel internal headers carried on the message as node properties.
+
+Ordinary document properties are unaffected and continue to be mapped as before. A route that relies on the
+previous behaviour can supply a custom `headerFilterStrategy` on the `jcr` endpoint to opt out of, or narrow,
+the filtering.
+
 === camel-mustache, camel-chunk - potential breaking change
 
 The Exchange header constants in `MustacheConstants` and `ChunkConstants` have been renamed to
@@ -3032,6 +3209,18 @@ are unaffected. Routes that set the header by its literal string name, or that u
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
 
+=== camel-pqc - FileBasedKeyLifecycleManager restricts keyId to a flat file name
+
+`FileBasedKeyLifecycleManager` now confines every key file to its configured key directory. A `keyId`
+(supplied through the `CamelPQCKeyId` / `CamelPQCNewKeyId` headers) that contains a forward slash, a
+backslash, a null character, or that would otherwise resolve outside the key directory is now rejected
+with an `IllegalArgumentException`.
+
+Previously a `keyId` such as `tenant-a/signing` resolved into a subdirectory of the key directory.
+Deployments that organised keys that way must switch to a flat `keyId` (for example `tenant-a-signing`).
+Only the file-based manager is affected; the in-memory and cloud-backed managers were never file-path
+based.
+
 === camel-crypto
 
 Three changes to `CryptoDataFormat`, none of which affects the format of data already written.
@@ -3057,6 +3246,7 @@ allocation; a declared length outside 0–1024 is now rejected instead of attemp
 Not changed: the HMAC key is still derived from the same key material as the cipher. Separating them
 would change the MAC written into the message and so could not be read by earlier versions; that is
 tracked separately.
+
 === camel-debezium - a failed embedded engine is now reported
 
 The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops
@@ -3076,6 +3266,30 @@ are now failed with a `RejectedExecutionException` and their on completions are 
 reply of a discarded exchange (`waitForTaskToComplete`) is released with that exception, instead of waiting until its
 `timeout`, or forever when the timeout is disabled. On completions handed over to a discarded InOnly exchange, such as
 the commit or rollback of the consumer that received the message, now run as a failure, where previously they never ran.
+
+=== camel-pulsar - PulsarMessageUtils.updateExchange returns the exchange it was given
+
+`PulsarMessageUtils.updateExchange(message, exchange)` used to return a *copy* of the exchange passed to
+it. It now populates and returns that same instance.
+
+The copy orphaned the exchange the consumer had taken from the exchange factory, so with
+`camel.main.exchange-factory=pooled` every consumed message leaked one pooled exchange and the pool never
+refilled. Code outside the component that called this method and relied on getting an independent copy
+must make its own copy instead.
+
+=== camel-pulsar - a failed exchange is negatively acknowledged
+
+When a route fails, the consumer now calls `negativeAcknowledge` on the Pulsar consumer instead of
+leaving the message unacknowledged. This only applies when `allowManualAcknowledgement` is `false`
+(the default); with manual acknowledgement the route stays in charge, as before.
+
+This changes when the message comes back. Previously it was redelivered once the acknowledgement
+timeout expired, which `camel-pulsar` sets to 10 seconds by default through `ackTimeoutMillis`. A
+negative acknowledgement removes the message from the client's unacknowledged-message tracker, so
+redelivery now follows `negativeAckRedeliveryDelayMicros`, which defaults to 60 seconds, and honours
+`negativeAckRedeliveryBackoff` when one is configured.
+
+A route that wants the previous timing can set `negativeAckRedeliveryDelayMicros=10000000`.
 
 === camel-seda - multipleConsumers broadcasts to consumers with different uri options
 
@@ -3119,6 +3333,35 @@ substring, which was also not the case without `ignoreCase`.
 
 A String is now only equal to a boolean when it is `true` or `false` (ignoring case). Previously any other
 String was equal to `false`, so `${body} == false` was `true` when the body was `hello`.
+
+=== camel-coap
+
+The CoAP consumer now answers a failed exchange with `5.00 Internal Server Error`, and no longer returns
+the exception's message to the client.
+
+Previously the consumer did not check whether the exchange had failed: a route failure was answered with
+`2.05 Content` and whatever body the message held when the route failed. When the response could not be
+built once the route had completed, for example because the body could not be converted to `byte[]`, the
+exception's message was sent to the client as the payload of a `5.00 Internal Server Error` response.
+
+A new `muteException` consumer option controls the payload of the error response, and it defaults to
+`true`, the same default as the HTTP consumers and the `camel-knative`, `camel-mina`, `camel-cxf` and
+`camel-grpc` consumers: the payload is empty. A route that relies on the exception's message reaching the
+client must opt back in explicitly:
+
+[source,text]
+----
+coap://0.0.0.0:5683/my/resource?muteException=false
+----
+
+For the Rest DSL, set it with `restConfiguration().endpointProperty("muteException", "false")`.
+
+=== camel-quickfix - InOut replies are sent on the session the request arrived on
+
+With `exchangePattern=InOut`, the QuickFIX/J consumer now sends the reply on the session the request was received on.
+Previously it read the `SessionID` header when the route completed, so a route that changed that header also changed
+which session received the reply. A route that changed the `SessionID` header to send the reply to another session
+must now send that message with a QuickFIX/J producer endpoint that sets the `sessionID` option.
 
 == ThrottlingExceptionRoutePolicy
 
