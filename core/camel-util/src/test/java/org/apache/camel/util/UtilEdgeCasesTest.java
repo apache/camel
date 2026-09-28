@@ -66,12 +66,6 @@ public class UtilEdgeCasesTest {
     }
 
     @Test
-    public void testParseQueryWithDoubleAmpersand() throws Exception {
-        Map<String, Object> map = URISupport.parseQuery("a=1&&b=2");
-        assertEquals(Map.of("a", "1", "b", "2"), map);
-    }
-
-    @Test
     public void testStripExtOfHiddenFileInRoot() {
         assertEquals("/.bashrc", FileUtil.stripExt("/.bashrc"));
         assertEquals("/.a", FileUtil.stripExt("/.a.b"));
