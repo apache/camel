@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WaitForTaskToComplete;
@@ -222,6 +223,10 @@ public class SedaProducer extends DefaultAsyncProducer {
         // handover the completion so its the copy which performs that, as we do not wait
         if (copy) {
             target = prepareCopy(exchange, true);
+            // the copy is routed independently of the original exchange, so any stream cache it holds must be
+            // released when the copy is done, and not with the unit of work of a parent (multicast/split) exchange
+            // (same as the Wire Tap EIP does, see CAMEL-12108)
+            target.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
             // if the body is stream caching based we need to make a deep copy
             if (target.getMessage().getBody() instanceof StreamCache sc) {
                 StreamCache newBody = sc.copy(target);
