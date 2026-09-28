@@ -72,6 +72,10 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     private boolean removeSpoolDirectoryWhenStopping = true;
     private final UtilizationStatistics statistics = new UtilizationStatistics();
     private final Set<SpoolRule> spoolRules = new LinkedHashSet<>();
+    // the spool rules added when starting (and removed when stopping), from the spool thresholds
+    private final List<SpoolRule> thresholdSpoolRules = new ArrayList<>();
+    // whether spooling to disk is in use (the spool directory is only removed when it was in use)
+    private volatile boolean spoolInUse;
     private volatile boolean anySpoolRules;
 
     @Override
@@ -377,28 +381,16 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         }
 
         // find core type converters that can convert to StreamCache
+        // (clear first, as the strategy may be started again after a restart)
+        coreConverters.clear();
         var set = getCamelContext().getTypeConverterRegistry().lookup(StreamCache.class).entrySet();
         set.forEach(e -> coreConverters.add(new CoreConverter(e.getKey(), e.getValue())));
 
         if (allowClassNames != null) {
-            if (allowClasses == null) {
-                allowClasses = new ArrayList<>();
-            }
-            for (String name : allowClassNames.split(",")) {
-                name = name.trim();
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(name);
-                allowClasses.add(clazz);
-            }
+            allowClasses = resolveClasses(allowClasses, allowClassNames);
         }
         if (denyClassNames != null) {
-            if (denyClasses == null) {
-                denyClasses = new ArrayList<>();
-            }
-            for (String name : denyClassNames.split(",")) {
-                name = name.trim();
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(name);
-                denyClasses.add(clazz);
-            }
+            denyClasses = resolveClasses(denyClasses, denyClassNames);
         }
 
         if (spoolUsedHeapMemoryThreshold > 99) {
@@ -439,15 +431,17 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                 }
             }
             if (spoolThreshold > 0) {
-                spoolRules.add(new FixedThresholdSpoolRule());
+                thresholdSpoolRules.add(new FixedThresholdSpoolRule());
             }
             if (spoolUsedHeapMemoryThreshold > 0) {
                 if (spoolUsedHeapMemoryLimit == null) {
                     // use max by default
                     spoolUsedHeapMemoryLimit = SpoolUsedHeapMemoryLimit.Max;
                 }
-                spoolRules.add(new UsedHeapMemorySpoolRule(spoolUsedHeapMemoryLimit));
+                thresholdSpoolRules.add(new UsedHeapMemorySpoolRule(spoolUsedHeapMemoryLimit));
             }
+            spoolRules.addAll(thresholdSpoolRules);
+            spoolInUse = true;
         }
 
         LOG.debug("StreamCaching configuration {}", this);
@@ -468,6 +462,11 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
             LOG.debug("Removing spool directory: {}", spoolDirectory);
             FileUtil.removeDir(spoolDirectory);
         }
+        spoolInUse = false;
+
+        // remove the spool rules added when starting, as they are added again if started again
+        thresholdSpoolRules.forEach(spoolRules::remove);
+        thresholdSpoolRules.clear();
 
         if (LOG.isDebugEnabled() && statistics.isStatisticsEnabled()) {
             LOG.debug("Stopping StreamCachingStrategy with statistics: {}", statistics);
@@ -476,8 +475,22 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
         statistics.reset();
     }
 
+    private Collection<Class<?>> resolveClasses(Collection<Class<?>> classes, String names) throws ClassNotFoundException {
+        // use a new list, as the existing may be immutable (such as set via setAllowClasses)
+        Collection<Class<?>> answer = classes != null ? new ArrayList<>(classes) : new ArrayList<>();
+        for (String name : names.split(",")) {
+            Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(name.trim());
+            // avoid duplicates when started again after a restart
+            if (!answer.contains(clazz)) {
+                answer.add(clazz);
+            }
+        }
+        return answer;
+    }
+
     private boolean isSpoolRemovable() {
-        return spoolThreshold > 0 && spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping();
+        // spooling may be in use by any of the spool rules (not only the spool threshold)
+        return spoolInUse && spoolDirectory != null && isRemoveSpoolDirectoryWhenStopping();
     }
 
     @Override
