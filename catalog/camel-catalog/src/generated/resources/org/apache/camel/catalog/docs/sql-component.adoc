@@ -1090,8 +1090,14 @@ This covers the component-level DataSource as well as any DataSources resolved b
 (e.g. `sql:...?dataSource=#myDs`), with identity-based deduplication so each pool is evicted at most once.
 
 Currently only HikariCP pools are supported for active eviction via `softEvictConnections()`.
+The eviction is triggered by calling `getHikariPoolMXBean()` directly on the `HikariDataSource` instance
+via reflection — JMX registration (`registerMbeans=true`) is *not* required.
 Other pool implementations (including Quarkus Agroal) are not actively evicted — existing connections
 will be replaced as they expire or are validated by the pool.
+
+NOTE: The HikariCP eviction uses reflection to invoke `HikariDataSource.getHikariPoolMXBean()` and
+`HikariPoolMXBean.softEvictConnections()`. In GraalVM native mode (e.g. Quarkus native), these classes
+and methods need to be registered for reflection.
 
 IMPORTANT: The eviction only closes existing connections — it does *not* update the pool's credentials.
 For pools configured with a static password (e.g. Spring Boot `spring.datasource.password`),
