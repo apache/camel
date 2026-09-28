@@ -2285,39 +2285,41 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.hasVaultConfiguration()) {
             camelContext.setVaultConfiguration(mainConfigurationProperties.vault());
         }
-        VaultConfiguration target = camelContext.getVaultConfiguration();
+        VaultConfiguration root = camelContext.getVaultConfiguration();
 
         // make defensive copy as we mutate the map
         Set<String> keys = new LinkedHashSet<>(properties.asMap().keySet());
         // set properties per different vault component
         for (String key : keys) {
             String name = StringHelper.before(key, ".");
+            // each vault is configured on the vault configuration of the camel context
+            VaultConfiguration target = root;
             if ("aws".equalsIgnoreCase(name)) {
-                target = target.aws();
+                target = root.aws();
             }
             if ("gcp".equalsIgnoreCase(name)) {
-                target = target.gcp();
+                target = root.gcp();
             }
             if ("azure".equalsIgnoreCase(name)) {
-                target = target.azure();
+                target = root.azure();
             }
             if ("hashicorp".equalsIgnoreCase(name)) {
-                target = target.hashicorp();
+                target = root.hashicorp();
             }
             if ("kubernetes".equalsIgnoreCase(name)) {
-                target = target.kubernetes();
+                target = root.kubernetes();
             }
             if ("kubernetescm".equalsIgnoreCase(name)) {
-                target = target.kubernetesConfigmaps();
+                target = root.kubernetesConfigmaps();
             }
             if ("springConfig".equalsIgnoreCase(name)) {
-                target = target.springConfig();
+                target = root.springConfig();
             }
             if ("ibm".equalsIgnoreCase(name)) {
-                target = target.ibmSecretsManager();
+                target = root.ibmSecretsManager();
             }
             if ("cyberark".equalsIgnoreCase(name)) {
-                target = target.cyberark();
+                target = root.cyberark();
             }
             // configure all the properties on the vault at once (to ensure they are configured in right order)
             OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");

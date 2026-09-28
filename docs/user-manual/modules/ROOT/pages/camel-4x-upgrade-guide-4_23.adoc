@@ -3069,6 +3069,19 @@ healthy while no longer receiving any change event. Deployments that use readine
 now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
 The engine is still not restarted automatically.
 
+=== camel-core - event notifier exchange sent and redelivery events
+
+An event notifier now receives the `ExchangeSentEvent` also when it does not want the `ExchangeSendingEvent`
+(with `ignoreExchangeSendingEvents=true`, or when `isEnabled` only accepts the sent event). Previously the sent
+event was only emitted when some event notifier had accepted the sending event.
+
+The `ignoreExchangeRedeliveryEvents` option on an event notifier is now used to ignore the `ExchangeRedeliveryEvent`.
+Previously the redelivery event was ignored by the `ignoreExchangeFailedEvents` option instead, and
+`ignoreExchangeRedeliveryEvents` had no effect.
+
+An event notifier that is added after `CamelContext` has been started is now started (and it is stopped when it is
+removed).
+
 === camel-seda - purging the queue completes the discarded exchanges
 
 When a SEDA queue is purged (with `purgeWhenStopping=true` or the `purgeQueue` JMX operation), the discarded exchanges
