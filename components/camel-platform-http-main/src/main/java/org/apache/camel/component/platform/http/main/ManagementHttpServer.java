@@ -975,7 +975,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         for (Map.Entry<String, Boolean> root : roots.entrySet()) {
             try {
                 for (String n : listResourceRoot(URI.create(root.getKey()).toURL(), root.getValue())) {
-                    if (!n.endsWith(".class") && !n.startsWith("META-INF/")) {
+                    if (isApplicationResource(n)) {
                         answer.add(n);
                     }
                 }
@@ -1042,10 +1042,21 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             f = f.trim();
             Path p = dir.resolve(f).normalize();
             if (!f.isEmpty() && p.startsWith(dir) && Files.isRegularFile(p)) {
-                answer.add(FileUtil.normalizePath(dir.relativize(p).toString()).replace('\\', '/'));
+                String n = FileUtil.normalizePath(dir.relativize(p).toString()).replace('\\', '/');
+                if (isApplicationResource(n)) {
+                    answer.add(n);
+                }
             }
         }
         return answer;
+    }
+
+    /**
+     * Whether the file is a resource that can be listed and downloaded, which excludes classes and JARs (camel run can
+     * add both to the classpath) and META-INF files.
+     */
+    private static boolean isApplicationResource(String name) {
+        return !name.endsWith(".class") && !name.endsWith(".jar") && !name.startsWith("META-INF/");
     }
 
     protected void setupSendConsole() {

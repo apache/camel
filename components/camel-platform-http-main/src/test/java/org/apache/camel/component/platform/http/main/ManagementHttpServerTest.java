@@ -73,7 +73,9 @@ class ManagementHttpServerTest {
 
         camelContext = new DefaultCamelContext();
         // files that camel run adds to the classpath, only files inside the project directory are included
-        camelContext.getPropertiesComponent().addInitialProperty("camel.jbang.classpathFiles", "pom.xml,../pom.xml");
+        String clazz = "target/classes/" + ManagementHttpServer.class.getName().replace('.', '/') + ".class";
+        camelContext.getPropertiesComponent().addInitialProperty("camel.jbang.classpathFiles",
+                "pom.xml,../pom.xml," + clazz);
         server.setCamelContext(camelContext);
 
         server.setHost("0.0.0.0");
@@ -91,6 +93,7 @@ class ManagementHttpServerTest {
             // files from the project directory
             assertTrue(names.contains("pom.xml"), names.toString());
             assertFalse(names.contains("../pom.xml"), names.toString());
+            assertFalse(names.contains(clazz), names.toString());
             // no classes or content of dependency JARs
             assertTrue(names.stream().noneMatch(n -> n.endsWith(".class")), names.toString());
             assertTrue(names.stream().noneMatch(n -> n.startsWith("META-INF/")), names.toString());
@@ -101,6 +104,10 @@ class ManagementHttpServerTest {
             response = get("/q/download/pom.xml");
             assertEquals(200, response.statusCode());
             assertTrue(response.body().contains("<artifactId>camel-platform-http-main</artifactId>"));
+
+            // classes cannot be downloaded
+            response = get("/q/download/" + clazz);
+            assertEquals(204, response.statusCode());
         } finally {
             server.stop();
         }
