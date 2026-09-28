@@ -2926,6 +2926,23 @@ To restore the previous behaviour and allow external entity resolution, set the 
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
 
+=== camel-main - profiles and precedence of ENV and JVM system properties
+
+The `dev` profile no longer overrides an option that is configured with a key in another case or with dashes, such as
+the ENV variable `CAMEL_MAIN_SHUTDOWNTIMEOUT=5` (which becomes `camel.main.shutdowntimeout`) or
+`camel.main.shutdown-timeout=5`. Previously only the exact camelCase key (`camel.main.shutdownTimeout`) was
+recognized, and the `dev` profile default was used instead.
+
+A JVM system property now always takes precedence over the same option from an ENV variable or from a properties
+file, also when the keys are in another case (such as `-Dcamel.main.shutdownTimeout=22` and
+`CAMEL_MAIN_SHUTDOWNTIMEOUT=11`). Previously the result depended on the case of the keys.
+
+When the profile is set as an ENV variable or JVM system property (`camel.main.profile`), only the
+`application-<profile>.properties` file of that profile is loaded. Previously `Main` also loaded the properties file of
+a profile configured in Java (such as `main.configure().withProfile("dev")`).
+
+The option `camel.main.durationMaxAction` is now case-insensitive (`STOP` is the same as `stop`).
+
 === camel-zipfile, camel-tarfile - a maxDecompressedSize of 2 GiB or more is now enforced
 
 The `maxDecompressedSize` option of the Zip File and Tar File data formats (and of `ZipSplitter`) was not
