@@ -1202,6 +1202,10 @@ public class AggregateProcessor extends BaseProcessorSupport
         this.discardOnAggregationFailure = discardOnAggregationFailure;
     }
 
+    public boolean isForceCompletionOnStop() {
+        return forceCompletionOnStop;
+    }
+
     public void setForceCompletionOnStop(boolean forceCompletionOnStop) {
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
