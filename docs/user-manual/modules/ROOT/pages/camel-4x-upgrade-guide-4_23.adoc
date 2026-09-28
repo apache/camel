@@ -377,6 +377,13 @@ The `dynamic-router` endpoint gained an `allowedSchemes` option, an optional com
 allow-list of component schemes that a subscription destination may resolve to. It is unset by
 default, which allows any scheme, matching the previous behaviour.
 
+=== camel-management - JMX tabular data
+
+Some tabular data returned by the JMX MBeans had a key that was not unique, so the operation failed with
+`KeyAlreadyExistsException`. The tabular data of the Choice EIP and doTry EIP `extendedInformation` and of
+`listTasks` of the task manager registry now have an `index` item as their key, the exchange factories of `listStatistics`
+are keyed by `url` and `routeId`, and endpoints that only differ in a secret (which is masked) are shown once.
+
 === camel-exec
 
 `allowControlHeaders` is now annotated `security = "insecure:dev"`.

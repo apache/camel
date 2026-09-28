@@ -16,22 +16,14 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.util.Map;
-
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
-import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedRecipientListMBean;
 import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.processor.RecipientList;
-import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.URISupport;
 
@@ -131,28 +123,7 @@ public class ManagedRecipientList extends ManagedProcessor implements ManagedRec
     @Override
     public TabularData extendedInformation() {
         try {
-            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
-
-            EndpointUtilizationStatistics stats = getProcessor().getEndpointUtilizationStatistics();
-            if (stats != null) {
-                for (Map.Entry<String, Long> entry : stats.getStatistics().entrySet()) {
-                    CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
-                    String url = entry.getKey();
-                    if (sanitize) {
-                        url = URISupport.sanitizeUri(url);
-                    }
-
-                    Long hits = entry.getValue();
-                    if (hits == null) {
-                        hits = 0L;
-                    }
-
-                    CompositeData data
-                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
-                    answer.put(data);
-                }
-            }
-            return answer;
+            return EndpointUtilizationHelper.toTabularData(getProcessor().getEndpointUtilizationStatistics(), sanitize);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

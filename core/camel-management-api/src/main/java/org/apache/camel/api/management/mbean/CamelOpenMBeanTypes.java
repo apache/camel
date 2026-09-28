@@ -85,7 +85,8 @@ public final class CamelOpenMBeanTypes {
 
     public static TabularType listExchangeFactoryTabularType() throws OpenDataException {
         CompositeType ct = listExchangeFactoryCompositeType();
-        return new TabularType("listExchangeFactory", "Lists all the exchange factories", ct, new String[] { "url" });
+        return new TabularType(
+                "listExchangeFactory", "Lists all the exchange factories", ct, new String[] { "url", "routeId" });
     }
 
     public static CompositeType listExchangeFactoryCompositeType() throws OpenDataException {
@@ -193,28 +194,29 @@ public final class CamelOpenMBeanTypes {
 
     public static TabularType choiceTabularType() throws OpenDataException {
         CompositeType ct = choiceCompositeType();
-        return new TabularType("choice", "Choice statistics", ct, new String[] { "predicate" });
+        return new TabularType("choice", "Choice statistics", ct, new String[] { "index" });
     }
 
     public static CompositeType choiceCompositeType() throws OpenDataException {
         return new CompositeType(
                 "predicates", "Predicates",
-                new String[] { "predicate", "language", "matches" },
-                new String[] { "Predicate", "Language", "Matches" },
-                new OpenType[] { SimpleType.STRING, SimpleType.STRING, SimpleType.LONG });
+                new String[] { "index", "predicate", "language", "matches" },
+                new String[] { "Index", "Predicate", "Language", "Matches" },
+                new OpenType[] { SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG });
     }
 
     public static TabularType doTryTabularType() throws OpenDataException {
         CompositeType ct = doTryCompositeType();
-        return new TabularType("doTry", "doTry statistics", ct, new String[] { "exception" });
+        return new TabularType("doTry", "doTry statistics", ct, new String[] { "index" });
     }
 
     public static CompositeType doTryCompositeType() throws OpenDataException {
         return new CompositeType(
                 "exceptions", "Exception types",
-                new String[] { "exception", "predicate", "language", "matches" },
-                new String[] { "Exception", "Predicate", "Language", "Matches" },
-                new OpenType[] { SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG });
+                new String[] { "index", "exception", "predicate", "language", "matches" },
+                new String[] { "Index", "Exception", "Predicate", "Language", "Matches" },
+                new OpenType[] {
+                        SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG });
     }
 
     public static TabularType loadbalancerExceptionsTabularType() throws OpenDataException {
@@ -362,20 +364,21 @@ public final class CamelOpenMBeanTypes {
         CompositeType ct = listInternalTaskCompositeType();
         return new TabularType(
                 "listTask", "Lists all the internal tasks", ct,
-                new String[] { "name" });
+                new String[] { "index" });
     }
 
     public static CompositeType listInternalTaskCompositeType() throws OpenDataException {
         return new CompositeType(
                 "tasks", "Tasks",
                 new String[] {
-                        "name", "kind", "status", "attempts", "delay", "elapsed", "firstTime", "lastTime", "nextTime",
-                        "failure" },
+                        "index", "name", "kind", "status", "attempts", "delay", "elapsed", "firstTime", "lastTime",
+                        "nextTime", "failure" },
                 new String[] {
-                        "Name", "Kind", "Status", "Attempts", "Delay", "Elapsed", "FirstTime", "LastTime", "NextTime",
-                        "Failure" },
+                        "Index", "Name", "Kind", "Status", "Attempts", "Delay", "Elapsed", "FirstTime", "LastTime",
+                        "NextTime", "Failure" },
                 new OpenType[] {
-                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG, SimpleType.LONG,
+                        SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.LONG,
+                        SimpleType.LONG,
                         SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.STRING });
     }
 
