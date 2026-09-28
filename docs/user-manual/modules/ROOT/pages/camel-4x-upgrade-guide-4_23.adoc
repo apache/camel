@@ -768,6 +768,13 @@ structurally significant in Camel's own `key=value&key=value` query syntax.
 Code that asserts a literal, fully-normalized endpoint URI string containing one of those characters in a
 query value may need to update the expected string to the (now consistently) unencoded form.
 
+=== camel-core - double && in endpoint URIs
+
+An endpoint URI containing `&&` is no longer rejected with `Invalid uri syntax: Double && marker found`.
+An empty query parameter, such as from `delay=250&&period=500`, is now ignored, so the URI is the same as
+`delay=250&period=500`. The old check also rejected a `&&` in the path of an endpoint, for example
+`language:simple:${header.a} == 1 && ${header.b} == 2`, which now works.
+
 === camel-core - masking of sensitive values in endpoint URIs
 
 `URISupport.sanitizeUri()`, which masks secrets in endpoint URIs shown in logs, events, JMX names and error
