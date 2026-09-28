@@ -290,7 +290,9 @@ public final class BeanModelHelper {
             final String classType = factoryOrConstructorType(def, type);
 
             final CamelContext camelContext = routeTemplateContext.getCamelContext();
-            routeTemplateContext.bind(def.getName(), Object.class, Suppliers.memorize(() -> {
+            // bind with the class when known, so the bean can also be looked up by its type
+            final Class<?> bindType = localBeanType(camelContext, def, beanType);
+            routeTemplateContext.bind(def.getName(), bindType, Suppliers.memorize(() -> {
                 try {
                     Object local;
                     Object builder = inferBuilder(camelContext, def, beanType);
@@ -379,6 +381,28 @@ public final class BeanModelHelper {
             return null;
         }
         return PropertyBindingSupport.newBuilderInstance(resolveBeanClass(camelContext, type));
+    }
+
+    /**
+     * The type to bind a local bean with: its class when known (but not when it is created by a factory method, which
+     * may return another type), otherwise Object.
+     */
+    private static Class<?> localBeanType(CamelContext camelContext, BeanFactoryDefinition<?> def, String type) {
+        if (def.getBeanClass() != null) {
+            return def.getBeanClass();
+        }
+        if (type.startsWith("#class:") && def.getFactoryMethod() == null && def.getFactoryBean() == null) {
+            String fqn = type.substring(7);
+            if (!fqn.contains("#")) {
+                // remove any constructor arguments
+                fqn = StringHelper.before(fqn, "(", fqn).trim();
+                Class<?> clazz = camelContext.getClassResolver().resolveClass(fqn);
+                if (clazz != null) {
+                    return clazz;
+                }
+            }
+        }
+        return Object.class;
     }
 
     private static Class<?> resolveBeanClass(CamelContext camelContext, String type) throws ClassNotFoundException {

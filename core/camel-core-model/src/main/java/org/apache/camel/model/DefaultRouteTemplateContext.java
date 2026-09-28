@@ -29,6 +29,7 @@ import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.LocalBeanRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.function.Suppliers;
 
 /**
  * Default {@link RouteTemplateContext}.
@@ -58,7 +59,8 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
         if (bean instanceof BeanSupplier) {
             // need to unwrap bean supplier as regular supplier
             BeanSupplier<Object> bs = (BeanSupplier<Object>) bean;
-            registry.bind(id, (Supplier<Object>) () -> bs.get(DefaultRouteTemplateContext.this));
+            // a local bean is a singleton, so the supplier is only called once
+            registry.bind(id, Object.class, Suppliers.memorize(() -> bs.get(DefaultRouteTemplateContext.this)));
         } else {
             registry.bind(id, bean);
         }
@@ -70,7 +72,8 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
         if (bean instanceof BeanSupplier) {
             // need to unwrap bean supplier as regular supplier
             BeanSupplier<Object> bs = (BeanSupplier<Object>) bean;
-            registry.bind(id, type, () -> bs.get(this));
+            // a local bean is a singleton, so the supplier is only called once
+            registry.bind(id, type, Suppliers.memorize(() -> bs.get(this)));
         } else {
             registry.bind(id, type, bean);
         }
@@ -78,12 +81,14 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
 
     @Override
     public void bind(String id, Class<?> type, Supplier<Object> bean) {
-        registry.bind(id, type, bean);
+        // a local bean is a singleton, so the supplier is only called once
+        registry.bind(id, type, Suppliers.memorize(bean));
     }
 
     @Override
     public void bindAsPrototype(String id, Class<?> type, Supplier<Object> bean) {
-        registry.bindAsPrototype(id, type, bean);
+        // the supplier registry calls the supplier on every lookup
+        registry.bind(id, type, bean);
     }
 
     @Override
@@ -93,13 +98,21 @@ public final class DefaultRouteTemplateContext implements RouteTemplateContext {
 
     @Override
     public Object getProperty(String name) {
-        return parameters.get(name);
+        Object value = parameters.get(name);
+        if (value == null) {
+            // lookup key with both dash and camel style (as hasParameter)
+            value = parameters.get(StringHelper.dashToCamelCase(name));
+        }
+        if (value == null) {
+            value = parameters.get(StringHelper.camelCaseToDash(name));
+        }
+        return value;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Class<?> type) {
-        Object value = parameters.get(name);
+        Object value = getProperty(name);
         return (T) camelContext.getTypeConverter().tryConvertTo(type, value);
     }
 
