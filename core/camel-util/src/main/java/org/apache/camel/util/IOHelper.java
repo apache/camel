@@ -42,6 +42,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -699,7 +700,7 @@ public final class IOHelper {
      */
     public static String lookupEnvironmentVariable(String key) {
         // lookup OS env with upper case key
-        String upperKey = key.toUpperCase();
+        String upperKey = key.toUpperCase(Locale.ENGLISH);
         String value = System.getenv(upperKey);
 
         if (value == null) {
@@ -718,7 +719,7 @@ public final class IOHelper {
      * underscores.
      */
     public static String normalizeEnvironmentVariable(String key) {
-        String upperKey = key.toUpperCase();
+        String upperKey = key.toUpperCase(Locale.ENGLISH);
         // some OS do not support dashes in keys, so replace with underscore
         String normalizedKey = upperKey.replace('-', '_');
 

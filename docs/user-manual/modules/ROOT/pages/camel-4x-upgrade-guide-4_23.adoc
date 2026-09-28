@@ -3591,6 +3591,16 @@ producer were never stopped.
 With `parallelProcessing`, a recipient whose task had not started yet when the Recipient List completed is now
 skipped instead of being sent to afterwards. As before, recipients that had already started keep running.
 
+=== camel-core - properties component locations
+
+A properties location with an unknown (or misspelled) resolver, such as `Classpath:app.properties` or
+`C:\app.properties` (use `file:` for a file path), now fails when Camel is started. Previously the location was silently
+ignored. The supported resolvers are `classpath:`, `file:` and `ref:`. Mark the location as optional
+(`;optional=true`) or set `ignoreMissingLocation=true` to ignore it.
+
+A `;` in the path of a location (such as `file:/opt/a;b/app.properties`) is now kept as part of the path. Previously
+the path was cut off at the `;` (only `;optional=true` is an option of a location).
+
 === camel-xmlsecurity, camel-avro - data format options now carry their security metadata
 
 The `security` and `secret` attributes of `@Metadata` were never written to the generated metadata of data format,
