@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The timeouts below are deliberately {@code SEPARATE_THREAD}: the default mode only measures elapsed time once the
  * test method returns, so a regression that restores the indefinite wait would hang the build instead of failing it.
  */
-public class HttpResourceTimeoutTest {
+class HttpResourceTimeoutTest {
 
     private ServerSocket server;
     private Thread acceptor;
@@ -103,7 +103,7 @@ public class HttpResourceTimeoutTest {
 
     @Test
     @Timeout(value = 30, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-    public void getInputStreamGivesUpOnAServerThatNeverAnswers() throws Exception {
+    void getInputStreamGivesUpOnAServerThatNeverAnswers() throws Exception {
         CamelContext context = contextWithReadTimeout("500");
         try {
             Resource resource = ResourceHelper.resolveResource(context, muteUrl());
@@ -118,7 +118,7 @@ public class HttpResourceTimeoutTest {
 
     @Test
     @Timeout(value = 30, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-    public void existsGivesUpOnAServerThatNeverAnswers() throws Exception {
+    void existsGivesUpOnAServerThatNeverAnswers() throws Exception {
         CamelContext context = contextWithReadTimeout("500");
         try {
             Resource resource = ResourceHelper.resolveResource(context, muteUrl());
@@ -133,7 +133,7 @@ public class HttpResourceTimeoutTest {
 
     @Test
     @Timeout(value = 30, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-    public void httpsResourcesAreBoundedToo() throws Exception {
+    void httpsResourcesAreBoundedToo() throws Exception {
         CamelContext context = contextWithReadTimeout("500");
         try {
             // the https resolver hands back the same HttpResource, so it must inherit the same bound; the handshake
@@ -149,7 +149,7 @@ public class HttpResourceTimeoutTest {
 
     @Test
     @Timeout(value = 30, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-    public void aTimeoutThatIsNotANumberSaysWhichPropertyIsWrong() throws Exception {
+    void aTimeoutThatIsNotANumberSaysWhichPropertyIsWrong() throws Exception {
         CamelContext context = new DefaultCamelContext();
         Properties properties = new Properties();
         properties.setProperty(DefaultResourceResolvers.HTTP_CONNECT_TIMEOUT_PROPERTY, "10s");
@@ -172,7 +172,7 @@ public class HttpResourceTimeoutTest {
 
     @Test
     @Timeout(value = 30, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-    public void aResourceThatIsNotThereStillReportsAbsent() throws Exception {
+    void aResourceThatIsNotThereStillReportsAbsent() throws Exception {
         // guards against the timeouts turning an ordinary 404 into a failure
         CamelContext context = contextWithReadTimeout("5000");
         try (ServerSocket notFound = new ServerSocket(0)) {
