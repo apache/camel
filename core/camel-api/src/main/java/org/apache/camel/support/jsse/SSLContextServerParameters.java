@@ -20,6 +20,7 @@ import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -87,7 +88,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             if (clientAuthStr == null) {
                 clientAuthStr = this.getClientAuthentication();
             }
-            final ClientAuthentication clientAuthValue = ClientAuthentication.valueOf(clientAuthStr);
+            final ClientAuthentication clientAuthValue
+                    = ClientAuthentication.valueOf(clientAuthStr.toUpperCase(Locale.ENGLISH));
 
             Configurer<SSLEngine> sslEngineConfigurer = new Configurer<>() {
                 @Override
@@ -129,7 +131,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             if (clientAuthStr == null) {
                 clientAuthStr = this.getClientAuthentication();
             }
-            final ClientAuthentication clientAuthValue = ClientAuthentication.valueOf(clientAuthStr);
+            final ClientAuthentication clientAuthValue
+                    = ClientAuthentication.valueOf(clientAuthStr.toUpperCase(Locale.ENGLISH));
 
             Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<>() {
                 @Override
