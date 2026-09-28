@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.lmax.disruptor.InsufficientCapacityException;
 import org.apache.camel.AsyncEndpoint;
@@ -53,6 +54,11 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM",
              remote = false, syntax = "disruptor:name", category = { Category.MESSAGING })
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
+    /**
+     * Property on the exchange published by a producer that waits for the reply. Its value is set to true when the
+     * producer no longer waits (timeout or interrupt), so the consumer ignores the exchange if it has not started it
+     * yet.
+     */
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
 
@@ -365,5 +371,19 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     @Override
     public int hashCode() {
         return getEndpointUri().hashCode() * 37 + getCamelContext().hashCode();
+    }
+
+    /**
+     * Whether the consumer should ignore the given exchange, as the producer that published it no longer waits for it.
+     */
+    static boolean isIgnoreExchange(Exchange exchange) {
+        if (!exchange.hasProperties()) {
+            return false;
+        }
+        Object ignore = exchange.getProperty(DISRUPTOR_IGNORE_EXCHANGE);
+        if (ignore instanceof AtomicBoolean flag) {
+            return flag.get();
+        }
+        return Boolean.TRUE.equals(ignore);
     }
 }

@@ -92,6 +92,10 @@ public class DisruptorProducer extends DefaultAsyncProducer {
 
                 // we should wait for the reply so install a on completion so we know when its complete
                 copy.getExchangeExtension().addOnCompletion(newOnCompletion(exchange, latch, completed));
+                // the consumer ignores the copy if we no longer wait for it (timeout or interrupt) before it is processed,
+                // this must be on the published copy, not on the exchange of the caller, as later copies of the caller's
+                // exchange (such as a redelivery) would inherit it and be ignored as well
+                copy.setProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, completed);
 
                 doPublish(copy);
 
@@ -110,17 +114,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                     }
                     if (!done) {
                         if (completed.compareAndSet(false, true)) {
-                            // Remove timed out Exchange from disruptor endpoint.
-
-                            // We can't actually remove a published exchange from an active Disruptor.
-                            // Instead we prevent processing of the exchange by setting a Property on the exchange and the value
-                            // would be an AtomicBoolean. This is set by the Producer and the Consumer would look up that Property and
-                            // check the AtomicBoolean. If the AtomicBoolean says that we are good to proceed, it will process the
-                            // exchange. If false, it will simply disregard the exchange.
-                            // But since the Property map is a Concurrent one, maybe we don't need the AtomicBoolean. Check with Simon.
-                            // Also check the TimeoutHandler of the new Disruptor 3.0.0, consider making the switch to the latest version.
-                            exchange.setProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, true);
-
+                            // We can't remove a published exchange from an active Disruptor, but the consumer
+                            // ignores the copy, if it has not started it yet, as we have claimed the completed flag
                             exchange.setException(new ExchangeTimedOutException(exchange, timeout));
                         } else {
                             // the response is being copied into the exchange, so wait for the copy to complete
@@ -195,6 +190,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                     }
                     try {
                         ExchangeHelper.copyResults(exchange, response);
+                        // the flag of the published copy must not be copied back to the caller
+                        exchange.removeProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
                     } finally {
                         // always ensure latch is triggered
                         latch.countDown();
@@ -235,6 +232,8 @@ public class DisruptorProducer extends DefaultAsyncProducer {
     private Exchange prepareCopy(final Exchange exchange, final boolean copy) throws IOException {
         // use a new copy of the exchange to route async
         final Exchange target = ExchangeHelper.createCorrelatedCopy(exchange, copy);
+        // a flag from an earlier send must not be inherited, it is set for this send only when we wait for the reply
+        target.removeProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
         // set a new from endpoint to be the disruptor
         target.getExchangeExtension().setFromEndpoint(endpoint);
         if (copy) {

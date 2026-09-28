@@ -27,9 +27,9 @@ import org.apache.camel.Processor;
  * {@code tikaParseOutputEncoding}. This step exists because a plain {@code getBody(String.class)} resolves its charset
  * through the exchange: the {@code CamelCharsetName} <em>header</em> first, then the exchange property — so any route
  * that lets a message-supplied {@code CamelCharsetName} header survive up to the conversion hands the decode to whoever
- * sent the message. Reading the raw bytes and decoding as the pinned charset never consults that heuristic. Note that
- * {@code convertBodyTo(String.class, "UTF-8")} would not be a safe substitute: the option sets the exchange
- * <em>property</em>, which the injected header outranks.
+ * sent the message. Reading the raw bytes and decoding as the pinned charset never consults that heuristic. Since
+ * CAMEL-25034, {@code convertBodyTo(String.class, "UTF-8")} also overrides that header while it converts, but this step
+ * keeps the decode self-contained and does not depend on how the route converts the body.
  *
  * <p>
  * camel-tika itself no longer forwards Camel-namespace metadata names from the parsed document (CAMEL-24423), so the

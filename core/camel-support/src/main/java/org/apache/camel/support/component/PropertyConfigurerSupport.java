@@ -74,8 +74,10 @@ public abstract class PropertyConfigurerSupport {
                     try {
                         long num = TimeUtils.toMilliSeconds(text);
                         if (type == int.class || type == Integer.class) {
-                            // need to cast to int
-                            obj = (int) num;
+                            // need to cast to int (if the value fits)
+                            if (num >= Integer.MIN_VALUE && num <= Integer.MAX_VALUE) {
+                                obj = (int) num;
+                            }
                         } else {
                             obj = num;
                         }

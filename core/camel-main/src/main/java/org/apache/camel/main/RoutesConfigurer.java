@@ -408,7 +408,7 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
             if (pattern != null && pattern.contains("?optional=true")) {
                 StringJoiner sj1 = new StringJoiner(",");
                 StringJoiner sj2 = new StringJoiner(",");
-                for (String p : pattern.split(",")) {
+                for (String p : pattern.trim().split("\\s*,\\s*")) {
                     if (p.endsWith("?optional=true")) {
                         sj2.add(p.substring(0, p.length() - 14));
                     } else {

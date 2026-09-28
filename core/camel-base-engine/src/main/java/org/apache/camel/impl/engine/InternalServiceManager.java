@@ -20,7 +20,7 @@ package org.apache.camel.impl.engine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -186,7 +186,8 @@ final class InternalServiceManager {
             return Collections.emptySet();
         }
 
-        Set<T> set = new HashSet<>();
+        // keep the order the services were added in (such as for cluster service selectors)
+        Set<T> set = new LinkedHashSet<>();
         for (Service service : services) {
             if (type.isInstance(service)) {
                 set.add((T) service);

@@ -125,11 +125,20 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
         public void done(boolean doneSync) {
             try {
                 if (exception == null) {
-                    exchange.removeProperty(ExchangePropertyKey.FAILURE_ENDPOINT);
-                    exchange.removeProperty(ExchangePropertyKey.FAILURE_ROUTE_ID);
-                    exchange.removeProperty(ExchangePropertyKey.FAILURE_NODE_ID);
-                    exchange.removeProperty(ExchangePropertyKey.FAILURE_LOCATION);
+                    // only clear the failure details when the doFinally did not fail
+                    // (the doTry restores the failure details of an earlier failure)
+                    if (exchange.getException() == null) {
+                        exchange.removeProperty(ExchangePropertyKey.FAILURE_ENDPOINT);
+                        exchange.removeProperty(ExchangePropertyKey.FAILURE_ROUTE_ID);
+                        exchange.removeProperty(ExchangePropertyKey.FAILURE_NODE_ID);
+                        exchange.removeProperty(ExchangePropertyKey.FAILURE_LOCATION);
+                    }
                 } else {
+                    // the original exception is kept, and an exception from the doFinally is added as suppressed
+                    Exception finallyException = exchange.getException();
+                    if (finallyException != null && finallyException != exception) {
+                        exception.addSuppressed(finallyException);
+                    }
                     // set exception back on exchange
                     exchange.setException(exception);
                     exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
