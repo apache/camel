@@ -2580,6 +2580,19 @@ for the lifetime of the executor. Callers that inspect the returned `Future` wil
 return `true` after the task is done, where it previously stayed live. Callers that already cancel the
 `Future` themselves are unaffected.
 
+=== camel-support - the throttling route policies only resume a consumer they suspended
+
+`ThrottlingInflightRoutePolicy` now only resumes a consumer that it suspended itself. It also no longer resumes the
+consumer while the route is being stopped or suspended (for example while `stopRoute` waits for the inflight
+exchanges), or while Camel is stopping. `ThrottlingExceptionRoutePolicy` no longer resumes the consumer of a route that
+was suspended through the route controller while the circuit was open.
+
+For a consumer that is not `Suspendable`, `ThrottlingInflightRoutePolicy` previously called `start` on the consumer (and
+logged that it resumed the consumer) whenever an exchange completed below the resume threshold, even when it had not
+stopped the consumer. It now only starts a consumer that it stopped itself, so it no longer restarts a consumer that was
+stopped by the route controller or by other means. Such a consumer is still stopped and started to throttle the route,
+as before.
+
 === camel-master
 
 The `backOffMaxAttempts` option now bounds the attempts to start the delegated consumer as documented.
