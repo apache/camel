@@ -43,6 +43,7 @@ import io.vertx.ext.auth.authentication.AuthenticationProvider;
 import io.vertx.ext.auth.properties.PropertyFileAuthentication;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Message;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
@@ -55,6 +56,7 @@ import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.EmbeddedHttpService;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.jsse.CipherSuitesParameters;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -69,6 +71,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.emptyString;
@@ -354,6 +357,97 @@ public class VertxPlatformHttpEngineTest {
                     .request(String.class);
 
             assertThat(result).isEqualTo("TEST");
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testEngineSSLClientAuthenticationRequired() throws Exception {
+        final CamelContext context
+                = createCamelContextForTest(configuration -> configuration.setSslContextParameters(serverSSLParameters));
+
+        try {
+            // the client trusts the server but has no certificate
+            KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+            truststoreParameters.setResource("jsse/truststore.jks");
+            truststoreParameters.setPassword("storepass");
+            TrustManagersParameters trustManagers = new TrustManagersParameters();
+            trustManagers.setKeyStore(truststoreParameters);
+            SSLContextParameters noCertificate = new SSLContextParameters();
+            noCertificate.setTrustManagers(trustManagers);
+            context.getRegistry().bind("noCertificate", noCertificate);
+
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/")
+                            .transform().body(String.class, b -> b.toUpperCase());
+                }
+            });
+
+            context.start();
+
+            // client authentication is required
+            assertThatThrownBy(() -> context.createFluentProducerTemplate()
+                    .toF("https://localhost:%d?sslContextParameters=#noCertificate", RestAssured.port)
+                    .withBody("test")
+                    .request(String.class))
+                    .isInstanceOf(CamelExecutionException.class);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testEngineSSLCipherSuites() throws Exception {
+        KeyStoreParameters keystoreParameters = new KeyStoreParameters();
+        keystoreParameters.setResource("jsse/service.jks");
+        keystoreParameters.setPassword("security");
+        KeyManagersParameters keyManagers = new KeyManagersParameters();
+        keyManagers.setKeyPassword("security");
+        keyManagers.setKeyStore(keystoreParameters);
+        KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setResource("jsse/truststore.jks");
+        truststoreParameters.setPassword("storepass");
+        TrustManagersParameters trustManagers = new TrustManagersParameters();
+        trustManagers.setKeyStore(truststoreParameters);
+
+        // the server only allows one cipher suite
+        SSLContextParameters server = new SSLContextParameters();
+        server.setKeyManagers(keyManagers);
+        server.setTrustManagers(trustManagers);
+        CipherSuitesParameters serverSuites = new CipherSuitesParameters();
+        serverSuites.setCipherSuite(List.of("TLS_AES_256_GCM_SHA384"));
+        server.setCipherSuites(serverSuites);
+
+        // and the client only another cipher suite
+        SSLContextParameters client = new SSLContextParameters();
+        client.setKeyManagers(keyManagers);
+        client.setTrustManagers(trustManagers);
+        CipherSuitesParameters clientSuites = new CipherSuitesParameters();
+        clientSuites.setCipherSuite(List.of("TLS_AES_128_GCM_SHA256"));
+        client.setCipherSuites(clientSuites);
+
+        final CamelContext context = createCamelContextForTest(configuration -> configuration.setSslContextParameters(server));
+
+        try {
+            context.getRegistry().bind("client", client);
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/")
+                            .transform().body(String.class, b -> b.toUpperCase());
+                }
+            });
+
+            context.start();
+
+            assertThatThrownBy(() -> context.createFluentProducerTemplate()
+                    .toF("https://localhost:%d?sslContextParameters=#client", RestAssured.port)
+                    .withBody("test")
+                    .request(String.class))
+                    .isInstanceOf(CamelExecutionException.class);
         } finally {
             context.stop();
         }

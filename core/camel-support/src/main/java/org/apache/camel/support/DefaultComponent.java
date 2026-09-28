@@ -123,11 +123,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // and use method parseParameters
             parameters = URISupport.parseParameters(u);
         }
-        if (properties != null) {
+        if (properties != null && !properties.isEmpty()) {
             parameters.putAll(properties);
+            // This special property (added by endpoint-dsl together with the properties) is only to identify
+            // endpoints in a unique manner (a hash parameter in the uri itself is a regular parameter)
+            parameters.remove("hash");
         }
-        // This special property is only to identify endpoints in a unique manner
-        parameters.remove("hash");
 
         if (resolveRawParameterValues()) {
             // parameters using raw syntax: RAW(value)
@@ -564,7 +565,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             if (EndpointHelper.isReferenceParameter(str)) {
                 return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
             } else {
-                return getCamelContext().getTypeConverter().convertTo(type, value);
+                T answer = getCamelContext().getTypeConverter().convertTo(type, value);
+                return answer != null ? answer : defaultValue;
             }
         }
     }
@@ -653,8 +655,17 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             Map<String, Object> parameters, String key, Class<T> elementType, List<T> defaultValue) {
         // the value may already be a list such as when using endpoint-dsl
         Object value = getAndRemoveParameter(parameters, key, Object.class);
-        if (value instanceof List) {
-            return (List<T>) value;
+        if (value instanceof List<?> list) {
+            // the elements may be references (such as #myBean) to resolve
+            List<T> answer = new ArrayList<>(list.size());
+            for (Object element : list) {
+                if (element instanceof String str && EndpointHelper.isReferenceParameter(str)) {
+                    answer.add(EndpointHelper.resolveReferenceParameter(getCamelContext(), str, elementType));
+                } else {
+                    answer.add((T) element);
+                }
+            }
+            return answer;
         }
         if (value == null) {
             return defaultValue;

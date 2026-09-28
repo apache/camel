@@ -1202,7 +1202,8 @@ public class BeanInfo {
         String types = StringHelper.betweenOuterPair(methodName, '(', ')');
         if (org.apache.camel.util.ObjectHelper.isNotEmpty(types)) {
             // we must qualify based on types to match method
-            String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',', true, true);
+            // split the same way as the parameter values (see MethodInfo)
+            String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',', true, true, true);
             Class<?>[] parameterTypes = null;
             Iterator<?> it = ObjectHelper.createIterator(parameters);
             for (int i = 0; i < method.getParameterCount(); i++) {

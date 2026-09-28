@@ -81,6 +81,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile Map<String, Object> lastErrorDetails;
     private final AtomicLong counter = new AtomicLong();
     private volatile boolean firstPollDone;
+    // the error counter when the last backoff finished (the error threshold of the backoff counts from this)
+    private final AtomicLong backoffErrorBase = new AtomicLong();
+    // incremented when the consumer is stopped, so a poll that is still running does not update the state afterwards
+    private final AtomicLong generation = new AtomicLong();
+    // whether this consumer created the scheduler (and therefore configures it)
+    private boolean consumerCreatedScheduler;
     private volatile boolean forceReady;
 
     protected ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
@@ -143,6 +149,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     }
 
     private void doRun() {
+        final long currentGeneration = generation.get();
         if (isSuspended()) {
             LOG.trace("Cannot start to poll: {} as its suspended", this.getEndpoint());
             return;
@@ -151,8 +158,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
         // should we backoff if its enabled, and either the idle or error counter is > the threshold
         if (backoffMultiplier > 0
                 // either idle or error threshold could be not in use, so check for that and use MAX_VALUE if not in use
-                && idleCounter.longValue() >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE)
-                || errorCounter.longValue() >= (backoffErrorThreshold > 0 ? backoffErrorThreshold : Integer.MAX_VALUE)) {
+                && (idleCounter.longValue() >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE)
+                        || errorCounter.longValue() - backoffErrorBase.longValue() >= (backoffErrorThreshold > 0
+                                ? backoffErrorThreshold : Integer.MAX_VALUE))) {
             final int currentBackoffCounter = backoffCounter.incrementAndGet();
             if (currentBackoffCounter < backoffMultiplier) {
                 // yes we should backoff
@@ -165,9 +173,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                 }
                 return;
             } else {
-                // we are finished with backoff so reset counters
+                // we are finished with backoff so reset counters, but keep the error counter (the consumer is still
+                // failing until the next poll succeeds) and count the error threshold from now on
                 idleCounter.set(0);
-                errorCounter.set(0);
+                backoffErrorBase.set(errorCounter.longValue());
                 backoffCounter.set(0);
                 successCounter.set(0);
                 LOG.trace("doRun() backoff finished, resetting counters.");
@@ -220,14 +229,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
                                 retryCounter = -1;
                                 LOG.trace("Greedy polling after processing {} messages", polledMessages);
 
-                                // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
-                                // consumer to be unhealthy
-                                errorCounter.set(0);
-                                lastError = null;
-                                lastErrorDetails = null;
+                                if (currentGeneration == generation.get()) {
+                                    // clear any error that might be since we have successfully polled, otherwise readiness checks might believe the
+                                    // consumer to be unhealthy
+                                    errorCounter.set(0);
+                                    backoffErrorBase.set(0);
+                                    lastError = null;
+                                    lastErrorDetails = null;
 
-                                // setting firstPollDone to true if greedy polling is enabled
-                                firstPollDone = true;
+                                    // setting firstPollDone to true if greedy polling is enabled
+                                    firstPollDone = true;
+                                }
                             }
                         } else {
                             LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
@@ -267,11 +279,19 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             }
         }
 
+        if (currentGeneration != generation.get()) {
+            // the consumer has been stopped while polling, so the state (which has been reset) must not be updated
+            LOG.trace("doRun() done after the consumer was stopped");
+            return;
+        }
+
         if (cause != null) {
             idleCounter.set(0);
             successCounter.set(0);
             errorCounter.incrementAndGet();
             lastError = cause;
+            // the details are for this error only
+            lastErrorDetails = null;
             // enrich last error with http response code if possible
             if (cause instanceof HttpResponseAware httpResponseAware) {
                 int code = httpResponseAware.getHttpResponseCode();
@@ -287,6 +307,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             }
             successCounter.incrementAndGet();
             errorCounter.set(0);
+            backoffErrorBase.set(0);
             lastError = null;
             lastErrorDetails = null;
         }
@@ -641,14 +662,16 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
 
         boolean newScheduler = false;
         if (scheduler == null) {
-            DefaultScheduledPollConsumerScheduler scheduler
-                    = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
-            scheduler.setDelay(delay);
-            scheduler.setInitialDelay(initialDelay);
-            scheduler.setTimeUnit(timeUnit);
-            scheduler.setUseFixedDelay(useFixedDelay);
-            this.scheduler = scheduler;
+            this.scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
+            consumerCreatedScheduler = true;
             newScheduler = true;
+        }
+        if (consumerCreatedScheduler && scheduler instanceof DefaultScheduledPollConsumerScheduler defaultScheduler) {
+            // (re)apply the options from this consumer, which may have been changed while stopped (such as via JMX)
+            defaultScheduler.setDelay(delay);
+            defaultScheduler.setInitialDelay(initialDelay);
+            defaultScheduler.setTimeUnit(timeUnit);
+            defaultScheduler.setUseFixedDelay(useFixedDelay);
         }
         ObjectHelper.notNull(scheduler, "scheduler", this);
         scheduler.setCamelContext(getEndpoint().getCamelContext());
@@ -713,15 +736,21 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
             ServiceHelper.stopAndShutdownServices(scheduler);
         }
 
+        // a poll that is still running must not update the state after it has been cleared
+        generation.incrementAndGet();
+
         // clear counters
         backoffCounter.set(0);
         idleCounter.set(0);
         errorCounter.set(0);
+        backoffErrorBase.set(0);
         successCounter.set(0);
         counter.set(0);
         // clear ready state
         firstPollDone = false;
         forceReady = false;
+        lastError = null;
+        lastErrorDetails = null;
 
         super.doStop();
     }

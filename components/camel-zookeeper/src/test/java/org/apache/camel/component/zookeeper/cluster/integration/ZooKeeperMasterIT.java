@@ -78,7 +78,7 @@ public final class ZooKeeperMasterIT {
             ZooKeeperClusterService service = new ZooKeeperClusterService();
             service.setId("node-" + id);
             service.setNodes(connectString);
-            service.setBasePath("/camel/master");
+            service.setBasePath("/camel-ZooKeeperMasterIT/master");
 
             context.disableJMX();
             context.getCamelContextExtension().setName("context-" + id);

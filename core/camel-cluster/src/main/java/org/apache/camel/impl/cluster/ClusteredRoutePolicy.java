@@ -79,6 +79,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final AtomicBoolean leadershipChangePending;
     private CamelClusterService clusterService;
     private volatile boolean startManagedRoutesEarly;
+    private volatile boolean initialDelayElapsed;
 
     private Duration initialDelay;
     private volatile ExecutorService leadershipExecutor;
@@ -223,6 +224,9 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             retainLock.unlock();
         }
         autoStartupRoutes.remove(route);
+        // a route added later with the same id must not be started or stopped by this policy
+        startedRoutes.remove(route);
+        stoppedRoutes.remove(route);
     }
 
     @Override
@@ -352,6 +356,12 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         // if we are currently starting up Camel context then defer starting routes till its fully started
         if (camelContext.isStarting()) {
             LOG.debug("Will defer starting managed routes until camel context is fully started");
+            startManagedRoutesEarly = true;
+            return;
+        }
+        // and if the initial delay has not elapsed yet, then defer starting routes till it has
+        if (!initialDelayElapsed && initialDelay != null && initialDelay.toMillis() > 0) {
+            LOG.debug("Will defer starting managed routes until the initial delay {} has elapsed", initialDelay);
             startManagedRoutesEarly = true;
             return;
         }
@@ -551,6 +561,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
                     initialDelayExecutor = scheduler;
                     scheduler.schedule(() -> {
                         try {
+                            initialDelayElapsed = true;
                             ClusteredRoutePolicy.this.onCamelContextStarted();
                         } finally {
                             // the delay applies once, so its thread is not needed anymore

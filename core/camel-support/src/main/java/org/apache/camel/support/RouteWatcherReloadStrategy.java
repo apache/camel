@@ -149,15 +149,22 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             final String[] parts = pattern.split(",");
             setFileFilter(f -> {
                 for (String part : parts) {
-                    // strip starting directory, so we have a relative name to the starting folder
+                    part = part.trim();
+                    // the file name, and the path relative to the starting folder (such as sub/foo.yaml)
                     String path = f.getAbsolutePath();
+                    String relative = null;
                     if (path.startsWith(base)) {
+                        relative = path.substring(base.length()).replace('\\', '/');
+                        while (relative.startsWith("/")) {
+                            relative = relative.substring(1);
+                        }
                         path = FileUtil.stripPath(path);
                     }
 
                     String name = FileUtil.compactPath(f.getPath());
                     boolean exact = name.equals(part);
-                    boolean result = exact || matcher.match(part, path, false);
+                    boolean result = exact || matcher.match(part, path, false)
+                            || relative != null && matcher.match(part, relative, false);
                     LOG.trace("Accepting file pattern:{} path:{} -> {}", part, path, result);
 
                     if (result) {

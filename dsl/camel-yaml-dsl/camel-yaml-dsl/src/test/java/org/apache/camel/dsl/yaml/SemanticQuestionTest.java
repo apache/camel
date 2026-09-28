@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -121,6 +122,39 @@ class SemanticQuestionTest extends YamlTestSupport {
                               steps:
                                 - to: mock:other
                 """;
+    }
+
+    @Test
+    void batchExpressionReusesNamedQuestionsAndResults() throws Exception {
+        loadRoutes(declarations("${body}") + declarations("${body}").replace("department:", "second:") + """
+                - route:
+                    from:
+                      uri: direct:batch
+                      steps:
+                        - setProperty:
+                            name: decision
+                            expression:
+                              language:
+                                language: semantic
+                                expression: refs:department,second
+                        - setHeader:
+                            name: selectedDepartment
+                            expression:
+                              simple:
+                                expression: "${exchangeProperty.decision[department]}"
+                        - to: mock:batch
+                """);
+        context.start();
+        MockEndpoint mock = context.getEndpoint("mock:batch", MockEndpoint.class);
+        mock.expectedBodiesReceived("invoice");
+        mock.expectedHeaderReceived("selectedDepartment", "billing");
+        try (var template = context.createProducerTemplate()) {
+            template.sendBody("direct:batch", "invoice");
+        }
+        mock.assertIsSatisfied();
+        assertThat(calls).hasValue(2);
+        assertThat(mock.getExchanges().get(0).getProperty(SemanticLanguage.RESULTS, Map.class))
+                .containsKeys("department", "second");
     }
 
     @Test

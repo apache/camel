@@ -16,7 +16,11 @@
  */
 package org.apache.camel.main;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ai.observability.GenAiObservability;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -36,6 +40,34 @@ class AiObservabilityConfigurationPropertiesTest {
 
         try {
             assertThat(GenAiObservability.isEnabled(main.getCamelContext())).isFalse();
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void shouldDisableGenAiObservabilityWithRoutesAndOtherThreads() throws Exception {
+        Main main = new Main();
+        main.configure().aiObservability().withEnabled(false);
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").to("log:foo");
+            }
+        });
+
+        main.start();
+
+        try {
+            // the setting must be available after the routes are started, and from other threads (such as the
+            // threads routing messages)
+            assertThat(GenAiObservability.isEnabled(main.getCamelContext())).isFalse();
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            try {
+                assertThat(executor.submit(() -> GenAiObservability.isEnabled(main.getCamelContext())).get()).isFalse();
+            } finally {
+                executor.shutdownNow();
+            }
         } finally {
             main.stop();
         }

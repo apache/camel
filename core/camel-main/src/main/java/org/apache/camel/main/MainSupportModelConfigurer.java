@@ -106,9 +106,9 @@ public final class MainSupportModelConfigurer {
                 key = key.substring(6);
                 key = StringHelper.replaceFirst(key, ".", ":");
             } else if (key.startsWith("global.")) {
+                // global variables have no route or group id (so the name is kept as-is)
                 id = "global";
                 key = key.substring(7);
-                key = StringHelper.replaceFirst(key, ".", ":");
             }
             VariableRepository repo = camelContext.getCamelContextExtension().getContextPlugin(VariableRepositoryFactory.class)
                     .getVariableRepository(id);

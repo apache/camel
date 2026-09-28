@@ -131,9 +131,25 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final Exception e = exchange.getException();
-        Throwable caught = catches(exchange, e);
-        // If a previous catch clause handled the exception or if this clause does not match, exit
-        if (exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED) != null || caught == null) {
+        // If a previous catch clause handled the exception, exit (before matching so this clause is not counted)
+        if (exchange.getProperty(ExchangePropertyKey.EXCEPTION_HANDLED) != null) {
+            callback.done(true);
+            return true;
+        }
+        Throwable caught;
+        try {
+            caught = catches(exchange, e);
+        } catch (Exception onWhenException) {
+            // the onWhen predicate failed, so the exchange fails with this exception (and the original as suppressed)
+            if (e != null && e != onWhenException) {
+                onWhenException.addSuppressed(e);
+            }
+            exchange.setException(onWhenException);
+            callback.done(true);
+            return true;
+        }
+        // If this clause does not match, exit
+        if (caught == null) {
             callback.done(true);
             return true;
         }

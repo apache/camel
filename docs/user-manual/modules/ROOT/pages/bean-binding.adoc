@@ -227,7 +227,7 @@ the method option
 * It can be evaluated using the xref:components:languages:simple-language.adoc[Simple] language, which
 means you can use, e.g., `$\{body}`, `${header.foo}` and others
 xref:components:languages:simple-language.adoc[Simple] tokens. Notice the tokens must be enclosed with
-`${ }`.
+`${ }`. A comma inside the `${ }`, such as in `${body.substring(0, 3)}`, is part of the parameter.
 * The value ends with `.class` then it's a type declaration instead - see the
 next section about specifying types for overloaded methods.
 
