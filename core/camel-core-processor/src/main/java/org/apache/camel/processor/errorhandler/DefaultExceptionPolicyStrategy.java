@@ -227,7 +227,15 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
             // if no predicate then it's always a match
             return true;
         }
-        return definition.getWhen().matches(exchange);
+        try {
+            return definition.getWhen().matches(exchange);
+        } catch (Exception e) {
+            // a failing predicate is not a match (so other exception policies can be used)
+            LOG.warn("Error evaluating the onWhen predicate of onException: {} on exchange: {}. The onException is regarded"
+                     + " as not matching. Caused by: {}",
+                    definition.getExceptionClass().getName(), exchange.getExchangeId(), e.getMessage(), e);
+            return false;
+        }
     }
 
     /**
