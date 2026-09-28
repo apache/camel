@@ -1618,6 +1618,7 @@ from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
 
 Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
 Camel then no longer controls how the payload is read.
+
 === camel-langchain4j
 
 The legacy `sse` `transportType` has been removed. It follows the support removal in 
@@ -1662,6 +1663,7 @@ Ordinary listings are unaffected, as a listed name is normally a single path seg
 resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
 server that reports names navigating above the polled directory, and a `fileName` expression (used when
 `useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+
 === camel-salesforce
 
 The `camel-salesforce-maven-plugin` now supports JWT and Client Credentials authentication in addition to
@@ -3357,6 +3359,17 @@ This is visible in two places. `passPhraseByte` is now masked as `xxxxxx` wherev
 logged endpoint URIs and route dumps; `passPhrase` and `keyPassword` were already masked because other components
 declare options with the same names. The YAML DSL JSON schema now also marks `passPhrase` and `keyPassword` with
 `"format": "password"`, so editors that consume the schema render them as password fields.
+
+=== camel-core - simple contains on a collection and comparing a String with a boolean
+
+The `contains` operator of the simple language now type coerces each element of a collection, the same way
+it already did for an array. For example `${header.ids} contains '2'` is now `true` when the header is a
+`List` of the numbers 1, 2 and 3. With `ignoreCase` (the `~~` operator) an element of a collection must now be
+equal to the value (ignoring case), where previously it was enough for the element to contain the value as a
+substring, which was also not the case without `ignoreCase`.
+
+A String is now only equal to a boolean when it is `true` or `false` (ignoring case). Previously any other
+String was equal to `false`, so `${body} == false` was `true` when the body was `hello`.
 
 === camel-coap
 

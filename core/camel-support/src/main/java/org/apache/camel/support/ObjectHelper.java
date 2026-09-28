@@ -254,8 +254,20 @@ public final class ObjectHelper {
     }
 
     private static boolean booleanStringComparison(Boolean leftBool, String rightValue) {
-        Boolean rightBool = Boolean.valueOf(rightValue);
-        return leftBool.compareTo(rightBool) == 0;
+        Boolean rightBool = toBoolean(rightValue);
+        return rightBool != null && leftBool.compareTo(rightBool) == 0;
+    }
+
+    /**
+     * Converts the string to a boolean only if it is true or false (such as hello is not false)
+     */
+    private static Boolean toBoolean(String value) {
+        if ("true".equalsIgnoreCase(value)) {
+            return Boolean.TRUE;
+        } else if ("false".equalsIgnoreCase(value)) {
+            return Boolean.FALSE;
+        }
+        return null;
     }
 
     private static boolean doublePairComparison(Object leftValue, Object rightValue) {
@@ -287,8 +299,8 @@ public final class ObjectHelper {
     }
 
     private static boolean stringBooleanComparison(String leftValue, Boolean rightValue) {
-        Boolean leftBool = Boolean.valueOf(leftValue);
-        return leftBool.compareTo(rightValue) == 0;
+        Boolean leftBool = toBoolean(leftValue);
+        return leftBool != null && leftBool.compareTo(rightValue) == 0;
     }
 
     private static boolean stringDoubleComparison(String leftValue, Double rightValue) {
@@ -395,12 +407,12 @@ public final class ObjectHelper {
                 && isFloatingNumber(leftStr)) {
             Float leftNum = Float.valueOf(leftStr);
             return leftNum.compareTo(rightNum);
-        } else if (rightValue instanceof Boolean rightBool && leftValue instanceof String leftStr) {
-            Boolean leftBool = Boolean.valueOf(leftStr);
-            return leftBool.compareTo(rightBool);
-        } else if (rightValue instanceof String rightStr && leftValue instanceof Boolean leftBool) {
-            Boolean rightBool = Boolean.valueOf(rightStr);
-            return leftBool.compareTo(rightBool);
+        } else if (rightValue instanceof Boolean rightBool && leftValue instanceof String leftStr
+                && toBoolean(leftStr) != null) {
+            return toBoolean(leftStr).compareTo(rightBool);
+        } else if (rightValue instanceof String rightStr && leftValue instanceof Boolean leftBool
+                && toBoolean(rightStr) != null) {
+            return leftBool.compareTo(toBoolean(rightStr));
         }
 
         // numbers of different types (such as Double and Integer), or a number and a numeric String, are compared
@@ -700,7 +712,7 @@ public final class ObjectHelper {
             return 1;
         }
         if (a instanceof Ordered orderedA && b instanceof Ordered orderedB) {
-            return orderedA.getOrder() - orderedB.getOrder();
+            return Integer.compare(orderedA.getOrder(), orderedB.getOrder());
         }
         if (ignoreCase && a instanceof String strA && b instanceof String strB) {
             return strA.compareToIgnoreCase(strB);
@@ -710,7 +722,7 @@ public final class ObjectHelper {
         }
         int answer = a.getClass().getName().compareTo(b.getClass().getName());
         if (answer == 0) {
-            answer = a.hashCode() - b.hashCode();
+            answer = Integer.compare(a.hashCode(), b.hashCode());
         }
         return answer;
     }
@@ -1149,12 +1161,10 @@ public final class ObjectHelper {
             collectionOrArray = new String(arr);
         }
         if (collectionOrArray instanceof Collection<?> collection) {
-            if (ignoreCase) {
-                String lower = value.toString().toLowerCase(Locale.ENGLISH);
-                return collection.stream().anyMatch(c -> c.toString().toLowerCase(Locale.ENGLISH).contains(lower));
-            } else {
-                return collection.contains(value);
+            if (!ignoreCase && collection.contains(value)) {
+                return true;
             }
+            // otherwise type coerce each element (below) the same way as for an array
         } else if (collectionOrArray instanceof String str) {
             String subStr;
             if (value instanceof String strValue) {
@@ -1238,6 +1248,10 @@ public final class ObjectHelper {
                 this.contentLength = content.length() - separatorLength;
             } else {
                 this.contentLength = content.length();
+            }
+            if (from > contentLength) {
+                // the content is only the separator (or the start and end separators overlap) so there are no values
+                this.to = -1;
             }
         }
 
@@ -1328,7 +1342,12 @@ public final class ObjectHelper {
                 } else if (to == -1) {
                     return false;
                 }
-                if (matcher.find(from)) {
+                boolean found = matcher.find(from);
+                if (found && matcher.end() == from) {
+                    // an empty match (such as with \s*) is not a separator, so find the next separator
+                    found = from < content.length() && matcher.find(from + 1);
+                }
+                if (found) {
                     to = matcher.start();
                     if (from == to) {
                         from = matcher.end();
