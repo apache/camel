@@ -313,6 +313,15 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeStopDefinition(StopDefinition def) {
         return wrapNode("stop", doWriteStopDefinition(def));
     }
+    public JsonObject writeSwitchCaseDefinition(SwitchCaseDefinition def) {
+        return wrapNode("case", doWriteSwitchCaseDefinition(def));
+    }
+    public JsonObject writeSwitchDefinition(SwitchDefinition def) {
+        return wrapNode("switch", doWriteSwitchDefinition(def));
+    }
+    public JsonObject writeSwitchValueDefinition(SwitchValueDefinition def) {
+        return wrapNode("switchValue", doWriteSwitchValueDefinition(def));
+    }
     public JsonObject writeTemplatedRouteDefinition(TemplatedRouteDefinition def) {
         return wrapNode("templatedRoute", doWriteTemplatedRouteDefinition(def));
     }
@@ -1814,6 +1823,35 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteStopDefinition(StopDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
+        return jo;
+    }
+    protected JsonObject doWriteSwitchCaseDefinition(SwitchCaseDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
+        doWriteAttribute(jo, "value", def.getValue(), null);
+        doWriteAttribute(jo, "uri", def.getUri(), null);
+        doWriteChildList(jo, null, "values", def.getValues(), this::doWriteSwitchValueDefinition);
+        if (def.getValue() != null) {
+            jo.put("value", def.getValue());
+        }
+        return jo;
+    }
+    protected JsonObject doWriteSwitchDefinition(SwitchDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteProcessorDefinitionAttributes(jo, def);
+        doWriteAttribute(jo, "otherwise", def.getOtherwise(), null);
+        doWriteChildElement(jo, "selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
+        doWriteStringList(jo, null, "keys", def.getKeys());
+        doWriteChildList(jo, null, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
+        return jo;
+    }
+    protected JsonObject doWriteSwitchValueDefinition(SwitchValueDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteAttribute(jo, "name", def.getName(), null);
+        doWriteAttribute(jo, "value", def.getValue(), null);
+        doWriteAttribute(jo, "type", def.getType(), "string");
+        jo.clear();
+        jo.put(def.getName(), def.asLiteral());
         return jo;
     }
     protected JsonObject doWriteTemplatedRouteDefinition(TemplatedRouteDefinition def) {
@@ -3733,6 +3771,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SplitDefinition" -> wrapNode("split", doWriteSplitDefinition((SplitDefinition) v));
                 case "StepDefinition" -> wrapNode("step", doWriteStepDefinition((StepDefinition) v));
                 case "StopDefinition" -> wrapNode("stop", doWriteStopDefinition((StopDefinition) v));
+                case "SwitchCaseDefinition" -> wrapNode("case", doWriteSwitchCaseDefinition((SwitchCaseDefinition) v));
+                case "SwitchDefinition" -> wrapNode("switch", doWriteSwitchDefinition((SwitchDefinition) v));
                 case "TemplatedRoutesDefinition" -> wrapNode("templatedRoutes", doWriteTemplatedRoutesDefinition((TemplatedRoutesDefinition) v));
                 case "ThreadPoolProfileDefinition" -> wrapNode("threadPoolProfile", doWriteThreadPoolProfileDefinition((ThreadPoolProfileDefinition) v));
                 case "ThreadsDefinition" -> wrapNode("threads", doWriteThreadsDefinition((ThreadsDefinition) v));
@@ -3835,6 +3875,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SplitDefinition" -> wrapNode("split", doWriteSplitDefinition((SplitDefinition) v));
                 case "StepDefinition" -> wrapNode("step", doWriteStepDefinition((StepDefinition) v));
                 case "StopDefinition" -> wrapNode("stop", doWriteStopDefinition((StopDefinition) v));
+                case "SwitchDefinition" -> wrapNode("switch", doWriteSwitchDefinition((SwitchDefinition) v));
                 case "ThreadsDefinition" -> wrapNode("threads", doWriteThreadsDefinition((ThreadsDefinition) v));
                 case "ThrottleDefinition" -> wrapNode("throttle", doWriteThrottleDefinition((ThrottleDefinition) v));
                 case "ThrowExceptionDefinition" -> wrapNode("throwException", doWriteThrowExceptionDefinition((ThrowExceptionDefinition) v));

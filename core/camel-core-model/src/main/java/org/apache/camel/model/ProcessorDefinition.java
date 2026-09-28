@@ -1640,6 +1640,31 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Routes to a fixed endpoint using a literal selector lookup.
+     *
+     * @param  selector the expression to evaluate once per entry
+     * @return          the switch builder
+     */
+    public SwitchDefinition doSwitch(Expression selector) {
+        SwitchDefinition answer = new SwitchDefinition(selector);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Routes to a fixed endpoint using a literal selector lookup.
+     *
+     * @return the selector expression builder
+     */
+    public ExpressionClause<SwitchDefinition> doSwitch() {
+        SwitchDefinition answer = new SwitchDefinition();
+        ExpressionClause<SwitchDefinition> clause = new ExpressionClause<>(answer);
+        answer.setSelector(new ExpressionSubElementDefinition((Expression) clause));
+        addOutput(answer);
+        return clause;
+    }
+
+    /**
      * Creates a try/catch block
      *
      * @return the builder for a tryBlock expression

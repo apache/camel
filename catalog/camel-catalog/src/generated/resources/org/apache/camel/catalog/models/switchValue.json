@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "switchValue",
+    "title": "Switch Value",
+    "description": "A named literal in a composite switch case",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.SwitchValueDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The exact name of the selected field." },
+    "value": { "index": 1, "kind": "attribute", "displayName": "Value", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The literal value, never an expression." },
+    "type": { "index": 2, "kind": "attribute", "displayName": "Type", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "string", "boolean", "number" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "string", "description": "The literal type." }
+  }
+}

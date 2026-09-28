@@ -90,6 +90,7 @@ import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BrowsableVariableRepository;
@@ -964,6 +965,16 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         List<ProcessorDefinition<?>> children = processor.getOutputs();
         for (ProcessorDefinition<?> child : children) {
             registerPerformanceCounters(route, child, registeredCounters);
+        }
+
+        // Switch destinations are literal sends rather than nested processor outputs.
+        if (processor instanceof SwitchDefinition sw) {
+            for (var c : sw.getCases()) {
+                registerPerformanceCounters(route, c.getToDefinition(), registeredCounters);
+            }
+            if (sw.getOtherwiseDefinition() != null) {
+                registerPerformanceCounters(route, sw.getOtherwiseDefinition(), registeredCounters);
+            }
         }
 
         // skip processors that should not be registered

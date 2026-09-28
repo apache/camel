@@ -279,6 +279,14 @@ public class YamlModelWriter extends YamlModelWriterSupport {
             #if( $name == "RouteDefinition" )
         doMoveStepsUnderFrom(jo);
             #end
+            #if( $name == "SwitchValueDefinition" )
+        jo.clear();
+        jo.put(def.getName(), def.asLiteral());
+            #elseif( $name == "SwitchCaseDefinition" )
+        if (def.getValue() != null) {
+            jo.put("value", def.getValue());
+        }
+            #end
         return jo;
     }
         #end

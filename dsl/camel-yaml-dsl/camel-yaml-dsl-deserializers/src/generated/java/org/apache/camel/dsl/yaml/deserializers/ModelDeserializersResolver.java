@@ -403,6 +403,10 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.SwiftMtDataFormat": return new ModelDeserializers.SwiftMtDataFormatDeserializer();
             case "swiftMx": return new ModelDeserializers.SwiftMxDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.SwiftMxDataFormat": return new ModelDeserializers.SwiftMxDataFormatDeserializer();
+            case "case": return new ModelDeserializers.SwitchCaseDefinitionDeserializer();
+            case "org.apache.camel.model.SwitchCaseDefinition": return new ModelDeserializers.SwitchCaseDefinitionDeserializer();
+            case "switch": return new ModelDeserializers.SwitchDefinitionDeserializer();
+            case "org.apache.camel.model.SwitchDefinition": return new ModelDeserializers.SwitchDefinitionDeserializer();
             case "syslog": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.SyslogDataFormat": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "tarFile": return new ModelDeserializers.TarFileDataFormatDeserializer();

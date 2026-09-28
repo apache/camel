@@ -32,6 +32,7 @@ import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.model.OnWhenDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.PropertyExpressionDefinition;
@@ -39,6 +40,9 @@ import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
+import org.apache.camel.model.SwitchCaseDefinition;
+import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.SwitchValueDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -86,6 +90,54 @@ import org.apache.camel.model.validator.ValidatorDefinition;
  * shared across threads. Create one instance per thread or per conversion.
  */
 public abstract class JavaDslModelWriterSupport {
+
+    protected void writeSwitch(StringBuilder sb, SwitchDefinition definition) {
+        handledAttributes.clear();
+        sb.append(NL).append(indent()).append(".doSwitch(")
+                .append(expressionDsl(definition.getSelector().getExpressionType())).append(")");
+        doWriteProcessorDefinitionAttributes(sb, definition);
+        if (!definition.getKeys().isEmpty()) {
+            sb.append(NL).append(indent()).append(".keys(");
+            for (int i = 0; i < definition.getKeys().size(); i++) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(quote(definition.getKeys().get(i)));
+            }
+            sb.append(")");
+        }
+        for (SwitchCaseDefinition c : definition.getCases()) {
+            sb.append(NL).append(indent()).append(".doCase(");
+            if (c.getValue() != null) {
+                sb.append(quote(c.getValue()));
+            }
+            sb.append(")");
+            for (SwitchValueDefinition value : c.getValues()) {
+                Object literal = value.asLiteral();
+                sb.append(".value(").append(quote(value.getName())).append(", ");
+                if (literal instanceof String text) {
+                    sb.append(quote(text));
+                } else if (literal instanceof Boolean) {
+                    sb.append(literal);
+                } else {
+                    sb.append("new java.math.BigDecimal(").append(quote(literal.toString())).append(")");
+                }
+                sb.append(")");
+            }
+            handledAttributes.clear();
+            doWriteOptionalIdentifiedDefinitionAttributes(sb, c);
+            sb.append(".to(").append(quote(c.getUri())).append(")");
+        }
+        if (definition.getOtherwise() != null) {
+            sb.append(NL).append(indent()).append(".otherwise(").append(quote(definition.getOtherwise())).append(")");
+        }
+        sb.append(NL).append(indent()).append(".end()");
+    }
+
+    protected abstract void doWriteProcessorDefinitionAttributes(StringBuilder sb, ProcessorDefinition<?> definition);
+
+    protected abstract void doWriteOptionalIdentifiedDefinitionAttributes(
+            StringBuilder sb, OptionalIdentifiedDefinition<?> definition);
 
     private static final String NL = "\n";
 
