@@ -2770,6 +2770,14 @@ two names differed, that header never carried a usable `DataHandler` in the firs
 names happened to be equal did it resolve, and then the name is unchanged. A route that expected the
 attachment header under the uploaded file name should read it under the multipart field name.
 
+Both bindings now share this check through `DefaultHttpBinding` in `camel-http-common`. `DefaultHttpBinding`
+also carried an older copy of it for uploads that arrive as request attributes, which matched each
+extension as a substring of the whitelist, so for example a whitelist of `txt` accepted an upload named
+`evil.x`, and it replaced the configured `fileNameExtWhitelist` with its lower-cased value. It now uses
+the shared check: each comma-separated entry is compared exactly and case-insensitively, `*` still
+accepts every file, and the configured value is left unchanged. An upload whose extension only matched
+as part of a longer entry is now rejected.
+
 === camel-tensorflow-serving - the Target and Credentials headers are deprecated
 
 `TensorFlowServingConstants.TARGET` (`CamelTensorFlowServingTarget`) and
