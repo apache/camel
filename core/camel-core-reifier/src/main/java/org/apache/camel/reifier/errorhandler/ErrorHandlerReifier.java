@@ -295,13 +295,15 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         List<Class<? extends Throwable>> list;
         if (ObjectHelper.isNotEmpty(exceptionType.getExceptions())) {
             list = createExceptionClasses(exceptionType);
+            // create the predicate (once) when the route is created (such as resolving placeholders of route templates)
+            Predicate when = exceptionType.getOnWhen() != null
+                    ? createPredicate(exceptionType.getOnWhen().getExpression()) : null;
             for (Class<? extends Throwable> clazz : list) {
                 String routeId = null;
                 // only get the route id, if the exception type is route scoped
                 if (exceptionType.isRouteScoped()) {
                     routeId = route.getRouteId();
                 }
-                Predicate when = exceptionType.getOnWhen() != null ? exceptionType.getOnWhen().getExpression() : null;
                 ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, when);
                 ExceptionPolicy policy = createExceptionPolicy(exceptionType);
                 handlerSupport.addExceptionPolicy(key, policy);
@@ -324,7 +326,11 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     protected Class<? extends Throwable> resolveExceptionClass(String name) throws ClassNotFoundException {
-        return camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+        Class<? extends Throwable> answer = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+        if (!Throwable.class.isAssignableFrom(answer)) {
+            throw new IllegalArgumentException("The class: " + name + " in onException is not an exception");
+        }
+        return answer;
     }
 
     /**
