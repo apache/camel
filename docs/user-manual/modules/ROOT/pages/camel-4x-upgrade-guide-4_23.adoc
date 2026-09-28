@@ -3045,6 +3045,18 @@ The accessors changed accordingly:
 The fluent builder `ParamDefinition.required(Boolean)` is unchanged, and a `required(String)` overload
 was added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change.
 
+=== camel-main - properties that are not auto-configured are logged
+
+When `camel.main.autoConfigurationFailFast=false`, camel-main now logs a WARN for each `camel.*` property that could
+not be applied (such as a typo in the name of an option), for example
+`Property not auto-configured: camel.rest.contxtPath=/api`. These warnings were never logged before. The values of
+sensitive options (such as passwords) are masked. With fail-fast (the default) an unknown property fails the startup
+as before.
+
+When `camel.opentelemetry.*` properties are configured but OpenTelemetry is disabled (`camel.opentelemetry.enabled=false`),
+the `camel.opentelemetry2.*` or `camel.telemetryDev.*` properties are now used. Previously they were ignored whenever
+any `camel.opentelemetry.*` property was configured.
+
 === camel-seda - stopping a suspended route does not wait for its pending messages
 
 Stopping a suspended SEDA route, or stopping the CamelContext while such a route is suspended, no longer waits for the

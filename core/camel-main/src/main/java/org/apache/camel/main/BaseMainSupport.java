@@ -941,8 +941,8 @@ public abstract class BaseMainSupport extends BaseService {
         // log which options was not set
         if (!properties.isEmpty()) {
             properties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.startupcondition.{}={} on object: {}", k, v,
-                        mainConfigurationProperties.startupCondition());
+                LOG.warn("Property not auto-configured: camel.startupcondition.{}={} on object: {}", k,
+                        maskValue(camelContext, k, v), mainConfigurationProperties.startupCondition());
             });
         }
 
@@ -1366,11 +1366,7 @@ public abstract class BaseMainSupport extends BaseService {
             setVaultProperties(camelContext, vaultProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
-        if (!vaultProperties.isEmpty()) {
-            vaultProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.vault.{}={}", k, v);
-            });
-        }
+        warnNotAutoConfigured(camelContext, "camel.vault.", vaultProperties);
     }
 
     protected void doInitFileConfigurations(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
@@ -1662,6 +1658,8 @@ public abstract class BaseMainSupport extends BaseService {
         if (!variableProperties.isEmpty()) {
             LOG.debug("Auto-configuring Variables from loaded properties: {}", variableProperties.size());
             MainSupportModelConfigurer.setVariableProperties(camelContext, variableProperties, autoConfiguredProperties);
+            // the variables have been set
+            variableProperties.clear();
         }
         // create beans first as they may be used later
         if (!beansProperties.isEmpty()) {
@@ -1733,22 +1731,26 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        // only one tracing service is used (the first that is enabled)
+        boolean tracing = false;
         if (!otelProperties.isEmpty() || mainConfigurationProperties.hasOtelConfiguration()) {
             LOG.debug("Auto-configuring OpenTelemetry from loaded properties: {}", otelProperties.size());
-            setOtelProperties(camelContext, otelProperties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+            tracing = setOtelProperties(camelContext, otelProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
-        } else if (!otel2Properties.isEmpty() || mainConfigurationProperties.hasOtel2Configuration()) {
+        }
+        if (!tracing && (!otel2Properties.isEmpty() || mainConfigurationProperties.hasOtel2Configuration())) {
             LOG.debug("Auto-configuring OpenTelemetry 2 from loaded properties: {}", otel2Properties.size());
-            setOtel2Properties(camelContext, otel2Properties, mainConfigurationProperties.isAutoConfigurationFailFast(),
+            tracing = setOtel2Properties(camelContext, otel2Properties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
-        } else {
-            // Attempt to fallback to Telemetry simple only if no other tracing service is found
-            if (!telemetryDevProperties.isEmpty() || mainConfigurationProperties.hasTelemetryDevConfiguration()) {
-                LOG.debug("Auto-configuring TelemetryDev from loaded properties: {}", telemetryDevProperties.size());
-                setTelemetryDevProperties(camelContext, telemetryDevProperties,
-                        mainConfigurationProperties.isAutoConfigurationFailFast(),
-                        autoConfiguredProperties);
-            }
+        }
+        // Attempt to fallback to Telemetry simple only if no other tracing service is found
+        if (!tracing && (!telemetryDevProperties.isEmpty() || mainConfigurationProperties.hasTelemetryDevConfiguration())) {
+            LOG.debug("Auto-configuring TelemetryDev from loaded properties: {}", telemetryDevProperties.size());
+            setTelemetryDevProperties(camelContext, telemetryDevProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
         }
         if (!metricsProperties.isEmpty() || mainConfigurationProperties.hasMetricsConfiguration()) {
             LOG.debug("Auto-configuring Micrometer metrics from loaded properties: {}", metricsProperties.size());
@@ -1808,119 +1810,31 @@ public abstract class BaseMainSupport extends BaseService {
                 autoConfiguredProperties, resilience4jProperties, faultToleranceProperties);
 
         // log which options was not set
-        if (!variableProperties.isEmpty()) {
-            variableProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.variable.{}={}", k, v);
-            });
-        }
-        if (!beansProperties.isEmpty()) {
-            beansProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.beans.{}={}", k, v);
-            });
-        }
-        if (!contextProperties.isEmpty()) {
-            contextProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.context.{}={}", k, v);
-            });
-        }
-        if (!resilience4jProperties.isEmpty()) {
-            resilience4jProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.resilience4j.{}={}", k, v);
-            });
-        }
-        if (!faultToleranceProperties.isEmpty()) {
-            faultToleranceProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.faulttolerance.{}={}", k, v);
-            });
-        }
-        if (!restProperties.isEmpty()) {
-            restProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.rest.{}={}", k, v);
-            });
-        }
-        if (!threadPoolProperties.isEmpty()) {
-            threadPoolProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.threadpool.{}={}", k, v);
-            });
-        }
-        if (!healthProperties.isEmpty()) {
-            healthProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.health.{}={}", k, v);
-            });
-        }
-        if (!securityProperties.isEmpty()) {
-            securityProperties.forEach((k, v) -> LOG.warn("Property not auto-configured: camel.security.{}={}", k, v));
-        }
-        if (!sslProperties.isEmpty()) {
-            sslProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.ssl.{}={}", k, v);
-            });
-        }
-        if (!debuggerProperties.isEmpty()) {
-            debuggerProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.debug.{}={}", k, v);
-            });
-        }
-        if (!routeControllerProperties.isEmpty()) {
-            routeControllerProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.routeController.{}={}", k, v);
-            });
-        }
-        if (!errorRegistryProperties.isEmpty()) {
-            errorRegistryProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.errorRegistry.{}={}", k, v);
-            });
-        }
-        if (!aiObservabilityProperties.isEmpty()) {
-            aiObservabilityProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.aiObservability.{}={}", k, v);
-            });
-        }
-        if (!devConsoleProperties.isEmpty()) {
-            devConsoleProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.devConsole.{}={}", k, v);
-            });
-        }
-        if (!routeTemplateProperties.isEmpty()) {
-            routeTemplateProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.routetemplate.{}={}", k, v);
-            });
-        }
-        if (!lraProperties.isEmpty()) {
-            lraProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.lra.{}={}", k, v);
-            });
-        }
-        if (!otelProperties.isEmpty()) {
-            otelProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.opentelemetry.{}={}", k, v);
-            });
-        }
-        if (!otel2Properties.isEmpty()) {
-            otel2Properties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.opentelemetry2.{}={}", k, v);
-            });
-        }
-        if (!telemetryDevProperties.isEmpty()) {
-            telemetryDevProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.telemetryDev.{}={}", k, v);
-            });
-        }
-        if (!httpServerProperties.isEmpty()) {
-            httpServerProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.server.{}={}", k, v);
-            });
-        }
-        if (!httpManagementServerProperties.isEmpty()) {
-            httpManagementServerProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.management.{}={}", k, v);
-            });
-        }
-        if (!mdcProperties.isEmpty()) {
-            mdcProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.mdc.{}={}", k, v);
-            });
-        }
+        warnNotAutoConfigured(camelContext, "camel.variable.", variableProperties);
+        warnNotAutoConfigured(camelContext, "camel.beans.", beansProperties);
+        warnNotAutoConfigured(camelContext, "camel.context.", contextProperties);
+        warnNotAutoConfigured(camelContext, "camel.resilience4j.", resilience4jProperties);
+        warnNotAutoConfigured(camelContext, "camel.faulttolerance.", faultToleranceProperties);
+        warnNotAutoConfigured(camelContext, "camel.rest.", restProperties);
+        warnNotAutoConfigured(camelContext, "camel.threadpool.", threadPoolProperties);
+        warnNotAutoConfigured(camelContext, "camel.health.", healthProperties);
+        warnNotAutoConfigured(camelContext, "camel.security.", securityProperties);
+        warnNotAutoConfigured(camelContext, "camel.ssl.", sslProperties);
+        warnNotAutoConfigured(camelContext, "camel.debug.", debuggerProperties);
+        warnNotAutoConfigured(camelContext, "camel.routeController.", routeControllerProperties);
+        warnNotAutoConfigured(camelContext, "camel.errorRegistry.", errorRegistryProperties);
+        warnNotAutoConfigured(camelContext, "camel.aiObservability.", aiObservabilityProperties);
+        warnNotAutoConfigured(camelContext, "camel.devConsole.", devConsoleProperties);
+        warnNotAutoConfigured(camelContext, "camel.routetemplate.", routeTemplateProperties);
+        warnNotAutoConfigured(camelContext, "camel.lra.", lraProperties);
+        warnNotAutoConfigured(camelContext, "camel.opentelemetry.", otelProperties);
+        warnNotAutoConfigured(camelContext, "camel.opentelemetry2.", otel2Properties);
+        warnNotAutoConfigured(camelContext, "camel.telemetryDev.", telemetryDevProperties);
+        warnNotAutoConfigured(camelContext, "camel.server.", httpServerProperties);
+        warnNotAutoConfigured(camelContext, "camel.management.", httpManagementServerProperties);
+        warnNotAutoConfigured(camelContext, "camel.mdc.", mdcProperties);
+        warnNotAutoConfigured(camelContext, "camel.metrics.", metricsProperties);
+        warnNotAutoConfigured(camelContext, "camel.trace.", tracerProperties);
 
         // and call after all properties are set
         DefaultConfigurationConfigurer.afterPropertiesSet(camelContext);
@@ -2058,6 +1972,17 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    private static void warnNotAutoConfigured(
+            CamelContext camelContext, String prefix, OrderedLocationProperties properties) {
+        properties.forEach(
+                (k, v) -> LOG.warn("Property not auto-configured: {}{}={}", prefix, k, maskValue(camelContext, k, v)));
+    }
+
+    private static Object maskValue(CamelContext camelContext, Object key, Object value) {
+        // the values of sensitive options are masked
+        return MainHelper.containsSensitive(camelContext, key.toString(), value) ? "xxxxxx" : value;
+    }
+
     /**
      * Adds the options configured using the Java API (the options that are not the default value), which are not
      * already configured as properties (properties take precedence).
@@ -2079,7 +2004,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    private void setLraCheckProperties(
+    private boolean setLraCheckProperties(
             CamelContext camelContext, OrderedLocationProperties lraProperties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
@@ -2109,6 +2034,11 @@ public abstract class BaseMainSupport extends BaseService {
             // add as service so saga can be active
             camelContext.addService(css, true, true);
         }
+        if (!enabled) {
+            // the service is disabled so its options are not used
+            lraProperties.clear();
+        }
+        return enabled;
     }
 
     private void setClusterServiceProperties(
@@ -2156,7 +2086,7 @@ public abstract class BaseMainSupport extends BaseService {
                 camelContext, factoryKey, CamelClusterService.class, "camel-" + type);
     }
 
-    private void setOtelProperties(
+    private boolean setOtelProperties(
             CamelContext camelContext, OrderedLocationProperties otelProperties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
@@ -2189,9 +2119,14 @@ public abstract class BaseMainSupport extends BaseService {
                 camelContext.addService(otel, true, true);
             }
         }
+        if (!enabled) {
+            // the service is disabled so its options are not used
+            otelProperties.clear();
+        }
+        return enabled;
     }
 
-    private void setOtel2Properties(
+    private boolean setOtel2Properties(
             CamelContext camelContext, OrderedLocationProperties otel2Properties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
@@ -2211,9 +2146,14 @@ public abstract class BaseMainSupport extends BaseService {
                 camelContext.addService(otel, true, true);
             }
         }
+        if (!enabled) {
+            // the service is disabled so its options are not used
+            otel2Properties.clear();
+        }
+        return enabled;
     }
 
-    private void setMdcProperties(
+    private boolean setMdcProperties(
             CamelContext camelContext, OrderedLocationProperties mdcProperties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
@@ -2233,9 +2173,14 @@ public abstract class BaseMainSupport extends BaseService {
                 camelContext.addService(mdc, true, true);
             }
         }
+        if (!enabled) {
+            // the service is disabled so its options are not used
+            mdcProperties.clear();
+        }
+        return enabled;
     }
 
-    private void setTelemetryDevProperties(
+    private boolean setTelemetryDevProperties(
             CamelContext camelContext, OrderedLocationProperties telemetryDevProperties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
@@ -2256,9 +2201,14 @@ public abstract class BaseMainSupport extends BaseService {
                 camelContext.addService(telemetryDev, true, true);
             }
         }
+        if (!enabled) {
+            // the service is disabled so its options are not used
+            telemetryDevProperties.clear();
+        }
+        return enabled;
     }
 
-    private void setMetricsProperties(
+    private boolean setMetricsProperties(
             CamelContext camelContext, OrderedLocationProperties metricsProperties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
@@ -2291,6 +2241,11 @@ public abstract class BaseMainSupport extends BaseService {
                 camelContext.addService(micrometer, true, true);
             }
         }
+        if (!enabled) {
+            // the service is disabled so its options are not used
+            metricsProperties.clear();
+        }
+        return enabled;
     }
 
     private void setDevConsoleProperties(
@@ -2981,8 +2936,8 @@ public abstract class BaseMainSupport extends BaseService {
         // log which options was not set
         if (!properties.isEmpty()) {
             properties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.component.properties.{}={} on object: {}", k, v,
-                        camelContext.getPropertiesComponent());
+                LOG.warn("Property not auto-configured: camel.component.properties.{}={} on object: {}", k,
+                        maskValue(camelContext, k, v), camelContext.getPropertiesComponent());
             });
         }
     }
@@ -3043,7 +2998,8 @@ public abstract class BaseMainSupport extends BaseService {
         // log which options was not set
         if (!properties.isEmpty()) {
             properties.forEach((k, v) -> {
-                LOG.warn("Property not auto-configured: camel.main.{}={} on bean: {}", k, v, config);
+                LOG.warn("Property not auto-configured: camel.main.{}={} on bean: {}", k, maskValue(camelContext, k, v),
+                        config);
             });
         }
     }
@@ -3214,7 +3170,8 @@ public abstract class BaseMainSupport extends BaseService {
                 PropertyOptionKey pok = entry.getKey();
                 OrderedLocationProperties values = entry.getValue();
                 values.forEach((k, v) -> {
-                    String stringValue = v != null ? v.toString() : null;
+                    Object value = maskValue(camelContext, k, v);
+                    String stringValue = value != null ? value.toString() : null;
                     LOG.warn("Property ({}={}) not auto-configured with name: {} on bean: {} with value: {}",
                             pok.getOptionPrefix() + "." + k, stringValue, k, pok.getInstance(), stringValue);
                 });
