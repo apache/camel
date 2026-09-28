@@ -173,14 +173,11 @@ public class DefaultPropertiesParser implements PropertiesParser {
             Property property;
             while ((property = readProperty(prevKey, answer)) != null) {
                 if (replacedPropertyKeys.contains(property.getKey())) {
-                    // Check for circular references (skip optional)
-                    boolean optional = property.getKey().startsWith(OPTIONAL_TOKEN);
-                    if (optional) {
-                        break;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Circular reference detected with key [" + property.getKey() + "] from text: " + input);
-                    }
+                    // Check for circular references, also for optional keys, as a circular reference can never be
+                    // resolved (returning the text unresolved would make the caller parse the same placeholder again,
+                    // and again, for ever)
+                    throw new IllegalArgumentException(
+                            "Circular reference detected with key [" + property.getKey() + "] from text: " + input);
                 }
 
                 if (propertiesComponent != null) {
