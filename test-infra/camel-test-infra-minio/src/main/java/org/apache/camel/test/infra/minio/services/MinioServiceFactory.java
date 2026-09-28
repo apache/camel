@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.minio.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
+@Deprecated(since = "4.23")
 public final class MinioServiceFactory {
     private MinioServiceFactory() {
 
