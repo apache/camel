@@ -102,8 +102,10 @@ Loading declarations does not perform inference. Java applications can register 
 A question's optional `state` Simple expression overrides
 `camel.language.semantic.default-state`, whose default is `$\{body}`. Selectors are compiled
 before evaluation; selected strings, maps and lists are passed as data and are never evaluated recursively.
-A missing selected header fails instead of falling back to the body. Blank or invalid selectors
-fail. The original message is preserved. `CamelSemanticResult` contains the latest successful
+A missing selected header fails instead of falling back to the body. A selector must be nonblank
+before property placeholders are resolved. A placeholder that resolves to an empty string retains
+the existing Simple behavior: it selects an empty string as state. Invalid Simple syntax fails.
+The original message is preserved. `CamelSemanticResult` contains the latest successful
 normalized result and is cleared before each evaluation, including one that fails.
 
 State must be a string, map or list. For byte arrays or stream bodies, explicitly select

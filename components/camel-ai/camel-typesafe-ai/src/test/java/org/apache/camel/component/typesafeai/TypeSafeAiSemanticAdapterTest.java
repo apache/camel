@@ -21,12 +21,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -112,6 +115,11 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
     }
 
     private Expression batchExpression() {
+        batchQuestions();
+        return context.resolveLanguage("semantic").createExpression("refs:refund,department,urgency");
+    }
+
+    private void batchQuestions() {
         SemanticQuestions.get(context).replace("test", Map.of(
                 "refund", new SemanticQuestion(
                         SemanticQuestion.Type.BOOLEAN, "Refund requested?", null,
@@ -123,7 +131,39 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
                 "urgency", new SemanticQuestion(
                         SemanticQuestion.Type.SCORE, "How urgent?", null,
                         Map.of(), List.of("Routine", "Urgent", "Critical"), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
-        return context.resolveLanguage("semantic").createExpression("refs:refund,department,urgency");
+    }
+
+    @Test
+    void xmlBatchUsesGenericLanguageAndReusesResults() throws Exception {
+        batchQuestions();
+        respond = request -> mixedResponse();
+        PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("batch.xml", """
+                <routes xmlns="http://camel.apache.org/schema/spring">
+                  <route>
+                    <from uri="direct:batch"/>
+                    <setProperty name="decision">
+                      <language language="semantic">refs:refund,department,urgency</language>
+                    </setProperty>
+                    <setHeader name="department">
+                      <simple>${exchangeProperty.decision[department]}</simple>
+                    </setHeader>
+                    <setHeader name="urgency">
+                      <simple>${exchangeProperty.decision[urgency]}</simple>
+                    </setHeader>
+                  </route>
+                </routes>
+                """));
+        assertThat(requests).isEmpty();
+        Exchange exchange = template.request("direct:batch", e -> e.getMessage().setBody("refund requested"));
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getProperty("decision", Map.class))
+                .containsEntry("refund", false).containsEntry("department", "billing").containsEntry("urgency", 1.2);
+        assertThat(exchange.getMessage().getHeader("department")).isEqualTo("billing");
+        assertThat(exchange.getMessage().getHeader("urgency", Double.class)).isEqualTo(1.2);
+        assertThat(exchange.getMessage().getBody()).isEqualTo("refund requested");
+        assertThat(exchange.getProperty(SemanticLanguage.RESULTS, Map.class)).containsKeys("refund", "department", "urgency");
+        assertThat(requests).hasSize(1);
+        assertThat(requests.peek().get("state")).isEqualTo("refund requested");
     }
 
     @Test
