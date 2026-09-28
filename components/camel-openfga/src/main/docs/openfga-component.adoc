@@ -71,7 +71,7 @@ each Exchange, so a literal is used as written and an expression resolves per me
 to("openfga:check"
         + "?storeId=01HQMVAJ..."
         + "&relation=reader"
-        + "&user=user:${exchangeProperty.authenticatedSubject}"
+        + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
         + "&object=document:${header.documentId}");
 ------------------------------------------------------------
 
@@ -85,12 +85,14 @@ An endpoint configured as `user=user:${header.userId}` lets the caller choose wh
 authorization-bypass equivalent of trusting a client-supplied username.
 
 Put the subject where the caller cannot reach it. An exchange property set by the step in your route that
-*verified* the caller — a processor that validated the bearer token, a `camel-oauth` or `camel-keycloak` step
-followed by one that records what it established — cannot be set from outside the route, and a header usually can.
-Name that property here, and let authentication decide who the caller is.
+*verified* the caller cannot be set from outside the route, and a header usually can. Name that property here, and
+let authentication decide who the caller is.
 
-Camel does not ship a standard property name for this; the examples below use `authenticatedSubject`, which your
-authentication step has to set.
+There is a convention worth following rather than inventing one: `camel-keycloak`'s `KeycloakSecurityPolicy` reads
+the subject from the `CamelKeycloakTokenSubject` exchange property in preference to the header of the same name —
+its `preferPropertyOverHeader` option defaults to `true`, for exactly the reason above. Nothing in Camel sets that
+property for you, so the step in your route that validates the token is what has to record it; but recording it
+under that name means the same identity serves both components.
 
 Taking the **object** from a header is a different matter and is entirely normal: the caller is entitled to say
 *which* resource it wants, and the check is what decides whether it may have it.
@@ -107,7 +109,7 @@ untouched, so the route decides what to do with it:
 ------------------------------------------------------------
 from("platform-http:/documents")
         .to("openfga:check?storeId={{fga.store}}&authorizationModelId={{fga.model}}"
-            + "&relation=reader&user=user:${exchangeProperty.authenticatedSubject}"
+            + "&relation=reader&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
             + "&object=document:${header.documentId}")
         .choice()
             .when(header("CamelOpenFgaAllowed").isEqualTo(true))
@@ -128,7 +130,7 @@ policy.setApiUrl("http://openfga:8080");
 policy.setStoreId("01HQMVAJ...");
 policy.setAuthorizationModelId("01HQMVAK...");
 policy.setRelation("writer");
-policy.setUser("user:${exchangeProperty.authenticatedSubject}");
+policy.setUser("user:${exchangeProperty.CamelKeycloakTokenSubject}");
 policy.setObject("document:${header.documentId}");
 
 from("platform-http:/documents")
@@ -146,7 +148,7 @@ order the body asked in:
 from("direct:listDocuments")
         .to("sql:SELECT id FROM documents")                         // every document
         .to("openfga:batchCheck?storeId={{fga.store}}&relation=reader"
-            + "&user=user:${exchangeProperty.authenticatedSubject}")             // only the ones this subject may read
+            + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}")             // only the ones this subject may read
         .to("direct:render");
 ------------------------------------------------------------
 
@@ -156,7 +158,7 @@ rather than filtering a list you already have:
 [source,java]
 ------------------------------------------------------------
 to("openfga:listObjects?storeId={{fga.store}}&relation=reader"
-   + "&user=user:${exchangeProperty.authenticatedSubject}&type=document");
+   + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}&type=document");
 // body becomes [document:budget, document:roadmap]
 ------------------------------------------------------------
 
@@ -174,7 +176,7 @@ that reads best right after a resource was created:
 from("direct:createDocument")
         .to("sql:INSERT INTO documents ...")
         .to("openfga:writeTuples?storeId={{fga.store}}"
-            + "&user=user:${exchangeProperty.authenticatedSubject}&relation=owner"
+            + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}&relation=owner"
             + "&object=document:${header.documentId}");
 ------------------------------------------------------------
 
@@ -288,7 +290,7 @@ from("platform-http:/orders/{orderId}")
         // whatever verifies the caller, ending in a processor that records the verified subject as a property
         .to("direct:authenticate")
         .to("openfga:check?storeId={{fga.store}}&authorizationModelId={{fga.model}}"
-            + "&relation=can_view&user=user:${exchangeProperty.authenticatedSubject}"
+            + "&relation=can_view&user=user:${exchangeProperty.CamelKeycloakTokenSubject}"
             + "&object=order:${header.orderId}")
         .filter(header("CamelOpenFgaAllowed").isEqualTo(true))
             .to("direct:serveOrder");

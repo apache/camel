@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * policy.setStoreId(storeId);
  * policy.setAuthorizationModelId(modelId);
  * policy.setRelation("reader");
- * policy.setUser("user:${exchangeProperty.authenticatedSubject}");
+ * policy.setUser("user:${exchangeProperty.CamelKeycloakTokenSubject}");
  * policy.setObject("document:${header.documentId}");
  *
  * from("platform-http:/documents")
@@ -243,12 +243,13 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
 
     /**
      * The subject to authorize, as a Simple expression resolving to an OpenFGA user identifier such as
-     * <code>user:${exchangeProperty.authenticatedSubject}</code>.
+     * <code>user:${exchangeProperty.CamelKeycloakTokenSubject}</code>.
      * <p/>
      * Read it from an exchange property rather than a header wherever you can: a property is set by the route itself,
-     * by the step that verified the caller, while a header is often whatever the caller sent. Camel ships no standard
-     * property name for a verified subject, so the authentication step in your route is what has to record it. An
-     * exchange whose subject resolves to blank is denied.
+     * by the step that verified the caller, while a header is often whatever the caller sent.
+     * {@code CamelKeycloakTokenSubject} is the name worth using - {@code camel-keycloak}'s own security policy reads
+     * the subject from that property in preference to the header - though the step that validates the token is what has
+     * to record it. An exchange whose subject resolves to blank is denied.
      */
     public void setUser(String user) {
         configuration.setUser(user);

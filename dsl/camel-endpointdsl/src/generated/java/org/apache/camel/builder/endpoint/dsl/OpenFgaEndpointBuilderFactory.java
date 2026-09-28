@@ -195,18 +195,22 @@ public interface OpenFgaEndpointBuilderFactory {
          * The subject to authorize, as an OpenFGA user identifier such as {code
          * user:anne}. Evaluated as a Simple expression against each exchange,
          * so a literal is used as-is and
-         * user:${exchangeProperty.authenticatedSubject} resolves whatever an
-         * earlier step established. Read it from an exchange property rather
+         * user:${exchangeProperty.CamelKeycloakTokenSubject} resolves whatever
+         * an earlier step established. Read it from an exchange property rather
          * than a header wherever you can. An exchange property is set by the
          * route itself - by the step that verified the caller - and nothing
          * outside the route can set one. A header, by contrast, is often
          * whatever the caller sent, and an endpoint configured as
-         * user:${header.userId} lets the caller choose who to be. Camel ships
-         * no standard property name for a verified subject, so the
-         * authentication step in your route is what has to record it. An
-         * expression that resolves to blank, or to a bare {code user:} prefix,
-         * denies the exchange: an exchange carrying no identity is not
-         * authorized, and failOpen does not apply to it.
+         * user:${header.userId} lets the caller choose who to be. {code
+         * camel-keycloak}'s KeycloakSecurityPolicy already follows that
+         * reasoning: it reads the subject from the CamelKeycloakTokenSubject
+         * exchange property in preference to the header of the same name, its
+         * preferPropertyOverHeader option defaulting to true. Nothing in Camel
+         * sets the property for you, so the step that validates the token has
+         * to record it - but recording it under that name lets one identity
+         * serve both. An expression that resolves to blank, or to a bare {code
+         * user:} prefix, denies the exchange: an exchange carrying no identity
+         * is not authorized, and failOpen does not apply to it.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
