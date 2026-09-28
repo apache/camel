@@ -83,10 +83,12 @@ public final class MongoDbConstants {
     public static final String BULK_ORDERED = "CamelMongoDbBulkOrdered";
     @Metadata(label = "consumer changeStreams",
               description = """
-                      A document that contains the _id of the document created or modified by the insert,
-                      replace, delete, update operations (i.e. CRUD operations). For sharded collections, also displays the full shard key for
-                      the document. The _id field is not repeated if it is already a part of the shard key.""",
-              javaType = "org.bson.types.ObjectId")
+                      The _id of the document created or modified by the insert, replace, delete or update operation
+                      (i.e. CRUD operations). It is an org.bson.types.ObjectId when MongoDB generated the id, and
+                      otherwise the id in its natural Java type: a String, a number, or a Document for a compound key.
+                      The header is absent on the events that do not belong to a single document, such as invalidate,
+                      drop, rename and dropDatabase.""",
+              javaType = "Object")
     public static final String MONGO_ID = "_id"; // default id field
     @Metadata(label = "consumer changeStreams", description = """
             The type of operation that occurred. Can

@@ -47,10 +47,17 @@ public class MainSedaWildcardTest {
         MySedaBlockingQueueFactory myBQF = (MySedaBlockingQueueFactory) seda.getDefaultQueueFactory();
         assertEquals(123, myBQF.getCounter());
 
-        SedaComponent seda2 = camelContext.getComponent("seda", SedaComponent.class);
+        SedaComponent seda2 = camelContext.getComponent("seda2", SedaComponent.class);
         assertNotNull(seda2);
         assertInstanceOf(MySedaBlockingQueueFactory.class, seda2.getDefaultQueueFactory());
         myBQF = (MySedaBlockingQueueFactory) seda2.getDefaultQueueFactory();
+        assertEquals(123, myBQF.getCounter());
+
+        // a component that is added later is also configured
+        camelContext.addComponent("seda3", new SedaComponent());
+        SedaComponent seda3 = camelContext.getComponent("seda3", SedaComponent.class);
+        assertInstanceOf(MySedaBlockingQueueFactory.class, seda3.getDefaultQueueFactory());
+        myBQF = (MySedaBlockingQueueFactory) seda3.getDefaultQueueFactory();
         assertEquals(123, myBQF.getCounter());
 
         main.stop();

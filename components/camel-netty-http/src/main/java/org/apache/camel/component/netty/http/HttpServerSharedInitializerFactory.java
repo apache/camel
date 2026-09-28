@@ -134,7 +134,11 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(false);
-            engine.setNeedClientAuth(configuration.isNeedClientAuth());
+            if (configuration.isNeedClientAuth()) {
+                // only when enabled, to keep the client authentication from the sslContextParameters (such as
+                // REQUIRE or WANT) when needClientAuth is not enabled
+                engine.setNeedClientAuth(true);
+            }
             if (configuration.getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(configuration.getEnabledProtocols().split(","));

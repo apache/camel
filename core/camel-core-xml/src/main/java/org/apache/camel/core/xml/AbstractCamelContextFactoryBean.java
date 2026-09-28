@@ -197,6 +197,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // set the package scan resolver as soon as possible
         setupPackageScanResolver();
 
+        // set the custom registry if defined
+        initCustomRegistry(getContext());
+
+        // setup property placeholder so we got it as early as possible
+        // (before the options below that can use property placeholders)
+        initPropertyPlaceholder();
+
         // also set type converter registry as early as possible
         setupTypeConverters();
 
@@ -205,12 +212,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // then set custom properties
         setCustomProperties();
-
-        // set the custom registry if defined
-        initCustomRegistry(getContext());
-
-        // setup property placeholder so we got it as early as possible
-        initPropertyPlaceholder();
 
         // then setup JMX
         initJMXAgent();
@@ -492,7 +493,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         BacklogTracer backlogTracer = getBeanForType(BacklogTracer.class);
         if (backlogTracer != null) {
             LOG.info("Using custom BacklogTracer: {}", backlogTracer);
-            getContext().addService(backlogTracer);
+            getContext().getCamelContextExtension().addContextPlugin(BacklogTracer.class, backlogTracer);
         }
         InflightRepository inflightRepository = getBeanForType(InflightRepository.class);
         if (inflightRepository != null) {
@@ -851,22 +852,28 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                     .mandatoryConvertTo(ManagementMBeansLevel.class, level);
             properties.put("mBeansLevel", mbLevel);
         }
+        if (camelJMXAgent.getMbeanServerDefaultDomain() != null) {
+            properties.put("mBeanServerDefaultDomain",
+                    CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeanServerDefaultDomain()));
+        }
         return properties;
     }
 
     protected void initStreamCachingStrategy() throws Exception {
         CamelStreamCachingStrategyDefinition streamCaching = getCamelStreamCachingStrategy();
         if (streamCaching == null) {
-            getContext().getStreamCachingStrategy().setEnabled(true);
             return;
         }
 
+        // the strategy is enabled by the camel context when it starts if stream caching is in use,
+        // so the enabled option turns stream caching on/off (unless the streamCache attribute is set)
         Boolean enabled = CamelContextHelper.parseBoolean(getContext(), streamCaching.getEnabled());
-        if (enabled != null) {
-            getContext().getStreamCachingStrategy().setEnabled(enabled);
-        } else {
-            // stream-caching is default enabled
-            getContext().getStreamCachingStrategy().setEnabled(true);
+        if (enabled != null && getStreamCache() == null) {
+            getContext().setStreamCaching(enabled);
+        }
+        Integer bufferSize = CamelContextHelper.parseInteger(getContext(), streamCaching.getBufferSize());
+        if (bufferSize != null) {
+            getContext().getStreamCachingStrategy().setBufferSize(bufferSize);
         }
         String allowClasses = CamelContextHelper.parseText(getContext(), streamCaching.getAllowClasses());
         if (allowClasses != null) {
@@ -919,11 +926,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolRules());
         if (spoolRules != null) {
             for (String name : ObjectHelper.createIterable(spoolRules)) {
-                StreamCachingStrategy.SpoolRule rule = getContext().getRegistry().lookupByNameAndType(name,
+                StreamCachingStrategy.SpoolRule rule = CamelContextHelper.mandatoryLookup(getContext(), name,
                         StreamCachingStrategy.SpoolRule.class);
-                if (rule != null) {
-                    getContext().getStreamCachingStrategy().addSpoolRule(rule);
-                }
+                getContext().getStreamCachingStrategy().addSpoolRule(rule);
             }
         }
     }
@@ -945,7 +950,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         SupervisingRouteController src = null;
         Boolean enabled = CamelContextHelper.parseBoolean(getContext(), rc.getSupervising());
-        if (enabled != null) {
+        if (enabled != null && enabled) {
             src = getContext().getRouteController().supervising();
         }
         String includeRoutes = CamelContextHelper.parseText(getContext(), rc.getIncludeRoutes());

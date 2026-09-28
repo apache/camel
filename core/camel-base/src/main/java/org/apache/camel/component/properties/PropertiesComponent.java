@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Stack;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -126,7 +127,8 @@ public class PropertiesComponent extends ServiceSupport
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
-    private final Stack<Properties> localProperties = new Stack<>();
+    // the local properties are per thread (such as route template parameters when creating a route from a template)
+    private final ThreadLocal<Deque<Properties>> localProperties = new ThreadLocal<>();
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
@@ -570,10 +572,18 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     public void setLocalProperties(Properties localProperties) {
+        Deque<Properties> stack = this.localProperties.get();
         if (localProperties != null) {
-            this.localProperties.push(localProperties);
-        } else if (!this.localProperties.isEmpty()) {
-            this.localProperties.pop();
+            if (stack == null) {
+                stack = new ArrayDeque<>();
+                this.localProperties.set(stack);
+            }
+            stack.push(localProperties);
+        } else if (stack != null) {
+            stack.poll();
+            if (stack.isEmpty()) {
+                this.localProperties.remove();
+            }
         }
     }
 
@@ -582,10 +592,8 @@ public class PropertiesComponent extends ServiceSupport
      * currently in use.
      */
     public Properties getLocalProperties() {
-        if (localProperties.isEmpty()) {
-            return null;
-        }
-        return localProperties.peek();
+        Deque<Properties> stack = this.localProperties.get();
+        return stack != null ? stack.peek() : null;
     }
 
     @Override

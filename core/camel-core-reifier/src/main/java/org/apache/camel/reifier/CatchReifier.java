@@ -66,6 +66,7 @@ public class CatchReifier extends ProcessorReifier<CatchDefinition> {
         String id = getId(definition);
         processor.setId(id);
         processor.setRouteId(route.getRouteId());
+        injectStepId(processor);
         return wrapProcessor(processor);
     }
 

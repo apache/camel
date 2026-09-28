@@ -41,7 +41,11 @@ public class TransactedDoTryRecipientListTest extends TransactionClientDataSourc
                         .transacted()
                         .doTry()
                             .recipientList(constant("direct:a"))
-                        .endDoTry();
+                        .endDoTry()
+                        // a doTry must have a doCatch or doFinally
+                        .doFinally()
+                            .to("mock:finally")
+                        .end();
 
                 from("direct:a")
                         .delay(1)

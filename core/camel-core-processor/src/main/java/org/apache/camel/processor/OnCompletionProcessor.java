@@ -229,8 +229,11 @@ public class OnCompletionProcessor extends BaseProcessorSupport
         boolean stop = exchange.isRouteStop();
         exchange.setRouteStop(false);
         boolean failureHandled = exchange.getExchangeExtension().isFailureHandled();
+        // the onCompletion is not failure handled (so its own failures can be handled by the error handler)
+        exchange.getExchangeExtension().setFailureHandled(false);
         Boolean errorhandlerHandled = exchange.getExchangeExtension().getErrorHandlerHandled();
         exchange.getExchangeExtension().setErrorHandlerHandled(null);
+        Object caught = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT);
         boolean rollbackOnly = exchange.isRollbackOnly();
         exchange.setRollbackOnly(false);
         boolean rollbackOnlyLast = exchange.isRollbackOnlyLast();
@@ -251,11 +254,25 @@ public class OnCompletionProcessor extends BaseProcessorSupport
         } finally {
             // restore the options
             exchange.setRouteStop(stop);
-            if (failureHandled) {
-                exchange.getExchangeExtension().setFailureHandled(true);
-            }
-            if (errorhandlerHandled != null) {
+            boolean newFailure = cause == null && exchange.getException() != null;
+            if (newFailure) {
+                // the onCompletion failed (and was not handled) so keep its error handler state
+                if (failureHandled) {
+                    exchange.getExchangeExtension().setFailureHandled(true);
+                }
+                if (errorhandlerHandled != null) {
+                    exchange.getExchangeExtension().setErrorHandlerHandled(errorhandlerHandled);
+                }
+            } else {
+                // restore the state as it was before the onCompletion (such as when the onCompletion
+                // handled an exception by its error handler)
+                exchange.getExchangeExtension().setFailureHandled(failureHandled);
                 exchange.getExchangeExtension().setErrorHandlerHandled(errorhandlerHandled);
+                if (caught != null) {
+                    exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, caught);
+                } else {
+                    exchange.removeProperty(ExchangePropertyKey.EXCEPTION_CAUGHT);
+                }
             }
             exchange.setRollbackOnly(rollbackOnly);
             exchange.setRollbackOnlyLast(rollbackOnlyLast);

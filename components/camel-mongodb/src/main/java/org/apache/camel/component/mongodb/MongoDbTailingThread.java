@@ -115,11 +115,13 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
                     if (log.isTraceEnabled()) {
                         log.trace("Sending exchange: {}, ObjectId: {}", exchange, dbObj.get(MONGO_ID));
                     }
-                    consumer.getProcessor().process(exchange);
-                } catch (Exception e) {
-                    // do nothing
+                    if (processExchange(exchange)) {
+                        // only once the route accepted it, so a failed record does not move the tail position
+                        tailTracking.setLastVal(dbObj);
+                    }
+                } finally {
+                    consumer.releaseExchange(exchange, false);
                 }
-                tailTracking.setLastVal(dbObj);
             }
         } catch (MongoCursorNotFoundException e) {
             // we only log the warning if we are not stopping, otherwise it is
@@ -147,7 +149,8 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
     }
 
     Exchange createMongoDbExchange(Document dbObj) {
-        Exchange exchange = consumer.createExchange(true);
+        // released by doRun once the outcome has been read, as an auto-released exchange may already be reset by then
+        Exchange exchange = consumer.createExchange(false);
         Message message = exchange.getIn();
         message.setHeader(MongoDbConstants.DATABASE, endpoint.getDatabase());
         message.setHeader(MongoDbConstants.COLLECTION, endpoint.getCollection());
