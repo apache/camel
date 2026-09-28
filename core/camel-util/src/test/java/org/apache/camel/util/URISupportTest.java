@@ -509,6 +509,26 @@ public class URISupportTest {
     }
 
     @Test
+    public void testParseQueryDoubleAmpersand() throws Exception {
+        Map<String, Object> map = URISupport.parseQuery("delay=250&&period=500");
+        assertEquals(2, map.size());
+        assertEquals("250", map.get("delay"));
+        assertEquals("500", map.get("period"));
+
+        map = URISupport.parseQuery("&&delay=250&&&period=500");
+        assertEquals(2, map.size());
+        assertEquals("250", map.get("delay"));
+        assertEquals("500", map.get("period"));
+
+        map = URISupport.parseQuery("password=RAW(se&&cret)&&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("RAW(se&&cret)", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+
+        assertEquals("timer://foo?delay=250&period=500", URISupport.normalizeUri("timer://foo?delay=250&&period=500"));
+    }
+
+    @Test
     public void testParseQuery() throws Exception {
         Map<String, Object> map = URISupport.parseQuery("password=secret&serviceName=somechat");
         assertEquals(2, map.size());
