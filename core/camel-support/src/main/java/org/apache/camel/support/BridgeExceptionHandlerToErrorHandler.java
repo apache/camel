@@ -58,6 +58,14 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
 
     @Override
     public void handleException(String message, Exchange exchange, Throwable exception) {
+        if (exchange != null && (exchange.getExchangeExtension().isErrorHandlerHandledSet()
+                || exchange.getExchangeExtension().isRedeliveryExhausted())) {
+            // the exchange failed while being routed and has already been handled by the error handler, so it must not
+            // be handled by the error handler again (the bridge is only for errors when the consumer picks up messages)
+            fallback.handleException(message, exchange, exception);
+            return;
+        }
+
         Exchange copy;
         if (exchange == null) {
             copy = consumer.getEndpoint().createExchange();

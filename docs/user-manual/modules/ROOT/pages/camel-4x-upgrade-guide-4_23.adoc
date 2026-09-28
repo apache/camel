@@ -3236,6 +3236,20 @@ use the same queue name with different consumer options, such as `seda:foo?multi
 `seda:foo?multipleConsumers=true&concurrentConsumers=5`. Previously each distinct endpoint uri only multicast to its own
 consumers, so such consumers silently competed for the messages instead of each receiving a copy.
 
+=== camel-core - bridgeErrorHandler no longer handles a failed exchange twice
+
+With `bridgeErrorHandler=true`, an exchange that failed while being routed (and was already handled by the error
+handler of the route, such as an `onException` that does not mark it as handled) is no longer bridged to the error
+handler a second time. Previously the `onException` (and dead letter channel) of the route was invoked twice for the
+same failure, the second time with the message body replaced by the error message. The bridge error handler is only
+for errors that happen when the consumer picks up messages (as documented), and such errors are bridged as before.
+
+A query parameter named `hash` in an endpoint uri (such as `http://host/path?hash=abc`) is now kept as a regular
+parameter. Previously it was always removed (it is only used internally by the endpoint DSL to identify endpoints).
+
+When both `bridgeErrorHandler=true` and `exceptionHandler` are configured on an endpoint, then `bridgeErrorHandler` is
+now used, as documented. Previously the `exceptionHandler` was used.
+
 === camel-core - Recipient List releases the producers of recipients it did not send to
 
 The Recipient List acquires a producer for every recipient before it starts sending. When it completes before
