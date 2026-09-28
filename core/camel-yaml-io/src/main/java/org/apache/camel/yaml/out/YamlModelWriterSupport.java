@@ -217,13 +217,20 @@ public abstract class YamlModelWriterSupport {
         if ("true".equals(value) || "false".equals(value)) {
             return Boolean.parseBoolean(value);
         }
+        // only a number when it is written as the number (such as 007, +5 or 1e3 are text, which is quoted)
         try {
-            return Long.parseLong(value);
+            long l = Long.parseLong(value);
+            if (Long.toString(l).equals(value)) {
+                return l;
+            }
         } catch (NumberFormatException e) {
             // not a long
         }
         try {
-            return Double.parseDouble(value);
+            double d = Double.parseDouble(value);
+            if (Double.toString(d).equals(value)) {
+                return d;
+            }
         } catch (NumberFormatException e) {
             // not a double
         }

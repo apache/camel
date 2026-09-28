@@ -1135,7 +1135,10 @@ public abstract class JavaDslModelWriterSupport {
         if (s == null) {
             return "null";
         }
-        return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+        // escape as a java string literal (a line break is not allowed in a string literal)
+        return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r")
+                .replace("\t", "\\t")
+               + "\"";
     }
 
     protected String classLiteral(String typeName) {

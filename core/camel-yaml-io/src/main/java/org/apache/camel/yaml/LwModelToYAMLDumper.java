@@ -54,6 +54,7 @@ import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.KeyValueHolder;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.yaml.out.YamlModelWriter;
 
@@ -460,22 +461,24 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                 return;
             }
 
-            buffer.write("- dataFormats:\n");
-
-            DataFormatsDefinition def = new DataFormatsDefinition();
-            def.setDataFormats(new ArrayList<>(dataFormats.values()));
-
-            YamlModelWriter writer = new YamlModelWriter();
+            // a list of data formats, each as its own single-key map (such as - json: ...), as the yaml dsl loads them
+            // (and so two data formats of the same kind do not overwrite each other)
+            var writer = new YamlModelWriter() {
+                @Override
+                public JsonObject doWriteDataFormatsDefinition(DataFormatsDefinition def) {
+                    return super.doWriteDataFormatsDefinition(def);
+                }
+            };
             writer.setCamelContext(camelContext);
-            JsonObject jo = writer.writeDataFormatsDefinition(def);
-            List<JsonObject> roots = new ArrayList<>();
-            roots.add(jo);
-            String yaml = writer.printAsYaml(roots);
-            for (String line : yaml.split("\n")) {
-                buffer.write("    ");
-                buffer.write(line);
-                buffer.write("\n");
+            JsonArray list = new JsonArray();
+            for (DataFormatDefinition df : dataFormats.values()) {
+                DataFormatsDefinition def = new DataFormatsDefinition();
+                def.setDataFormats(List.of(df));
+                list.add(writer.doWriteDataFormatsDefinition(def));
             }
+            JsonObject root = new JsonObject();
+            root.put("dataFormats", list);
+            buffer.write(writer.printAsYaml(List.of(root)));
         }
     }
 
