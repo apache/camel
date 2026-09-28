@@ -94,9 +94,10 @@ public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
             } else {
                 String delim = groupDelimiter;
                 if (delim == null) {
-                    // the parts of a pair are joined without a delimiter (as in xml mode), as the start token
-                    // between them would make them look like an unfinished pair
-                    delim = endToken != null ? "" : token;
+                    // pairs that include their tokens are joined without a delimiter (as in xml mode), as the start
+                    // token between them would make them look like an unfinished pair; bare values keep the token
+                    // as boundary
+                    delim = endToken != null && includeTokens ? "" : token;
                 }
                 answer = ExpressionBuilder.groupIteratorExpression(answer, delim, group, skipFirst);
             }

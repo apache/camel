@@ -113,6 +113,13 @@ public class TokenizeEdgeCasesTest extends ContextTestSupport {
     }
 
     @Test
+    public void testPairGroupWithoutTokensKeepsStartTokenAsBoundary() throws Exception {
+        MockEndpoint mock = split(lang().tokenize().token("[").endToken("]").group(2).end(),
+                "[1][2][3]", null, null);
+        assertThat(bodies(mock)).containsExactly("1[2", "3");
+    }
+
+    @Test
     public void testPairWithSameStartAndEndTokenIsRejected() {
         assertThatThrownBy(() -> split(lang().tokenize().token("'").endToken("'").end(), "'a' 'b'", null, null))
                 .isInstanceOf(FailedToCreateRouteException.class)
@@ -145,6 +152,16 @@ public class TokenizeEdgeCasesTest extends ContextTestSupport {
     @Test
     public void testWrapWithDoctype() throws Exception {
         String doctype = "<!DOCTYPE root [<!ELEMENT root (order*)>]>";
+        MockEndpoint mock = split(lang().tokenize().token("order").xml(true).inheritNamespaceTagName("*").end(),
+                String.format(ORDERS, doctype, ""), null, null);
+        assertThat(bodies(mock)).containsExactly(
+                "<?xml version=\"1.0\"?>" + doctype + "<root><order>1</order></root>",
+                "<?xml version=\"1.0\"?>" + doctype + "<root><order>2</order></root>");
+    }
+
+    @Test
+    public void testWrapWithDoctypeWhitespaceBeforeClose() throws Exception {
+        String doctype = "<!DOCTYPE root [<!ELEMENT root (order*)>] \n>";
         MockEndpoint mock = split(lang().tokenize().token("order").xml(true).inheritNamespaceTagName("*").end(),
                 String.format(ORDERS, doctype, ""), null, null);
         assertThat(bodies(mock)).containsExactly(
