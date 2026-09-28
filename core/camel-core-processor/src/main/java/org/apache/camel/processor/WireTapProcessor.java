@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -380,7 +381,11 @@ public class WireTapProcessor extends BaseProcessorSupport
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(processorExchangeFactory, taskFactory, processor);
         if (shutdownExecutorService) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            List<Runnable> dropped = getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            if (dropped != null && !dropped.isEmpty()) {
+                // the tasks still queued in the thread pool will never run, so they are no longer pending
+                taskCount.add(-dropped.size());
+            }
         }
     }
 }
