@@ -513,9 +513,10 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
             return;
         }
 
-        if (contentType != null) {
-            // the verb declares what it produces, so use one of those media types, favoring json over xml
-            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, selectProducedMediaType(contentType, isXml, isJson));
+        // the verb declares what it produces, so use one of those media types, favoring json over xml
+        String produced = contentType != null ? selectProducedMediaType(contentType, isXml, isJson) : null;
+        if (produced != null) {
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, produced);
         } else if (isJson) {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
         } else if (isXml) {
@@ -524,21 +525,22 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
     }
 
     private static String selectProducedMediaType(String produces, boolean isXml, boolean isJson) {
-        String[] types = produces.split(",");
-        String type = isJson ? findMediaType(types, "json") : null;
-        if (type == null && isXml) {
-            type = findMediaType(types, "xml");
-        }
-        return type != null ? type : types[0].trim();
-    }
-
-    private static String findMediaType(String[] types, String kind) {
-        for (String type : types) {
-            if (type.toLowerCase(Locale.ENGLISH).contains(kind)) {
-                return type.trim();
+        String kind = isJson ? "json" : isXml ? "xml" : null;
+        String first = null;
+        for (String type : produces.split(",")) {
+            type = type.trim();
+            // a wildcard cannot be the Content-Type of a response
+            if (type.contains("*")) {
+                continue;
+            }
+            if (kind != null && type.toLowerCase(Locale.ENGLISH).contains(kind)) {
+                return type;
+            }
+            if (first == null) {
+                first = type;
             }
         }
-        return null;
+        return first;
     }
 
     private void setCORSHeaders(Exchange exchange) {
