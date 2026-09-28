@@ -793,6 +793,14 @@ replacing them. The keywords apply to the whole JVM and cannot be removed.
 ends at the last `@` before the path, so a password may contain `@`, and an `@` in the query of a URI is no longer
 taken as the end of a password.
 
+=== camel-core - spaces inside quoted values are kept
+
+When a list of values is split, such as the parameters of a simple function (for example `${list(' a ','b')}`),
+the arguments of `camel-exec`, or the values of a `camel-sql` IN query, the spaces inside a quoted value were removed
+unless it was the last value. They are now kept for every value, so `${list(' a ',' b ')}` gives `" a "` and `" b "`,
+and the exec argument `"arg 0 "` is passed as `arg 0 ` (with the trailing space). Spaces outside the quotes are still
+removed.
+
 === camel-core - property placeholders in pollEnrich
 
 Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
