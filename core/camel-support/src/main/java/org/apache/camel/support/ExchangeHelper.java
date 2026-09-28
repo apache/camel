@@ -1055,7 +1055,8 @@ public final class ExchangeHelper {
             } else {
                 // value is not a suitable type, try to convert value to a string
                 String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
-                scanner = new Scanner(text, delimiter);
+                // a null value (such as no message body) has no tokens
+                scanner = new Scanner(text != null ? text : "", delimiter);
             }
         }
         return scanner;

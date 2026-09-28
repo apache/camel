@@ -504,7 +504,9 @@ public class MockValueBuilder implements Expression, Predicate {
             // wrap in skip first (if group then it has its own skip-first logic)
             newExp = ExpressionBuilder.skipFirstExpression(newExp);
         }
-        newExp = ExpressionBuilder.groupIteratorExpression(newExp, token, group, skipFirst);
+        if (group != null) {
+            newExp = ExpressionBuilder.groupIteratorExpression(newExp, token, group, skipFirst);
+        }
         return onNewValueBuilder(newExp);
     }
 

@@ -1789,8 +1789,10 @@ public class ExpressionBuilder {
                 Object value = expression.evaluate(exchange, Object.class);
                 Iterator<?> it = typeConverter.tryConvertTo(Iterator.class, exchange, value);
                 if (it != null) {
-                    // skip first
-                    it.next();
+                    // skip first (there is nothing to skip when there is no content)
+                    if (it.hasNext()) {
+                        it.next();
+                    }
                     return it;
                 } else {
                     return value;
@@ -1838,6 +1840,11 @@ public class ExpressionBuilder {
     }
 
     public static Expression groupXmlIteratorExpression(final Expression expression, final String group) {
+        return groupXmlIteratorExpression(expression, group, false);
+    }
+
+    public static Expression groupXmlIteratorExpression(
+            final Expression expression, final String group, final boolean skipFirst) {
         return new ExpressionAdapter() {
             private Expression groupExp;
 
@@ -1857,7 +1864,7 @@ public class ExpressionBuilder {
                 } else if (parts <= 0) {
                     throw new RuntimeExchangeException("Group must be a positive number, was: " + parts, exchange);
                 }
-                return new GroupTokenIterator(exchange, it, null, parts, false);
+                return new GroupTokenIterator(exchange, it, null, parts, skipFirst);
             }
 
             @Override
@@ -2632,7 +2639,7 @@ public class ExpressionBuilder {
      */
     public static Expression tokenizePairExpression(
             Expression source, String startToken, String endToken, boolean includeTokens) {
-        return new TokenPairExpressionIterator(startToken, endToken, includeTokens);
+        return new TokenPairExpressionIterator(source, startToken, endToken, includeTokens);
     }
 
     /**

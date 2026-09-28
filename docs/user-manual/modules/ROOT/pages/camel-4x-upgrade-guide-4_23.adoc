@@ -155,6 +155,19 @@ ratios that are all `0`, or ratios whose sum is greater than `2147483647` now fa
 `IllegalArgumentException`. Previously such a route started, but sending to it could hang the caller, spin a CPU,
 or send every message to the same endpoint.
 
+=== Tokenize language
+
+- A message without a body (or a `source` that has no value) now has no tokens, the same as an empty body.
+  Prior to Camel 4.23 the tokenizer failed with a `NullPointerException`.
+- `skipFirst` now also skips the first token in `xml` mode and in pair mode (`endToken`). Prior to Camel 4.23 the
+  option was ignored in those modes.
+- In pair mode with `group` and `includeTokens`, the grouped pairs are now joined without a delimiter (as in
+  `xml` mode), unless `groupDelimiter` is set. Prior to Camel 4.23 the start token was inserted between them, so a
+  group of `<a>1</a>` and `<a>2</a>` became `<a>1</a><a><a>2</a>`. Without `includeTokens` the start token is still
+  used as the delimiter between the grouped values.
+- A pair with the same start and end token is now refused when the route is created. Prior to Camel 4.23 it
+  silently had no tokens.
+
 === Context reload now re-applies placeholder based component options
 
 When a context reload is triggered, for example by one of the vault components detecting that a secret was rotated,
