@@ -3257,6 +3257,37 @@ healthy while no longer receiving any change event. Deployments that use readine
 now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
 The engine is still not restarted automatically.
 
+=== camel-mongodb - a failed exchange is reported, and does not advance the consumer's position
+
+Both MongoDB consumers ignored the outcome of the route. A failure left on the exchange was never looked at,
+and an exception thrown from the processor was caught and dropped. With the default error handler the
+failure was still logged once redelivery was exhausted, but with `noErrorHandler`, or an error handler that
+does not log, it left no trace. The failure is now also passed to the consumer's `ExceptionHandler`, which
+logs it by default, so expect an additional log line for each failed exchange.
+
+A failed exchange also no longer advances the consumer's position. The tailable cursor consumer updates its
+tail tracking value, and the change streams consumer records and commits its resume token, only after the
+route processed the event without a failure. Previously both did so for every event, whether or not the
+route failed. With `persistentTailTracking=true` the stored position is therefore that of the last
+successful record.
+
+This is not a retry. The next event that succeeds moves the position past the failed one. A failed event is
+read again only if the consumer reopens its cursor from the stored position before a later event has
+succeeded, for example when the cursor is regenerated, or on a restart with persistent tail tracking or a
+resume strategy.
+
+=== camel-mongodb - the change stream id header is no longer always an ObjectId
+
+The `_id` header set by the change streams consumer (`MongoDbConstants.MONGO_ID`) used to be read as an
+`org.bson.types.ObjectId` unconditionally, which threw for a document whose `_id` is a string, a number or
+a compound key, and for the events that carry no document key at all (`invalidate`, `drop`, `rename`,
+`dropDatabase`).
+
+It now carries the id in its natural Java type - an `ObjectId` when MongoDB generated it, otherwise a
+`String`, a number, or a `Document` for a compound key - and is absent for the events without a document
+key. A route that casts this header to `ObjectId` should check the type first, or keep working unchanged
+if its collection uses generated ids.
+
 === camel-seda - purging the queue completes the discarded exchanges
 
 When a SEDA queue is purged (with `purgeWhenStopping=true` or the `purgeQueue` JMX operation), the discarded exchanges
