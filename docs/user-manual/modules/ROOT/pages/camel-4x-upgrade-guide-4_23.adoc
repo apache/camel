@@ -903,6 +903,18 @@ component publishes events in the CloudEvents schema, which has no `dataVersion`
 belongs to the legacy Event Grid event schema), so the header was read but never applied to the
 published event. Remove any use of that header; there is no CloudEvents equivalent.
 
+=== camel-hivemq
+
+The `ssl` option is now marked `insecure:ssl`, so setting it to `false` in the configuration is reported
+by the xref:security-policy.adoc[security policy] check: a warning by default, and a startup failure with
+the `prod` profile or `camel.security.insecureSslPolicy = fail`.
+
+The check matches a configuration property by its option name, not by its component. It therefore also
+applies when `ssl=false` is set on the other components that have an `ssl` option: `camel-clickhouse`,
+`camel-netty`, `camel-netty-http` and `camel-oaipmh`, for example `camel.component.netty.ssl = false` in
+`application.properties`. The `tls` option of `camel-pinecone` already worked this way for `tls=false`. To
+keep such a setting under a `fail` policy, list it in `camel.security.allowedProperties`.
+
 === camel-hazelcast
 
 `ReplicatedHazelcastAggregationRepository` now applies the same default
