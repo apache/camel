@@ -45,6 +45,8 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "notify": target.setNotify(property(camelContext, boolean.class, value)); return true;
         case "observable": target.setObservable(property(camelContext, boolean.class, value)); return true;
         case "observe": target.setObserve(property(camelContext, boolean.class, value)); return true;
@@ -85,6 +87,8 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "notify": return boolean.class;
         case "observable": return boolean.class;
         case "observe": return boolean.class;
@@ -126,6 +130,8 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "muteexception":
+        case "muteException": return target.isMuteException();
         case "notify": return target.isNotify();
         case "observable": return target.isObservable();
         case "observe": return target.isObserve();
