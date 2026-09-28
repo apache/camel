@@ -16,6 +16,8 @@
  */
 package org.apache.camel.opentelemetry.metrics.messagehistory;
 
+import java.util.concurrent.TimeUnit;
+
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.metrics.data.HistogramPointData;
 import io.opentelemetry.sdk.metrics.data.PointData;
@@ -26,6 +28,7 @@ import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -58,12 +61,15 @@ public class MessageHistoryTest extends AbstractOpenTelemetryTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        // there should be 3 names
-        assertEquals(3, getAllPointData(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).size());
-
-        assertEquals(count / 2, getPointData("route1", "foo").getCount());
-        assertEquals(count / 2, getPointData("route2", "bar").getCount());
-        assertEquals(count / 2, getPointData("route2", "baz").getCount());
+        // Metric recording via nodeProcessingDone() happens asynchronously on seda threads,
+        // so all metric assertions need to be wrapped in await() to avoid a race with mock receipt.
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            // there should be 3 names
+            assertEquals(3, getAllPointData(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME).size());
+            assertEquals(count / 2, getPointData("route1", "foo").getCount());
+            assertEquals(count / 2, getPointData("route2", "bar").getCount());
+            assertEquals(count / 2, getPointData("route2", "baz").getCount());
+        });
     }
 
     private HistogramPointData getPointData(String routeId, String nodeId) {
