@@ -179,8 +179,9 @@ module parses to nothing and the document is answered `EMPTY`.
 text output as the pinned UTF-8 without consulting the exchange — a plain
 `getBody(String.class)` resolves its charset from the `CamelCharsetName` *header* first (then
 the property), so a message-supplied `CamelCharsetName` surviving up to the conversion would
-steer the decode. `convertBodyTo(String.class, "UTF-8")` is no substitute: that option sets
-the exchange property, which the injected header outranks. Tika also copies the parsed
+steer the decode. Since CAMEL-25034, `convertBodyTo(String.class, "UTF-8")` also overrides
+that header while it converts, but `TikaTextDecode` keeps the decode independent of how the
+route converts the body. Tika also copies the parsed
 document's remaining metadata over the message headers (Camel-namespace names are filtered
 out by camel-tika); when the route continues past ingestion, sweep them with a
 `removeHeaders` step — the same hygiene the docling recipe applies to `CamelDocling*` — so

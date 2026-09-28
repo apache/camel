@@ -68,6 +68,12 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <!-- many consoles are driven by the managed MBeans (JMX) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-management</artifactId>
+            <scope>test</scope>
+        </dependency>
        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

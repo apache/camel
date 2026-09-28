@@ -34,8 +34,7 @@ class TikaTextDecodeTest {
      * The reason this step exists: getBody(String) resolves its charset through the exchange — the CamelCharsetName
      * header first, then the property — so a message-supplied CamelCharsetName header would steer the decode and mangle
      * the extracted text. The decode reads raw bytes and applies the pinned UTF-8 regardless. The header (not the
-     * property) is injected here on purpose: convertBodyTo(String, "UTF-8") only sets the property, which the header
-     * outranks — proving that option would be no substitute.
+     * property) is injected here on purpose, as the header outranks the property when a body is converted.
      */
     @Test
     void decodesThePinnedUtf8DespiteAnInjectedCharsetHeader() throws Exception {

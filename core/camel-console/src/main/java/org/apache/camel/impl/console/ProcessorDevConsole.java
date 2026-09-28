@@ -123,6 +123,10 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         final StringBuilder sb = new StringBuilder();
+        if (mcc == null) {
+            // camel-management is not in use
+            return sb.toString();
+        }
         final AtomicInteger counter = new AtomicInteger();
         for (Route r : getCamelContext().getRoutes()) {
             ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
@@ -245,6 +249,10 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
         List<ProcessorEntry> list = new ArrayList<>();
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        if (mcc == null) {
+            // camel-management is not in use
+            return JsonRecordSupport.toJsonObject(new Response(list));
+        }
         for (Route r : getCamelContext().getRoutes()) {
             ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
             includeProcessorsJson(mrb, list, filter, max);
@@ -284,7 +292,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             CamelContext camelContext, List<ProcessorEntry> list, int max, List<ManagedProcessorMBean> mps) {
         for (int i = 0; i < mps.size(); i++) {
             ManagedProcessorMBean mp = mps.get(i);
-            if (list.size() > max) {
+            if (list.size() >= max) {
                 return;
             }
 
@@ -409,6 +417,10 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
         List<ManagedProcessorMBean> mps = new ArrayList<>();
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        if (mcc == null) {
+            // camel-management is not in use
+            return;
+        }
         for (Route r : getCamelContext().getRoutes()) {
             ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
             try {

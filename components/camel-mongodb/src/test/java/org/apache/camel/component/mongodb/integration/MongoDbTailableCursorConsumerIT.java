@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb.integration;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +53,7 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
     private String cappedTestCollectionName;
     private CreateCollectionOptions createCollectionOptions;
     private ExecutorService executorService = Executors.newCachedThreadPool();
+    private final RecordingExceptionHandler failures = new RecordingExceptionHandler("increasing");
 
     @BeforeEach
     void checkDocuments() {
@@ -330,6 +332,31 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
 
     }
 
+    @Test
+    public void testFailedRecordIsReportedAndDoesNotMoveTheTailPosition() throws Exception {
+        assertEquals(0, cappedTestCollection.countDocuments());
+        MongoCollection<Document> trackingCol = db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION, Document.class);
+        trackingCol.deleteMany(eq("persistentId", "failing"));
+        failures.clear();
+
+        MockEndpoint mock = contextExtension.getMockEndpoint("mock:tailFailing");
+        mock.reset();
+        mock.expectedMessageCount(2);
+
+        context.getRouteController().startRoute("tailableCursorConsumerFailing");
+        // the route fails for the last record, increasing=3
+        doQuickInsert(1, 3);
+
+        mock.assertIsSatisfied();
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> !failures.getValues().isEmpty());
+        context.getRouteController().stopRoute("tailableCursorConsumerFailing");
+
+        // the route failure reached the consumer's exception handler
+        assertEquals(List.of(3), failures.getValues());
+        // and the failed record did not move the persisted position past the last record the route accepted
+        assertEquals(2, trackingCol.find(eq("persistentId", "failing")).first().get("lastTrackingValue"));
+    }
+
     public void assertAndResetMockEndpoint(MockEndpoint mock) throws Exception {
         mock.assertIsSatisfied();
         mock.reset();
@@ -374,6 +401,7 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
     @RouteFixture
     @Override
     public void createRouteBuilder(CamelContext context) throws Exception {
+        context.getRegistry().bind("tailFailures", failures);
         context.addRoutes(new RouteBuilder() {
 
             @Override
@@ -393,6 +421,15 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
 
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing")// &readPreference=primary")
                         .id("tailableCursorConsumer1.readPreference").autoStartup(false).to("mock:test");
+                from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&"
+                     + "persistentTailTracking=true&persistentId=failing&exceptionHandler=#tailFailures")
+                        .id("tailableCursorConsumerFailing").autoStartup(false)
+                        .process(exchange -> {
+                            if (Integer.valueOf(3).equals(exchange.getIn().getBody(Document.class).get("increasing"))) {
+                                throw new IllegalStateException("Simulated route failure");
+                            }
+                        })
+                        .to("mock:tailFailing");
 
             }
         });
