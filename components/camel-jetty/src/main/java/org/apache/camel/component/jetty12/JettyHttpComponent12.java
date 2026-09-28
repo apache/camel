@@ -29,6 +29,7 @@ import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.util.URISupport;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
@@ -118,7 +119,8 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
                         throw new IllegalArgumentException(
                                 "There are " + properties.size() + " parameters that couldn't be set on the SocketConnector."
                                                            + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
-                                                           + " Unknown parameters=[" + properties + "]");
+                                                           + " Unknown parameters=["
+                                                           + URISupport.sanitizeParameters(properties) + "]");
                     }
                 }
 
