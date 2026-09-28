@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.minio.services;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 
+@Deprecated(since = "4.23")
 public final class MinioServiceFactory {
 
     private static class SingletonMinioService extends SingletonService<MinioService> implements MinioService {
