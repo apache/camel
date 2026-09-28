@@ -196,6 +196,16 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
                 }
             }
         }
+        if (invalidDuration != null) {
+            for (Map.Entry<String, String> entry : invalidDuration.entrySet()) {
+                boolean empty = isEmpty(entry.getValue());
+                if (empty) {
+                    options.put(entry.getKey(), "Empty duration value");
+                } else {
+                    options.put(entry.getKey(), "Invalid duration value: " + entry.getValue());
+                }
+            }
+        }
         if (invalidMap != null) {
             for (Map.Entry<String, String> entry : invalidMap.entrySet()) {
                 boolean empty = isEmpty(entry.getValue());
