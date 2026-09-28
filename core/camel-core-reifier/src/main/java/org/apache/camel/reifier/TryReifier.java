@@ -48,8 +48,9 @@ public class TryReifier extends ProcessorReifier<TryDefinition> {
         }
 
         // user must have configured at least one catch or finally
-        if (definition.getFinallyClause() == null && definition.getCatchClauses() == null) {
-            throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
+        if (definition.getFinallyClause() == null
+                && (definition.getCatchClauses() == null || definition.getCatchClauses().isEmpty())) {
+            throw new IllegalArgumentException("doTry must have one or more doCatch or doFinally blocks on " + definition);
         }
 
         // must have finally processor as it set some state after completing the entire doTry block
