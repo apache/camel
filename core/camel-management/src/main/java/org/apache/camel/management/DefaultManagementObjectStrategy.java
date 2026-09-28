@@ -103,6 +103,7 @@ import org.apache.camel.management.mbean.ManagedStickyLoadBalancer;
 import org.apache.camel.management.mbean.ManagedStop;
 import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
+import org.apache.camel.management.mbean.ManagedSwitch;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThreads;
 import org.apache.camel.management.mbean.ManagedThrottler;
@@ -160,6 +161,7 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.StepProcessor;
 import org.apache.camel.processor.StopProcessor;
 import org.apache.camel.processor.StreamResequencer;
+import org.apache.camel.processor.SwitchProcessor;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThrowExceptionProcessor;
@@ -366,6 +368,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedConvertHeader(context, chp, definition);
             } else if (target instanceof ConvertVariableProcessor cvp) {
                 answer = new ManagedConvertVariable(context, cvp, definition);
+            } else if (target instanceof SwitchProcessor sp) {
+                answer = new ManagedSwitch(context, sp, definition);
             } else if (target instanceof ChoiceProcessor cp) {
                 answer = new ManagedChoice(context, cp, definition);
             } else if (target instanceof ClaimCheckProcessor ccp) {

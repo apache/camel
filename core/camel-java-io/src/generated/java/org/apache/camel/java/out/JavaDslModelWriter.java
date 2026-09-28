@@ -663,6 +663,26 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteStopDefinition(sb, def);
         return sb.toString();
     }
+    public String writeSwitchCaseDefinition(SwitchCaseDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "case", def);
+        doWriteSwitchCaseDefinition(sb, def);
+        return sb.toString();
+    }
+    public String writeSwitchDefinition(SwitchDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        writeSwitch(sb, def);
+        return sb.toString();
+    }
+    public String writeSwitchValueDefinition(SwitchValueDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "switchValue", def);
+        doWriteSwitchValueDefinition(sb, def);
+        return sb.toString();
+    }
     public String writeTemplatedRouteDefinition(TemplatedRouteDefinition def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -2575,6 +2595,24 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteStopDefinition(StringBuilder sb, StopDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
+    }
+    protected void doWriteSwitchCaseDefinition(StringBuilder sb, SwitchCaseDefinition def) {
+        doWriteOptionalIdentifiedDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "value", def.getValue(), null);
+        doWriteAttribute(sb, "uri", def.getUri(), null);
+        doWriteChildList(sb, "values", def.getValues(), this::doWriteSwitchValueDefinition);
+    }
+    protected void doWriteSwitchDefinition(StringBuilder sb, SwitchDefinition def) {
+        doWriteProcessorDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "otherwise", def.getOtherwise(), null);
+        doWriteChildElement(sb, "selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
+        doWriteStringList(sb, null, "keys", def.getKeys());
+        doWriteChildList(sb, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
+    }
+    protected void doWriteSwitchValueDefinition(StringBuilder sb, SwitchValueDefinition def) {
+        doWriteAttribute(sb, "name", def.getName(), null);
+        doWriteAttribute(sb, "value", def.getValue(), null);
+        doWriteAttribute(sb, "type", def.getType(), "string");
     }
     protected void doWriteTemplatedRouteDefinition(StringBuilder sb, TemplatedRouteDefinition def) {
         doWriteAttribute(sb, "routeTemplateRef", def.getRouteTemplateRef(), null);
@@ -4885,6 +4923,12 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     doWriteStopDefinition(sb, (StopDefinition) v);
                     endStep(sb, "stop", v);
                 }
+                case "SwitchCaseDefinition" -> {
+                    beginStep(sb, "case", v);
+                    doWriteSwitchCaseDefinition(sb, (SwitchCaseDefinition) v);
+                    endStep(sb, "case", v);
+                }
+                case "SwitchDefinition" -> writeSwitch(sb, (SwitchDefinition) v);
                 case "TemplatedRoutesDefinition" -> {
                     beginStep(sb, "templatedRoutes", v);
                     doWriteTemplatedRoutesDefinition(sb, (TemplatedRoutesDefinition) v);
@@ -5977,6 +6021,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     doWriteStopDefinition(sb, (StopDefinition) v);
                     endStep(sb, "stop", v);
                 }
+                case "SwitchDefinition" -> writeSwitch(sb, (SwitchDefinition) v);
                 case "ThreadsDefinition" -> {
                     ThreadsDefinition _d = (ThreadsDefinition) v;
                     handledAttributes.clear();

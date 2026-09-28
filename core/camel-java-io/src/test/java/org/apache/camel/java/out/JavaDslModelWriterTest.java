@@ -32,6 +32,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetVariableDefinition;
 import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TransformDefinition;
@@ -45,6 +46,25 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class JavaDslModelWriterTest {
+
+    @Test
+    void switchExportPreservesDisabledAndCaseMetadata() {
+        SwitchDefinition sw = new SwitchDefinition(new HeaderExpression("decision"));
+        sw.id("dispatch").disabled(true).description("Table dispatch").note("dispatch note");
+        sw.doCase("billing").id("billingCase").description("Billing destination").note("case note").to("mock:billing");
+        JavaDslModelWriter writer = new JavaDslModelWriter();
+        String java = writer.writeSwitchDefinition(sw);
+        Assertions.assertTrue(java.contains(".doSwitch(header(\"decision\"))"), java);
+        Assertions.assertTrue(java.contains(".disabled(\"true\")"), java);
+        Assertions.assertTrue(java.contains(".id(\"dispatch\")"), java);
+        Assertions.assertTrue(java.contains(".description(\"Table dispatch\")"), java);
+        Assertions.assertTrue(java.contains(".id(\"billingCase\")"), java);
+        Assertions.assertTrue(java.contains(".note(\"case note\")"), java);
+        sw.setCustomId(false);
+        sw.getCases().get(0).setCustomId(false);
+        java = writer.writeSwitchDefinition(sw);
+        Assertions.assertFalse(java.contains(".id("), java);
+    }
 
     private String loadExpected(String name) throws IOException {
         return Files.readString(Paths.get("src/test/resources/" + name));

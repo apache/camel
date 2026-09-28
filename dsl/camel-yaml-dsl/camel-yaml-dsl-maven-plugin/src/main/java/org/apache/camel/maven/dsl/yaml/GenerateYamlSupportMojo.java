@@ -101,12 +101,10 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("org.apache.camel.model.OutputNode");
     public static final DotName PROCESSOR_DEFINITION_CLASS
             = DotName.createSimple("org.apache.camel.model.ProcessorDefinition");
-    public static final DotName SEND_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.SendDefinition");
+    public static final DotName ENDPOINT_REQUIRED_DEFINITION_CLASS
+            = DotName.createSimple("org.apache.camel.model.EndpointRequiredDefinition");
     public static final DotName TO_DYNAMIC_DEFINITION_CLASS
             = DotName.createSimple("org.apache.camel.model.ToDynamicDefinition");
-    public static final DotName POLL_DEFINITION_CLASS
-            = DotName.createSimple("org.apache.camel.model.PollDefinition");
     public static final DotName ERROR_HANDLER_BUILDER_CLASS
             = DotName.createSimple("org.apache.camel.builder.ErrorHandlerBuilder");
     public static final DotName VERB_DEFINITION_CLASS

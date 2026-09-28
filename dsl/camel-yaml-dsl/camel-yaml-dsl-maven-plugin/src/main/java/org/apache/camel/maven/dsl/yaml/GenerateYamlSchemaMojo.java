@@ -172,6 +172,16 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             postProcessInheritance(inheritedDefinitions, inlineDefinitions);
         }
 
+        // Switch's YAML shorthand is one named, typed scalar per list entry.
+        String switchValue = "org.apache.camel.model.SwitchValueDefinition";
+        if (definitions.has(switchValue)) {
+            ObjectNode literal = mapper.createObjectNode();
+            literal.put("type", "object").put("minProperties", 1).put("maxProperties", 1);
+            literal.putObject("additionalProperties").putArray("type")
+                    .add("string").add("boolean").add("number");
+            definitions.set(switchValue, literal);
+        }
+
         try {
             ToolingSupport.mkparents(outputFile);
 

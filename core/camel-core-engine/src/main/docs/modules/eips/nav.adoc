@@ -106,6 +106,7 @@
 ** xref:stop-eip.adoc[Stop]
 ** xref:throwException-eip.adoc[Stop]
 ** xref:streamConfig-eip.adoc[StreamConfig]
+** xref:switch-eip.adoc[Switch]
 ** xref:threads-eip.adoc[Threads]
 ** xref:throttle-eip.adoc[Throttle]
 ** xref:to-eip.adoc[To]

@@ -101,6 +101,7 @@ import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
+import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.ThrottleDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
@@ -217,6 +218,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new CacheReifier(route, definition);
         } else if (definition instanceof CatchDefinition) {
             return new CatchReifier(route, definition);
+        } else if (definition instanceof SwitchDefinition) {
+            return new SwitchReifier(route, definition);
         } else if (definition instanceof ChoiceDefinition) {
             return new ChoiceReifier(route, definition);
         } else if (definition instanceof CircuitBreakerDefinition) {

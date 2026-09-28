@@ -72,6 +72,8 @@ public class CustomResolver implements YamlDeserializerResolver {
             //
             // Misc
             //
+            case "org.apache.camel.model.SwitchValueDefinition":
+                return new SwitchValueDefinitionDeserializer();
             case "beans":
                 return beansDeserializer;
             case "dataFormats":
