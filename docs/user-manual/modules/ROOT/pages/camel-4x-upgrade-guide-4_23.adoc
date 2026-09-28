@@ -2794,6 +2794,27 @@ Configure the `target` and `credentials` endpoint options instead, or route to a
 with `toD` when the destination varies per message. The constants remain in place for backwards
 compatibility and are now marked deprecated in the component metadata.
 
+=== camel-main - configuration options now applied
+
+Some configuration options of camel-main were not applied, and are now:
+
+* The backlog tracer now traces the routes of the Rest DSL by default (`camel.trace.traceRests=true`), as documented.
+  Previously camel-main turned this off. Set `camel.trace.traceRests=false` to not trace them.
+* Wildcard component options (such as `camel.component.seda*.queueSize=123`) are now also applied to components that
+  are created after startup, such as when a route uses the component the first time. Previously they were only
+  applied to the components that existed at startup.
+* Options of `metrics`, `otel` and `lra` configured using the Java API (such as
+  `main.configure().metrics().withEnabled(true).withEnableMessageHistory(true)`) are now applied. When no
+  `camel.metrics.*` (or `camel.opentelemetry.*` or `camel.lra.*`) properties are configured, the service is only enabled
+  when `withEnabled(true)` is set (previously configuring the service using the Java API always enabled it).
+* The documented `camel.main.cloudPropertiesLocation` option is now used (previously only
+  `camel.main.cloud-properties-location` worked), and override properties are no longer lost when cloud properties
+  are loaded.
+* `camel.main.streamCachingBufferSize` no longer sets the buffer size to `0` when not configured, and
+  `camel.main.streamCachingStatisticsEnabled` is now applied.
+* `camel.server.useGlobalSslContextParameters=false` (and `camel.management.useGlobalSslContextParameters=false`)
+  is now honoured when global SSL is enabled.
+
 === camel-seda - purgeWhenStopping no longer purges when suspending
 
 A SEDA consumer with `purgeWhenStopping=true` no longer discards the pending messages on its queue when its route

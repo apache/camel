@@ -35,6 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -69,6 +70,7 @@ import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.BacklogTracer;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelMDCService;
@@ -167,6 +169,7 @@ public abstract class BaseMainSupport extends BaseService {
     protected volatile CamelContext camelContext;
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
     protected final OrderedLocationProperties wildcardProperties = new OrderedLocationProperties();
+    private volatile boolean wildcardLifecycleStrategyAdded;
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected String propertyPlaceholderLocations;
     protected String defaultPropertyPlaceholderLocation = MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
@@ -487,13 +490,34 @@ public abstract class BaseMainSupport extends BaseService {
             pc.setOverrideProperties(op);
         }
 
-        Optional<String> cloudLocations = pc.resolveProperty(MainConstants.CLOUD_PROPERTIES_LOCATION);
-        if (cloudLocations.isPresent()) {
-            final Properties kp = tryLoadCloudProperties(op, cloudLocations.get());
+        String cloudLocations = resolveCloudPropertiesLocation(pc, ip, op);
+        if (cloudLocations != null) {
+            final Properties kp = tryLoadCloudProperties(op, cloudLocations);
             if (!kp.isEmpty()) {
                 pc.setOverrideProperties(kp);
             }
         }
+    }
+
+    private String resolveCloudPropertiesLocation(PropertiesComponent pc, Properties ip, Properties op) {
+        String answer = mainConfigurationProperties.getCloudPropertiesLocation();
+        // the option may be configured in camelCase or kebab-case
+        String[] keys = { MainConstants.CLOUD_PROPERTIES_LOCATION, "camel.main.cloudPropertiesLocation" };
+        for (String key : keys) {
+            // look in the initial and override properties first (they cannot yet be resolved by the properties component)
+            if (answer == null && op != null) {
+                answer = op.getProperty(key);
+            }
+            if (answer == null && ip != null) {
+                answer = ip.getProperty(key);
+            }
+        }
+        for (String key : keys) {
+            if (answer == null) {
+                answer = pc.resolveProperty(key).orElse(null);
+            }
+        }
+        return answer;
     }
 
     private Properties tryLoadProperties(
@@ -569,7 +593,9 @@ public abstract class BaseMainSupport extends BaseService {
         if (overridProperties == null) {
             return cp;
         }
-        Properties mergedProperties = new Properties(overridProperties);
+        // the override properties must be kept (and not as defaults, which are not used when looking up properties)
+        Properties mergedProperties = new Properties();
+        mergedProperties.putAll(overridProperties);
         mergedProperties.putAll(cp);
         return mergedProperties;
     }
@@ -2001,6 +2027,27 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
+    /**
+     * Adds the options configured using the Java API (the options that are not the default value), which are not
+     * already configured as properties (properties take precedence).
+     */
+    private static void addJavaApiOptions(
+            CamelContext camelContext, Object config, Object defaults, OrderedLocationProperties properties) {
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(camelContext);
+        Map<String, Object> values = new LinkedHashMap<>();
+        bi.getProperties(config, values, null, false);
+        Map<String, Object> defaultValues = new LinkedHashMap<>();
+        bi.getProperties(defaults, defaultValues, null, false);
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
+            String key = optionKey(entry.getKey());
+            Object value = entry.getValue();
+            if (!"enabled".equals(key) && value != null && !Objects.equals(value, defaultValues.get(entry.getKey()))
+                    && !properties.containsKey(key)) {
+                properties.put("JavaAPI", key, value);
+            }
+        }
+    }
+
     private void setLraCheckProperties(
             CamelContext camelContext, OrderedLocationProperties lraProperties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
@@ -2011,8 +2058,21 @@ public abstract class BaseMainSupport extends BaseService {
         if (ObjectHelper.isNotEmpty(obj)) {
             autoConfiguredProperties.put(loc, "camel.lra.enabled", obj.toString());
         }
-        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        // the options may also be configured using the Java API
+        LraConfigurationProperties config
+                = mainConfigurationProperties.hasLraConfiguration() ? mainConfigurationProperties.lra() : null;
+        boolean enabled;
+        if (obj != null) {
+            enabled = CamelContextHelper.parseBoolean(camelContext, obj.toString());
+        } else if (config != null && lraProperties.isEmpty()) {
+            enabled = config.isEnabled();
+        } else {
+            enabled = true;
+        }
         if (enabled) {
+            if (config != null) {
+                addJavaApiOptions(camelContext, config, new LraConfigurationProperties(null), lraProperties);
+            }
             CamelSagaService css = resolveLraSagaService(camelContext);
             setPropertiesOnTarget(camelContext, css, lraProperties, "camel.lra.", failIfNotSet, true, autoConfiguredProperties);
             // add as service so saga can be active
@@ -2075,8 +2135,21 @@ public abstract class BaseMainSupport extends BaseService {
         if (ObjectHelper.isNotEmpty(obj)) {
             autoConfiguredProperties.put(loc, "camel.opentelemetry.enabled", obj.toString());
         }
-        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        // the options may also be configured using the Java API
+        OtelConfigurationProperties config
+                = mainConfigurationProperties.hasOtelConfiguration() ? mainConfigurationProperties.otel() : null;
+        boolean enabled;
+        if (obj != null) {
+            enabled = CamelContextHelper.parseBoolean(camelContext, obj.toString());
+        } else if (config != null && otelProperties.isEmpty()) {
+            enabled = config.isEnabled();
+        } else {
+            enabled = true;
+        }
         if (enabled) {
+            if (config != null) {
+                addJavaApiOptions(camelContext, config, new OtelConfigurationProperties(null), otelProperties);
+            }
             CamelTracingService otel = resolveOtelService(camelContext);
             setPropertiesOnTarget(camelContext, otel, otelProperties, "camel.opentelemetry.", failIfNotSet, true,
                     autoConfiguredProperties);
@@ -2164,8 +2237,21 @@ public abstract class BaseMainSupport extends BaseService {
         if (ObjectHelper.isNotEmpty(obj)) {
             autoConfiguredProperties.put(loc, "camel.metrics.enabled", obj.toString());
         }
-        boolean enabled = obj != null ? CamelContextHelper.parseBoolean(camelContext, obj.toString()) : true;
+        // the options may also be configured using the Java API
+        MetricsConfigurationProperties config
+                = mainConfigurationProperties.hasMetricsConfiguration() ? mainConfigurationProperties.metrics() : null;
+        boolean enabled;
+        if (obj != null) {
+            enabled = CamelContextHelper.parseBoolean(camelContext, obj.toString());
+        } else if (config != null && metricsProperties.isEmpty()) {
+            enabled = config.isEnabled();
+        } else {
+            enabled = true;
+        }
         if (enabled) {
+            if (config != null) {
+                addJavaApiOptions(camelContext, config, new MetricsConfigurationProperties(null), metricsProperties);
+            }
             CamelMetricsService micrometer = resolveMicrometerService(camelContext);
             setPropertiesOnTarget(camelContext, micrometer, metricsProperties, "camel.metrics.", failIfNotSet, true,
                     autoConfiguredProperties);
@@ -2205,6 +2291,10 @@ public abstract class BaseMainSupport extends BaseService {
 
         HttpServerConfigurationProperties server = mainConfigurationProperties.httpServer();
 
+        // whether useGlobalSslContextParameters is explicit configured (must check before the properties are bound
+        // as binding removes them)
+        boolean explicitGlobalSsl = properties.stringPropertyNames().stream()
+                .anyMatch(k -> k.equalsIgnoreCase("useGlobalSslContextParameters"));
         setPropertiesOnTarget(camelContext, server, properties, PREFIX_SERVER,
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
@@ -2219,7 +2309,7 @@ public abstract class BaseMainSupport extends BaseService {
         // (unless the user has explicitly configured useGlobalSslContextParameters)
         if (!server.isUseGlobalSslContextParameters()
                 && camelContext.getSSLContextParameters() != null
-                && !properties.containsKey("useGlobalSslContextParameters")) {
+                && !explicitGlobalSsl) {
             server.setUseGlobalSslContextParameters(true);
         }
 
@@ -2253,6 +2343,10 @@ public abstract class BaseMainSupport extends BaseService {
 
         HttpManagementServerConfigurationProperties server = mainConfigurationProperties.httpManagementServer();
 
+        // whether useGlobalSslContextParameters is explicit configured (must check before the properties are bound
+        // as binding removes them)
+        boolean explicitGlobalSsl = properties.stringPropertyNames().stream()
+                .anyMatch(k -> k.equalsIgnoreCase("useGlobalSslContextParameters"));
         setPropertiesOnTarget(camelContext, server, properties, "camel.management.",
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
@@ -2265,7 +2359,7 @@ public abstract class BaseMainSupport extends BaseService {
         // (unless the user has explicitly configured useGlobalSslContextParameters)
         if (!server.isUseGlobalSslContextParameters()
                 && camelContext.getSSLContextParameters() != null
-                && !properties.containsKey("useGlobalSslContextParameters")) {
+                && !explicitGlobalSsl) {
             server.setUseGlobalSslContextParameters(true);
         }
 
@@ -3091,16 +3185,17 @@ public abstract class BaseMainSupport extends BaseService {
             doAutowireWildcardProperties(name, comp);
         }
 
-        // and autowire any new components that may be added in the future
-        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
-            @Override
-            public void onComponentAdd(String name, Component component) {
-                doAutowireWildcardProperties(name, component);
-            }
-        });
-
-        // clear in case we reload later
-        wildcardProperties.clear();
+        // and autowire any new components that may be added in the future (such as when routes are created)
+        // using the wildcard properties (which are kept, and updated when properties are reloaded)
+        if (!wildcardLifecycleStrategyAdded) {
+            wildcardLifecycleStrategyAdded = true;
+            camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+                @Override
+                public void onComponentAdd(String name, Component component) {
+                    doAutowireWildcardProperties(name, component);
+                }
+            });
+        }
     }
 
     protected void doAutowireWildcardProperties(String name, Component component) {
