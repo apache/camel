@@ -2963,6 +2963,15 @@ carried an HTTP header of that name, the two were merged and `${header.sku}` was
 so a route that read it failed even when the path value was correct. The value from the path is used now; a query
 parameter may still repeat and is still collected into a list.
 
+=== camel-main - global variables and the route reload pattern
+
+A global variable configured with a dot in its name, such as `camel.variable.global.foo.bar=1`, is now stored with the
+name `foo.bar`. Previously the first dot was replaced by a colon (`foo:bar`), as it is for route and group variables.
+
+The `camel.main.routesReloadPattern` option now also matches a pattern with a directory (such as `sub/*.yaml`) against
+the path of the file relative to the reload directory. Previously only the name of the file was matched, so such a
+pattern never matched.
+
 === camel-core - the required attribute on rest param and route template parameter is now a String
 
 `ParamDefinition.required` (the rest DSL `param`) and `RouteTemplateParameterDefinition.required`
