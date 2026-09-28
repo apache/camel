@@ -17,6 +17,7 @@
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -28,9 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,6 +102,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     private static final String SSL_SERVER_SOCKET_SIGNATURE_SCHEME_LOG_MSG
             = createSignatureSchemeLogMessage("SSLServerSocket");
 
+    private static volatile boolean namedGroupsNotSupportedWarned;
+    private static volatile boolean signatureSchemesNotSupportedWarned;
+
     // Reflection handles for JDK 19/20 SSLParameters methods (not available on JDK 17)
     private static final @Nullable Method GET_NAMED_GROUPS;
     private static final @Nullable Method SET_NAMED_GROUPS;
@@ -134,13 +140,40 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
     private static void setNamedGroupsOnParams(SSLParameters params, String[] namedGroups) {
         if (SET_NAMED_GROUPS == null) {
+            if (!namedGroupsNotSupportedWarned) {
+                namedGroupsNotSupportedWarned = true;
+                LOG.warn("The named groups cannot be configured as this JVM does not support it (requires JDK 20 or newer)");
+            }
             return;
         }
+        invokeSetter(SET_NAMED_GROUPS, params, namedGroups, "named groups");
+    }
+
+    private static void invokeSetter(Method method, SSLParameters params, String[] values, String name) {
         try {
-            SET_NAMED_GROUPS.invoke(params, (Object) namedGroups);
-        } catch (Exception e) {
-            // ignore
+            method.invoke(params, (Object) values);
+        } catch (InvocationTargetException e) {
+            // the configured values must not be silently ignored (the JVM defaults would be used instead)
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            throw new IllegalArgumentException(
+                    "Cannot configure the " + name + " " + Arrays.toString(values) + " due to: " + cause.getMessage(), cause);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
         }
+    }
+
+    /**
+     * Trims the values, and removes blank and duplicate values (keeping the order), as the JVM does not allow blank or
+     * duplicate named groups and signature schemes.
+     */
+    static List<String> normalizeValues(List<String> values) {
+        Set<String> answer = new LinkedHashSet<>();
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                answer.add(value.trim());
+            }
+        }
+        return new ArrayList<>(answer);
     }
 
     private static String @Nullable [] getSignatureSchemesFromParams(SSLParameters params) {
@@ -156,13 +189,14 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
     private static void setSignatureSchemesOnParams(SSLParameters params, String[] signatureSchemes) {
         if (SET_SIGNATURE_SCHEMES == null) {
+            if (!signatureSchemesNotSupportedWarned) {
+                signatureSchemesNotSupportedWarned = true;
+                LOG.warn(
+                        "The signature schemes cannot be configured as this JVM does not support it (requires JDK 19 or newer)");
+            }
             return;
         }
-        try {
-            SET_SIGNATURE_SCHEMES.invoke(params, (Object) signatureSchemes);
-        } catch (Exception e) {
-            // ignore
-        }
+        invokeSetter(SET_SIGNATURE_SCHEMES, params, signatureSchemes, "signature schemes");
     }
 
     /**
@@ -1190,7 +1224,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         Collection<String> filteredNamedGroups;
         if (enabledNamedGroups != null) {
-            filteredNamedGroups = new ArrayList<>(enabledNamedGroups);
+            filteredNamedGroups = normalizeValues(enabledNamedGroups);
         } else if (enabledNamedGroupsPatterns != null) {
             filteredNamedGroups = this.filter(
                     null, Arrays.asList(currentNamedGroups),
@@ -1227,7 +1261,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         Collection<String> filteredSignatureSchemes;
         if (enabledSignatureSchemes != null) {
-            filteredSignatureSchemes = new ArrayList<>(enabledSignatureSchemes);
+            filteredSignatureSchemes = normalizeValues(enabledSignatureSchemes);
         } else if (enabledSignatureSchemesPatterns != null) {
             filteredSignatureSchemes = this.filter(
                     null, Arrays.asList(currentSignatureSchemes),
