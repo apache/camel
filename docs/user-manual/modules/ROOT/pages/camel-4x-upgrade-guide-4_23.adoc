@@ -2701,6 +2701,9 @@ as successful. When it waits for space in a full queue (`blockWhenFull=true`, wi
 as the message was not added to the queue. When it waits for the reply without a timeout (`waitForTaskToComplete` with
 `timeout=0`), the exchange fails with the `InterruptedException`, instead of returning the request as the reply.
 Camel itself interrupts such threads when a route is forced to stop after the graceful shutdown timeout.
+A reply that arrives after the producer timed out, or was interrupted, is now ignored; previously it could still be
+copied into the caller's exchange after the producer had returned. If the reply is already being copied when the timeout
+or the interrupt occurs, the producer waits for the copy to complete and returns the reply.
 
 === camel-servlet, camel-jetty - the multipart upload whitelist is enforced against the submitted file name
 
