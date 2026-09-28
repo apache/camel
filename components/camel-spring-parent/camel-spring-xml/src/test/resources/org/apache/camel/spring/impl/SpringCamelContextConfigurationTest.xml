@@ -24,10 +24,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="myCustomizer" class="org.apache.camel.spring.impl.SpringCamelContextConfigurationTest.MyCustomizer"/>
-
-  <bean id="mySSL" class="org.apache.camel.spring.impl.SpringCamelContextConfigurationTest.MySSLSupplier"/>
-
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <streamCaching id="myCache" enabled="false" bufferSize="4096"/>
     <jmxAgent id="jmx" disabled="true"/>

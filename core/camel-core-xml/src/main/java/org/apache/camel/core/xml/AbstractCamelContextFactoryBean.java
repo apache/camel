@@ -17,7 +17,6 @@
 package org.apache.camel.core.xml;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -98,7 +97,6 @@ import org.apache.camel.reifier.transformer.TransformerReifier;
 import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelBeanPostProcessor;
-import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
@@ -143,7 +141,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
@@ -277,9 +274,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // init route controller
         initRouteController();
-
-        // and finally the camel context customizers
-        initCamelContextCustomizers();
     }
 
     private void setupPropertiesComponent() {
@@ -346,23 +340,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             for (DevConsole console : consoles) {
                 devConsoleRegistry.register(console);
             }
-        }
-    }
-
-    private void setupSSLContextParameters() {
-        GlobalSSLContextParametersSupplier supplier = getBeanForType(GlobalSSLContextParametersSupplier.class);
-        if (supplier != null) {
-            LOG.debug("Using GlobalSSLContextParametersSupplier: {}", supplier);
-            getContext().setSSLContextParameters(supplier.get());
-        }
-    }
-
-    protected void initCamelContextCustomizers() {
-        Set<CamelContextCustomizer> customizers = getContext().getRegistry().findByType(CamelContextCustomizer.class);
-        if (customizers != null && !customizers.isEmpty()) {
-            customizers.stream()
-                    .sorted(Comparator.comparing(CamelContextCustomizer::getOrder))
-                    .forEach(c -> c.configure(getContext()));
         }
     }
 
@@ -518,7 +495,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using custom BacklogTracer: {}", backlogTracer);
             getContext().getCamelContextExtension().addContextPlugin(BacklogTracer.class, backlogTracer);
         }
-        setupSSLContextParameters();
         InflightRepository inflightRepository = getBeanForType(InflightRepository.class);
         if (inflightRepository != null) {
             LOG.info("Using custom InflightRepository: {}", inflightRepository);
