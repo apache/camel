@@ -32,6 +32,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.AggregateController;
+import org.apache.camel.processor.aggregate.DefaultAggregateController;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
@@ -43,6 +45,7 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -152,6 +155,35 @@ public class AggregateRecoverInProgressTest extends ContextTestSupport {
         assertDeliveredOnce(mock);
     }
 
+    @Test
+    public void testForceDiscardingNotConfirmedIsRecovered() throws Exception {
+        // a force discarded group is not sent, so it must not be left marked as being completed: if it could not be
+        // confirmed, it is still in the completed store, and the recover task must recover it
+        AggregateController controller = new DefaultAggregateController();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").aggregate(header("id"), new BodyStrategy()).aggregationRepository(repository)
+                        .completionSize(10).aggregateController(controller)
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("A");
+        mock.expectedHeaderReceived(Exchange.REDELIVERED, true);
+
+        send("A", "1");
+        repository.failConfirm.set(true);
+        assertThrows(IllegalStateException.class, () -> controller.forceDiscardingOfGroup("1"));
+        assertFalse(repository.completed.isEmpty(), "The discarded exchange should still be in the completed store");
+
+        assertMockEndpointsSatisfied();
+        await().atMost(20, TimeUnit.SECONDS).until(repository.completed::isEmpty);
+        assertEquals(1, repository.recovered.get());
+    }
+
     private void assertNotRecoveredWhilePaused(Thread producer) throws Exception {
         awaitLatch(paused);
         assertFalse(repository.completed.isEmpty(), "The completed exchange should be in the completed store");
@@ -228,6 +260,7 @@ public class AggregateRecoverInProgressTest extends ContextTestSupport {
         private final AtomicInteger scans = new AtomicInteger();
         private final AtomicInteger recovered = new AtomicInteger();
         private final AtomicBoolean pauseAfterRemove = new AtomicBoolean();
+        private final AtomicBoolean failConfirm = new AtomicBoolean();
         private volatile String pauseThread;
 
         void pauseAfterRemove(String threadName) {
@@ -288,6 +321,9 @@ public class AggregateRecoverInProgressTest extends ContextTestSupport {
 
         @Override
         public void confirm(CamelContext camelContext, String exchangeId) {
+            if (failConfirm.compareAndSet(true, false)) {
+                throw new IllegalStateException("Simulated failure to confirm " + exchangeId);
+            }
             completed.remove(exchangeId);
         }
 

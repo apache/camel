@@ -35,11 +35,11 @@ import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.KeyValueAggregationRepository;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -88,7 +88,7 @@ public class AggregatePreCompleteLostGroupTest extends ContextTestSupport {
                 super.remove(camelContext, key, exchange);
                 if (Thread.currentThread().getName().equals("producer-START-b") && pauseRemove.getAndSet(false)) {
                     removed.countDown();
-                    await(releaseRemove);
+                    awaitLatch(releaseRemove);
                 }
             }
         };
@@ -106,7 +106,7 @@ public class AggregatePreCompleteLostGroupTest extends ContextTestSupport {
         Exchange b = createExchange("START-b");
         Thread producer = new Thread(() -> process(ap, b), "producer-START-b");
         producer.start();
-        await(removed);
+        awaitLatch(removed);
 
         // c starts a new group, so START-b fails to add its new group and is retried
         ap.process(createExchange("c"));
@@ -168,8 +168,8 @@ public class AggregatePreCompleteLostGroupTest extends ContextTestSupport {
         assertNotNull(bad.getException());
         assertMockEndpointsSatisfied();
         // several recovery runs later the group is still delivered only once, and it is confirmed
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> repository.scan(context).isEmpty());
-        Awaitility.await().during(500, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+        await().atMost(5, TimeUnit.SECONDS).until(() -> repository.scan(context).isEmpty());
+        await().during(500, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
                 .until(() -> mock.getReceivedCounter() == 1);
     }
 
@@ -240,7 +240,7 @@ public class AggregatePreCompleteLostGroupTest extends ContextTestSupport {
         }
     }
 
-    private static void await(CountDownLatch latch) {
+    private static void awaitLatch(CountDownLatch latch) {
         try {
             if (!latch.await(10, TimeUnit.SECONDS)) {
                 fail("Timeout waiting for latch");

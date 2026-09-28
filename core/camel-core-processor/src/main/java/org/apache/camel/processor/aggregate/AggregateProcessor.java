@@ -2033,7 +2033,13 @@ public class AggregateProcessor extends BaseProcessorSupport
                 // onCompletion only discards on aggregation failure when discardOnAggregationFailure is enabled,
                 // so discard here, as otherwise the group is removed without being confirmed (and a recoverable
                 // repository would recover and send it later)
-                discard(key, answer);
+                try {
+                    discard(key, answer);
+                } finally {
+                    // onCompletion returned the exchange, so it is still marked as being completed, but it is
+                    // discarded instead of passed to onSubmitCompletion, so clear the mark here
+                    unmarkCompleting(answer.getExchangeId());
+                }
             }
             return true;
         } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
