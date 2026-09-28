@@ -42,9 +42,6 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
     @Override
     public Processor createProcessor() throws Exception {
         Processor answer = this.createChildProcessor(true);
-        if (answer instanceof DisabledAware da) {
-            da.setDisabled(isDisabled(camelContext, definition));
-        }
 
         // force the answer as a multicast processor even if there is only one
         // child processor in the multicast
@@ -52,6 +49,10 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
             List<Processor> list = new ArrayList<>(1);
             list.add(answer);
             answer = createCompositeProcessor(list);
+        }
+        // set disabled on the multicast (and not on a single output, which it wraps)
+        if (answer instanceof DisabledAware da) {
+            da.setDisabled(isDisabled(camelContext, definition));
         }
         return answer;
     }
