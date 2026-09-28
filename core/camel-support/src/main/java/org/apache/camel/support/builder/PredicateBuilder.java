@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
-import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -309,8 +309,8 @@ public class PredicateBuilder {
 
             protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
                 if (leftValue == null && rightValue == null) {
-                    // they are equal, so one is not less than the other
-                    return false;
+                    // they are equal
+                    return true;
                 } else if (leftValue == null || rightValue == null) {
                     // only one of them is null so they are not equal
                     return false;
@@ -643,8 +643,7 @@ public class PredicateBuilder {
             public boolean matches(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
                 if (value != null) {
-                    // a new exchange for each evaluation, as the predicate is used by concurrent exchanges
-                    Exchange dummy = new DefaultExchange(exchange);
+                    Exchange dummy = ExchangeHelper.getDummy(exchange.getContext());
                     dummy.getMessage().setBody(value);
                     return pred.matches(dummy);
                 }

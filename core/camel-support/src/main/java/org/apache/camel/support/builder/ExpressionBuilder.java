@@ -186,26 +186,7 @@ public class ExpressionBuilder {
      * @return            an expression object which will return the header value
      */
     public static <T> Expression headerExpression(final String headerName, final Class<T> type) {
-        // the type is already known, so use it as-is instead of resolving it again by name (which cannot load
-        // every array or nested class type)
-        final Expression name = simpleExpression(headerName);
-        return new ExpressionAdapter() {
-            @Override
-            public Object evaluate(Exchange exchange) {
-                return headerAs(exchange, name.evaluate(exchange, String.class), type);
-            }
-
-            @Override
-            public void init(CamelContext context) {
-                super.init(context);
-                name.init(context);
-            }
-
-            @Override
-            public String toString() {
-                return "headerAs(" + name + ", " + type.getName() + ")";
-            }
-        };
+        return headerExpression(simpleExpression(headerName), constantExpression(type.getName()));
     }
 
     /**
@@ -243,7 +224,13 @@ public class ExpressionBuilder {
                 } catch (ClassNotFoundException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                return headerAs(exchange, headerName.evaluate(exchange, String.class), type);
+                String text = headerName.evaluate(exchange, String.class);
+                Object header = exchange.getIn().getHeader(text, type);
+                if (header == null) {
+                    // fall back on a property
+                    header = exchange.getProperty(text, type);
+                }
+                return header;
             }
 
             @Override
@@ -259,15 +246,6 @@ public class ExpressionBuilder {
                 return "headerAs(" + headerName + ", " + typeName + ")";
             }
         };
-    }
-
-    private static Object headerAs(Exchange exchange, String name, Class<?> type) {
-        Object header = exchange.getIn().getHeader(name, type);
-        if (header == null) {
-            // fall back on a property
-            header = exchange.getProperty(name, type);
-        }
-        return header;
     }
 
     /**
@@ -341,26 +319,7 @@ public class ExpressionBuilder {
      * @return              an expression object which will return the variable value
      */
     public static <T> Expression variableExpression(final String variableName, final Class<T> type) {
-        // the type is already known, so use it as-is instead of resolving it again by name (which cannot load
-        // every array or nested class type)
-        final Expression name = simpleExpression(variableName);
-        return new ExpressionAdapter() {
-            @Override
-            public Object evaluate(Exchange exchange) {
-                return variableAs(exchange, name.evaluate(exchange, String.class), type);
-            }
-
-            @Override
-            public void init(CamelContext context) {
-                super.init(context);
-                name.init(context);
-            }
-
-            @Override
-            public String toString() {
-                return "variableAs(" + name + ", " + type.getName() + ")";
-            }
-        };
+        return variableExpression(simpleExpression(variableName), constantExpression(type.getName()));
     }
 
     /**
@@ -384,6 +343,7 @@ public class ExpressionBuilder {
     public static Expression variableExpression(final Expression variableName, final Expression typeName) {
         return new ExpressionAdapter() {
             private ClassResolver classResolver;
+            private TypeConverter converter;
 
             @Override
             public Object evaluate(Exchange exchange) {
@@ -394,7 +354,12 @@ public class ExpressionBuilder {
                 } catch (ClassNotFoundException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                return variableAs(exchange, variableName.evaluate(exchange, String.class), type);
+                String key = variableName.evaluate(exchange, String.class);
+                Object value = ExchangeHelper.getVariable(exchange, key);
+                if (value != null) {
+                    value = converter.convertTo(type, value);
+                }
+                return value;
             }
 
             @Override
@@ -403,6 +368,7 @@ public class ExpressionBuilder {
                 variableName.init(context);
                 typeName.init(context);
                 classResolver = context.getClassResolver();
+                converter = context.getTypeConverter();
             }
 
             @Override
@@ -410,14 +376,6 @@ public class ExpressionBuilder {
                 return "variableAs(" + variableName + ", " + typeName + ")";
             }
         };
-    }
-
-    private static Object variableAs(Exchange exchange, String name, Class<?> type) {
-        Object value = ExchangeHelper.getVariable(exchange, name);
-        if (value != null) {
-            value = exchange.getContext().getTypeConverter().convertTo(type, value);
-        }
-        return value;
     }
 
     /**
@@ -1159,7 +1117,6 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 super.init(context);
-                expression.init(context);
                 Language lan = context.resolveLanguage(language);
                 if (lan != null) {
                     pred = lan.createPredicate(value);
@@ -1441,7 +1398,7 @@ public class ExpressionBuilder {
             if (source.startsWith("variable:")) {
                 source = source.substring(9);
             }
-            exp = variableExpression(source, true);
+            exp = variableExpression(source);
         }
         return exp;
     }
@@ -1738,7 +1695,7 @@ public class ExpressionBuilder {
                 if (type != null) {
                     return expression.evaluate(exchange, type);
                 } else {
-                    return expression.evaluate(exchange, Object.class);
+                    return expression;
                 }
             }
 
@@ -1766,7 +1723,7 @@ public class ExpressionBuilder {
                 if (result != null) {
                     return expression.evaluate(exchange, result.getClass());
                 } else {
-                    return expression.evaluate(exchange, Object.class);
+                    return expression;
                 }
             }
 
@@ -2045,17 +2002,14 @@ public class ExpressionBuilder {
                         "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
 
                 StringBuilder sb = new StringBuilder(128);
-                boolean first = true;
                 while (it.hasNext()) {
                     Object o = it.next();
                     if (o != null) {
                         String s = converter.tryConvertTo(String.class, exchange, o);
                         if (s != null) {
-                            // an empty element is still an element that is separated from the others
-                            if (!first) {
+                            if (!sb.isEmpty()) {
                                 sb.append(separator);
                             }
-                            first = false;
                             if (prefix != null) {
                                 sb.append(prefix);
                             }
@@ -2393,10 +2347,7 @@ public class ExpressionBuilder {
                         expression.init(context);
                         if (expression instanceof ConstantExpressionAdapter constantExpressionAdapter) {
                             Object value = constantExpressionAdapter.getValue();
-                            // a null constant adds nothing (as when it is evaluated)
-                            if (value != null) {
-                                preprocessedExpression.add(String.valueOf(value));
-                            }
+                            preprocessedExpression.add(String.valueOf(value));
                         } else {
                             preprocessedExpression.add(expression);
                             constantsOnly = false;

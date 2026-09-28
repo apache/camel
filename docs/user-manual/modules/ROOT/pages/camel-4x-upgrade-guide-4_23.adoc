@@ -206,6 +206,7 @@ Only options whose value is a placeholder are affected, and only when running wi
 Camel Quarkus. If a component must not be stopped on reload, configure it programmatically rather than with a
 placeholder based property.
 
+<<<<<<< stabilizeZookeeperTest
 === Languages - less than with two null values, and a source from a variable
 
 - The `<` operator (in the Simple language and the Java DSL `isLessThan`) is now `false` when both sides are `null`,
@@ -232,6 +233,8 @@ can no longer expect the routes to be started or stopped when the event returns,
 instead. Likewise, `isLeader()` of the policy (JMX attribute `Leader`) reflects the view right away, and the routes
 follow asynchronously.
 
+=======
+>>>>>>> 1dd20e7 CAMEL-25044: camel-core - ExpressionBuilder and PredicateBuilder: fix bugs found in a deep review (#26924)
 === Apache Avro trusted packages
 
 Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
