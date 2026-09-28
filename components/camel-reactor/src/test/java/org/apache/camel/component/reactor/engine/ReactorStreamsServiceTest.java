@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.reactor.engine;
 
+import java.time.Duration;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -283,74 +283,56 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     public void testTo() throws Exception {
         context.start();
 
-        Set<String> values = Collections.synchronizedSet(new TreeSet<>());
-        CountDownLatch latch = new CountDownLatch(3);
-
-        Flux.just(1, 2, 3)
+        List<String> values = Flux.just(1, 2, 3)
                 .flatMap(e -> crs.to("bean:hello", e, String.class))
-                .doOnNext(values::add)
-                .doOnNext(res -> latch.countDown())
-                .subscribe();
+                .collectList()
+                .block(Duration.ofSeconds(30));
 
-        assertTrue(latch.await(2, TimeUnit.SECONDS));
-        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
+        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), new TreeSet<>(values));
     }
 
     @Test
     public void testToWithExchange() throws Exception {
         context.start();
 
-        Set<String> values = Collections.synchronizedSet(new TreeSet<>());
-        CountDownLatch latch = new CountDownLatch(3);
-
-        Flux.just(1, 2, 3)
+        List<String> values = Flux.just(1, 2, 3)
                 .flatMap(e -> crs.to("bean:hello", e))
                 .map(Exchange::getMessage)
                 .map(e -> e.getBody(String.class))
-                .doOnNext(values::add)
-                .doOnNext(res -> latch.countDown())
-                .subscribe();
+                .collectList()
+                .block(Duration.ofSeconds(30));
 
-        assertTrue(latch.await(2, TimeUnit.SECONDS));
-        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
+        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), new TreeSet<>(values));
     }
 
     @Test
     public void testToFunction() throws Exception {
         context.start();
 
-        Set<String> values = Collections.synchronizedSet(new TreeSet<>());
-        CountDownLatch latch = new CountDownLatch(3);
         Function<Object, Publisher<String>> fun = crs.to("bean:hello", String.class);
 
-        Flux.just(1, 2, 3)
+        List<String> values = Flux.just(1, 2, 3)
                 .flatMap(fun)
-                .doOnNext(values::add)
-                .doOnNext(res -> latch.countDown())
-                .subscribe();
+                .collectList()
+                .block(Duration.ofSeconds(30));
 
-        assertTrue(latch.await(2, TimeUnit.SECONDS));
-        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
+        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), new TreeSet<>(values));
     }
 
     @Test
     public void testToFunctionWithExchange() throws Exception {
         context.start();
 
-        Set<String> values = Collections.synchronizedSet(new TreeSet<>());
-        CountDownLatch latch = new CountDownLatch(3);
         Function<Object, Publisher<Exchange>> fun = crs.to("bean:hello");
 
-        Flux.just(1, 2, 3)
+        List<String> values = Flux.just(1, 2, 3)
                 .flatMap(fun)
                 .map(Exchange::getMessage)
                 .map(e -> e.getBody(String.class))
-                .doOnNext(values::add)
-                .doOnNext(res -> latch.countDown())
-                .subscribe();
+                .collectList()
+                .block(Duration.ofSeconds(30));
 
-        assertTrue(latch.await(2, TimeUnit.SECONDS));
-        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
+        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), new TreeSet<>(values));
     }
 
     // ************************************************
