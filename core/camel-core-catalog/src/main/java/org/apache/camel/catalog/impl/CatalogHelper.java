@@ -199,8 +199,8 @@ public final class CatalogHelper {
                 continue;
             }
 
-            // the & denote parameter is ended
-            if (ch == '&') {
+            // the & denote parameter is ended (but a raw value may contain & until the raw value is ended)
+            if (ch == '&' && !(isRaw && !isRawEnded(value))) {
                 // parameter is ended, as we hit & separator
                 String aKey = key.toString();
                 // the key may be a placeholder of options which we then do not know what is
@@ -229,6 +229,18 @@ public final class CatalogHelper {
 
         return rc;
 
+    }
+
+    private static boolean isRawEnded(StringBuilder value) {
+        // RAW(...) ends with ) and RAW{...} ends with }
+        String s = value.toString();
+        for (int j = 0; j < URISupport.RAW_TOKEN_START.length; j++) {
+            String rawTokenStart = URISupport.RAW_TOKEN_PREFIX + URISupport.RAW_TOKEN_START[j];
+            if (s.startsWith(rawTokenStart)) {
+                return s.length() > rawTokenStart.length() && s.charAt(s.length() - 1) == URISupport.RAW_TOKEN_END[j];
+            }
+        }
+        return true;
     }
 
     private static boolean isRaw(boolean isRaw, StringBuilder value) {
@@ -288,6 +300,7 @@ public final class CatalogHelper {
             if (s != null) {
                 list.add(s);
             }
+            list.add(newValue);
 
         }
         return list;
