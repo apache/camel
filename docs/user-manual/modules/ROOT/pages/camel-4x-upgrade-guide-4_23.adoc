@@ -3446,6 +3446,15 @@ redelivery now follows `negativeAckRedeliveryDelayMicros`, which defaults to 60 
 
 A route that wants the previous timing can set `negativeAckRedeliveryDelayMicros=10000000`.
 
+=== camel-core - scheduled poll consumer
+
+The `delay`, `initialDelay`, `timeUnit` and `useFixedDelay` of a scheduled poll consumer that are changed while the
+consumer is stopped (such as using JMX) are now used when the consumer is started again. Previously the values from
+the first start were kept.
+
+When a backoff (`backoffMultiplier`) finishes, the error counter of the consumer (used by the health checks and JMX)
+is no longer reset to 0. It is reset when a poll succeeds. The number of skipped polls is the same as before.
+
 === camel-seda - multipleConsumers broadcasts to consumers with different uri options
 
 With `multipleConsumers=true` every consumer of a SEDA queue now receives a copy of each message, also when the consumers
