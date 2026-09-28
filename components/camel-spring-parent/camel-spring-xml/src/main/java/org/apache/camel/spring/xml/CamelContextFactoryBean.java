@@ -230,7 +230,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private List<Resilience4jConfigurationDefinition> resilience4jConfigurations;
     @XmlElement(name = "defaultFaultToleranceConfiguration")
     private FaultToleranceConfigurationDefinition defaultFaultToleranceConfiguration;
-    @XmlElement(name = "faultToleranceConfiguration", type = Resilience4jConfigurationDefinition.class)
+    @XmlElement(name = "faultToleranceConfiguration", type = FaultToleranceConfigurationDefinition.class)
     private List<FaultToleranceConfigurationDefinition> faultToleranceConfigurations;
     @XmlElement(name = "routeConfigurationContextRef")
     private List<RouteConfigurationContextRefDefinition> routeConfigurationRefs = new ArrayList<>();

@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring;
+package org.apache.camel.spring.impl;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.ManagementAgent;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,29 +26,22 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Test that verifies JMX properties can be configured via Spring.
- */
-public class JMXAgentPropertiesTest extends DefaultJMXAgentTest {
+public class SpringCamelContextPropertyPlaceholderTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfigUsingProperties.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/impl/SpringCamelContextPropertyPlaceholderTest.xml");
     }
 
     @Test
-    public void testEnableUseHostIPAddress() throws Exception {
-        CamelContext ctx = createCamelContext();
-        ManagementAgent agent = ctx.getManagementStrategy().getManagementAgent();
-        agent.start();
-        assertTrue(agent.getUseHostIPAddress());
+    public void testPropertyPlaceholderOnContextOptions() {
+        assertTrue(context.isTypeConverterStatisticsEnabled());
     }
 
     @Test
-    public void testMBeanServerDefaultDomain() throws Exception {
-        CamelContext ctx = createCamelContext();
-        ManagementAgent agent = ctx.getManagementStrategy().getManagementAgent();
-        assertEquals("myDomain", agent.getMBeanServerDefaultDomain());
+    public void testRedeliveryPolicyLogLevels() {
+        RedeliveryPolicy policy = applicationContext.getBean("myRedelivery", RedeliveryPolicy.class);
+        assertEquals(LoggingLevel.WARN, policy.getRetriesExhaustedLogLevel());
+        assertEquals(LoggingLevel.INFO, policy.getRetryAttemptedLogLevel());
     }
-
 }

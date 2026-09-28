@@ -24,23 +24,15 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: e1 -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <propertyPlaceholder id="properties" location="org/apache/camel/spring/jmx.properties"/>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-        <!-- we can use property placeholders when we define the JMX agent -->
-        <jmxAgent id="agent" disabled="{{myjmx.disabled}}"
-                  usePlatformMBeanServer="{{myjmx.usePlatform}}"
-                  statisticsLevel="RoutesOnly"
-                  useHostIPAddress="true"
-                  mbeanServerDefaultDomain="myDomain"/>
+    <streamCaching id="myCacheConfig" spoolRules="myUnknownRule"/>
 
-        <route id="foo" autoStartup="false">
-            <from uri="seda:start"/>
-            <to uri="mock:result"/>
-        </route>
+    <route>
+      <from uri="direct:c"/>
+      <to uri="mock:c"/>
+    </route>
 
-    </camelContext>
-    <!-- END SNIPPET: e1 -->
+  </camelContext>
 
 </beans>
