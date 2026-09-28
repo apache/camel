@@ -17275,7 +17275,7 @@ URI of the Endpoint used for validation.
           <xs:element minOccurs="0" name="defaultResilience4jConfiguration" type="tns:resilience4JConfigurationDefinition"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:resilience4jConfiguration"/>
           <xs:element minOccurs="0" name="defaultFaultToleranceConfiguration" type="tns:faultToleranceConfigurationDefinition"/>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="faultToleranceConfiguration" type="tns:resilience4JConfigurationDefinition"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:faultToleranceConfiguration"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeConfigurationContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeTemplateContextRef"/>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:routeBuilder"/>
