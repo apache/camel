@@ -940,6 +940,17 @@ seen, and a repository backed by a remote store keeps its connection while the r
 forget the ids, clear the repository with `IdempotentRepository.clear()` (or the `clear` JMX operation of
 the Idempotent Consumer).
 
+=== camel-core - a graceful shutdown waits for the parallel onCompletion tasks
+
+With `onCompletion().parallelProcessing()`, stopping or suspending a route (and stopping `CamelContext`) now waits
+for the onCompletion tasks that are running or queued in its thread pool, up to the shutdown timeout, just as it
+waits for the inflight exchanges. Previously the shutdown did not wait for them, and when the thread pool was shut
+down, the queued tasks were dropped and the running ones were interrupted.
+
+An onCompletion with `parallelProcessing` that synchronously stops its own route now waits for itself until the
+shutdown timeout occurs, and the route is then stopped forcibly. Stop the route asynchronously instead, for example
+from a separate thread or with the Control Bus `async=true` option.
+
 === Component deprecation
 
 ==== camel-minio
