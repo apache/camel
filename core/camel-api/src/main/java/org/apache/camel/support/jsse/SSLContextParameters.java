@@ -329,19 +329,21 @@ public class SSLContextParameters extends BaseSSLContextParameters {
             autoConfiguredPqc = applyPqcNamedGroupDefaults(context);
         }
 
-        this.configureSSLContext(context);
+        try {
+            this.configureSSLContext(context);
 
-        // Decorate the context.
-        context = new SSLContextDecorator(
-                new SSLContextSpiDecorator(
-                        context,
-                        this.getSSLEngineConfigurers(context),
-                        this.getSSLSocketFactoryConfigurers(context),
-                        this.getSSLServerSocketFactoryConfigurers(context)));
-
-        // Reset auto-configured PQC named groups so they don't persist on this instance
-        if (autoConfiguredPqc) {
-            this.setNamedGroups(null);
+            // Decorate the context.
+            context = new SSLContextDecorator(
+                    new SSLContextSpiDecorator(
+                            context,
+                            this.getSSLEngineConfigurers(context),
+                            this.getSSLSocketFactoryConfigurers(context),
+                            this.getSSLServerSocketFactoryConfigurers(context)));
+        } finally {
+            // Reset auto-configured PQC named groups so they don't persist on this instance (also on failure)
+            if (autoConfiguredPqc) {
+                this.setNamedGroups(null);
+            }
         }
 
         return context;

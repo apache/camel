@@ -138,6 +138,28 @@ public final class StringQuoteHelper {
      * @return            the input split, or <tt>null</tt> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator, boolean trim, boolean keepQuotes) {
+        return splitSafeQuote(input, separator, trim, keepQuotes, false);
+    }
+
+    /**
+     * Splits the input safely honoring if values is enclosed in quotes, and optionally also if values is enclosed in
+     * parenthesis or curly brackets.
+     * <p/>
+     * Though this method does not support double quoting values. A quoted value must start with the same start and
+     * ending quote, which is either a single quote or double quote value.
+     * <p/>
+     * When <tt>nested</tt> is enabled then the separator is not used for splitting when it is inside <tt>( )</tt> or
+     * <tt>{ }</tt> (outside quotes), such as a comma in a simple expression <tt>${body.substring(0, 3)}</tt>. The input
+     * is otherwise split in the same way as when <tt>nested</tt> is disabled.
+     *
+     * @param  input      the input
+     * @param  separator  the separator char to split the input, for example a comma.
+     * @param  trim       whether to trim each split value
+     * @param  keepQuotes whether to keep quotes
+     * @param  nested     whether to not split inside parenthesis and curly brackets
+     * @return            the input split, or <tt>null</tt> if the input is null.
+     */
+    public static String[] splitSafeQuote(String input, char separator, boolean trim, boolean keepQuotes, boolean nested) {
         if (input == null) {
             return null;
         }
@@ -165,6 +187,10 @@ public final class StringQuoteHelper {
         boolean singleQuoted = false;
         boolean doubleQuoted = false;
         boolean separating = false;
+        int depth = 0;
+        // where quoted text starts and ends in the current value, so trim does not remove spaces inside quotes
+        int quoteStart = -1;
+        int quoteEnd = -1;
 
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
@@ -199,6 +225,11 @@ public final class StringQuoteHelper {
                 if (keepQuotes) {
                     sb.append(ch);
                 }
+                if (singleQuoted && quoteStart == -1) {
+                    quoteStart = sb.length();
+                } else if (!singleQuoted) {
+                    quoteEnd = sb.length();
+                }
                 continue;
             } else if (!singleQuoted && ch == '"') {
                 if (doubleQuoted && prev == ch && sb.isEmpty()) {
@@ -227,20 +258,31 @@ public final class StringQuoteHelper {
                 if (keepQuotes) {
                     sb.append(ch);
                 }
+                if (doubleQuoted && quoteStart == -1) {
+                    quoteStart = sb.length();
+                } else if (!doubleQuoted) {
+                    quoteEnd = sb.length();
+                }
                 continue;
-            } else if (!isQuoting && ch == separator) {
+            } else if (!isQuoting && ch == separator && depth == 0) {
                 separating = true;
                 // add as answer if we are not in a quote
                 if (!sb.isEmpty()) {
-                    String text = sb.toString();
-                    if (trim) {
-                        text = text.trim();
-                    }
-                    answer.add(text);
+                    answer.add(trim ? trimOutsideQuotes(sb, quoteStart, quoteEnd) : sb.toString());
                     sb.setLength(0);
                 }
+                quoteStart = -1;
+                quoteEnd = -1;
                 // we should avoid adding the separator
                 continue;
+            }
+
+            if (nested && !isQuoting) {
+                if (ch == '(' || ch == '{') {
+                    depth++;
+                } else if ((ch == ')' || ch == '}') && depth > 0) {
+                    depth--;
+                }
             }
 
             if (trim && !isQuoting && separating && separator != ' ' && ch == ' ') {
@@ -254,14 +296,32 @@ public final class StringQuoteHelper {
 
         // any leftover
         if (!sb.isEmpty()) {
-            String text = sb.toString();
-            if (trim) {
-                text = text.trim();
-            }
-            answer.add(text);
+            answer.add(trim ? trimOutsideQuotes(sb, quoteStart, quoteEnd) : sb.toString());
         }
 
         return answer.toArray(new String[0]);
+    }
+
+    /**
+     * Trims the value, but not the text between quoteStart and quoteEnd (the quoted text, when there is any).
+     */
+    private static String trimOutsideQuotes(StringBuilder sb, int quoteStart, int quoteEnd) {
+        if (quoteStart == -1) {
+            return sb.toString().trim();
+        }
+        if (quoteEnd < quoteStart) {
+            // an unterminated quote runs to the end of the value
+            quoteEnd = sb.length();
+        }
+        int begin = 0;
+        while (begin < quoteStart && sb.charAt(begin) <= ' ') {
+            begin++;
+        }
+        int end = sb.length();
+        while (end > quoteEnd && sb.charAt(end - 1) <= ' ') {
+            end--;
+        }
+        return sb.substring(begin, end);
     }
 
 }

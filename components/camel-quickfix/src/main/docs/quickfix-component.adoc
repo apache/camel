@@ -91,11 +91,16 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-The DataDictionary header is useful if string messages are being
-received and need to be parsed in a route. QuickFIX/J requires a data
-dictionary to parse certain types of messages (with repeating groups,
-for example). By injecting a DataDictionary header in the route after
-receiving a message string, the FIX engine can properly parse the data.
+The `DataDictionary` exchange property is useful if string messages are
+being received and need to be parsed in a route. QuickFIX/J requires a
+data dictionary to parse certain types of messages (with repeating
+groups, for example). By setting the `DataDictionary` exchange property
+(`QuickfixjEndpoint.DATA_DICTIONARY_KEY`) in the route after receiving a
+message string, the FIX engine can properly parse the data. The property
+can hold a `quickfix.DataDictionary` instance or the name of a data
+dictionary resource, such as `FIX44.xml`. When the property is not set,
+the data dictionary of the session identified by the `SessionID` header
+is used, if that session exists.
 
 === QuickFIX/J Configuration Extensions
 
@@ -245,6 +250,11 @@ to the requestor session.
         .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
         .bean(new MarketOrderStatusService());
 ----
+
+The reply is always sent on the session the request was received on.
+Changing the `SessionID` header while routing does not change where the
+reply goes. To send a message to another session, use a QuickFIX/J
+producer endpoint with the `sessionID` option.
 
 ==== Implementing InOut Exchanges for Producers
 

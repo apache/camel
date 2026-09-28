@@ -102,8 +102,10 @@ Loading declarations does not perform inference. Java applications can register 
 A question's optional `state` Simple expression overrides
 `camel.language.semantic.default-state`, whose default is `$\{body}`. Selectors are compiled
 before evaluation; selected strings, maps and lists are passed as data and are never evaluated recursively.
-A missing selected header fails instead of falling back to the body. Blank or invalid selectors
-fail. The original message is preserved. `CamelSemanticResult` contains the latest successful
+A missing selected header fails instead of falling back to the body. A selector must be nonblank
+before property placeholders are resolved. A placeholder that resolves to an empty string retains
+the existing Simple behavior: it selects an empty string as state. Invalid Simple syntax fails.
+The original message is preserved. `CamelSemanticResult` contains the latest successful
 normalized result and is cleared before each evaluation, including one that fails.
 
 State must be a string, map or list. For byte arrays or stream bodies, explicitly select
@@ -129,6 +131,90 @@ remain absent. Results can retain provider/model identity and usage metadata. Th
 do not imply equivalent quality or calibration when switching providers. Timeouts, malformed
 answers and unsupported capabilities are errors, distinct from valid negative decisions or
 unmatched Choice results.
+
+== Batching named questions
+
+Use `refs:name1,name2` to evaluate independent questions against the same selected state.
+The expression returns a map of normalized decisions keyed by question name. For example,
+using the declarations above:
+
+[source,java]
+----
+from("direct:tickets")
+    .setProperty("decision").language("semantic", "refs:actionable,department,urgency")
+    .choice()
+        .when(simple("${exchangeProperty.decision[actionable]} == true && ${exchangeProperty.decision[department]} == 'billing'"))
+            .to("direct:billing")
+        .otherwise()
+            .to("direct:review");
+----
+
+The same expression works through the generic language integration in YAML and XML.
+For example, replace the route above with:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:tickets
+      steps:
+        - setProperty:
+            name: decision
+            expression:
+              language:
+                language: semantic
+                expression: refs:actionable,department,urgency
+        - setHeader:
+            name: urgency
+            expression:
+              simple:
+                expression: "${exchangeProperty.decision[urgency]}"
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${exchangeProperty.decision[department]} == 'billing'"
+                steps:
+                  - to: direct:billing
+            otherwise:
+              steps:
+                - to: direct:review
+----
+
+A result might contain `actionable -> true`, `department -> "billing"` and `urgency -> 1.2`.
+Reading the stored map does not invoke the provider again. Each question retains its own
+threshold and uncertainty policy. There is no implicit AND/OR: batch expressions, including
+a batch containing one boolean question, cannot be used as predicates.
+
+`CamelSemanticResults` holds an immutable map of the detailed `SemanticResult` objects,
+keyed by the same names. These retain available probabilities, confidence and provider
+metadata. `CamelSemanticResult` remains the single-question diagnostic property for
+`ref:name`. Both diagnostic properties are cleared before every semantic evaluation;
+a batch publishes its decisions and diagnostics only after every answer passes validation.
+Missing, extra or invalid answers, operational failures and an uncertainty policy of `fail`
+fail the entire evaluation through Camel error handling. A valid negative decision or
+uncertainty handled by `non-match` remains a normal `false` result. A route property assigned
+by Set Property is owned by the route; clear it explicitly before reevaluation if an error
+handler could otherwise reuse a decision from an earlier attempt.
+
+Batch references are comma-separated names with surrounding whitespace removed. Empty,
+duplicate and unknown references are rejected. There is no quoting or escaping in this
+syntax: names containing commas or leading/trailing whitespace require a single `ref:name`
+evaluation. Existing single references are unchanged.
+
+All selected questions must use the same effective Simple state selector, after applying
+`camel.language.semantic.default-state` and resolving property placeholders. Selectors
+must match exactly; different expressions that happen to return equal values are not
+interchangeable. The selector is evaluated once per batch. Missing or unsupported state
+fails before inference. One snapshot of the question definitions is used throughout each
+batch, including validation and decision policies; the next evaluation sees replacements
+from resource reload. Questions that need a previous answer require separate evaluations.
+
+`SemanticAdapter.evaluateBatch(Map<String, SemanticQuestion>, Object)` has a default
+implementation that invokes the existing single-question method sequentially, preserving
+compatibility with existing adapters. TypeSafe AI overrides it to send all questions in
+one HTTP request using the component's existing timeout and concurrency limits. No results
+are cached or combined across exchanges.
 
 == EIP integration
 

@@ -81,18 +81,21 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     @Override
     public void addEventNotifier(EventNotifier eventNotifier) {
+        if (getCamelContext() != null) {
+            // inject camel context if needed
+            CamelContextAware.trySetCamelContext(eventNotifier, getCamelContext());
+        }
         this.eventNotifiers.add(eventNotifier);
         // resort after adding
         this.eventNotifiers.sort(OrderedComparator.get());
         if (isStarted()) {
-            // already started
+            // already started so the notifier must be started as well
+            ServiceHelper.startService(eventNotifier);
             this.startedEventNotifiers.add(eventNotifier);
             // resort after adding
             this.startedEventNotifiers.sort(OrderedComparator.get());
         }
         if (getCamelContext() != null) {
-            // inject camel context if needed
-            CamelContextAware.trySetCamelContext(eventNotifier, getCamelContext());
             // okay we have an event notifier that accepts exchange events so its applicable
             if (!eventNotifier.isIgnoreExchangeEvents()) {
                 getCamelContext().getCamelContextExtension().setEventNotificationApplicable(true);
@@ -103,7 +106,12 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     @Override
     public boolean removeEventNotifier(EventNotifier eventNotifier) {
         startedEventNotifiers.remove(eventNotifier);
-        return eventNotifiers.remove(eventNotifier);
+        boolean removed = eventNotifiers.remove(eventNotifier);
+        if (removed && isStarted()) {
+            // the notifier was started when added (or when this was started) so stop it
+            ServiceHelper.stopService(eventNotifier);
+        }
+        return removed;
     }
 
     @Override

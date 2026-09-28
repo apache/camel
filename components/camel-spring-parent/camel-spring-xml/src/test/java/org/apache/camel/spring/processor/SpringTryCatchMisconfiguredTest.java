@@ -22,8 +22,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
 
@@ -40,8 +40,8 @@ class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
         });
         FailedToCreateRouteException ftce = assertIsInstanceOf(FailedToCreateRouteException.class, e1);
         IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftce.getCause());
-        assertEquals(
-                "This doCatch should have a doTry as its parent on DoCatch[java.io.IOException -> [to[mock:fail]]]",
+        // the doCatch is not inside the doTry, so the doTry has no doCatch or doFinally
+        assertTrue(iae.getMessage().startsWith("doTry must have one or more doCatch or doFinally blocks"),
                 iae.getMessage());
 
         Exception e2 = assertThrows(Exception.class, () -> {
@@ -49,7 +49,8 @@ class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
         });
         FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e2);
         IllegalArgumentException iae2 = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
-        assertEquals("This doFinally should have a doTry as its parent on DoFinally[[to[mock:finally]]]", iae2.getMessage());
+        assertTrue(iae2.getMessage().startsWith("doTry must have one or more doCatch or doFinally blocks"),
+                iae2.getMessage());
     }
 
 }

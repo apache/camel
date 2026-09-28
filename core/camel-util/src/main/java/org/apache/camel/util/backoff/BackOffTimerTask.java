@@ -122,7 +122,8 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
     @Override
     public void reset() {
         this.currentAttempts = 0;
-        this.currentDelay = 0;
+        // start over from the initial delay (as when the task was created)
+        this.currentDelay = backOff.getDelay().toMillis();
         this.currentElapsedTime = 0;
         this.firstAttemptTime = BackOff.NEVER;
         this.lastAttemptTime = BackOff.NEVER;
@@ -252,8 +253,10 @@ public final class BackOffTimerTask implements BackOffTimer.Task, Runnable {
                 currentDelay = BackOff.NEVER;
                 status = Status.Exhausted;
             } else {
-                if (currentDelay <= backOff.getMaxDelay().toMillis()) {
-                    currentDelay = (long) (currentDelay * backOff.getMultiplier());
+                // the delay grows by the multiplier but must not go above the max delay
+                long maxDelay = backOff.getMaxDelay().toMillis();
+                if (currentDelay < maxDelay) {
+                    currentDelay = Math.min((long) (currentDelay * backOff.getMultiplier()), maxDelay);
                 }
 
                 currentElapsedTime += currentDelay;

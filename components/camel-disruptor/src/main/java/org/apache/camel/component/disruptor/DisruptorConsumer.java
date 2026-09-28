@@ -136,6 +136,8 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
         // send a new copied exchange with new camel context
         // don't copy handovers as they are handled by the Disruptor Event Handlers
         final Exchange newExchange = ExchangeHelper.copyExchangeWithProperties(exchange, endpoint.getCamelContext());
+        // the flag is only for this consumer, and must not be routed (or copied back to the caller)
+        newExchange.removeProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
         // set the from endpoint
         newExchange.getExchangeExtension().setFromEndpoint(endpoint);
         return newExchange;
@@ -145,10 +147,8 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
         try {
             Exchange exchange = synchronizedExchange.getExchange();
 
-            final boolean ignore = exchange.hasProperties() && exchange
-                    .getProperties().containsKey(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE);
-            if (ignore) {
-                // Property was set and it was set to true, so don't process Exchange.
+            if (DisruptorEndpoint.isIgnoreExchange(exchange)) {
+                // the producer no longer waits for this exchange (timeout), so don't process it
                 LOGGER.trace("Ignoring exchange {}", exchange);
                 return;
             }

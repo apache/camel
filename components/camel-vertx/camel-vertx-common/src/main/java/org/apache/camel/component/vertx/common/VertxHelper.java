@@ -17,13 +17,20 @@
 package org.apache.camel.component.vertx.common;
 
 import java.security.KeyStore;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
 
 import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManagerFactory;
 
+import io.vertx.core.http.ClientAuth;
+import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.TCPSSLOptions;
 import io.vertx.core.net.TrustOptions;
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustAllTrustManager;
@@ -36,8 +43,8 @@ public final class VertxHelper {
     }
 
     /**
-     * Configures key store and trust store options for the given TCPSSLOptions from the configuration specified on
-     * SSLContextParameters
+     * Configures key store and trust store options, the client authentication (of a server) and the cipher suites and
+     * protocols for the given TCPSSLOptions from the configuration specified on SSLContextParameters
      *
      * @param camelContext         the CamelContext
      * @param sslContextParameters the SSL configuration to use for the KeyManagerFactory & TrustManagerFactory
@@ -76,6 +83,37 @@ public final class VertxHelper {
             tcpsslOptions.setTrustOptions(TrustOptions.wrap(TrustAllTrustManager.INSTANCE));
         }
 
+        // client authentication of a server
+        if (tcpsslOptions instanceof NetServerOptions serverOptions
+                && sslContextParameters.getServerParameters() != null
+                && sslContextParameters.getServerParameters().getClientAuthentication() != null) {
+            String value = camelContext.resolvePropertyPlaceholders(
+                    sslContextParameters.getServerParameters().getClientAuthentication());
+            ClientAuthentication clientAuthentication = ClientAuthentication.valueOf(value.toUpperCase(Locale.ENGLISH));
+            serverOptions.setClientAuth(switch (clientAuthentication) {
+                case REQUIRE -> ClientAuth.REQUIRED;
+                case WANT -> ClientAuth.REQUEST;
+                case NONE -> ClientAuth.NONE;
+            });
+        }
+
+        // the cipher suites and protocols (when configured) as computed by the SSLContextParameters
+        // (such as from the include and exclude filters)
+        boolean cipherSuites = sslContextParameters.getCipherSuites() != null
+                || sslContextParameters.getCipherSuitesFilter() != null;
+        boolean protocols = sslContextParameters.getSecureSocketProtocols() != null
+                || sslContextParameters.getSecureSocketProtocolsFilter() != null;
+        if (cipherSuites || protocols) {
+            SSLEngine engine = sslContextParameters.createSSLContext(camelContext).createSSLEngine();
+            if (cipherSuites) {
+                for (String suite : engine.getEnabledCipherSuites()) {
+                    tcpsslOptions.addEnabledCipherSuite(suite);
+                }
+            }
+            if (protocols) {
+                tcpsslOptions.setEnabledSecureTransportProtocols(new LinkedHashSet<>(List.of(engine.getEnabledProtocols())));
+            }
+        }
     }
 
     private static KeyManagerFactory createKeyManagerFactory(
