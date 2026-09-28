@@ -2466,8 +2466,24 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         SSLConfigurationProperties sslConfig = mainConfigurationProperties.sslConfig();
+
+        // a trust store that refers to a KeyStore bean (#bean:name) must be kept as-is (and not be converted to a String
+        // when binding the properties) so the bean can be looked up when creating the trust managers
+        String trustStoreBean = null;
+        for (String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+            if (key.equalsIgnoreCase("trustStore") && value != null && value.startsWith("#bean:")) {
+                autoConfiguredProperties.put(properties.getLocation(key), PREFIX_SSL + "trustStore", value);
+                properties.remove(key);
+                trustStoreBean = value;
+            }
+        }
+
         setPropertiesOnTarget(camelContext, sslConfig, properties, PREFIX_SSL,
                 failIfNotSet, true, autoConfiguredProperties);
+        if (trustStoreBean != null) {
+            sslConfig.setTrustStore(trustStoreBean);
+        }
 
         if (!sslConfig.isEnabled()) {
             return;
@@ -2506,8 +2522,11 @@ public abstract class BaseMainSupport extends BaseService {
             kmp.setCamelContext(camelContext);
             kmp.setKeyPassword(password);
             kmp.setKeyStore(ksp);
+        } else if (sslConfig.getTrustStore() != null || sslConfig.isTrustAllCertificates()) {
+            // client side only (no key store), such as trusting a private certificate authority
+            kmp = null;
         } else {
-            LOG.warn("SSL is enabled but no keystore is configured."
+            LOG.warn("SSL is enabled but no keystore or truststore is configured."
                      + " Set camel.ssl.keyStore or camel.ssl.selfSigned=true for development.");
             return;
         }

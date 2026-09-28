@@ -47,6 +47,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.support.jsse.FilterParameters.Patterns;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -57,6 +58,8 @@ import org.slf4j.LoggerFactory;
  * are applied to.
  */
 public abstract class BaseSSLContextParameters extends JsseParameters {
+
+    private volatile boolean signatureSchemesFilterWarned;
 
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_INCLUDE
             = List.of(".*");
@@ -240,6 +243,19 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      */
     public void setCipherSuites(@Nullable CipherSuitesParameters cipherSuites) {
         this.cipherSuites = cipherSuites;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext context) {
+        super.setCamelContext(context);
+        // the filter patterns may use property placeholders
+        for (FilterParameters filter : new FilterParameters[] {
+                getCipherSuitesFilter(), getSecureSocketProtocolsFilter(), getNamedGroupsFilter(),
+                getSignatureSchemesFilter() }) {
+            if (filter != null) {
+                filter.setCamelContext(context);
+            }
+        }
     }
 
     /**
@@ -1133,8 +1149,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         } else {
             returnValues = new LinkedList<>();
 
+            // a filter with only exclude patterns includes all the other values
+            boolean includeAll = includePatterns.isEmpty() && !excludePatterns.isEmpty();
             for (String value : availableValues) {
-                if (this.matchesOneOf(value, includePatterns)
+                if ((includeAll || this.matchesOneOf(value, includePatterns))
                         && !this.matchesOneOf(value, excludePatterns)) {
                     returnValues.add(value);
                 }
@@ -1221,6 +1239,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             return null;
         }
 
+        if (currentSignatureSchemes == null && enabledSignatureSchemes == null) {
+            // the JVM does not tell its default signature schemes (null), so there is nothing to filter, and
+            // configuring an empty list would fail every handshake
+            if (!signatureSchemesFilterWarned) {
+                signatureSchemesFilterWarned = true;
+                LOG.warn("The signature schemes filter cannot be applied as the JVM does not provide its default"
+                         + " signature schemes. Configure the signature schemes explicitly instead of using a filter.");
+            }
+            return null;
+        }
         if (currentSignatureSchemes == null) {
             currentSignatureSchemes = new String[0];
         }
@@ -1310,8 +1338,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         protected SSLEngine engineCreateSSLEngine() {
             SSLEngine engine = this.context.createSSLEngine();
             LOG.debug("SSLEngine [{}] created from SSLContext [{}].", engine, context);
-            this.configureSSLEngine(engine);
-            return engine;
+            return this.configureSSLEngine(engine);
         }
 
         @Override

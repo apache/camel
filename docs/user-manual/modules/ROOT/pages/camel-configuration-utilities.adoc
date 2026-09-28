@@ -59,7 +59,7 @@ constructing the SSLContext. If omitted, the standard provider look-up
 mechanism is used to resolve the provider.
 secureSocketProtocol::
 The optional secure socket protocol. See https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html[Java Security Standard Algorithm Names]
-for information about standard protocol names. If omitted, TLS is used by default.
+for information about standard protocol names. If omitted, TLSv1.3 is used by default.
 Note that this property is related to but distinctly different from the
 secureSocketProtocols and secureSocketProtocolsFilter properties.
 certAlias::
@@ -82,7 +82,8 @@ This optional property represents a collection of include and exclude
 patterns for cipher suites to enable on both the client and server side
 as well as in the SSLEngine. The patterns are applied over only the
 available cipher suites. The excludes patterns have precedence over the
-includes patterns. If no cipherSuites and no cipherSuitesFilter are
+includes patterns. A filter with only excludes patterns includes all the
+other available values (this applies to all the filters). If no cipherSuites and no cipherSuitesFilter are
 present, the default patterns applied are:
 
 [source,text]
@@ -376,7 +377,9 @@ patterns for signature schemes to enable on both the client and server
 side as well as in the SSLEngine. The patterns are applied over only the
 available signature schemes. The excludes patterns have precedence over
 the includes patterns. No default filtering is applied to signature
-schemes.
+schemes. Some JVMs (such as JDK 25 and older) do not provide their default
+signature schemes, and then the filter cannot be applied (a WARN is logged)
+and the defaults of the JVM are used; configure signatureSchemes explicitly instead.
 
 === Configuring SSLContextParameters in XML and YAML DSL
 
@@ -493,8 +496,8 @@ camel.ssl.enabled = true
 # Explicit named groups ordering (PQC-first)
 camel.ssl.namedGroups = X25519MLKEM768,x25519,secp256r1,secp384r1
 
-# Explicit signature schemes (if your JDK supports PQC signatures)
-camel.ssl.signatureSchemes = ML-DSA,ECDSA,RSA
+# Explicit signature schemes (using the JSSE names of the signature schemes)
+camel.ssl.signatureSchemes = ecdsa_secp256r1_sha256,rsa_pss_rsae_sha256,ed25519
 ----
 
 You can also use include/exclude filters instead of explicit lists:
@@ -533,7 +536,7 @@ SSLContextParameters scp = new SSLContextParameters();
 scp.setKeyManagers(kmp);
 scp.setNamedGroups(ngp);
 
-SSLContext context = scp.createSSLContext();
+SSLContext context = scp.createSSLContext(camelContext);
 ----
 
 === Disabling PQC Auto-Configuration
@@ -633,7 +636,7 @@ SSLContextParameters scp = new SSLContextParameters();
 scp.setServerParameters(scsp);
 scp.setKeyManagers(kmp);
 
-SSLContext context = scp.createSSLContext();
+SSLContext context = scp.createSSLContext(camelContext);
 SSLEngine engine = scp.createSSLEngine();
 -------------------------------------------------------------------
 
@@ -670,7 +673,7 @@ SSLContextParameters scp = new SSLContextParameters();
 scp.setClientParameters(sccp);
 scp.setKeyManagers(kmp);
 
-SSLContext context = scp.createSSLContext();
+SSLContext context = scp.createSSLContext(camelContext);
 SSLEngine engine = scp.createSSLEngine();
 -------------------------------------------------------------------
 

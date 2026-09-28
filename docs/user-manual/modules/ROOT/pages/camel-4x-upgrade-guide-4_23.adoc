@@ -3129,6 +3129,22 @@ The fluent builder `CircuitBreakerDefinition.inheritErrorHandler(boolean)` and t
 added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change; the `inheritErrorHandler`
 attribute in the XML schema is now `xs:string` so a placeholder validates.
 
+=== camel-core - JSSE utility (SSLContextParameters)
+
+A filter (such as `cipherSuitesFilter` or `namedGroupsFilter`, or `camel.ssl.cipherSuitesExclude` and
+`camel.ssl.namedGroupsExclude`) with only exclude patterns now includes all the other available values. Previously it
+included nothing, which made every TLS handshake fail (for example `camel.ssl.namedGroupsExclude = X25519MLKEM768`,
+which is the documented way to disable the post-quantum named groups). A filter with no patterns at all still
+includes nothing.
+
+On JVMs that do not provide their default signature schemes (such as JDK 25 and older) a `signatureSchemesFilter`
+(or `camel.ssl.signatureSchemesInclude`/`signatureSchemesExclude`) is no longer applied (a WARN is logged) and the
+defaults of the JVM are used. Previously an empty list of signature schemes was configured, which made every TLS
+handshake fail. Configure the signature schemes explicitly instead.
+
+The SNI host names of the client parameters are now also set on the `SSLEngine` (used by components such as
+camel-netty). Previously they were only set on an `SSLSocket`.
+
 === camel-weaviate - removed the unused vector field name header
 
 The `CamelweaviateVectorFieldName` header (`WeaviateVectorDbHeaders.VECTOR_FIELD_NAME`) has been removed.
