@@ -27,7 +27,10 @@ import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -108,9 +111,83 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
         assertThat(expression(SemanticQuestion.Type.SCORE).evaluate(exchange, Double.class)).isEqualTo(0.7);
     }
 
+    private Expression batchExpression() {
+        SemanticQuestions.get(context).replace("test", Map.of(
+                "refund", new SemanticQuestion(
+                        SemanticQuestion.Type.BOOLEAN, "Refund requested?", null,
+                        Map.of(), List.of(), 0.95, 0, SemanticQuestion.UncertaintyPolicy.FAIL),
+                "department", new SemanticQuestion(
+                        SemanticQuestion.Type.CHOICE, "Which department?", null,
+                        Map.of("billing", "Refunds", "technical", "Faults", "other", "Anything else"), List.of(),
+                        0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL),
+                "urgency", new SemanticQuestion(
+                        SemanticQuestion.Type.SCORE, "How urgent?", null,
+                        Map.of(), List.of("Routine", "Urgent", "Critical"), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
+        return context.resolveLanguage("semantic").createExpression("refs:refund,department,urgency");
+    }
+
     @Test
-    void providerErrorsClearPreviousResult() {
-        Expression expression = expression(SemanticQuestion.Type.BOOLEAN);
+    void mixedBatchUsesOneRequestAndPreservesEveryResult() {
+        respond = request -> mixedResponse();
+        Expression expression = batchExpression();
+        assertThat(requests).isEmpty();
+        var exchange = new DefaultExchange(context);
+        exchange.getMessage().setBody(Map.of("ticket", "refund requested"));
+        assertThat(expression.evaluate(exchange, Map.class))
+                .containsEntry("refund", false).containsEntry("department", "billing").containsEntry("urgency", 1.2);
+        assertThat(requests).hasSize(1);
+        JsonObject request = requests.peek();
+        assertThat(request.getJsonObject("questions").keySet()).containsExactlyInAnyOrder("refund", "department", "urgency");
+        assertThat(request.get("state")).isEqualTo(exchange.getMessage().getBody());
+        assertThat(authorization).containsExactly("Bearer test-key");
+        Map<?, ?> results = exchange.getProperty(SemanticLanguage.RESULTS, Map.class);
+        SemanticResult refund = (SemanticResult) results.get("refund");
+        SemanticResult department = (SemanticResult) results.get("department");
+        SemanticResult urgency = (SemanticResult) results.get("urgency");
+        assertThat(refund.getProbability()).isEqualTo(0.9);
+        assertThat(refund.getConfidence()).isNull();
+        assertThat(department.getProbabilities()).containsEntry("billing", 0.9);
+        assertThat(department.getConfidence()).isEqualTo(0.8);
+        assertThat(urgency.getProbabilities()).containsEntry("1", 0.8);
+        assertThat(urgency.getConfidence()).isEqualTo(0.7);
+        assertThat(urgency.getMetadata()).containsEntry("provider", "typesafe-ai").containsEntry("model", "jev-1.13.0")
+                .containsKey("usage");
+        assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "missing", "extra", "type", "probability", "choice", "score", "confidence" })
+    void malformedBatchResponseClearsPreviousDiagnostics(String failure) throws Exception {
+        JsonObject response = TypeSafeAiJson.parse(mixedResponse());
+        JsonObject answers = response.getJsonObject("answers");
+        switch (failure) {
+            case "missing" -> answers.remove("urgency");
+            case "extra" -> answers.put("extra", answers.get("refund"));
+            case "type" -> answers.getJsonObject("refund").put("type", "choice");
+            case "probability" -> answers.getJsonObject("refund").put("noul", 1.1);
+            case "choice" -> answers.getJsonObject("department").put("choice", "undeclared");
+            case "score" -> answers.getJsonObject("urgency").put("score", 3);
+            case "confidence" -> answers.getJsonObject("urgency").remove("confidence");
+            default -> throw new IllegalArgumentException(failure);
+        }
+        respond = request -> response.toJson();
+        Expression expression = batchExpression();
+        var exchange = new DefaultExchange(context);
+        exchange.getMessage().setBody("private-input");
+        exchange.setProperty(SemanticLanguage.RESULT, "old");
+        exchange.setProperty(SemanticLanguage.RESULTS, "old");
+        assertThatThrownBy(() -> expression.evaluate(exchange, Map.class))
+                .hasStackTraceContaining("Invalid TypeSafe AI response")
+                .hasMessageNotContaining("private-input");
+        assertThat(requests).hasSize(1);
+        assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
+        assertThat(exchange.getProperty(SemanticLanguage.RESULTS)).isNull();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void providerErrorsClearPreviousResult(boolean batch) {
+        Expression expression = batch ? batchExpression() : expression(SemanticQuestion.Type.BOOLEAN);
         var exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("private-input");
         exchange.setProperty(SemanticLanguage.RESULT, "old");
@@ -120,11 +197,12 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
         assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
     }
 
-    @Test
-    void componentTimeoutBoundsSemanticEvaluation() {
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void componentTimeoutBoundsSemanticEvaluation(boolean batch) {
         context.getComponent("typesafe-ai", TypeSafeAiComponent.class).getConfiguration().setRequestTimeout(100);
         holdHeaders = true;
-        Expression expression = expression(SemanticQuestion.Type.BOOLEAN);
+        Expression expression = batch ? batchExpression() : expression(SemanticQuestion.Type.BOOLEAN);
         var exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("private-input");
         assertThatThrownBy(() -> expression.evaluate(exchange, Object.class))
