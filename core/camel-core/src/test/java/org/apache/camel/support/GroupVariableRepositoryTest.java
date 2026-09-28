@@ -127,6 +127,26 @@ public class GroupVariableRepositoryTest {
     }
 
     @Test
+    public void testRemoveHeaderVariablesWithPrefix() {
+        // the form used by ExchangeHelper.setVariableFromMessageBodyAndHeaders for group:grp:resp, where the
+        // headers are stored as header:grp:resp.key in the shared header map (CAMEL-25050)
+        repo.setVariable("grp:resp", "body");
+        repo.setVariable("header:grp:resp.a", "1");
+        repo.setVariable("header:grp:resp.b", "2");
+        repo.setVariable("header:grp:response.a", "3");
+        repo.setVariable("header:grp2:resp.a", "4");
+
+        repo.removeVariablesWithPrefix("header:grp:resp.");
+
+        assertNull(repo.getVariable("header:grp:resp.a"));
+        assertNull(repo.getVariable("header:grp:resp.b"));
+        assertEquals("body", repo.getVariable("grp:resp"));
+        assertEquals("3", repo.getVariable("header:grp:response.a"));
+        assertEquals("4", repo.getVariable("header:grp2:resp.a"));
+        assertEquals(3, repo.size());
+    }
+
+    @Test
     public void testSetNullRemoves() {
         repo.setVariable("teamA:foo", "bar");
         repo.setVariable("teamA:foo", null);

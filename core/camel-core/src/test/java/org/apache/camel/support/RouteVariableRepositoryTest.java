@@ -54,4 +54,24 @@ public class RouteVariableRepositoryTest {
         assertEquals(3, repo.size());
         assertThrows(IllegalArgumentException.class, () -> repo.removeVariablesWithPrefix("noColon"));
     }
+
+    @Test
+    public void testRemoveHeaderVariablesWithPrefix() {
+        // the form used by ExchangeHelper.setVariableFromMessageBodyAndHeaders for route:rs:resp, where the
+        // headers are stored as header:rs:resp.key in the shared header map (CAMEL-25050)
+        repo.setVariable("rs:resp", "body");
+        repo.setVariable("header:rs:resp.a", "1");
+        repo.setVariable("header:rs:resp.b", "2");
+        repo.setVariable("header:rs:response.a", "3");
+        repo.setVariable("header:rs2:resp.a", "4");
+
+        repo.removeVariablesWithPrefix("header:rs:resp.");
+
+        assertNull(repo.getVariable("header:rs:resp.a"));
+        assertNull(repo.getVariable("header:rs:resp.b"));
+        assertEquals("body", repo.getVariable("rs:resp"));
+        assertEquals("3", repo.getVariable("header:rs:response.a"));
+        assertEquals("4", repo.getVariable("header:rs2:resp.a"));
+        assertEquals(3, repo.size());
+    }
 }

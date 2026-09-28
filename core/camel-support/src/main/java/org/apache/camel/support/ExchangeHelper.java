@@ -1255,7 +1255,9 @@ public final class ExchangeHelper {
     }
 
     private static void removeVariables(Exchange exchange, VariableRepository repo, String prefix) {
-        // the route and group repositories only scan the variables of the route or group given in the prefix
+        // the route and group repositories only scan the map of the id parsed from the prefix instead of copying
+        // the whole repository. For a prefix like header:<routeId>:<var>. that id is always header (CAMEL-25050),
+        // so the scan covers the shared header map of all routes or groups
         if (repo instanceof RouteVariableRepository route) {
             route.removeVariablesWithPrefix(prefix);
             return;
