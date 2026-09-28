@@ -17,6 +17,7 @@
 package org.apache.camel.component.typesafeai;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -67,28 +68,48 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
 
     @Override
     public SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception {
+        return evaluateBatch(Map.of("question", question), state).get("question");
+    }
+
+    @Override
+    public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state) throws Exception {
+        Map<String, Object> definitions = new LinkedHashMap<>();
+        questions.forEach((name, question) -> definitions.put(name, definition(question)));
+        JsonObject response = endpoint().evaluate(Map.of("state", state, "questions", definitions));
+        Map<String, SemanticResult> results = new LinkedHashMap<>();
+        questions.forEach((name, question) -> results.put(name,
+                result(question, response.getJsonObject("answers").getJsonObject(name), response)));
+        return results;
+    }
+
+    private Map<String, Object> definition(SemanticQuestion question) {
         validate(question);
         Map<String, Object> definition = new HashMap<>();
         definition.put("instructions", question.getInstructions());
-        String type = switch (question.getType()) {
-            case BOOLEAN -> "noul";
-            case CHOICE -> "choice";
-            case SCORE -> "score";
-        };
-        definition.put("type", type);
+        definition.put("type", type(question));
         if (question.getType() == SemanticQuestion.Type.SCORE) {
             definition.put("criteria", question.getLevels());
         } else if (!question.getCriteria().isEmpty()) {
             definition.put("criteria", question.getCriteria());
         }
-        JsonObject response = endpoint().evaluate(Map.of("state", state, "questions", Map.of("question", definition)));
-        JsonObject answer = response.getJsonObject("answers").getJsonObject("question");
+        return definition;
+    }
+
+    private String type(SemanticQuestion question) {
+        return switch (question.getType()) {
+            case BOOLEAN -> "noul";
+            case CHOICE -> "choice";
+            case SCORE -> "score";
+        };
+    }
+
+    private SemanticResult result(SemanticQuestion question, JsonObject answer, JsonObject response) {
         Map<String, Double> probabilities = new HashMap<>();
         if (answer.get("probabilities") instanceof Map<?, ?> values) {
             values.forEach((key, value) -> probabilities.put((String) key, ((Number) value).doubleValue()));
         }
         return new SemanticResult(
-                question.getType() == SemanticQuestion.Type.BOOLEAN ? null : answer.get(type),
+                question.getType() == SemanticQuestion.Type.BOOLEAN ? null : answer.get(type(question)),
                 question.getType() == SemanticQuestion.Type.BOOLEAN ? answer.getDouble("noul") : null,
                 probabilities, answer.get("confidence") == null ? null : answer.getDouble("confidence"),
                 Map.of("provider", "typesafe-ai", "model", response.get("model"), "usage", response.get("usage")));

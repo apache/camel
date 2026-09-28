@@ -53,6 +53,33 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
     }
 
     protected CompletableFuture<CamelSagaCoordinator> getCurrentSagaCoordinator(Exchange exchange) {
+        String currentSaga = getCurrentSagaId(exchange);
+        if (currentSaga != null) {
+            return sagaService.getSaga(currentSaga);
+        }
+
+        return CompletableFuture.completedFuture(null);
+    }
+
+    /**
+     * Checks that the saga of the exchange, if any, is still known by the saga service. The in-memory saga service
+     * removes a saga once it is completed or compensated (for example after a timeout), and then a step of that saga
+     * must fail, instead of starting a new saga or running outside of a saga.
+     *
+     * @param  exchange              the exchange
+     * @param  coordinator           the coordinator of the saga found for the exchange, or <tt>null</tt> if none
+     * @throws IllegalStateException if the exchange belongs to a saga that is no longer active
+     */
+    protected void checkSagaIsActive(Exchange exchange, CamelSagaCoordinator coordinator) {
+        if (coordinator == null) {
+            String currentSaga = getCurrentSagaId(exchange);
+            if (currentSaga != null) {
+                throw new IllegalStateException("Cannot begin: saga " + currentSaga + " is not active or not known");
+            }
+        }
+    }
+
+    private String getCurrentSagaId(Exchange exchange) {
         // try internal state first (survives removeHeaders("*"))
         String currentSaga = exchange.getExchangeExtension().getSagaLongRunningAction();
         if (currentSaga == null && sagaService.isLongRunningActionHeaderSupported()) {
@@ -62,11 +89,7 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport
             // message pick which saga its exchange joins.
             currentSaga = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);
         }
-        if (currentSaga != null) {
-            return sagaService.getSaga(currentSaga);
-        }
-
-        return CompletableFuture.completedFuture(null);
+        return currentSaga;
     }
 
     protected void setCurrentSagaCoordinator(Exchange exchange, CamelSagaCoordinator coordinator) {

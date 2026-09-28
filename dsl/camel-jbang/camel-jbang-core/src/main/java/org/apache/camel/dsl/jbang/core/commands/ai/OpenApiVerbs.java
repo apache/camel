@@ -24,8 +24,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * What a {@code rest: openApi:} binding hides: which of its operations carry a body.
@@ -37,7 +39,7 @@ import org.apache.camel.util.json.Jsoner;
 public final class OpenApiVerbs {
 
     /** The verbs whose request carries no body. */
-    private static final Set<String> WITHOUT_BODY = Set.of("get", "delete", "head");
+    private static final Set<String> WITHOUT_BODY = Set.of("get", "delete", "head", "options", "trace");
 
     private static final Pattern SPECIFICATION = Pattern.compile(
             "openApi:\\s*\\n\\s*(?:[a-zA-Z]+:[^\\n]*\\n\\s*)*?specification:\\s*[\"']?([^\"'\\s]+)[\"']?");
@@ -62,34 +64,41 @@ public final class OpenApiVerbs {
                 continue;
             }
             try {
-                String text = Files.readString(spec);
-                if (!text.stripLeading().startsWith("{")) {
-                    continue; // a YAML specification: not read here
-                }
-                JsonObject root = (JsonObject) Jsoner.deserialize(text);
-                JsonObject paths = root.getMap("paths");
+                Map<?, ?> paths = paths(Files.readString(spec));
                 if (paths == null) {
                     continue;
                 }
-                for (Map.Entry<String, Object> path : paths.entrySet()) {
-                    if (!(path.getValue() instanceof Map<?, ?> operations)) {
+                for (Object path : paths.values()) {
+                    if (!(path instanceof Map<?, ?> operations)) {
                         continue;
                     }
                     for (Map.Entry<?, ?> operation : operations.entrySet()) {
                         String verb = String.valueOf(operation.getKey()).toLowerCase(java.util.Locale.ROOT);
-                        if (!WITHOUT_BODY.contains(verb) || !(operation.getValue() instanceof Map<?, ?> details)) {
-                            continue;
-                        }
-                        Object id = details.get("operationId");
-                        if (id != null) {
-                            answer.add("direct:" + id);
+                        if (WITHOUT_BODY.contains(verb) && operation.getValue() instanceof Map<?, ?> details
+                                && details.get("operationId") != null) {
+                            answer.add("direct:" + details.get("operationId"));
                         }
                     }
                 }
             } catch (Exception e) {
-                // an unreadable or unparseable specification says nothing
+                // Catching Exception handles unreadable and unparseable JSON or YAML specifications.
             }
         }
         return answer;
+    }
+
+    private static Map<?, ?> paths(String text) {
+        try {
+            Object document;
+            if (text.stripLeading().startsWith("{")) {
+                document = Jsoner.deserialize(text);
+            } else {
+                document = new Yaml(new SafeConstructor(new LoaderOptions())).load(text);
+            }
+            return document instanceof Map<?, ?> root && root.get("paths") instanceof Map<?, ?> paths ? paths : null;
+        } catch (Exception e) {
+            // Ignore unreadable or unparseable JSON or YAML specifications.
+            return null;
+        }
     }
 }

@@ -169,6 +169,29 @@ public final class RouteVariableRepository extends ServiceSupport implements Bro
         return null;
     }
 
+    /**
+     * Removes all the variables of a route whose name starts with the given prefix.
+     * <p>
+     * Only the variables of the given route are scanned.
+     *
+     * @param  prefix                   the prefix in routeId:prefix syntax, for example {@code myId:foo.} removes
+     *                                  {@code myId:foo.a} and {@code myId:foo.b}, but not {@code myId:foo}
+     * @throws IllegalArgumentException if the prefix is not in routeId:prefix syntax
+     * @since                           4.23
+     */
+    public void removeVariablesWithPrefix(String prefix) {
+        String id = StringHelper.before(prefix, ":");
+        String key = StringHelper.after(prefix, ":");
+        if (id == null || key == null) {
+            throw new IllegalArgumentException("Prefix must be routeId:prefix syntax");
+        }
+
+        Map<String, Object> variables = routes.get(id);
+        if (variables != null) {
+            variables.keySet().removeIf(k -> k.startsWith(key));
+        }
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();

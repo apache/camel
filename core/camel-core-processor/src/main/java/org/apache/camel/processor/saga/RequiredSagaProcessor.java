@@ -39,6 +39,7 @@ public class RequiredSagaProcessor extends SagaProcessor {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         getCurrentSagaCoordinator(exchange)
                 .whenComplete((existingCoordinator, ex) -> ifNotException(ex, exchange, callback, () -> {
+                    checkSagaIsActive(exchange, existingCoordinator);
                     CompletableFuture<CamelSagaCoordinator> coordinatorFuture;
                     final boolean inheritedCoordinator;
                     if (existingCoordinator != null) {

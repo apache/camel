@@ -62,11 +62,12 @@ public class JqNullBodyHintTest extends JqTestSupport {
     }
 
     @Test
-    public void testNullVariableSourceNamesTheSource() {
+    public void testMissingVariableSourceNamesTheVariable() {
         String message = rootCauseMessage(assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:variable", node("foo", "bar"))));
 
-        assertTrue(message.contains("got no input from variable(input) to evaluate, it is null"),
+        // a missing variable as the source fails as a missing header does (CAMEL-25044), naming the variable
+        assertTrue(message.contains("No 'input' variable available"),
                 "should name the variable source, not the body, but was: " + message);
     }
 

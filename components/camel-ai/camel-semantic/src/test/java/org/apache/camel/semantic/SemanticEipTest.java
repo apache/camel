@@ -74,6 +74,13 @@ class SemanticEipTest extends CamelTestSupport {
                         "unfinished", question("unfinished", SemanticQuestion.Type.BOOLEAN),
                         "urgency", question("urgency", SemanticQuestion.Type.SCORE)));
 
+                from("direct:batch").setProperty("decision").language("semantic", "refs:actionable,department,urgency")
+                        .setHeader("urgency").simple("${exchangeProperty.decision[urgency]}")
+                        .choice()
+                        .when(simple(
+                                "${exchangeProperty.decision[actionable]} == true && ${exchangeProperty.decision[department]} == 'billing'"))
+                        .to("mock:batchBilling")
+                        .otherwise().to("mock:batchReview");
                 from("direct:choice").setProperty("department").language("semantic", "ref:department")
                         .choice()
                         .when(exchangeProperty("department").isEqualTo("billing")).to("mock:billing")
@@ -149,6 +156,17 @@ class SemanticEipTest extends CamelTestSupport {
                         ? Map.of("billing", "Payments", "technical", "Bugs", "general", "Other requests") : null,
                 type == SemanticQuestion.Type.SCORE ? List.of("low", "medium", "high") : null,
                 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL);
+    }
+
+    @Test
+    void batchDecisionsAreReusedByOrdinaryEips() throws Exception {
+        getMockEndpoint("mock:batchBilling").expectedBodiesReceived("please fix this urgent invoice");
+        getMockEndpoint("mock:batchBilling").expectedHeaderReceived("urgency", 2.0);
+        template.sendBody("direct:batch", "please fix this urgent invoice");
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(calls.get("actionable")).hasValue(1);
+        assertThat(calls.get("department")).hasValue(1);
+        assertThat(calls.get("urgency")).hasValue(1);
     }
 
     @Test
