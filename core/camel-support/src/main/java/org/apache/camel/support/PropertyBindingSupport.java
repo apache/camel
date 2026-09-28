@@ -63,7 +63,8 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * <li>map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property
  * that is a Map instance, and bar is the name of the key.</li>
  * <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the
- * property that is a List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
+ * property that is a List instance, and 0 is the index. To refer to the last element, then use last as key. An index
+ * beyond the end of the list pads the list with null elements up to the index.</li>
  * <li>reference by property placeholder id - Values can refer to a property placeholder key with #property:myKey</li>
  * <li>reference by bean id - Values can refer to other beans in the registry by prefixing with # or #bean: eg #myBean
  * or #bean:myBean. It is recommended to favour using `#bean:` syntax to make it obvious it's a bean reference.</li>
@@ -613,6 +614,17 @@ public final class PropertyBindingSupport {
         return name.contains("[") && name.endsWith("]");
     }
 
+    /**
+     * The index of a list key: a number, or {@code last} for the last element of the list (index 0 if the list is
+     * empty).
+     */
+    private static int listIndex(String lookupKey, int size) {
+        if ("last".equals(lookupKey)) {
+            return Math.max(0, size - 1);
+        }
+        return Integer.parseInt(lookupKey);
+    }
+
     private static boolean setPropertyCollectionViaReflection(
             CamelContext context, Object target, String name, Object value,
             boolean ignoreCase, boolean reference, boolean optional)
@@ -673,7 +685,7 @@ public final class PropertyBindingSupport {
             return true;
         } else if (obj instanceof List list) {
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.parseInt(lookupKey);
+                int idx = listIndex(lookupKey, list.size());
                 org.apache.camel.util.ObjectHelper.addListByIndex(list, idx, value);
             } else {
                 list.add(value);
@@ -757,7 +769,7 @@ public final class PropertyBindingSupport {
             return true;
         } else if (obj instanceof List list) {
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.parseInt(lookupKey);
+                int idx = listIndex(lookupKey, list.size());
                 if (idx < list.size()) {
                     list.set(idx, value);
                 } else if (idx == list.size()) {
@@ -992,7 +1004,7 @@ public final class PropertyBindingSupport {
             }
         } else if (answer instanceof List list) {
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.parseInt(lookupKey);
+                int idx = listIndex(lookupKey, list.size());
                 answer = list.size() > idx ? list.get(idx) : null;
             } else {
                 if (list.isEmpty()) {
@@ -1009,7 +1021,12 @@ public final class PropertyBindingSupport {
                 if (parameterType != null
                         && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
                     Object instance = context.getInjector().newInstance(parameterType);
-                    list.add(instance);
+                    if (isNotEmpty(lookupKey)) {
+                        // create the element at its index (the list is padded with null if needed)
+                        org.apache.camel.util.ObjectHelper.addListByIndex(list, listIndex(lookupKey, list.size()), instance);
+                    } else {
+                        list.add(instance);
+                    }
                     answer = instance;
                 }
             }
@@ -1123,7 +1140,7 @@ public final class PropertyBindingSupport {
             }
         } else if (answer instanceof List list) {
             if (isNotEmpty(lookupKey)) {
-                int idx = Integer.parseInt(lookupKey);
+                int idx = listIndex(lookupKey, list.size());
                 answer = list.size() > idx ? list.get(idx) : null;
             } else {
                 if (list.isEmpty()) {
@@ -1153,7 +1170,12 @@ public final class PropertyBindingSupport {
                 if (parameterType != null
                         && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
                     Object instance = context.getInjector().newInstance(parameterType);
-                    list.add(instance);
+                    if (isNotEmpty(lookupKey)) {
+                        // create the element at its index (the list is padded with null if needed)
+                        org.apache.camel.util.ObjectHelper.addListByIndex(list, listIndex(lookupKey, list.size()), instance);
+                    } else {
+                        list.add(instance);
+                    }
                     answer = instance;
                 }
             }
