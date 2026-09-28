@@ -61,6 +61,19 @@ healthy while no longer receiving any change event. Deployments that use readine
 now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
 The engine is still not restarted automatically.
 
+=== camel-saga
+
+The `saga:complete` and `saga:compensate` endpoints now follow the same rule as the Saga EIP: when the
+exchange is not bound to a saga, the `Long-Running-Action` message header is consulted only if the
+configured `CamelSagaService` returns `true` from `isLongRunningActionHeaderSupported()`, as
+`LRASagaService` does. With the default `InMemorySagaService` the header is ignored, and sending an
+exchange that is not bound to a saga to these endpoints fails with `IllegalStateException`.
+
+Exchanges created inside a saga, including copies made by EIPs such as Wire Tap, Multicast or SEDA,
+stay bound to it and are not affected. A route that completes or compensates an in-memory saga from an
+unrelated exchange must bind it explicitly from trusted code, for example with
+`exchange.getExchangeExtension().setSagaLongRunningAction(id)`.
+
 == Upgrading from 4.22.0 to 4.22.1
 
 === camel-docling
