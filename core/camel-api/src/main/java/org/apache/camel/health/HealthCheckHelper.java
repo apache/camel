@@ -184,11 +184,22 @@ public final class HealthCheckHelper {
                     } else {
                         return downs;
                     }
-                } else {
-                    // all up so grab first
-                    HealthCheck.Result up = result.iterator().next();
-                    return Collections.singleton(up);
                 }
+                // there may be results that are not up (such as unknown) which must be included, so readiness
+                // gives the same result regardless of the exposure level
+                Collection<HealthCheck.Result> notUps = result.stream()
+                        .filter(r -> !r.getState().equals(HealthCheck.State.UP))
+                        .collect(Collectors.toCollection(ArrayList::new));
+                if (!notUps.isEmpty()) {
+                    if ("oneline".equals(exposureLevel)) {
+                        return Collections.singleton(notUps.iterator().next());
+                    } else {
+                        return notUps;
+                    }
+                }
+                // all up so grab first
+                HealthCheck.Result up = result.iterator().next();
+                return Collections.singleton(up);
             }
         }
 

@@ -206,8 +206,8 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         CamelContextAware.trySetCamelContext(obj, camelContext);
 
         if (obj instanceof HealthCheck healthCheck) {
-            // do we have this already
-            if (getCheck(healthCheck.getId()).isPresent()) {
+            // do we have this already (with the exact same id)
+            if (checks.stream().anyMatch(c -> c.getId().equals(healthCheck.getId()))) {
                 return false;
             }
             result = checks.add(healthCheck);
@@ -307,7 +307,8 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
     @Override
     public boolean isExcluded(HealthCheck healthCheck) {
         if (excludePattern != null) {
-            String[] s = excludePattern.split(",");
+            // allow spaces around the comma (such as foo, bar)
+            String[] s = excludePattern.trim().split("\\s*,\\s*");
 
             String id = healthCheck.getId();
             if (PatternHelper.matchPatterns(id, s)) {

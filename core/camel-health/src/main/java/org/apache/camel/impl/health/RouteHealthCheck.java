@@ -46,12 +46,19 @@ public class RouteHealthCheck extends AbstractHealthCheck {
             final ServiceStatus status = context.getRouteController().getRouteStatus(route.getId());
 
             builder.detail("route.id", route.getId());
+            if (status == null) {
+                // the route has been removed
+                builder.unknown();
+                builder.message(String.format("Route %s is removed", route.getId()));
+                return;
+            }
             builder.detail("route.status", status.name());
 
             if (route.getRouteController() != null || route.isAutoStartup()) {
                 if (status.isStarted()) {
                     builder.up();
-                } else if (status.isStopped()) {
+                } else {
+                    // stopped, suspended, starting or stopping
                     builder.down();
                     builder.message(String.format("Route %s has status %s", route.getId(), status.name()));
                 }
