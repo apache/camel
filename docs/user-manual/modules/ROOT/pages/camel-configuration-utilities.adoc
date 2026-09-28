@@ -88,7 +88,7 @@ present, the default patterns applied are:
 [source,text]
 ----
 Includes .\*;
-Excludes .*_NULL_.*, .\*_anon_.*, .\*DES.*, .\*EXPORT.*, .\*MD5, .*RC4.*
+Excludes .*_NULL_.*, .\*_anon_.*, .\*_EXPORT_.*, .\*_DES_.*, .\*_3DES_.*, .\*MD5, .*RC4.*
 ----
 
 secureSocketProtocols::
@@ -112,7 +112,11 @@ are:
 [source,text]
 ----
 Includes .*
+Excludes SSL.*, TLSv1, TLSv1\.1
 ----
+
+This means TLSv1.2 is the minimum protocol by default. To enable an older protocol (not recommended) it must
+be configured explicitly in secureSocketProtocols.
 
 namedGroups::
 This optional property represents a collection of explicitly named
