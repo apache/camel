@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.clickhouse.ClickHouseContainer;
 import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.utility.MountableFile;
 
 /**
  * A service for a local instance of ClickHouse running with TestContainers
@@ -57,7 +58,11 @@ public class ClickHouseLocalContainerInfraService implements ClickHouseInfraServ
 
     protected ClickHouseContainer initContainer(String imageName) {
         return new ClickHouseContainer(
-                DockerImageName.parse(imageName).asCompatibleSubstituteFor("clickhouse/clickhouse-server"));
+                DockerImageName.parse(imageName).asCompatibleSubstituteFor("clickhouse/clickhouse-server"))
+                .withCopyFileToContainer(
+                        MountableFile.forClasspathResource(
+                                "org/apache/camel/test/infra/clickhouse/services/clickhouse-workaround.xml"),
+                        "/etc/clickhouse-server/users.d/workaround-3105.xml");
     }
 
     @Override
