@@ -1243,6 +1243,14 @@ The message of the part is copied into the child exchange, so the exchanges in t
 untouched and remain usable after the split, for example by the batching consumer that owns them. Exchange
 properties of the part are not carried over to the child exchange, as is already the case for `Message` parts.
 
+=== camel-util - retainAll on the key set of the message headers ignores case
+
+`retainAll` on the key set of `CaseInsensitiveMap`, and so on `exchange.getMessage().getHeaders().keySet()`, now
+keeps a key when the given collection holds its name in any case, as lookups do. For example
+`headers.keySet().retainAll(List.of("accept"))` now keeps the `Accept` header. Prior to Camel 4.23 the names were
+compared case-sensitively, and such a call removed `Accept`. To keep headers by their exact name, remove the others
+explicitly, for example with `headers.keySet().removeIf(name -> !names.contains(name))`.
+
 === camel-core - Idempotent Consumer no longer stops its repository when the route is stopped
 
 Stopping a route with an Idempotent Consumer (for example with `stopRoute` on the route controller, over JMX,
