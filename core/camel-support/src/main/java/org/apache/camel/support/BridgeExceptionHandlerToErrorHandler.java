@@ -58,10 +58,10 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
 
     @Override
     public void handleException(String message, Exchange exchange, Throwable exception) {
-        if (exchange != null && (exchange.getExchangeExtension().isErrorHandlerHandledSet()
-                || exchange.getExchangeExtension().isRedeliveryExhausted())) {
-            // the exchange failed while being routed and has already been handled by the error handler, so it must not
-            // be handled by the error handler again (the bridge is only for errors when the consumer picks up messages)
+        if (exchange != null && isFailedByErrorHandler(exchange)) {
+            // the exchange failed while being routed and has already been processed by the error handler (which did not
+            // handle it), so it must not be processed by the error handler again (the bridge is only for errors when the
+            // consumer picks up messages, or for later errors such as when committing a message that was handled)
             fallback.handleException(message, exchange, exception);
             return;
         }
@@ -97,5 +97,13 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
         } finally {
             UnitOfWorkHelper.doneUow(uow, copy);
         }
+    }
+
+    private static boolean isFailedByErrorHandler(Exchange exchange) {
+        if (exchange.getExchangeExtension().isRedeliveryExhausted()) {
+            return true;
+        }
+        return exchange.getExchangeExtension().isErrorHandlerHandledSet()
+                && !exchange.getExchangeExtension().isErrorHandlerHandled();
     }
 }

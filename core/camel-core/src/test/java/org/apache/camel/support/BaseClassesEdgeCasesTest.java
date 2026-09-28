@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -98,6 +99,35 @@ public class BaseClassesEdgeCasesTest extends ContextTestSupport {
         await().atMost(5, TimeUnit.SECONDS).until(() -> onException.get() >= 1);
         // give a potential second (bridged) error handling time to happen
         await().pollDelay(500, TimeUnit.MILLISECONDS).atMost(2, TimeUnit.SECONDS).until(() -> true);
+        assertEquals(1, onException.get());
+    }
+
+    @Test
+    public void testBridgeErrorHandlerLaterErrorOfHandledExchange() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException(IllegalStateException.class).handled(true).process(e -> onException.incrementAndGet());
+
+                from("direct:start?bridgeErrorHandler=true").routeId("foo").to("mock:result");
+            }
+        });
+        context.start();
+
+        DefaultConsumer consumer = (DefaultConsumer) context.getRoute("foo").getConsumer();
+        ExceptionHandler bridge = consumer.getExceptionHandler();
+        assertInstanceOf(BridgeExceptionHandlerToErrorHandler.class, bridge);
+
+        // a later error (such as when committing) of an exchange that was handled by the error handler is bridged
+        Exchange handled = consumer.getEndpoint().createExchange();
+        handled.getExchangeExtension().setErrorHandlerHandled(true);
+        bridge.handleException("Error committing", handled, new IllegalStateException("Commit failed"));
+        assertEquals(1, onException.get());
+
+        // an exchange that failed while routed (not handled by the error handler) is not bridged again
+        Exchange failed = consumer.getEndpoint().createExchange();
+        failed.getExchangeExtension().setErrorHandlerHandled(false);
+        bridge.handleException("Error processing exchange", failed, new IllegalStateException("Forced"));
         assertEquals(1, onException.get());
     }
 
