@@ -2638,13 +2638,9 @@ public abstract class BaseMainSupport extends BaseService {
                 failIfNotSet, true, autoConfiguredProperties);
 
         if (mainConfigurationProperties.hasAiObservabilityConfiguration() || !properties.isEmpty()) {
-            PropertiesComponent pc = camelContext.getPropertiesComponent();
-            Properties local = pc.getLocalProperties();
-            if (local == null) {
-                local = new Properties();
-                pc.setLocalProperties(local);
-            }
-            local.setProperty("camel.aiObservability.enabled", Boolean.toString(config.isEnabled()));
+            // make the setting available to the components when they are in use (at runtime from any thread)
+            camelContext.getPropertiesComponent().addOverrideProperty("camel.aiObservability.enabled",
+                    Boolean.toString(config.isEnabled()));
         }
     }
 
