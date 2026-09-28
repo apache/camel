@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Stack;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -113,7 +114,9 @@ public class PropertiesComponent extends ServiceSupport
     private final List<PropertiesLookupListener> propertiesLookupListeners = new ArrayList<>();
     private final PropertiesSourceFactory propertiesSourceFactory = new DefaultPropertiesSourceFactory(this);
     private final DefaultPropertiesLookupListener defaultPropertiesLookupListener = new DefaultPropertiesLookupListener();
-    private final List<PropertiesSource> sources = new ArrayList<>();
+    private final List<PropertiesLocation> unknownLocations = new ArrayList<>();
+    // thread-safe as sources may be added at runtime (such as when reloading) while properties are looked up
+    private final List<PropertiesSource> sources = new CopyOnWriteArrayList<>();
     private List<PropertiesLocation> locations = new ArrayList<>();
     private String location;
     private boolean ignoreMissingLocation;
@@ -123,7 +126,7 @@ public class PropertiesComponent extends ServiceSupport
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
-    private final Stack<Properties> localProperties = new Stack<>();;
+    private final Stack<Properties> localProperties = new Stack<>();
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
@@ -370,6 +373,7 @@ public class PropertiesComponent extends ServiceSupport
 
         // we need to re-create the property sources which may have already been created from locations
         this.sources.removeIf(s -> s instanceof LocationPropertiesSource);
+        this.unknownLocations.clear();
         // ensure the locations are in the same order as here, and therefore we provide the order number
         int order = 100;
         for (PropertiesLocation loc : locations) {
@@ -398,7 +402,11 @@ public class PropertiesComponent extends ServiceSupport
     }
 
     public void addLocation(PropertiesLocation location) {
-        this.locations.add(location);
+        if (location != null) {
+            List<PropertiesLocation> newLocations = new ArrayList<>(locations);
+            newLocations.add(location);
+            setLocations(newLocations);
+        }
     }
 
     @Override
@@ -800,6 +808,7 @@ public class PropertiesComponent extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
+        checkUnknownLocations();
         ServiceHelper.startService(sources, propertiesFunctionResolver, defaultPropertiesLookupListener);
     }
 
@@ -820,6 +829,22 @@ public class PropertiesComponent extends ServiceSupport
             addPropertiesSource(new FilePropertiesSource(this, location, order));
         } else if ("classpath".equals(location.getResolver())) {
             addPropertiesSource(new ClasspathPropertiesSource(this, location, order));
+        } else if (!location.isOptional()) {
+            // validated when starting (as ignoreMissingLocation may be configured afterwards)
+            unknownLocations.add(location);
+            if (isStarted()) {
+                checkUnknownLocations();
+            }
+        } else {
+            LOG.debug("Ignored properties location with unknown resolver: {}", location);
+        }
+    }
+
+    private void checkUnknownLocations() {
+        if (!ignoreMissingLocation && !unknownLocations.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Unknown resolver in properties locations: " + unknownLocations
+                                               + ". Supported resolvers are: classpath, file, ref.");
         }
     }
 
