@@ -109,7 +109,7 @@ public final class URISupport {
      * @param  uri The uri to sanitize.
      * @return     Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey
      *             sanitized.
-     * @see        SensitiveUtils#maskUserInfoCredentials(String, String) for how the userinfo password is found
+     * @see        SensitiveUtils#maskUserInfo(String, String, boolean) for how the userinfo password is found
      */
     public static String sanitizeUri(String uri) {
         String sanitized = uri;
