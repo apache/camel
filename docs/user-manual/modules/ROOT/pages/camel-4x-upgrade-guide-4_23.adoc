@@ -2832,6 +2832,12 @@ with `timeout=0`) now fails the exchange with the `InterruptedException`, where 
 successful and returned the request as the reply. A reply that arrives after the producer timed out, or was interrupted,
 is now ignored; previously it could still be copied into the caller's exchange after the producer had returned.
 
+A request/reply message that timed out (or whose producer was interrupted) before a Disruptor consumer started it is
+now ignored by the consumer, as intended. Previously the consumer processed it anyway, and instead the exchange of the
+caller was marked as ignored: a redelivery of that exchange after the timeout, or a fallback that sends it to another
+Disruptor endpoint, was then dropped by the consumer, so the redelivery timed out again and an InOnly fallback message
+was lost.
+
 === camel-seda - an interrupted producer fails the exchange
 
 A SEDA producer whose thread is interrupted while it waits now fails the exchange, where previously it reported the send
