@@ -171,6 +171,28 @@ class AuthoringToolsTest {
     }
 
     @Test
+    void aMissingConsumerIsReportedButDoesNotRefuseTheWrite(@TempDir Path dir) throws IOException {
+        // the route that consumes direct:lookup is often the next file the agent writes (CAMEL-24955)
+        String caller = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: direct:lookup
+                """;
+        JsonObject validated = call("camel_validate_source", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "main.camel.yaml", "content", caller));
+        assertFalse(validated.getBoolean("valid"), validated.toJson());
+        assertTrue(validated.getCollection("errors").stream().anyMatch(m -> m.toString().contains("direct:lookup")),
+                validated.toJson());
+
+        JsonObject written = call("camel_write_file", new ToolContext(),
+                Map.of("directory", dir.toString(), "file", "main.camel.yaml", "content", caller));
+        assertEquals("created", written.getString("status"), written.toJson());
+        assertEquals(caller, Files.readString(dir.resolve("main.camel.yaml"), StandardCharsets.UTF_8));
+    }
+
+    @Test
     void filePathsStayInsideTheDirectoryButMayNameASubdirectory(@TempDir Path dir) throws IOException {
         for (String bad : List.of("../etc/passwd", "/tmp/x.yaml", "sub/../../x.yaml")) {
             ToolExecutionException e = assertThrows(ToolExecutionException.class,

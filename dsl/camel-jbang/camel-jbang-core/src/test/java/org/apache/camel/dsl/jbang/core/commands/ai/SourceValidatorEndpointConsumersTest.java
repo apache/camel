@@ -122,6 +122,84 @@ class SourceValidatorEndpointConsumersTest {
     }
 
     @Test
+    void javaRouteInputsTheScanCannotReadKeepTheCheckQuiet() throws Exception {
+        // each may well consume direct:lookup: a route template's from(, fromF( and a concatenated uri
+        for (String configure : List.of(
+                "routeTemplate(\"t\").templateParameter(\"n\").from(\"direct:{{n}}\").log(\"found\");",
+                "fromF(\"direct:%s\", \"lookup\").log(\"found\");",
+                "from(\"direct:\" + NAME).log(\"found\");")) {
+            Files.writeString(dir.resolve("Lookup.java"), """
+                    import org.apache.camel.builder.RouteBuilder;
+
+                    public class Lookup extends RouteBuilder {
+                        static final String NAME = "lookup";
+
+                        @Override
+                        public void configure() {
+                            %s
+                        }
+                    }
+                    """.formatted(configure));
+            assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, dir)).as(configure).isEmpty();
+        }
+    }
+
+    @Test
+    void aRouteFileInASubdirectoryConsumesIt() throws Exception {
+        Files.createDirectories(dir.resolve("routes"));
+        Files.writeString(dir.resolve("routes/lookup.camel.yaml"), """
+                - route:
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - log: found
+                """);
+        assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, dir)).isEmpty();
+    }
+
+    @Test
+    void theFileBeingValidatedIsLeftOutByItsPathUnderTheDirectory() throws Exception {
+        // camel_validate_source passes the project directory and the file's path relative to it
+        Files.createDirectories(dir.resolve("routes"));
+        Files.writeString(dir.resolve("routes/r.camel.yaml"), ROUTE + """
+                - route:
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - log: found
+                """);
+        assertThat(SourceValidator.validate("routes/r.camel.yaml", ROUTE, CATALOG, null, dir))
+                .singleElement().asString().contains("sends to direct:lookup");
+    }
+
+    @Test
+    void aMavenProjectIsScannedFromItsRootOnly() throws Exception {
+        Path camel = Files.createDirectories(dir.resolve("src/main/resources/camel"));
+        Path java = Files.createDirectories(dir.resolve("src/main/java/com/acme"));
+        Files.writeString(dir.resolve("pom.xml"), "<project/>");
+        Files.writeString(java.resolve("Lookup.java"), """
+                package com.acme;
+
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Lookup extends RouteBuilder {
+                    @Override
+                    public void configure() {
+                        from("direct:lookup").log("found");
+                    }
+                }
+                """);
+        // from the project root, the RouteBuilder under src/main/java is found
+        assertThat(SourceValidator.validate("src/main/resources/camel/r.camel.yaml", ROUTE, CATALOG, null, dir))
+                .isEmpty();
+        // from the directory of the YAML file, the rest of the project is not seen: the check says nothing
+        Files.delete(java.resolve("Lookup.java"));
+        assertThat(SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, camel)).isEmpty();
+        assertThat(SourceValidator.validate("src/main/resources/camel/r.camel.yaml", ROUTE, CATALOG, null, dir))
+                .singleElement().asString().contains("sends to direct:lookup");
+    }
+
+    @Test
     void theFileBeingValidatedIsReadFromItsContentNotFromDisk() throws Exception {
         // the editor's buffer is newer than the file on disk, which still consumes direct:lookup
         Files.writeString(dir.resolve("r.camel.yaml"), ROUTE + """

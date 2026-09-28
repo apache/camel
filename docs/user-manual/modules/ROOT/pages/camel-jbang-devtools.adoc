@@ -428,8 +428,10 @@ schema and reports the deprecated compact notation. `camel validate source` vali
 load: YAML routes, `.properties` files (the `camel.*` keys), Java (compiles it), XSLT and XML.
 As the routes of an application are spread over the files of its directory, `camel validate source` also reports a
 `direct:` or `seda:` endpoint a YAML route sends to that no route consumes, in that file or in the YAML, Java and
-XML route files next to it: with `direct:` the route would fail to start, with `seda:` the messages would be queued
-and never read. An endpoint only known at runtime (a property placeholder, an expression) is not reported.
+XML route files of its directory and its subdirectories: with `direct:` the route would fail to start, with `seda:`
+the messages would be queued and never read. The check stays quiet when it cannot be certain: an endpoint only known
+at runtime (a property placeholder, an expression), route templates and Kamelets, and a directory that is only a part
+of a Maven or Gradle project, such as `src/main/resources/camel`.
 
 === Validating against another Camel version or runtime
 

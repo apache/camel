@@ -140,4 +140,44 @@ public class EndpointConsumersTest {
         assertThat(EndpointConsumers.check(yaml, Set.of())).isEmpty();
         assertThat(EndpointConsumers.consumed(yaml)).isNull();
     }
+
+    @Test
+    public void testARouteTemplateKeepsTheCheckQuiet() {
+        // the templated route lookup is made from the template, and consumes direct:lookup once the template is
+        // instantiated: the routes a template creates are not read, so the check says nothing
+        String yaml = SENDS_TO.formatted("direct:lookup") + """
+                - routeTemplate:
+                    id: lookup-template
+                    parameters:
+                      - name: name
+                    from:
+                      uri: "direct:{{name}}"
+                      steps:
+                        - log: found
+                - templatedRoute:
+                    routeTemplateRef: lookup-template
+                    parameters:
+                      - name: name
+                        value: lookup
+                """;
+        assertThat(EndpointConsumers.check(yaml, Set.of())).isEmpty();
+        assertThat(EndpointConsumers.consumed(yaml)).isNull();
+    }
+
+    @Test
+    public void testAKameletConsumesWhatIsNotKnown() {
+        String kamelet = """
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: lookup-action
+                spec:
+                  template:
+                    from:
+                      uri: kamelet:source
+                      steps:
+                        - to: direct:lookup
+                """;
+        assertThat(EndpointConsumers.consumed(kamelet)).isNull();
+    }
 }

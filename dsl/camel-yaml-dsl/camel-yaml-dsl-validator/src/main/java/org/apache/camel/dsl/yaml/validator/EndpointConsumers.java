@@ -44,6 +44,9 @@ public final class EndpointConsumers {
 
     /** The components whose consumer is a route of the same application. */
     private static final Set<String> CHECKED = Set.of("direct", "seda");
+    /** The route templates and the routes made from them, whose endpoints are only known once instantiated. */
+    private static final Set<String> TEMPLATES = Set.of(
+            "routeTemplate", "route-template", "templatedRoute", "templated-route");
 
     private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
 
@@ -53,11 +56,15 @@ public final class EndpointConsumers {
     /**
      * The {@code direct:} and {@code seda:} endpoints the routes of a YAML file consume, without their options. Empty
      * when the file is not YAML the routes can be read from; null when a route consumes an endpoint only known at
-     * runtime ({@code from: direct:{{name}}}), which could be any of them.
+     * runtime ({@code from: direct:{{name}}}), or the file has route templates or is a Kamelet, which could consume any
+     * of them.
      */
     public static Set<String> consumed(String yaml) {
         JsonNode target = read(yaml);
-        return target != null ? consumed(routes(target)) : Set.of();
+        if (target == null) {
+            return Set.of();
+        }
+        return hasTemplates(target) ? null : consumed(routes(target));
     }
 
     /**
@@ -71,7 +78,7 @@ public final class EndpointConsumers {
             return List.of();
         }
         JsonNode target = read(yaml);
-        if (target == null) {
+        if (target == null || hasTemplates(target)) {
             return List.of();
         }
         List<Route> routes = routes(target);
@@ -134,6 +141,26 @@ public final class EndpointConsumers {
     /** Whether the endpoint is only known at runtime: a property placeholder or an expression. */
     public static boolean isDynamic(String uri) {
         return uri != null && (uri.contains("{{") || uri.contains("${"));
+    }
+
+    /**
+     * Whether the file has a route template, a route made from one, or is a Kamelet: the routes they create are not
+     * read here, so what they consume is not known.
+     */
+    private static boolean hasTemplates(JsonNode target) {
+        if (target.isObject()) {
+            return "Kamelet".equals(target.path("kind").asText());
+        }
+        for (JsonNode entry : target) {
+            if (entry.isObject()) {
+                for (String key : TEMPLATES) {
+                    if (entry.has(key)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private static JsonNode read(String yaml) {
