@@ -3109,6 +3109,17 @@ logged endpoint URIs and route dumps; `passPhrase` and `keyPassword` were alread
 declare options with the same names. The YAML DSL JSON schema now also marks `passPhrase` and `keyPassword` with
 `"format": "password"`, so editors that consume the schema render them as password fields.
 
+=== camel-core - simple contains on a collection and comparing a String with a boolean
+
+The `contains` operator of the simple language now type coerces each element of a collection, the same way
+it already did for an array. For example `${header.ids} contains '2'` is now `true` when the header is a
+`List` of the numbers 1, 2 and 3. With `ignoreCase` (the `~~` operator) an element of a collection must now be
+equal to the value (ignoring case), where previously it was enough for the element to contain the value as a
+substring, which was also not the case without `ignoreCase`.
+
+A String is now only equal to a boolean when it is `true` or `false` (ignoring case). Previously any other
+String was equal to `false`, so `${body} == false` was `true` when the body was `hello`.
+
 == ThrottlingExceptionRoutePolicy
 
 `ThrottlingExceptionRoutePolicy.setKeepOpen(true)` now opens the circuit immediately and synchronously (the consumer
