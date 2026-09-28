@@ -287,6 +287,7 @@ public final class ArtifactUtils {
             Map.entry("language", "camel-language"),
             Map.entry("ldap", "camel-ldap"),
             Map.entry("ldif", "camel-ldif"),
+            Map.entry("llm", "camel-openai"),
             Map.entry("log", "camel-log"),
             Map.entry("lpr", "camel-printer"),
             Map.entry("lucene", "camel-lucene"),

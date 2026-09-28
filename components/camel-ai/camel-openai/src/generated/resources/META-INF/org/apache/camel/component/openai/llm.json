@@ -1,8 +1,8 @@
 {
   "component": {
     "kind": "component",
-    "name": "openai",
-    "title": "OpenAI",
+    "name": "llm",
+    "title": "LLM",
     "description": "LLM endpoint for chat completion, Responses API, embeddings, audio transcription, audio translation, and text-to-speech using OpenAI-compatible APIs. The openai scheme is a supported alias.",
     "deprecated": false,
     "firstVersion": "4.17.0",
@@ -12,10 +12,10 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-openai",
     "version": "4.23.0-SNAPSHOT",
-    "scheme": "openai",
+    "scheme": "llm",
     "extendsScheme": "",
     "alternativeSchemes": "openai,llm",
-    "syntax": "openai:operation",
+    "syntax": "llm:operation",
     "async": false,
     "api": false,
     "consumerOnly": false,
