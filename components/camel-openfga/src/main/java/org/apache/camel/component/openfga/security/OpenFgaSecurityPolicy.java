@@ -347,6 +347,17 @@ public class OpenFgaSecurityPolicy implements AuthorizationPolicy {
         configuration.setApiAudience(apiAudience);
     }
 
+    public String getScopes() {
+        return configuration.getScopes();
+    }
+
+    /**
+     * Space-separated scopes to request in the OAuth 2.0 client-credentials flow.
+     */
+    public void setScopes(String scopes) {
+        configuration.setScopes(scopes);
+    }
+
     public boolean isFailOpen() {
         return configuration.isFailOpen();
     }

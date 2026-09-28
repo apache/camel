@@ -88,6 +88,28 @@ class OpenFgaEndpointConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    void acceptsTheConsistencyValuesOpenFgaDefines() throws Exception {
+        for (String value : new String[] { "UNSPECIFIED", "MINIMIZE_LATENCY", "HIGHER_CONSISTENCY" }) {
+            OpenFgaEndpoint endpoint = endpoint("openfga:check?openFgaClient=#fgaClient&storeId=" + STORE
+                                                + "&user=user:anne&relation=reader&object=document:budget"
+                                                + "&consistency=" + value);
+            assertThat(endpoint.getConfiguration().getConsistency()).isEqualTo(value);
+        }
+    }
+
+    @Test
+    void refusesAConsistencyValueOpenFgaWouldNotUnderstand() {
+        // ConsistencyPreference.fromValue does not reject an unknown value, it answers UNKNOWN_DEFAULT_OPEN_API -
+        // whose wire form would then be sent on every request - and the enums= on the @UriParam is only metadata,
+        // so a lowercase typo reaches the endpoint and has to be caught here
+        assertThatThrownBy(() -> endpoint("openfga:check?openFgaClient=#fgaClient&storeId=" + STORE
+                                          + "&user=user:anne&relation=reader&object=document:budget"
+                                          + "&consistency=higher_consistency"))
+                .hasStackTraceContaining("Unknown consistency 'higher_consistency'")
+                .hasStackTraceContaining("HIGHER_CONSISTENCY");
+    }
+
+    @Test
     void letsTheTupleOperationsTakeEverythingFromTheMessage() throws Exception {
         // writeTuples and deleteTuples read their tuples from the body, so nothing has to be configured up front
         OpenFgaEndpoint endpoint = endpoint("openfga:writeTuples?openFgaClient=#fgaClient&storeId=" + STORE);

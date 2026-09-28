@@ -146,11 +146,19 @@ order the body asked in:
 [source,java]
 ------------------------------------------------------------
 from("direct:listDocuments")
-        .to("sql:SELECT id FROM documents")                         // every document
+        .to("sql:SELECT id FROM documents")
+        // sql: answers with a List<Map>, one entry per row, so turn it into the object identifiers first - a Map
+        // would stringify to {ID=budget}, which is not an identifier and would simply be skipped
+        .process(exchange -> {
+            List<Map<String, Object>> rows = exchange.getMessage().getBody(List.class);
+            exchange.getMessage().setBody(rows.stream().map(row -> "document:" + row.get("id")).toList());
+        })
         .to("openfga:batchCheck?storeId={{fga.store}}&relation=reader"
-            + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}")             // only the ones this subject may read
+            + "&user=user:${exchangeProperty.CamelKeycloakTokenSubject}")
         .to("direct:render");
 ------------------------------------------------------------
+
+The body comes back holding only the identifiers the check allowed, in the order it was given them.
 
 `listObjects` answers the same question from the other end — ask OpenFGA which objects the subject can reach,
 rather than filtering a list you already have:
@@ -180,8 +188,24 @@ from("direct:createDocument")
             + "&object=document:${header.documentId}");
 ------------------------------------------------------------
 
-For several tuples at once, set the body to a collection of `Map`s with `user`, `relation` and `object` entries, or
-of `ClientTupleKey` objects. `deleteTuples` accepts the same shapes and revokes instead.
+For several tuples at once, leave `user`/`relation`/`object` unset and put them in the body instead — a collection of
+`Map`s with `user`, `relation` and `object` entries, or of `ClientTupleKey` objects. `deleteTuples` accepts the same
+shapes and revokes instead.
+
+[IMPORTANT]
+.The endpoint wins over the body
+====
+If the endpoint configures any of `user`, `relation` or `object`, that is the tuple written and the body is not
+consulted. The body is read only when the endpoint names none of them.
+
+The same rule that governs a check governs a write: the configuration decides and the message does not. Were the body
+preferred, a route that unmarshals an untrusted payload before writing would hand the caller the choice of which
+relationship to grant — and `{"user": "user:attacker", "relation": "owner", "object": "document:secret"}` is a
+perfectly well-formed tuple.
+
+A partly configured triple is treated as a mistake rather than an invitation to fill the rest in from the message: the
+producer fails and names the part that is missing.
+====
 
 A typed wildcard — `user:*`, OpenFGA's "everyone" — is accepted here, because writing that tuple is how a resource
 is shared publicly and is a deliberate act by the route. It is *refused* as the subject of a check; see below.
@@ -195,7 +219,15 @@ that and is off by default; it is marked `insecure:dev` and should not be enable
 
 `failOpen` covers only a *failure to obtain an answer*, and only for `check` and for `OpenFgaSecurityPolicy` — the
 two places where "proceed" means something. It never turns a denial into an allow, and it never applies to an
-Exchange that carried no usable subject (see below). The query operations ignore it entirely: a `batchCheck` or
+Exchange that carried no usable subject (see below).
+
+It also does not apply when OpenFGA answers with an HTTP 4xx. A 400 means the question was malformed, a 401 or 403
+that this client may not ask it, a 404 that what was asked about does not exist — none of which is a decision point
+that has gone away. This matters concretely: an object identifier can get past the component's own guards and still
+be rejected by the server (`document:a:b` and `document:x#y` are both HTTP 400 on OpenFGA 1.21.0), and if `failOpen`
+covered that, any caller able to influence the identifier could turn a check into an allow. Those fail closed, and
+the component logs why it did not fail open. A 429 is the one 4xx that does count as unavailable — it means "not
+right now" — as do transport errors, timeouts and 5xx. The query operations ignore it entirely: a `batchCheck` or
 `listObjects` that failed has no safe way to proceed, since handing back the objects it never managed to filter
 would be exactly the leak the filtering was there to prevent.
 
@@ -239,6 +271,11 @@ deliberate, reviewable configuration change.
 OpenFGA's default read consistency may answer from a replica that has not caught up, which right after a revoke
 means a deleted tuple can still grant access for a moment. Set `consistency=HIGHER_CONSISTENCY` on the paths where
 that window matters, at the cost of latency.
+
+The value is checked when the endpoint starts, and an unrecognised one — `higher_consistency`, say — is refused
+rather than accepted and quietly sent as `unknown_default_open_api` on every request.
+
+
 
 === Authentication and TLS
 

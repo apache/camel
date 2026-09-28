@@ -173,6 +173,50 @@ public class OpenFgaIT extends CamelTestSupport {
     }
 
     @Test
+    void refusesAnObjectTheServerRejectsEvenWithFailOpenEnabled() throws Exception {
+        // document:x#y gets past the component's own guards - '#' is legitimate in a userset subject - but OpenFGA
+        // rejects it as an object with HTTP 400. Prove the server really does reject it...
+        assertThat(rawCheckStatus("user:anne", "reader", "document:x#y")).isEqualTo(400);
+
+        // ...and that failOpen does not turn that rejection into an allow, which is the bypass a caller able to
+        // influence the identifier would otherwise have
+        Exchange out = template.request(
+                openfga("check", "relation=reader&user=user:anne&object=document:${header.documentId}&failOpen=true"),
+                e -> e.getMessage().setHeader("documentId", "x#y"));
+
+        assertThat(out.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+    }
+
+    @Test
+    void proceedsWhenTheServerIsUnreachableAndFailOpenIsEnabled() {
+        // the other half of the same rule: an unreachable decision point is what failOpen is actually for
+        Exchange out = template.request(
+                "openfga:check?apiUrl=http://localhost:1&storeId=" + storeId
+                                        + "&relation=reader&user=user:anne&object=document:budget&failOpen=true"
+                                        + "&connectTimeout=500&readTimeout=500&maxRetries=0",
+                e -> {
+                });
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+    }
+
+    private static int rawCheckStatus(String user, String relation, String object) throws Exception {
+        HttpResponse<String> response = HttpClient.newHttpClient().send(
+                HttpRequest.newBuilder()
+                        .uri(URI.create(service.getOpenFgaUrl() + "/stores/" + storeId + "/check"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(
+                                "{\"authorization_model_id\":\"" + modelId + "\",\"tuple_key\":{\"user\":\"" + user
+                                                                  + "\",\"relation\":\"" + relation
+                                                                  + "\",\"object\":\"" + object + "\"}}"))
+                        .build(),
+                HttpResponse.BodyHandlers.ofString());
+        return response.statusCode();
+    }
+
+    @Test
     void listsTheObjectsASubjectCanRead() {
         Exchange out = template.request(
                 openfga("listObjects", "relation=reader&user=user:anne&type=document"), e -> {

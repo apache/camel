@@ -149,6 +149,19 @@ class OpenFgaOperationsTest extends CamelTestSupport {
     }
 
     @Test
+    void batchCheckReportsTheVerdictEvenWhenNoEntryIsUsable() throws Exception {
+        Exchange out = template.request("openfga:batchCheck" + BASE + "&relation=reader&user=user:anne",
+                e -> e.getMessage().setBody(List.of("not-an-identifier", "also-not-one")));
+
+        // every other path sets the verdict header; leaving it unset here would make the route infer one from an
+        // empty body
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(false);
+        assertThat(out.getMessage().getBody(List.class)).isEmpty();
+        verify(client, never()).clientBatchCheck(anyList(), any());
+    }
+
+    @Test
     void listObjectsReplacesTheBodyWithTheObjectsTheSubjectCanReach() throws Exception {
         ClientListObjectsResponse response = mock(ClientListObjectsResponse.class);
         when(response.getObjects()).thenReturn(List.of("document:budget", "document:public"));
@@ -208,7 +221,7 @@ class OpenFgaOperationsTest extends CamelTestSupport {
     }
 
     @Test
-    void writeTuplesFallsBackToTheConfiguredTripleWhenTheBodyCarriesNone() throws Exception {
+    void writeTuplesUsesTheConfiguredTripleWhenNoBodyCarriesTuples() throws Exception {
         when(client.writeTuples(anyList())).thenReturn(CompletableFuture.completedFuture(mock(ClientWriteResponse.class)));
 
         // the shape a route that just created a resource wants: grant access to it without assembling a payload
@@ -230,6 +243,38 @@ class OpenFgaOperationsTest extends CamelTestSupport {
                     assertThat(tuple.getRelation()).isEqualTo("owner");
                     assertThat(tuple.getObject()).isEqualTo("document:q3-report");
                 });
+    }
+
+    @Test
+    void writeTuplesPrefersTheConfiguredTripleOverTheBody() throws Exception {
+        when(client.writeTuples(anyList())).thenReturn(CompletableFuture.completedFuture(mock(ClientWriteResponse.class)));
+
+        // the same rule that governs a check governs a write: the endpoint decides and the message does not. A route
+        // that unmarshalled this body must not thereby let the caller choose which relationship gets granted
+        Exchange out = template.request(
+                "openfga:writeTuples" + BASE + "&user=user:anne&relation=reader&object=document:budget",
+                e -> e.getMessage().setBody(
+                        Map.of("user", "user:attacker", "relation", "owner", "object", "document:secret")));
+
+        assertThat(out.getException()).isNull();
+        ArgumentCaptor<List<ClientTupleKey>> captor = ArgumentCaptor.captor();
+        verify(client).writeTuples(captor.capture());
+        assertThat(captor.getValue()).singleElement()
+                .satisfies(tuple -> {
+                    assertThat(tuple.getUser()).isEqualTo("user:anne");
+                    assertThat(tuple.getRelation()).isEqualTo("reader");
+                    assertThat(tuple.getObject()).isEqualTo("document:budget");
+                });
+    }
+
+    @Test
+    void writeTuplesReportsAPartlyConfiguredTripleRatherThanCompletingItFromTheBody() {
+        Exchange out = template.request("openfga:writeTuples" + BASE + "&user=user:anne",
+                e -> e.getMessage().setBody(
+                        Map.of("user", "user:attacker", "relation", "owner", "object", "document:secret")));
+
+        assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(out.getException()).hasMessageContaining("relation");
     }
 
     @Test

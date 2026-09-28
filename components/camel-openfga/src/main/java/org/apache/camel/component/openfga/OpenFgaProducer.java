@@ -147,6 +147,9 @@ public class OpenFgaProducer extends DefaultProducer {
             requests.add(new ClientCheckRequest().user(user).relation(relation)._object(object));
         }
         if (requests.isEmpty()) {
+            // nothing in the body could be an object of a check, so nothing is allowed. Say so on the header as
+            // every other path does, rather than leaving the route to infer a verdict from an empty body
+            exchange.getMessage().setHeader(OpenFgaConstants.ALLOWED, false);
             exchange.getMessage().setBody(List.of());
             return;
         }
@@ -311,6 +314,18 @@ public class OpenFgaProducer extends DefaultProducer {
      * with everyone, and writing that tuple is a deliberate act by the route rather than something a caller chose.
      */
     private List<Tuple> resolveTuples(Exchange exchange, OpenFgaAuthorizer authorizer) throws InvalidPayloadException {
+        // The endpoint wins whenever it names a tuple at all. This is an authorization component, so the same rule
+        // that governs the check governs the write: the configuration decides and the message does not. Reading the
+        // body in preference would mean a route that unmarshals an untrusted payload hands the caller the choice of
+        // which relationship to grant - and "user:attacker owner document:secret" is a legitimate-looking tuple.
+        Tuple configured = new Tuple(
+                authorizer.rawUser(exchange), authorizer.rawRelation(exchange), authorizer.rawObject(exchange));
+        if (configured.user != null || configured.relation != null || configured.object != null) {
+            // a partly configured triple is a mistake rather than an invitation to fill the rest in from the
+            // message, so validated() reports whichever part is missing
+            return List.of(validated(configured));
+        }
+
         List<Tuple> tuples = new ArrayList<>();
         Object body = exchange.getMessage().getBody();
         if (body instanceof Collection<?> collection) {
@@ -320,13 +335,12 @@ public class OpenFgaProducer extends DefaultProducer {
         } else if (body instanceof Map || body instanceof ClientTupleKeyWithoutCondition) {
             tuples.add(toTuple(body));
         } else {
-            Tuple tuple = new Tuple(
-                    authorizer.rawUser(exchange), authorizer.rawRelation(exchange), authorizer.rawObject(exchange));
-            if (tuple.user == null && tuple.relation == null && tuple.object == null) {
-                // neither a payload nor a configured triple: there is nothing to write, and guessing is not an option
-                throw new InvalidPayloadException(exchange, Collection.class);
-            }
-            tuples.add(validated(tuple));
+            // neither a payload nor a configured triple: there is nothing to write, and guessing is not an option
+            throw new InvalidPayloadException(exchange, Collection.class);
+        }
+        if (tuples.isEmpty()) {
+            // an empty collection asks for no tuples at all, which OpenFGA rejects; saying so here names the cause
+            throw new InvalidPayloadException(exchange, Collection.class);
         }
         return tuples;
     }

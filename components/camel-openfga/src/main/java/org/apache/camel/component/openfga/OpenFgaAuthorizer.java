@@ -25,6 +25,7 @@ import dev.openfga.sdk.api.client.OpenFgaClient;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.configuration.ClientCheckOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
+import dev.openfga.sdk.errors.FgaError;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -99,9 +100,18 @@ public class OpenFgaAuthorizer {
         if (ObjectHelper.isEmpty(consistency)) {
             return null;
         }
-        // fromValue matches the wire value ("HIGHER_CONSISTENCY"), and valueOf would accept
-        // UNKNOWN_DEFAULT_OPEN_API, which is not something to let anyone configure
-        return ConsistencyPreference.fromValue(consistency);
+        ConsistencyPreference parsed = ConsistencyPreference.fromValue(consistency);
+        // fromValue does not reject an unknown value, it answers UNKNOWN_DEFAULT_OPEN_API - and its wire form,
+        // "unknown_default_open_api", would then be sent on every request. The enums= on the @UriParam is only
+        // metadata for the catalog and tooling, so nothing else stops a typo like "higher_consistency" either
+        if (parsed == null || parsed == ConsistencyPreference.UNKNOWN_DEFAULT_OPEN_API) {
+            throw new IllegalArgumentException(
+                    "Unknown consistency '" + consistency + "'; expected one of "
+                                               + ConsistencyPreference.UNSPECIFIED.getValue() + ", "
+                                               + ConsistencyPreference.MINIMIZE_LATENCY.getValue() + ", "
+                                               + ConsistencyPreference.HIGHER_CONSISTENCY.getValue());
+        }
+        return parsed;
     }
 
     /**
@@ -146,12 +156,20 @@ public class OpenFgaAuthorizer {
             allowed = await(exchange, "check " + resolvedRelation + " on " + resolvedObject,
                     () -> client.check(request, checkOptions())).getAllowed();
         } catch (OpenFgaEvaluationException e) {
-            if (failOpen) {
+            if (failOpen && isDecisionPointUnavailable(e)) {
                 LOG.warn("Could not ask OpenFGA whether {} has {} on {}, allowing the exchange to proceed because"
                          + " failOpen is enabled. Reason: {}",
                         resolvedUser, resolvedRelation, resolvedObject, e.getMessage());
                 setDecision(exchange, true);
                 return true;
+            }
+            if (failOpen) {
+                // worth saying out loud: the operator asked to fail open and did not get it, and the reason is that
+                // this was not the kind of failure failOpen is for
+                LOG.warn("OpenFGA rejected the question about {} having {} on {}, so the exchange is denied even"
+                         + " though failOpen is enabled: a rejected request is not an unavailable decision point."
+                         + " Reason: {}",
+                        resolvedUser, resolvedRelation, resolvedObject, e.getMessage());
             }
             throw e;
         }
@@ -164,6 +182,31 @@ public class OpenFgaAuthorizer {
             exchange.getMessage().setHeader(OpenFgaConstants.DENY_REASON, "denied");
         }
         return permitted;
+    }
+
+    /**
+     * Whether a failure means OpenFGA could not answer, which is the only thing {@code failOpen} is for.
+     * <p/>
+     * An HTTP 4xx is not that. It is OpenFGA telling us the question was malformed (400), that we may not ask it
+     * (401/403), or that what we asked about does not exist (404) - and none of those is a decision point that has gone
+     * away. Letting {@code failOpen} cover them would be a bypass: an object identifier that gets past
+     * {@link OpenFgaIdentifiers} but that the server still rejects - {@code document:a:b} or {@code document:x#y}, both
+     * HTTP 400 on OpenFGA 1.21.0 - would turn into an allow for any caller who could influence it.
+     * <p/>
+     * A 429 is the exception that proves the rule: it is a 4xx by status class, but what it says is "not right now",
+     * which is precisely a decision point that could not answer.
+     */
+    private static boolean isDecisionPointUnavailable(Throwable failure) {
+        for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
+            if (cause instanceof FgaError error) {
+                return !error.isClientError() || error.isRateLimitError();
+            }
+            if (cause.getCause() == cause) {
+                break;
+            }
+        }
+        // no HTTP status to go on: a connect failure, a timeout, a serialization problem. The server never answered
+        return true;
     }
 
     /**

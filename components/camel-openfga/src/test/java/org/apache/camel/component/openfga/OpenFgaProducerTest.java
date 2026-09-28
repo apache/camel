@@ -17,15 +17,20 @@
 package org.apache.camel.component.openfga;
 
 import java.io.IOException;
+import java.net.http.HttpHeaders;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import dev.openfga.sdk.api.client.OpenFgaClient;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.client.model.ClientCheckResponse;
+import dev.openfga.sdk.errors.FgaError;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,6 +59,15 @@ class OpenFgaProducerTest extends CamelTestSupport {
     private void givenServerIsUnreachable() throws Exception {
         when(client.check(any(ClientCheckRequest.class), any()))
                 .thenReturn(CompletableFuture.failedFuture(new IOException("connection refused")));
+    }
+
+    private void givenServerRejectsTheRequest(int statusCode) throws Exception {
+        // what OpenFGA answers for an object identifier it will not accept - document:a:b and document:x#y are both
+        // HTTP 400 validation_error on 1.21.0 - and for a client that may not ask (401/403) or a missing store (404)
+        FgaError error = new FgaError(
+                "validation_error", statusCode, HttpHeaders.of(Map.of(), (k, v) -> true),
+                "{\"code\":\"validation_error\"}");
+        when(client.check(any(ClientCheckRequest.class), any())).thenReturn(CompletableFuture.failedFuture(error));
     }
 
     private Exchange request(String endpoint) {
@@ -144,6 +158,43 @@ class OpenFgaProducerTest extends CamelTestSupport {
     @Test
     void proceedsWhenTheServerCannotBeReachedAndFailOpenIsEnabled() throws Exception {
         givenServerIsUnreachable();
+
+        Exchange out = request(ENDPOINT + "&failOpen=true");
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 400, 401, 403, 404 })
+    void deniesWhenOpenFgaRejectsTheRequestEvenWhenFailOpenIsEnabled(int statusCode) throws Exception {
+        givenServerRejectsTheRequest(statusCode);
+
+        Exchange out = request(ENDPOINT + "&failOpen=true");
+
+        // a 4xx is OpenFGA saying the question was malformed or may not be asked - not a decision point that has
+        // gone away. Were failOpen to cover it, an object identifier that gets past the component's own guards but
+        // that the server rejects would turn into an allow for anyone able to influence it
+        assertThat(out.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+    }
+
+    @Test
+    void proceedsOnARateLimitWhenFailOpenIsEnabled() throws Exception {
+        // 429 is a 4xx by status class, but what it says is "not right now", which is exactly an unavailable
+        // decision point - so it is the one client error failOpen does cover
+        givenServerRejectsTheRequest(429);
+
+        Exchange out = request(ENDPOINT + "&failOpen=true");
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 500, 502, 503 })
+    void proceedsOnAServerErrorWhenFailOpenIsEnabled(int statusCode) throws Exception {
+        givenServerRejectsTheRequest(statusCode);
 
         Exchange out = request(ENDPOINT + "&failOpen=true");
 
