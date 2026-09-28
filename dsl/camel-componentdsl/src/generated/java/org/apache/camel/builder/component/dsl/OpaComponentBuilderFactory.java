@@ -74,6 +74,32 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Authorize a whole collection in one call. When enabled the producer
+         * expects a List body, evaluates one input document per element - each
+         * element as the body, sharing the exchange's headers and properties -
+         * and returns the per-element verdicts in the CamelOpaBatchDecision
+         * header, a List parallel to the input. An element whose evaluation
+         * could not be reached is denied, unless failOpen is set; the batch is
+         * never allowed or denied as a whole because one element failed. Only
+         * for {code evaluationMode=rest}: it saves the per-element HTTP
+         * round-trip via OPA's batch API, which has no meaning for in-process
+         * wasm.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param batch the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder batch(boolean batch) {
+            doSetProperty("batch", batch);
+            return this;
+        }
+    
         /**
          * The component configuration.
          * 
@@ -519,6 +545,7 @@ public interface OpaComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "allowKey": getOrCreateConfiguration((OpaComponent) component).setAllowKey((java.lang.String) value); return true;
+            case "batch": getOrCreateConfiguration((OpaComponent) component).setBatch((boolean) value); return true;
             case "configuration": ((OpaComponent) component).setConfiguration((org.apache.camel.component.opa.OpaConfiguration) value); return true;
             case "entrypoint": getOrCreateConfiguration((OpaComponent) component).setEntrypoint((java.lang.String) value); return true;
             case "evaluationMode": getOrCreateConfiguration((OpaComponent) component).setEvaluationMode((java.lang.String) value); return true;

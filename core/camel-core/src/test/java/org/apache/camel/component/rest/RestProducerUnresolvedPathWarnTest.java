@@ -52,8 +52,9 @@ public class RestProducerUnresolvedPathWarnTest {
 
     @BeforeEach
     public void before() {
+        // a name of its own, so two of these cannot replace each other's appender
         appender = ConsumingAppender.newAppender(
-                RestProducer.class.getName(), "UnresolvedPath", Level.WARN,
+                RestProducer.class.getName(), "UnresolvedPath-" + System.nanoTime(), Level.WARN,
                 event -> warnings.add(event.getMessage().getFormattedMessage()));
     }
 
@@ -62,6 +63,15 @@ public class RestProducerUnresolvedPathWarnTest {
         if (appender != null) {
             appender.stop();
         }
+    }
+
+    /**
+     * The warnings about one path, by its first segment: the appender is on the shared RestProducer logger, so a test
+     * class running beside this one in the same JVM is captured here too. The message carries the path as it was
+     * resolved, so warnsays/{id}/{val} appears as warnsays/1/{val} once the id has a value.
+     */
+    private List<String> warningsFor(String firstSegment) {
+        return warnings.stream().filter(w -> w.contains(" of " + firstSegment + "/")).toList();
     }
 
     private RestProducer createProducer(String uri) throws Exception {
@@ -75,7 +85,7 @@ public class RestProducerUnresolvedPathWarnTest {
 
     @Test
     public void testSaysWhichParameterHasNoValue() throws Exception {
-        RestProducer producer = createProducer("rest:get:list/{id}/{val}");
+        RestProducer producer = createProducer("rest:get:warnsays/{id}/{val}");
         Exchange exchange = producer.createExchange();
         Message message = exchange.getIn();
         message.setHeader("id", 1);
@@ -83,15 +93,16 @@ public class RestProducerUnresolvedPathWarnTest {
         producer.process(exchange);
 
         // the request is still sent, with the placeholder in it, as before
-        assertEquals("http://localhost/list/1/{val}", message.getHeader(Exchange.REST_HTTP_URI));
-        assertEquals(1, warnings.size(), warnings.toString());
-        assertTrue(warnings.get(0).contains("{val}"), warnings.get(0));
-        assertTrue(warnings.get(0).contains("set the header val"), warnings.get(0));
+        assertEquals("http://localhost/warnsays/1/{val}", message.getHeader(Exchange.REST_HTTP_URI));
+        List<String> mine = warningsFor("warnsays");
+        assertEquals(1, mine.size(), warnings.toString());
+        assertTrue(mine.get(0).contains("{val}"), mine.get(0));
+        assertTrue(mine.get(0).contains("set the header val"), mine.get(0));
     }
 
     @Test
     public void testSaysItOncePerParameter() throws Exception {
-        RestProducer producer = createProducer("rest:get:list/{id}");
+        RestProducer producer = createProducer("rest:get:warnonce/{id}");
 
         for (int i = 0; i < 3; i++) {
             Exchange exchange = producer.createExchange();
@@ -99,19 +110,20 @@ public class RestProducerUnresolvedPathWarnTest {
         }
 
         // a route that is wrong is wrong for every message, so it is said once
-        assertEquals(1, warnings.size(), warnings.toString());
-        assertTrue(warnings.get(0).contains("{id}"), warnings.get(0));
+        List<String> mine = warningsFor("warnonce");
+        assertEquals(1, mine.size(), warnings.toString());
+        assertTrue(mine.get(0).contains("{id}"), mine.get(0));
     }
 
     @Test
     public void testSaysNothingWhenEveryParameterHasAValue() throws Exception {
-        RestProducer producer = createProducer("rest:get:list/{id}");
+        RestProducer producer = createProducer("rest:get:warnnone/{id}");
         Exchange exchange = producer.createExchange();
         exchange.getIn().setHeader("id", 1);
 
         producer.process(exchange);
 
-        assertEquals("http://localhost/list/1", exchange.getIn().getHeader(Exchange.REST_HTTP_URI));
-        assertTrue(warnings.isEmpty(), warnings.toString());
+        assertEquals("http://localhost/warnnone/1", exchange.getIn().getHeader(Exchange.REST_HTTP_URI));
+        assertTrue(warningsFor("warnnone").isEmpty(), warnings.toString());
     }
 }

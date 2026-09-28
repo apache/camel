@@ -440,20 +440,10 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                     setOutputDataType(exchange, new DataType("xml"));
 
                     if (enableNoContentResponse) {
-                        String body = MessageHelper.extractBodyAsString(exchange.getMessage()).replace("\n", "");
-                        if (ObjectHelper.isNotEmpty(body)) {
-                            int open = 0;
-                            int close = body.indexOf('>');
-                            // xml declaration
-                            if (body.startsWith("<?xml")) {
-                                open = close;
-                                close = body.indexOf('>', close + 1);
-                            }
-                            // empty root element <el/> or <el></el>
-                            if (body.length() == close + 1 || body.length() == (open + 1 + 2 * (close - open) + 1)) {
-                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
-                                exchange.getMessage().setBody("");
-                            }
+                        String body = MessageHelper.extractBodyAsString(exchange.getMessage());
+                        if (isEmptyXmlRootElement(body)) {
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+                            exchange.getMessage().setBody("");
                         }
                     }
                 }
@@ -484,6 +474,30 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, error.statusCode());
             exchange.getMessage().setBody(error.body());
         }
+    }
+
+    /**
+     * Whether the xml is only an empty root element, such as <tt>&lt;el/&gt;</tt> or <tt>&lt;el&gt;&lt;/el&gt;</tt>
+     * (after an optional xml declaration).
+     */
+    static boolean isEmptyXmlRootElement(String xml) {
+        if (ObjectHelper.isEmpty(xml)) {
+            return false;
+        }
+        String body = xml.replace("\n", "");
+        int start = 0;
+        int close = body.indexOf('>');
+        // xml declaration
+        if (body.startsWith("<?xml")) {
+            start = close + 1;
+            close = body.indexOf('>', start);
+        }
+        if (close < 0) {
+            return false;
+        }
+        // <el/> or <el></el> where the end tag is one char longer than the start tag
+        int len = close - start + 1;
+        return body.length() == close + 1 || body.length() == start + 2 * len + 1;
     }
 
     private void setOutputDataType(Exchange exchange, DataType type) {

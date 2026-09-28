@@ -76,7 +76,7 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
         if (answer == null && definition.getRetryWhileRef() != null) {
             // it is a bean expression
             Language bean = camelContext.resolveLanguage("bean");
-            answer = bean.createPredicate(definition.getRetryWhileRef());
+            answer = bean.createPredicate(parseString(definition.getRetryWhileRef()));
             answer.initPredicate(camelContext);
         }
 
@@ -87,6 +87,9 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);
+        }
+        if (answer == null && definition.getLogName() != null) {
+            answer = new CamelLogger(LoggerFactory.getLogger(parseString(definition.getLogName())), LoggingLevel.ERROR);
         }
         if (answer == null) {
             answer = new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
@@ -134,6 +137,7 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
             ScheduledExecutorService executorService, String executorServiceRef) {
         lock.lock();
         try {
+            executorServiceRef = parseString(executorServiceRef);
             if (executorService == null || executorService.isShutdown()) {
                 // camel context will shutdown the executor when it shutdown so no
                 // need to shut it down when stopping
@@ -142,7 +146,9 @@ public class DeadLetterChannelReifier extends ErrorHandlerReifier<DeadLetterChan
                     if (executorService == null) {
                         ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
                         ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);
-                        executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
+                        if (profile != null) {
+                            executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
+                        }
                     }
                     if (executorService == null) {
                         throw new IllegalArgumentException("ExecutorService " + executorServiceRef + " not found in registry.");

@@ -47,6 +47,13 @@ public final class OpaConstants {
               javaType = "Boolean")
     public static final String DECISION_FAILED_OPEN = HEADER_PREFIX + "DecisionFailedOpen";
 
+    @Metadata(label = "producer",
+              description = "The per-element allow/deny verdicts of a batch evaluation (batch=true), as a List of"
+                            + " Boolean parallel to the List body. Always overwritten by the component. An element"
+                            + " whose evaluation could not be reached is denied, unless failOpen is set.",
+              javaType = "java.util.List<Boolean>")
+    public static final String BATCH_DECISION = HEADER_PREFIX + "BatchDecision";
+
     private OpaConstants() {
     }
 }

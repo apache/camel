@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.styra.opa.wasm.OpaPolicy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -93,6 +94,32 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
             byte[] content = in.readAllBytes();
             return isGzip(content) ? extractFromBundle(content, location) : new Bundle(content, null);
         }
+    }
+
+    /**
+     * Builds a wasm evaluator from a bundle location, applying the validation and the entrypoint default in one place
+     * so that the producer and the {@code OpaSecurityPolicy} construct it identically.
+     */
+    public static OpaWasmEvaluator create(
+            CamelContext camelContext, String policyBundle, String entrypoint, int poolSize, long borrowTimeout,
+            String policyPath, String allowKey, String includeHeaders, String includeProperties, boolean includeBody,
+            boolean failOpen)
+            throws Exception {
+        if (ObjectHelper.isEmpty(policyBundle)) {
+            throw new IllegalArgumentException(
+                    "policyBundle is required when evaluationMode=wasm; build one with"
+                                               + " opa build -t wasm -e <entrypoint> <policy.rego>");
+        }
+        if (poolSize < 1) {
+            throw new IllegalArgumentException("poolSize must be at least 1 when evaluationMode=wasm, was " + poolSize);
+        }
+        // the entrypoint is fixed at build time and is not the same thing as a data path, but opa build names it after
+        // the rule, so the policy path is the right default
+        String resolvedEntrypoint = ObjectHelper.isNotEmpty(entrypoint) ? entrypoint : policyPath;
+        Bundle bundle = loadPolicy(camelContext, policyBundle);
+        return new OpaWasmEvaluator(
+                bundle.wasm(), bundle.data(), resolvedEntrypoint, poolSize, borrowTimeout, policyPath, allowKey,
+                includeHeaders, includeProperties, includeBody, failOpen);
     }
 
     /**

@@ -102,4 +102,19 @@ public class RecordableInputStreamTest {
         ris.close();
     }
 
+    @Test
+    public void testGetTextWithMultiByteCharacters() throws Exception {
+        byte[] data = "æøåabc".getBytes(StandardCharsets.UTF_8);
+        RecordableInputStream ris = new RecordableInputStream(new ByteArrayInputStream(data), "utf-8");
+        byte[] buf = new byte[64];
+        assertEquals(data.length, ris.read(buf, 0, buf.length));
+
+        // the position is in characters, and the rest is kept
+        assertEquals("æøåa", ris.getText(4));
+        assertEquals(2, ris.size());
+        assertEquals("bc", ris.getText(2));
+        assertEquals(0, ris.size());
+
+        ris.close();
+    }
 }

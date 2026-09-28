@@ -34,6 +34,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.clock.Clock;
 import org.apache.camel.clock.EventClock;
@@ -549,6 +550,27 @@ public final class CamelContextHelper {
             }
         }
         return 0;
+    }
+
+    /**
+     * Whether the given route is started automatically when its CamelContext starts, taking into account the
+     * CamelContext and route <tt>autoStartup</tt> options and the CamelContext <tt>autoStartupExcludePattern</tt>.
+     *
+     * @param  route the route
+     * @return       <tt>true</tt> if the route is started automatically
+     */
+    public static boolean isAutoStartup(Route route) {
+        CamelContext camelContext = route.getCamelContext();
+        if (Boolean.FALSE.equals(camelContext.isAutoStartup()) || Boolean.FALSE.equals(route.isAutoStartup())) {
+            return false;
+        }
+        String exclude = camelContext.getAutoStartupExcludePattern();
+        if (exclude != null) {
+            String[] patterns = exclude.split(",");
+            return !PatternHelper.matchPatterns(route.getRouteId(), patterns)
+                    && !PatternHelper.matchPatterns(route.getEndpoint().getEndpointUri(), patterns);
+        }
+        return true;
     }
 
     /**

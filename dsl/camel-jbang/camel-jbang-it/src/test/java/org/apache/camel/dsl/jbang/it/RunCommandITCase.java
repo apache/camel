@@ -83,13 +83,17 @@ public class RunCommandITCase extends JBangTestSupport {
     @Test
     @Tag("container-only")
     public void runRoutesFromMultipleFilesUsingWildcardTest() {
-        execute("init one.yaml --directory=/tmp/one");
-        execute("init two.xml --directory=/tmp/two");
-        copyInternallyToDataFolder("/tmp/one/one.yaml");
-        copyInternallyToDataFolder("/tmp/two/two.xml");
-        executeBackground(String.format("run %s/* ", mountPoint()));
-        checkLogContains(DEFAULT_MSG);
-        checkLogContains(DEFAULT_MSG);
+        try {
+            execute("init one.yaml --directory=/tmp/one");
+            execute("init two.xml --directory=/tmp/two");
+            copyInternallyToDataFolder("/tmp/one/one.yaml");
+            copyInternallyToDataFolder("/tmp/two/two.xml");
+            executeBackground(String.format("run %s/* ", mountPoint()));
+            checkLogContains(DEFAULT_MSG);
+            checkLogContains(DEFAULT_MSG);
+        } finally {
+            execInContainer("rm -rf /tmp/one /tmp/two");
+        }
     }
 
     @Test

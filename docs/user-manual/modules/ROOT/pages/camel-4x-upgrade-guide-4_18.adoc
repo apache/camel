@@ -256,6 +256,19 @@ are unaffected. Routes that set the header by its literal string name, or that u
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
 
+=== camel-saga
+
+The `saga:complete` and `saga:compensate` endpoints now follow the same rule as the Saga EIP: when the
+exchange is not bound to a saga, the `Long-Running-Action` message header is consulted only if the
+configured `CamelSagaService` returns `true` from `isLongRunningActionHeaderSupported()`, as
+`LRASagaService` does. With the default `InMemorySagaService` the header is ignored, and sending an
+exchange that is not bound to a saga to these endpoints fails with `IllegalStateException`.
+
+Exchanges created inside a saga, including copies made by EIPs such as Wire Tap, Multicast or SEDA,
+stay bound to it and are not affected. A route that completes or compensates an in-memory saga from an
+unrelated exchange must bind it explicitly from trusted code, for example with
+`exchange.getExchangeExtension().setSagaLongRunningAction(id)`.
+
 == Upgrading from 4.18.3 to 4.18.4
 
 === camel-core - Multicast EIP honors UseOriginalAggregationStrategy

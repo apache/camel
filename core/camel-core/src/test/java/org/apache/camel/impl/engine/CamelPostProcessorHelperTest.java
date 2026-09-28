@@ -407,6 +407,23 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     }
 
     @Test
+    public void testPropertyFieldInvalidValueNotDefaultValue() throws Exception {
+        // the property exists, but its value is not a number
+        myProp.put("myTimeout", "abc");
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyPropertyFieldBean bean = new MyPropertyFieldBean();
+
+        Field field = bean.getClass().getField("timeout");
+        PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+        Class<?> type = field.getType();
+        // the default value must not hide the invalid value
+        assertThrows(RuntimeCamelException.class,
+                () -> helper.getInjectionPropertyValue(type, null, propertyInject.value(), "5000", ""));
+    }
+
+    @Test
     public void testPropertyFieldSeparatorArrayInject() throws Exception {
         myProp.put("serverPorts", "4444;5555"); // test with semicolon as separator
         myProp.put("hosts", "serverA , serverB"); // test with whitespace noise

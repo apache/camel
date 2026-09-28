@@ -723,10 +723,22 @@ public class MethodInfo {
                 return null;
             }
 
+            // an explicit null parameter value
+            if ("null".equals(exp)) {
+                return Void.TYPE;
+            }
+
             parameterValue = evaluateSimpleExpression(exchange, index, exp);
 
-            if ("null".equals(parameterValue)) {
+            // the expression evaluated to null, which is a valid value we need to honor
+            if (parameterValue == null) {
                 return Void.TYPE;
+            }
+
+            // we need to unquote a quoted String parameter value, as the enclosing quotes is there to denote a
+            // parameter value, but a value from an expression such as ${body} or ${header.foo} is used as-is
+            if (StringHelper.isQuoted(exp.trim()) && parameterValue instanceof String string) {
+                parameterValue = StringHelper.removeLeadingAndEndingQuotes(string);
             }
 
             boolean valid = isValidParameterValue(exchange, exp, parameterValue, parameterType, varargs);
@@ -760,8 +772,7 @@ public class MethodInfo {
             Expression expression = null;
             try {
                 expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
-                Object result = expression.evaluate(exchange, Object.class);
-                return result != null ? result : "null";
+                return expression.evaluate(exchange, Object.class);
             } catch (Exception e) {
                 throw new ExpressionEvaluationException(
                         expression, "Cannot create/evaluate simple expression: " + exp
@@ -788,9 +799,6 @@ public class MethodInfo {
 
         private Object convertParameterValue(
                 Exchange exchange, int index, Object parameterValue, Class<?> parameterType, boolean varargs) {
-            if (parameterValue instanceof String string) {
-                parameterValue = StringHelper.removeLeadingAndEndingQuotes(string);
-            }
             if (varargs) {
                 return parameterValue;
             }

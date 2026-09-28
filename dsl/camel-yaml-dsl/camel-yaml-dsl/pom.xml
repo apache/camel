@@ -237,6 +237,11 @@
             <artifactId>camel-typesafe-ai</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-semantic</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 
@@ -245,6 +250,13 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-semantic</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <!-- camelCase -->
                     <execution>
