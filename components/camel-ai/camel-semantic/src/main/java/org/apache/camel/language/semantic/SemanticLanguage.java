@@ -128,10 +128,11 @@ public class SemanticLanguage extends LanguageSupport {
 
     private Evaluation createEvaluation(String expression, boolean predicate) {
         List<String> names = references(expression);
-        if (predicate) {
-            validatePredicate(expression);
+        boolean batch = expression.startsWith("refs:");
+        if (predicate && batch) {
+            throw new IllegalArgumentException("Semantic batch expressions cannot be predicates");
         }
-        Evaluation evaluation = new Evaluation(names, expression.startsWith("refs:"), predicate);
+        Evaluation evaluation = new Evaluation(names, batch, predicate);
         if (getCamelContext() != null) {
             evaluation.init(getCamelContext());
         }
@@ -298,17 +299,14 @@ public class SemanticLanguage extends LanguageSupport {
             questions = SemanticQuestions.get(context);
             Map<String, SemanticQuestion> selected = questions.get(names);
             if (predicate) {
-                requireBoolean(selected);
+                requireBoolean(selected.get(names.get(0)));
             }
             provider = adapter();
             compile(selected);
         }
 
-        private void requireBoolean(Map<String, SemanticQuestion> selected) {
-            if (batch) {
-                throw new IllegalArgumentException("Semantic batch expressions cannot be predicates");
-            }
-            if (selected.get(names.get(0)).getType() != SemanticQuestion.Type.BOOLEAN) {
+        private void requireBoolean(SemanticQuestion question) {
+            if (question.getType() != SemanticQuestion.Type.BOOLEAN) {
                 throw new IllegalArgumentException("Semantic predicate requires a boolean question: " + names.get(0));
             }
         }
@@ -316,20 +314,18 @@ public class SemanticLanguage extends LanguageSupport {
         private synchronized Compiled compile(Map<String, SemanticQuestion> selected) {
             if (compiled == null || !compiled.questions.equals(selected)) {
                 if (predicate) {
-                    requireBoolean(selected);
+                    requireBoolean(selected.get(names.get(0)));
                 }
                 String selector = null;
                 for (var entry : selected.entrySet()) {
                     SemanticQuestion question = entry.getValue();
                     provider.validate(question);
                     String effective = question.getState() != null ? question.getState() : defaultState;
-                    if (effective != null) {
-                        effective = getCamelContext().resolvePropertyPlaceholders(effective);
-                    }
                     if (effective == null || effective.isBlank()) {
                         throw new IllegalArgumentException(
                                 "Semantic state selector must not be blank for question: " + entry.getKey());
                     }
+                    effective = getCamelContext().resolvePropertyPlaceholders(effective);
                     if (selector != null && !selector.equals(effective)) {
                         throw new IllegalArgumentException(
                                 "Semantic batch questions must use the same effective state selector");
@@ -345,20 +341,35 @@ public class SemanticLanguage extends LanguageSupport {
 
         @Override
         public Object evaluate(Exchange exchange) {
-            return evaluate(exchange, predicate);
+            return evaluate(exchange, false);
         }
 
         private Object evaluate(Exchange exchange, boolean asPredicate) {
             exchange.removeProperty(RESULT);
             exchange.removeProperty(RESULTS);
-            try {
-                Map<String, SemanticQuestion> selected = questions.get(names);
-                if (asPredicate) {
-                    requireBoolean(selected);
+            SemanticQuestion single = null;
+            if (asPredicate) {
+                if (batch) {
+                    throw new IllegalArgumentException("Semantic batch expressions cannot be predicates");
                 }
+                single = questions.get(names.get(0));
+                requireBoolean(single);
+            }
+            try {
                 Compiled current = compiled;
-                if (current == null || !current.questions.equals(selected)) {
-                    current = compile(selected);
+                if (batch) {
+                    Map<String, SemanticQuestion> selected = questions.get(names);
+                    if (current == null || !current.questions.equals(selected)) {
+                        current = compile(selected);
+                    }
+                } else {
+                    String name = names.get(0);
+                    if (single == null) {
+                        single = questions.get(name);
+                    }
+                    if (current == null || current.questions.get(name) != single) {
+                        current = compile(Map.of(name, single));
+                    }
                 }
                 Object state = current.state.evaluate(exchange, Object.class);
                 if (state == null) {

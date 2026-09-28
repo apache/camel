@@ -166,6 +166,17 @@ class SemanticBatchTest {
     }
 
     @Test
+    void batchUsesTheSameEmptyPlaceholderStateAsSingleQuestions() {
+        Properties properties = new Properties();
+        properties.setProperty("selected", "");
+        context.getPropertiesComponent().setInitialProperties(properties);
+        language.setDefaultState("{{selected}}");
+        assertThat(language.createExpression("refs:urgent,department").evaluate(exchange, Map.class))
+                .containsEntry("urgent", true).containsEntry("department", "billing");
+        assertThat(adapter.states).containsExactly("", "");
+    }
+
+    @Test
     void incompatibleSelectorsAndUnsupportedCapabilitiesFailBeforeInference() {
         SemanticQuestions.get(context).replace("other", Map.of("other",
                 question(SemanticQuestion.Type.BOOLEAN, "${header.other}", 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
