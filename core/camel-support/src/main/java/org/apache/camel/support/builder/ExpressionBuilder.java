@@ -175,11 +175,6 @@ public class ExpressionBuilder {
         };
     }
 
-    private static String typeName(Class<?> type) {
-        // the class resolver loads an array type by its canonical name (byte[]) and not by its binary name ([B)
-        return type.isArray() ? type.getCanonicalName() : type.getName();
-    }
-
     /**
      * Returns an expression for the header value with the given name converted to the given type
      * <p/>
@@ -190,7 +185,26 @@ public class ExpressionBuilder {
      * @return            an expression object which will return the header value
      */
     public static <T> Expression headerExpression(final String headerName, final Class<T> type) {
-        return headerExpression(simpleExpression(headerName), constantExpression(typeName(type)));
+        // the type is already known, so use it as-is instead of resolving it again by name (which cannot load
+        // every array or nested class type)
+        final Expression name = simpleExpression(headerName);
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return headerAs(exchange, name.evaluate(exchange, String.class), type);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                name.init(context);
+            }
+
+            @Override
+            public String toString() {
+                return "headerAs(" + name + ", " + type.getName() + ")";
+            }
+        };
     }
 
     /**
@@ -228,13 +242,7 @@ public class ExpressionBuilder {
                 } catch (ClassNotFoundException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                String text = headerName.evaluate(exchange, String.class);
-                Object header = exchange.getIn().getHeader(text, type);
-                if (header == null) {
-                    // fall back on a property
-                    header = exchange.getProperty(text, type);
-                }
-                return header;
+                return headerAs(exchange, headerName.evaluate(exchange, String.class), type);
             }
 
             @Override
@@ -250,6 +258,15 @@ public class ExpressionBuilder {
                 return "headerAs(" + headerName + ", " + typeName + ")";
             }
         };
+    }
+
+    private static Object headerAs(Exchange exchange, String name, Class<?> type) {
+        Object header = exchange.getIn().getHeader(name, type);
+        if (header == null) {
+            // fall back on a property
+            header = exchange.getProperty(name, type);
+        }
+        return header;
     }
 
     /**
@@ -323,7 +340,26 @@ public class ExpressionBuilder {
      * @return              an expression object which will return the variable value
      */
     public static <T> Expression variableExpression(final String variableName, final Class<T> type) {
-        return variableExpression(simpleExpression(variableName), constantExpression(typeName(type)));
+        // the type is already known, so use it as-is instead of resolving it again by name (which cannot load
+        // every array or nested class type)
+        final Expression name = simpleExpression(variableName);
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return variableAs(exchange, name.evaluate(exchange, String.class), type);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                name.init(context);
+            }
+
+            @Override
+            public String toString() {
+                return "variableAs(" + name + ", " + type.getName() + ")";
+            }
+        };
     }
 
     /**
@@ -347,7 +383,6 @@ public class ExpressionBuilder {
     public static Expression variableExpression(final Expression variableName, final Expression typeName) {
         return new ExpressionAdapter() {
             private ClassResolver classResolver;
-            private TypeConverter converter;
 
             @Override
             public Object evaluate(Exchange exchange) {
@@ -358,12 +393,7 @@ public class ExpressionBuilder {
                 } catch (ClassNotFoundException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                String key = variableName.evaluate(exchange, String.class);
-                Object value = ExchangeHelper.getVariable(exchange, key);
-                if (value != null) {
-                    value = converter.convertTo(type, value);
-                }
-                return value;
+                return variableAs(exchange, variableName.evaluate(exchange, String.class), type);
             }
 
             @Override
@@ -372,7 +402,6 @@ public class ExpressionBuilder {
                 variableName.init(context);
                 typeName.init(context);
                 classResolver = context.getClassResolver();
-                converter = context.getTypeConverter();
             }
 
             @Override
@@ -380,6 +409,14 @@ public class ExpressionBuilder {
                 return "variableAs(" + variableName + ", " + typeName + ")";
             }
         };
+    }
+
+    private static Object variableAs(Exchange exchange, String name, Class<?> type) {
+        Object value = ExchangeHelper.getVariable(exchange, name);
+        if (value != null) {
+            value = exchange.getContext().getTypeConverter().convertTo(type, value);
+        }
+        return value;
     }
 
     /**

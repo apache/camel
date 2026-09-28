@@ -128,6 +128,15 @@ public class ExpressionBuilderEdgeCasesTest extends ContextTestSupport {
                 .isEqualTo(new byte[] { 1, 2 });
         assertThat(evaluate(ExpressionBuilder.variableExpression("v", byte[].class), exchange))
                 .isEqualTo(new byte[] { 3 });
+        exchange.getMessage().setHeader("ints", new int[] { 4, 5 });
+        exchange.setVariable("matrix", new byte[][] { { 6 } });
+        exchange.getMessage().setHeader("nested", new Nested[] { new Nested() });
+        assertThat(evaluate(ExpressionBuilder.headerExpression("ints", int[].class), exchange))
+                .isEqualTo(new int[] { 4, 5 });
+        assertThat(evaluate(ExpressionBuilder.variableExpression("matrix", byte[][].class), exchange))
+                .isEqualTo(new byte[][] { { 6 } });
+        assertThat(evaluate(ExpressionBuilder.headerExpression("nested", Nested[].class), exchange))
+                .isInstanceOf(Nested[].class);
     }
 
     @Test
@@ -145,5 +154,8 @@ public class ExpressionBuilderEdgeCasesTest extends ContextTestSupport {
         Expression expression = ExpressionBuilder.languageExpression(
                 ExpressionBuilder.simpleExpression("${header.foo} World"), "simple", "${body}", String.class);
         assertThat(evaluate(expression, exchange)).isEqualTo("Hello World");
+    }
+
+    public static class Nested {
     }
 }

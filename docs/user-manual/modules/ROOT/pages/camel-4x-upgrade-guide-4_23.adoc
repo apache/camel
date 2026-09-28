@@ -180,7 +180,8 @@ placeholder based property.
   existed. The `<=` and `>=` operators are unchanged and are `true` in that case.
 - A language that reads its input from a `source` of `variable:name` now fails with `NoSuchVariableException` when the
   variable does not exist, as it does with `NoSuchHeaderException` for `header:name`. From Camel 4.4 to 4.22 a missing
-  variable was used as a `null` input.
+  variable was used as a `null` input. This also applies to a `source` without a prefix, as a plain name refers to a
+  variable (`source="myVar"`), and to the `source` option of the `xslt`, `xslt-saxon` and `xquery` endpoints.
 
 === Apache Avro trusted packages
 
