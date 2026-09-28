@@ -49,6 +49,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.SensitiveUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -315,6 +316,39 @@ public class PropertiesComponent extends ServiceSupport
         return prop;
     }
 
+    private boolean isSensitive(String uri) {
+        // the uri uses a function with sensitive values (such as a vault) or refers to a sensitive key
+        for (PropertiesFunction function : propertiesFunctionResolver.getFunctions().values()) {
+            if (function.isSensitive() && uri.contains(function.getName() + ":")) {
+                return true;
+            }
+        }
+        // the keys of the placeholders (without any default value)
+        int start = uri.indexOf(PREFIX_TOKEN);
+        if (start == -1) {
+            return isSensitiveKey(uri);
+        }
+        while (start != -1) {
+            int end = uri.indexOf(SUFFIX_TOKEN, start);
+            if (end == -1) {
+                return false;
+            }
+            if (isSensitiveKey(uri.substring(start + PREFIX_TOKEN.length(), end))) {
+                return true;
+            }
+            start = uri.indexOf(PREFIX_TOKEN, end);
+        }
+        return false;
+    }
+
+    private static boolean isSensitiveKey(String key) {
+        int pos = key.indexOf(':');
+        if (pos != -1) {
+            key = key.substring(0, pos);
+        }
+        return !key.isEmpty() && SensitiveUtils.containsSensitive(key);
+    }
+
     protected String parseUri(final String uri, PropertiesLookup properties, boolean keepUnresolvedOptional) {
         LOG.trace("Parsing uri {}", uri);
 
@@ -346,7 +380,9 @@ public class PropertiesComponent extends ServiceSupport
             // Remove the escape characters if any
             answer = unescape(answer);
         }
-        LOG.trace("Parsed uri {} -> {}", uri, answer);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Parsed uri {} -> {}", uri, isSensitive(uri) ? "xxxxxx" : answer);
+        }
         return answer;
     }
 
