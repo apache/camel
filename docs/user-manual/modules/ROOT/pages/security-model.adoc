@@ -923,7 +923,11 @@ be closed as `not a vulnerability`.
   `circuitBreaker`, `resilience4j`, JVM heap limits, and the relevant
   component-level options. Algorithmic-complexity attacks in third-party
   libraries are reported to the upstream project unless Camel exposes the
-  parser in a way that bypasses the library's own limits.
+  parser in a way that bypasses the library's own limits. A resource limit
+  that Camel itself offers, such as `maxDecompressedSize` on the Zip File and
+  Tar File data formats, is defence in depth for a property the framework
+  does not claim: a defect that stops it enforcing its documented value is a
+  bug, fixed as `VALID-HARDENING` rather than published as a CVE.
 * *A deployer placing `camel-management`, the developer console,
   `camel-jolokia`, JMX or another management surface on a public network.*
   These are management surfaces; they assume a trusted network. The
@@ -1209,16 +1213,20 @@ not provided_), not to close the report ad hoc.
   invariants_, _In-scope vulnerability classes_, _Adversary model_
 
 | `VALID-HARDENING`
-| No claimed property is violated, but a recurring misuse or scanner
-  pattern makes the framework elect to harden the default or add a
-  defence-in-depth check at maintainer discretion. Reported privately;
+| No claimed property is violated, but the framework elects to harden the
+  default or add a defence-in-depth check at maintainer discretion - either
+  because a recurring misuse or scanner pattern warrants it, or because a
+  resource limit Camel itself offers for a property it does not claim (such
+  as `maxDecompressedSize` on the Zip File and Tar File data formats) fails
+  to enforce its documented value. Reported privately;
   usually shipped without a CVE; documented in the upgrade guide. The PMC
   may still publish an advisory when a sibling component's accepted
   finding would otherwise make the change look like a silent fix -
   CVE-2026-56140 (`camel-aws2-sns`) documents an inbound filter added to
   a producer-only component with no reachable injection path, alongside
   CVE-2026-46456 in `camel-aws2-sqs` where the path was reachable.
-| _Known limitations_, _Guidance for component authors and reviewers_
+| _Known limitations_, _Guidance for component authors and reviewers_,
+  _Out of scope_
 
 | `OUT-OF-MODEL: trusted-input`
 | Requires control over an input the model marks trusted (route DSL,

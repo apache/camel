@@ -390,10 +390,12 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter
         if (percentileWindow == null || percentileCount == 0) {
             return -1;
         }
-        long[] snapshot = new long[percentileCount];
-        System.arraycopy(percentileWindow, 0, snapshot, 0, percentileCount);
+        // the count is updated without a lock by concurrent exchanges, so it may go past the window size
+        int count = Math.min(percentileCount, PERCENTILE_WINDOW_SIZE);
+        long[] snapshot = new long[count];
+        System.arraycopy(percentileWindow, 0, snapshot, 0, count);
         Arrays.sort(snapshot);
-        int index = (int) Math.ceil(percentile * percentileCount) - 1;
+        int index = (int) Math.ceil(percentile * count) - 1;
         return snapshot[Math.max(0, index)];
     }
 

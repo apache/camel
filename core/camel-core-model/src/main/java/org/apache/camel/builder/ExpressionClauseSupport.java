@@ -849,6 +849,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
         SimpleExpression expression = new SimpleExpression(text);
         expression.setResultType(resultType);
         expression.setPretty(Boolean.toString(pretty));
+        expression.setTrimResult(Boolean.toString(trimResult));
         expression(expression);
         return result;
     }

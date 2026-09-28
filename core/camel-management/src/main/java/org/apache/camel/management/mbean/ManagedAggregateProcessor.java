@@ -175,7 +175,7 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     @Override
     public boolean isForceCompletionOnStop() {
-        return getProcessor().isCompletionFromBatchConsumer();
+        return getProcessor().isForceCompletionOnStop();
     }
 
     @Override

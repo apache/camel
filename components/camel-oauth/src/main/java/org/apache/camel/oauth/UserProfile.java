@@ -227,6 +227,13 @@ public class UserProfile {
             if (issuer != null && !issuer.equals(tokenJwt.get("iss").getAsString())) {
                 throw new OAuthException("Invalid JWT issuer");
             }
+            // A token must not be accepted before its not-before time (RFC 7519, section 4.1.5)
+            if (tokenJwt.has("nbf")) {
+                long now = System.currentTimeMillis() / 1000L;
+                if (tokenJwt.get("nbf").getAsLong() > now + jwtOptions.getLeeway()) {
+                    throw new OAuthException("Token is not yet valid (nbf)");
+                }
+            }
         } catch (OAuthException ex) {
             throw ex;
         } catch (Exception ex) {

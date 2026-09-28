@@ -673,6 +673,27 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    void testInWithDecimals() {
+        exchange.getIn().setHeader("n", 2);
+        exchange.getIn().setHeader("big", 99L);
+        exchange.getIn().setHeader("amount", new BigDecimal("2.50"));
+        // the elements are compared with an integer header by their numeric values, without dropping the decimals
+        assertPredicate("${header.n} in '2.5,3.5'", false);
+        assertPredicate("${header.n} in '2.9'", false);
+        assertPredicate("${header.n} !in '2.5'", true);
+        assertPredicate("${header.n} in '2,3'", true);
+        assertPredicate("${header.n} in '1, 2'", true);
+        assertPredicate("${header.n} in '4294967298'", false);
+        // 2.0 is the same number as 2, as with ${header.n} == 2.0
+        assertPredicate("${header.n} in '2.0'", true);
+        assertPredicate("${header.n} == 2.0", true);
+        assertPredicate("${header.big} in '99.99,100.01'", false);
+        assertPredicate("${header.big} in '98,99'", true);
+        assertPredicate("${header.amount} in '2.5'", true);
+        assertPredicate("${header.amount} in '2'", false);
+    }
+
+    @Test
     public void testRange() {
         assertPredicate("${in.header.bar} range '100..200'", true);
         assertPredicate("${in.header.bar} range '200..300'", false);

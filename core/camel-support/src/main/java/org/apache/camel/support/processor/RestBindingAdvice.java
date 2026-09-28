@@ -440,20 +440,10 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                     setOutputDataType(exchange, new DataType("xml"));
 
                     if (enableNoContentResponse) {
-                        String body = MessageHelper.extractBodyAsString(exchange.getMessage()).replace("\n", "");
-                        if (ObjectHelper.isNotEmpty(body)) {
-                            int open = 0;
-                            int close = body.indexOf('>');
-                            // xml declaration
-                            if (body.startsWith("<?xml")) {
-                                open = close;
-                                close = body.indexOf('>', close + 1);
-                            }
-                            // empty root element <el/> or <el></el>
-                            if (body.length() == close + 1 || body.length() == (open + 1 + 2 * (close - open) + 1)) {
-                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
-                                exchange.getMessage().setBody("");
-                            }
+                        String body = MessageHelper.extractBodyAsString(exchange.getMessage());
+                        if (isEmptyXmlRootElement(body)) {
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 204);
+                            exchange.getMessage().setBody("");
                         }
                     }
                 }
@@ -486,6 +476,30 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
         }
     }
 
+    /**
+     * Whether the xml is only an empty root element, such as <tt>&lt;el/&gt;</tt> or <tt>&lt;el&gt;&lt;/el&gt;</tt>
+     * (after an optional xml declaration).
+     */
+    static boolean isEmptyXmlRootElement(String xml) {
+        if (ObjectHelper.isEmpty(xml)) {
+            return false;
+        }
+        String body = xml.replace("\n", "");
+        int start = 0;
+        int close = body.indexOf('>');
+        // xml declaration
+        if (body.startsWith("<?xml")) {
+            start = close + 1;
+            close = body.indexOf('>', start);
+        }
+        if (close < 0) {
+            return false;
+        }
+        // <el/> or <el></el> where the end tag is one char longer than the start tag
+        int len = close - start + 1;
+        return body.length() == close + 1 || body.length() == start + 2 * len + 1;
+    }
+
     private void setOutputDataType(Exchange exchange, DataType type) {
         Message target = exchange.getMessage();
         if (target instanceof DataTypeAware dataTypeAware) {
@@ -499,14 +513,34 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
             return;
         }
 
-        // favor json over xml as a concrete single media type
-        if (isJson) {
+        // the verb declares what it produces, so use one of those media types, favoring json over xml
+        String produced = contentType != null ? selectProducedMediaType(contentType, isXml, isJson) : null;
+        if (produced != null) {
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, produced);
+        } else if (isJson) {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
         } else if (isXml) {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-        } else if (contentType != null) {
-            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentType);
         }
+    }
+
+    private static String selectProducedMediaType(String produces, boolean isXml, boolean isJson) {
+        String kind = isJson ? "json" : isXml ? "xml" : null;
+        String first = null;
+        for (String type : produces.split(",")) {
+            type = type.trim();
+            // a wildcard cannot be the Content-Type of a response
+            if (type.contains("*")) {
+                continue;
+            }
+            if (kind != null && type.toLowerCase(Locale.ENGLISH).contains(kind)) {
+                return type;
+            }
+            if (first == null) {
+                first = type;
+            }
+        }
+        return first;
     }
 
     private void setCORSHeaders(Exchange exchange) {

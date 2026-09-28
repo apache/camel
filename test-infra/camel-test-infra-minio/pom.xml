@@ -28,7 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>camel-test-infra-minio</artifactId>
-    <name>Camel :: Test Infra :: Minio</name>
+    <name>Camel :: Test Infra :: Minio (deprecated)</name>
 
     <dependencies>
         <dependency>

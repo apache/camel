@@ -257,7 +257,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         }
         BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
-        def.setType(language);
+        def.setScriptLanguage(language);
         def.setScript(script);
         beans.add(def);
         return this;
@@ -278,7 +278,7 @@ public class TemplatedRouteDefinition implements CamelContextAware, ResourceAwar
         BeanFactoryDefinition<TemplatedRouteDefinition> def = new BeanFactoryDefinition<>();
         def.setName(name);
         def.setBeanType(type);
-        def.setType(language);
+        def.setScriptLanguage(language);
         def.setScript(script);
         beans.add(def);
         return this;

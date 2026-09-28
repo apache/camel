@@ -84,8 +84,8 @@ public class ManagedDoTry extends ManagedProcessor implements ManagedDoTryMBean 
 
                         CompositeData data = new CompositeDataSupport(
                                 ct,
-                                new String[] { "exception", "predicate", "language", "matches" },
-                                new Object[] { fqn, predicate, language, matches });
+                                new String[] { "index", "exception", "predicate", "language", "matches" },
+                                new Object[] { answer.size(), fqn, predicate, language, matches });
                         answer.put(data);
                     }
                 }
