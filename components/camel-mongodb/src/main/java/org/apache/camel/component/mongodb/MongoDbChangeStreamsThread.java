@@ -112,14 +112,17 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                     if (log.isTraceEnabled()) {
                         log.trace("Sending exchange: {}, id: {}", exchange, documentId);
                     }
-                    consumer.getProcessor().process(exchange);
-                    this.resumeToken = currentResumeToken;
-                    commitManager.recordResumeToken(currentResumeToken);
-                    commitManager.commit();
+                    // a failed event does not advance the resume token itself, but a later event that
+                    // succeeds commits its own, so the failure is reported rather than retried
+                    if (processExchange(exchange)) {
+                        this.resumeToken = currentResumeToken;
+                        commitManager.recordResumeToken(currentResumeToken);
+                        commitManager.commit();
+                    }
                 } catch (Exception e) {
-                    // the resume token is not advanced for this event, but a later one that succeeds
-                    // commits its own, so the failure has to be reported or it leaves no trace at all
-                    getExceptionHandler().handleException("Error processing exchange", exchange, e);
+                    getExceptionHandler().handleException("Error committing the change stream resume token", exchange, e);
+                } finally {
+                    consumer.releaseExchange(exchange, false);
                 }
             }
         } catch (MongoException e) {
@@ -162,7 +165,8 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     }
 
     private Exchange createMongoDbExchange(Document dbObj) {
-        Exchange exchange = consumer.createExchange(true);
+        // released by doRun once the outcome has been read, as an auto-released exchange may already be reset by then
+        Exchange exchange = consumer.createExchange(false);
         Message message = exchange.getIn();
         message.setHeader(MongoDbConstants.DATABASE, endpoint.getDatabase());
         message.setHeader(MongoDbConstants.COLLECTION, endpoint.getCollection());

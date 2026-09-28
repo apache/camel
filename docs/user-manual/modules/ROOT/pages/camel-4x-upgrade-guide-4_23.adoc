@@ -2907,18 +2907,24 @@ healthy while no longer receiving any change event. Deployments that use readine
 now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
 The engine is still not restarted automatically.
 
-=== camel-mongodb - a failed exchange is reported, and the tailable cursor no longer skips it
+=== camel-mongodb - a failed exchange is reported, and does not advance the consumer's position
 
-Both MongoDB consumers used to discard a route failure silently: the exception was caught and dropped, so
-nothing was logged and `bridgeErrorHandler` had no effect. The failure is now passed to the consumer's
-`ExceptionHandler`, which means a route that relied on the silence will start seeing these errors in its
-log, or in its error handler when `bridgeErrorHandler=true`.
+Both MongoDB consumers ignored the outcome of the route. A failure left on the exchange was never looked at,
+and an exception thrown from the processor was caught and dropped. With the default error handler the
+failure was still logged once redelivery was exhausted, but with `noErrorHandler`, or an error handler that
+does not log, it left no trace. The failure is now also passed to the consumer's `ExceptionHandler`, which
+logs it by default, so expect an additional log line for each failed exchange.
 
-The tailable cursor consumer additionally recorded the failed record as consumed - `setLastVal` ran
-whether or not the exchange succeeded. It now runs only after the route accepted the exchange, so a failed
-record is re-read when the cursor is regenerated instead of being skipped. With
-`persistentTailTracking=true` that also means the position stored on restart is the last *successful*
-record rather than the last one read.
+A failed exchange also no longer advances the consumer's position. The tailable cursor consumer updates its
+tail tracking value, and the change streams consumer records and commits its resume token, only after the
+route processed the event without a failure. Previously both did so for every event, whether or not the
+route failed. With `persistentTailTracking=true` the stored position is therefore that of the last
+successful record.
+
+This is not a retry. The next event that succeeds moves the position past the failed one. A failed event is
+read again only if the consumer reopens its cursor from the stored position before a later event has
+succeeded, for example when the cursor is regenerated, or on a restart with persistent tail tracking or a
+resume strategy.
 
 === camel-mongodb - the change stream id header is no longer always an ObjectId
 
