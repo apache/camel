@@ -143,6 +143,8 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         this.rollbackOnly = parent.rollbackOnly;
         this.rollbackOnlyLast = parent.rollbackOnlyLast;
         this.routeStop = parent.routeStop;
+        // a copy (such as a split, multicast or wire tap exchange) belongs to the same saga
+        this.sagaLongRunningAction = parent.sagaLongRunningAction;
 
         if (parent.hasVariables()) {
             if (this.variableRepository == null) {
