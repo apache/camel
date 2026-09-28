@@ -83,16 +83,21 @@ public final class DataSourceHelper {
     /**
      * Evicts stale connections from the given DataSource's connection pool.
      * <p/>
-     * HikariCP is tried first via reflection (so the caller does not need a compile-time dependency on it). Any
-     * DataSource that does not expose {@code getHikariPoolMXBean()} is left untouched — a log message is emitted and
-     * the pool will naturally replace connections as they expire or are validated.
+     * The following pool implementations are supported (detected via reflection — no compile-time dependency required):
+     * <ul>
+     * <li><b>HikariCP</b>: {@code softEvictConnections()} is called via {@code HikariPoolMXBean}. Idle connections are
+     * evicted immediately; borrowed connections are evicted when returned.</li>
+     * <li><b>Agroal</b> (Quarkus default): {@code flush(GRACEFUL)} is called on {@code AgroalDataSource}. Idle
+     * connections are closed immediately; active connections are closed when returned to the pool.</li>
+     * </ul>
+     * Any DataSource not recognised as one of the above is left untouched — a log message is emitted and the pool will
+     * naturally replace connections as they expire or are validated.
      * <p/>
      * <b>Important:</b> this method only evicts existing connections from the pool. It does <em>not</em> update the
      * pool's credentials. For pools configured with a static password (e.g. Spring Boot
      * {@code spring.datasource.password}), the pool will re-open connections using the <em>old</em> credentials unless
      * the credentials are resolved dynamically (e.g. {@code HikariCredentialsProvider}, the AWS JDBC wrapper secrets
-     * plugin, or a custom {@code DataSource} that fetches credentials from a vault at connect time). Note that Quarkus
-     * uses Agroal by default, not HikariCP, so this eviction does not apply to Quarkus out of the box.
+     * plugin, or a custom {@code DataSource} that fetches credentials from a vault at connect time).
      *
      * @param ds     the DataSource whose connections should be evicted
      * @param source an opaque label for the rotation event (used in log messages only)
@@ -114,19 +119,45 @@ public final class DataSourceHelper {
             }
             return;
         } catch (NoSuchMethodException e) {
-            // Not a HikariCP DataSource — fall through to generic handling
+            // Not a HikariCP DataSource — fall through to next pool check
         } catch (InvocationTargetException e) {
-            LOG.warn("Secret rotation (source={}): softEvictConnections() failed on {}", source, ds,
+            LOG.warn("Secret rotation (source={}): HikariCP softEvictConnections() failed on {}", source, ds,
                     e.getCause() != null ? e.getCause() : e);
             return;
         } catch (Exception e) {
-            LOG.warn("Secret rotation (source={}): softEvictConnections() failed on {}", source, ds, e);
+            LOG.warn("Secret rotation (source={}): HikariCP softEvictConnections() failed on {}", source, ds, e);
+            return;
+        }
+
+        // Agroal (Quarkus default pool): AgroalDataSource.flush(FlushMode.GRACEFUL).
+        // GRACEFUL closes idle connections immediately and active connections when returned to the pool.
+        // Detected via reflection to avoid a compile-time dependency on agroal-api.
+        try {
+            // look up flush(FlushMode) — the parameter type is the nested FlushMode enum
+            for (Method m : ds.getClass().getMethods()) {
+                if ("flush".equals(m.getName()) && m.getParameterCount() == 1) {
+                    Class<?> flushModeClass = m.getParameterTypes()[0];
+                    if (flushModeClass.isEnum() && flushModeClass.getSimpleName().equals("FlushMode")) {
+                        @SuppressWarnings("unchecked")
+                        Enum<?> graceful = Enum.valueOf((Class<Enum>) flushModeClass, "GRACEFUL");
+                        m.invoke(ds, graceful);
+                        LOG.info("Secret rotation (source={}): Agroal flush(GRACEFUL) called on {}", source, ds);
+                        return;
+                    }
+                }
+            }
+        } catch (InvocationTargetException e) {
+            LOG.warn("Secret rotation (source={}): Agroal flush(GRACEFUL) failed on {}", source, ds,
+                    e.getCause() != null ? e.getCause() : e);
+            return;
+        } catch (Exception e) {
+            LOG.warn("Secret rotation (source={}): Agroal flush(GRACEFUL) failed on {}", source, ds, e);
             return;
         }
 
         // Generic fallback: log that the pool was not explicitly evicted.
         LOG.info(
-                "Secret rotation (source={}): DataSource {} does not support HikariCP pool eviction; "
+                "Secret rotation (source={}): DataSource {} is not a recognised connection pool (HikariCP, Agroal); "
                  + "existing connections will be replaced as they expire or are validated",
                 source, ds.getClass().getName());
     }

@@ -82,6 +82,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-api</artifactId>
+            <version>${agroal-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-pool</artifactId>
+            <version>${agroal-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb-version}</version>
