@@ -51,7 +51,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-iggy",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "0.8.0",
+  "serviceVersion" : "0.9.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
