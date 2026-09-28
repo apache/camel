@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -45,6 +46,7 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.RestConfiguration;
@@ -531,6 +533,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         ResponseMessageDefinition msg = responseMessage(verb);
         msg.setCode(String.valueOf(code));
         msg.setMessage(message);
+        verb.getResponseMsgs().add(msg);
         return this;
     }
 
@@ -619,12 +622,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     }
 
     public RestDefinition bindingMode(String mode) {
+        // a property placeholder must keep its case (the key is case-sensitive)
+        if (!mode.contains(PropertiesComponent.PREFIX_TOKEN)) {
+            mode = mode.toLowerCase(Locale.ENGLISH);
+        }
         if (getVerbs().isEmpty()) {
-            this.bindingMode = mode.toLowerCase();
+            this.bindingMode = mode;
         } else {
             // add on last verb as that is how the Java DSL works
             VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.setBindingMode(mode.toLowerCase());
+            verb.setBindingMode(mode);
         }
 
         return this;
@@ -1136,9 +1143,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setProduces(getProduces());
             }
-            if (binding.getType() != null || binding.getOutType() != null && binding.getBindingMode() != null) {
+            // the binding mode from the verb or rest, or else from the rest configuration
+            String mode = parseText(camelContext, binding.getBindingMode());
+            if (mode == null && camelContext.getRestConfiguration().getBindingMode() != null) {
+                mode = camelContext.getRestConfiguration().getBindingMode().name();
+            }
+            if (mode != null && (binding.getType() != null || binding.getOutType() != null)) {
                 // okay we have binding mode and in/out type defined - then we can infer consume/produces
-                String mode = binding.getBindingMode();
                 if ("json".equals(mode)) {
                     if (binding.getConsumes() == null && binding.getType() != null) {
                         binding.setConsumes("application/json");
