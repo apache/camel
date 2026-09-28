@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.lmax.disruptor.InsufficientCapacityException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WaitForTaskToComplete;
@@ -237,6 +238,10 @@ public class DisruptorProducer extends DefaultAsyncProducer {
         // set a new from endpoint to be the disruptor
         target.getExchangeExtension().setFromEndpoint(endpoint);
         if (copy) {
+            // the copy is routed independently of the original exchange, so any stream cache it holds must be
+            // released when the copy is done, and not with the unit of work of a parent (multicast/split) exchange
+            // (same as the Wire Tap EIP does, see CAMEL-12108)
+            target.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
             // if the body is stream caching based we need to make a deep copy
             if (target.getMessage().getBody() instanceof StreamCache sc) {
                 StreamCache newBody = sc.copy(target);
