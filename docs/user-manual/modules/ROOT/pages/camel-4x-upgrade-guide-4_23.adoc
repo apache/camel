@@ -87,6 +87,11 @@ A review of the simple language fixed a number of edge cases. These change what 
   The same applies to two `BigDecimal` or two `BigInteger` values, to a number compared with a numeric `String`, and to
   the Java DSL predicates such as `header("amount").isGreaterThan(100)`. Two `BigDecimal` values with a different scale,
   such as `2.50` and `2.5`, are now equal.
+  The `in` and `!in` operators (and the Java DSL `in`) compare the same way when the left value is a number: each
+  element of the list is no longer converted to the type of the left value first, which dropped its decimals or failed.
+  `${header.n} in '2.5,3.5'` is `false` for an `Integer` of `2` (it used to fail with a `TypeConversionException`),
+  `${header.n} in '2.0'` is `true`, as `${header.n} == 2.0` is, and `header("n").in(2.5)` and
+  `header("n").in(4294967298L)` are `false` (they used to be `true`).
 * Inside `${ }` the ternary `?` and `:` need whitespace around them, so `${bean:svc?method=at(10:30)}` is not a
   ternary.
 
