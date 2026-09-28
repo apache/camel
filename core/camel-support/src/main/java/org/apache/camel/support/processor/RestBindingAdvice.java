@@ -513,14 +513,32 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
             return;
         }
 
-        // favor json over xml as a concrete single media type
-        if (isJson) {
+        if (contentType != null) {
+            // the verb declares what it produces, so use one of those media types, favoring json over xml
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, selectProducedMediaType(contentType, isXml, isJson));
+        } else if (isJson) {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
         } else if (isXml) {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-        } else if (contentType != null) {
-            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentType);
         }
+    }
+
+    private static String selectProducedMediaType(String produces, boolean isXml, boolean isJson) {
+        String[] types = produces.split(",");
+        String type = isJson ? findMediaType(types, "json") : null;
+        if (type == null && isXml) {
+            type = findMediaType(types, "xml");
+        }
+        return type != null ? type : types[0].trim();
+    }
+
+    private static String findMediaType(String[] types, String kind) {
+        for (String type : types) {
+            if (type.toLowerCase(Locale.ENGLISH).contains(kind)) {
+                return type.trim();
+            }
+        }
+        return null;
     }
 
     private void setCORSHeaders(Exchange exchange) {
