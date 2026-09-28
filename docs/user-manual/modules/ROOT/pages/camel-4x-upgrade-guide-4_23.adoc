@@ -791,6 +791,22 @@ kept running at full CPU without any log. No configuration that worked before is
 To take a value from somewhere else and otherwise a default, use another key for the override, such as
 `timeout={{?timeout.override:5000}}`.
 
+=== camel-support - property binding creates a nested list element at its index
+
+When a property key goes through a list element that does not exist yet, such as
+`camel.beans.cluster.servers[1].host`, the element is now created at its index, and the list is padded with `null`
+up to that index, as a single key such as `names[3]=x` and an array property already did. Before, the new element
+was appended to the end of the list whatever its index was. So the keys of one element could end up on several
+elements, and a list of 11 or more nested elements lost some of them, because the keys are sorted as strings
+(`servers[10].host` is bound before `servers[2].host`).
+
+A configuration that numbers its elements from 1, or leaves a gap, with one key per element, such as
+`servers[1].host=a` and `servers[2].host=b`, used to give a list without the gap (`[a, b]`). It now gives
+`[null, a, b]`. Number the elements from 0 without gaps, or make the code that uses the list skip `null` elements.
+
+The list key `last`, which was documented but failed with a `NumberFormatException`, now refers to the last element
+of a list (index 0 when the list is empty). Arrays still need a number.
+
 === camel-core - XmlConverter SAX parser factory
 
 `XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
