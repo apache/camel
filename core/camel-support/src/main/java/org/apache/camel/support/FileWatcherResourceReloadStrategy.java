@@ -69,7 +69,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     String folder;
     boolean isRecursive;
     boolean scheduler = true;
-    long pollTimeout = 1000;
+    long pollTimeout = 2000;
     /**
      * A file modified less than this ago is left for the next scan: a save still being written would otherwise be
      * reloaded half-finished. The file component leaves a file alone the same way.
@@ -107,7 +107,8 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
     }
 
     /**
-     * Sets how often the folder is scanned for changed files, in millis. The default value is 1000.
+     * Sets how often the folder is scanned for changed files, in millis. The default value is 2000. A longer interval
+     * also groups more of one save together: two files written a second apart are one change at 2000 and two at 1000.
      */
     public void setPollTimeout(long pollTimeout) {
         this.pollTimeout = pollTimeout;
@@ -217,6 +218,13 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                     if (isCompileWorkDir(dir)) {
                         // the class files the runtime writes while compiling a Java source are not changes of ours,
                         // and would trigger a reload, which compiles again, which writes again (CAMEL-24862)
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    if (!dir.equals(root) && dir.getFileName() != null
+                            && dir.getFileName().toString().startsWith(".")) {
+                        // a dot directory holds state, not sources: .camel-jbang is where camel-jbang keeps the
+                        // properties of the run it is doing, and rewriting those was reloading the routes; .git and
+                        // .idea are not ours either, and walking them every scan costs for nothing (CAMEL-25042)
                         return FileVisitResult.SKIP_SUBTREE;
                     }
                     if (!isRecursive && !dir.equals(root)) {

@@ -2963,8 +2963,11 @@ all the files of one save together, which is what a reload needs: a route is bui
 so a route and a property saved together must be reloaded together. It also removes the macOS penalty, where Java has
 no native file notification and the watch service fell back to a poll of about ten seconds.
 
-`FileWatcherResourceReloadStrategy.setPollTimeout` is now how often the folder is scanned, and its default changed
-from 2000 to 1000 milliseconds. On Linux and Windows a change is therefore noticed within a second rather than
-immediately; on macOS within a second rather than up to ten. A new `setStableTimeout` (default 200 milliseconds)
-leaves a file that was only just modified for the next scan, so a save still being written is not reloaded
-half-finished.
+A dot directory under the watched folder is no longer scanned. `.camel-jbang`, where `camel run` keeps the properties
+of the run it is doing, was reloading the routes whenever it was written, and `.git` or `.idea` were walked on every
+scan for nothing. A route file inside a dot directory is therefore no longer watched.
+
+`FileWatcherResourceReloadStrategy.setPollTimeout` is now how often the folder is scanned. Its default is unchanged at
+2000 milliseconds, so on Linux and Windows a change is noticed within two seconds rather than immediately, and on macOS
+within two seconds rather than up to ten. A new `setStableTimeout` (default 200 milliseconds) leaves a file that was
+only just modified for the next scan, so a save still being written is not reloaded half-finished.
