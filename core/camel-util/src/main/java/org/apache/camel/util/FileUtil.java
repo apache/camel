@@ -199,7 +199,7 @@ public final class FileUtil {
         int posWin = name.lastIndexOf('\\');
         int pos = Math.max(posUnix, posWin);
 
-        if (pos > 0) {
+        if (pos >= 0) {
             String onlyName = name.substring(pos + 1);
             // a leading dot is a hidden file (such as .bashrc), not an extension
             int pos2 = singleMode ? onlyName.lastIndexOf('.') : onlyName.indexOf('.', 1);
@@ -332,9 +332,12 @@ public final class FileUtil {
         String separatorRegex = "[\\\\/]";
         String[] parts = path.split(separatorRegex);
         for (String part : parts) {
-            if (part.equals("..") && !stack.isEmpty() && !"..".equals(stack.peek())) {
+            if (part.equals("..") && !stack.isEmpty() && !"..".equals(stack.peek())
+                    && !(stack.size() == 1 && isWindowsDrive(stack.peek()))) {
                 // only pop if there is a previous path, which is not a ".." path either
                 stack.pop();
+            } else if (part.equals("..") && stack.size() == 1 && isWindowsDrive(stack.peek())) {
+                // cannot go above the root of a windows drive (such as C:)
             } else if (!part.equals(".") && !part.isEmpty()) {
                 stack.push(part);
             }
@@ -653,6 +656,10 @@ public final class FileUtil {
      * @param  uri the URI
      * @return     <tt>true</tt> if the URI starts with a scheme
      */
+    private static boolean isWindowsDrive(String part) {
+        return part.length() == 2 && part.charAt(1) == ':' && Character.isLetter(part.charAt(0));
+    }
+
     private static boolean hasScheme(String uri) {
         if (uri == null) {
             return false;

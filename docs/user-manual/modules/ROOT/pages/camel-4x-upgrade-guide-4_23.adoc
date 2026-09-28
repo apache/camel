@@ -3052,6 +3052,20 @@ allocation; a declared length outside 0–1024 is now rejected instead of attemp
 Not changed: the HMAC key is still derived from the same key material as the cipher. Separating them
 would change the MAC written into the message and so could not be read by earlier versions; that is
 tracked separately.
+=== camel-core - invalid time patterns in options are rejected
+
+Numeric options such as `period`, `delay` or `timeout` accept a time pattern such as `5s` or `1h30m`. An invalid
+value is now rejected with an error when the endpoint is created. Previously it was silently turned into `0` (or
+only a part of it was used), so a typo such as `period=five` or `period=1m30` configured a period of `0` or `60000`
+without any warning. The unit is now case-insensitive (`5S` is 5 seconds) and a negative time pattern such as `-5s`
+is kept as a negative value. A time pattern that is too large for an `int` option is also rejected instead of
+overflowing to a negative number.
+
+=== camel-core - normalizeWhitespace turns tabs and new lines into a space
+
+The Simple function `${normalizeWhitespace()}` now turns every run of whitespace (including tabs and new lines) into
+a single space. Previously only runs of spaces were collapsed and a tab or new line was kept as-is.
+
 === camel-debezium - a failed embedded engine is now reported
 
 The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops

@@ -20,7 +20,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class AnnotationHelper {
@@ -54,13 +56,28 @@ public final class AnnotationHelper {
         do {
             Method[] methods = type.getDeclaredMethods();
             for (Method method : methods) {
-                if (hasAnnotation(method, annotationType, checkMetaAnnotations)) {
+                // skip bridge methods (generics) and methods overridden in a sub class (which is already found)
+                if (!method.isBridge() && !isOverridden(method, answer)
+                        && hasAnnotation(method, annotationType, checkMetaAnnotations)) {
                     answer.add(method);
                 }
             }
             type = type.getSuperclass();
         } while (type != null);
         return answer;
+    }
+
+    private static boolean isOverridden(Method method, List<Method> methods) {
+        if (Modifier.isPrivate(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
+            return false;
+        }
+        for (Method m : methods) {
+            if (m.getName().equals(method.getName())
+                    && Arrays.equals(m.getParameterTypes(), method.getParameterTypes())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

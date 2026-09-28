@@ -155,6 +155,10 @@ class URIScanner {
     }
 
     private void addParameter(Map<String, Object> answer, boolean isRaw) {
+        if (key.isEmpty()) {
+            // no parameter (such as a double && in the query)
+            return;
+        }
         String name = URLDecoder.decode(key.toString(), CHARSET);
         String text;
         if (isRaw) {

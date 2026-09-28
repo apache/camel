@@ -510,7 +510,7 @@ public final class StringHelper {
      */
     public static String removeStartingCharacters(String text, char ch) {
         int idx = 0;
-        while (text.charAt(idx) == ch) {
+        while (idx < text.length() && text.charAt(idx) == ch) {
             idx++;
         }
         if (idx > 0) {
@@ -671,19 +671,15 @@ public final class StringHelper {
                 skip = false;
             } else if (c == '[') {
                 skip = true;
-            } else if (c == '\'') {
+            } else if (c == '\'' && !skip) {
                 singleQuotes++;
-            } else if (c == '"') {
+            } else if (c == '"' && !skip) {
                 doubleQuotes++;
             }
 
-            if (singleQuotes > 0) {
-                skip = singleQuotes % 2 == 1;
-            }
-            if (doubleQuotes > 0) {
-                skip = doubleQuotes % 2 == 1;
-            }
-            if (skip) {
+            // inside [] or quotes the text is kept as-is
+            boolean quoted = singleQuotes % 2 == 1 || doubleQuotes % 2 == 1;
+            if (skip || quoted) {
                 sb.append(c);
                 continue;
             }
@@ -1417,20 +1413,12 @@ public final class StringHelper {
      */
     public static String replaceFromSecondOccurrence(String text, String search, String replacement) {
         int index = text.indexOf(search);
-        boolean replace = false;
-
-        while (index != -1) {
-            String tempString = text.substring(index);
-            if (replace) {
-                tempString = tempString.replaceFirst(search, replacement);
-                text = text.substring(0, index) + tempString;
-                replace = false;
-            } else {
-                replace = true;
-            }
-            index = text.indexOf(search, index + 1);
+        if (index == -1 || search.isEmpty()) {
+            return text;
         }
-        return text;
+        // keep the first occurrence and replace all the following (as plain text and not as a regular expression)
+        int start = index + search.length();
+        return text.substring(0, start) + text.substring(start).replace(search, replacement);
     }
 
     /**
@@ -1498,7 +1486,8 @@ public final class StringHelper {
     }
 
     /**
-     * Normalizes the whitespaces by removing any excess spaces so there are only at most a single whitespace.
+     * Normalizes the whitespaces by removing any excess whitespace so there are only at most a single space between the
+     * words (any other whitespace such as tabs and new lines is also turned into a space).
      */
     public static String normalizeWhitespace(String text) {
         if (text == null) {
@@ -1508,24 +1497,22 @@ public final class StringHelper {
             return "";
         }
 
-        // must have at least double spaces
-        if (!text.contains("  ")) {
-            return text.trim();
-        }
+        text = text.trim();
         StringBuilder sb = new StringBuilder(text.length());
-        final char[] chars = text.toCharArray();
-        for (int i = 1; i < chars.length; i++) {
-            char prev = chars[i - 1];
-            char ch = chars[i];
-            if (Character.isWhitespace(ch) && Character.isWhitespace(prev)) {
-                continue;
+        boolean whitespace = false;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (Character.isWhitespace(ch)) {
+                whitespace = true;
+            } else {
+                if (whitespace) {
+                    sb.append(' ');
+                    whitespace = false;
+                }
+                sb.append(ch);
             }
-            if (i == 1) {
-                sb.append(prev);
-            }
-            sb.append(ch);
         }
-        return sb.toString().trim();
+        return sb.toString();
     }
 
 }
