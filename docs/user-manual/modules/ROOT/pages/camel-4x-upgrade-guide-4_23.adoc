@@ -186,6 +186,16 @@ Only options whose value is a placeholder are affected, and only when running wi
 Camel Quarkus. If a component must not be stopped on reload, configure it programmatically rather than with a
 placeholder based property.
 
+=== Languages - less than with two null values, and a source from a variable
+
+- The `<` operator (in the Simple language and the Java DSL `isLessThan`) is now `false` when both sides are `null`,
+  as the `>` operator already was. Prior to Camel 4.23, `${header.a} < ${header.b}` was `true` when neither header
+  existed. The `<=` and `>=` operators are unchanged and are `true` in that case.
+- A language that reads its input from a `source` of `variable:name` now fails with `NoSuchVariableException` when the
+  variable does not exist, as it does with `NoSuchHeaderException` for `header:name`. From Camel 4.4 to 4.22 a missing
+  variable was used as a `null` input. This also applies to a `source` without a prefix, as a plain name refers to a
+  variable (`source="myVar"`), and to the `source` option of the `xslt`, `xslt-saxon` and `xquery` endpoints.
+
 === Apache Avro trusted packages
 
 Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
