@@ -3053,6 +3053,35 @@ always ran into the graceful shutdown timeout and was then forced (or aborted). 
 (or purged with `purgeWhenStopping=true`), and are processed if the route is started again while the queue still
 exists.
 
+=== camel-core - error handler predicates that throw an exception
+
+When an `onWhen`, `handled`, `continued` or `retryWhile` predicate of `onException` (or `retryWhile` of the error
+handler) throws an exception during error handling, then the error handler now logs this at `WARN` level and regards
+the predicate as `false`:
+
+* A failing `onWhen` means the `onException` does not match, so another `onException` (or the error handler itself)
+handles the exception instead. Previously the exception from the predicate escaped from the error handler.
+* A failing `handled`, `continued` or `retryWhile` means the exchange is not handled, not continued and not redelivered.
+The exchange is still processed by the `onException` outputs (or sent to the dead letter channel), and the original
+exception is kept as the exception, with the exception from the predicate attached as a suppressed exception.
+Previously the exception from the predicate replaced the original exception, and the `onException` outputs
+were skipped.
+
+=== camel-core - error handler onPrepareFailure that throws an exception
+
+When the `onPrepareFailure` processor of the Dead Letter Channel or the Default Error Handler throws an exception,
+then the exchange is no longer sent to the dead letter queue (or failure processor) with that exception set on it.
+Instead, the exchange is not delivered, and with the Dead Letter Channel the new exception is handled
+according to `deadLetterHandleNewException` (by default `true`, so the exchange completes and a `WARN` is logged).
+With `deadLetterHandleNewException=false`, or with the Default Error Handler, the exchange fails with the new exception,
+which has the original exception attached as a suppressed exception.
+
+=== camel-core - error handler error registry handled flag
+
+The error registry (`ErrorRegistry`) now records whether an error was handled from the exchange itself. An exception
+that is processed by an `onException` without `handled(true)` is now recorded as not handled; previously any exception
+that was processed by an `onException` or a failure processor was recorded as handled.
+
 === camel-sql, camel-sql-stored - the query/template override headers are gated
 
 A message header could override the endpoint-configured SQL by default, letting an incoming message choose the
