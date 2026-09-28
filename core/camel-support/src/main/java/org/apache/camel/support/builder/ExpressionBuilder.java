@@ -18,6 +18,7 @@ package org.apache.camel.support.builder;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -1781,6 +1782,71 @@ public class ExpressionBuilder {
                 return String.valueOf(expression);
             }
         };
+    }
+
+    /**
+     * Returns an expression for one value of the <tt>in</tt> operator, which is compared for equality with the value of
+     * the left expression.
+     * <p/>
+     * When the left value is a number, a number is returned as is, and a String with a decimal number is returned as a
+     * {@link BigDecimal}, so the values are compared by their numeric values (such as <tt>2</tt> and <tt>2.5</tt>,
+     * which are not equal). Converting them to the type of the left value first could drop the decimals or wrap a long
+     * that does not fit in an int. Otherwise the value is converted to the type of the left value, as by
+     * {@link #convertToExpression(Expression, Expression)}.
+     *
+     * @param  value the expression for the value in the list of the in operator
+     * @param  left  the left expression
+     * @return       the expression for the value to compare with the left value
+     */
+    public static Expression inValueExpression(final Expression value, final Expression left) {
+        final Expression converted = convertToExpression(value, left);
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object leftValue = left.evaluate(exchange, Object.class);
+                if (leftValue instanceof Number) {
+                    Object rightValue = value.evaluate(exchange, Object.class);
+                    if (rightValue instanceof Number) {
+                        return rightValue;
+                    }
+                    if (rightValue instanceof String text) {
+                        BigDecimal number = decimalOrNull(text);
+                        if (number != null) {
+                            return number;
+                        }
+                    }
+                    if (rightValue == null) {
+                        return null;
+                    }
+                    // not a number, so convert to the type of the left value as before
+                    return exchange.getContext().getTypeConverter().convertTo(leftValue.getClass(), exchange, rightValue);
+                }
+                return converted.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                converted.init(context);
+            }
+
+            @Override
+            public String toString() {
+                return String.valueOf(value);
+            }
+        };
+    }
+
+    private static BigDecimal decimalOrNull(String text) {
+        String number = text.trim();
+        if (number.isEmpty()) {
+            return null;
+        }
+        try {
+            return new BigDecimal(number);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**

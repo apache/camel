@@ -56,10 +56,14 @@ public class QuickfixjConsumer extends DefaultConsumer {
     public void onExchange(Exchange exchange) {
         if (isStarted()) {
             try {
+                // the reply goes back on the session the request arrived on, so capture it before routing
+                // can change the header
+                SessionID messageSessionID = exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY, SessionID.class);
+
                 getProcessor().process(exchange);
 
                 if (exchange.getPattern().isOutCapable() && exchange.hasOut()) {
-                    sendOutMessage(exchange);
+                    sendOutMessage(exchange, messageSessionID);
                 }
             } catch (Exception e) {
                 exchange.setException(e);
@@ -67,13 +71,11 @@ public class QuickfixjConsumer extends DefaultConsumer {
         }
     }
 
-    private void sendOutMessage(Exchange exchange) throws QFJException {
+    private void sendOutMessage(Exchange exchange, SessionID messageSessionID) throws QFJException {
         Message camelMessage = exchange.getMessage();
         quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
 
         LOG.debug("Sending FIX message reply: {}", quickfixjMessage);
-
-        SessionID messageSessionID = exchange.getIn().getHeader(QuickfixjEndpoint.SESSION_ID_KEY, SessionID.class);
 
         Session session = getSession(messageSessionID);
         if (session == null) {

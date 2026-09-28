@@ -161,7 +161,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-postgres",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "17.10-alpine",
+  "serviceVersion" : "17.11-alpine",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
@@ -348,7 +348,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-opa",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "1.20.2-static",
+  "serviceVersion" : "1.21.0-static",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
@@ -755,7 +755,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-docling",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "v1.34.0",
+  "serviceVersion" : "v1.35.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",

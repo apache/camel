@@ -3413,6 +3413,21 @@ public interface ComponentsBuilderFactory {
         return LdifComponentBuilderFactory.ldif();
     }
     /**
+     * LLM (camel-openai)
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * @return the dsl builder
+     */
+    static LlmComponentBuilderFactory.LlmComponentBuilder llm() {
+        return LlmComponentBuilderFactory.llm();
+    }
+    /**
      * Log Data (camel-log)
      * Prints data from the routed message (such as body and headers) to the
      * logger.
@@ -3840,8 +3855,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion, Responses API, embeddings, audio
-     * transcription, audio translation, and text-to-speech.
+     * LLM endpoint for chat completion, Responses API, embeddings, audio
+     * transcription, audio translation, and text-to-speech using
+     * OpenAI-compatible APIs. The openai scheme is a supported alias.
      * 
      * Category: ai
      * Since: 4.17

@@ -125,8 +125,9 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
 
     @Test
     void rejectsBatchInWasmModeAtStartup() {
+        // rejected before the bundle is resolved, so the location here is never opened
         assertThatThrownBy(() -> context.getEndpoint(
-                "opa:" + PATH + "?evaluationMode=wasm&policyBundle=classpath:authz.wasm&batch=true").start())
+                "opa:" + PATH + "?evaluationMode=wasm&policyBundle=file:unused.wasm&batch=true").start())
                 .isInstanceOf(Exception.class)
                 .hasMessageContaining("batch");
     }

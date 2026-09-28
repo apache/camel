@@ -16,6 +16,9 @@
  */
 package org.apache.camel.semantic;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Provider-independent semantic evaluation. Implementations must support concurrent calls, bound evaluation time and
  * resource use, honor interruption, and release outstanding work on shutdown. Exceptions must not expose state or
@@ -30,4 +33,20 @@ public interface SemanticAdapter {
 
     /** Synchronous, potentially blocking evaluation. Operational errors must be thrown, never returned as decisions. */
     SemanticResult evaluate(SemanticQuestion question, Object state) throws Exception;
+
+    /**
+     * Evaluate named questions against the same selected state, returning exactly one result per name. The default
+     * implementation calls the single-question method sequentially; providers may override it to use one request.
+     * Operational errors must be thrown, never returned as partial results. The language applies each decision policy.
+     */
+    default Map<String, SemanticResult> evaluateBatch(Map<String, SemanticQuestion> questions, Object state) throws Exception {
+        Map<String, SemanticResult> results = new LinkedHashMap<>();
+        for (var entry : questions.entrySet()) {
+            if (Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException("Semantic batch evaluation interrupted");
+            }
+            results.put(entry.getKey(), evaluate(entry.getValue(), state));
+        }
+        return results;
+    }
 }
