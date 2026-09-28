@@ -262,8 +262,16 @@ public class JmsProducer extends DefaultAsyncProducer {
         try {
             doSend(exchange, true, destinationName, destination, messageCreator, messageSentCallback);
         } catch (Exception e) {
-            // send failed after reply was registered, cancel to prevent double callback on timeout
-            replyManager.cancelCorrelationId(registeredCorrelationId[0]);
+            // send failed after the reply was registered: cancel it to prevent a second callback from the timeout
+            String registered = registeredCorrelationId[0];
+            if (registered != null && !replyManager.cancelCorrelationId(registered)) {
+                // the request timeout (or the reply) removed the correlation while the send was still running,
+                // and it completes the exchange, so the exchange must not be completed here a second time
+                LOG.warn("Sending JMS request with correlation id: {} failed after the request timeout or the reply"
+                         + " has already completed the exchange. The send failure is only logged: {}",
+                        registered, e.getMessage(), e);
+                return false;
+            }
             throw e;
         }
 
