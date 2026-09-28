@@ -3223,6 +3223,15 @@ was published as a second, undocumented spelling of the same setting. Routes tha
 `databaseOutServerName` should use `xstreamOutServerName` instead; it configures the same XStream outbound
 server and is unchanged.
 
+=== camel-kafka - sslContextParameters and the SSL endpoint options
+
+When `sslContextParameters` is configured (also using global SSL with `useGlobalSslContextParameters`), the SSL endpoint
+options (such as `sslTruststoreLocation`) are now applied after the `sslContextParameters`, as documented. Previously
+the SSL endpoint options were ignored when `sslContextParameters` was configured.
+
+When `sslContextParameters` is configured and `securityProtocol` is the default (`PLAINTEXT`), the security protocol
+`SSL` is now used. Previously `PLAINTEXT` was used unless `securityProtocol` (or `saslAuthType`) was configured.
+
 === camel-pulsar - the producer no longer replaces the body with the message id
 
 After sending, the producer used to overwrite the message body with the `MessageId` returned by the
