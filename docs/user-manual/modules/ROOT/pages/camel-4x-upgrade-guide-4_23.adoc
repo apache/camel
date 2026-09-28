@@ -164,6 +164,12 @@ ratios that are all `0`, or ratios whose sum is greater than `2147483647` now fa
 `IllegalArgumentException`. Previously such a route started, but sending to it could hang the caller, spin a CPU,
 or send every message to the same endpoint.
 
+=== Resequencer EIP - stream resequencing and route stop
+
+When a route with the stream resequencer stops, a caller that is blocked because the resequencer is full (`capacity`)
+now fails with a `java.util.concurrent.RejectedExecutionException`. Prior to Camel 4.23 such a caller stayed blocked,
+also after the route was stopped.
+
 === Tokenize language
 
 - A message without a body (or a `source` that has no value) now has no tokens, the same as an empty body.
