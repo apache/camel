@@ -217,16 +217,15 @@ public abstract class AbstractCamelCatalog {
         ComponentModel model = componentModel(scheme);
         boolean lenient = Boolean.parseBoolean(properties.getOrDefault("lenient", "false"))
                 || model != null && model.isLenientProperties();
-        return validateProperties(scheme, properties, lenient, false, false);
+        return validateProperties(scheme, model, properties, lenient, false, false);
     }
 
     private EndpointValidationResult validateProperties(
-            String scheme, Map<String, String> properties,
+            String scheme, ComponentModel model, Map<String, String> properties,
             boolean lenient, boolean consumerOnly,
             boolean producerOnly) {
         EndpointValidationResult result = new EndpointValidationResult(scheme);
 
-        ComponentModel model = componentModel(scheme);
         if (model == null) {
             result.addUnknownComponent(scheme);
             return result;
@@ -512,7 +511,7 @@ public abstract class AbstractCamelCatalog {
                 // only enable lenient properties if we should not ignore
                 lenient = !ignoreLenientProperties && model.isLenientProperties();
             }
-            return validateProperties(scheme, properties, lenient, consumerOnly, producerOnly);
+            return validateProperties(scheme, model, properties, lenient, consumerOnly, producerOnly);
         } catch (URISyntaxException e) {
             EndpointValidationResult result = new EndpointValidationResult(uri);
             result.addSyntaxError(e.getMessage());
@@ -1128,7 +1127,8 @@ public abstract class AbstractCamelCatalog {
         }
 
         if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(") && !val.startsWith("RAW{")) {
-            // use RAW{} when the value contains ) as that would end RAW()
+            // use RAW{} when the value contains ) as that would end RAW() (scanRaw ends at the first ")")
+            // note: a value with both ) and } cannot be safely wrapped in either form, RAW() is used
             if (val.indexOf(')') != -1 && val.indexOf('}') == -1) {
                 return "RAW{" + val + "}";
             }
