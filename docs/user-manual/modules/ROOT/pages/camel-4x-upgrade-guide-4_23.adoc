@@ -196,6 +196,22 @@ placeholder based property.
   variable was used as a `null` input. This also applies to a `source` without a prefix, as a plain name refers to a
   variable (`source="myVar"`), and to the `source` option of the `xslt`, `xslt-saxon` and `xquery` endpoints.
 
+=== ClusteredRoutePolicy - routes are started and stopped on the policy thread
+
+When the leadership changes, `ClusteredRoutePolicy` now starts and stops its routes on its own thread, instead of on
+the thread that fires the leadership event while it holds the lock of the cluster view. This fixes a deadlock between
+a leadership change that is starting routes and a CamelContext stop or a route removal. The thread only exists while
+there is a leadership change to apply, and exits when idle, so a policy per route (`ClusteredRoutePolicyFactory`) does
+not keep a thread per route. Leadership changes that reach the policy thread while the CamelContext is stopping are
+ignored, as the CamelContext is stopping all the routes.
+
+Most cluster services fire leadership events from their own threads, but some fire them on the calling thread, for
+example when a view starts or a listener is added. In all cases the routes are now started and stopped on the policy
+thread, shortly after the event. Code that fires the event itself, for example a custom `CamelClusterView` in a test,
+can no longer expect the routes to be started or stopped when the event returns, and should wait for the route status
+instead. Likewise, `isLeader()` of the policy (JMX attribute `Leader`) reflects the view right away, and the routes
+follow asynchronously.
+
 === Apache Avro trusted packages
 
 Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
