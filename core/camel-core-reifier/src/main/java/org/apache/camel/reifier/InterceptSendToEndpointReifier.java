@@ -30,6 +30,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.InterceptSendToEndpointCallback;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
 
 public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSendToEndpointDefinition> {
@@ -64,10 +65,16 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             when = new OnWhenPredicate(createPredicate(definition.getOnWhen().getExpression()));
         }
 
+        final Route registeringRoute = route;
         Processor p = exchange -> {
-            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID, route.getId());
+            // the endpoint is decorated once (by the first route of the intercept), so use the route that is sending
+            Route current = ExchangeHelper.getRoute(exchange);
+            if (current == null) {
+                current = registeringRoute;
+            }
+            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ID, current.getId());
             exchange.setProperty(ExchangePropertyKey.INTERCEPTED_NODE_ID, definition.getId());
-            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI, route.getEndpoint().getEndpointUri());
+            exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ROUTE_ENDPOINT_URI, current.getEndpoint().getEndpointUri());
         };
 
         // register endpoint callback so we can proxy the endpoint
