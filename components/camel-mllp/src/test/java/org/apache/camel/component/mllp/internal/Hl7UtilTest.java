@@ -110,6 +110,12 @@ public class Hl7UtilTest {
                                                                    + MllpProtocolConstants.END_OF_BLOCK
                                                                    + MllpProtocolConstants.END_OF_DATA;
 
+    static final String MSH_SEGMENT_BEFORE_MSH9_OTHER_SEPARATOR
+            = "MSH|$~\\&|REQUESTING|ICE|INHOUSE|RTH00|20250912193919||";
+
+    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START_OTHER_SEPARATOR
+            = MllpProtocolConstants.START_OF_BLOCK + "MSH|$~\\&|INHOUSE|RTH00|REQUESTING|ICE|";
+
     static final byte[] TEST_MESSAGE_BYTES = TEST_MESSAGE.getBytes();
 
     private final Hl7Util hl7util = new Hl7Util(5120, LOG_PHI_TRUE);
@@ -768,6 +774,57 @@ public class Hl7UtilTest {
         final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "MDM^T01^MDM_T01" + MSH_SEGMENT_AFTER_MSH9;
         hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
+        assertThat(actual, endsWith("||ACK^T01^ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithOtherComponentSeparator() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9_OTHER_SEPARATOR + "MDM$T01" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START_OTHER_SEPARATOR));
+        assertThat(actual, endsWith("||ACK$T01" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithOtherComponentSeparatorAndMsh93() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9_OTHER_SEPARATOR + "MDM$T01$MDM_T01" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START_OTHER_SEPARATOR));
+        assertThat(actual, endsWith("||ACK$T01$ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithOtherComponentSeparatorAndCaretInMsh93() throws Exception {
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        // '^' is not a separator here, so MSH-9 has three components
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9_OTHER_SEPARATOR + "MDM$T01$MDM^T01" + MSH_SEGMENT_AFTER_MSH9;
+        hl7util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
+
+        final String actual = mllpSocketBuffer.toString();
+
+        assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START_OTHER_SEPARATOR));
+        assertThat(actual, endsWith("||ACK$T01$ACK" + EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END_MSH));
+    }
+
+    @Test
+    public void testGenerateAcknowledgementPayloadWithMsh93AndSmallLogPhiMaxBytes() throws Exception {
+        // logPhiMaxBytes only limits what is logged, it must not change the acknowledgement
+        final Hl7Util local = new Hl7Util(3, LOG_PHI_TRUE);
+        final MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
+        final String testMessage = MSH_SEGMENT_BEFORE_MSH9 + "MDM^T01^MDM_T01" + MSH_SEGMENT_AFTER_MSH9;
+        local.generateAcknowledgementPayload(mllpSocketBuffer, testMessage.getBytes(), "AA");
 
         final String actual = mllpSocketBuffer.toString();
 
