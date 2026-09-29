@@ -1685,6 +1685,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteList(null, null, def.getRoutes(), this::doWriteRouteDefinitionRef);
+        doWriteElement("semantic", def.getSemantic(), this::doWriteSemanticDefinition);
         endElement(name);
     }
     protected void doWriteRoutingSlipDefinition(String name, RoutingSlipDefinition<?> def) throws IOException {
@@ -2082,6 +2083,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteBeansDefinitionElements(BeansDefinition def) throws IOException {
         doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
+        doWriteElement("semantic", def.getSemantic(), this::doWriteSemanticDefinition);
         domElements(def.getSpringOrBlueprintBeans());
         doWriteList(null, "sslContextParameters", def.getSslContextParameters(), this::doWriteSSLContextParametersDefinition);
         doWriteList("dataFormats", "dataFormat", def.getDataFormats(), this::doWriteDataFormatDefinition);
@@ -2130,6 +2132,24 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("secureRandomAlgorithm", def.getSecureRandomAlgorithm(), null);
         doWriteAttribute("secureRandomProvider", def.getSecureRandomProvider(), null);
         doWriteAttribute("clientAuthentication", def.getClientAuthentication(), "NONE");
+        endElement(name);
+    }
+    protected void doWriteSemanticDefinition(String name, SemanticDefinition def) throws IOException {
+        startElement(name);
+        doWriteList(null, "question", def.getQuestions(), this::doWriteSemanticQuestionDefinition);
+        endElement(name);
+    }
+    protected void doWriteSemanticQuestionDefinition(String name, SemanticQuestionDefinition def) throws IOException {
+        startElement(name);
+        doWriteAttribute("name", def.getName(), null);
+        doWriteAttribute("type", def.getType(), null);
+        doWriteAttribute("state", def.getState(), null);
+        doWriteAttribute("threshold", def.getThreshold(), null);
+        doWriteAttribute("uncertainty", def.getUncertainty(), null);
+        doWriteAttribute("uncertaintyPolicy", def.getUncertaintyPolicy(), null);
+        doWriteElement("instructions", def.getInstructions(), this::doWriteString);
+        doWriteList(null, "criterion", def.getCriteria(), this::doWritePropertyDefinition);
+        doWriteList(null, "level", def.getLevels(), this::doWriteString);
         endElement(name);
     }
     protected void doWriteBatchResequencerConfig(String name, BatchResequencerConfig def) throws IOException {

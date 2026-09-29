@@ -1,0 +1,25 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "semanticQuestionDefinition",
+    "title": "Semantic Question Definition",
+    "description": "A semantic question with the same fields and policies as a YAML declaration.",
+    "deprecated": false,
+    "label": "configuration",
+    "javaType": "org.apache.camel.model.app.SemanticQuestionDefinition",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "name": { "index": 0, "kind": "attribute", "displayName": "Name", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The context-wide question name." },
+    "type": { "index": 1, "kind": "attribute", "displayName": "Type", "group": "common", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "boolean", "choice", "score" ], "deprecated": false, "autowired": false, "secret": false, "description": "The question type." },
+    "state": { "index": 2, "kind": "attribute", "displayName": "State", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The Simple expression selecting the message state." },
+    "threshold": { "index": 3, "kind": "attribute", "displayName": "Threshold", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The boolean decision threshold." },
+    "uncertainty": { "index": 4, "kind": "attribute", "displayName": "Uncertainty", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The boolean uncertainty band." },
+    "uncertaintyPolicy": { "index": 5, "kind": "attribute", "displayName": "Uncertainty Policy", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "fail", "non-match" ], "deprecated": false, "autowired": false, "secret": false, "description": "The boolean uncertainty policy." },
+    "instructions": { "index": 6, "kind": "element", "displayName": "Instructions", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Instructions describing the judgment to make." },
+    "criterion": { "index": 7, "kind": "element", "displayName": "Criterion", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Named choice criteria, or optional true\/false boolean criteria." },
+    "level": { "index": 8, "kind": "element", "displayName": "Level", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<java.lang.String>", "deprecated": false, "autowired": false, "secret": false, "description": "Ordered descriptive levels for a score question." }
+  }
+}

@@ -23,14 +23,47 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.app.SemanticDefinition;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.yaml.LwModelToYAMLDumper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class YamlWriterEdgeCasesTest {
+
+    @Test
+    public void semanticExportRejectsDuplicatesInsteadOfDiscardingThem() {
+        SemanticDefinition questions = new SemanticDefinition();
+        questions.question("q").type("boolean").instructions("First?");
+        questions.question("q").type("boolean").instructions("Second?");
+        YamlModelWriter writer = new YamlModelWriter();
+        assertThatThrownBy(() -> writer.writeSemanticDefinition(questions)).hasMessageContaining("Duplicate semantic question");
+
+        SemanticDefinition criteria = new SemanticDefinition();
+        criteria.question("q").type("choice").instructions("Which?").criterion("a", "First").criterion("a", "Second");
+        assertThatThrownBy(() -> writer.writeSemanticDefinition(criteria)).hasMessageContaining("Duplicate semantic criterion");
+    }
+
+    @Test
+    public void semanticDeclarationsRetainYamlShapeAndTextTypes() throws Exception {
+        SemanticDefinition semantic = new SemanticDefinition();
+        semantic.question("007").type("boolean").instructions("true").state("42").threshold(0.8)
+                .uncertainty(0.1).uncertaintyPolicy("non-match").criterion("true", "yes");
+        semantic.question("priority").type("score").instructions("Priority?").level("Low").level("High");
+        YamlModelWriter writer = new YamlModelWriter();
+        String yaml = writer.printAsYaml(List.of(writer.writeSemanticDefinition(semantic)));
+        JsonNode node = new YAMLMapper().readTree(yaml);
+        JsonNode questions = node.get(0).get("semantic").get("question");
+        assertThat(questions.isObject()).isTrue();
+        assertThat(questions.get("007").get("instructions").isTextual()).isTrue();
+        assertThat(questions.get("007").get("state").isTextual()).isTrue();
+        assertThat(questions.get("007").get("criteria").get("true").asText()).isEqualTo("yes");
+        assertThat(questions.get("007").get("threshold").doubleValue()).isEqualTo(0.8);
+        assertThat(questions.get("priority").get("criteria").get(1).asText()).isEqualTo("High");
+    }
 
     @Test
     public void testTextThatLooksLikeNumber() throws Exception {

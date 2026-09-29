@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -31,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.EndpointConsumerBuilder;
+import org.apache.camel.model.app.SemanticDefinition;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
@@ -74,6 +76,18 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @XmlElementRef
     @Metadata(description = "The Camel routes.")
     private List<RouteDefinition> routes = new ArrayList<>();
+
+    @XmlElement(name = "semantic")
+    @Metadata(description = "Named semantic question declarations.")
+    private SemanticDefinition semantic;
+
+    public SemanticDefinition getSemantic() {
+        return semantic;
+    }
+
+    public void setSemantic(SemanticDefinition semantic) {
+        this.semantic = semantic;
+    }
 
     public RoutesDefinition() {
     }

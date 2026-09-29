@@ -1,0 +1,73 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.model.app;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
+
+/** Named, provider-independent semantic question declarations. */
+@Metadata(label = "configuration")
+@XmlType(name = "semanticDefinition")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class SemanticDefinition {
+    @XmlElement(name = "question")
+    @Metadata(description = "Named semantic questions shared by routes in this Camel context.")
+    private List<SemanticQuestionDefinition> questions = new ArrayList<>();
+
+    public List<SemanticQuestionDefinition> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<SemanticQuestionDefinition> questions) {
+        this.questions = questions;
+    }
+
+    /** Declare a named semantic question. */
+    public SemanticQuestionDefinition question(String name) {
+        SemanticQuestionDefinition question = new SemanticQuestionDefinition();
+        question.setName(name);
+        questions.add(question);
+        return question;
+    }
+
+    /** Register declarations before route initialization, without requiring semantic support for ordinary routes. */
+    public static void configure(
+            CamelContext context, Resource resource, String source, SemanticDefinition definition) {
+        SemanticDefinitionConfigurer configurer
+                = context.getCamelContextExtension().getContextPlugin(SemanticDefinitionConfigurer.class);
+        if (configurer == null) {
+            if (definition == null || definition.getQuestions().isEmpty()) {
+                return;
+            }
+            configurer = context.getCamelContextExtension().getDefaultFactoryFinder()
+                    .newInstance("semantic-configurer", SemanticDefinitionConfigurer.class)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Semantic question declarations require camel-semantic on the classpath"));
+            context.getCamelContextExtension().addContextPlugin(SemanticDefinitionConfigurer.class, configurer);
+        }
+        configurer.configure(context, resource, source, definition);
+    }
+}

@@ -46,6 +46,20 @@ class TransformToolsTest {
     }
 
     @Test
+    void transformXmlToYamlPreservesSemanticDeclarations() {
+        var result = createTools().camel_transform_route(
+                """
+                        <routes xmlns="http://camel.apache.org/schema/spring">
+                          <semantic><question name="urgent" type="boolean"><instructions>Urgent?</instructions></question></semantic>
+                          <route><from uri="direct:input"/><setBody><language language="semantic">ref:urgent</language></setBody></route>
+                        </routes>
+                        """,
+                "xml", "yaml");
+        assertThat(result.supported).isTrue();
+        assertThat(result.result).contains("semantic:", "question:", "urgent:", "Urgent?", "ref:urgent");
+    }
+
+    @Test
     void transformYamlToXml() {
         TransformTools tools = createTools();
         String yaml = """

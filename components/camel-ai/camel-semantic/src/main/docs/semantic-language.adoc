@@ -96,8 +96,75 @@ Reloading a resource replaces its complete set of questions, including removing 
 no longer present. Development-mode route reload also removes definitions from deleted or renamed files
 before parsing replacements. This replacement does not make the surrounding route reload transactional.
 Existing expressions resolve the current definition on their next evaluation.
-Loading declarations does not perform inference. Java applications can register immutable
-`SemanticQuestion` definitions using `SemanticQuestions.get(context).replace(source, questions)`.
+Loading declarations does not perform inference.
+
+=== Java declarations
+
+Use `semanticQuestions().question(name)` in a `RouteBuilder` to declare questions alongside routes:
+
+[source,java]
+----
+@Override
+public void configure() {
+    semanticQuestions().question("department")
+        .type("choice")
+        .state("${header.myState}")
+        .instructions("Which department should handle this message?")
+        .criterion("billing", "Invoices, payments, and refunds")
+        .criterion("technical", "Bugs, outages, and technical problems")
+        .criterion("other", "Everything else");
+
+    from("direct:tickets")
+        .setProperty("department").language("semantic", "ref:department")
+        .to("direct:dispatch");
+}
+----
+
+Declarations are installed after `configure()` completes and before the routes are initialized.
+They can appear before or after the routes that reference them. Use `.type("boolean")` with
+optional `.threshold(0.8)`, `.uncertainty(0.1)` and `.uncertaintyPolicy("non-match")` for boolean
+questions. Use `.type("score")` and successive `.level("description")` calls for ordered score
+levels. Java applications can also continue to register immutable `SemanticQuestion` definitions
+using `SemanticQuestions.get(context).replace(source, questions)`.
+
+=== XML declarations
+
+With xref:others:java-xml-io-dsl.adoc[XML DSL], place a `semantic` element inside the `camel` or
+`routes` document, alongside the routes:
+
+[source,xml]
+----
+<camel xmlns="http://camel.apache.org/schema/spring">
+  <semantic>
+    <question name="department" type="choice" state="${header.myState}">
+      <instructions>Which department should handle this message?</instructions>
+      <criterion key="billing" value="Invoices, payments, and refunds"/>
+      <criterion key="technical" value="Bugs, outages, and technical problems"/>
+      <criterion key="other" value="Everything else"/>
+    </question>
+  </semantic>
+  <route>
+    <from uri="direct:tickets"/>
+    <setProperty name="department">
+      <language language="semantic">ref:department</language>
+    </setProperty>
+    <to uri="direct:dispatch"/>
+  </route>
+</camel>
+----
+
+For boolean questions, `threshold`, `uncertainty` and `uncertaintyPolicy` are optional question
+attributes. For score questions, replace the named `criterion` elements with ordered
+`level` elements, such as `<level>Routine</level><level>Urgent</level><level>Critical</level>`.
+XML declarations are loaded before route references are initialized, including declarations
+after a route or in another resource loaded together. Reload replaces the source's questions;
+removing its declarations or deleting the resource removes obsolete definitions.
+
+Both Java and XML declarations require `camel-semantic` and use the same context-wide registry,
+validation, defaults and adapters as YAML. They do not require `camel-yaml-dsl`. Their questions
+can also be selected together using `refs:name1,name2`, as described below.
+
+=== Selected state
 
 A question's optional `state` Simple expression overrides
 `camel.language.semantic.default-state`, whose default is `$\{body}`. Selectors are compiled

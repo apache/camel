@@ -43,6 +43,8 @@ import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ValueDefinition;
+import org.apache.camel.model.app.SemanticDefinition;
+import org.apache.camel.model.app.SemanticQuestionDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
@@ -1129,6 +1131,43 @@ public abstract class JavaDslModelWriterSupport {
 
     protected String indent() {
         return "    ".repeat(indentLevel);
+    }
+
+    public String writeSemanticDefinition(SemanticDefinition definition) {
+        StringBuilder result = new StringBuilder();
+        doWriteSemanticDefinition(result, definition);
+        return result.toString();
+    }
+
+    protected void doWriteSemanticDefinition(StringBuilder result, SemanticDefinition definition) {
+        for (SemanticQuestionDefinition question : definition.getQuestions()) {
+            if (!result.isEmpty()) {
+                result.append(NL);
+            }
+            result.append("semanticQuestions().question(").append(quote(question.getName())).append(")")
+                    .append(".type(").append(quote(question.getType())).append(")")
+                    .append(".instructions(").append(quote(question.getInstructions())).append(")");
+            if (question.getState() != null) {
+                result.append(".state(").append(quote(question.getState())).append(")");
+            }
+            if (question.getThreshold() != null) {
+                result.append(".threshold(").append(Double.parseDouble(question.getThreshold())).append(")");
+            }
+            if (question.getUncertainty() != null) {
+                result.append(".uncertainty(").append(Double.parseDouble(question.getUncertainty())).append(")");
+            }
+            if (question.getUncertaintyPolicy() != null) {
+                result.append(".uncertaintyPolicy(").append(quote(question.getUncertaintyPolicy())).append(")");
+            }
+            for (PropertyDefinition criterion : question.getCriteria()) {
+                result.append(".criterion(").append(quote(criterion.getKey())).append(", ")
+                        .append(quote(criterion.getValue())).append(")");
+            }
+            for (String level : question.getLevels()) {
+                result.append(".level(").append(quote(level)).append(")");
+            }
+            result.append(";");
+        }
     }
 
     protected String quote(String s) {

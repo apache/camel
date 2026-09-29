@@ -47,6 +47,7 @@ import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
 import org.apache.camel.model.app.SSLContextParametersDefinition;
+import org.apache.camel.model.app.SemanticDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -75,6 +76,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     private final Map<String, Resource> resourceCache = new ConcurrentHashMap<>();
     private final Map<String, XmlStreamInfo> xmlInfoCache = new ConcurrentHashMap<>();
     private final Map<String, BeansDefinition> camelAppCache = new ConcurrentHashMap<>();
+    private final Map<String, RoutesDefinition> routesCache = new ConcurrentHashMap<>();
     private final List<BeanFactoryDefinition<?>> delayedRegistrations = new ArrayList<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -95,19 +97,50 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         if (preparseDone.getOrDefault(resource.getLocation(), false)) {
             return;
         }
-        XmlStreamInfo xmlInfo = xmlInfo(resource);
-        if (xmlInfo.isValid()) {
-            String root = xmlInfo.getRootElementName();
-            if ("beans".equals(root) || "blueprint".equals(root) || "camel".equals(root)) {
-                new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                        .parseBeansDefinition()
-                        .ifPresent(bd -> {
-                            registerBeans(resource, bd);
-                            camelAppCache.put(resource.getLocation(), bd);
-                        });
+        try {
+            XmlStreamInfo xmlInfo = xmlInfo(resource);
+            if (xmlInfo.isValid()) {
+                String root = xmlInfo.getRootElementName();
+                SemanticDefinition semantic = null;
+                if ("beans".equals(root) || "blueprint".equals(root) || "camel".equals(root)) {
+                    new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                            .parseBeansDefinition()
+                            .ifPresent(bd -> {
+                                registerBeans(resource, bd);
+                                camelAppCache.put(resource.getLocation(), bd);
+                            });
+                    BeansDefinition app = camelAppCache.get(resource.getLocation());
+                    if (app != null) {
+                        semantic = app.getSemantic();
+                    }
+                } else if ("routes".equals(root) || "route".equals(root)) {
+                    RoutesDefinition routes = new XmlModelParser(resource(resource), xmlInfo.getRootElementNamespace())
+                            .parseRoutesDefinition().orElse(null);
+                    if (routes != null) {
+                        routesCache.put(resource.getLocation(), routes);
+                        semantic = routes.getSemantic();
+                    }
+                }
+                SemanticDefinition.configure(getCamelContext(), resource, resource.getLocation(), semantic);
             }
+            preparseDone.put(resource.getLocation(), true);
+        } catch (Exception e) {
+            // A failed batch also prevents builders for earlier resources from clearing their cached input.
+            resourceCache.clear();
+            xmlInfoCache.clear();
+            camelAppCache.clear();
+            routesCache.clear();
+            preparseDone.clear();
+            throw e;
         }
-        preparseDone.put(resource.getLocation(), true);
+    }
+
+    private void clearCaches(String location) {
+        resourceCache.remove(location);
+        xmlInfoCache.remove(location);
+        camelAppCache.remove(location);
+        routesCache.remove(location);
+        preparseDone.remove(location);
     }
 
     @Override
@@ -150,19 +183,22 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         case "rests", "rest" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
                                 .parseRestsDefinition()
                                 .ifPresent(this::addRests);
-                        case "routes", "route" -> new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
-                                .parseRoutesDefinition()
-                                .ifPresent(this::addRoutes);
+                        case "routes", "route" -> {
+                            RoutesDefinition routes = routesCache.get(resourceLocation);
+                            if (routes != null) {
+                                addRoutes(routes);
+                            } else {
+                                new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                                        .parseRoutesDefinition().ifPresent(this::addRoutes);
+                            }
+                        }
                         default -> {
                         }
                     }
                 } finally {
                     // knowing this is the last time an XML may have been parsed, we can clear the cache
                     // (route may get reloaded later)
-                    resourceCache.remove(resourceLocation);
-                    xmlInfoCache.remove(resourceLocation);
-                    camelAppCache.remove(resourceLocation);
-                    preparseDone.remove(resourceLocation);
+                    clearCaches(resourceLocation);
                 }
             }
 
@@ -197,6 +233,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
 
             private void configureCamel(BeansDefinition app) {
+                getRouteCollection().setSemantic(app.getSemantic());
                 if (!delayedRegistrations.isEmpty()) {
                     // some of the beans were not available yet, so we have to try register them now
                     for (BeanFactoryDefinition<?> def : delayedRegistrations) {
@@ -303,6 +340,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                     CamelContextAware.trySetCamelContext(def, getCamelContext());
                     def.setResource(getResource());
                     def.setRoutes(app.getRoutes());
+                    def.setSemantic(app.getSemantic());
                     addRoutes(def);
                 }
             }
@@ -329,6 +367,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
 
             private void addRoutes(RoutesDefinition routes) {
+                getRouteCollection().setSemantic(routes.getSemantic());
                 // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
                 // so create a copy and use the fluent builder to add the route
                 for (RouteDefinition route : routes.getRoutes()) {

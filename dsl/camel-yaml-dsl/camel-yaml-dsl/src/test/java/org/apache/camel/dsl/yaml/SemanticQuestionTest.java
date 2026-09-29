@@ -23,11 +23,15 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dsl.yaml.common.exception.InvalidEnumException;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.language.semantic.SemanticLanguage;
+import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.app.SemanticDefinition;
+import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.semantic.SemanticAdapter;
 import org.apache.camel.semantic.SemanticQuestion;
 import org.apache.camel.semantic.SemanticQuestions;
@@ -36,6 +40,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
+import org.apache.camel.yaml.LwModelToYAMLDumper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -80,6 +85,59 @@ class SemanticQuestionTest extends YamlTestSupport {
                           billing: Invoices and refunds
                           technical: Bugs and outages
                 """.formatted(state);
+    }
+
+    @Test
+    void exportedModelLoadsWithTheExistingYamlSyntax() throws Exception {
+        SemanticDefinition semantic = new SemanticDefinition();
+        semantic.question("urgent").type("boolean").instructions("Urgent?").threshold(0.8)
+                .uncertainty(0.1).uncertaintyPolicy("non-match");
+        semantic.question("department").type("choice").state("${header.selected}").instructions("Which department?")
+                .criterion("billing", "Invoices").criterion("technical", "Outages");
+        semantic.question("priority").type("score").instructions("Priority?").level("Low").level("High");
+        RoutesDefinition routes = new RoutesDefinition();
+        routes.setSemantic(semantic);
+        routes.from("direct:exported").setBody(new LanguageExpression("semantic", "ref:department"));
+        loadRoutes(new LwModelToYAMLDumper().dumpModelAsYaml(context, routes));
+        context.start();
+        assertThat(calls).hasValue(0);
+        var questions = SemanticQuestions.get(context);
+        assertThat(questions.get("urgent").getThreshold()).isEqualTo(0.8);
+        assertThat(questions.get("urgent").getUncertaintyPolicy()).isEqualTo(SemanticQuestion.UncertaintyPolicy.NON_MATCH);
+        assertThat(questions.get("priority").getLevels()).containsExactly("Low", "High");
+        try (var template = context.createProducerTemplate()) {
+            assertThat(template.requestBodyAndHeader("direct:exported", "original", "selected", "invoice"))
+                    .isEqualTo("billing");
+        }
+    }
+
+    @Test
+    void javaDeclarationsCoexistWithUnchangedYamlDeclarations() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                semanticQuestions().question("javaDepartment").type("choice").state("${header.selected}")
+                        .instructions("Which department?")
+                        .criterion("billing", "Invoices and refunds").criterion("technical", "Bugs and outages");
+            }
+        });
+        loadRoutes(declarations("${header.selected}") + route());
+        context.start();
+        SemanticQuestion java = SemanticQuestions.get(context).get("javaDepartment");
+        SemanticQuestion yaml = SemanticQuestions.get(context).get("department");
+        assertThat(java).usingRecursiveComparison().isEqualTo(yaml);
+        assertThat(calls).hasValue(0);
+        try (var template = context.createProducerTemplate()) {
+            var exchange = template.request("direct:tickets", e -> {
+                e.getMessage().setBody("original");
+                e.getMessage().setHeader("selected", "invoice");
+            });
+            assertThat(exchange.getException()).isNull();
+            assertThat(context.resolveLanguage("semantic").createExpression("refs:javaDepartment,department")
+                    .evaluate(exchange, Map.class)).containsEntry("javaDepartment", "billing")
+                    .containsEntry("department", "billing");
+        }
+        assertThat(selected).isEqualTo("invoice");
     }
 
     @Test
