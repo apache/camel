@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hivemq;
 
+import com.hivemq.client.mqtt.MqttVersion;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ class HiveMQConfigurationTest {
 
         assertThat(config.getHost()).isEqualTo(HiveMQConstants.DEFAULT_HOST);
         assertThat(config.getPort()).isEqualTo(HiveMQConstants.DEFAULT_PORT);
+        assertThat(config.getMqttVersion()).isEqualTo(MqttVersion.MQTT_5_0);
         assertThat(config.getQos()).isEqualTo(MqttQos.AT_LEAST_ONCE);
         assertThat(config.isRetained()).isFalse();
         assertThat(config.isCleanStart()).isTrue();
@@ -43,6 +45,7 @@ class HiveMQConfigurationTest {
         HiveMQConfiguration original = new HiveMQConfiguration();
         original.setHost("broker.hivemq.com");
         original.setPort(8883);
+        original.setMqttVersion(MqttVersion.MQTT_3_1_1);
         original.setQos(MqttQos.EXACTLY_ONCE);
         original.setRetained(true);
         original.setUsername("admin");
@@ -53,6 +56,7 @@ class HiveMQConfigurationTest {
         assertThat(copy).isNotSameAs(original);
         assertThat(copy.getHost()).isEqualTo("broker.hivemq.com");
         assertThat(copy.getPort()).isEqualTo(8883);
+        assertThat(copy.getMqttVersion()).isEqualTo(MqttVersion.MQTT_3_1_1);
         assertThat(copy.getQos()).isEqualTo(MqttQos.EXACTLY_ONCE);
         assertThat(copy.isRetained()).isTrue();
         assertThat(copy.getUsername()).isEqualTo("admin");
