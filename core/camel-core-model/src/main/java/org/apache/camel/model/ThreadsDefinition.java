@@ -198,7 +198,8 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     }
 
     /**
-     * Sets the keep alive time for idle threads
+     * Sets the keep alive time for idle threads. A plain number is in the time unit (seconds by default), and a
+     * duration such as 30s or 1m30s is converted to the time unit.
      *
      * @param  keepAliveTime keep alive time
      * @return               the builder

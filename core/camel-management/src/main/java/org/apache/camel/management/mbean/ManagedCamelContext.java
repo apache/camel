@@ -802,6 +802,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
 
                 // use substring as we only want the attributes
                 route.statsAsJSon(jo, fullStats);
+                jo.put("exchangesInflight", route.getExchangesInflight());
 
                 // add processor details if needed
                 if (includeProcessors) {
