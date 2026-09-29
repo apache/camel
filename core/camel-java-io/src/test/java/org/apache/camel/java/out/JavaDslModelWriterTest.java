@@ -52,6 +52,7 @@ public class JavaDslModelWriterTest {
         SwitchDefinition sw = new SwitchDefinition(new HeaderExpression("decision"));
         sw.id("dispatch").disabled(true).description("Table dispatch").note("dispatch note");
         sw.doCase("billing").id("billingCase").description("Billing destination").note("case note").to("mock:billing");
+        sw.otherwise("mock:review");
         JavaDslModelWriter writer = new JavaDslModelWriter();
         String java = writer.writeSwitchDefinition(sw);
         Assertions.assertTrue(java.contains(".doSwitch(header(\"decision\"))"), java);
@@ -60,6 +61,7 @@ public class JavaDslModelWriterTest {
         Assertions.assertTrue(java.contains(".description(\"Table dispatch\")"), java);
         Assertions.assertTrue(java.contains(".id(\"billingCase\")"), java);
         Assertions.assertTrue(java.contains(".note(\"case note\")"), java);
+        Assertions.assertTrue(java.contains(".otherwise(\"mock:review\")"), java);
         sw.setCustomId(false);
         sw.getCases().get(0).setCustomId(false);
         java = writer.writeSwitchDefinition(sw);

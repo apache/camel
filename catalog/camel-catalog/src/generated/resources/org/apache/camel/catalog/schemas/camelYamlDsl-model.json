@@ -8446,13 +8446,33 @@
         "group" : "common"
       }, {
         "name" : "otherwise",
-        "type" : "string",
+        "type" : "object",
+        "ref" : "switchOtherwise",
         "description" : "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.",
         "title" : "Otherwise",
         "displayName" : "Otherwise",
-        "kind" : "attribute",
+        "kind" : "element",
         "index" : 7,
         "group" : "common"
+      } ]
+    },
+    "switchOtherwise" : {
+      "title" : "Switch Otherwise",
+      "description" : "The fixed endpoint used when no switch case matches",
+      "label" : "configuration",
+      "children" : [ {
+        "name" : "uri",
+        "type" : "string",
+        "description" : "The fixed destination URI. Supports property placeholders, but not Simple expressions.",
+        "title" : "Uri",
+        "required" : true,
+        "displayName" : "Uri",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "parameters",
+        "type" : "object"
       } ]
     },
     "switchValue" : {

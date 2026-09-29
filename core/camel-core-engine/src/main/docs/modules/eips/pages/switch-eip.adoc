@@ -55,10 +55,11 @@ XML::
 ----
 <route xmlns="http://camel.apache.org/schema/spring">
     <from uri="direct:tickets"/>
-    <switch otherwise="direct:review">
+    <switch>
         <selector><header>department</header></selector>
         <case value="billing" uri="direct:billing"/>
         <case value="technical" uri="direct:technical"/>
+        <otherwise uri="direct:review"/>
     </switch>
 </route>
 ----
@@ -79,7 +80,8 @@ YAML::
                 uri: direct:billing
               - value: technical
                 uri: direct:technical
-            otherwise: direct:review
+            otherwise:
+              uri: direct:review
 ----
 ====
 
@@ -151,7 +153,7 @@ XML::
 ----
 <route xmlns="http://camel.apache.org/schema/spring">
     <from uri="direct:tickets"/>
-    <switch otherwise="direct:review">
+    <switch>
         <selector><header>decision</header></selector>
         <keys>department</keys>
         <keys>urgent</keys>
@@ -167,6 +169,7 @@ XML::
             <values name="department" value="technical"/>
             <values name="urgent" type="boolean" value="true"/>
         </case>
+        <otherwise uri="direct:review"/>
     </switch>
 </route>
 ----
@@ -191,7 +194,8 @@ YAML::
                 uri: direct:billing
               - values: [department: technical, urgent: true]
                 uri: direct:incident
-            otherwise: direct:review
+            otherwise:
+              uri: direct:review
 ----
 ====
 
@@ -284,7 +288,7 @@ XML::
 ----
 <route xmlns="http://camel.apache.org/schema/spring">
     <from uri="direct:tickets"/>
-    <switch otherwise="direct:review">
+    <switch>
         <selector><language language="semantic">refs:department,urgent</language></selector>
         <keys>department</keys>
         <keys>urgent</keys>
@@ -300,6 +304,7 @@ XML::
             <values name="department" value="technical"/>
             <values name="urgent" type="boolean" value="true"/>
         </case>
+        <otherwise uri="direct:review"/>
     </switch>
 </route>
 ----
@@ -335,7 +340,8 @@ YAML::
                 uri: direct:billing
               - values: [department: technical, urgent: true]
                 uri: direct:incident
-            otherwise: direct:review
+            otherwise:
+              uri: direct:review
 ----
 ====
 

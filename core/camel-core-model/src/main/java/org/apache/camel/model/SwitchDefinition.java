@@ -23,7 +23,6 @@ import java.util.Map;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -40,7 +39,7 @@ import org.apache.camel.spi.Metadata;
           description = "Evaluates a selector once and dispatches to a fixed endpoint by literal scalar or composite values")
 @XmlRootElement(name = "switch")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "selector", "keys", "cases" })
+@XmlType(propOrder = { "selector", "keys", "cases", "otherwise" })
 public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     @XmlElement(required = true)
     @Metadata(required = true,
@@ -52,9 +51,9 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
     @XmlElement(name = "case")
     @Metadata(description = "Literal cases. Duplicate combinations are rejected at startup.")
     private List<SwitchCaseDefinition> cases = new ArrayList<>();
-    @XmlAttribute
+    @XmlElement
     @Metadata(description = "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.")
-    private String otherwise;
+    private SwitchOtherwiseDefinition otherwise;
     @XmlTransient
     private ToDefinition otherwiseDefinition;
 
@@ -69,7 +68,7 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
         super(source);
         this.selector = source.selector != null ? source.selector.copyDefinition() : null;
         this.keys = new ArrayList<>(source.keys);
-        this.otherwise = source.otherwise;
+        this.otherwise = source.otherwise != null ? source.otherwise.copyDefinition() : null;
         for (SwitchCaseDefinition c : source.cases) {
             SwitchCaseDefinition copy = c.copyDefinition();
             copy.setParent(this);
@@ -116,11 +115,11 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
         this.cases = cases;
     }
 
-    public String getOtherwise() {
+    public SwitchOtherwiseDefinition getOtherwise() {
         return otherwise;
     }
 
-    public void setOtherwise(String otherwise) {
+    public void setOtherwise(SwitchOtherwiseDefinition otherwise) {
         this.otherwise = otherwise;
         this.otherwiseDefinition = null;
     }
@@ -132,9 +131,10 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
             return null;
         }
         if (otherwiseDefinition == null) {
-            otherwiseDefinition = new ToDefinition(otherwise);
+            otherwiseDefinition = new ToDefinition();
             otherwiseDefinition.setParent(this);
         }
+        otherwiseDefinition.setUri(otherwise.getUri());
         if (getId() != null) {
             if (hasCustomIdAssigned()) {
                 otherwiseDefinition.setId(getId() + "-otherwise");
@@ -188,7 +188,12 @@ public class SwitchDefinition extends NoOutputDefinition<SwitchDefinition> {
 
     /** Set the fixed fallback destination. */
     public SwitchDefinition otherwise(String uri) {
-        setOtherwise(uri);
+        SwitchOtherwiseDefinition fallback = null;
+        if (uri != null) {
+            fallback = new SwitchOtherwiseDefinition();
+            fallback.setUri(uri);
+        }
+        setOtherwise(fallback);
         return this;
     }
 

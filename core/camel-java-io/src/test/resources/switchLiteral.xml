@@ -20,11 +20,12 @@
 <routes xmlns="http://camel.apache.org/schema/xml-io">
   <route id="switchExport">
     <from uri="direct:start"/>
-    <switch id="scalar" disabled="false" description="Scalar dispatch" note="dispatch note" otherwise="mock:other">
+    <switch id="scalar" disabled="false" description="Scalar dispatch" note="dispatch note">
       <selector><header>department</header></selector>
       <case id="billing" description="Billing destination" note="case note" value="billing" uri="mock:billing"/>
+      <otherwise uri="mock:other"/>
     </switch>
-    <switch id="composite" otherwise="mock:review">
+    <switch id="composite">
       <selector><header>decision</header></selector>
       <keys>department</keys><keys>urgent</keys><keys>score</keys>
       <case id="urgent" uri="mock:urgent">
@@ -32,6 +33,7 @@
         <values name="urgent" type="boolean" value="true"/>
         <values name="score" type="number" value="2.0"/>
       </case>
+      <otherwise uri="mock:review"/>
     </switch>
     <to uri="mock:after"/>
   </route>

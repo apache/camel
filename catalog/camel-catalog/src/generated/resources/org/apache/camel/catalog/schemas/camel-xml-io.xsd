@@ -1851,6 +1851,15 @@ Evaluates a selector once and dispatches to a fixed endpoint by literal scalar o
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="switchOtherwise" type="tns:switchOtherwiseDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+The fixed endpoint used when no switch case matches
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="switchValue" type="tns:switchValueDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -13142,18 +13151,30 @@ Exact map field names forming a composite key. Additional result fields are igno
             </xs:annotation>
           </xs:element>
           <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:case"/>
-        </xs:sequence>
-        <xs:attribute name="otherwise" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
+          <xs:element minOccurs="0" name="otherwise" type="tns:switchOtherwiseDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">
 <![CDATA[
 Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.
 ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="switchOtherwiseDefinition">
+    <xs:sequence/>
+    <xs:attribute name="uri" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+The fixed destination URI. Supports property placeholders, but not Simple expressions.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType final="extension restriction" name="caseBuilder">
     <xs:sequence/>

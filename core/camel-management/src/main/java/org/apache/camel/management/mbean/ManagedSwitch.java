@@ -72,7 +72,7 @@ public class ManagedSwitch extends ManagedProcessor implements ManagedSwitchMBea
                         c.getUri(), getProcessor().getMatchedCount(i));
             }
             if (getDefinition().getOtherwise() != null) {
-                addRow(table, getDefinition().getId() + "-otherwise", "otherwise", getDefinition().getOtherwise(),
+                addRow(table, getDefinition().getId() + "-otherwise", "otherwise", getDefinition().getOtherwise().getUri(),
                         getUnmatchedCount());
             }
             return table;

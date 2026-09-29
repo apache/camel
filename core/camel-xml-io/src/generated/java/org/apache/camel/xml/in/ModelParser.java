@@ -1200,15 +1200,19 @@ public class ModelParser extends BaseParser {
             }, noElementHandler(), noValueHandler());
     }
     protected SwitchDefinition doParseSwitchDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SwitchDefinition(), (def, key, val) -> switch (key) {
-                case "otherwise": def.setOtherwise(val); yield true;
-                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
+        return doParse(new SwitchDefinition(), processorDefinitionAttributeHandler(), (def, key) -> switch (key) {
                 case "case": doAdd(doParseSwitchCaseDefinition(), def.getCases(), def::setCases); yield true;
                 case "keys": doAdd(doParseText(), def.getKeys(), def::setKeys); yield true;
+                case "otherwise": def.setOtherwise(doParseSwitchOtherwiseDefinition()); yield true;
                 case "selector": def.setSelector(doParseExpressionSubElementDefinition()); yield true;
                 default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
+    }
+    protected SwitchOtherwiseDefinition doParseSwitchOtherwiseDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SwitchOtherwiseDefinition(), (def, key, val) -> switch (key) {
+                case "uri": def.setUri(sanitizeUri(val)); yield true;
+                default: yield false;
+            }, noElementHandler(), noValueHandler());
     }
     protected TemplatedRouteDefinition doParseTemplatedRouteDefinition() throws IOException, XmlPullParserException {
         return doParse(new TemplatedRouteDefinition(), (def, key, val) -> switch (key) {

@@ -52,7 +52,8 @@ class SwitchTest extends YamlTestSupport {
                                   name: urgent
                               - values: [urgent: false, department: billing]
                                 uri: direct:billing
-                            otherwise: direct:review
+                            otherwise:
+                              uri: direct:review
                 - route:
                     from:
                       uri: direct:urgent
@@ -75,6 +76,7 @@ class SwitchTest extends YamlTestSupport {
         SwitchDefinition sw = (SwitchDefinition) context.getRouteDefinition("decision").getOutputs().get(0);
         assertThat(sw.getCases().get(0).getUri()).isEqualTo("direct:urgent");
         assertThat(sw.getCases().get(0).getValues().get(1).asLiteral()).isEqualTo(true);
+        assertThat(sw.getOtherwise().getUri()).isEqualTo("direct:review");
         try (var restored = new DefaultCamelContext()) {
             for (var route : context.getRouteDefinitions()) {
                 String yaml = new LwModelToYAMLDumper().dumpModelAsYaml(context, route);
@@ -139,6 +141,27 @@ class SwitchTest extends YamlTestSupport {
                                   - values: %s
                                     uri: mock:a
                     """.formatted(values);
+            assertThatThrownBy(() -> loadRoutes(yaml)).isInstanceOf(Exception.class);
+        }
+    }
+
+    @Test
+    void fallbackRequiresAnEndpointObject() {
+        for (String fallback : new String[] { "direct:review", "{steps: [{to: {uri: direct:review}}]}" }) {
+            String yaml = """
+                    - route:
+                        from:
+                          uri: direct:start
+                          steps:
+                            - switch:
+                                selector:
+                                  header:
+                                    expression: department
+                                case:
+                                  - value: billing
+                                    uri: direct:billing
+                                otherwise: %s
+                    """.formatted(fallback);
             assertThatThrownBy(() -> loadRoutes(yaml)).isInstanceOf(Exception.class);
         }
     }

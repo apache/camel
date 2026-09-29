@@ -95,6 +95,7 @@ import org.apache.camel.model.StepDefinition;
 import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.SwitchCaseDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.SwitchOtherwiseDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.ThreadsDefinition;
@@ -18126,7 +18127,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "keys", type = "array:string", description = "Exact map field names forming a composite key. Additional result fields are ignored.", displayName = "Keys"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
-                    @YamlProperty(name = "otherwise", type = "string", description = "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.", displayName = "Otherwise"),
+                    @YamlProperty(name = "otherwise", type = "object:org.apache.camel.model.SwitchOtherwiseDefinition", description = "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.", displayName = "Otherwise"),
                     @YamlProperty(name = "selector", type = "object:org.apache.camel.model.ExpressionSubElementDefinition", required = true, description = "Expression evaluated once per entry. Returns a scalar, or a map when keys are configured.", displayName = "Selector")
             }
     )
@@ -18161,7 +18162,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "otherwise": {
-                    String val = asText(node);
+                    org.apache.camel.model.SwitchOtherwiseDefinition val = asType(node, org.apache.camel.model.SwitchOtherwiseDefinition.class);
                     target.setOtherwise(val);
                     break;
                 }
@@ -18183,6 +18184,52 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "note": {
                     String val = asText(node);
                     target.setNote(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "switchOtherwise",
+            types = org.apache.camel.model.SwitchOtherwiseDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Switch Otherwise",
+            description = "The fixed endpoint used when no switch case matches",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "parameters", type = "object"),
+                    @YamlProperty(name = "uri", type = "string", required = true, description = "The fixed destination URI. Supports property placeholders, but not Simple expressions.", displayName = "Uri")
+            }
+    )
+    public static class SwitchOtherwiseDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<SwitchOtherwiseDefinition> {
+        public SwitchOtherwiseDefinitionDeserializer() {
+            super(SwitchOtherwiseDefinition.class);
+        }
+
+        @Override
+        protected SwitchOtherwiseDefinition newInstance() {
+            return new SwitchOtherwiseDefinition();
+        }
+
+        @Override
+        protected void setEndpointUri(CamelContext camelContext, Node node,
+                SwitchOtherwiseDefinition target, Map<String, Object> parameters) {
+            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
+        }
+
+        @Override
+        protected boolean setProperty(SwitchOtherwiseDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "uri": {
+                    String val = asText(node);
+                    target.setUri(val);
                     break;
                 }
                 default: {

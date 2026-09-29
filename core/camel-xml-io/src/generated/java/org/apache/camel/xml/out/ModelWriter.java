@@ -326,6 +326,9 @@ public class ModelWriter extends BaseWriter {
     public void writeSwitchDefinition(SwitchDefinition def) throws IOException {
         doWriteSwitchDefinition("switch", def);
     }
+    public void writeSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) throws IOException {
+        doWriteSwitchOtherwiseDefinition("switchOtherwise", def);
+    }
     public void writeSwitchValueDefinition(SwitchValueDefinition def) throws IOException {
         doWriteSwitchValueDefinition("switchValue", def);
     }
@@ -1840,10 +1843,15 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSwitchDefinition(String name, SwitchDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("otherwise", def.getOtherwise(), null);
         doWriteElement("selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
         doWriteList(null, "keys", def.getKeys(), this::doWriteString);
         doWriteList(null, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
+        doWriteElement("otherwise", def.getOtherwise(), this::doWriteSwitchOtherwiseDefinition);
+        endElement(name);
+    }
+    protected void doWriteSwitchOtherwiseDefinition(String name, SwitchOtherwiseDefinition def) throws IOException {
+        startElement(name);
+        doWriteAttribute("uri", def.getUri(), null);
         endElement(name);
     }
     protected void doWriteSwitchValueDefinition(String name, SwitchValueDefinition def) throws IOException {

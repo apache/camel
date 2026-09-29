@@ -47,6 +47,7 @@ class ManagedSwitchTest extends ManagementTestSupport {
         assertEquals("mock:urgent", first.get("uri"));
         assertEquals(2L, first.get("matches"));
         assertEquals(1L, table.get(new Object[] { 1 }).get("matches"));
+        assertEquals("mock:review", table.get(new Object[] { 1 }).get("uri"));
         assertTrue(getMBeanServer().isRegistered(getCamelObjectName(TYPE_PROCESSOR, "p-urgentCase")),
                 getMBeanServer().queryNames(new ObjectName("org.apache.camel:type=processors,*"), null).toString());
         assertTrue(getMBeanServer().isRegistered(getCamelObjectName(TYPE_PROCESSOR, "p-dispatch-otherwise")));

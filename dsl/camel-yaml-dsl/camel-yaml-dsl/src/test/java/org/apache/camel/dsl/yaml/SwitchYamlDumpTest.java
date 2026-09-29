@@ -53,5 +53,10 @@ class SwitchYamlDumpTest extends YamlTestSupport {
         assertThat(xpath.getNamespaces()).containsEntry("t", "urn:tickets");
         assertThat(restored.getCases().get(0).getValue()).isEqualTo("billing");
         assertThat(restored.getCases().get(0).getUri()).isEqualTo("mock:billing");
+        assertThat(restored.getOtherwise().getUri()).isEqualTo("mock:other");
+        SwitchDefinition copy = restored.copyDefinition();
+        copy.getOtherwise().setUri("mock:copy");
+        assertThat(restored.getOtherwise().getUri()).isEqualTo("mock:other");
+        assertThat(copy.getOtherwise().getUri()).isEqualTo("mock:copy");
     }
 }

@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.SwitchDefinition;
+import org.apache.camel.model.SwitchOtherwiseDefinition;
 import org.apache.camel.model.SwitchValueDefinition;
 import org.apache.camel.model.language.HeaderExpression;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,16 @@ class SwitchValidationTest {
     @Test
     void rejectsMissingUri() {
         rejects(s -> s.doCase("billing", null), "nonblank uri");
+    }
+
+    @Test
+    void rejectsMissingFallbackUri() {
+        rejects(s -> s.setOtherwise(new SwitchOtherwiseDefinition()), "nonblank uri");
+    }
+
+    @Test
+    void rejectsDynamicFallbackUri() {
+        rejects(s -> s.otherwise("mock:${header.target}"), "must be static");
     }
 
     @Test

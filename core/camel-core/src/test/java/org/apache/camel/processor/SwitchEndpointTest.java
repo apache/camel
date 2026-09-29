@@ -30,6 +30,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SwitchEndpointTest extends ContextTestSupport {
@@ -40,10 +41,15 @@ class SwitchEndpointTest extends ContextTestSupport {
     @Test
     void routeEndpointDiscoveryIncludesCaseAndFallback() {
         RouteDefinition route = new RouteDefinition("direct:discovery");
-        route.doSwitch(new HeaderExpression("decision")).doCase("match", "mock:destination").otherwise("mock:fallback");
+        var sw = route.doSwitch(new HeaderExpression("decision")).doCase("match", "mock:destination")
+                .otherwise("mock:fallback");
         var uris = RouteDefinitionHelper.gatherAllStaticEndpointUris(context, route, false, true);
         assertTrue(uris.contains("mock://destination"), uris.toString());
         assertTrue(uris.contains("mock://fallback"), uris.toString());
+        sw.getOtherwise().setUri("mock:updated");
+        uris = RouteDefinitionHelper.gatherAllStaticEndpointUris(context, route, false, true);
+        assertTrue(uris.contains("mock://updated"), uris.toString());
+        assertFalse(uris.contains("mock://fallback"), uris.toString());
     }
 
     @Test

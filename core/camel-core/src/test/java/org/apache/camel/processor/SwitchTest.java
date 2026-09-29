@@ -43,9 +43,10 @@ class SwitchTest extends ContextTestSupport {
         getMockEndpoint("mock:billing").expectedMessageCount(2);
         getMockEndpoint("mock:empty").expectedMessageCount(1);
         getMockEndpoint("mock:literal").expectedMessageCount(1);
+        getMockEndpoint("mock:otherwiseLiteral").expectedMessageCount(1);
         getMockEndpoint("mock:review").expectedMessageCount(3);
-        getMockEndpoint("mock:after").expectedMessageCount(7);
-        for (String value : new String[] { "billing", "BILLING", "", "billing*", "billing123", "other" }) {
+        getMockEndpoint("mock:after").expectedMessageCount(8);
+        for (String value : new String[] { "billing", "BILLING", "", "billing*", "billing123", "other", "OTHERWISE" }) {
             template.sendBodyAndHeader("direct:scalar", "message", "department", value);
         }
         template.sendBody("direct:scalar", "message");
@@ -153,6 +154,7 @@ class SwitchTest extends ContextTestSupport {
             public void configure() {
                 from("direct:scalar").doSwitch().header("department")
                         .doCase("billing", "mock:billing").doCase("", "mock:empty").doCase("billing*", "mock:literal")
+                        .doCase("otherwise", "mock:otherwiseLiteral")
                         .otherwise("mock:review").end().to("mock:after");
                 from("direct:composite").doSwitch(header("decision")).keys("department", "urgent")
                         .doCase().value("department", "billing").value("urgent", true).id("urgentCase").to("mock:urgent")
