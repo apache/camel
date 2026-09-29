@@ -163,6 +163,19 @@ Prior to Camel 4.23 the property was only set when there was no fallback and was
 so a fallback that tested it for `null` must now test for `true` or `false` instead.
 `CamelCircuitBreakerResponseShortCircuited` is unchanged and remains `true` whenever the fallback runs, whatever the cause.
 
+=== camel-resilience4j - bulkhead together with timeout
+
+When the Circuit Breaker EIP with resilience4j has both `bulkheadEnabled` and `timeoutEnabled`, the bulkhead permit is
+now held until the protected call has ended, also when the call has timed out and the fallback has already been used.
+Prior to Camel 4.23 the permit was released when the timeout fired, while the call kept running on the timeout thread
+pool, so `bulkheadMaxConcurrentCalls` did not limit the calls running against a slow service. This applies to both the
+synchronous and the `asynchronous` mode, and matches the decorator order recommended by resilience4j (the bulkhead
+inside the time limiter) and the behaviour of `camel-microprofile-fault-tolerance`.
+
+As a result, while calls that timed out are still running, further calls are rejected by the bulkhead (and answered by
+the fallback, with `CamelCircuitBreakerResponseRejected` set to `true`), where before they were started. A call that
+never ends keeps its permit.
+
 === Convert Body, Convert Header and Convert Variable EIPs
 
 When a charset is configured, such as `convertBodyTo(String.class, "UTF-8")`, then the conversion now uses that charset
