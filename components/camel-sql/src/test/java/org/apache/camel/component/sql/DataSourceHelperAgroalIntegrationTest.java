@@ -69,8 +69,7 @@ class DataSourceHelperAgroalIntegrationTest {
             DataSourceHelper.evictDataSourceConnections(ds, "test-rotation");
 
             // GRACEFUL flush hands a FlushTask to the housekeeping executor, so the
-            // actual eviction is async.  Use Awaitility instead of Thread.sleep to
-            // avoid flakiness and comply with the project's no-Thread.sleep rule.
+            // actual eviction is async.
             await().atMost(5, TimeUnit.SECONDS)
                     .untilAsserted(() -> {
                         assertTrue(metrics.flushCount() > flushCountBefore,

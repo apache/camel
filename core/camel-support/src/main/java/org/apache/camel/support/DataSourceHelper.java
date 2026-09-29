@@ -134,7 +134,7 @@ public final class DataSourceHelper {
         // Resolved through the public AgroalDataSource interface (not ds.getClass()) so that proxy
         // or wrapper classes work correctly.  No compile-time dependency on agroal-api.
         try {
-            Class<?> agroalDsClass = Class.forName("io.agroal.api.AgroalDataSource");
+            Class<?> agroalDsClass = Class.forName("io.agroal.api.AgroalDataSource", false, ds.getClass().getClassLoader());
             if (agroalDsClass.isInstance(ds)) {
                 // resolve flush(FlushMode) from the public interface
                 for (Method m : agroalDsClass.getMethods()) {
