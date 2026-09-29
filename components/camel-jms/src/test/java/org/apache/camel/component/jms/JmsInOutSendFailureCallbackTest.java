@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.jms.Connection;
@@ -41,6 +42,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -54,11 +56,14 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that when a JMS send fails after the reply correlation has been registered, the AsyncCallback is invoked
  * exactly once: not a second time by the timeout handler (CAMEL-24073), and not a second time by the send failure when
- * the request timeout or the reply has already completed the exchange while the send was still running.
+ * the request timeout or the reply has already completed the exchange while the send was still running. With
+ * useMessageIDAsCorrelationID, a failure after the correlation was moved to the JMSMessageID (a failing commit of a
+ * transacted session) must cancel the moved correlation and fail the exchange with that failure.
  *
  * @see <a href="https://issues.apache.org/jira/browse/CAMEL-24073">CAMEL-24073</a>
  */
@@ -67,6 +72,8 @@ public class JmsInOutSendFailureCallbackTest extends AbstractJMSTest {
     private static final String FAIL_QUEUE = "JmsInOutSendFailureCallbackTest";
     private static final String TIMEOUT_QUEUE = "JmsInOutSendFailureCallbackTest.timeout";
     private static final String REPLY_QUEUE = "JmsInOutSendFailureCallbackTest.reply";
+    private static final String COMMIT_QUEUE = "JmsInOutSendFailureCallbackTest.commit";
+    private static final String COMMIT_FAILURE = "Simulated commit failure: transaction rolled back";
 
     // counts the completions of the exchange, the send to TIMEOUT_QUEUE and REPLY_QUEUE waits for the first one
     private static final AtomicInteger COMPLETED = new AtomicInteger();
@@ -131,6 +138,42 @@ public class JmsInOutSendFailureCallbackTest extends AbstractJMSTest {
         assertCompletedOnce(1, 0);
     }
 
+    @Test
+    public void testCallbackInvokedOnceWhenCommitFailsAfterMessageIdCorrelationUpdate() throws Exception {
+        // useMessageIDAsCorrelationID moves the reply handler to the JMSMessageID when the message has been sent, and
+        // only then the transacted session is committed: when the commit fails the request is rolled back and no reply
+        // comes, so the exchange must fail with the commit failure rather than wait for the request timeout
+        StopWatch watch = new StopWatch();
+        Exchange result = template.send("direct:commitFailure", ExchangePattern.InOut,
+                p -> p.getIn().setBody("Hello"));
+        long taken = watch.taken();
+
+        Exception cause = result.getException();
+        assertNotNull(cause, "The exchange should fail with the commit failure");
+        assertFalse(cause instanceof ExchangeTimedOutException,
+                "Should fail with the commit failure, not ExchangeTimedOutException: " + cause);
+        assertTrue(hasMessageInChain(cause, COMMIT_FAILURE), "Should fail with the commit failure: " + cause);
+        assertTrue(taken < 3000, "The exchange should fail promptly, not after the request timeout, took " + taken + " ms");
+
+        // the reply handler has been cancelled, so the request timeout must not complete the exchange a second time
+        await().during(4, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    assertSame(cause, result.getException(), "Exception changed after the commit failure");
+                    assertEquals(1, FAILED.get(), "onFailure calls");
+                });
+        assertCompletedOnce(0, 1);
+    }
+
+    private static boolean hasMessageInChain(Throwable t, String message) {
+        for (Throwable c = t; c != null; c = c.getCause()) {
+            if (c.getMessage() != null && c.getMessage().contains(message)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void assertCompletedOnce(int expectedCompleted, int expectedFailed) {
         assertEquals(expectedCompleted, COMPLETED.get(), "onComplete calls");
         assertEquals(expectedFailed, FAILED.get(), "onFailure calls");
@@ -177,6 +220,13 @@ public class JmsInOutSendFailureCallbackTest extends AbstractJMSTest {
                 from("direct:replyDuringSend")
                         .process(JmsInOutSendFailureCallbackTest::countCompletions)
                         .to(ExchangePattern.InOut, "activemq:queue:" + REPLY_QUEUE + "?requestTimeout=10000");
+
+                from("direct:commitFailure")
+                        .process(JmsInOutSendFailureCallbackTest::countCompletions)
+                        .to(ExchangePattern.InOut,
+                                "activemq:queue:" + COMMIT_QUEUE
+                                                   + "?useMessageIDAsCorrelationID=true&transactedInOut=true"
+                                                   + "&requestTimeout=3000&requestTimeoutCheckerInterval=50");
 
                 from("activemq:queue:" + REPLY_QUEUE)
                         .setBody(constant("Bye World"));
@@ -229,9 +279,20 @@ public class JmsInOutSendFailureCallbackTest extends AbstractJMSTest {
     }
 
     private static Session wrapSession(Session delegate) {
+        // whether this session has sent to COMMIT_QUEUE, and its commit should then fail
+        AtomicBoolean failCommit = new AtomicBoolean();
         return proxyOf(Session.class, delegate, (proxy, method, args) -> {
-            Object result = method.invoke(delegate, args);
-            return result instanceof MessageProducer producer ? wrapProducer(producer) : result;
+            if ("commit".equals(method.getName()) && failCommit.get()) {
+                throw new JMSException(COMMIT_FAILURE);
+            }
+            Object result = invoke(method, delegate, args);
+            if (result instanceof MessageProducer producer) {
+                if (COMMIT_QUEUE.equals(queueName(producer.getDestination()))) {
+                    failCommit.set(true);
+                }
+                return wrapProducer(producer);
+            }
+            return result;
         });
     }
 
