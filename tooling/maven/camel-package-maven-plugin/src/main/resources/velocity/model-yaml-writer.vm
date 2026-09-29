@@ -83,6 +83,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     #if( $clazz.simpleName == "OptionalIdentifiedDefinition" )
         #set( $foo = $elementRefs.add($clazz) )
     #end
+## Semantic declaration writers are hand-written in YamlModelWriterSupport.
     #if( !$mojo.getXmlEnum($clazz) && !$clazz.isInterface()
         && $clazz.simpleName != "SemanticDefinition" && $clazz.simpleName != "SemanticQuestionDefinition" )
         #set( $hasDerived = false )

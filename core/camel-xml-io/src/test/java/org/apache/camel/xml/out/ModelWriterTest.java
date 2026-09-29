@@ -37,6 +37,10 @@ import java.util.stream.Stream;
 
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+
 import org.w3c.dom.Element;
 
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -51,6 +55,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.xmlunit.assertj3.XmlAssert;
 import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.ElementSelectors;
@@ -67,6 +72,23 @@ public class ModelWriterTest {
     public static final String NAMESPACE = ModelWriter.DEFAULT_NAMESPACE;
 
     private static final Map<Field, Boolean> TRANSIENT = new ConcurrentHashMap<>();
+
+    @ParameterizedTest
+    @ValueSource(strings = { "routes", "camel" })
+    void semanticDeclarationsBeforeRoutesConformToTheSchema(String root) throws Exception {
+        String xml = """
+                <%s xmlns="http://camel.apache.org/schema/spring">
+                  <semantic>
+                    <question name="valid" type="boolean"><instructions>Valid?</instructions></question>
+                  </semantic>
+                  <route><from uri="direct:input"/><to uri="mock:output"/></route>
+                </%s>
+                """.formatted(root, root);
+        // The build changes the generated schema's namespace to xml-io after the test phase.
+        SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+                .newSchema(getClass().getResource("/camel-xml-io.xsd"))
+                .newValidator().validate(new StreamSource(new StringReader(xml)));
+    }
 
     @ParameterizedTest
     @MethodSource("routes")

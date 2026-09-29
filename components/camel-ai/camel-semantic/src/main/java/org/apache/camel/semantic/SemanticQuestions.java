@@ -43,7 +43,11 @@ public final class SemanticQuestions {
         }
     }
 
-    /** Replace all definitions from one source; an empty map removes obsolete declarations. */
+    /**
+     * Replace all definitions from one source; an empty map removes obsolete declarations. Java/XML declarations
+     * reserve the {@code model:} prefix. Resource declarations use {@code model:} followed by
+     * {@link Resource#getLocation()}, while embedded Java builders use unique generated source keys.
+     */
     public synchronized void replace(String source, Map<String, SemanticQuestion> definitions) {
         Map<String, SemanticQuestion> replacement = new HashMap<>();
         sources.forEach((location, entries) -> {
@@ -76,7 +80,7 @@ public final class SemanticQuestions {
     synchronized void replace(String location, Resource source, Map<String, SemanticQuestion> definitions) {
         removeDeletedResources();
         replace(location, definitions);
-        if (!definitions.isEmpty() && "file".equals(source.getScheme())) {
+        if (source != null && !definitions.isEmpty() && "file".equals(source.getScheme())) {
             resources.put(location, source);
         }
     }

@@ -48,12 +48,8 @@ public class DefaultSemanticDefinitionConfigurer implements SemanticDefinitionCo
                 }
             }
         }
-        if (resource != null) {
-            // A YAML loader can register its own declarations from the same resource before its RouteBuilder runs.
-            SemanticQuestions.get(context).replace("model:" + resource.getLocation(), resource, questions);
-        } else {
-            SemanticQuestions.get(context).replace(source, questions);
-        }
+        // A YAML loader can register its own declarations from the same resource before its RouteBuilder runs.
+        SemanticQuestions.get(context).replace("model:" + source, resource, questions);
     }
 
     private static SemanticQuestion question(SemanticQuestionDefinition definition) {

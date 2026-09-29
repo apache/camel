@@ -2473,8 +2473,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteRoutesDefinition(StringBuilder sb, RoutesDefinition def) {
         doWriteOptionalIdentifiedDefinitionAttributes(sb, def);
-        doWriteChildList(sb, "routes", def.getRoutes(), this::doWriteRouteDefinitionRef);
         doWriteChildElement(sb, "semantic", def.getSemantic(), this::doWriteSemanticDefinition);
+        doWriteChildList(sb, "routes", def.getRoutes(), this::doWriteRouteDefinitionRef);
     }
     protected void doWriteRoutingSlipDefinition(StringBuilder sb, RoutingSlipDefinition<?> def) {
         doWriteProcessorDefinitionAttributes(sb, def);
