@@ -34,7 +34,7 @@ public final class CamelOpenMBeanTypes {
         CompositeType ct = listEndpointServicesCompositeType();
         return new TabularType(
                 "listEndpointServices", "Lists all the endpoint services in the registry", ct,
-                new String[] { "component", "dir", "serviceUrl", "endpointUri" });
+                new String[] { "component", "dir", "serviceUrl", "endpointUri", "routeId" });
     }
 
     public static CompositeType listEndpointServicesCompositeType() throws OpenDataException {

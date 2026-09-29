@@ -20,10 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.management.MBeanNotificationInfo;
+import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.JmxNotificationBroadcasterAware;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementStrategy;
 
@@ -163,26 +165,22 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
 
     @Override
     public MBeanNotificationInfo[] getNotificationInfo() {
-        // all the class names in the event package
-        String[] names = {
-                "CamelContextStartedEvent", "CamelContextStartingEvent", "CamelContextStartupFailureEvent",
-                "CamelContextStopFailureEvent", "CamelContextStoppedEvent", "CamelContextStoppingEvent",
-                "CamelContextSuspendingEvent", "CamelContextSuspendedEvent", "CamelContextResumingEvent",
-                "CamelContextResumedEvent",
-                "CamelContextResumeFailureEvent", "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailedEvent",
-                "ExchangeFailureHandledEvent", "ExchangeRedeliveryEvents", "ExchangeSendingEvent", "ExchangeSentEvent",
-                "RouteStartedEvent",
-                "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent",
-                "StepStartedEvent", "StepCompletedEvent", "StepFailedEvent" };
-
+        // JmxNotificationEventNotifier uses the simple class name of the event as the notification type
         List<MBeanNotificationInfo> infos = new ArrayList<>();
-        for (String name : names) {
-            MBeanNotificationInfo info = new MBeanNotificationInfo(
-                    new String[] { "org.apache.camel.management.event" },
-                    "org.apache.camel.management.event." + name, "The event " + name + " occurred");
-            infos.add(info);
+        for (CamelEvent.Type type : CamelEvent.Type.values()) {
+            if (type == CamelEvent.Type.Custom) {
+                // custom events have their own class names
+                continue;
+            }
+            String name = type.name();
+            if (name.startsWith("Routes")) {
+                // the routes events of the CamelContext
+                name = "CamelContext" + name;
+            }
+            name = name + "Event";
+            infos.add(new MBeanNotificationInfo(
+                    new String[] { name }, Notification.class.getName(), "The event " + name + " occurred"));
         }
-
         return infos.toArray(new MBeanNotificationInfo[0]);
     }
 
