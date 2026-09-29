@@ -106,6 +106,10 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                 if (def.getDescriptionText() != null) {
                     doWriteAttribute("description", def.getDescriptionText());
                 }
+                // write note
+                if (def.getNote() != null) {
+                    doWriteAttribute("note", def.getNote());
+                }
                 // write location information
                 if (sourceLocation || context.isDebugging()) {
                     int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
