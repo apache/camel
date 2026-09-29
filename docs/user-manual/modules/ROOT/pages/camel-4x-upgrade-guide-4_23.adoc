@@ -3462,6 +3462,14 @@ overflowing to a negative number.
 The Simple function `${normalizeWhitespace()}` now turns every run of whitespace (including tabs and new lines) into
 a single space. Previously only runs of spaces were collapsed and a tab or new line was kept as-is.
 
+=== camel-core - onException and doCatch configuration is validated when the route is created
+
+The `onWhen` predicate of an `onException` is now created when the route is created (as with `doCatch` and
+`onCompletion`), so an invalid `onWhen` expression now fails at startup, instead of when an exception occurs.
+
+A class in `onException` or `doCatch` that is not an exception (such as `<exception>java.lang.String</exception>` in XML
+or YAML) now fails at startup. Previously it was accepted, and never matched any exception.
+
 === camel-debezium - a failed embedded engine is now reported
 
 The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops

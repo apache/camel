@@ -22,12 +22,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.TemplatedRouteBuilder;
+import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OnExceptionReifierEdgeCasesTest extends ContextTestSupport {
 
@@ -115,5 +118,32 @@ public class OnExceptionReifierEdgeCasesTest extends ContextTestSupport {
             });
             context.start();
         });
+    }
+
+    @Test
+    public void testDoCatchNotAnExceptionClass() {
+        Exception e = assertThrows(Exception.class, () -> {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    TryDefinition doTry = from("direct:start").doTry().to("mock:result");
+                    doTry.doCatch(IOException.class);
+                    CatchDefinition doCatch = (CatchDefinition) doTry.getOutputs().get(doTry.getOutputs().size() - 1);
+                    // as in XML or YAML, where the classes are resolved from their names
+                    doCatch.setExceptionClasses(null);
+                    doCatch.getExceptions().clear();
+                    doCatch.getExceptions().add("java.lang.String");
+                }
+            });
+            context.start();
+        });
+        assertTrue(getRootCause(e).getMessage().contains("is not an exception"), e.getMessage());
+    }
+
+    private static Throwable getRootCause(Throwable t) {
+        while (t.getCause() != null) {
+            t = t.getCause();
+        }
+        return t;
     }
 }
