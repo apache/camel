@@ -382,10 +382,8 @@ public class NettyProducer extends DefaultAsyncProducer {
                     } catch (Exception e) {
                         cause = e.getCause();
                     }
-                    if (cause != null) {
-                        exchange.setException(cause);
-                    }
-                    state.onExceptionCaughtOnce(false);
+                    // the exchange may already be completed (by the timeout of the correlation manager)
+                    state.onExceptionCaughtOnce(false, cause);
                     return;
                 }
 
