@@ -3678,7 +3678,7 @@ equal to the value (ignoring case), where previously it was enough for the eleme
 substring, which was also not the case without `ignoreCase`.
 
 A String is now only equal to a boolean when it is `true` or `false` (ignoring case). Previously any other
-String was equal to `false`, so `${body} == false` was `true` when the body was `hello`.
+String was equal to `false`, so `+${body} == false+` was `true` when the body was `hello`.
 
 === camel-coap
 
