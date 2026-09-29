@@ -16,24 +16,26 @@
  */
 package org.apache.camel.tracing.propagation;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.tracing.InjectAdapter;
-import org.apache.camel.util.StringHelper;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Deprecated(since = "4.19.0")
-public final class CamelHeadersInjectAdapter implements InjectAdapter {
-    private final Map<String, Object> map;
+public class CamelHeadersInjectAdapterTest {
 
-    public CamelHeadersInjectAdapter(final Map<String, Object> map) {
-        this.map = map;
-    }
-
-    @Override
-    public void put(String key, String value) {
-        // Assume any header property that begins with 'Camel' is for internal use
-        if (!StringHelper.startsWithIgnoreCase(key, "Camel")) {
-            this.map.put(key, value);
-        }
+    @Test
+    public void camelHeadersInAnyCaseAreNotInjected() {
+        Map<String, Object> map = new HashMap<>();
+        CamelHeadersInjectAdapter adapter = new CamelHeadersInjectAdapter(map);
+        adapter.put("CamelFoo", "value1");
+        adapter.put("camelFoo", "value2");
+        adapter.put("CAMELFOO", "value3");
+        adapter.put("CaMeLfoo", "value4");
+        adapter.put("traceparent", "value5");
+        assertEquals(1, map.size());
+        assertEquals("value5", map.get("traceparent"));
     }
 }

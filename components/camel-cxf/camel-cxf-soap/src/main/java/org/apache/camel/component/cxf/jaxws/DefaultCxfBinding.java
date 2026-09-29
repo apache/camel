@@ -914,7 +914,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {
             // put response code in request context so it will be copied to CXF message's property
-            if (Message.RESPONSE_CODE.equals(entry.getKey()) || CxfConstants.HTTP_RESPONSE_CODE.equals(entry.getKey())) {
+            if (Message.RESPONSE_CODE.equalsIgnoreCase(entry.getKey())
+                    || CxfConstants.HTTP_RESPONSE_CODE.equalsIgnoreCase(entry.getKey())) {
                 LOG.debug("Propagate to CXF header: {} value: {}", Message.RESPONSE_CODE, entry.getValue());
                 cxfContext.put(Message.RESPONSE_CODE, entry.getValue());
                 continue;

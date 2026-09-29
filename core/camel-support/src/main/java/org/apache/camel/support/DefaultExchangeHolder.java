@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -421,7 +422,7 @@ public class DefaultExchangeHolder implements Serializable {
     }
 
     private static void logCannotSerializeObject(String type, String key, Object value) {
-        if (key.startsWith("Camel")) {
+        if (StringHelper.startsWithIgnoreCase(key, "Camel")) {
             // log Camel at DEBUG level
             if (LOG.isDebugEnabled()) {
                 LOG.debug(
