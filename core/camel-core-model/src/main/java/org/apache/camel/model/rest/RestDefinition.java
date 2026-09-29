@@ -1198,6 +1198,20 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setEnableNoContentResponse(getEnableNoContentResponse());
             }
+            // the body parameter from the type must be added before the parameters are registered on the binding,
+            // so a required body is enforced
+            if (verb.getType() != null) {
+                String bodyType = parseText(camelContext, verb.getType());
+                ParamDefinition param = findParam(verb, RestParamType.body.name());
+                if (param == null) {
+                    // must be body type and set the model class as data type
+                    param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
+                } else {
+                    // must be body type and set the model class as data type
+                    param.type(RestParamType.body).dataType(bodyType);
+                }
+            }
+
             for (ParamDefinition param : verb.getParams()) {
                 // register all the default values for the query and header parameters
                 RestParamType type = param.getType();
@@ -1228,7 +1242,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 if (rm.getHeaders() != null) {
                     for (var header : rm.getHeaders()) {
                         String name = parseText(camelContext, header.getName());
-                        binding.addResponseHeader(name);
+                        // the headers are only required on the responses of this code
+                        binding.addResponseHeader(rm.getCode(), name);
                     }
                 }
             }
@@ -1292,18 +1307,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 // no query parameters
                 uriTemplating(camelContext, verb, allPath, false);
-            }
-
-            if (verb.getType() != null) {
-                String bodyType = parseText(camelContext, verb.getType());
-                ParamDefinition param = findParam(verb, RestParamType.body.name());
-                if (param == null) {
-                    // must be body type and set the model class as data type
-                    param(verb).name(RestParamType.body.name()).type(RestParamType.body).dataType(bodyType).endParam();
-                } else {
-                    // must be body type and set the model class as data type
-                    param.type(RestParamType.body).dataType(bodyType);
-                }
             }
 
             // create the from endpoint uri which is using the rest component

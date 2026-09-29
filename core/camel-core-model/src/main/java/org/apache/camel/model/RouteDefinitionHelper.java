@@ -157,7 +157,9 @@ public final class RouteDefinitionHelper {
                     VerbDefinition verb = findVerbDefinition(context, rest, route.getInput().getEndpointUri());
                     if (verb != null) {
                         String id = context.resolvePropertyPlaceholders(verb.getId());
-                        if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
+                        if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id)) {
+                            // a duplicate id is kept, so it is reported as a duplicate route id (and not silently
+                            // replaced by a generated id)
                             route.setId(id);
                             customIds.add(id);
                         }
