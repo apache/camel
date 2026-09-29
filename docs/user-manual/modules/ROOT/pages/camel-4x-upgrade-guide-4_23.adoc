@@ -3440,6 +3440,12 @@ Not changed: the HMAC key is still derived from the same key material as the cip
 would change the MAC written into the message and so could not be read by earlier versions; that is
 tracked separately.
 
+=== camel-core - the debugger waitForAttach option now suspends message processing
+
+With `camel.debug.waitForAttach=true` the backlog debugger now suspends the processing of messages at startup until a
+debugger is attached, as the option documents. Previously the option only set a flag, and messages were processed
+straight away. An application that has this option set now waits at startup until a debugger attaches.
+
 === camel-spring-xml - routeController supervising="false"
 
 In the Spring XML `<camelContext>`, `<routeController supervising="false"/>` previously still switched to the

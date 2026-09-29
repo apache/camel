@@ -239,7 +239,17 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     @Override
     public void setSuspendMode(boolean suspendMode) {
+        boolean changed = this.suspendMode != suspendMode;
         this.suspendMode = suspendMode;
+        if (changed) {
+            if (suspendMode) {
+                // wait for a debugger to attach (as when suspend mode is set from the environment)
+                detach();
+            } else {
+                // do not keep messages waiting for a debugger that is no longer expected
+                resumeMessageProcessing();
+            }
+        }
     }
 
     @Override
@@ -350,6 +360,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         } else if (breakpoint.getCondition() == null) {
             logger.log("Updating to conditional breakpoint " + nodeId + " [" + predicate + "]");
             debugger.removeBreakpoint(breakpoint);
+            breakpoint.setCondition(condition);
             breakpoints.put(nodeId, breakpoint);
             debugger.addBreakpoint(breakpoint, breakpoint);
         } else {
@@ -378,7 +389,10 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         // stop single stepping
         singleStepExchangeId.clear();
 
-        for (String nodeId : getSuspendedBreakpointNodeIds()) {
+        // all breakpoints (not only those that have a suspended exchange), and the suspended exchanges
+        Set<String> nodeIds = new LinkedHashSet<>(breakpoints.keySet());
+        nodeIds.addAll(getSuspendedBreakpointNodeIds());
+        for (String nodeId : nodeIds) {
             removeBreakpoint(nodeId);
         }
     }
@@ -491,8 +505,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            Class<?> oldType = se.getExchange().getMessage().getHeader(exchangePropertyName) == null
-                    ? null : se.getExchange().getMessage().getHeader(exchangePropertyName).getClass();
+            Object oldValue = se.getExchange().getProperty(exchangePropertyName);
+            Class<?> oldType = oldValue == null ? null : oldValue.getClass();
             setExchangePropertyOnBreakpoint(nodeId, exchangePropertyName, value, oldType);
         }
     }
@@ -531,8 +545,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            Class<?> oldType = se.getExchange().getMessage().getHeader(variableName) == null
-                    ? null : se.getExchange().getMessage().getHeader(variableName).getClass();
+            Object oldValue = se.getExchange().getVariable(variableName);
+            Class<?> oldType = oldValue == null ? null : oldValue.getClass();
             setExchangeVariableOnBreakpoint(nodeId, variableName, value, oldType);
         }
     }
@@ -674,7 +688,11 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
 
     @Override
     public void stepOver() {
-        stepOverMode.set(true);
+        // step over is only in use when single stepping (it is reset by the next step), otherwise the debugger would
+        // skip every breakpoint from now on
+        if (isSingleStepMode()) {
+            stepOverMode.set(true);
+        }
         step();
     }
 
@@ -1109,6 +1127,10 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                     }
                 } finally {
                     singleStepExchangeId.remove(completedId);
+                    if (singleStepExchangeId.isEmpty()) {
+                        // a step over at the last step (or when the exchange failed) is done, as there is no next step
+                        stepOverMode.set(false);
+                    }
                     if (completed) {
                         logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");
                     }
