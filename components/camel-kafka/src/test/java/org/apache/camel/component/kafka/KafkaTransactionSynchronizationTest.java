@@ -83,16 +83,15 @@ class KafkaTransactionSynchronizationTest {
         ConsumerGroupMetadata groupMetadata = new ConsumerGroupMetadata("orders-group");
         doThrow(new KafkaException("boom")).when(producer).sendOffsetsToTransaction(offsets, groupMetadata);
 
+        Exchange exchange = successfulExchange();
         KafkaTransactionSynchronization sync
                 = new KafkaTransactionSynchronization("tx-1", producer, offsets, groupMetadata);
-        sync.onDone(successfulExchange());
+        sync.onDone(exchange);
 
-        // A failed sendOffsetsToTransaction must abort the (now open) transaction, not commit it.
-        verify(producer).abortTransaction();
+        // A failed sendOffsetsToTransaction must abort the (now open) transaction, not commit it, and must report
+        // the failure on the exchange rather than letting the route continue as if it had succeeded.
         verify(producer).abortTransaction();
         verify(producer, never()).commitTransaction();
         verify(exchange).setException(any(KafkaException.class));
-    }
-}
     }
 }
