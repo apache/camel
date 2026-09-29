@@ -31,13 +31,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyEdge;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyExternalEndpoint;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyNode;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyResult;
+import org.apache.camel.tooling.model.ComponentModel;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.INTERNAL;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.Route;
+import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.normalize;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.sendsTo;
@@ -63,6 +67,11 @@ public final class SourceTopology {
     public static final String UNCONSUMED_ENDPOINT = "unconsumed-endpoint";
     /** A route that reads a body that neither it nor any route that calls it sets (CAMEL-24844). */
     public static final String BODY_NEVER_SET = "body-never-set";
+    /**
+     * The reason a file has a route template: the template is not read, and the routes written beside it in the file
+     * are.
+     */
+    public static final String ROUTE_TEMPLATES_NOT_READ = "route templates not read";
 
     /**
      * What sends to a route without a {@code to} in the files: the routes of an OpenAPI specification are bound to
@@ -75,6 +84,11 @@ public final class SourceTopology {
     private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
 
     private SourceTopology() {
+    }
+
+    /** The catalog of this version of Camel, loaded when it is first asked for. */
+    private static final class DefaultCatalog {
+        static final CamelCatalog INSTANCE = new DefaultCamelCatalog();
     }
 
     /**
@@ -116,10 +130,10 @@ public final class SourceTopology {
     }
 
     /**
-     * A file that was not read.
+     * A file that was not read, or not all of it.
      *
      * @param file   the file
-     * @param reason {@code unparseable}, {@code route-template} or {@code kamelet}
+     * @param reason {@code unparseable}, {@link #ROUTE_TEMPLATES_NOT_READ} or {@code kamelet}
      */
     public record Skipped(String file, String reason) {
     }
@@ -135,11 +149,19 @@ public final class SourceTopology {
     }
 
     /**
+     * As {@link #analyze(Map, CamelCatalog)}, with the catalog of this version of Camel.
+     */
+    public static Result analyze(Map<String, String> yamlByFile) {
+        return analyze(yamlByFile, DefaultCatalog.INSTANCE);
+    }
+
+    /**
      * @param  yamlByFile the YAML source of each file, by the name to report it under, in the order to read them
+     * @param  catalog    the catalog that says which components are remote systems
      * @return            the topology of the routes of all the files together, as the routes of an application are
      *                    spread over files
      */
-    public static Result analyze(Map<String, String> yamlByFile) {
+    public static Result analyze(Map<String, String> yamlByFile, CamelCatalog catalog) {
         List<Skipped> skipped = new ArrayList<>();
         boolean templates = false;
         // the entries of all the files in one list, so that the routes of a file can call those of another
@@ -158,9 +180,12 @@ public final class SourceTopology {
             }
             if (EndpointConsumers.hasTemplates(target)) {
                 // the routes they create are not read, and could consume or call any endpoint
-                skipped.add(new Skipped(file.getKey(), target.isObject() ? "kamelet" : "route-template"));
+                skipped.add(new Skipped(file.getKey(), target.isObject() ? "kamelet" : ROUTE_TEMPLATES_NOT_READ));
                 templates = true;
-            } else if (target.isArray()) {
+            }
+            if (target.isArray()) {
+                // a route template has no from of its own, so it is left out of the routes, and the routes written
+                // beside it in the file are read
                 for (JsonNode entry : target) {
                     entries.add(entry);
                     fileOf.put(entry, file.getKey());
@@ -211,7 +236,7 @@ public final class SourceTopology {
         }
 
         return new Result(
-                new TopologyResult(nodes, new ArrayList<>(edges), externalEndpoints(routes, placed)),
+                new TopologyResult(nodes, new ArrayList<>(edges), externalEndpoints(routes, placed, catalog)),
                 infos, findings, skipped);
     }
 
@@ -253,19 +278,40 @@ public final class SourceTopology {
         return answer;
     }
 
-    /** The remote systems the routes read from ({@code in}) and send to ({@code out}). */
-    private static List<TopologyExternalEndpoint> externalEndpoints(List<Route> routes, Map<Route, Placed> placed) {
+    /**
+     * The remote systems the routes read from ({@code in}) and send to ({@code out}), as
+     * {@code DefaultRouteTopologyDumper} has them: an endpoint that is between two routes is a connection, and not the
+     * border of the application, so a route that reads from an endpoint some route sends to is not {@code in}, and a
+     * route that sends to an endpoint some route reads from is not {@code out}.
+     */
+    private static List<TopologyExternalEndpoint> externalEndpoints(
+            List<Route> routes, Map<Route, Placed> placed, CamelCatalog catalog) {
+        Set<String> sentTo = new HashSet<>();
+        Set<String> startedFrom = new HashSet<>();
+        for (Route r : routes) {
+            if (r.fromUri() != null) {
+                startedFrom.add(endpoint(r.fromUri()));
+            }
+            for (String send : sendsTo(r.steps())) {
+                sentTo.add(endpoint(send));
+            }
+        }
+
         List<TopologyExternalEndpoint> answer = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
         for (Route r : routes) {
             String id = placed.get(r).id();
-            if (r.fromUri() != null && isExternal(scheme(normalize(r.fromUri())))) {
-                String uri = normalize(r.fromUri());
-                answer.add(new TopologyExternalEndpoint("in-" + id, uri, scheme(uri), "in", id));
+            if (r.fromUri() != null) {
+                String uri = endpoint(r.fromUri());
+                if (isRemote(scheme(uri), catalog) && !sentTo.contains(uri)) {
+                    answer.add(new TopologyExternalEndpoint("in-" + id, uri, scheme(uri), "in", id));
+                }
             }
             int index = 0;
             for (String send : sendsTo(r.steps())) {
-                String uri = normalize(send);
-                if (isExternal(scheme(uri))) {
+                String uri = endpoint(send);
+                // once for each route and endpoint, however many times the route sends to it
+                if (isRemote(scheme(uri), catalog) && !startedFrom.contains(uri) && seen.add(id + "|" + uri)) {
                     answer.add(new TopologyExternalEndpoint("out-" + id + "-" + index++, uri, scheme(uri), "out", id));
                 }
             }
@@ -328,7 +374,9 @@ public final class SourceTopology {
         Set<String> called = new HashSet<>();
         // every entry, not only the routes: a rest operation, an onException or a route configuration sends as well
         for (JsonNode entry : entries) {
-            for (String uri : sendsTo(entry)) {
+            List<String> uris = sendsTo(entry);
+            urisOfOtherCallers(entry, uris);
+            for (String uri : uris) {
                 if (EndpointConsumers.isDynamic(uri)) {
                     return;
                 }
@@ -348,6 +396,37 @@ public final class SourceTopology {
                                                                     + ", so it is called from elsewhere (Java, a ProducerTemplate, another"
                                                                     + " application), or not at all"));
             }
+        }
+    }
+
+    /**
+     * The endpoints that are called without a {@code to}, added to the list: the {@code deadLetterUri} of a dead letter
+     * channel, wherever the error handler is (of the route, of a route configuration, or a global one), and the
+     * {@code compensation} and {@code completion} of a saga.
+     */
+    private static void urisOfOtherCallers(JsonNode node, List<String> answer) {
+        if (node.isArray()) {
+            for (JsonNode child : node) {
+                urisOfOtherCallers(child, answer);
+            }
+            return;
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String name = it.next();
+            JsonNode value = node.get(name);
+            if ("deadLetterUri".equals(name)) {
+                addIfNotNull(answer, endpointOf(value));
+            } else if ("saga".equals(name) && value.isObject()) {
+                addIfNotNull(answer, endpointOf(value.get("compensation")));
+                addIfNotNull(answer, endpointOf(value.get("completion")));
+            }
+            urisOfOtherCallers(value, answer);
+        }
+    }
+
+    private static void addIfNotNull(List<String> answer, String uri) {
+        if (uri != null) {
+            answer.add(uri);
         }
     }
 
@@ -390,9 +469,20 @@ public final class SourceTopology {
         return scheme != null && BodyTypeFlow.NO_BODY_CONSUMER.contains(scheme);
     }
 
-    /** Whether the component is a remote system, and not a route of the application or a trigger; not a placeholder. */
-    private static boolean isExternal(String scheme) {
-        return scheme != null && SCHEME.matcher(scheme).matches() && !isInternal(scheme) && !isTrigger(scheme);
+    /**
+     * Whether the component is a remote system, as the catalog says. A component the catalog does not know, such as
+     * {@code direct-vm} and {@code vm}, is one unless it is a route of the application or a trigger. Never a
+     * placeholder.
+     */
+    private static boolean isRemote(String scheme, CamelCatalog catalog) {
+        if (scheme == null || !SCHEME.matcher(scheme).matches()) {
+            return false;
+        }
+        ComponentModel model = catalog.componentModel(scheme);
+        if (model != null) {
+            return model.isRemote();
+        }
+        return !isInternal(scheme) && !isTrigger(scheme);
     }
 
     private static JsonNode read(String yaml) throws IOException {

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -936,6 +937,16 @@ public final class AuthoringTools {
 
     /** The regular files under the directory, sorted by path, build and tooling directories skipped. */
     public static List<Path> projectFiles(Path dir) {
+        return projectFiles(dir, new AtomicBoolean());
+    }
+
+    /**
+     * As {@link #projectFiles(Path)}, telling whether the files listed are all there are.
+     *
+     * @param incomplete set to true when the scan did not see everything: it stopped at the limit on the number of
+     *                   files, did not go into a directory below the limit on the depth, or could not read one
+     */
+    public static List<Path> projectFiles(Path dir, AtomicBoolean incomplete) {
         List<Path> files = new ArrayList<>();
         try {
             Files.walkFileTree(dir, EnumSet.noneOf(FileVisitOption.class), MAX_DEPTH, new SimpleFileVisitor<>() {
@@ -944,21 +955,29 @@ public final class AuthoringTools {
                     if (d.equals(dir)) {
                         return FileVisitResult.CONTINUE;
                     }
-                    String name = d.getFileName().toString();
-                    return SKIPPED_DIRS.contains(name) || name.startsWith(".")
-                            ? FileVisitResult.SKIP_SUBTREE : FileVisitResult.CONTINUE;
+                    return isSkippedDirectory(d) ? FileVisitResult.SKIP_SUBTREE : FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path f, BasicFileAttributes attrs) {
-                    if (attrs.isRegularFile() && !f.getFileName().toString().startsWith(".")) {
+                    if (attrs.isDirectory()) {
+                        // a directory at the depth limit: what is in it is not seen
+                        if (!isSkippedDirectory(f)) {
+                            incomplete.set(true);
+                        }
+                    } else if (attrs.isRegularFile() && !f.getFileName().toString().startsWith(".")) {
                         files.add(f);
                     }
-                    return files.size() >= SCAN_LIMIT ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+                    if (files.size() >= SCAN_LIMIT) {
+                        incomplete.set(true);
+                        return FileVisitResult.TERMINATE;
+                    }
+                    return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path f, IOException e) {
+                    incomplete.set(true);
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -967,6 +986,12 @@ public final class AuthoringTools {
         }
         files.sort(Comparator.comparing((Path p) -> relativePath(dir, p), String.CASE_INSENSITIVE_ORDER));
         return files;
+    }
+
+    /** Build output, tooling and VCS directories, and hidden ones: never sources. */
+    private static boolean isSkippedDirectory(Path d) {
+        String name = d.getFileName().toString();
+        return SKIPPED_DIRS.contains(name) || name.startsWith(".");
     }
 
     static String relativePath(Path dir, Path p) {

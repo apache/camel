@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
 import org.apache.camel.dsl.yaml.validator.SourceTopology;
@@ -81,16 +82,18 @@ public class Topology extends CamelCommand {
         // the files named on the command line: one of them that cannot be read is an error, not a skipped file
         Set<String> explicit = new HashSet<>();
         List<Skipped> unreadable = new ArrayList<>();
+        // whether the scan of a directory did not see all of it
+        AtomicBoolean incomplete = new AtomicBoolean();
 
         if (paths.isEmpty()) {
-            if (!readDirectory(baseDir, null, sources, unreadable)) {
+            if (!readDirectory(baseDir, null, sources, unreadable, incomplete)) {
                 return 1;
             }
         } else {
             for (String name : paths) {
                 Path path = Path.of(name);
                 if (Files.isDirectory(path)) {
-                    if (!readDirectory(path, name, sources, unreadable)) {
+                    if (!readDirectory(path, name, sources, unreadable, incomplete)) {
                         return 1;
                     }
                 } else if (!Files.isRegularFile(path)) {
@@ -122,9 +125,9 @@ public class Topology extends CamelCommand {
         skipped.addAll(unreadable);
 
         if (jsonOutput) {
-            printer().println(Jsoner.prettyPrint(toJson(result, skipped).toJson(), 2));
+            printer().println(Jsoner.prettyPrint(toJson(result, skipped, incomplete.get()).toJson(), 2));
         } else {
-            printText(result, skipped);
+            printText(result, skipped, incomplete.get());
         }
         return 0;
     }
@@ -137,10 +140,12 @@ public class Topology extends CamelCommand {
      *                 current directory, whose files are named by their path in it
      * @return         false when the directory cannot be listed, after printing why
      */
-    private boolean readDirectory(Path dir, String shownAs, Map<String, String> sources, List<Skipped> unreadable) {
+    private boolean readDirectory(
+            Path dir, String shownAs, Map<String, String> sources, List<Skipped> unreadable,
+            AtomicBoolean incomplete) {
         List<Path> files;
         try {
-            files = AuthoringTools.projectFiles(dir);
+            files = AuthoringTools.projectFiles(dir, incomplete);
         } catch (RuntimeException e) {
             printer().printErr("Cannot read directory: " + (shownAs != null ? shownAs : dir), e);
             return false;
@@ -167,7 +172,7 @@ public class Topology extends CamelCommand {
         return name.endsWith(".yaml") || name.endsWith(".yml");
     }
 
-    private void printText(Result result, List<Skipped> skipped) {
+    private void printText(Result result, List<Skipped> skipped, boolean incomplete) {
         List<TopologyNode> nodes = result.topology().nodes();
         List<TopologyEdge> edges = result.topology().edges();
         if (nodes.isEmpty()) {
@@ -183,7 +188,7 @@ public class Topology extends CamelCommand {
                 RouteInfo info = result.routes().get(i);
                 printer().println(String.format("  %s (%s) type=%s  [%s]", node.routeId(), node.from(), node.nodeType(),
                         info.file()));
-                printer().println("    body: " + describeBody(info));
+                printer().println("    body in: " + describeBody(info));
                 for (TopologyEdge edge : edges) {
                     if (edge.fromRouteId().equals(node.routeId())) {
                         printer().println(String.format("    --> %s via %s [%s]", edge.toRouteId(), edge.endpoint(),
@@ -210,15 +215,21 @@ public class Topology extends CamelCommand {
         }
         if (!skipped.isEmpty()) {
             printer().println("");
-            printer().println("Skipped (not read):");
+            printer().println("Not fully read:");
             for (Skipped s : skipped) {
                 printer().println(String.format("  %s (%s)", s.file(), s.reason()));
             }
-            if (skipped.stream().anyMatch(s -> "route-template".equals(s.reason()) || "kamelet".equals(s.reason()))) {
+            if (skipped.stream().anyMatch(
+                    s -> SourceTopology.ROUTE_TEMPLATES_NOT_READ.equals(s.reason()) || "kamelet".equals(s.reason()))) {
                 // what a route template or a Kamelet creates could consume or call any endpoint
                 printer().println("  Endpoints no route consumes and routes no route calls are not reported while"
                                   + " route templates or Kamelets are not read.");
             }
+        }
+        if (incomplete) {
+            printer().println("");
+            printer().println("Note: the directory has more files or levels than the scan reads, so some route files"
+                              + " may not have been read.");
         }
     }
 
@@ -240,7 +251,7 @@ public class Topology extends CamelCommand {
      * The same nodes, edges and external endpoints as the {@code route-topology} developer console gives, with the file
      * and the body of each node, the findings and the files not read added.
      */
-    private static JsonObject toJson(Result result, List<Skipped> skipped) {
+    private static JsonObject toJson(Result result, List<Skipped> skipped, boolean incomplete) {
         JsonArray nodes = new JsonArray();
         for (int i = 0; i < result.topology().nodes().size(); i++) {
             TopologyNode node = result.topology().nodes().get(i);
@@ -302,6 +313,9 @@ public class Topology extends CamelCommand {
         root.put("externalEndpoints", external);
         root.put("findings", findings);
         root.put("skipped", skippedFiles);
+        if (incomplete) {
+            root.put("incomplete", true);
+        }
         return root;
     }
 

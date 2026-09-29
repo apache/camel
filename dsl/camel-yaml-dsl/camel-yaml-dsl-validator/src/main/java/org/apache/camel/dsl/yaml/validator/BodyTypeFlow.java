@@ -131,22 +131,31 @@ final class BodyTypeFlow {
         Map<String, List<Route>> byFrom = new HashMap<>();
         for (Route r : routes) {
             if (r.fromUri() != null) {
-                byFrom.computeIfAbsent(normalize(r.fromUri()), k -> new ArrayList<>()).add(r);
+                byFrom.computeIfAbsent(key(r.fromUri()), k -> new ArrayList<>()).add(r);
             }
         }
         Map<Route, List<Route>> callers = new HashMap<>();
         for (Route caller : routes) {
             for (String uri : sendsTo(caller.steps())) {
-                for (Route target2 : byFrom.getOrDefault(normalize(uri), List.of())) {
+                for (Route target2 : byFrom.getOrDefault(key(uri), List.of())) {
                     callers.computeIfAbsent(target2, k -> new ArrayList<>()).add(caller);
                 }
             }
         }
         Set<String> restless = new HashSet<>(restEndpointsWithoutABody(target));
         for (String uri : known) {
-            restless.add(normalize(uri));
+            restless.add(key(uri));
         }
         return new Analysis(routes, callers, restless);
+    }
+
+    /**
+     * The endpoint as the routes are matched on it, so that {@code direct://lookup?timeout=1000} and
+     * {@code direct:lookup} are the same endpoint here as they are for the connections between the routes.
+     */
+    private static String key(String uri) {
+        String endpoint = EndpointConsumers.endpoint(uri);
+        return endpoint != null ? endpoint : normalize(uri);
     }
 
     /** The report for a route that reads the body when it has none. */
@@ -199,7 +208,7 @@ final class BodyTypeFlow {
         if (!"direct".equals(scheme) && !"seda".equals(scheme) && !"direct-vm".equals(scheme)) {
             return false; // a consumer of its own: it brings whatever it brings
         }
-        boolean fromRestWithoutBody = restless.contains(normalize(route.fromUri()));
+        boolean fromRestWithoutBody = restless.contains(key(route.fromUri()));
         List<Route> from = callers.get(route);
         if (from == null || from.isEmpty()) {
             // nothing in the file calls it: only a REST verb that carries no body makes this certain
@@ -225,7 +234,7 @@ final class BodyTypeFlow {
         if (steps == null || !steps.isArray()) {
             return false;
         }
-        String wanted = normalize(target.fromUri());
+        String wanted = key(target.fromUri());
         for (JsonNode step : steps) {
             for (var it = step.fieldNames(); it.hasNext();) {
                 String name = it.next();
@@ -247,7 +256,7 @@ final class BodyTypeFlow {
             return false;
         }
         String uri = endpointOf(value);
-        return uri != null && normalize(uri).equals(wanted);
+        return uri != null && key(uri).equals(wanted);
     }
 
     /**
@@ -377,7 +386,7 @@ final class BodyTypeFlow {
                 for (JsonNode operation : value.isArray() ? value : List.of(value)) {
                     String uri = endpointOf(operation.get("to"));
                     if (uri != null) {
-                        answer.add(normalize(uri));
+                        answer.add(key(uri));
                     }
                 }
             }

@@ -94,6 +94,56 @@ public class BodyTypeFlowTest {
     }
 
     @Test
+    public void testTheEndpointIsTheSameWhateverWayTheCallerWritesIt() {
+        // direct://lookup?timeout=1000 is the endpoint direct:lookup: the route is called, and nothing sets a body
+        String yaml = """
+                - route:
+                    id: tick
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: direct://lookup?timeout=1000
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).anyMatch(m -> m.contains("reads the message body")
+                && m.contains("the routes that call it do not set one either"));
+    }
+
+    @Test
+    public void testACallerThatSetsTheBodyIsQuietWhateverWayItWritesTheEndpoint() {
+        String yaml = """
+                - route:
+                    id: tick
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: '{"sku": "a1"}'
+                        - to:
+                            uri: direct://lookup
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$.sku"
+                """;
+        assertThat(messages(yaml)).noneMatch(m -> m.contains("reads the message body"));
+    }
+
+    @Test
     public void testAPostCarriesABodySoNothingIsSaid() {
         String yaml = """
                 - rest:

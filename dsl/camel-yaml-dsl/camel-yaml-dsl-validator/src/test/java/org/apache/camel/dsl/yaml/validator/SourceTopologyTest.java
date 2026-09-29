@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.yaml.validator.SourceTopology.BodyOrigin;
 import org.apache.camel.dsl.yaml.validator.SourceTopology.Finding;
 import org.apache.camel.dsl.yaml.validator.SourceTopology.Result;
@@ -169,10 +170,10 @@ public class SourceTopologyTest {
 
         Result result = SourceTopology.analyze(files("consume.camel.yaml", route));
 
+        // log: is not a remote system, as the catalog has it
         assertThat(result.topology().externalEndpoints()).containsExactly(
                 new TopologyExternalEndpoint("in-consume", "kafka:orders", "kafka", "in", "consume"),
-                new TopologyExternalEndpoint("out-consume-0", "http:api/orders", "http", "out", "consume"),
-                new TopologyExternalEndpoint("out-consume-1", "log:done", "log", "out", "consume"));
+                new TopologyExternalEndpoint("out-consume-0", "http:api/orders", "http", "out", "consume"));
         assertThat(result.topology().edges()).isEmpty();
     }
 
@@ -376,7 +377,8 @@ public class SourceTopologyTest {
                         "template.camel.yaml", template));
 
         assertThat(result.findings()).isEmpty();
-        assertThat(result.skipped()).containsExactly(new Skipped("template.camel.yaml", "route-template"));
+        assertThat(result.skipped())
+                .containsExactly(new Skipped("template.camel.yaml", SourceTopology.ROUTE_TEMPLATES_NOT_READ));
         assertThat(result.topology().nodes()).extracting(TopologyNode::routeId).containsExactly("tick", "lookup");
     }
 
@@ -417,5 +419,277 @@ public class SourceTopologyTest {
             assertThat(result.findings()).isEmpty();
             assertThat(result.skipped()).isEmpty();
         }
+    }
+
+    @Test
+    public void testATopicBetweenTwoRoutesIsAConnectionAndNotTheBorderOfTheApplication() {
+        String sender = """
+                - route:
+                    id: a
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: kafka:shared
+                """;
+        String receiver = """
+                - route:
+                    id: b
+                    from:
+                      uri: kafka:shared
+                      steps:
+                        - log: got it
+                """;
+
+        Result result = SourceTopology.analyze(files("a.camel.yaml", sender, "b.camel.yaml", receiver));
+
+        assertThat(result.topology().edges()).containsExactly(new TopologyEdge("a", "b", "kafka:shared", "external"));
+        assertThat(result.topology().externalEndpoints()).isEmpty();
+    }
+
+    @Test
+    public void testARouteThatSendsToTheSameEndpointTwiceHasOneExternalEndpointForIt() {
+        String route = """
+                - route:
+                    id: a
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: http:api
+                        - to:
+                            uri: http:api?bridgeEndpoint=true
+                        - to:
+                            uri: http:other
+                """;
+
+        Result result = SourceTopology.analyze(files("a.camel.yaml", route));
+
+        // the index only counts what was added
+        assertThat(result.topology().externalEndpoints()).containsExactly(
+                new TopologyExternalEndpoint("out-a-0", "http:api", "http", "out", "a"),
+                new TopologyExternalEndpoint("out-a-1", "http:other", "http", "out", "a"));
+    }
+
+    @Test
+    public void testLogBeanAndMockAreNotRemoteSystems() {
+        String route = """
+                - route:
+                    id: a
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: log:done
+                        - to: bean:orders
+                        - to: mock:result
+                """;
+
+        Result result = SourceTopology.analyze(files("a.camel.yaml", route));
+
+        assertThat(result.topology().externalEndpoints()).isEmpty();
+    }
+
+    @Test
+    public void testAComponentTheCatalogDoesNotKnowIsRemoteUnlessItIsInternalOrATrigger() {
+        String route = """
+                - route:
+                    id: a
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: vm:inbox
+                        - to: direct-vm:inbox
+                        - to: nosuchcomponent:somewhere
+                """;
+
+        Result result = SourceTopology.analyze(files("a.camel.yaml", route));
+
+        assertThat(result.topology().externalEndpoints()).extracting(TopologyExternalEndpoint::uri)
+                .containsExactly("nosuchcomponent:somewhere");
+    }
+
+    @Test
+    public void testTheCatalogCanBeGiven() {
+        String route = """
+                - route:
+                    id: consume
+                    from:
+                      uri: kafka:orders
+                      steps:
+                        - to: http:api
+                        - to: log:done
+                """;
+
+        Result withDefault = SourceTopology.analyze(files("consume.camel.yaml", route));
+        Result given = SourceTopology.analyze(files("consume.camel.yaml", route), new DefaultCamelCatalog());
+
+        assertThat(given.topology()).isEqualTo(withDefault.topology());
+        assertThat(given.topology().externalEndpoints()).extracting(TopologyExternalEndpoint::uri)
+                .containsExactly("kafka:orders", "http:api");
+    }
+
+    @Test
+    public void testARouteThatIsTheDeadLetterOfAGlobalErrorHandlerIsCalled() {
+        String routes = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: "direct:dlq"
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - log: dead
+                """;
+
+        assertThat(SourceTopology.analyze(files("dlq.camel.yaml", routes)).findings()).isEmpty();
+    }
+
+    @Test
+    public void testARouteThatIsTheDeadLetterOfARouteConfigurationIsCalled() {
+        String routes = """
+                - routeConfiguration:
+                    errorHandler:
+                      deadLetterChannel:
+                        deadLetterUri: direct:dlq
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - log: dead
+                """;
+
+        assertThat(SourceTopology.analyze(files("dlq.camel.yaml", routes)).findings()).isEmpty();
+    }
+
+    @Test
+    public void testARouteThatIsTheDeadLetterOfARouteIsCalled() {
+        String routes = """
+                - route:
+                    id: work
+                    errorHandler:
+                      deadLetterChannel:
+                        deadLetterUri: direct:dlq
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log: work
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - log: dead
+                """;
+
+        assertThat(SourceTopology.analyze(files("dlq.camel.yaml", routes)).findings()).isEmpty();
+    }
+
+    @Test
+    public void testTheRoutesOfASagaAreCalled() {
+        String routes = """
+                - route:
+                    id: work
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - saga:
+                            compensation: direct:compensate
+                            completion: "direct:complete"
+                            steps:
+                              - log: work
+                - route:
+                    id: compensate
+                    from:
+                      uri: direct:compensate
+                      steps:
+                        - log: compensate
+                - route:
+                    id: complete
+                    from:
+                      uri: direct:complete
+                      steps:
+                        - log: complete
+                """;
+
+        assertThat(SourceTopology.analyze(files("saga.camel.yaml", routes)).findings()).isEmpty();
+    }
+
+    @Test
+    public void testADeadLetterUriDoesNotHideAnotherRouteNobodyCalls() {
+        String routes = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: "direct:dlq"
+                - route:
+                    id: dlq
+                    from:
+                      uri: direct:dlq
+                      steps:
+                        - log: dead
+                - route:
+                    id: orphan
+                    from:
+                      uri: direct:orphan
+                      steps:
+                        - log: nobody calls me
+                """;
+
+        assertThat(SourceTopology.analyze(files("dlq.camel.yaml", routes)).findings())
+                .singleElement().satisfies(f -> {
+                    assertThat(f.kind()).isEqualTo(SourceTopology.UNCALLED_ROUTE);
+                    assertThat(f.routeId()).isEqualTo("orphan");
+                });
+    }
+
+    @Test
+    public void testTheRoutesOfAFileWithARouteTemplateAreRead() {
+        String mixed = """
+                - routeTemplate:
+                    id: any
+                    from:
+                      uri: direct:any
+                - route:
+                    id: regular
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: direct:missing
+                """;
+
+        Result result = SourceTopology.analyze(files("mixed.camel.yaml", mixed));
+
+        assertThat(result.topology().nodes()).extracting(TopologyNode::routeId).containsExactly("regular");
+        assertThat(result.routes()).extracting(RouteInfo::file).containsExactly("mixed.camel.yaml");
+        assertThat(result.skipped())
+                .containsExactly(new Skipped("mixed.camel.yaml", SourceTopology.ROUTE_TEMPLATES_NOT_READ));
+        // what the template creates could consume direct:missing, so nothing is said about it
+        assertThat(result.findings()).isEmpty();
+    }
+
+    @Test
+    public void testACallerThatWritesTheEndpointWithSlashesIsSeenByTheBodyToo() {
+        String sender = TICK.replace("uri: direct:lookup", "uri: direct://lookup?timeout=1000");
+        String reader = """
+                - route:
+                    id: lookup
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - setHeader:
+                            name: id
+                            expression:
+                              jsonpath:
+                                expression: $.id
+                """;
+
+        Result result = SourceTopology.analyze(files("tick.camel.yaml", sender, "lookup.camel.yaml", reader));
+
+        assertThat(result.topology().edges())
+                .containsExactly(new TopologyEdge("tick", "lookup", "direct:lookup", "internal"));
+        // the same as with direct:lookup: nothing sets a body, and the route reads one
+        assertThat(info(result, "lookup").bodyOrigin()).isEqualTo(BodyOrigin.NONE);
+        assertThat(kinds(result)).containsExactly(SourceTopology.BODY_NEVER_SET);
     }
 }

@@ -119,11 +119,12 @@ class TopologyTest extends CamelCommandBaseTestSupport {
                 .contains("orders (timer:tick) type=trigger  [orders.camel.yaml]")
                 .contains("--> lookup via direct:lookup [internal]")
                 .contains("lookup (direct:lookup) type=route  [lookup.camel.yaml]")
-                .contains("body: none; set by setBody")
+                .contains("body in: none; set by setBody")
                 .contains("External endpoints:")
                 .contains("[out] http:api (http) route=lookup")
                 .contains("Findings:")
-                .contains("route orders: sends to direct:missing, and no route in the YAML files read consumes it");
+                .contains("route orders: sends to direct:missing, and no route in the YAML files read consumes it")
+                .doesNotContain("Note: the directory has more files or levels");
     }
 
     @Test
@@ -134,7 +135,8 @@ class TopologyTest extends CamelCommandBaseTestSupport {
         assertThat(command().doCall()).isZero();
 
         // the orders route only sends to other routes; a to may replace the body, it does not certainly set one
-        assertThat(printer.getOutput()).contains("body: none; may be set by to").contains("body: none; set by setBody");
+        assertThat(printer.getOutput()).contains("body in: none; may be set by to")
+                .contains("body in: none; set by setBody");
     }
 
     @Test
@@ -243,6 +245,8 @@ class TopologyTest extends CamelCommandBaseTestSupport {
             assertThat(((JsonObject) f).getString("endpoint")).isEqualTo("direct:missing");
         });
         assertThat((JsonArray) jo.getCollection("skipped")).isEmpty();
+        // only said when the scan did not see everything
+        assertThat(jo).doesNotContainKey("incomplete");
     }
 
     @Test
@@ -324,9 +328,9 @@ class TopologyTest extends CamelCommandBaseTestSupport {
 
         assertThat(printer.getOutput())
                 .contains("Route topology (2 routes, 1 connections")
-                .contains("Skipped (not read):")
+                .contains("Not fully read:")
                 .contains("broken.camel.yaml (unparseable)")
-                .contains("template.camel.yaml (route-template)")
+                .contains("template.camel.yaml (route templates not read)")
                 .doesNotContain("notes.txt");
     }
 
@@ -376,7 +380,57 @@ class TopologyTest extends CamelCommandBaseTestSupport {
         assertThat(command.doCall()).isZero();
 
         assertThat(printer.getOutput()).contains("No routes found in: " + template)
-                .contains("template.camel.yaml (route-template)");
+                .contains("template.camel.yaml (route templates not read)");
+    }
+
+    @Test
+    void aFileWithATemplateAndARouteIsReadForTheRoute() throws Exception {
+        write("mixed.camel.yaml", TEMPLATE + ORDERS);
+
+        assertThat(command().doCall()).isZero();
+
+        assertThat(printer.getOutput())
+                .contains("Route topology (1 routes, 0 connections, 0 findings)")
+                .contains("orders (timer:tick) type=trigger  [mixed.camel.yaml]")
+                .contains("Not fully read:")
+                .contains("mixed.camel.yaml (route templates not read)")
+                .contains("are not reported while route templates or Kamelets are not read");
+    }
+
+    @Test
+    void aDirectoryDeeperThanTheScanGoesIsSaidToBeIncomplete() throws Exception {
+        write("orders.camel.yaml", ORDERS);
+        write("d0/d1/d2/d3/d4/d5/d6/d7/d8/deep.camel.yaml", LOOKUP);
+
+        assertThat(command().doCall()).isZero();
+
+        assertThat(printer.getOutput())
+                .contains("Route topology (1 routes")
+                .doesNotContain("deep.camel.yaml")
+                .contains("Note: the directory has more files or levels than the scan reads, so some route files may"
+                          + " not have been read.");
+    }
+
+    @Test
+    void aDirectoryWithMoreFilesThanTheScanReadsIsSaidToBeIncompleteInJson() throws Exception {
+        write("orders.camel.yaml", ORDERS);
+        for (int i = 0; i < 2001; i++) {
+            Files.writeString(dir.resolve("file" + i + ".txt"), "x");
+        }
+
+        JsonObject jo = json(command());
+
+        assertThat(jo.get("incomplete")).isEqualTo(true);
+    }
+
+    @Test
+    void aBuildDirectoryAtTheDepthLimitDoesNotMakeTheScanIncomplete() throws Exception {
+        write("orders.camel.yaml", ORDERS);
+        write("d0/d1/d2/d3/d4/d5/d6/target/classes.txt", "x");
+
+        assertThat(command().doCall()).isZero();
+
+        assertThat(printer.getOutput()).doesNotContain("Note: the directory has more files or levels");
     }
 
     @Test

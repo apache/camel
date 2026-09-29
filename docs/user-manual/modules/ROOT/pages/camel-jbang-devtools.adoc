@@ -400,6 +400,8 @@ logging.level.com.zaxxer.hikari = DEBUG
 
 == Route topology from the source
 
+*Available since Camel 4.23*
+
 `camel topology` shows how the routes of an application fit together, read from the source files without running
 them: where each route starts, which routes send to which (and through which endpoint), the endpoints that leave and
 enter the application, where the body of each route comes from, and what looks wrong.
@@ -410,14 +412,14 @@ $ camel topology orders.camel.yaml lookup.camel.yaml inbox.camel.yaml orphan.cam
 Route topology (4 routes, 1 connections, 2 findings) - YAML routes only
 
   orders (timer:orders) type=trigger  [orders.camel.yaml]
-    body: none; may be set by to
+    body in: none; may be set by to
     --> lookup via direct:lookup [internal]
   lookup (direct:lookup) type=route  [lookup.camel.yaml]
-    body: none; set by setBody
+    body in: none; set by setBody
   inbox (kafka:incoming-orders) type=route  [inbox.camel.yaml]
-    body: from the consumer of the route
+    body in: from the consumer of the route
   orphan (direct:orphan) type=route  [orphan.camel.yaml]
-    body: unknown - no route in the files calls it
+    body in: unknown - no route in the files calls it
 
 External endpoints:
   [out] http:api/stock (http) route=lookup
@@ -429,9 +431,16 @@ Findings:
 ----
 
 Without arguments it reads the YAML files of the current directory and its subdirectories (build and tooling
-directories such as `target` are skipped); it also takes files and directories. `--json` gives the same nodes, edges
-and external endpoints as the `route-topology` developer console, that `camel cmd route-topology` shows for a
-running integration, with the file and the body of each route, the findings and the files not read added.
+directories such as `target` are skipped); it also takes files and directories. When the directory has more files or
+levels than the scan reads, a note says that some route files may not have been read. `--json` gives the same nodes,
+edges and external endpoints as the `route-topology` developer console, that `camel cmd route-topology` shows for a
+running integration, with the file and the body of each route, the findings and the files not read added
+(`"incomplete": true` is added when the scan did not see everything).
+
+The external endpoints are the remote systems the routes read from and send to, as the Camel catalog says which
+components are remote: `kafka:` and `http:` are, `log:`, `bean:` and `mock:` are not. An endpoint that is between two
+routes is a connection, and not an external endpoint. `body in:` is the body of the message that reaches the route,
+and the step after it is the first one that may put something else there: only a `setBody` certainly does.
 
 The findings are informational, and never make the command fail: an endpoint a route sends to with `direct:` or
 `seda:` and no route consumes, a route that reads a body that neither it nor the routes that call it set, and a
@@ -441,8 +450,9 @@ be parsed is listed as not read.
 
 Only YAML routes are read. Routes written in Java or XML, route templates and Kamelets are not, so a route that is
 consumed or called from them is not seen to be: the findings say so, and the endpoints and routes they are about are
-not reported while a route template or a Kamelet is among the files. The body of a route that is called by a REST
-operation bound to an OpenAPI specification is not known either.
+not reported while a route template or a Kamelet is among the files. The routes written in the same file as a route
+template are read, and the file is listed as having route templates not read. The body of a route that is called by a
+REST operation bound to an OpenAPI specification is not known either.
 
 == Validate Plugin
 
