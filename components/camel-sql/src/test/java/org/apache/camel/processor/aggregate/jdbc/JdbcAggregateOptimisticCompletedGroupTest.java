@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -64,6 +65,7 @@ public class JdbcAggregateOptimisticCompletedGroupTest extends AbstractJdbcAggre
 
         release.countDown();
         threadA.join(10000);
+        assertFalse(threadA.isAlive(), "the aggregating thread should have finished");
         sendLast("direct:predicate", "z", "k1");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -85,6 +87,7 @@ public class JdbcAggregateOptimisticCompletedGroupTest extends AbstractJdbcAggre
 
         release.countDown();
         threadA.join(10000);
+        assertFalse(threadA.isAlive(), "the aggregating thread should have finished");
         sendLast("direct:predicate", "z", "k2");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -105,6 +108,7 @@ public class JdbcAggregateOptimisticCompletedGroupTest extends AbstractJdbcAggre
 
         release.countDown();
         threadA.join(10000);
+        assertFalse(threadA.isAlive(), "the aggregating thread should have finished");
 
         await().atMost(5, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() == 2);
         // x is sent once, a starts a new group that completes by timeout too
