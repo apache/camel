@@ -206,7 +206,7 @@
         <google-cloud-bigquery-version>2.72.0</google-cloud-bigquery-version>
         <google-cloud-core-version>2.76.0</google-cloud-core-version>
         <google-cloud-firestore-version>3.48.0</google-cloud-firestore-version>
-        <google-cloud-functions-version>2.85.0</google-cloud-functions-version>
+        <google-cloud-functions-version>2.86.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.156.0</google-cloud-pubsub-version>
         <google-cloud-secretmanager-version>2.98.0</google-cloud-secretmanager-version>
