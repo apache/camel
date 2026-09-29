@@ -224,19 +224,22 @@ public final class SyslogConverter {
                 LOG.error("Invalid syslog message, missing a mandatory space after version");
             }
 
-            // This should be the timestamp
+            // This should be the timestamp, or the NILVALUE when the sender has no time (RFC 5424 6.2.3)
             StringBuilder date = new StringBuilder();
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+            while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 date.append(charFound);
             }
 
-            syslogMessage.setTimestamp(DatatypeConverter.parseDateTime(date.toString()));
+            if (!"-".contentEquals(date)) {
+                syslogMessage.setTimestamp(DatatypeConverter.parseDateTime(date.toString()));
+            }
         }
 
-        // The host is the char sequence until the next ' '
+        // The host is the char sequence until the next ' ', or the end of the message: MSG is optional (RFC 5424 6),
+        // so any field can be the last one
 
         StringBuilder host = new StringBuilder();
-        while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+        while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
             host.append(charFound);
         }
 
@@ -245,32 +248,47 @@ public final class SyslogConverter {
         if (isRfc5424) {
             Rfc5424SyslogMessage rfc5424SyslogMessage = (Rfc5424SyslogMessage) syslogMessage;
             StringBuilder appName = new StringBuilder();
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+            while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 appName.append(charFound);
             }
             rfc5424SyslogMessage.setAppName(decode(appName, charset));
 
             StringBuilder procId = new StringBuilder();
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+            while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 procId.append(charFound);
             }
             rfc5424SyslogMessage.setProcId(decode(procId, charset));
 
             StringBuilder msgId = new StringBuilder();
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
+            while (byteBuffer.hasRemaining() && (charFound = (char) (byteBuffer.get() & 0xff)) != ' ') {
                 msgId.append(charFound);
             }
             rfc5424SyslogMessage.setMsgId(decode(msgId, charset));
 
+            // STRUCTURED-DATA is the NILVALUE or SD-ELEMENTs (RFC 5424 6.3). A PARAM-VALUE is quoted, and escapes
+            // '"', '\' and ']' with a backslash, so a ']' only closes the element outside a PARAM-VALUE
             StringBuilder structuredData = new StringBuilder();
             boolean inblock = false;
-            while ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ' || inblock) {
-                if (charFound == '[') {
+            boolean inValue = false;
+            boolean escaped = false;
+            char previous = 0;
+            while (byteBuffer.hasRemaining() && ((charFound = (char) (byteBuffer.get() & 0xff)) != ' ' || inblock)) {
+                if (inValue) {
+                    if (escaped) {
+                        escaped = false;
+                    } else if (charFound == '\\') {
+                        escaped = true;
+                    } else if (charFound == '"') {
+                        inValue = false;
+                    }
+                } else if (charFound == '[') {
                     inblock = true;
-                }
-                if (charFound == ']') {
+                } else if (charFound == ']') {
                     inblock = false;
+                } else if (charFound == '"' && inblock && previous == '=') {
+                    inValue = true;
                 }
+                previous = charFound;
                 structuredData.append(charFound);
             }
             rfc5424SyslogMessage.setStructuredData(decode(structuredData, charset));
