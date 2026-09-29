@@ -30,6 +30,12 @@ and matched case-insensitively using the English locale. An empty string is a va
 literal. An asterisk is literal, not a wildcard. Duplicate normalized values are
 rejected at startup.
 
+=== Route from a header
+
+This route reads the `department` header. The body is passed unchanged to the
+selected destination. The examples on this page are independent; load one at a
+time and connect the `direct:` destinations to your application's handling routes.
+
 [tabs]
 ====
 Java::
@@ -47,11 +53,14 @@ XML::
 +
 [source,xml]
 ----
-<switch otherwise="direct:review">
-    <selector><header>department</header></selector>
-    <case value="billing" uri="direct:billing"/>
-    <case value="technical" uri="direct:technical"/>
-</switch>
+<route xmlns="http://camel.apache.org/schema/spring">
+    <from uri="direct:tickets"/>
+    <switch otherwise="direct:review">
+        <selector><header>department</header></selector>
+        <case value="billing" uri="direct:billing"/>
+        <case value="technical" uri="direct:technical"/>
+    </switch>
+</route>
 ----
 YAML::
 +
@@ -74,6 +83,22 @@ YAML::
 ----
 ====
 
+Send a message to any of these equivalent routes with a `ProducerTemplate`:
+
+[source,java]
+----
+template.sendBodyAndHeader("direct:tickets", "Please check this invoice",
+    "department", "BILLING");
+----
+
+[cols="1,2",options="header"]
+|===
+|Header value |Destination
+|`billing` or `BILLING` |`direct:billing`
+|`technical` |`direct:technical`
+|`sales` or an absent header |`direct:review`
+|===
+
 A null or unmatched result uses `otherwise`. Without `otherwise`, the exchange
 continues after Switch. Selector failures follow normal Camel error handling and
 never select the fallback. Streams are reset after selector evaluation when stream
@@ -94,6 +119,14 @@ match number `2`. Numbers compare by decimal value, so `2` and `2.0` match. Dupl
 combinations, including differences only in letter case or numeric scale, fail at
 startup. Scalar `value` cases and composite `values` cases cannot be mixed.
 
+=== Route from a map in a header
+
+The `decision` header now contains a map, for example
+`Map.of("department", "billing", "urgent", true)`. The table declares the
+combinations directly, without a helper expression that concatenates values into
+a synthetic category. Any expression returning the same map can replace the
+header selector.
+
 [tabs]
 ====
 Java::
@@ -107,6 +140,8 @@ from("direct:tickets")
             .id("urgentBilling").to("direct:urgent-billing")
         .doCase().value("department", "billing").value("urgent", false)
             .to("direct:billing")
+        .doCase().value("department", "technical").value("urgent", true)
+            .to("direct:incident")
         .otherwise("direct:review")
     .end();
 ----
@@ -114,19 +149,26 @@ XML::
 +
 [source,xml]
 ----
-<switch otherwise="direct:review">
-    <selector><header>decision</header></selector>
-    <keys>department</keys>
-    <keys>urgent</keys>
-    <case id="urgentBilling" uri="direct:urgent-billing">
-        <values name="department" value="billing"/>
-        <values name="urgent" type="boolean" value="true"/>
-    </case>
-    <case uri="direct:billing">
-        <values name="department" value="billing"/>
-        <values name="urgent" type="boolean" value="false"/>
-    </case>
-</switch>
+<route xmlns="http://camel.apache.org/schema/spring">
+    <from uri="direct:tickets"/>
+    <switch otherwise="direct:review">
+        <selector><header>decision</header></selector>
+        <keys>department</keys>
+        <keys>urgent</keys>
+        <case id="urgentBilling" uri="direct:urgent-billing">
+            <values name="department" value="billing"/>
+            <values name="urgent" type="boolean" value="true"/>
+        </case>
+        <case uri="direct:billing">
+            <values name="department" value="billing"/>
+            <values name="urgent" type="boolean" value="false"/>
+        </case>
+        <case uri="direct:incident">
+            <values name="department" value="technical"/>
+            <values name="urgent" type="boolean" value="true"/>
+        </case>
+    </switch>
+</route>
 ----
 YAML::
 +
@@ -147,6 +189,8 @@ YAML::
                 uri: direct:urgent-billing
               - values: [department: billing, urgent: false]
                 uri: direct:billing
+              - values: [department: technical, urgent: true]
+                uri: direct:incident
             otherwise: direct:review
 ----
 ====
@@ -156,15 +200,124 @@ otherwise be read as booleans or numbers. XML literals default to `type="string"
 use `type="boolean"` or `type="number"` explicitly. Keys select fields in the returned
 map; they do not implicitly read separate message headers.
 
+For example, send this input with `java.util.Map`:
+
+[source,java]
+----
+template.sendBodyAndHeader("direct:tickets", "Please check this invoice",
+    "decision", Map.of("department", "billing", "urgent", true));
+----
+
+[cols="1,1,2",options="header"]
+|===
+|`department` |`urgent` |Destination
+|`billing` |boolean `true` |`direct:urgent-billing`
+|`billing` |boolean `false` |`direct:billing`
+|`technical` |boolean `true` |`direct:incident`
+|`technical` |boolean `false` |`direct:review`
+|`billing` |string `"true"` |`direct:review`
+|===
+
+A map missing `urgent` fails the exchange instead of selecting `direct:review`.
+The table does not require every possible combination to have a case.
+
 Cases are compiled into a lookup table. Constructing a composite key involves the
 selected fields, but lookup does not scan the declared cases.
 
-=== Semantic decisions
+=== Route from a semantic batch
 
-With `camel-semantic` and a provider configured, a named batch can be used directly:
+The same table can consume two named semantic questions directly. Add
+`camel-semantic` and configure an adapter such as
+xref:ROOT:typesafe-ai-component.adoc[TypeSafe AI], as described in the
+xref:languages:semantic-language.adoc[Semantic language]. Provider credentials,
+timeouts and inference configuration belong to the adapter.
 
+The `department` question produces a category string and `urgent` produces a
+boolean. The selector evaluates `refs:department,urgent` once per Switch entry
+and returns both decisions in one map. An adapter can evaluate them in one provider
+request; adapters without batch support evaluate the questions sequentially.
+Switch does not invoke the selector again for each case.
+
+The YAML example includes the question declarations. For the Java and XML routes,
+register the same definitions before loading the routes:
+
+[source,java]
+----
+import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.semantic.SemanticQuestion;
+import org.apache.camel.semantic.SemanticQuestions;
+
+SemanticQuestions.get(context).replace("ticket-routing", Map.of(
+    "department", new SemanticQuestion(
+        SemanticQuestion.Type.CHOICE, "Which department should handle this message?", null,
+        Map.of("billing", "Invoices, payments and refunds",
+               "technical", "Bugs, outages and technical problems"),
+        List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL),
+    "urgent", new SemanticQuestion(
+        SemanticQuestion.Type.BOOLEAN, "Does this request need immediate attention?", null,
+        Map.of(), List.of(), 0.5, 0, SemanticQuestion.UncertaintyPolicy.FAIL)));
+----
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:tickets")
+    .doSwitch().language("semantic", "refs:department,urgent")
+        .keys("department", "urgent")
+        .doCase().value("department", "billing").value("urgent", true)
+            .to("direct:urgent-billing")
+        .doCase().value("department", "billing").value("urgent", false)
+            .to("direct:billing")
+        .doCase().value("department", "technical").value("urgent", true)
+            .to("direct:incident")
+        .otherwise("direct:review")
+    .end();
+----
+XML::
++
+[source,xml]
+----
+<route xmlns="http://camel.apache.org/schema/spring">
+    <from uri="direct:tickets"/>
+    <switch otherwise="direct:review">
+        <selector><language language="semantic">refs:department,urgent</language></selector>
+        <keys>department</keys>
+        <keys>urgent</keys>
+        <case uri="direct:urgent-billing">
+            <values name="department" value="billing"/>
+            <values name="urgent" type="boolean" value="true"/>
+        </case>
+        <case uri="direct:billing">
+            <values name="department" value="billing"/>
+            <values name="urgent" type="boolean" value="false"/>
+        </case>
+        <case uri="direct:incident">
+            <values name="department" value="technical"/>
+            <values name="urgent" type="boolean" value="true"/>
+        </case>
+    </switch>
+</route>
+----
+YAML::
++
 [source,yaml]
 ----
+- semantic:
+    question:
+      department:
+        type: choice
+        instructions: Which department should handle this message?
+        criteria:
+          billing: Invoices, payments and refunds
+          technical: Bugs, outages and technical problems
+      urgent:
+        type: boolean
+        instructions: Does this request need immediate attention?
 - route:
     from:
       uri: direct:tickets
@@ -180,13 +333,88 @@ With `camel-semantic` and a provider configured, a named batch can be used direc
                 uri: direct:urgent-billing
               - values: [department: billing, urgent: false]
                 uri: direct:billing
+              - values: [department: technical, urgent: true]
+                uri: direct:incident
             otherwise: direct:review
 ----
+====
 
-Declare the questions using the xref:languages:semantic-language.adoc[Semantic language].
-Batching, thresholds and uncertainty policies belong to that language and its provider.
-Switch has no dependency on semantic evaluation. Store a result explicitly in a
-variable, header or exchange property when it should be reused by later EIPs.
+Submit a message body using `template.sendBody("direct:tickets", "Our invoice is due today; please help immediately")`.
+If the adapter returns `{department: "billing", urgent: true}`, the message goes
+to `direct:urgent-billing`. The destination depends on the returned decisions,
+not on a guaranteed classification of that example sentence. The other combinations
+use the same routing table as the map-header example above. Provider failures follow
+normal error handling and do not select the fallback.
+
+For a single Choice question, use `ref:department` as the selector and the scalar
+`value` cases from the first example, without `keys`. No intermediate property or
+header is needed to route the answer.
+
+Batching, thresholds and uncertainty policies belong to the semantic language and
+its provider. Switch has no dependency on semantic evaluation. Store a result
+explicitly in a variable, header or exchange property when later EIPs should reuse it.
+
+=== Connect the example destinations
+
+For a local demonstration, the destination routes can simply log the message.
+Load these routes alongside one of the examples above; replace the logging steps
+with the application's processing when integrating the example.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:billing").log("Billing: ${body}");
+from("direct:technical").log("Technical: ${body}");
+from("direct:urgent-billing").log("Urgent billing: ${body}");
+from("direct:incident").log("Incident: ${body}");
+from("direct:review").log("Review: ${body}");
+----
+XML::
++
+[source,xml]
+----
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route><from uri="direct:billing"/><log message="Billing: ${body}"/></route>
+    <route><from uri="direct:technical"/><log message="Technical: ${body}"/></route>
+    <route><from uri="direct:urgent-billing"/><log message="Urgent billing: ${body}"/></route>
+    <route><from uri="direct:incident"/><log message="Incident: ${body}"/></route>
+    <route><from uri="direct:review"/><log message="Review: ${body}"/></route>
+</routes>
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:billing
+      steps:
+        - log: "Billing: ${body}"
+- route:
+    from:
+      uri: direct:technical
+      steps:
+        - log: "Technical: ${body}"
+- route:
+    from:
+      uri: direct:urgent-billing
+      steps:
+        - log: "Urgent billing: ${body}"
+- route:
+    from:
+      uri: direct:incident
+      steps:
+        - log: "Incident: ${body}"
+- route:
+    from:
+      uri: direct:review
+      steps:
+        - log: "Review: ${body}"
+----
+====
 
 == Destinations and management
 
