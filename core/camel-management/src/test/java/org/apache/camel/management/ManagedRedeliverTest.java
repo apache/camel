@@ -97,6 +97,16 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
         on = getCamelObjectName(TYPE_ROUTE, "flaky");
         assertEquals(1L, mbeanServer.getAttribute(on, "ExchangesCompleted"));
         assertEquals(1L, mbeanServer.getAttribute(on, "Redeliveries"));
+
+        // the redelivered header stays on the exchange, but the later processors and routes were not redelivered
+        for (String id : new String[] { "after-flaky", "call-other", "in-other" }) {
+            on = getCamelObjectName(TYPE_PROCESSOR, id);
+            assertEquals(1L, mbeanServer.getAttribute(on, "ExchangesCompleted"), id);
+            assertEquals(0L, mbeanServer.getAttribute(on, "Redeliveries"), id);
+        }
+        on = getCamelObjectName(TYPE_ROUTE, "other");
+        assertEquals(1L, mbeanServer.getAttribute(on, "ExchangesCompleted"));
+        assertEquals(0L, mbeanServer.getAttribute(on, "Redeliveries"));
     }
 
     @Override
@@ -115,7 +125,12 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
                             if (attempts.incrementAndGet() < 3) {
                                 throw new IllegalArgumentException("Forced");
                             }
-                        }).id("flaky-processor");
+                        }).id("flaky-processor")
+                        .log("after the flaky processor").id("after-flaky")
+                        .to("direct:other").id("call-other");
+
+                from("direct:other").routeId("other")
+                        .log("in the other route").id("in-other");
 
                 from("direct:start")
                         .to("mock:foo")

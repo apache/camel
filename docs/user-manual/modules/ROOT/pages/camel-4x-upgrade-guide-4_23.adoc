@@ -452,9 +452,13 @@ should be reviewed.
 `InflightRepository.InflightExchange` and `AsyncProcessorAwaitManager.AwaitThread` gained a `getNodeSource()` method
 for the same value. Both are `default` methods returning `null`, so existing implementations continue to compile.
 
-The `Redeliveries` statistic now also counts a redelivery attempt that succeeds. Before, only redelivery attempts
-that failed were counted, so a processor that succeeded on its second redelivery reported 1 instead of 2, and a route
-whose exchange was redelivered and then completed reported 0.
+The `Redeliveries` statistic now also counts a redelivery attempt that succeeds, and it is only counted where the
+redelivery happened. For a processor it is the number of redelivery attempts of that processor. For a route it is the
+number of exchanges that were redelivered by a processor of that route, and for the CamelContext the number of
+exchanges that were redelivered. Before, only redelivery attempts that failed were counted (so a processor that
+succeeded on its second redelivery reported 1 instead of 2, and a route whose exchange was redelivered and then
+completed reported 0), and a processor or route that the exchange went through after a redelivery could count that
+redelivery as well.
 
 === camel-groovy
 
