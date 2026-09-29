@@ -1681,6 +1681,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
         doWriteChildList(jo, "routes", "routes", def.getRoutes(), this::doWriteRouteDefinition);
+        doWriteChildElement(jo, "semantic", def.getSemantic(), this::doWriteSemanticDefinition);
         return jo;
     }
     protected JsonObject doWriteRoutingSlipDefinition(RoutingSlipDefinition<?> def) {
@@ -2078,6 +2079,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected void doWriteBeansDefinitionElements(JsonObject jo, BeansDefinition def) {
         doWriteChildList(jo, null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteChildList(jo, null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
+        doWriteChildElement(jo, "semantic", def.getSemantic(), this::doWriteSemanticDefinition);
         // @XmlAnyElement - not applicable for YAML
         doWriteChildList(jo, null, "sslContextParameters", def.getSslContextParameters(), this::doWriteSSLContextParametersDefinition);
         doWriteChildList(jo, "dataFormats", "dataFormat", def.getDataFormats(), this::doWriteDataFormatDefinition);

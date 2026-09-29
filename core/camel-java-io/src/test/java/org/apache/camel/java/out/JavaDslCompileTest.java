@@ -38,6 +38,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.ToolProvider;
 
+import org.apache.camel.java.LwModelToJavaDumper;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -129,6 +130,18 @@ public class JavaDslCompileTest {
                     .filter(n -> !n.startsWith("beans"))
                     .filter(n -> !NON_ROUTE_FILES.contains(n))
                     .forEach(result::add);
+        }
+    }
+
+    @Test
+    void semanticDeclarationsCompileWithTheirRoutes() throws Exception {
+        try (var input = Files.newInputStream(XML_IO_RESOURCES.resolve("semantic-routes.xml"))) {
+            RoutesDefinition routes = new ModelParser(input, NAMESPACE).parseRoutesDefinition().orElseThrow();
+            String java = new LwModelToJavaDumper().dumpModelAsJava(null, routes);
+            assertTrue(java.contains("semanticQuestions().question(\"department\")"));
+            assertTrue(java.contains(".threshold(0.8)"));
+            List<String> errors = compile("SemanticRoutes", wrapInRouteBuilder("SemanticRoutes", List.of(java)));
+            assertTrue(errors.isEmpty(), () -> errors + "\n" + java);
         }
     }
 

@@ -126,6 +126,9 @@ public class TransformTools {
 
         YamlModelWriter writer = new YamlModelWriter();
         List<JsonObject> roots = new ArrayList<>();
+        if (routes.getSemantic() != null) {
+            roots.add(writer.writeSemanticDefinition(routes.getSemantic()));
+        }
         for (RouteDefinition route : routes.getRoutes()) {
             roots.add(writer.writeRouteDefinition(route));
         }

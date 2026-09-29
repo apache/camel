@@ -1049,6 +1049,7 @@ public class ModelParser extends BaseParser {
     protected RoutesDefinition doParseRoutesDefinition() throws IOException, XmlPullParserException {
         return doParse(new RoutesDefinition(), optionalIdentifiedDefinitionAttributeHandler(), (def, key) -> switch (key) {
                 case "route": doAdd(doParseRouteDefinition(), def.getRoutes(), def::setRoutes); yield true;
+                case "semantic": def.setSemantic(doParseSemanticDefinition()); yield true;
                 default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
     }
@@ -1072,6 +1073,12 @@ public class ModelParser extends BaseParser {
             return Optional.of(def);
         }
         return Optional.empty();
+    }
+    protected SemanticDefinition doParseSemanticDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SemanticDefinition(), noAttributeHandler(), (def, key) -> switch (key) {
+                case "question": doAdd(doParseSemanticQuestionDefinition(), def.getQuestions(), def::setQuestions); yield true;
+                default: yield false;
+            }, noValueHandler());
     }
     protected RoutingSlipDefinition doParseRoutingSlipDefinition() throws IOException, XmlPullParserException {
         return doParse(new RoutingSlipDefinition(), (def, key, val) -> switch (key) {
@@ -1430,6 +1437,7 @@ public class ModelParser extends BaseParser {
                 case "routeConfiguration": doAdd(doParseRouteConfigurationDefinition(), def.getRouteConfigurations(), def::setRouteConfigurations); break;
                 case "routeTemplate": doAdd(doParseRouteTemplateDefinition(), def.getRouteTemplates(), def::setRouteTemplates); break;
                 case "route": doAdd(doParseRouteDefinition(), def.getRoutes(), def::setRoutes); break;
+                case "semantic": def.setSemantic(doParseSemanticDefinition()); break;
                 case "sslContextParameters": doAdd(doParseSSLContextParametersDefinition(), def.getSslContextParameters(), def::setSslContextParameters); break;
                 case "templatedRoute": doAdd(doParseTemplatedRouteDefinition(), def.getTemplatedRoutes(), def::setTemplatedRoutes); break;
                 default:
@@ -1542,6 +1550,22 @@ public class ModelParser extends BaseParser {
                 default: yield false;
             }, (def, key) -> switch (key) {
                 case "properties": def.setProperties(doParseBeanPropertiesDefinition()); yield true;
+                default: yield false;
+            }, noValueHandler());
+    }
+    protected SemanticQuestionDefinition doParseSemanticQuestionDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SemanticQuestionDefinition(), (def, key, val) -> switch (key) {
+                case "name": def.setName(val); yield true;
+                case "state": def.setState(val); yield true;
+                case "threshold": def.setThreshold(val); yield true;
+                case "type": def.setType(val); yield true;
+                case "uncertainty": def.setUncertainty(val); yield true;
+                case "uncertaintyPolicy": def.setUncertaintyPolicy(val); yield true;
+                default: yield false;
+            }, (def, key) -> switch (key) {
+                case "criterion": doAdd(doParsePropertyDefinition(), def.getCriteria(), def::setCriteria); yield true;
+                case "instructions": def.setInstructions(doParseText()); yield true;
+                case "level": doAdd(doParseText(), def.getLevels(), def::setLevels); yield true;
                 default: yield false;
             }, noValueHandler());
     }

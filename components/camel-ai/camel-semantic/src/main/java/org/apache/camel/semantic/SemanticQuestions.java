@@ -70,15 +70,19 @@ public final class SemanticQuestions {
 
     /** Track a route resource so deleted files can be discarded before development-mode reload. */
     public synchronized void replace(Resource source, Map<String, SemanticQuestion> definitions) {
+        replace(source.getLocation(), source, definitions);
+    }
+
+    synchronized void replace(String location, Resource source, Map<String, SemanticQuestion> definitions) {
         removeDeletedResources();
-        replace(source.getLocation(), definitions);
+        replace(location, definitions);
         if (!definitions.isEmpty() && "file".equals(source.getScheme())) {
-            resources.put(source.getLocation(), source);
+            resources.put(location, source);
         }
     }
 
     synchronized void removeDeletedResources() {
-        resources.values().stream().filter(resource -> !resource.exists()).map(Resource::getLocation).toList()
+        resources.entrySet().stream().filter(entry -> !entry.getValue().exists()).map(Map.Entry::getKey).toList()
                 .forEach(location -> replace(location, Map.of()));
     }
 

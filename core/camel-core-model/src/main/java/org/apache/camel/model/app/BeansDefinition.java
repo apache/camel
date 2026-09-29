@@ -54,6 +54,7 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
 @XmlType(propOrder = {
         "componentScanning",
         "beans",
+        "semantic",
         "springOrBlueprintBeans",
         "sslContextParameters",
         "dataFormats",
@@ -78,6 +79,18 @@ public class BeansDefinition {
     @XmlElement(name = "bean")
     @Metadata(description = "List of bean definitions to be registered in the Camel registry.")
     private List<BeanFactoryDefinition> beans = new ArrayList<>();
+
+    @XmlElement(name = "semantic")
+    @Metadata(description = "Named semantic question declarations.")
+    private SemanticDefinition semantic;
+
+    public SemanticDefinition getSemantic() {
+        return semantic;
+    }
+
+    public void setSemantic(SemanticDefinition semantic) {
+        this.semantic = semantic;
+    }
 
     // support for legacy spring <beans> and blueprint <bean> files to be parsed and loaded
     // for migration and tooling effort (need to be in a single @XmlAnyElement as otherwise

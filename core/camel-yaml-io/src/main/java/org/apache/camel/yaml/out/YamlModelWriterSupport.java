@@ -25,6 +25,8 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.model.app.SemanticDefinition;
+import org.apache.camel.model.app.SemanticQuestionDefinition;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -49,6 +51,44 @@ public abstract class YamlModelWriterSupport {
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public JsonObject writeSemanticDefinition(SemanticDefinition definition) {
+        return wrapNode("semantic", doWriteSemanticDefinition(definition));
+    }
+
+    protected JsonObject doWriteSemanticDefinition(SemanticDefinition definition) {
+        JsonObject questions = new JsonObject();
+        for (SemanticQuestionDefinition question : definition.getQuestions()) {
+            JsonObject value = new JsonObject();
+            value.put("type", question.getType());
+            value.put("instructions", question.getInstructions());
+            if (question.getState() != null) {
+                value.put("state", question.getState());
+            }
+            doWriteAttribute(value, "threshold", question.getThreshold(), null);
+            doWriteAttribute(value, "uncertainty", question.getUncertainty(), null);
+            doWriteAttribute(value, "uncertaintyPolicy", question.getUncertaintyPolicy(), null);
+            if (!question.getLevels().isEmpty()) {
+                JsonArray levels = new JsonArray();
+                levels.addAll(question.getLevels());
+                value.put("criteria", levels);
+            } else if (!question.getCriteria().isEmpty()) {
+                JsonObject criteria = new JsonObject();
+                question.getCriteria().forEach(criterion -> {
+                    if (criteria.putIfAbsent(criterion.getKey(), criterion.getValue()) != null) {
+                        throw new IllegalArgumentException("Duplicate semantic criterion: " + criterion.getKey());
+                    }
+                });
+                value.put("criteria", criteria);
+            }
+            if (questions.putIfAbsent(question.getName(), value) != null) {
+                throw new IllegalArgumentException("Duplicate semantic question: " + question.getName());
+            }
+        }
+        JsonObject result = new JsonObject();
+        result.put("question", questions);
+        return result;
     }
 
     protected void doWriteAttribute(JsonObject jo, String key, String value, String defaultValue) {

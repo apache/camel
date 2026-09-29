@@ -2474,6 +2474,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteRoutesDefinition(StringBuilder sb, RoutesDefinition def) {
         doWriteOptionalIdentifiedDefinitionAttributes(sb, def);
         doWriteChildList(sb, "routes", def.getRoutes(), this::doWriteRouteDefinitionRef);
+        doWriteChildElement(sb, "semantic", def.getSemantic(), this::doWriteSemanticDefinition);
     }
     protected void doWriteRoutingSlipDefinition(StringBuilder sb, RoutingSlipDefinition<?> def) {
         doWriteProcessorDefinitionAttributes(sb, def);
@@ -2788,6 +2789,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteBeansDefinitionElements(StringBuilder sb, BeansDefinition def) {
         doWriteChildList(sb, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteChildList(sb, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
+        doWriteChildElement(sb, "semantic", def.getSemantic(), this::doWriteSemanticDefinition);
         // @XmlAnyElement - not applicable for Java DSL
         doWriteChildList(sb, "sslContextParameters", def.getSslContextParameters(), this::doWriteSSLContextParametersDefinition);
         doWriteChildList(sb, "dataFormat", def.getDataFormats(), this::doWriteDataFormatDefinition);

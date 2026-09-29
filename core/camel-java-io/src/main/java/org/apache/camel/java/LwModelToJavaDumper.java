@@ -94,6 +94,9 @@ public class LwModelToJavaDumper implements ModelToJavaDumper {
         StringBuilder sb = new StringBuilder();
         try {
             if (definition instanceof RoutesDefinition rd) {
+                if (rd.getSemantic() != null) {
+                    sb.append(writer.writeSemanticDefinition(rd.getSemantic()));
+                }
                 for (RouteDefinition route : rd.getRoutes()) {
                     if (!sb.isEmpty()) {
                         sb.append("\n\n");
