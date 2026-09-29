@@ -50,6 +50,7 @@ import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.SensitiveUtils;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -341,12 +342,25 @@ public class PropertiesComponent extends ServiceSupport
         return false;
     }
 
-    private static boolean isSensitiveKey(String key) {
-        int pos = key.indexOf(':');
-        if (pos != -1) {
-            key = key.substring(0, pos);
+    private boolean isSensitiveKey(String key) {
+        // the key with a default value (key:default), or the key of a function (such as env:DB_PASSWORD)
+        String name = StringHelper.before(key, ":", key);
+        String remainder = StringHelper.after(key, ":");
+        if (remainder != null) {
+            remainder = StringHelper.before(remainder, ":", remainder);
         }
-        return !key.isEmpty() && SensitiveUtils.containsSensitive(key);
+        if (!name.isEmpty() && SensitiveUtils.containsSensitive(name)
+                || remainder != null && !remainder.isEmpty() && SensitiveUtils.containsSensitive(remainder)) {
+            return true;
+        }
+        // the value of the key is resolved by a function with sensitive values (such as {{app.db.conn}} set to a vault)
+        PropertiesResolvedValue resolved = defaultPropertiesLookupListener.getProperty(name);
+        return resolved != null && isSensitiveFunction(resolved.source());
+    }
+
+    private boolean isSensitiveFunction(String name) {
+        PropertiesFunction function = name != null ? propertiesFunctionResolver.getFunctions().get(name) : null;
+        return function != null && function.isSensitive();
     }
 
     protected String parseUri(final String uri, PropertiesLookup properties, boolean keepUnresolvedOptional) {

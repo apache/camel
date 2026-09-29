@@ -373,7 +373,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     } else {
                         if (log.isDebugEnabled()) {
                             log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(),
-                                    function.isSensitive() ? MASK : mask(key, value));
+                                    function.isSensitive() ? MASK : mask(StringHelper.after(key, ":"), value));
                         }
                         String k = prevKey != null ? prevKey : key;
                         propertiesComponent.updateResolvedValue(k, value, function.getName());

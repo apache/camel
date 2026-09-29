@@ -97,6 +97,7 @@ public class PropertiesComponentMaskSensitiveLogTest extends ContextTestSupport 
         props.put("DB_PASSWORD", "Secret-env");
         props.put("my.apiSecret", "Secret-api");
         props.put("greeting", "Hello-public");
+        props.put("app.db.conn", "{{myvault:db/conn}}");
         context.getPropertiesComponent().setInitialProperties(props);
         context.getPropertiesComponent().addPropertiesFunction(new MyVaultFunction());
         context.getPropertiesComponent().addPropertiesFunction(new MyUpperFunction());
@@ -110,6 +111,15 @@ public class PropertiesComponentMaskSensitiveLogTest extends ContextTestSupport 
         assertEquals("Secret-env", context.resolvePropertyPlaceholders("{{DB_PASSWORD}}"));
         assertEquals("Secret-api", context.resolvePropertyPlaceholders("{{my.apiSecret}}"));
         assertEquals("jdbc:Secret-db", context.resolvePropertyPlaceholders("jdbc:{{db.password}}"));
+        // a vault value by way of an ordinary property
+        assertEquals("Vault-db/conn", context.resolvePropertyPlaceholders("{{app.db.conn}}"));
+        // a sensitive key of a function that is not sensitive
+        System.setProperty("DB_PASSWORD", "Secret-sys");
+        try {
+            assertEquals("Secret-sys", context.resolvePropertyPlaceholders("{{sys:DB_PASSWORD}}"));
+        } finally {
+            System.clearProperty("DB_PASSWORD");
+        }
 
         assertFalse(messages.isEmpty());
         for (String msg : messages) {
