@@ -30,11 +30,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.component.opa.OpaSdkFailures.badRequest;
 import static org.apache.camel.component.opa.OpaSdkFailures.evaluationError;
+import static org.apache.camel.component.opa.OpaSdkFailures.interrupted;
+import static org.apache.camel.component.opa.OpaSdkFailures.rejectedBeforeSending;
 import static org.apache.camel.component.opa.OpaSdkFailures.status;
 import static org.apache.camel.component.opa.OpaSdkFailures.timedOut;
 import static org.apache.camel.component.opa.OpaSdkFailures.undefinedDecision;
 import static org.apache.camel.component.opa.OpaSdkFailures.unreachable;
 import static org.apache.camel.component.opa.OpaSdkFailures.unserializableInput;
+import static org.apache.camel.component.opa.OpaSdkFailures.unserializableInputUnchecked;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
@@ -385,9 +388,38 @@ class OpaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void failsClosedOnAnInterruptedCallEvenUnderFailOpen() throws Exception {
+        // the SDK wraps the interrupt in its OPAException, so the dedicated InterruptedException catch never sees
+        // it: the classification is what keeps a shutdown from turning into an allow
+        givenFailure(interrupted(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
+    void failsClosedWhenTheSdkRefusesToSendTheRequestEvenUnderFailOpen() throws Exception {
+        // nothing reached the server, so it was not the server that was unavailable
+        givenFailure(rejectedBeforeSending(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
     void failsClosedOnAnInputTheSdkCannotSerializeEvenUnderFailOpen() throws Exception {
         // Jackson reports this as an IOException, which must not pass for a transport failure
         givenFailure(unserializableInput(PATH));
+
+        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
+        }));
+    }
+
+    @Test
+    void failsClosedOnASerializationFailureWrappedInAnUncheckedIOExceptionEvenUnderFailOpen() throws Exception {
+        // UncheckedIOException is not an IOException, so the classification has to walk past it to the Jackson
+        // cause rather than stop at the first type it does not recognise
+        givenFailure(unserializableInputUnchecked(PATH));
 
         assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
         }));

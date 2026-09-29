@@ -18,6 +18,7 @@ package org.apache.camel.component.opa;
 
 import java.io.Closeable;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.ConnectException;
 import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
@@ -75,9 +76,25 @@ public final class OpaSdkFailures {
         return wrap(path, new SDKError(response, statusCode, "API error occurred", new byte[0]));
     }
 
+    /** The call was interrupted: the SDK catches the InterruptedException and wraps it like any other failure. */
+    public static OPAException interrupted(String path) {
+        return wrap(path, new InterruptedException("sleep interrupted"));
+    }
+
+    /** The SDK refused to build the request, so nothing was sent to the server. */
+    public static OPAException rejectedBeforeSending(String path) {
+        return wrap(path, new IllegalArgumentException("Request body is required"));
+    }
+
     /** The SDK could not serialize the input document: Jackson reports that as an IOException of its own. */
     public static OPAException unserializableInput(String path) {
         return wrap(path, new JsonMappingException((Closeable) null, "No serializer found for class Object"));
+    }
+
+    /** The same serialization failure one level deeper, as an UncheckedIOException carries it. */
+    public static OPAException unserializableInputUnchecked(String path) {
+        return wrap(path, new UncheckedIOException(
+                new JsonMappingException((Closeable) null, "No serializer found for class Object")));
     }
 
     private static OPAException wrap(String path, Exception cause) {

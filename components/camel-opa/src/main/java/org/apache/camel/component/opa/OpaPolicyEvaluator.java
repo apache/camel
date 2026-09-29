@@ -88,7 +88,9 @@ public abstract class OpaPolicyEvaluator {
             decision = evaluateDecision(buildInput(exchange));
         } catch (InterruptedException e) {
             // not a policy failure but a shutdown, so failOpen must not turn it into an allow: nothing decided
-            // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed
+            // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed.
+            // This catches the wasm pool's wait; the REST SDK wraps an interrupted call in its OPAException, which
+            // reaches the catch below and fails closed there, as isDecisionPointUnavailable does not count it
             Thread.currentThread().interrupt();
             throw new OpaPolicyEvaluationException(
                     "Interrupted while evaluating policy " + policyPath, exchange, e);
