@@ -204,6 +204,28 @@ public class HealthCheckEdgeCasesTest {
         context.stop();
     }
 
+    @Test
+    public void testRestartedRouteConsumersAreNotKept() throws Exception {
+        DefaultHealthCheckRegistry registry = new DefaultHealthCheckRegistry();
+        CamelContext context = createContext(registry);
+        context.start();
+
+        ConsumersHealthCheckRepository consumers = new ConsumersHealthCheckRepository();
+        consumers.setCamelContext(context);
+
+        // a restarted route has a new consumer
+        for (int i = 0; i < 5; i++) {
+            consumers.stream().forEach(c -> c.call());
+            context.getRouteController().stopRoute("foo");
+            context.getRouteController().startRoute("foo");
+        }
+        consumers.stream().forEach(c -> c.call());
+
+        assertEquals(1, checksOf(consumers).size());
+
+        context.stop();
+    }
+
     private static Map<?, ?> checksOf(Object repository) throws Exception {
         Field field = repository.getClass().getDeclaredField("checks");
         field.setAccessible(true);
