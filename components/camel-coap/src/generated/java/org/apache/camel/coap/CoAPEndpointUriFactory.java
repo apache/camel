@@ -24,7 +24,7 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(20);
+        Set<String> props = new HashSet<>(21);
         props.add("advancedCertificateVerifier");
         props.add("advancedPskStore");
         props.add("alias");
@@ -37,6 +37,7 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("exchangePattern");
         props.add("headerFilterStrategy");
         props.add("lazyStartProducer");
+        props.add("muteException");
         props.add("notify");
         props.add("observable");
         props.add("observe");
