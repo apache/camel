@@ -39,47 +39,37 @@ public class CompositePerformanceCounter implements PerformanceCounter {
 
     @Override
     public void processExchange(Exchange exchange, String type) {
-        if (counter1.isStatisticsEnabled()) {
-            counter1.processExchange(exchange, type);
-        }
-        if (counter2.isStatisticsEnabled()) {
-            counter2.processExchange(exchange, type);
-        }
-        if (counter3 != null && counter3.isStatisticsEnabled()) {
+        counter1.processExchange(exchange, type);
+        counter2.processExchange(exchange, type);
+        if (counter3 != null) {
             counter3.processExchange(exchange, type);
         }
     }
 
     @Override
     public void completedExchange(Exchange exchange, long time) {
-        if (counter1.isStatisticsEnabled()) {
-            counter1.completedExchange(exchange, time);
-        }
-        if (counter2.isStatisticsEnabled()) {
-            counter2.completedExchange(exchange, time);
-        }
-        if (counter3 != null && counter3.isStatisticsEnabled()) {
+        counter1.completedExchange(exchange, time);
+        counter2.completedExchange(exchange, time);
+        if (counter3 != null) {
             counter3.completedExchange(exchange, time);
         }
     }
 
     @Override
     public void failedExchange(Exchange exchange) {
-        if (counter1.isStatisticsEnabled()) {
-            counter1.failedExchange(exchange);
-        }
-        if (counter2.isStatisticsEnabled()) {
-            counter2.failedExchange(exchange);
-        }
-        if (counter3 != null && counter3.isStatisticsEnabled()) {
+        counter1.failedExchange(exchange);
+        counter2.failedExchange(exchange);
+        if (counter3 != null) {
             counter3.failedExchange(exchange);
         }
     }
 
     @Override
     public boolean isStatisticsEnabled() {
-        // this method is not used
-        return true;
+        // an exchange is counted when any of the counters has statistics enabled; each counter keeps its inflight
+        // count, and only gathers the other statistics when it is enabled itself
+        return counter1.isStatisticsEnabled() || counter2.isStatisticsEnabled()
+                || counter3 != null && counter3.isStatisticsEnabled();
     }
 
     @Override

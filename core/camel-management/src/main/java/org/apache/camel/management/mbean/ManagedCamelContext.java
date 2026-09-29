@@ -115,17 +115,21 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
             if (level <= 1) {
                 super.completedExchange(exchange, time);
                 if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
-                    remoteExchangesTotal.increment();
-                    remoteExchangesCompleted.increment();
                     remoteExchangesInflight.decrement();
+                    if (isStatisticsEnabled()) {
+                        remoteExchangesTotal.increment();
+                        remoteExchangesCompleted.increment();
+                    }
                 }
             }
         } else {
             super.completedExchange(exchange, time);
             if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
-                remoteExchangesTotal.increment();
-                remoteExchangesCompleted.increment();
                 remoteExchangesInflight.decrement();
+                if (isStatisticsEnabled()) {
+                    remoteExchangesTotal.increment();
+                    remoteExchangesCompleted.increment();
+                }
             }
         }
     }
@@ -142,17 +146,21 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
             if (level <= 1) {
                 super.failedExchange(exchange);
                 if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
-                    remoteExchangesTotal.increment();
-                    remoteExchangesFailed.increment();
                     remoteExchangesInflight.decrement();
+                    if (isStatisticsEnabled()) {
+                        remoteExchangesTotal.increment();
+                        remoteExchangesFailed.increment();
+                    }
                 }
             }
         } else {
             super.failedExchange(exchange);
             if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote()) {
-                remoteExchangesTotal.increment();
-                remoteExchangesFailed.increment();
                 remoteExchangesInflight.decrement();
+                if (isStatisticsEnabled()) {
+                    remoteExchangesTotal.increment();
+                    remoteExchangesFailed.increment();
+                }
             }
         }
     }
