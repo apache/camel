@@ -118,10 +118,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
         if (properties != null && !properties.isEmpty()) {
             parameters.putAll(properties);
-            // This special property (added by endpoint-dsl together with the properties) is only to identify
-            // endpoints in a unique manner (a hash parameter in the uri itself is a regular parameter)
-            parameters.remove("hash");
         }
+        // This special property is only to identify endpoints in a unique manner. The endpoint-dsl adds it to the
+        // uri, which can later be resolved from the uri alone, and it is also used in uris to create unique endpoints
+        parameters.remove("hash");
 
         if (resolveRawParameterValues()) {
             // parameters using raw syntax: RAW(value)

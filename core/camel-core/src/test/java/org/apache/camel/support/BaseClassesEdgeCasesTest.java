@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -132,13 +133,14 @@ public class BaseClassesEdgeCasesTest extends ContextTestSupport {
     }
 
     @Test
-    public void testHashParameterIsKept() throws Exception {
+    public void testHashParameterIsRemoved() throws Exception {
         MyComponent component = new MyComponent();
         context.addComponent("my", component);
         context.start();
 
+        // hash is only to identify endpoints in a unique manner, and is not an endpoint parameter
         context.getEndpoint("my:foo?hash=abc&x=1");
-        assertEquals("abc", component.parameters.get("hash"));
+        assertFalse(component.parameters.containsKey("hash"));
         assertEquals("1", component.parameters.get("x"));
     }
 
