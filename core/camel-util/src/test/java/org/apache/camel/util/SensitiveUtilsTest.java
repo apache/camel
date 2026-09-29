@@ -30,6 +30,8 @@ class SensitiveUtilsTest {
         assertThat(SensitiveUtils.containsSensitive("authorizationtoken")).isTrue();
         assertThat(SensitiveUtils.containsSensitive("clientsecret")).isTrue();
         assertThat(SensitiveUtils.containsSensitive("passphrase")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("DB_PASSWORD")).isTrue();
+        assertThat(SensitiveUtils.containsSensitive("app.apiSecret")).isTrue();
         assertThat(SensitiveUtils.containsSensitive("password")).isTrue();
         assertThat(SensitiveUtils.containsSensitive("sasljaasconfig")).isTrue();
         assertThat(SensitiveUtils.containsSensitive("sasl-jaas-config")).isTrue();

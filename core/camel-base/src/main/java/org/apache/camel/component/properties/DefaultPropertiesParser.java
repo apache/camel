@@ -24,6 +24,7 @@ import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,9 @@ import static org.apache.camel.util.IOHelper.lookupEnvironmentVariable;
  * A parser to parse a string which contains property placeholders.
  */
 public class DefaultPropertiesParser implements PropertiesParser {
+
+    // the mask of sensitive values (such as passwords) when logged
+    private static final String MASK = "xxxxxx";
 
     private static final String UNRESOLVED_PREFIX_TOKEN = "@@[";
 
@@ -401,7 +405,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     } else {
                         if (log.isDebugEnabled()) {
                             log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(),
-                                    value);
+                                    function.isSensitive() ? MASK : mask(StringHelper.after(key, ":"), value));
                         }
                         String k = prevKey != null ? prevKey : key;
                         propertiesComponent.updateResolvedValue(k, value, function.getName());
@@ -419,7 +423,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
             String value = doGetPropertyValue(key, defaultValue);
             if (value == null && defaultValue != null) {
-                log.debug("Property with key [{}] not found, using default value: {}", key, defaultValue);
+                log.debug("Property with key [{}] not found, using default value: {}", key, mask(key, defaultValue));
                 value = defaultValue;
                 for (PropertiesLookupListener listener : propertiesComponent.getPropertiesLookupListeners()) {
                     try {
@@ -481,7 +485,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                         }
                     }
                     onLookup(key, value, localDefaultValue, loc);
-                    log.debug("Found local property: {} with value: {} to be used.", key, value);
+                    log.debug("Found local property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
@@ -497,21 +501,21 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
                     onLookup(key, value, defaultValue, "ENV");
-                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
+                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 value = System.getProperty(key);
                 if (value != null) {
                     onLookup(key, value, defaultValue, "SYS");
-                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
             if (value == null && properties != null) {
                 value = properties.lookup(key, defaultValue);
                 if (value != null) {
-                    log.debug("Found property: {} with value: {} to be used.", key, value);
+                    log.debug("Found property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
@@ -519,7 +523,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 // custom lookup in spring boot or other runtimes
                 value = customLookup(key);
                 if (value != null) {
-                    log.debug("Found property (custom lookup): {} with value: {} to be used.", key, value);
+                    log.debug("Found property (custom lookup): {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
@@ -527,14 +531,14 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 value = lookupEnvironmentVariable(key);
                 if (value != null) {
                     onLookup(key, value, defaultValue, "ENV");
-                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, value);
+                    log.debug("Found an OS environment property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
             if (value == null && sysMode == PropertiesComponent.SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 value = System.getProperty(key);
                 if (value != null) {
                     onLookup(key, value, defaultValue, "SYS");
-                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
+                    log.debug("Found a JVM system property: {} with value: {} to be used.", key, mask(key, value));
                 }
             }
 
@@ -611,5 +615,9 @@ public class DefaultPropertiesParser implements PropertiesParser {
         public String getValue() {
             return value;
         }
+    }
+
+    private static Object mask(String key, Object value) {
+        return value != null && key != null && SensitiveUtils.containsSensitive(key) ? MASK : value;
     }
 }

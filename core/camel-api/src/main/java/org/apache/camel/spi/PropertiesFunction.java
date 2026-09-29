@@ -70,4 +70,15 @@ public interface PropertiesFunction {
         return false;
     }
 
+    /**
+     * Whether the values returned by this function are sensitive (such as secrets from a vault), which should not be
+     * logged.
+     *
+     * @return true if the values are sensitive
+     * @since  4.23
+     */
+    default boolean isSensitive() {
+        return false;
+    }
+
 }
