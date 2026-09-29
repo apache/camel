@@ -192,6 +192,10 @@ class SemanticDeclarationDslTest {
                         "Duplicate semantic criterion"),
                 Arguments.of(question.replace("type=\"boolean\"", "type=\"score\""), "score needs ordered levels"),
                 Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" threshold=\"NaN\""), "within [0,1]"),
+                Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" threshold=\"abc\""),
+                        "Invalid semantic question 'q': threshold must be a valid number: abc"),
+                Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" uncertainty=\"abc\""),
+                        "Invalid semantic question 'q': uncertainty must be a valid number: abc"),
                 Arguments.of(question.replace("type=\"boolean\"", "type=\"boolean\" state=\" \""),
                         "state selector must not be blank"),
                 Arguments.of(question.replace("name=\"q\"", "unknown=\"q\""), "Unexpected attribute"));
