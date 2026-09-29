@@ -773,6 +773,22 @@ public interface OpenFgaEndpointBuilderFactory {
             return "CamelOpenFgaDenyReason";
         }
         /**
+         * Set to true only when the exchange proceeded because failOpen is
+         * enabled and OpenFGA could not be asked - nothing authorized it.
+         * Absent on every verdict OpenFGA actually gave, so a route or an audit
+         * trail can tell the two apart rather than seeing the same
+         * CamelOpenFgaAllowed=true for both.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenFgaFailedOpen}.
+         */
+        public String openFgaFailedOpen() {
+            return "CamelOpenFgaFailedOpen";
+        }
+        /**
          * The subject the check was made for, as resolved from the endpoint's
          * user expression. Set for observability; it is not read as an input.
          * 

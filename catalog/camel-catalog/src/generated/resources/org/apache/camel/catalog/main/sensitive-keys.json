@@ -11,6 +11,7 @@
   "apikey",
   "apipassword",
   "apisecret",
+  "apitoken",
   "apiuser",
   "apiusername",
   "authenticationtoken",

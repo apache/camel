@@ -161,6 +161,10 @@ public class OpenFgaAuthorizer {
                          + " failOpen is enabled. Reason: {}",
                         resolvedUser, resolvedRelation, resolvedObject, e.getMessage());
                 setDecision(exchange, true);
+                // the verdict header alone cannot distinguish "OpenFGA allowed this" from "OpenFGA was never
+                // reached and we were told to proceed". An auditor asking which exchanges went through
+                // unauthorized needs something to filter on, not a log line
+                exchange.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, true);
                 return true;
             }
             if (failOpen) {
@@ -297,6 +301,9 @@ public class OpenFgaAuthorizer {
     static void clearDecisionHeaders(Exchange exchange) {
         Message message = exchange.getMessage();
         message.removeHeader(OpenFgaConstants.ALLOWED);
+        // as worth spoofing as the verdict itself: left in place, a sender could preload it false and make a
+        // fail-open allow read as a verdict OpenFGA actually gave
+        message.removeHeader(OpenFgaConstants.FAILED_OPEN);
         message.removeHeader(OpenFgaConstants.DENY_REASON);
         message.removeHeader(OpenFgaConstants.USER);
         message.removeHeader(OpenFgaConstants.OBJECT);

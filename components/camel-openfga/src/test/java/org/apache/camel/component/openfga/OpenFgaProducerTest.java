@@ -163,6 +163,32 @@ class OpenFgaProducerTest extends CamelTestSupport {
 
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+        // nothing authorized this exchange, so it must not look like a verdict OpenFGA gave
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.FAILED_OPEN)).isEqualTo(true);
+    }
+
+    @Test
+    void doesNotMarkAGenuineAllowAsHavingFailedOpen() throws Exception {
+        givenVerdict(Boolean.TRUE);
+
+        Exchange out = request(ENDPOINT + "&failOpen=true");
+
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.FAILED_OPEN)).isNull();
+    }
+
+    @Test
+    void neverLetsASenderPreloadTheFailedOpenMarker() throws Exception {
+        givenServerIsUnreachable();
+
+        // preloading it false would make a fail-open allow read as a real verdict to anything auditing on it
+        Exchange out = template.request(ENDPOINT + "&failOpen=true", e -> {
+            e.getMessage().setHeader("subject", "anne");
+            e.getMessage().setHeader("documentId", "budget");
+            e.getMessage().setHeader(OpenFgaConstants.FAILED_OPEN, false);
+        });
+
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.FAILED_OPEN)).isEqualTo(true);
     }
 
     @ParameterizedTest

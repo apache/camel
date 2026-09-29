@@ -221,6 +221,11 @@ that and is off by default; it is marked `insecure:dev` and should not be enable
 two places where "proceed" means something. It never turns a denial into an allow, and it never applies to an
 Exchange that carried no usable subject (see below).
 
+When `failOpen` does let an exchange through, it carries `CamelOpenFgaFailedOpen=true`. The verdict header alone
+cannot distinguish "OpenFGA allowed this" from "OpenFGA was never reached and we were told to proceed", and an audit
+asking which exchanges went through unauthorized needs something it can filter on. The marker is set only on that
+deliberate path, and it is cleared on entry like the other decision headers so a sender cannot preload it.
+
 It also does not apply when OpenFGA answers with an HTTP 4xx. A 400 means the question was malformed, a 401 or 403
 that this client may not ask it, a 404 that what was asked about does not exist — none of which is a decision point
 that has gone away. This matters concretely: an object identifier can get past the component's own guards and still

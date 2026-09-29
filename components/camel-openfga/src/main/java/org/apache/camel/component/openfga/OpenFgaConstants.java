@@ -43,6 +43,14 @@ public final class OpenFgaConstants {
     public static final String DENY_REASON = HEADER_PREFIX + "DenyReason";
 
     @Metadata(label = "producer",
+              description = "Set to true only when the exchange proceeded because failOpen is enabled and OpenFGA"
+                            + " could not be asked - nothing authorized it. Absent on every verdict OpenFGA actually"
+                            + " gave, so a route or an audit trail can tell the two apart rather than seeing the same"
+                            + " CamelOpenFgaAllowed=true for both.",
+              javaType = "Boolean")
+    public static final String FAILED_OPEN = HEADER_PREFIX + "FailedOpen";
+
+    @Metadata(label = "producer",
               description = "The subject the check was made for, as resolved from the endpoint's user expression."
                             + " Set for observability; it is not read as an input.",
               javaType = "String")
