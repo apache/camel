@@ -393,8 +393,13 @@ class OpaProducerTest extends CamelTestSupport {
         // it: the classification is what keeps a shutdown from turning into an allow
         givenFailure(interrupted(PATH));
 
-        assertFailedClosed(template.request(ENDPOINT + "&failOpen=true", e -> {
-        }));
+        Exchange out = template.request(ENDPOINT + "&failOpen=true", e -> {
+        });
+
+        // the SDK cleared the interrupt when it caught it; the evaluator must hand it back to the thread.
+        // Thread.interrupted() also clears it again, so it does not leak into the next test
+        assertThat(Thread.interrupted()).isTrue();
+        assertFailedClosed(out);
     }
 
     @Test

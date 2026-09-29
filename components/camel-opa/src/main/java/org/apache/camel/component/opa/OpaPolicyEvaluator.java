@@ -95,6 +95,7 @@ public abstract class OpaPolicyEvaluator {
             throw new OpaPolicyEvaluationException(
                     "Interrupted while evaluating policy " + policyPath, exchange, e);
         } catch (Exception e) {
+            restoreInterruptIfWrapped(e);
             // every failure to reach a verdict fails closed, whichever layer gave up. failOpen is narrower: it lets
             // the exchange through only when the decision point was unavailable. A decision point that answered -
             // with an undefined decision, a rejected request or an evaluation error - has not been unavailable, and
@@ -152,6 +153,20 @@ public abstract class OpaPolicyEvaluator {
     }
 
     /**
+     * Re-sets the interrupt flag when the failure carries an {@link InterruptedException} somewhere in its cause chain.
+     * The OPA SDK catches the interrupt of its HTTP call and wraps it in an {@code OPAException} without re-setting the
+     * flag, so the exchange fails closed but the thread would otherwise lose the interrupt its owner asked for.
+     */
+    private static void restoreInterruptIfWrapped(Throwable failure) {
+        for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
+            if (cause instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+    }
+
+    /**
      * Evaluates one input document per element in a single batch. The map is keyed so a result can be matched back to
      * its element; each value carries either the decision or the failure that stopped it being reached. Only the REST
      * evaluator implements this - wasm evaluates in-process, where batching saves nothing - so the default refuses.
@@ -195,6 +210,7 @@ public abstract class OpaPolicyEvaluator {
             throw new OpaPolicyEvaluationException(
                     "Interrupted while evaluating policy " + getPolicyPath() + " in batch", exchange, e);
         } catch (Exception e) {
+            restoreInterruptIfWrapped(e);
             // the batch call itself failed, so nothing was decided; fail closed for every element unless failOpen
             // is set and the server could not be reached
             if (!failOpen || !isDecisionPointUnavailable(e)) {
@@ -216,6 +232,9 @@ public abstract class OpaPolicyEvaluator {
     private boolean verdictFor(int index, BatchElement element) {
         if (element != null && element.succeeded()) {
             return isAllowed(element.decision());
+        }
+        if (element != null && element.failure() != null) {
+            restoreInterruptIfWrapped(element.failure());
         }
         // a single element failed: deny it without failing the whole batch, unless failOpen is set and its decision
         // point was unavailable

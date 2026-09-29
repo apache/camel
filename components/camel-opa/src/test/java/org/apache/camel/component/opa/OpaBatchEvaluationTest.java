@@ -29,6 +29,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.opa.OpaSdkFailures.evaluationError;
+import static org.apache.camel.component.opa.OpaSdkFailures.interrupted;
 import static org.apache.camel.component.opa.OpaSdkFailures.status;
 import static org.apache.camel.component.opa.OpaSdkFailures.undefinedDecision;
 import static org.apache.camel.component.opa.OpaSdkFailures.unreachable;
@@ -213,6 +214,21 @@ public class OpaBatchEvaluationTest extends CamelTestSupport {
         assertThat(out.getException())
                 .isInstanceOf(OpaPolicyEvaluationException.class)
                 .hasMessageContaining("in batch");
+        assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION)).isNull();
+    }
+
+    @Test
+    void failsTheWholeBatchClosedAndKeepsTheInterruptWhenTheCallWasInterrupted() throws Exception {
+        // the SDK wraps the interrupt and clears the flag; the batch must fail closed, even under failOpen, and
+        // hand the interrupt back to the thread
+        OPAException interruption = interrupted(PATH);
+        when(client.evaluateBatch(eq(PATH), anyMap())).thenThrow(interruption);
+
+        Exchange out = template.request("opa:" + PATH + "?opaClient=#opaClient&batch=true&failOpen=true",
+                e -> e.getMessage().setBody(List.of("a", "b")));
+
+        assertThat(Thread.interrupted()).isTrue();
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
         assertThat(out.getMessage().getHeader(OpaConstants.BATCH_DECISION)).isNull();
     }
 }
