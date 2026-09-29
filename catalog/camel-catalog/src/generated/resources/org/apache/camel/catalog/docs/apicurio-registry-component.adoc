@@ -65,7 +65,7 @@ the `CamelApicurioRegistryOperation` header:
 | `getArtifactContent` | Retrieve the content of an artifact version.
 | `getArtifactMetadata` | Retrieve artifact metadata.
 | `searchArtifacts` | Search for artifacts using filter headers.
-| `listVersions` | List all versions of an artifact.
+| `listVersions` | List all versions of an artifact, ordered by global ID. The component follows the registry's pagination and returns every page.
 | `createGroup` | Create a new group.
 | `testCompatibility` | Test schema compatibility (dry run). Returns `true`/`false` in the body.
 | `validate` | Validate the message body against the artifact's rules (dry run). Throws `ApicurioRegistryValidationException` on failure when `failOnValidation=true`.
@@ -83,9 +83,9 @@ stored schema. Authentication, connectivity, and other non-rule failures propaga
 exceptions, rather than returning a negative validation result.
 
 Both operations set `CamelApicurioRegistryValidationErrors` to the rule violation details
-when a check fails and clear any previous value before checking. `testCompatibility` returns
-the boolean result in the body; `validate` preserves the body and sets
-`CamelApicurioRegistryValidationResult`.
+when a check fails and clear any previous value before checking. Both set
+`CamelApicurioRegistryValidationResult`; `testCompatibility` also returns the boolean result
+in the body, while `validate` preserves the body.
 
 == Consumer
 
@@ -97,9 +97,15 @@ On first start, all existing versions of the artifact are emitted as exchanges. 
 only deliver versions created after the consumer started. The watermark is held in memory and
 resets on route/context restart.
 
-If fetching content or invoking the processor throws an exception, the consumer releases
-the exchange and stops the current poll without advancing the watermark for that version.
-The failed version remains eligible for the next poll.
+The consumer requests versions newest first, one page at a time, and stops at the first
+version it has already seen, so artifacts with many versions are handled without loading
+every page on each poll.
+
+If fetching content fails, or the route fails to process a version (including failures
+handled by the error handler without being rethrown, such as with the default error handler),
+the consumer reports the error through its exception handler and stops the current poll
+without advancing the watermark. The failed version and any newer ones are delivered again
+on the next poll.
 
 When `fetchContent=true`, the consumer fetches the version content and sets it as a `byte[]` exchange body,
 closing the SDK response stream before processing the exchange.
@@ -208,8 +214,12 @@ from("direct:validateSchema")
 
 == Authentication
 
-The endpoint manages the Vert.x instance used by its SDK client and closes it when
-the endpoint stops. A client supplied through `registryClient` remains caller-owned;
+All endpoints of the component share a single Vert.x instance for their SDK clients. The
+component creates it on first use and closes it when the component stops. To reuse an existing
+Vert.x instance, set the `vertx` component option or bind a single `Vertx` bean in the registry;
+the component does not close a Vert.x instance it did not create.
+
+A client supplied through `registryClient` remains caller-owned;
 the caller is responsible for its underlying HTTP resources.
 
 The component supports three authentication modes via the `authType` option:

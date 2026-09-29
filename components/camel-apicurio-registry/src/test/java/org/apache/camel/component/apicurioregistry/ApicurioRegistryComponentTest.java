@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.apicurioregistry;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
