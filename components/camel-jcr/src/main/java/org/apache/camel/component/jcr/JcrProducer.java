@@ -34,6 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.jackrabbit.util.Text;
@@ -49,6 +50,7 @@ public class JcrProducer extends DefaultProducer {
         TypeConverter converter = exchange.getContext().getTypeConverter();
         Session session = openSession();
         Message message = exchange.getIn();
+        HeaderFilterStrategy headerFilterStrategy = getJcrEndpoint().getHeaderFilterStrategy();
         String operation = determineOperation(message);
         try {
             if (JcrConstants.JCR_INSERT.equals(operation)) {
@@ -57,6 +59,10 @@ public class JcrProducer extends DefaultProducer {
                 Map<String, Object> headers = filterComponentHeaders(message.getHeaders());
                 for (String key : headers.keySet()) {
                     Object header = message.getHeader(key);
+                    if (headerFilterStrategy != null
+                            && headerFilterStrategy.applyFilterToCamelHeaders(key, header, exchange)) {
+                        continue;
+                    }
                     if (header != null && Object[].class.isAssignableFrom(header.getClass())) {
                         Value[] value = converter.convertTo(Value[].class, exchange, header);
                         node.setProperty(key, value);
@@ -81,7 +87,11 @@ public class JcrProducer extends DefaultProducer {
                     } else {
                         value = converter.convertTo(aClass, exchange, property.getValue());
                     }
-                    message.setHeader(property.getName(), value);
+                    String name = property.getName();
+                    if (headerFilterStrategy == null
+                            || !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                        message.setHeader(name, value);
+                    }
                 }
             } else {
                 throw new RuntimeCamelException("Unsupported operation: " + operation);
@@ -93,6 +103,10 @@ public class JcrProducer extends DefaultProducer {
         }
     }
 
+    // Strips the JCR control keys (operation, node name, node type) unconditionally, independent of the configured
+    // HeaderFilterStrategy. The default strategy already filters these (they are Camel-prefixed), but a custom
+    // strategy that does not filter Camel* headers must still never persist these operational headers as node
+    // properties, so this filtering is kept as a separate, unconditional guard.
     private Map<String, Object> filterComponentHeaders(Map<String, Object> properties) {
         Map<String, Object> result = new HashMap<>(properties.size());
         for (Map.Entry<String, Object> entry : properties.entrySet()) {

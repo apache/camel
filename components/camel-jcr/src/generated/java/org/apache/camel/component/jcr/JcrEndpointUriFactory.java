@@ -23,13 +23,14 @@ public class JcrEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(17);
         props.add("base");
         props.add("bridgeErrorHandler");
         props.add("deep");
         props.add("eventTypes");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("headerFilterStrategy");
         props.add("host");
         props.add("lazyStartProducer");
         props.add("noLocal");
