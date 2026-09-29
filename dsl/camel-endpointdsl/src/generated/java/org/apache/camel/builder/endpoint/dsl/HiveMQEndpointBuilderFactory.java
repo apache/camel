@@ -44,8 +44,8 @@ public interface HiveMQEndpointBuilderFactory {
             return (AdvancedHiveMQEndpointConsumerBuilder) this;
         }
         /**
-         * Whether to initiate a clean start (MQTT 5) upon connecting to the
-         * broker.
+         * Whether to initiate a clean session upon connecting to the broker
+         * (called clean session in MQTT 3.1.1 and clean start in MQTT 5).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -60,8 +60,8 @@ public interface HiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to initiate a clean start (MQTT 5) upon connecting to the
-         * broker.
+         * Whether to initiate a clean session upon connecting to the broker
+         * (called clean session in MQTT 3.1.1 and clean start in MQTT 5).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -102,6 +102,38 @@ public interface HiveMQEndpointBuilderFactory {
          */
         default HiveMQEndpointConsumerBuilder host(String host) {
             doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * The MQTT protocol version to use when connecting to the broker.
+         * 
+         * The option is a: <code>com.hivemq.client.mqtt.MqttVersion</code>
+         * type.
+         * 
+         * Default: MQTT_5_0
+         * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointConsumerBuilder mqttVersion(com.hivemq.client.mqtt.MqttVersion mqttVersion) {
+            doSetProperty("mqttVersion", mqttVersion);
+            return this;
+        }
+        /**
+         * The MQTT protocol version to use when connecting to the broker.
+         * 
+         * The option will be converted to a
+         * <code>com.hivemq.client.mqtt.MqttVersion</code> type.
+         * 
+         * Default: MQTT_5_0
+         * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointConsumerBuilder mqttVersion(String mqttVersion) {
+            doSetProperty("mqttVersion", mqttVersion);
             return this;
         }
         /**
@@ -395,8 +427,8 @@ public interface HiveMQEndpointBuilderFactory {
         }
 
         /**
-         * Whether to initiate a clean start (MQTT 5) upon connecting to the
-         * broker.
+         * Whether to initiate a clean session upon connecting to the broker
+         * (called clean session in MQTT 3.1.1 and clean start in MQTT 5).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -411,8 +443,8 @@ public interface HiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to initiate a clean start (MQTT 5) upon connecting to the
-         * broker.
+         * Whether to initiate a clean session upon connecting to the broker
+         * (called clean session in MQTT 3.1.1 and clean start in MQTT 5).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -453,6 +485,38 @@ public interface HiveMQEndpointBuilderFactory {
          */
         default HiveMQEndpointProducerBuilder host(String host) {
             doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * The MQTT protocol version to use when connecting to the broker.
+         * 
+         * The option is a: <code>com.hivemq.client.mqtt.MqttVersion</code>
+         * type.
+         * 
+         * Default: MQTT_5_0
+         * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointProducerBuilder mqttVersion(com.hivemq.client.mqtt.MqttVersion mqttVersion) {
+            doSetProperty("mqttVersion", mqttVersion);
+            return this;
+        }
+        /**
+         * The MQTT protocol version to use when connecting to the broker.
+         * 
+         * The option will be converted to a
+         * <code>com.hivemq.client.mqtt.MqttVersion</code> type.
+         * 
+         * Default: MQTT_5_0
+         * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointProducerBuilder mqttVersion(String mqttVersion) {
+            doSetProperty("mqttVersion", mqttVersion);
             return this;
         }
         /**
@@ -675,8 +739,8 @@ public interface HiveMQEndpointBuilderFactory {
         }
 
         /**
-         * Whether to initiate a clean start (MQTT 5) upon connecting to the
-         * broker.
+         * Whether to initiate a clean session upon connecting to the broker
+         * (called clean session in MQTT 3.1.1 and clean start in MQTT 5).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -691,8 +755,8 @@ public interface HiveMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to initiate a clean start (MQTT 5) upon connecting to the
-         * broker.
+         * Whether to initiate a clean session upon connecting to the broker
+         * (called clean session in MQTT 3.1.1 and clean start in MQTT 5).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -733,6 +797,38 @@ public interface HiveMQEndpointBuilderFactory {
          */
         default HiveMQEndpointBuilder host(String host) {
             doSetProperty("host", host);
+            return this;
+        }
+        /**
+         * The MQTT protocol version to use when connecting to the broker.
+         * 
+         * The option is a: <code>com.hivemq.client.mqtt.MqttVersion</code>
+         * type.
+         * 
+         * Default: MQTT_5_0
+         * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointBuilder mqttVersion(com.hivemq.client.mqtt.MqttVersion mqttVersion) {
+            doSetProperty("mqttVersion", mqttVersion);
+            return this;
+        }
+        /**
+         * The MQTT protocol version to use when connecting to the broker.
+         * 
+         * The option will be converted to a
+         * <code>com.hivemq.client.mqtt.MqttVersion</code> type.
+         * 
+         * Default: MQTT_5_0
+         * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
+         */
+        default HiveMQEndpointBuilder mqttVersion(String mqttVersion) {
+            doSetProperty("mqttVersion", mqttVersion);
             return this;
         }
         /**

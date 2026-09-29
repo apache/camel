@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.hivemq;
 
+import java.util.Optional;
+
 import com.hivemq.client.mqtt.datatypes.MqttQos;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
-import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultAsyncProducer;
 public class HiveMQProducer extends DefaultAsyncProducer {
 
     private final HiveMQEndpoint endpoint;
-    private Mqtt5AsyncClient client;
+    private HiveMQClientAdapter client;
 
     public HiveMQProducer(HiveMQEndpoint endpoint) {
         super(endpoint);
@@ -42,9 +42,21 @@ public class HiveMQProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        endpoint.stopClient(client);
+        if (client != null) {
+            client.stop();
+        }
         client = null;
         super.doStop();
+    }
+
+    /**
+     * Gives direct access to the underlying HiveMQ MQTT Client library client (e.g. {@code Mqtt5AsyncClient} or
+     * {@code Mqtt3AsyncClient}, depending on the {@code mqttVersion} this producer is connected with) for use cases
+     * this component does not cover. Empty before the producer has started, or if {@code clazz} does not match the
+     * protocol version in use.
+     */
+    public <T> Optional<T> getClient(Class<T> clazz) {
+        return client == null ? Optional.empty() : client.getClient(clazz);
     }
 
     @Override
@@ -59,12 +71,7 @@ public class HiveMQProducer extends DefaultAsyncProducer {
             payload = new byte[0];
         }
 
-        client.publish(Mqtt5Publish.builder()
-                .topic(targetTopic)
-                .qos(qos)
-                .retain(retained)
-                .payload(payload)
-                .build())
+        client.publish(targetTopic, payload, qos, retained)
                 .whenComplete((publishResult, throwable) -> {
                     if (throwable != null) {
                         exchange.setException(throwable);

@@ -16,21 +16,10 @@
  */
 package org.apache.camel.component.hivemq;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
-import com.hivemq.client.mqtt.MqttClient;
-import com.hivemq.client.mqtt.MqttClientState;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5ClientBuilder;
-import com.hivemq.client.mqtt.mqtt5.message.auth.Mqtt5SimpleAuth;
-import com.hivemq.client.mqtt.mqtt5.message.auth.Mqtt5SimpleAuthBuilder;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -42,14 +31,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @UriEndpoint(firstVersion = "4.23.0", scheme = "hivemq", title = "HiveMQ", syntax = "hivemq:topic",
              category = { Category.MESSAGING, Category.IOT }, headersClass = HiveMQConstants.class)
 public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HiveMQEndpoint.class);
 
     /**
      * The MQTT topic name or pattern to subscribe to or publish on.
@@ -64,8 +49,6 @@ public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLo
     @UriParam
     @Metadata(description = "To use a custom HiveMQConfiguration")
     private HiveMQConfiguration configuration;
-
-    private final Map<Mqtt5AsyncClient, AtomicBoolean> reconnectCancellations = new ConcurrentHashMap<>();
 
     public HiveMQEndpoint(String uri, HiveMQComponent component, HiveMQConfiguration configuration, String topic) {
         super(uri, component);
@@ -85,90 +68,21 @@ public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLo
         return consumer;
     }
 
-    public Mqtt5AsyncClient createClient() {
-        AtomicBoolean cancelReconnect = new AtomicBoolean();
-        AtomicReference<Mqtt5AsyncClient> clientRef = new AtomicReference<>();
-        Mqtt5ClientBuilder builder = MqttClient.builder()
-                .serverHost(configuration.getHost())
-                .serverPort(configuration.getPort())
-                .automaticReconnectWithDefaultConfig()
-                .addDisconnectedListener(context -> {
-                    // Initial connect() does not complete while auto-reconnect keeps retrying (HiveMQ #302).
-                    // Also honour an explicit stop so DISCONNECTED_RECONNECT / CONNECTING_RECONNECT are cancelled.
-                    if (cancelReconnect.get() || context.getClientConfig().getState() == MqttClientState.CONNECTING) {
-                        context.getReconnector().reconnect(false);
-                    }
-                })
-                .addConnectedListener(context -> {
-                    // HiveMQ schedules reconnect after listeners return; cancelReconnect cannot abort that delay.
-                    // If a reconnect succeeds after Camel stop, disconnect immediately (USER source skips auto-reconnect).
-                    if (cancelReconnect.get()) {
-                        Mqtt5AsyncClient started = clientRef.get();
-                        if (started != null && started.getState().isConnected()) {
-                            try {
-                                started.disconnect();
-                            } catch (Exception e) {
-                                // Already disconnecting or not connected
-                            }
-                        }
-                    }
-                })
-                .useMqttVersion5();
-
-        if (configuration.getClientId() != null) {
-            builder.identifier(configuration.getClientId());
-        }
-
-        if (configuration.isSsl()) {
-            builder.sslWithDefaultConfig();
-        }
-
-        if (configuration.getUsername() != null) {
-            Mqtt5SimpleAuthBuilder.Complete authBuilder
-                    = Mqtt5SimpleAuth.builder().username(configuration.getUsername());
-            if (configuration.getPassword() != null) {
-                authBuilder.password(configuration.getPassword().getBytes(StandardCharsets.UTF_8));
-            }
-            builder.simpleAuth(authBuilder.build());
-        }
-
-        Mqtt5AsyncClient client = builder.buildAsync();
-        clientRef.set(client);
-        reconnectCancellations.put(client, cancelReconnect);
-        return client;
+    HiveMQClientAdapter createClient() {
+        return switch (configuration.getMqttVersion()) {
+            case MQTT_3_1_1 -> new Mqtt3ClientAdapter(configuration);
+            case MQTT_5_0 -> new Mqtt5ClientAdapter(configuration);
+        };
     }
 
-    public void connect(Mqtt5AsyncClient client) {
+    void connect(HiveMQClientAdapter client) {
         try {
-            client.connectWith()
-                    .cleanStart(configuration.isCleanStart())
-                    .send()
+            client.connect(configuration.isCleanStart())
                     .orTimeout(HiveMQConstants.DEFAULT_CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                     .join();
         } catch (CompletionException e) {
-            stopClient(client);
+            client.stop();
             throw unwrapConnectFailure(e);
-        }
-    }
-
-    /**
-     * Stops automatic reconnect and disconnects if currently connected. Safe to call from any client state.
-     */
-    public void stopClient(Mqtt5AsyncClient client) {
-        if (client == null) {
-            return;
-        }
-        AtomicBoolean cancelReconnect = reconnectCancellations.remove(client);
-        if (cancelReconnect != null) {
-            cancelReconnect.set(true);
-        }
-        try {
-            if (client.getState().isConnected()) {
-                client.disconnect().orTimeout(5, TimeUnit.SECONDS).join();
-            }
-        } catch (Exception e) {
-            // Not connected, already disconnecting, or reconnecting: the disconnected listener cancels reconnect.
-            LOG.debug("Failed to disconnect HiveMQ client during shutdown", e);
         }
     }
 
