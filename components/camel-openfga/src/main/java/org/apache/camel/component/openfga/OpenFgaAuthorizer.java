@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openfga;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,7 @@ import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.configuration.ClientCheckOptions;
 import dev.openfga.sdk.api.model.ConsistencyPreference;
 import dev.openfga.sdk.errors.FgaError;
+import dev.openfga.sdk.errors.SdkSerializationException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -203,14 +205,28 @@ public class OpenFgaAuthorizer {
     private static boolean isDecisionPointUnavailable(Throwable failure) {
         for (Throwable cause = failure; cause != null; cause = cause.getCause()) {
             if (cause instanceof FgaError error) {
-                return !error.isClientError() || error.isRateLimitError();
+                // 429 says "not right now" and a 5xx says the server broke; both are an absent decision point. Every
+                // other 4xx is OpenFGA telling us the question was malformed or may not be asked, which is not
+                return error.isRateLimitError() || error.isServerError();
+            }
+            if (cause instanceof SdkSerializationException) {
+                // our own input could not be turned into a request, so OpenFGA was never asked anything. Checked
+                // before IOException, which this extends and would otherwise be read as a transport failure
+                return false;
+            }
+            if (cause instanceof IOException || cause instanceof TimeoutException) {
+                // a connect failure, a dropped connection, or no answer within the bound: the server never replied
+                return true;
             }
             if (cause.getCause() == cause) {
                 break;
             }
         }
-        // no HTTP status to go on: a connect failure, a timeout, a serialization problem. The server never answered
-        return true;
+        // Nothing recognisable, so nothing that says OpenFGA was reached and could not answer: a request the SDK
+        // refused to build (FgaInvalidParameterException for an invalid store id, say), an interrupt during shutdown,
+        // or a plain bug. The list above is deliberately an allowlist - a failure this method does not recognise must
+        // not become an allow just because it is unfamiliar.
+        return false;
     }
 
     /**
@@ -340,8 +356,9 @@ public class OpenFgaAuthorizer {
             return future.get(awaitTimeoutMillis, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             // a shutdown, not a failure of the decision point. Restore the flag the interruptible wait cleared and
-            // fail: nothing decided that this exchange was permitted, so failOpen must not claim it did either -
-            // which is why the caller only consults failOpen for the exception, never for an interrupt reaching here
+            // fail: nothing decided that this exchange was permitted, so failOpen must not claim it did either.
+            // isDecisionPointUnavailable is what holds that line - an InterruptedException matches nothing on its
+            // allowlist, so this fails closed however failOpen is set
             Thread.currentThread().interrupt();
             future.cancel(true);
             throw new OpenFgaEvaluationException("Interrupted while waiting for OpenFGA to " + what, exchange, e);

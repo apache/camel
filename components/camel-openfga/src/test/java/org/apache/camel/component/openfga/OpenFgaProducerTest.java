@@ -25,6 +25,8 @@ import dev.openfga.sdk.api.client.OpenFgaClient;
 import dev.openfga.sdk.api.client.model.ClientCheckRequest;
 import dev.openfga.sdk.api.client.model.ClientCheckResponse;
 import dev.openfga.sdk.errors.FgaError;
+import dev.openfga.sdk.errors.FgaInvalidParameterException;
+import dev.openfga.sdk.errors.SdkSerializationException;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -226,6 +228,32 @@ class OpenFgaProducerTest extends CamelTestSupport {
 
         assertThat(out.getException()).isNull();
         assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isEqualTo(true);
+    }
+
+    @Test
+    void deniesWhenTheSdkRefusesToBuildTheRequestEvenWhenFailOpenIsEnabled() throws Exception {
+        // thrown before the call goes out - an invalid store id, for instance - so OpenFGA was never asked anything.
+        // It carries no HTTP status, and a classifier that treated "nothing recognisable" as unavailable would allow it
+        when(client.check(any(ClientCheckRequest.class), any()))
+                .thenThrow(new FgaInvalidParameterException("storeId", "ClientConfiguration"));
+
+        Exchange out = request(ENDPOINT + "&failOpen=true");
+
+        assertThat(out.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
+    }
+
+    @Test
+    void deniesWhenOurOwnInputCouldNotBeSerialisedEvenWhenFailOpenIsEnabled() throws Exception {
+        // SdkSerializationException extends IOException, so it would pass for a transport failure unless singled out -
+        // but it means the request was never formed, not that the server went away
+        when(client.check(any(ClientCheckRequest.class), any())).thenReturn(CompletableFuture.failedFuture(
+                new SdkSerializationException("could not serialize the input", new IllegalStateException())));
+
+        Exchange out = request(ENDPOINT + "&failOpen=true");
+
+        assertThat(out.getException()).isInstanceOf(OpenFgaEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpenFgaConstants.ALLOWED)).isNull();
     }
 
     @Test
