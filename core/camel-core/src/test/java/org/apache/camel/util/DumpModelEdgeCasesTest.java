@@ -60,13 +60,14 @@ public class DumpModelEdgeCasesTest extends ContextTestSupport {
     }
 
     @Test
-    public void testDumpNote() throws Exception {
+    public void testDumpWithoutNote() throws Exception {
+        // a note is a code comment, which is not dumped
         String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
-        assertThat(xml).contains("note=\"my route note\"").contains("note=\"my log note\"");
+        assertThat(xml).contains("myRoute").doesNotContain("note");
 
         String yaml
                 = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"));
-        assertThat(yaml).contains("note: my route note").contains("note: my log note");
+        assertThat(yaml).contains("myRoute").doesNotContain("note");
     }
 
     @Override

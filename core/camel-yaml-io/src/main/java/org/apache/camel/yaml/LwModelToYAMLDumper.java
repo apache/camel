@@ -112,7 +112,6 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                     doWriteAttribute(jo, "id", def.getId(), null);
                 }
                 doWriteAttribute(jo, "description", def.getDescription(), null);
-                doWriteAttribute(jo, "note", def.getNote(), null);
                 if (sourceLocation || context.isDebugging()) {
                     String loc = (def instanceof RouteDefinition rd1 ? rd1.getInput() : def).getLocation();
                     int line = (def instanceof RouteDefinition rd2 ? rd2.getInput() : def).getLineNumber();
