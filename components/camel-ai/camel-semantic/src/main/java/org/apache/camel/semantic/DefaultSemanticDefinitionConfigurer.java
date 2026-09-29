@@ -17,13 +17,14 @@
 package org.apache.camel.semantic;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.app.SemanticDefinition;
-import org.apache.camel.model.app.SemanticDefinitionConfigurer;
 import org.apache.camel.model.app.SemanticQuestionDefinition;
+import org.apache.camel.model.spi.SemanticDefinitionConfigurer;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.StringHelper;
 
@@ -42,7 +43,7 @@ public class DefaultSemanticDefinitionConfigurer implements SemanticDefinitionCo
                     throw new IllegalArgumentException("Duplicate semantic question: " + name);
                 }
                 try {
-                    questions.put(name, question(question));
+                    questions.put(name, question(context, question));
                 } catch (IllegalArgumentException e) {
                     throw new IllegalArgumentException("Invalid semantic question '" + name + "': " + e.getMessage(), e);
                 }
@@ -52,7 +53,29 @@ public class DefaultSemanticDefinitionConfigurer implements SemanticDefinitionCo
         SemanticQuestions.get(context).replace("model:" + source, resource, questions);
     }
 
-    private static SemanticQuestion question(SemanticQuestionDefinition definition) {
+    /** Export a snapshot of the registered questions and their effective decision policies. */
+    public static SemanticDefinition getDefinition(CamelContext context) {
+        SemanticQuestions questions = context.getCamelContextExtension().getContextPlugin(SemanticQuestions.class);
+        if (questions == null) {
+            return null;
+        }
+        SemanticDefinition definition = new SemanticDefinition();
+        questions.snapshot().entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {
+            SemanticQuestion question = entry.getValue();
+            SemanticQuestionDefinition target = definition.question(entry.getKey())
+                    .type(question.getType().name().toLowerCase(Locale.ROOT))
+                    .instructions(question.getInstructions()).state(question.getState());
+            question.getCriteria().forEach(target::criterion);
+            question.getLevels().forEach(target::level);
+            if (question.getType() == SemanticQuestion.Type.BOOLEAN) {
+                target.threshold(question.getThreshold()).uncertainty(question.getUncertainty())
+                        .uncertaintyPolicy(question.getUncertaintyPolicy().name().toLowerCase(Locale.ROOT).replace('_', '-'));
+            }
+        });
+        return definition;
+    }
+
+    private static SemanticQuestion question(CamelContext context, SemanticQuestionDefinition definition) {
         if (definition.getType() == null) {
             throw new IllegalArgumentException("Question type is required");
         }
@@ -72,16 +95,16 @@ public class DefaultSemanticDefinitionConfigurer implements SemanticDefinitionCo
         return new SemanticQuestion(
                 type, definition.getInstructions(), definition.getState(), criteria,
                 definition.getLevels(),
-                definition.getThreshold() == null ? 0.5 : parseDouble(definition.getThreshold(), "threshold"),
-                definition.getUncertainty() == null ? 0 : parseDouble(definition.getUncertainty(), "uncertainty"),
+                definition.getThreshold() == null ? 0.5 : parseDouble(context, definition.getThreshold(), "threshold"),
+                definition.getUncertainty() == null ? 0 : parseDouble(context, definition.getUncertainty(), "uncertainty"),
                 definition.getUncertaintyPolicy() == null
                         ? SemanticQuestion.UncertaintyPolicy.FAIL
                         : enumeration(definition.getUncertaintyPolicy(), SemanticQuestion.UncertaintyPolicy.class));
     }
 
-    private static double parseDouble(String value, String field) {
+    private static double parseDouble(CamelContext context, String value, String field) {
         try {
-            return Double.parseDouble(value);
+            return Double.parseDouble(context.resolvePropertyPlaceholders(value));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(field + " must be a valid number: " + value, e);
         }

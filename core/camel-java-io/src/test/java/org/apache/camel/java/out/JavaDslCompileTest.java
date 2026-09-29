@@ -139,8 +139,21 @@ public class JavaDslCompileTest {
             RoutesDefinition routes = new ModelParser(input, NAMESPACE).parseRoutesDefinition().orElseThrow();
             String java = new LwModelToJavaDumper().dumpModelAsJava(null, routes);
             assertTrue(java.contains("semanticQuestions().question(\"department\")"));
-            assertTrue(java.contains(".threshold(0.8)"));
+            assertTrue(java.contains(".threshold(\"0.8\")"));
             List<String> errors = compile("SemanticRoutes", wrapInRouteBuilder("SemanticRoutes", List.of(java)));
+            assertTrue(errors.isEmpty(), () -> errors + "\n" + java);
+        }
+    }
+
+    @Test
+    void semanticNumericPlaceholdersSurviveJavaExport() throws Exception {
+        try (var input = Files.newInputStream(XML_IO_RESOURCES.resolve("semantic-routes.xml"))) {
+            RoutesDefinition routes = new ModelParser(input, NAMESPACE).parseRoutesDefinition().orElseThrow();
+            routes.getSemantic().getQuestions().get(0).threshold("{{threshold}}").uncertainty("{{uncertainty}}");
+            String java = new LwModelToJavaDumper().dumpModelAsJava(null, routes);
+            assertTrue(java.contains(".threshold(\"{{threshold}}\")"));
+            assertTrue(java.contains(".uncertainty(\"{{uncertainty}}\")"));
+            List<String> errors = compile("SemanticPlaceholders", wrapInRouteBuilder("SemanticPlaceholders", List.of(java)));
             assertTrue(errors.isEmpty(), () -> errors + "\n" + java);
         }
     }

@@ -167,14 +167,25 @@ XML declarations are loaded before route references are initialized, including t
 resource loaded together. Reload replaces the source's questions;
 removing its declarations or deleting the resource removes obsolete definitions.
 
+The JAXB XML loader also supports declarations inside a `routes` document using the
+`http://camel.apache.org/schema/spring` namespace. With JAXB, load a separate declaration
+resource before the routes that reference it.
+
+The numeric `threshold` and `uncertainty` options accept property placeholders in all three
+DSLs. For example, Java accepts `.threshold("{{semantic.threshold:0.5}}")`, and XML accepts
+`threshold="{{semantic.threshold:0.5}}"`. Values are resolved and validated when declarations
+are registered; Java model exports preserve the placeholder text.
+
 Both Java and XML declarations require `camel-semantic` and use the same context-wide registry,
 validation, defaults and adapters as YAML. They do not require `camel-yaml-dsl`. Their questions
 can also be selected together using `refs:name1,name2`, as described below.
 
 === Exporting declarations
 
-Direct exports of a `RoutesDefinition` containing semantic declarations preserve them, as does
-XML-to-YAML conversion. Runtime route dumps such as `camel.main.dumpRoutes=yaml` contain only
+Direct exports of a `RoutesDefinition` containing semantic declarations preserve them. The MCP
+route transformation tool also preserves declarations in XML-to-YAML, YAML-to-XML, and
+Java-to-YAML/XML conversions. Conversions that load a Camel context export the registered
+questions with their effective numeric policies. Runtime route dumps such as `camel.main.dumpRoutes=yaml` contain only
 the routes and omit the question declarations. Supply the declarations separately before
 reloading those dumps.
 

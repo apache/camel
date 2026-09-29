@@ -46,6 +46,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.SemanticDefinitionHelper;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.SemanticDefinition;
@@ -202,6 +203,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     /**
      * Declares named semantic questions for use with the semantic language. Requires camel-semantic at runtime.
+     *
+     * @since 4.23
      */
     public SemanticDefinition semanticQuestions() {
         if (getRouteCollection().getSemantic() == null) {
@@ -925,7 +928,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 String source = getResource() != null
                         ? getResource().getLocation()
                         : "java:" + camelContext.getUuidGenerator().generateUuid();
-                SemanticDefinition.configure(camelContext, getResource(), source, getRouteCollection().getSemantic());
+                SemanticDefinitionHelper.configure(camelContext, getResource(), source, getRouteCollection().getSemantic());
             }
 
             // remember the source resource

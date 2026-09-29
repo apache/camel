@@ -341,6 +341,21 @@ class SemanticQuestionTest extends YamlTestSupport {
                 .hasStackTraceContaining("Node type map is invalid, expected array");
     }
 
+    @Test
+    void numericPlaceholdersResolveBeforeValidation() throws Exception {
+        loadRoutesNoValidate("""
+                - semantic:
+                    question:
+                      urgent:
+                        type: boolean
+                        instructions: Urgent?
+                        threshold: "{{threshold:0.8}}"
+                        uncertainty: "{{uncertainty:0.1}}"
+                """);
+        assertThat(SemanticQuestions.get(context).get("urgent").getThreshold()).isEqualTo(0.8);
+        assertThat(SemanticQuestions.get(context).get("urgent").getUncertainty()).isEqualTo(0.1);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = { "threshold", "uncertainty" })
     void invalidNumericValuesIdentifyQuestionFieldAndLocation(String field) {

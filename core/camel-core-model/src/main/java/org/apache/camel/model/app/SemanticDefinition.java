@@ -24,9 +24,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Resource;
 
 /** Named, provider-independent semantic question declarations. */
 @Metadata(label = "configuration")
@@ -51,25 +49,5 @@ public class SemanticDefinition {
         question.setName(name);
         questions.add(question);
         return question;
-    }
-
-    /** Register declarations before route initialization, without requiring semantic support for ordinary routes. */
-    public static void configure(
-            CamelContext context, Resource resource, String source, SemanticDefinition definition) {
-        SemanticDefinitionConfigurer configurer
-                = context.getCamelContextExtension().getContextPlugin(SemanticDefinitionConfigurer.class);
-        if (configurer == null) {
-            if (definition == null || definition.getQuestions().isEmpty()) {
-                return;
-            }
-            // Concurrent discovery may create equivalent instances of the stateless default configurer.
-            // The semantic module synchronizes access to shared question state.
-            configurer = context.getCamelContextExtension().getDefaultFactoryFinder()
-                    .newInstance("semantic-configurer", SemanticDefinitionConfigurer.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Semantic question declarations require camel-semantic on the classpath"));
-            context.getCamelContextExtension().addContextPlugin(SemanticDefinitionConfigurer.class, configurer);
-        }
-        configurer.configure(context, resource, source, definition);
     }
 }

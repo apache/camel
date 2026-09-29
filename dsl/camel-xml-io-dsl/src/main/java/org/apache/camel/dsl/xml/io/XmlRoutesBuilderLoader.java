@@ -18,6 +18,7 @@ package org.apache.camel.dsl.xml.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.SemanticDefinitionHelper;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
@@ -94,16 +96,25 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public void preParseRoute(Resource resource) throws Exception {
         // preparsing is done at early stage, so we have a chance to load additional beans and populate
         // Camel registry
-        if (preparseDone.getOrDefault(resource.getLocation(), false)) {
-            return;
-        }
         try {
-            XmlStreamInfo xmlInfo = xmlInfo(resource);
+            // Main may preparse twice. Reuse unchanged input, but refresh edited resources after a failed batch.
+            Resource snapshot = new CachedResource(resource);
+            Resource previous = resourceCache.get(resource.getLocation());
+            if (preparseDone.getOrDefault(resource.getLocation(), false) && previous != null) {
+                try (var current = snapshot.getInputStream(); var cached = previous.getInputStream()) {
+                    if (Arrays.equals(current.readAllBytes(), cached.readAllBytes())) {
+                        return;
+                    }
+                }
+            }
+            clearCaches(resource.getLocation());
+            resourceCache.put(resource.getLocation(), snapshot);
+            XmlStreamInfo xmlInfo = xmlInfo(snapshot);
             if (xmlInfo.isValid()) {
                 String root = xmlInfo.getRootElementName();
                 SemanticDefinition semantic = null;
                 if ("beans".equals(root) || "blueprint".equals(root) || "camel".equals(root)) {
-                    new XmlModelParser(resource, xmlInfo.getRootElementNamespace())
+                    new XmlModelParser(snapshot, xmlInfo.getRootElementNamespace())
                             .parseBeansDefinition()
                             .ifPresent(bd -> {
                                 registerBeans(resource, bd);
@@ -114,14 +125,14 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                         semantic = app.getSemantic();
                     }
                 } else if ("routes".equals(root) || "route".equals(root)) {
-                    RoutesDefinition routes = new XmlModelParser(resource(resource), xmlInfo.getRootElementNamespace())
+                    RoutesDefinition routes = new XmlModelParser(snapshot, xmlInfo.getRootElementNamespace())
                             .parseRoutesDefinition().orElse(null);
                     if (routes != null) {
                         routesCache.put(resource.getLocation(), routes);
                         semantic = routes.getSemantic();
                     }
                 }
-                SemanticDefinition.configure(getCamelContext(), resource, resource.getLocation(), semantic);
+                SemanticDefinitionHelper.configure(getCamelContext(), resource, resource.getLocation(), semantic);
             }
             preparseDone.put(resource.getLocation(), true);
         } catch (Exception e) {
@@ -131,6 +142,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             camelAppCache.clear();
             routesCache.clear();
             preparseDone.clear();
+            delayedRegistrations.clear();
             throw e;
         }
     }
@@ -141,6 +153,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         camelAppCache.remove(location);
         routesCache.remove(location);
         preparseDone.remove(location);
+        delayedRegistrations.removeIf(def -> def.getResource() != null && location.equals(def.getResource().getLocation()));
     }
 
     @Override
@@ -237,7 +250,6 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 if (!delayedRegistrations.isEmpty()) {
                     // some of the beans were not available yet, so we have to try register them now
                     for (BeanFactoryDefinition<?> def : delayedRegistrations) {
-                        def.setResource(getResource());
                         registerBeanDefinition(def, false);
                     }
                     delayedRegistrations.clear();

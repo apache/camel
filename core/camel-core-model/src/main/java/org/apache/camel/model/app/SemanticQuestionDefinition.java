@@ -43,13 +43,13 @@ public class SemanticQuestionDefinition {
     @Metadata(description = "The Simple expression selecting the message state.")
     private String state;
     @XmlAttribute
-    @Metadata(description = "The boolean decision threshold.")
+    @Metadata(javaType = "java.lang.Double", defaultValue = "0.5", description = "The boolean decision threshold.")
     private String threshold;
     @XmlAttribute
-    @Metadata(description = "The boolean uncertainty band.")
+    @Metadata(javaType = "java.lang.Double", defaultValue = "0", description = "The boolean uncertainty band.")
     private String uncertainty;
     @XmlAttribute
-    @Metadata(enums = "fail,non-match", description = "The boolean uncertainty policy.")
+    @Metadata(defaultValue = "fail", enums = "fail,non-match", description = "The boolean uncertainty policy.")
     private String uncertaintyPolicy;
     @XmlElement(required = true)
     @Metadata(required = true, description = "Instructions describing the judgment to make.")
@@ -147,13 +147,23 @@ public class SemanticQuestionDefinition {
 
     /** The boolean decision threshold. */
     public SemanticQuestionDefinition threshold(double threshold) {
-        this.threshold = Double.toString(threshold);
+        return threshold(Double.toString(threshold));
+    }
+
+    /** The boolean decision threshold, allowing property placeholders. */
+    public SemanticQuestionDefinition threshold(String threshold) {
+        this.threshold = threshold;
         return this;
     }
 
     /** The boolean uncertainty band. */
     public SemanticQuestionDefinition uncertainty(double uncertainty) {
-        this.uncertainty = Double.toString(uncertainty);
+        return uncertainty(Double.toString(uncertainty));
+    }
+
+    /** The boolean uncertainty band, allowing property placeholders. */
+    public SemanticQuestionDefinition uncertainty(String uncertainty) {
+        this.uncertainty = uncertainty;
         return this;
     }
 

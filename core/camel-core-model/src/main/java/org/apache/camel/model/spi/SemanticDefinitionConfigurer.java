@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.app;
+package org.apache.camel.model.spi;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.app.SemanticDefinition;
 import org.apache.camel.spi.Resource;
 
 /** Installs semantic declarations using the optional semantic language module. */

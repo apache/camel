@@ -83,14 +83,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @Metadata(description = "Named semantic question declarations.")
     private SemanticDefinition semantic;
 
-    public SemanticDefinition getSemantic() {
-        return semantic;
-    }
-
-    public void setSemantic(SemanticDefinition semantic) {
-        this.semantic = semantic;
-    }
-
     public RoutesDefinition() {
     }
 
@@ -119,6 +111,14 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @Override
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
+    }
+
+    public SemanticDefinition getSemantic() {
+        return semantic;
+    }
+
+    public void setSemantic(SemanticDefinition semantic) {
+        this.semantic = semantic;
     }
 
     public List<InterceptFromDefinition> getInterceptFroms() {
