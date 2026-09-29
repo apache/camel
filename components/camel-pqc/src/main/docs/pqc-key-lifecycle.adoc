@@ -52,7 +52,7 @@ KeyLifecycleManager keyManager = new FileBasedKeyLifecycleManager("/secure/keys"
 
 // Generate a new Dilithium key
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
-    DilithiumParameterSpec.dilithium2);
+    MLDSAParameterSpec.ml_dsa_44);
 
 // Use the key
 KeyMetadata metadata = keyManager.getKeyMetadata("app-signing-key");
@@ -166,7 +166,7 @@ public HashicorpVaultKeyLifecycleManager createKeyManager() {
 
 // Generate a Dilithium key stored in Vault
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
-    DilithiumParameterSpec.dilithium2);
+    MLDSAParameterSpec.ml_dsa_44);
 
 // Key is stored in Vault at: secret/data/pqc/keys/app-signing-key
 ----
@@ -471,7 +471,7 @@ public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
 
 // Generate a Dilithium key stored in AWS Secrets Manager
 KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "app-signing-key",
-    DilithiumParameterSpec.dilithium2);
+    MLDSAParameterSpec.ml_dsa_44);
 
 // Keys are stored as: pqc/keys/app-signing-key/private, /public, /metadata
 ----
@@ -836,7 +836,7 @@ KeyPair mldsaKey = keyManager.generateKeyPair("MLDSA", "mldsa-key");
 
 // Dilithium with specific parameter
 KeyPair dilithiumKey = keyManager.generateKeyPair("DILITHIUM", "dilithium-key",
-    DilithiumParameterSpec.dilithium3);
+    MLDSAParameterSpec.ml_dsa_65);
 
 // Falcon (uses default Falcon-512)
 KeyPair falconKey = keyManager.generateKeyPair("FALCON", "falcon-key");
@@ -1116,7 +1116,7 @@ public KeyLifecycleManager createKeyManager() throws IOException {
 public KeyPair createSigningKey() throws Exception {
     KeyLifecycleManager manager = createKeyManager();
     return manager.generateKeyPair("DILITHIUM", "route-signing-key",
-        DilithiumParameterSpec.dilithium2);
+        MLDSAParameterSpec.ml_dsa_44);
 }
 ----
 
@@ -1136,7 +1136,7 @@ camel:
       scriptLanguage: groovy
       script: |
         def manager = new org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager('/secure/keys')
-        def spec = org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec.dilithium2
+        def spec = org.bouncycastle.jcajce.spec.MLDSAParameterSpec.ml_dsa_44
         manager.generateKeyPair('DILITHIUM', 'route-signing-key', spec)
 ----
 ====
@@ -1202,9 +1202,9 @@ The lifecycle manager provides sensible defaults for all algorithms:
 |===
 |Algorithm |Default Parameter Spec
 
-|DILITHIUM |dilithium2
+|DILITHIUM |ML-DSA-44
 |FALCON |falcon_512
-|SPHINCSPLUS |sha2_128s
+|SPHINCSPLUS |SLH-DSA-SHA2-128S
 |XMSS |10-tree height with SHA-256
 |XMSSMT |XMSSMT-SHA2-20d2-256
 |LMS/HSS |LMS-SHA256-N32-H10 with SHA256-N32-W4
@@ -1212,10 +1212,10 @@ The lifecycle manager provides sensible defaults for all algorithms:
 |NTRULPRime |ntrulpr653
 |SNTRUPrime |sntrup761
 |SABER |lightsaberkem128r3
-|FRODO |frodokem640aes
+|FRODO |frodokem976aes
 |BIKE |bike128
 |HQC |hqc128
-|CMCE |mceliece348864
+|CMCE |mceliece460896
 |===
 
 == Best Practices
@@ -1312,7 +1312,7 @@ for (int i = 0; i < 100; i++) {
     executor.submit(() -> {
         try {
             keyManager.generateKeyPair("DILITHIUM", "key-" + index,
-                DilithiumParameterSpec.dilithium2);
+                MLDSAParameterSpec.ml_dsa_44);
         } catch (Exception e) {
             logger.error("Key generation failed", e);
         }
