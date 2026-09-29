@@ -72,11 +72,19 @@ public class DefaultSemanticDefinitionConfigurer implements SemanticDefinitionCo
         return new SemanticQuestion(
                 type, definition.getInstructions(), definition.getState(), criteria,
                 definition.getLevels(),
-                definition.getThreshold() == null ? 0.5 : Double.parseDouble(definition.getThreshold()),
-                definition.getUncertainty() == null ? 0 : Double.parseDouble(definition.getUncertainty()),
+                definition.getThreshold() == null ? 0.5 : parseDouble(definition.getThreshold(), "threshold"),
+                definition.getUncertainty() == null ? 0 : parseDouble(definition.getUncertainty(), "uncertainty"),
                 definition.getUncertaintyPolicy() == null
                         ? SemanticQuestion.UncertaintyPolicy.FAIL
                         : enumeration(definition.getUncertaintyPolicy(), SemanticQuestion.UncertaintyPolicy.class));
+    }
+
+    private static double parseDouble(String value, String field) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(field + " must be a valid number: " + value, e);
+        }
     }
 
     private static <T extends Enum<T>> T enumeration(String value, Class<T> type) {

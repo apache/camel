@@ -141,7 +141,7 @@ With xref:others:java-xml-io-dsl.adoc[XML DSL], place a `semantic` element insid
 
 [source,xml]
 ----
-<camel xmlns="http://camel.apache.org/schema/spring">
+<camel xmlns="http://camel.apache.org/schema/xml-io">
   <semantic>
     <question name="department" type="choice" state="${header.myState}">
       <instructions>Which department should handle this message?</instructions>

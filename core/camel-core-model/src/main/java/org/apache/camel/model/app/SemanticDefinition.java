@@ -62,6 +62,8 @@ public class SemanticDefinition {
             if (definition == null || definition.getQuestions().isEmpty()) {
                 return;
             }
+            // Concurrent discovery may create equivalent instances of the stateless default configurer.
+            // The semantic module synchronizes access to shared question state.
             configurer = context.getCamelContextExtension().getDefaultFactoryFinder()
                     .newInstance("semantic-configurer", SemanticDefinitionConfigurer.class)
                     .orElseThrow(() -> new IllegalArgumentException(
