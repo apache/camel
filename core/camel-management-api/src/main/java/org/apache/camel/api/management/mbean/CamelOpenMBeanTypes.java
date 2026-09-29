@@ -384,25 +384,25 @@ public final class CamelOpenMBeanTypes {
 
     public static TabularType listErrorRegistryTabularType() throws OpenDataException {
         CompositeType ct = listErrorRegistryCompositeType();
-        return new TabularType("listErrors", "Lists captured routing errors", ct, new String[] { "exchangeId" });
+        return new TabularType("listErrors", "Lists captured routing errors", ct, new String[] { "uid" });
     }
 
     public static CompositeType listErrorRegistryCompositeType() throws OpenDataException {
         return new CompositeType(
                 "errors", "Errors",
                 new String[] {
-                        "exchangeId", "routeId", "routeGroup", "nodeId", "stepId",
+                        "uid", "exchangeId", "routeId", "routeGroup", "nodeId", "stepId",
                         "endpointUri", "fromEndpointUri", "timestamp",
                         "routeUptime", "elapsed",
                         "handled", "exceptionType", "exceptionMessage" },
                 new String[] {
-                        "Exchange Id", "Route Id", "Route Group", "Node Id", "Step Id",
+                        "Uid", "Exchange Id", "Route Id", "Route Group", "Node Id", "Step Id",
                         "Endpoint Uri", "From Endpoint Uri", "Timestamp",
                         "Route Uptime", "Elapsed",
                         "Handled", "Exception Type", "Exception Message" },
                 new OpenType[] {
-                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
-                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                        SimpleType.LONG, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
                         SimpleType.LONG, SimpleType.LONG,
                         SimpleType.BOOLEAN, SimpleType.STRING, SimpleType.STRING });
     }

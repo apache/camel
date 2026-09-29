@@ -365,6 +365,15 @@ through the transformer. The defaults are unchanged when the header is absent.
 If a route sets `CamelAwsDdbReturnValues` before the transformer runs and relies on it being discarded, remove the
 header instead.
 
+=== Error registry
+
+- An error is only recorded as handled when the failure processor has handled it. Prior to Camel 4.23 an error was
+  recorded as handled whenever an `onException`, dead letter channel or `doCatch` ran for it, also with
+  `handled(false)` or when the `doCatch` threw again.
+- The error registry records every failure of an exchange: the failures of the parts of a split or multicast, a failure
+  after an error that was handled by a `doCatch`, and a failure in `onCompletion`. Prior to Camel 4.23 it kept only
+  one entry per exchange, so such failures replaced or hid each other.
+
 === camel-aws2-s3
 
 The producer no longer evaluates the S3 object key or bucket name taken from a message header as a Simple
