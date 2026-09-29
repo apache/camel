@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.LongStream;
 
 import com.microsoft.kiota.ApiException;
 import io.apicurio.registry.rest.client.RegistryClient;
@@ -35,13 +36,14 @@ import io.apicurio.registry.rest.client.models.GroupMetaData;
 import io.apicurio.registry.rest.client.models.IfArtifactExists;
 import io.apicurio.registry.rest.client.models.ProblemDetails;
 import io.apicurio.registry.rest.client.models.RuleViolationProblemDetails;
+import io.apicurio.registry.rest.client.models.SearchedVersion;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -198,19 +200,20 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
     }
 
     @Test
-    void testListVersions() throws Exception {
+    void testListVersionsReturnsEveryPage() throws Exception {
         String endpointUri
                 = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=listVersions";
         injectMockClient(endpointUri);
+        FakeVersionPages pages = new FakeVersionPages(
+                mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact").versions())
+                .addRange(1, 250);
 
-        VersionSearchResults mockResults = new VersionSearchResults();
-        mockResults.setVersions(List.of());
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().get())
-                .thenReturn(mockResults);
-
-        Object result = template.requestBody("direct:listVersions", (Object) null);
-        assertThat(result).isSameAs(mockResults);
+        VersionSearchResults result
+                = template.requestBody("direct:listVersions", (Object) null, VersionSearchResults.class);
+        assertThat(result.getCount()).isEqualTo(250);
+        assertThat(result.getVersions()).extracting(SearchedVersion::getGlobalId)
+                .containsExactlyElementsOf(LongStream.rangeClosed(1, 250).boxed().toList());
+        assertThat(pages.requestedOffsets).containsExactly(0, 100, 200);
     }
 
     @Test
@@ -286,6 +289,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
         });
         assertThat(result.getException()).isNull();
         assertThat(result.getIn().getBody()).isEqualTo(true);
+        assertThat(result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, Boolean.class)).isTrue();
         assertThat(result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS)).isNull();
     }
 
@@ -302,6 +306,7 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
         var result = template.request("direct:testCompatibility", exchange -> exchange.getIn().setBody("{\"bad\":true}"));
         assertThat(result.getException()).isNull();
         assertThat(result.getIn().getBody()).isEqualTo(false);
+        assertThat(result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, Boolean.class)).isFalse();
         assertThat(result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS)).isEqualTo("incompatible");
     }
 

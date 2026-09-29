@@ -20,7 +20,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.apicurioregistry.ApicurioRegistryComponent;
 import org.apache.camel.test.infra.apicurio.registry.services.ApicurioRegistryService;
 import org.apache.camel.test.infra.apicurio.registry.services.ApicurioRegistryServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class ApicurioRegistryTestSupport extends CamelTestSupport {

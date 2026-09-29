@@ -17,6 +17,8 @@
 package org.apache.camel.component.apicurioregistry;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.models.ArtifactMetaData;
@@ -27,14 +29,19 @@ import io.apicurio.registry.rest.client.models.CreateVersion;
 import io.apicurio.registry.rest.client.models.GroupMetaData;
 import io.apicurio.registry.rest.client.models.IfArtifactExists;
 import io.apicurio.registry.rest.client.models.RuleViolationProblemDetails;
+import io.apicurio.registry.rest.client.models.SearchedVersion;
+import io.apicurio.registry.rest.client.models.SortOrder;
 import io.apicurio.registry.rest.client.models.VersionContent;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
+import io.apicurio.registry.rest.client.models.VersionSortBy;
 import org.apache.camel.Message;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
 
 public class ApicurioRegistryProducer extends HeaderSelectorProducer {
+
+    private static final int PAGE_SIZE = 100;
 
     private final ApicurioRegistryEndpoint endpoint;
     private final ApicurioRegistryConfiguration configuration;
@@ -174,8 +181,34 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
         String groupId = resolveGroupId(message);
         String artifactId = resolveArtifactId(message);
 
-        VersionSearchResults results = getClient().groups().byGroupId(groupId).artifacts()
-                .byArtifactId(artifactId).versions().get();
+        List<SearchedVersion> all = new ArrayList<>();
+        Integer total = null;
+        int offset = 0;
+        while (true) {
+            final int pageOffset = offset;
+            VersionSearchResults page = getClient().groups().byGroupId(groupId).artifacts()
+                    .byArtifactId(artifactId).versions().get(config -> {
+                        config.queryParameters.orderby = VersionSortBy.GlobalId;
+                        config.queryParameters.order = SortOrder.Asc;
+                        config.queryParameters.offset = pageOffset;
+                        config.queryParameters.limit = PAGE_SIZE;
+                    });
+            List<SearchedVersion> versions = page != null ? page.getVersions() : null;
+            if (page != null && page.getCount() != null) {
+                total = page.getCount();
+            }
+            if (versions == null || versions.isEmpty()) {
+                break;
+            }
+            all.addAll(versions);
+            offset += versions.size();
+            if (versions.size() < PAGE_SIZE || total != null && offset >= total) {
+                break;
+            }
+        }
+        VersionSearchResults results = new VersionSearchResults();
+        results.setVersions(all);
+        results.setCount(total != null ? total : all.size());
         message.setBody(results);
     }
 
@@ -196,6 +229,7 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_TEST_COMPATIBILITY)
     public void testCompatibility(Message message) throws Exception {
         boolean compatible = doDryRun(message);
+        message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, compatible);
         message.setBody(compatible);
     }
 

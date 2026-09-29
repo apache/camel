@@ -241,6 +241,23 @@ public interface ApicurioRegistryComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * To use an existing Vert.x instance for the registry clients. If not
+         * set, the component creates one shared Vert.x instance on first use
+         * and closes it when the component stops.
+         * 
+         * The option is a: &lt;code&gt;io.vertx.core.Vertx&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param vertx the value to set
+         * @return the dsl builder
+         */
+        default ApicurioRegistryComponentBuilder vertx(io.vertx.core.Vertx vertx) {
+            doSetProperty("vertx", vertx);
+            return this;
+        }
+    
         
         /**
          * The authentication type to use.
@@ -378,6 +395,7 @@ public interface ApicurioRegistryComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((ApicurioRegistryComponent) component).setOperation((java.lang.String) value); return true;
             case "autowiredEnabled": ((ApicurioRegistryComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((ApicurioRegistryComponent) component).setConfiguration((org.apache.camel.component.apicurioregistry.ApicurioRegistryConfiguration) value); return true;
+            case "vertx": ((ApicurioRegistryComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
             case "authType": getOrCreateConfiguration((ApicurioRegistryComponent) component).setAuthType((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((ApicurioRegistryComponent) component).setClientId((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((ApicurioRegistryComponent) component).setClientSecret((java.lang.String) value); return true;

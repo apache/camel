@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.apicurioregistry;
 
-import java.util.concurrent.TimeUnit;
-
 import io.apicurio.registry.client.RegistryClientFactory;
 import io.apicurio.registry.client.common.RegistryClientOptions;
 import io.apicurio.registry.rest.client.RegistryClient;
-import io.vertx.core.Vertx;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -52,7 +49,7 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
     @UriParam(label = "advanced", description = "To use a pre-configured RegistryClient instance")
     private RegistryClient registryClient;
 
-    private Vertx vertx;
+    private boolean managedRegistryClient;
 
     ApicurioRegistryEndpoint(String uri, ApicurioRegistryComponent component,
                              ApicurioRegistryConfiguration configuration,
@@ -79,35 +76,23 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
     protected void doStart() throws Exception {
         super.doStart();
         if (registryClient == null) {
-            vertx = Vertx.vertx();
-            try {
-                registryClient = createRegistryClient();
-            } catch (Exception e) {
-                closeVertx();
-                throw e;
-            }
+            registryClient = createRegistryClient();
+            managedRegistryClient = true;
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (vertx != null) {
+        if (managedRegistryClient) {
             registryClient = null;
-            closeVertx();
-        }
-    }
-
-    private void closeVertx() throws Exception {
-        try {
-            vertx.close().toCompletionStage().toCompletableFuture().get(30, TimeUnit.SECONDS);
-        } finally {
-            vertx = null;
+            managedRegistryClient = false;
         }
     }
 
     private RegistryClient createRegistryClient() {
-        RegistryClientOptions options = RegistryClientOptions.create(configuration.getRegistryUrl(), vertx);
+        RegistryClientOptions options = RegistryClientOptions.create(configuration.getRegistryUrl(),
+                ((ApicurioRegistryComponent) getComponent()).getOrCreateVertx());
         String authType = configuration.getAuthType();
         if ("basic".equalsIgnoreCase(authType)) {
             options.basicAuth(configuration.getUsername(), configuration.getPassword());

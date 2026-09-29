@@ -18,6 +18,8 @@ package org.apache.camel.component.apicurioregistry;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.sun.net.httpserver.HttpServer;
@@ -31,10 +33,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -101,45 +103,59 @@ class ApicurioRegistryEndpointTest {
     }
 
     @Test
-    void testOwnedResourcesClosedOnStopAndRestart() throws Exception {
+    void testEndpointsShareComponentVertxClosedWithComponent() throws Exception {
         Vertx vertx = mock(Vertx.class);
         when(vertx.close()).thenReturn(Future.succeededFuture());
-        RegistryClient client = mock(RegistryClient.class);
+        List<Vertx> clientVertx = new ArrayList<>();
         try (MockedStatic<Vertx> vertxFactory = mockStatic(Vertx.class);
              MockedStatic<RegistryClientFactory> clientFactory = mockStatic(RegistryClientFactory.class);
              DefaultCamelContext context = new DefaultCamelContext()) {
             vertxFactory.when(Vertx::vertx).thenReturn(vertx);
             clientFactory.when(() -> RegistryClientFactory.create(any())).thenAnswer(call -> {
-                assertThat(call.getArgument(0, RegistryClientOptions.class).getVertx())
-                        .isSameAs(vertx);
-                return client;
+                clientVertx.add(call.getArgument(0, RegistryClientOptions.class).getVertx());
+                return mock(RegistryClient.class);
             });
-            ApicurioRegistryEndpoint endpoint = context.getEndpoint(
+            context.start();
+            ApicurioRegistryEndpoint first = context.getEndpoint(
                     "apicurio-registry:g/a?registryUrl=http://localhost:8080/apis/registry/v3", ApicurioRegistryEndpoint.class);
-            endpoint.start();
-            assertThat(endpoint.getRegistryClient()).isSameAs(client);
-            endpoint.stop();
-            assertThat(endpoint.getRegistryClient()).isNull();
-            endpoint.start();
-            endpoint.stop();
-            verify(vertx, times(2)).close();
+            ApicurioRegistryEndpoint second = context.getEndpoint(
+                    "apicurio-registry:g/b?registryUrl=http://localhost:8080/apis/registry/v3", ApicurioRegistryEndpoint.class);
+            first.start();
+            second.start();
+            assertThat(clientVertx).containsExactly(vertx, vertx);
+            vertxFactory.verify(Vertx::vertx, times(1));
+
+            // stopping and restarting an endpoint recreates its client but keeps the shared Vert.x instance
+            first.stop();
+            assertThat(first.getRegistryClient()).isNull();
+            first.start();
+            assertThat(first.getRegistryClient()).isNotNull();
+            verify(vertx, never()).close();
+            vertxFactory.verify(Vertx::vertx, times(1));
+
+            context.getComponent("apicurio-registry").stop();
+            verify(vertx).close();
         }
     }
 
     @Test
-    void testFailedClientCreationClosesResources() throws Exception {
+    void testProvidedVertxIsNotClosed() throws Exception {
         Vertx vertx = mock(Vertx.class);
-        when(vertx.close()).thenReturn(Future.succeededFuture());
         try (MockedStatic<Vertx> vertxFactory = mockStatic(Vertx.class);
              MockedStatic<RegistryClientFactory> clientFactory = mockStatic(RegistryClientFactory.class);
              DefaultCamelContext context = new DefaultCamelContext()) {
-            vertxFactory.when(Vertx::vertx).thenReturn(vertx);
-            clientFactory.when(() -> RegistryClientFactory.create(any()))
-                    .thenThrow(new IllegalArgumentException("invalid client"));
+            clientFactory.when(() -> RegistryClientFactory.create(any())).thenAnswer(call -> {
+                assertThat(call.getArgument(0, RegistryClientOptions.class).getVertx()).isSameAs(vertx);
+                return mock(RegistryClient.class);
+            });
+            context.getComponent("apicurio-registry", ApicurioRegistryComponent.class).setVertx(vertx);
+            context.start();
             ApicurioRegistryEndpoint endpoint = context.getEndpoint(
                     "apicurio-registry:g/a?registryUrl=http://localhost:8080/apis/registry/v3", ApicurioRegistryEndpoint.class);
-            assertThatThrownBy(endpoint::start).isInstanceOf(IllegalArgumentException.class).hasMessage("invalid client");
-            verify(vertx).close();
+            endpoint.start();
+            context.stop();
+            vertxFactory.verify(Vertx::vertx, never());
+            verify(vertx, never()).close();
         }
     }
 
