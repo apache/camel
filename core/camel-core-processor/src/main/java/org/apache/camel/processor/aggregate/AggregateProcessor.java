@@ -16,7 +16,9 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +50,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.BaseProcessorSupport;
@@ -62,12 +65,15 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.KeyValueAggregationRepository;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.NoLock;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -135,6 +141,9 @@ public class AggregateProcessor extends BaseProcessorSupport
     // aggregated exchanges being completed (exchange id -> count): moved to the completed store of a recoverable
     // repository, but not yet registered in inProgressCompleteExchanges by onSubmitCompletion
     private final Map<String, Integer> completingExchanges = new ConcurrentHashMap<>();
+    // the references to spooled stream caches that the groups in the repository hold, by correlation key (only when
+    // isKeepingReferences, and guarded by the lock)
+    private final Map<String, SpooledStreamCaches> groupSpooledStreamCaches = new HashMap<>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<>();
 
     private final AggregateProcessorStatistics statistics = new Statistics();
@@ -451,6 +460,31 @@ public class AggregateProcessor extends BaseProcessorSupport
         removeFlagCompleteAllGroups(copy);
         removeFlagCompleteAllGroupsInclusive(copy);
 
+        // a stream cache spooled to disk is deleted when the incoming exchange is done, but the group keeps the body
+        // for later, so the copy takes its own reference, which the aggregator releases when it is done with the body
+        SpooledStreamCaches spooled = null;
+        if (copy.getIn().getBody() instanceof StreamCache sc && !sc.inMemory()) {
+            // the copy is independent of the unit of work that the incoming exchange may release its stream caches with
+            // (such as the parent of a split), as the wire tap does
+            copy.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);
+            try {
+                StreamCache copied = sc.copy(copy);
+                if (copied != null) {
+                    copy.getIn().setBody(copied);
+                }
+            } catch (IOException e) {
+                UnitOfWorkHelper.doneSynchronizations(copy, copy.getExchangeExtension().handoverCompletions());
+                exchange.setException(e);
+                callback.done(sync);
+                return sync;
+            }
+            // the copy has no on completions of its own, so these are only the releases of the reference, which are
+            // kept apart from the on completions that the aggregation strategy may add to the exchanges (such as the
+            // ZipAggregationStrategy deleting its zip file when the aggregated exchange is done)
+            spooled = new SpooledStreamCaches();
+            spooled.add(copy.getExchangeExtension().handoverCompletions());
+        }
+
         List<Exchange> aggregated = new ArrayList<>();
         lock.lock();
         try {
@@ -459,11 +493,17 @@ public class AggregateProcessor extends BaseProcessorSupport
             if (closedCorrelationKeys != null && closedCorrelationKeys.containsKey(key)) {
                 throw new ClosedCorrelationKeyException(key, exchange);
             }
-            doAggregation(key, copy, aggregated);
+            doAggregation(key, copy, spooled, aggregated);
         } catch (CamelExchangeException e) {
             exchange.setException(e);
         } finally {
             lock.unlock();
+            if (spooled != null) {
+                // release the reference unless it was handed over to the group or the aggregated exchange: the copy
+                // failed, is retried with a new copy due to optimistic locking, or is discarded, or the repository has
+                // read the body when the copy was added (see isKeepingReferences)
+                spooled.onDone(copy);
+            }
             // we are completed so submit to completion outside the lock. This must also be done when the aggregation
             // failed, or must be retried due to optimistic locking, after a group was completed (such as a group
             // completed by pre-completion), as that group has already been removed from the repository
@@ -524,10 +564,13 @@ public class AggregateProcessor extends BaseProcessorSupport
      *
      * @param  key                                     the correlation key
      * @param  newExchange                             the exchange
+     * @param  spooled                                 the references that the exchange holds to spooled stream caches,
+     *                                                 which are taken when they are handed over, or <tt>null</tt>
      * @param  list                                    the list to add the aggregated exchange(s) which are complete to
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
-    private void doAggregation(String key, Exchange newExchange, List<Exchange> list) throws CamelExchangeException {
+    private void doAggregation(String key, Exchange newExchange, SpooledStreamCaches spooled, List<Exchange> list)
+            throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
         String complete = null;
@@ -667,9 +710,19 @@ public class AggregateProcessor extends BaseProcessorSupport
             }
             // only need to update aggregation repository if we are not complete
             doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
+            if (spooled != null && isKeepingReferences()) {
+                // the group keeps the references until it is completed (see doOnCompletion)
+                groupSpooledStreamCaches.computeIfAbsent(key, k -> new SpooledStreamCaches()).add(spooled.take());
+            }
         } else {
             // if we are complete then add the answer to the list
             doAggregationComplete(complete, list, key, originalExchange, answer, aggregateFailed);
+            if (spooled != null && containsInstance(list, answer)) {
+                // the aggregated exchange takes over the references (onCompletion has handed over those of the group)
+                SpooledStreamCaches release = new SpooledStreamCaches();
+                release.add(spooled.take());
+                answer.getExchangeExtension().addOnCompletion(release);
+            }
         }
 
         LOG.trace("onAggregation +++  end  +++ with correlation key: {}", key);
@@ -709,6 +762,18 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (answer != null) {
             list.add(answer);
         }
+    }
+
+    /**
+     * Whether the groups in the repository keep the references to the spooled stream caches of their exchanges until
+     * they are completed. This is only the case with the memory repository, which keeps the exchange instances (and
+     * their bodies), and without optimistic locking, as all access to the groups is then under the lock. A persistent
+     * repository has read the body when the exchange is added, so the reference is released after the add. With
+     * optimistic locking the reference is released after the add as well, and only the body of the exchange that
+     * completes the group is kept.
+     */
+    private boolean isKeepingReferences() {
+        return !optimisticLocking && aggregationRepository instanceof MemoryAggregationRepository;
     }
 
     protected void doAggregationRepositoryAdd(
@@ -894,6 +959,11 @@ public class AggregateProcessor extends BaseProcessorSupport
         if (original != null) {
             // remove from repository as its completed, we do this first as to trigger any OptimisticLockingException's
             aggregationRepository.remove(aggregated.getContext(), key, original);
+            // the aggregated exchange takes over the references that the group holds to spooled stream caches
+            SpooledStreamCaches spooled = takeGroupSpooledStreamCaches(key);
+            if (spooled != null) {
+                aggregated.getExchangeExtension().addOnCompletion(spooled);
+            }
         }
 
         // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
@@ -949,7 +1019,80 @@ public class AggregateProcessor extends BaseProcessorSupport
         aggregationRepository.confirm(aggregated.getContext(), aggregated.getExchangeId());
         // and remove redelivery state as well
         redeliveryState.remove(aggregated.getExchangeId());
+        // and release the references that the discarded exchange holds to spooled stream caches (only those, as the
+        // other on completions of the exchange are left as they are when it is not discarded)
+        releaseSpooledStreamCaches(aggregated);
         // the completion was from timeout and we should just discard it
+    }
+
+    /**
+     * Takes the references that the group holds to spooled stream caches, when the group is removed from the
+     * repository.
+     */
+    private SpooledStreamCaches takeGroupSpooledStreamCaches(String key) {
+        return isKeepingReferences() ? groupSpooledStreamCaches.remove(key) : null;
+    }
+
+    /**
+     * Releases the references that the aggregator handed over to a discarded exchange (see doOnCompletion).
+     */
+    private static void releaseSpooledStreamCaches(Exchange exchange) {
+        List<Synchronization> completions = exchange.getExchangeExtension().handoverCompletions();
+        if (completions != null) {
+            for (Synchronization completion : completions) {
+                if (completion instanceof SpooledStreamCaches spooled) {
+                    spooled.onDone(exchange);
+                } else {
+                    exchange.getExchangeExtension().addOnCompletion(completion);
+                }
+            }
+        }
+    }
+
+    /**
+     * The on completions that release references that the aggregator took to spooled stream caches, so the bodies can
+     * be read until the aggregator is done with them. They are kept apart from the other on completions of the
+     * exchanges, which the aggregator leaves as they are. When added to an exchange as on completion, they are released
+     * when the exchange is done.
+     */
+    private static final class SpooledStreamCaches extends SynchronizationAdapter {
+        private List<Synchronization> releases;
+
+        void add(List<Synchronization> synchronizations) {
+            if (synchronizations != null && !synchronizations.isEmpty()) {
+                if (releases == null) {
+                    releases = new ArrayList<>(synchronizations);
+                } else {
+                    releases.addAll(synchronizations);
+                }
+            }
+        }
+
+        List<Synchronization> take() {
+            List<Synchronization> answer = releases;
+            releases = null;
+            return answer;
+        }
+
+        @Override
+        public void onDone(Exchange exchange) {
+            // release only once
+            UnitOfWorkHelper.doneSynchronizations(exchange, take());
+        }
+
+        @Override
+        public String toString() {
+            return "AggregateOnCompletion[SpooledStreamCaches]";
+        }
+    }
+
+    private static boolean containsInstance(List<Exchange> list, Exchange exchange) {
+        for (Exchange e : list) {
+            if (e == exchange) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void onSubmitCompletion(final String key, final Exchange exchange) {
@@ -1901,6 +2044,18 @@ public class AggregateProcessor extends BaseProcessorSupport
     protected void doShutdown() throws Exception {
         // shutdown aggregation repository and the strategy
         ServiceHelper.stopAndShutdownServices(aggregationRepository, aggregationStrategy);
+
+        // the memory repository has dropped the groups, so release the references they held to spooled stream caches
+        if (!groupSpooledStreamCaches.isEmpty()) {
+            lock.lock();
+            try {
+                Exchange dummy = new DefaultExchange(camelContext);
+                groupSpooledStreamCaches.values().forEach(spooled -> spooled.onDone(dummy));
+                groupSpooledStreamCaches.clear();
+            } finally {
+                lock.unlock();
+            }
+        }
 
         // cleanup when shutting down
         inProgressCompleteExchanges.clear();
