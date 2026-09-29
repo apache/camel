@@ -52,8 +52,8 @@ public interface HivemqComponentBuilderFactory {
     
         
         /**
-         * Whether to initiate a clean start (MQTT 5) upon connecting to the
-         * broker.
+         * Whether to initiate a clean session upon connecting to the broker
+         * (called clean session in MQTT 3.1.1 and clean start in MQTT 5).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -113,6 +113,24 @@ public interface HivemqComponentBuilderFactory {
          */
         default HivemqComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
+            return this;
+        }
+    
+        
+        /**
+         * The MQTT protocol version to use when connecting to the broker.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.hivemq.client.mqtt.MqttVersion&lt;/code&gt; type.
+         * 
+         * Default: MQTT_5_0
+         * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
+         */
+        default HivemqComponentBuilder mqttVersion(com.hivemq.client.mqtt.MqttVersion mqttVersion) {
+            doSetProperty("mqttVersion", mqttVersion);
             return this;
         }
     
@@ -315,6 +333,7 @@ public interface HivemqComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((HiveMQComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((HiveMQComponent) component).setConfiguration((org.apache.camel.component.hivemq.HiveMQConfiguration) value); return true;
             case "host": getOrCreateConfiguration((HiveMQComponent) component).setHost((java.lang.String) value); return true;
+            case "mqttVersion": getOrCreateConfiguration((HiveMQComponent) component).setMqttVersion((com.hivemq.client.mqtt.MqttVersion) value); return true;
             case "port": getOrCreateConfiguration((HiveMQComponent) component).setPort((int) value); return true;
             case "qos": getOrCreateConfiguration((HiveMQComponent) component).setQos((com.hivemq.client.mqtt.datatypes.MqttQos) value); return true;
             case "retained": getOrCreateConfiguration((HiveMQComponent) component).setRetained((boolean) value); return true;
