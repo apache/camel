@@ -31,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -170,16 +171,21 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
 
     @ParameterizedTest
     @ValueSource(strings = { "timeout", "malformed", "uncertain" })
-    void retryEvaluationFailurePropagatesWithoutRetryOrNormalEscalation(String failure) throws Exception {
+    void retryEvaluationFailureEscalatesWithoutRetry(String failure) throws Exception {
         failEvaluation(failure);
         getMockEndpoint("mock:completed").expectedMessageCount(0);
-        getMockEndpoint("mock:escalated").expectedMessageCount(0);
+        getMockEndpoint("mock:escalated").expectedBodiesReceived("operation");
 
         Exchange exchange = template.request("direct:retry", e -> e.getMessage().setBody("operation"));
 
-        assertEvaluationFailure(exchange, failure);
-        assertThat(exchange.getMessage().getBody()).isEqualTo("operation");
-        assertThat(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class)).isInstanceOf(IOException.class);
+        // a retry predicate that fails is regarded as false, so the exception clause escalates without another
+        // attempt, and the evaluation failure is attached to the original exception as a suppressed exception
+        assertThat(exchange.getException()).isNull();
+        IOException caught = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, IOException.class);
+        assertThat(caught).hasMessage("Failure 1");
+        assertThat(caught.getSuppressed()).hasSize(1);
+        assertEvaluationFailure(caught.getSuppressed()[0], failure);
+        assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
         assertThat(attempts).hasValue(1);
         assertThat(evaluatedStates).containsExactly(retryState(1));
         MockEndpoint.assertIsSatisfied(context);
@@ -259,14 +265,19 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
     }
 
     private static void assertEvaluationFailure(Exchange exchange, String failure) {
+        assertEvaluationFailure(exchange.getException(), failure);
+        assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
+    }
+
+    private static void assertEvaluationFailure(Throwable exception, String failure) {
         switch (failure) {
-            case "timeout" -> assertThat(exchange.getException(TimeoutException.class)).hasMessage("Evaluation timed out");
-            case "malformed" -> assertThat(exchange.getException(IllegalArgumentException.class))
+            case "timeout" -> assertThat(ObjectHelper.getException(TimeoutException.class, exception))
+                    .hasMessage("Evaluation timed out");
+            case "malformed" -> assertThat(ObjectHelper.getException(IllegalArgumentException.class, exception))
                     .hasMessage("Semantic result does not support the question and its decision policy");
-            case "uncertain" -> assertThat(exchange.getException(IllegalStateException.class))
+            case "uncertain" -> assertThat(ObjectHelper.getException(IllegalStateException.class, exception))
                     .hasMessage("Semantic boolean decision is uncertain");
             default -> throw new IllegalArgumentException(failure);
         }
-        assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNull();
     }
 }

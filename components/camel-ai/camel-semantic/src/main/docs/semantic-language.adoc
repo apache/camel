@@ -362,10 +362,13 @@ redeliveries after the initial attempt. Each failure refreshes the selected stat
 restarts at the failed processor, not at the beginning of the route. A negative decision or
 an exhausted budget sends the message to `direct:escalate` through normal exception handling.
 
-Evaluation errors are distinct from a negative decision. If the retry predicate throws,
-Camel reports the evaluation failure on the exchange; it does not automatically execute
-the exception clause's escalation route. Arrange caller or supervising-route handling for
-that failure. Bound provider timeouts as well as the retry count.
+If the retry predicate throws (such as a provider timeout, or a malformed or uncertain result),
+Camel logs the evaluation failure at `WARN` level and regards the predicate as `false`. The message
+is not redelivered and is sent to `direct:escalate` through normal exception handling, the same
+as for a negative decision. The original exception is kept as the caught exception, with the
+evaluation failure attached as a suppressed exception. To tell an evaluation failure apart from a
+negative decision in the escalation route, check `getSuppressed()` of the
+`Exchange.EXCEPTION_CAUGHT` exception. Bound provider timeouts as well as the retry count.
 
 === Contextual action validation
 
