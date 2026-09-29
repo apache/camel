@@ -1009,7 +1009,7 @@
                         <plugin>
                             <groupId>eu.maveniverse.maven.plugins</groupId>
                             <artifactId>pilot-plugin</artifactId>
-                            <version>0.4.0</version>
+                            <version>0.5.0</version>
                             <configuration>
                                 <ignoredUnusedDeclared>
                                     <!-- Logging implementations are runtime deps intentionally declared at compile scope -->
