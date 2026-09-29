@@ -28,7 +28,11 @@ import org.apache.camel.util.URISupport;
 
 /**
  * Endpoint strategy used by intercept send to endpoint.
+ *
+ * @deprecated the intercept send to endpoint EIP no longer uses this, but registers the interceptors of routes with
+ *             {@link InterceptSendToEndpointManager}
  */
+@Deprecated(since = "4.23.0")
 public class InterceptSendToEndpointCallback implements EndpointStrategy {
 
     private final CamelContext camelContext;

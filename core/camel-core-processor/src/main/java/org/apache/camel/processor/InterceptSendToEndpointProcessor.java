@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
@@ -24,10 +27,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
+import org.apache.camel.Route;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultInterceptSendToEndpoint;
+import org.apache.camel.support.DefaultInterceptSendToEndpoint.Interceptor;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -50,6 +55,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     private final Predicate onWhen;
     private AsyncProcessor pipeline;
     private AsyncProcessor after;
+    private Interceptor interceptor;
 
     public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer,
                                             boolean skip, Predicate onWhen) {
@@ -74,50 +80,120 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
                     endpoint.getBefore(), exchange);
         }
         exchange.setProperty(ExchangePropertyKey.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
-        return pipeline.process(exchange, doneSync -> callback(exchange, callback, doneSync));
+
+        List<Interceptor> chain = chain(exchange);
+        if (chain.isEmpty()) {
+            // no interceptor (anymore) so send to the endpoint
+            return producer.process(exchange, callback);
+        }
+        return process(exchange, chain, 0, callback);
     }
 
-    private boolean callback(Exchange exchange, AsyncCallback callback, boolean doneSync) {
+    /**
+     * The interceptors to use in their fixed order: the interceptors of the route that is sending (or when the route
+     * has none, the interceptors of the first route that registered one), and then the interceptor of the endpoint
+     * itself (such as a mock).
+     */
+    private List<Interceptor> chain(Exchange exchange) {
+        List<Interceptor> routes = routeInterceptors(exchange);
+        if (routes.isEmpty()) {
+            return this.interceptor != null ? List.of(this.interceptor) : List.of();
+        }
+        if (this.interceptor == null) {
+            return routes;
+        }
+        List<Interceptor> answer = new ArrayList<>(routes.size() + 1);
+        answer.addAll(routes);
+        answer.add(this.interceptor);
+        return answer;
+    }
+
+    private List<Interceptor> routeInterceptors(Exchange exchange) {
+        if (!(endpoint instanceof DefaultInterceptSendToEndpoint dise)) {
+            return List.of();
+        }
+        List<Interceptor> all = dise.getInterceptors();
+        if (all.isEmpty()) {
+            return List.of();
+        }
+        Route route = ExchangeHelper.getRoute(exchange);
+        String routeId = route != null ? route.getRouteId() : null;
+        List<Interceptor> answer = interceptorsOfRoute(all, routeId);
+        if (answer.isEmpty()) {
+            // the route that is sending has no interceptor (or it is not sent from a route)
+            // so use the interceptors of the first route that registered one
+            answer = interceptorsOfRoute(all, all.get(0).routeId());
+        }
+        return answer;
+    }
+
+    private static List<Interceptor> interceptorsOfRoute(List<Interceptor> all, String routeId) {
+        if (routeId == null) {
+            return List.of();
+        }
+        List<Interceptor> answer = null;
+        for (Interceptor i : all) {
+            if (routeId.equals(i.routeId())) {
+                if (answer == null) {
+                    answer = new ArrayList<>(1);
+                }
+                answer.add(i);
+            }
+        }
+        return answer != null ? answer : List.of();
+    }
+
+    private boolean process(Exchange exchange, List<Interceptor> chain, int index, AsyncCallback callback) {
+        if (index == chain.size()) {
+            // route to original destination
+            return producer.process(exchange, callback);
+        }
+        Interceptor current = chain.get(index);
+        if (index > 0) {
+            // each interceptor only sees whether its own onWhen predicate matched
+            exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+        }
+        AsyncProcessor before = AsyncProcessorConverterHelper.convert(current.before());
+        return before.process(exchange, doneSync -> afterBefore(exchange, chain, index, current, callback, doneSync));
+    }
+
+    private void afterBefore(
+            Exchange exchange, List<Interceptor> chain, int index, Interceptor current, AsyncCallback callback,
+            boolean doneSync) {
         // Decide whether to continue or not; similar logic to the Pipeline
         // check for error if so we should break out
         if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpoint(), LOG)) {
             callback.done(doneSync);
-            return doneSync;
+            return;
         }
 
-        // determine if we should skip or not
-        boolean shouldSkip = skip;
-
-        // if then interceptor has predicate, then we should only skip if matched
+        // if the interceptor has predicate, then we should only skip if matched
         Boolean whenMatches = (Boolean) exchange.getProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
-        if (whenMatches != null) {
-            shouldSkip = skip && whenMatches;
-        }
-
-        if (!shouldSkip) {
-            ExchangeHelper.prepareOutToIn(exchange);
-
-            AsyncCallback ac1 = doneSync1 -> {
-                exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
-                callback.done(doneSync1);
-            };
-            AsyncCallback ac2 = null;
-            if (after != null && (whenMatches == null || whenMatches)) {
-                ac2 = doneSync2 -> after.process(exchange, ac1);
-            }
-
-            // route to original destination (using producer) and when done, then
-            // optional route to the after processor
-            boolean s = producer.process(exchange, ac2 != null ? ac2 : ac1);
-            return doneSync && s;
-        } else {
+        boolean matched = whenMatches == null || whenMatches;
+        if (current.skip() && matched) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Skip sending exchange to original intended destination: {} for exchange: {}",
                         getEndpoint(), exchange);
             }
             callback.done(doneSync);
-            return doneSync;
+            return;
         }
+
+        ExchangeHelper.prepareOutToIn(exchange);
+
+        AsyncCallback ac1 = doneSync1 -> {
+            exchange.removeProperty(ExchangePropertyKey.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+            callback.done(doneSync1);
+        };
+        AsyncCallback ac2 = null;
+        if (current.after() != null && matched) {
+            AsyncProcessor after = AsyncProcessorConverterHelper.convert(current.after());
+            ac2 = doneSync2 -> after.process(exchange, ac1);
+        }
+
+        // route to the next interceptor (or the original destination) and when done, then
+        // optional route to the after processor
+        process(exchange, chain, index + 1, ac2 != null ? ac2 : ac1);
     }
 
     @Override
@@ -129,9 +205,13 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     protected void doBuild() throws Exception {
         CamelContextAware.trySetCamelContext(producer, endpoint.getCamelContext());
 
-        pipeline = new FilterProcessor(getEndpoint().getCamelContext(), onWhen, endpoint.getBefore());
-        if (endpoint.getAfter() != null) {
-            after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
+        // the interceptor of the endpoint itself (such as a mock)
+        if (endpoint.getBefore() != null || endpoint.getAfter() != null) {
+            pipeline = new FilterProcessor(getEndpoint().getCamelContext(), onWhen, endpoint.getBefore());
+            if (endpoint.getAfter() != null) {
+                after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
+            }
+            interceptor = new Interceptor(null, pipeline, after, skip);
         }
         ServiceHelper.buildService(producer, pipeline, after);
     }
