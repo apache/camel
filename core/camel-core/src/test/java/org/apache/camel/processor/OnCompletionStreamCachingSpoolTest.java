@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +60,16 @@ public class OnCompletionStreamCachingSpoolTest extends ContextTestSupport {
     private final ExecutorService rejecting = Executors.newSingleThreadExecutor();
     private final ExecutorService discarding = new ThreadPoolExecutor(
             1, 1, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadPoolExecutor.DiscardPolicy());
+    // a thread pool that another thread shuts down (gracefully) right after it has accepted a task
+    private final ExecutorService shutdownAfterSubmit = new ThreadPoolExecutor(
+            1, 1, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadPoolExecutor.DiscardPolicy()) {
+        @Override
+        public Future<?> submit(Runnable task) {
+            Future<?> answer = super.submit(task);
+            shutdown();
+            return answer;
+        }
+    };
 
     @Override
     @AfterEach
@@ -67,6 +78,7 @@ public class OnCompletionStreamCachingSpoolTest extends ContextTestSupport {
         super.tearDown();
         rejecting.shutdownNow();
         discarding.shutdownNow();
+        shutdownAfterSubmit.shutdownNow();
     }
 
     @Test
@@ -134,6 +146,24 @@ public class OnCompletionStreamCachingSpoolTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         assertNoSpoolFiles();
         assertNoPendingTasks("discarded");
+    }
+
+    @Test
+    public void testParallelTaskAcceptedBeforeShutdown() throws Exception {
+        // the thread pool is shut down after it accepted the onCompletion task, and a graceful shutdown still runs the
+        // task, so it must not be discarded
+        MockEndpoint done = getMockEndpoint("mock:done");
+        done.expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:shutdownAfterSubmit", stream());
+
+        assertMockEndpointsSatisfied();
+        assertArrayEquals(DATA, done.getReceivedExchanges().get(0).getMessage().getBody(byte[].class));
+        assertTrue(shutdownAfterSubmit.isShutdown());
+        assertNoSpoolFiles();
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertNoPendingTasks("shutdownAfterSubmit"));
     }
 
     @Test
@@ -241,6 +271,11 @@ public class OnCompletionStreamCachingSpoolTest extends ContextTestSupport {
 
                 from("direct:discarded")
                         .onCompletion().id("discarded").parallelProcessing().executorService(discarding).to("mock:done").end()
+                        .to("mock:result");
+
+                from("direct:shutdownAfterSubmit")
+                        .onCompletion().id("shutdownAfterSubmit").parallelProcessing().executorService(shutdownAfterSubmit)
+                        .convertBodyTo(byte[].class).to("mock:done").end()
                         .to("mock:result");
 
                 from("direct:dropped")

@@ -204,12 +204,20 @@ public class OnCompletionProcessor extends BaseProcessorSupport
      * when the copy is done. When the task never runs (the thread pool rejects it, discards it because it is shut down,
      * or drops it when the processor shuts its thread pool down), it is no longer counted as pending and the reference
      * is released instead, as otherwise a spooled file would be kept until the stream caching strategy is stopped.
+     * <p>
+     * A thread pool that is shut down rejects every task, and may do so without failing (such as with the CallerRuns or
+     * Discard policy), so the task is discarded when the thread pool was already shut down when the task was submitted.
+     * A thread pool that is shut down (gracefully) after it has accepted the task still runs it, so the task must then
+     * not be discarded. In the rare case that the thread pool is shut down while the task is being submitted, and
+     * silently rejects it, the task is left as pending, and is discarded when the processor shuts its thread pool down.
      */
     @SuppressWarnings("deprecation")
     private void submitTask(Exchange copy, Runnable task) {
         ParallelTask parallelTask = new ParallelTask(copy, task);
         taskCount.increment();
         pendingTasks.add(parallelTask);
+        // check before submitting, as the thread pool may be shut down by another thread after it accepted the task
+        boolean shutdown = executorService.isShutdown();
         try {
             // Deprecated since 4.19.0
             executorService.submit(prepareMDCParallelTask(camelContext, parallelTask));
@@ -218,8 +226,9 @@ public class OnCompletionProcessor extends BaseProcessorSupport
             parallelTask.discard();
             throw e;
         }
-        if (executorService.isShutdown()) {
-            // a thread pool that is shut down may discard the task without failing (such as with the CallerRuns policy)
+        if (shutdown) {
+            // the task was rejected, maybe without failing (unless the rejection policy has run it, and then this is a
+            // noop)
             parallelTask.discard();
         }
     }
