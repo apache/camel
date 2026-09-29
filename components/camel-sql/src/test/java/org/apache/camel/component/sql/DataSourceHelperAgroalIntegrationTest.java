@@ -19,6 +19,7 @@ package org.apache.camel.component.sql;
 import java.sql.Connection;
 
 import io.agroal.api.AgroalDataSource;
+import io.agroal.api.AgroalDataSourceMetrics;
 import io.agroal.api.configuration.supplier.AgroalDataSourceConfigurationSupplier;
 import io.agroal.api.security.NamePrincipal;
 import io.agroal.api.security.SimplePassword;
@@ -27,6 +28,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration test for {@link DataSourceHelper#evictDataSourceConnections} against a real {@link AgroalDataSource}
@@ -36,8 +39,9 @@ class DataSourceHelperAgroalIntegrationTest {
 
     private static AgroalDataSource createDataSource(String dbName) throws Exception {
         return AgroalDataSource.from(new AgroalDataSourceConfigurationSupplier()
+                .metricsEnabled()
                 .connectionPoolConfiguration(pool -> pool
-                        .maxSize(2)
+                        .maxSize(1)
                         .minSize(1)
                         .connectionFactoryConfiguration(factory -> factory
                                 .jdbcUrl("jdbc:h2:mem:" + dbName + ";DB_CLOSE_DELAY=-1")
@@ -48,18 +52,39 @@ class DataSourceHelperAgroalIntegrationTest {
     @Test
     void evict_startedPool_evictsConnections() throws Exception {
         try (AgroalDataSource ds = createDataSource("agroal_evict_started")) {
-            // Force pool initialisation by opening a connection
+            AgroalDataSourceMetrics metrics = ds.getMetrics();
+
+            // Grab a connection and remember the underlying physical connection
+            Connection physicalBefore;
             try (Connection conn = ds.getConnection()) {
-                assertNotNull(conn);
+                physicalBefore = conn.unwrap(Connection.class);
+                assertNotNull(physicalBefore);
             }
 
-            // Eviction must succeed — real AgroalDataSource.flush(GRACEFUL) via reflection
-            assertDoesNotThrow(() -> DataSourceHelper.evictDataSourceConnections(ds, "test-rotation"));
+            long flushCountBefore = metrics.flushCount();
 
-            // After GRACEFUL flush, the pool must still be functional
+            // Evict — flush(GRACEFUL) via reflection
+            DataSourceHelper.evictDataSourceConnections(ds, "test-rotation");
+
+            // GRACEFUL flush marks idle connections for eviction asynchronously;
+            // allow a short window for Agroal's housekeeping to destroy them
+            Thread.sleep(500);
+
+            // Verify flush was actually called via metrics
+            assertTrue(metrics.flushCount() > flushCountBefore,
+                    "flushCount should have increased after eviction");
+
+            // After GRACEFUL flush, requesting a new connection forces the pool to
+            // replace the flushed one with a fresh physical connection
+            Connection physicalAfter;
             try (Connection conn = ds.getConnection()) {
-                assertNotNull(conn);
+                physicalAfter = conn.unwrap(Connection.class);
+                assertNotNull(physicalAfter);
             }
+
+            // The pool replaced the flushed connection — the physical connection must differ
+            assertNotSame(physicalBefore, physicalAfter,
+                    "After flush(GRACEFUL), the pool should return a new physical connection");
         }
     }
 
