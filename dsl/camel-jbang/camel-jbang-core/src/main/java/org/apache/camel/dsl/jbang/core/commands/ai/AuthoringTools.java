@@ -65,10 +65,10 @@ public final class AuthoringTools {
     static final String FILE_PATH_DESC = "File path relative to the directory, e.g. src/main/resources/camel/foo.camel.yaml";
     private static final int MAX_FILES = 99;
     /** How many files a listing looks at before it stops; the route and configuration files are found among them. */
-    private static final int SCAN_LIMIT = 2000;
-    private static final int MAX_DEPTH = 8;
+    static final int SCAN_LIMIT = 2000;
+    static final int MAX_DEPTH = 8;
     /** Build output, tooling and VCS directories: never sources. */
-    private static final Set<String> SKIPPED_DIRS = Set.of(
+    static final Set<String> SKIPPED_DIRS = Set.of(
             "target", "build", "out", "node_modules", ".git", ".mvn", ".idea", ".vscode", ".gradle", ".settings",
             ".camel-jbang");
     private static final Pattern YAML_ROUTE = Pattern.compile(
@@ -703,7 +703,9 @@ public final class AuthoringTools {
             throw new ToolExecutionException(file + " is not a regular file");
         }
         if (validate && SourceValidator.isValidatableFile(file)) {
-            List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir);
+            // a missing consumer of a direct: endpoint does not refuse the write: it is often a file not written yet
+            List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir,
+                    null, false);
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
                 result.put("status", "invalid");

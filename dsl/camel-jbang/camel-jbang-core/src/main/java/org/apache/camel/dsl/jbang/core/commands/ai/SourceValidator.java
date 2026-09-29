@@ -101,6 +101,17 @@ public final class SourceValidator {
     public static List<String> validate(
             String fileName, String content, CamelCatalog catalog, Function<String, String> extraPropertyLine,
             Path directory, YamlValidator schemaValidator) {
+        return validate(fileName, content, catalog, extraPropertyLine, directory, schemaValidator, true);
+    }
+
+    /**
+     * As {@link #validate(String, String, CamelCatalog, Function, Path, YamlValidator)}, telling whether to check that
+     * the direct: and seda: endpoints the YAML sends to are consumed. A write leaves it out: the consuming route is
+     * often a file not written yet, and two files that call each other could never be written (CAMEL-24955).
+     */
+    public static List<String> validate(
+            String fileName, String content, CamelCatalog catalog, Function<String, String> extraPropertyLine,
+            Path directory, YamlValidator schemaValidator, boolean checkConsumers) {
         Objects.requireNonNull(catalog, "catalog");
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
@@ -114,6 +125,10 @@ public final class SourceValidator {
                 msgs.addAll(validateYamlBeanRefs(content, declarations, catalog));
                 msgs.addAll(validateResourceRefs(content, directory));
                 msgs.addAll(GroovyImportChecks.validateYamlGroovyImports(content, null, declarations.javaClasses()));
+                if (checkConsumers) {
+                    // a direct: or seda: endpoint no route of the application consumes (CAMEL-24955)
+                    msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName));
+                }
             }
             return msgs;
         }
