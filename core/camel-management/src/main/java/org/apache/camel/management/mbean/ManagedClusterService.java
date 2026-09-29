@@ -17,8 +17,6 @@
 package org.apache.camel.management.mbean;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
@@ -26,7 +24,6 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedClusterServiceMBean;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.support.cluster.ClusterServiceHelper;
 
 public class ManagedClusterService implements ManagedClusterServiceMBean {
     private final CamelContext context;
@@ -84,31 +81,22 @@ public class ManagedClusterService implements ManagedClusterServiceMBean {
 
     @Override
     public Collection<String> getNamespaces() {
-        return ClusterServiceHelper.lookupService(context)
-                .map(CamelClusterService::getNamespaces)
-                .orElseGet(Collections::emptyList);
+        // the cluster service this mbean is for (there may be more cluster services)
+        return service.getNamespaces();
     }
 
     @Override
     public void startView(String namespace) throws Exception {
-        Optional<CamelClusterService> service = ClusterServiceHelper.lookupService(context);
-        if (service.isPresent()) {
-            service.get().startView(namespace);
-        }
+        service.startView(namespace);
     }
 
     @Override
     public void stopView(String namespace) throws Exception {
-        Optional<CamelClusterService> service = ClusterServiceHelper.lookupService(context);
-        if (service.isPresent()) {
-            service.get().stopView(namespace);
-        }
+        service.stopView(namespace);
     }
 
     @Override
     public boolean isLeader(String namespace) {
-        return ClusterServiceHelper.lookupService(context)
-                .map(s -> s.isLeader(namespace))
-                .orElse(false);
+        return service.isLeader(namespace);
     }
 }

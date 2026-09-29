@@ -961,8 +961,12 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("timer://foo?fixedRate=#fixed&delay=#myDelay");
         assertTrue(result.isSuccess());
 
-        // optional consumer. prefix
+        // consumer. prefix is only optional for a few options
         result = catalog.validateEndpointProperties("file:inbox?consumer.delay=5000&consumer.greedy=true");
+        assertFalse(result.isSuccess());
+        result = catalog.validateEndpointProperties("file:inbox?consumer.bridgeErrorHandler=true");
+        assertFalse(result.isSuccess());
+        result = catalog.validateEndpointProperties("file:inbox?consumer.exceptionHandler=#myHandler");
         assertTrue(result.isSuccess());
 
         // optional without consumer. prefix
@@ -971,7 +975,7 @@ public class CamelCatalogTest {
 
         // mixed optional without consumer. prefix
         result = catalog.validateEndpointProperties("file:inbox?delay=5000&consumer.greedy=true");
-        assertTrue(result.isSuccess());
+        assertFalse(result.isSuccess());
 
         // prefix
         result = catalog.validateEndpointProperties("file:inbox?delay=5000&scheduler.foo=123&scheduler.bar=456");
@@ -1017,7 +1021,7 @@ public class CamelCatalogTest {
 
         // lenient on rss consumer only
         result = catalog.validateEndpointProperties(
-                "rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50&foo=bar", false, true,
+                "rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=50&foo=bar", false, true,
                 false);
         assertTrue(result.isSuccess());
         assertEquals("foo", result.getLenient().iterator().next());

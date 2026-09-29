@@ -1009,4 +1009,16 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         return disabled;
     }
 
+    /**
+     * Sets the step id (of the step the definition is inside) on the processor
+     */
+    protected void injectStepId(Object processor) {
+        if (processor instanceof StepIdAware stepIdAware) {
+            StepDefinition step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
+            if (step != null) {
+                stepIdAware.setStepId(
+                        step.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)));
+            }
+        }
+    }
 }

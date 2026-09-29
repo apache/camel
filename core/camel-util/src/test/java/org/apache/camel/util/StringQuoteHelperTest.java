@@ -42,6 +42,28 @@ public class StringQuoteHelperTest {
     }
 
     @Test
+    public void testSplitTrimKeepsSpacesInsideQuotes() {
+        // the quoted text is kept as-is whether or not it is the last value
+        String[] arr = StringQuoteHelper.splitSafeQuote("' a ', ' b '", ',', true, false);
+        Assertions.assertArrayEquals(new String[] { " a ", " b " }, arr);
+
+        arr = StringQuoteHelper.splitSafeQuote("  \" a \"  ,  \" b \"  ,c", ',', true, false);
+        Assertions.assertArrayEquals(new String[] { " a ", " b ", "c" }, arr);
+
+        // spaces outside the quotes are still trimmed
+        arr = StringQuoteHelper.splitSafeQuote("x, ' b '  ", ',', true, false);
+        Assertions.assertArrayEquals(new String[] { "x", " b " }, arr);
+
+        // with keepQuotes the quotes protect the text
+        arr = StringQuoteHelper.splitSafeQuote(" ' a ' , ' b ' ", ',', true, true);
+        Assertions.assertArrayEquals(new String[] { "' a '", "' b '" }, arr);
+
+        // space as separator (such as exec arguments)
+        arr = StringQuoteHelper.splitSafeQuote("'  a  ' b", ' ', true, false);
+        Assertions.assertArrayEquals(new String[] { "  a  ", "b" }, arr);
+    }
+
+    @Test
     public void testSplitBeanParametersNoTrim() throws Exception {
         String[] arr = StringQuoteHelper.splitSafeQuote("String.class ${body}, String.class Mars", ',', false, true);
         Assertions.assertEquals(2, arr.length);

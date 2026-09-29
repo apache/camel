@@ -280,13 +280,15 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     protected void waitUntilCompleted() {
+        // whether the duration max seconds has stopped all routes (and then wait until Camel is shutdown)
+        boolean routesStopped = false;
         while (shutdownStrategy.isRunAllowed()) {
             try {
                 int idle = durationMaxIdleSeconds;
                 int max = durationMaxMessages;
                 long sec = durationMaxSeconds;
                 int exit = durationHitExitCode;
-                if (sec == -1 || sec > 0) {
+                if (!routesStopped && (sec == -1 || sec > 0)) {
                     boolean zero;
                     if (sec > 0) {
                         LOG.info("Waiting until complete: Duration max {} seconds", sec);
@@ -303,7 +305,8 @@ public abstract class MainSupport extends BaseMainSupport {
                             } catch (Exception e) {
                                 LOG.warn("Error during stopping all routes. This exception is ignored.", e);
                             }
-                            // we are just stopping routes (not terminating JVM) so continue
+                            // we are just stopping routes (not terminating JVM) so continue and wait until shutdown
+                            routesStopped = true;
                             continue;
                         }
                     }

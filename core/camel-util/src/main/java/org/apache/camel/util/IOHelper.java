@@ -42,6 +42,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -628,9 +629,14 @@ public final class IOHelper {
     public static String getCharsetNameFromContentType(String contentType) {
         // try optimized for direct match without using splitting
         int pos = contentType.indexOf("charset=");
-        if (pos != -1) {
+        // the parameter must be named charset (and not such as mycharset)
+        if (pos != -1
+                && (pos == 0 || contentType.charAt(pos - 1) == ';' || Character.isWhitespace(contentType.charAt(pos - 1)))) {
             // special optimization for utf-8 which is a common charset
-            if (contentType.regionMatches(true, pos + 8, "utf-8", 0, 5)) {
+            int after = pos + 13;
+            if (contentType.regionMatches(true, pos + 8, "utf-8", 0, 5)
+                    && (after == contentType.length() || contentType.charAt(after) == ';'
+                            || Character.isWhitespace(contentType.charAt(after)))) {
                 return "UTF-8";
             }
 
@@ -694,7 +700,7 @@ public final class IOHelper {
      */
     public static String lookupEnvironmentVariable(String key) {
         // lookup OS env with upper case key
-        String upperKey = key.toUpperCase();
+        String upperKey = key.toUpperCase(Locale.ENGLISH);
         String value = System.getenv(upperKey);
 
         if (value == null) {
@@ -713,7 +719,7 @@ public final class IOHelper {
      * underscores.
      */
     public static String normalizeEnvironmentVariable(String key) {
-        String upperKey = key.toUpperCase();
+        String upperKey = key.toUpperCase(Locale.ENGLISH);
         // some OS do not support dashes in keys, so replace with underscore
         String normalizedKey = upperKey.replace('-', '_');
 
@@ -734,6 +740,8 @@ public final class IOHelper {
 
         private ByteBuffer bufferBytes;
         private final CharBuffer bufferedChars = CharBuffer.allocate(4096);
+        // the first half of a surrogate pair that was read at the end of the buffer
+        private char pendingHighSurrogate;
 
         public EncodingInputStream(Path file, String charset) throws IOException {
             this.file = file;
@@ -743,12 +751,23 @@ public final class IOHelper {
 
         @Override
         public int read() throws IOException {
-            if (bufferBytes == null || bufferBytes.remaining() <= 0) {
+            while (bufferBytes == null || bufferBytes.remaining() <= 0) {
                 BufferCaster.cast(bufferedChars).clear();
+                if (pendingHighSurrogate != 0) {
+                    bufferedChars.put(pendingHighSurrogate);
+                    pendingHighSurrogate = 0;
+                }
                 int len = reader.read(bufferedChars);
                 bufferedChars.flip();
-                if (len == -1) {
+                if (len == -1 && !bufferedChars.hasRemaining()) {
                     return -1;
+                }
+                int limit = bufferedChars.limit();
+                if (len != -1 && limit > 0 && Character.isHighSurrogate(bufferedChars.get(limit - 1))) {
+                    // a surrogate pair (such as an emoji) is split at the end of the buffer, so encode the high
+                    // surrogate together with the low surrogate in the next read (alone it would be encoded as ?)
+                    pendingHighSurrogate = bufferedChars.get(limit - 1);
+                    bufferedChars.limit(limit - 1);
                 }
                 bufferBytes = defaultStreamCharset.encode(bufferedChars);
             }

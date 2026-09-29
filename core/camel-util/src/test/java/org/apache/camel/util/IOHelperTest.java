@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -118,4 +119,16 @@ public class IOHelperTest {
             return n;
         }
     }
+
+    @Test
+    public void testNormalizeEnvironmentVariableTurkishLocale() {
+        Locale before = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+            assertEquals("FILE_INDEX", IOHelper.normalizeEnvironmentVariable("file.index"));
+        } finally {
+            Locale.setDefault(before);
+        }
+    }
+
 }

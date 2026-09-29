@@ -613,13 +613,16 @@ public final class URISupport {
         StringBuilder rc = new StringBuilder(128);
         boolean first = true;
         for (String key : sortedKeys) {
+            Object value = options.get(key);
+            if (value instanceof List<?> l && l.isEmpty()) {
+                // an empty list has no values
+                continue;
+            }
             if (first) {
                 first = false;
             } else {
                 rc.append("&");
             }
-
-            Object value = options.get(key);
 
             // the value may be a list since the same key has multiple
             // values
@@ -908,13 +911,17 @@ public final class URISupport {
         StringBuilder sb = new StringBuilder(128);
         boolean first = true;
         for (String key : sortedKeys) {
+            Object value = parameters.get(key);
+            if (value instanceof List<?> l && l.isEmpty()) {
+                // an empty list has no values
+                continue;
+            }
             if (first) {
                 first = false;
             } else {
                 sb.append('&');
             }
 
-            Object value = parameters.get(key);
             if (value instanceof List) {
                 List<String> list = (List<String>) value;
                 for (Iterator<String> it = list.iterator(); it.hasNext();) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -134,9 +135,28 @@ public class ProfileConfigurer {
     }
 
     private static void setIfNotConfigured(Properties autoConfigured, String key, Runnable setter) {
-        if (autoConfigured == null || !autoConfigured.containsKey(key)) {
+        if (autoConfigured == null || !isConfigured(autoConfigured, key)) {
             setter.run();
         }
+    }
+
+    private static boolean isConfigured(Properties autoConfigured, String key) {
+        if (autoConfigured.containsKey(key)) {
+            return true;
+        }
+        // the key may be in another case or with dashes (such as camel.main.shutdowntimeout from the ENV variable
+        // CAMEL_MAIN_SHUTDOWNTIMEOUT or camel.main.shutdown-timeout)
+        String target = normalizeKey(key);
+        for (String name : autoConfigured.stringPropertyNames()) {
+            if (normalizeKey(name).equals(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String normalizeKey(String key) {
+        return key.toLowerCase(Locale.ENGLISH).replace("-", "").replace("_", "");
     }
 
 }

@@ -188,6 +188,9 @@ public final class StringQuoteHelper {
         boolean doubleQuoted = false;
         boolean separating = false;
         int depth = 0;
+        // where quoted text starts and ends in the current value, so trim does not remove spaces inside quotes
+        int quoteStart = -1;
+        int quoteEnd = -1;
 
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
@@ -222,6 +225,11 @@ public final class StringQuoteHelper {
                 if (keepQuotes) {
                     sb.append(ch);
                 }
+                if (singleQuoted && quoteStart == -1) {
+                    quoteStart = sb.length();
+                } else if (!singleQuoted) {
+                    quoteEnd = sb.length();
+                }
                 continue;
             } else if (!singleQuoted && ch == '"') {
                 if (doubleQuoted && prev == ch && sb.isEmpty()) {
@@ -250,18 +258,21 @@ public final class StringQuoteHelper {
                 if (keepQuotes) {
                     sb.append(ch);
                 }
+                if (doubleQuoted && quoteStart == -1) {
+                    quoteStart = sb.length();
+                } else if (!doubleQuoted) {
+                    quoteEnd = sb.length();
+                }
                 continue;
             } else if (!isQuoting && ch == separator && depth == 0) {
                 separating = true;
                 // add as answer if we are not in a quote
                 if (!sb.isEmpty()) {
-                    String text = sb.toString();
-                    if (trim) {
-                        text = text.trim();
-                    }
-                    answer.add(text);
+                    answer.add(trim ? trimOutsideQuotes(sb, quoteStart, quoteEnd) : sb.toString());
                     sb.setLength(0);
                 }
+                quoteStart = -1;
+                quoteEnd = -1;
                 // we should avoid adding the separator
                 continue;
             }
@@ -285,14 +296,32 @@ public final class StringQuoteHelper {
 
         // any leftover
         if (!sb.isEmpty()) {
-            String text = sb.toString();
-            if (trim) {
-                text = text.trim();
-            }
-            answer.add(text);
+            answer.add(trim ? trimOutsideQuotes(sb, quoteStart, quoteEnd) : sb.toString());
         }
 
         return answer.toArray(new String[0]);
+    }
+
+    /**
+     * Trims the value, but not the text between quoteStart and quoteEnd (the quoted text, when there is any).
+     */
+    private static String trimOutsideQuotes(StringBuilder sb, int quoteStart, int quoteEnd) {
+        if (quoteStart == -1) {
+            return sb.toString().trim();
+        }
+        if (quoteEnd < quoteStart) {
+            // an unterminated quote runs to the end of the value
+            quoteEnd = sb.length();
+        }
+        int begin = 0;
+        while (begin < quoteStart && sb.charAt(begin) <= ' ') {
+            begin++;
+        }
+        int end = sb.length();
+        while (end > quoteEnd && sb.charAt(end - 1) <= ' ') {
+            end--;
+        }
+        return sb.substring(begin, end);
     }
 
 }

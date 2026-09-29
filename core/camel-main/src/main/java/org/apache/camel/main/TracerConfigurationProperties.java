@@ -53,7 +53,7 @@ public class TracerConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "true")
     private boolean includeException = true;
     @Metadata(label = "advanced", defaultValue = "true")
-    private boolean traceRests;
+    private boolean traceRests = true;
     @Metadata(label = "advanced")
     private boolean traceTemplates;
     @Metadata

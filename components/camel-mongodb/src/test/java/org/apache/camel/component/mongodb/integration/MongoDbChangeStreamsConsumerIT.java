@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.mongodb.integration;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.awaitility.Awaitility;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
@@ -44,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private MongoCollection<Document> mongoCollection;
+    private final RecordingExceptionHandler failures = new RecordingExceptionHandler("increasing");
 
     /*
      * NOTE: in the case of this test, we *DO* want to recreate everything after the test has executed, so that when
@@ -167,6 +171,33 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
+    @Order(5)
+    @Test
+    public void failedExchangeIsReportedTest() throws Exception {
+        Assumptions.assumeTrue(0 == mongoCollection.countDocuments(), "The collection should have no documents");
+        failures.clear();
+        MockEndpoint mock = contextExtension.getMockEndpoint("mock:changeStreamFailing");
+        mock.reset();
+        mock.expectedMessageCount(2);
+
+        String consumerRouteId = "failingConsumer";
+        context.getRouteController().startRoute(consumerRouteId);
+
+        // the route fails for the second event, increasing=2
+        CompletableFuture.runAsync(() -> {
+            for (int i = 1; i <= 3; i++) {
+                mongoCollection.insertOne(new Document("increasing", i));
+            }
+        });
+
+        mock.assertIsSatisfied();
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> !failures.getValues().isEmpty());
+        context.getRouteController().stopRoute(consumerRouteId);
+
+        // the route failure reached the consumer's exception handler
+        assertEquals(List.of(2), failures.getValues());
+    }
+
     private void insertAndDelete(ObjectId objectId) {
         mongoCollection.insertOne(new Document("_id", objectId).append("string", "value"));
         mongoCollection.deleteOne(new Document("_id", objectId));
@@ -175,6 +206,7 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
     @RouteFixture
     @Override
     public void createRouteBuilder(CamelContext context) throws Exception {
+        context.getRegistry().bind("changeStreamFailures", failures);
         context.addRoutes(new RouteBuilder() {
 
             @Override
@@ -193,6 +225,16 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
                         .id("updateWithFullDocumentConsumer")
                         .autoStartup(false)
                         .to("mock:test");
+
+                from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&exceptionHandler=#changeStreamFailures")
+                        .id("failingConsumer")
+                        .autoStartup(false)
+                        .process(exchange -> {
+                            if (Integer.valueOf(2).equals(exchange.getIn().getBody(Document.class).get("increasing"))) {
+                                throw new IllegalStateException("Simulated route failure");
+                            }
+                        })
+                        .to("mock:changeStreamFailing");
             }
         });
     }

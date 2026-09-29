@@ -16,11 +16,15 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.component.timer.TimerEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -44,8 +48,18 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
 
     @Test
     public void testDoubleAmpersand() {
-        assertThrows(ResolveEndpointFailedException.class, () -> context.getEndpoint("timer://foo?delay=250&&period=500"),
-                "Should have thrown ResolveEndpointFailedException");
+        // an empty parameter from && is ignored
+        TimerEndpoint endpoint = context.getEndpoint("timer://foo?delay=250&&period=500", TimerEndpoint.class);
+        assertEquals(250, endpoint.getDelay());
+        assertEquals(500, endpoint.getPeriod());
+    }
+
+    @Test
+    public void testDoubleAmpersandInPath() throws Exception {
+        Endpoint endpoint = context.getEndpoint("language:simple:${header.a} == 1 && ${header.b} == 2");
+        assertNotNull(endpoint, "Should have created an endpoint");
+        Object out = template.requestBodyAndHeaders(endpoint, "Hello", Map.of("a", 1, "b", 2));
+        assertEquals("1 == 1 && 2 == 2", out);
     }
 
     @Test
