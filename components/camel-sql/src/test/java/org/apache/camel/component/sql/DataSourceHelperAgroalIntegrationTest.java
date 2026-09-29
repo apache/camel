@@ -17,6 +17,7 @@
 package org.apache.camel.component.sql;
 
 import java.sql.Connection;
+import java.util.concurrent.TimeUnit;
 
 import io.agroal.api.AgroalDataSource;
 import io.agroal.api.AgroalDataSourceMetrics;
@@ -26,6 +27,7 @@ import io.agroal.api.security.SimplePassword;
 import org.apache.camel.support.DataSourceHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -66,13 +68,14 @@ class DataSourceHelperAgroalIntegrationTest {
             // Evict — flush(GRACEFUL) via reflection
             DataSourceHelper.evictDataSourceConnections(ds, "test-rotation");
 
-            // GRACEFUL flush marks idle connections for eviction asynchronously;
-            // allow a short window for Agroal's housekeeping to destroy them
-            Thread.sleep(500);
-
-            // Verify flush was actually called via metrics
-            assertTrue(metrics.flushCount() > flushCountBefore,
-                    "flushCount should have increased after eviction");
+            // GRACEFUL flush hands a FlushTask to the housekeeping executor, so the
+            // actual eviction is async.  Use Awaitility instead of Thread.sleep to
+            // avoid flakiness and comply with the project's no-Thread.sleep rule.
+            await().atMost(5, TimeUnit.SECONDS)
+                    .untilAsserted(() -> {
+                        assertTrue(metrics.flushCount() > flushCountBefore,
+                                "flushCount should have increased after eviction");
+                    });
 
             // After GRACEFUL flush, requesting a new connection forces the pool to
             // replace the flushed one with a fresh physical connection
