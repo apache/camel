@@ -208,6 +208,30 @@ public interface SpiffeComponentBuilderFactory {
             doSetProperty("spiffeSocketPath", spiffeSocketPath);
             return this;
         }
+    
+        
+        /**
+         * What the fetchX509Svid operation returns in the message body.
+         * Defaults to chain: the X.509 certificate chain without the private
+         * key, so a route never handles key material unless it asks for it.
+         * Choose svid to get the whole X509Svid including the private key
+         * (needed for programmatic mTLS), or id to leave the body untouched.
+         * The SPIFFE ID and expiry are exposed through the CamelSpiffeSpiffeId
+         * and CamelSpiffeExpiry headers in every case.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.spiffe.SpiffeX509Response&lt;/code&gt; type.
+         * 
+         * Default: chain
+         * Group: security
+         * 
+         * @param x509Response the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder x509Response(org.apache.camel.component.spiffe.SpiffeX509Response x509Response) {
+            doSetProperty("x509Response", x509Response);
+            return this;
+        }
     }
 
     class SpiffeComponentBuilderImpl
@@ -237,6 +261,7 @@ public interface SpiffeComponentBuilderFactory {
             case "workloadApiClient": getOrCreateConfiguration((SpiffeComponent) component).setWorkloadApiClient((io.spiffe.workloadapi.WorkloadApiClient) value); return true;
             case "allowOperationHeader": getOrCreateConfiguration((SpiffeComponent) component).setAllowOperationHeader((boolean) value); return true;
             case "spiffeSocketPath": getOrCreateConfiguration((SpiffeComponent) component).setSpiffeSocketPath((java.lang.String) value); return true;
+            case "x509Response": getOrCreateConfiguration((SpiffeComponent) component).setX509Response((org.apache.camel.component.spiffe.SpiffeX509Response) value); return true;
             default: return false;
             }
         }

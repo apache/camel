@@ -33,6 +33,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "spiffeSocketPath": target.getConfiguration().setSpiffeSocketPath(property(camelContext, java.lang.String.class, value)); return true;
         case "workloadapiclient":
         case "workloadApiClient": target.getConfiguration().setWorkloadApiClient(property(camelContext, io.spiffe.workloadapi.WorkloadApiClient.class, value)); return true;
+        case "x509response":
+        case "x509Response": target.getConfiguration().setX509Response(property(camelContext, org.apache.camel.component.spiffe.SpiffeX509Response.class, value)); return true;
         default: return false;
         }
     }
@@ -55,6 +57,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "spiffeSocketPath": return java.lang.String.class;
         case "workloadapiclient":
         case "workloadApiClient": return io.spiffe.workloadapi.WorkloadApiClient.class;
+        case "x509response":
+        case "x509Response": return org.apache.camel.component.spiffe.SpiffeX509Response.class;
         default: return null;
         }
     }
@@ -73,6 +77,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "spiffeSocketPath": return target.getConfiguration().getSpiffeSocketPath();
         case "workloadapiclient":
         case "workloadApiClient": return target.getConfiguration().getWorkloadApiClient();
+        case "x509response":
+        case "x509Response": return target.getConfiguration().getX509Response();
         default: return null;
         }
     }
