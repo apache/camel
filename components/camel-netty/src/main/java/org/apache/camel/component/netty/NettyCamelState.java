@@ -53,10 +53,20 @@ public final class NettyCamelState {
     }
 
     public void callbackDoneOnce(boolean doneSync) {
-        if (!callbackCalled.getAndSet(true)) {
+        if (markDone()) {
             // this is the first time we call the callback
             callback.done(doneSync);
         }
+    }
+
+    /**
+     * Claims the completion of the exchange.
+     *
+     * @return <tt>true</tt> for the first caller only, which must then set the outcome on the exchange and call the
+     *         callback, <tt>false</tt> if the exchange is already completed and must not be touched anymore
+     */
+    public boolean markDone() {
+        return callbackCalled.compareAndSet(false, true);
     }
 
     public Exchange getExchange() {
@@ -68,14 +78,24 @@ public final class NettyCamelState {
     }
 
     public void onExceptionCaughtOnce(boolean doneSync) {
+        onExceptionCaughtOnce(doneSync, null);
+    }
+
+    /**
+     * Completes the exchange with the cause of a failed write, unless an exception has already been caught or the
+     * exchange has already been completed, for example by the timeout of a correlation manager.
+     */
+    public void onExceptionCaughtOnce(boolean doneSync, Throwable cause) {
         // only trigger callback once if an exception has not already been caught
         // (ClientChannelHandler#exceptionCaught vs NettyProducer#processWithConnectedChannel)
-        if (exceptionCaught.compareAndSet(false, true)) {
-            // set some general exception as Camel should know the netty write operation failed
-            if (exchange.getException() == null) {
+        if (exceptionCaught.compareAndSet(false, true) && markDone()) {
+            if (cause != null) {
+                exchange.setException(cause);
+            } else if (exchange.getException() == null) {
+                // set some general exception as Camel should know the netty write operation failed
                 exchange.setException(new IOException("Netty write operation failed"));
             }
-            callbackDoneOnce(doneSync);
+            callback.done(doneSync);
         }
     }
 }

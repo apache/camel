@@ -230,7 +230,8 @@ public abstract class TimeoutCorrelationManagerSupport extends ServiceSupport
         workerPool.submit(() -> {
             Exchange exchange = value.getExchange();
             AsyncCallback callback = value.getCallback();
-            if (exchange != null && callback != null) {
+            // the exchange may have been completed meanwhile (the write failed), then it must not be touched
+            if (exchange != null && callback != null && value.markDone()) {
                 Object timeoutBody = getTimeoutResponse(key, exchange.getMessage().getBody());
                 if (timeoutBody != null) {
                     exchange.getMessage().setBody(timeoutBody);
