@@ -161,8 +161,9 @@ public final class SyslogConverter {
      * Parses a syslog message.
      *
      * @param  bytes   the message
-     * @param  charset the charset of the text fields. A MSG that starts with the UTF-8 byte order mark is always
-     *                 decoded as UTF-8, without the byte order mark (MSG-UTF8 of RFC 5424).
+     * @param  charset the charset of the text fields, which must be ASCII-compatible (such as UTF-8 or ISO-8859-1), as
+     *                 the fields are split on ASCII bytes before they are decoded. A MSG that starts with the UTF-8
+     *                 byte order mark is always decoded as UTF-8, without the byte order mark (MSG-UTF8 of RFC 5424).
      * @return         the parsed message
      */
     public static SyslogMessage parseMessage(byte[] bytes, Charset charset) {
@@ -293,7 +294,8 @@ public final class SyslogConverter {
 
     /**
      * The parse loops read one char per byte ({@code (char) (b & 0xff)}), so each char of a field is one of its bytes.
-     * Turns the chars back into those bytes, and decodes the bytes with the charset of the message.
+     * Turns the chars back into those bytes, and decodes the bytes with the charset of the message. The charset must be
+     * ASCII-compatible, as the fields were split on ASCII bytes (a charset such as UTF-16 is not supported).
      */
     private static String decode(CharSequence bytesAsChars, Charset charset) {
         return new String(bytesAsChars.toString().getBytes(StandardCharsets.ISO_8859_1), charset);
