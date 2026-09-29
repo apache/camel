@@ -129,7 +129,7 @@ public abstract class JavaDslModelWriterSupport {
             sb.append(".to(").append(quote(c.getUri())).append(")");
         }
         if (definition.getOtherwise() != null) {
-            sb.append(NL).append(indent()).append(".otherwise(").append(quote(definition.getOtherwise())).append(")");
+            sb.append(NL).append(indent()).append(".otherwise(").append(quote(definition.getOtherwise().getUri())).append(")");
         }
         sb.append(NL).append(indent()).append(".end()");
     }

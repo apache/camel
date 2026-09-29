@@ -80,7 +80,7 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
         if (new HashSet<>(caseKeys).size() != caseKeys.size()) {
             throw new IllegalArgumentException("Duplicate switch case after literal normalization");
         }
-        String otherwiseUri = definition.getOtherwise() == null ? null : staticUri(definition.getOtherwise());
+        String otherwiseUri = definition.getOtherwise() == null ? null : staticUri(definition.getOtherwise().getUri());
         Expression selector = createExpression(definition.getSelector().getExpressionType());
         NodeIdFactory ids = camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class);
         Map<Object, Processor> cases = new LinkedHashMap<>();

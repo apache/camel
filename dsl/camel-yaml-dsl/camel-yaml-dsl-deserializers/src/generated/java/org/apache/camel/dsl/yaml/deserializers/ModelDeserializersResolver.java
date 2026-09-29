@@ -407,6 +407,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.SwitchCaseDefinition": return new ModelDeserializers.SwitchCaseDefinitionDeserializer();
             case "switch": return new ModelDeserializers.SwitchDefinitionDeserializer();
             case "org.apache.camel.model.SwitchDefinition": return new ModelDeserializers.SwitchDefinitionDeserializer();
+            case "switchOtherwise": return new ModelDeserializers.SwitchOtherwiseDefinitionDeserializer();
+            case "org.apache.camel.model.SwitchOtherwiseDefinition": return new ModelDeserializers.SwitchOtherwiseDefinitionDeserializer();
             case "syslog": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.SyslogDataFormat": return new ModelDeserializers.SyslogDataFormatDeserializer();
             case "tarFile": return new ModelDeserializers.TarFileDataFormatDeserializer();

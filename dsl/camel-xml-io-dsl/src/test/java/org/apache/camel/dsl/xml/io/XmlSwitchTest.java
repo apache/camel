@@ -63,13 +63,14 @@ class XmlSwitchTest {
                 <routes xmlns="http://camel.apache.org/schema/spring">
                   <route id="selector">
                     <from uri="direct:start"/>
-                    <switch otherwise="direct:other">
+                    <switch>
                       <selector><header>decision</header></selector>
                       <keys>department</keys><keys>urgent</keys>
                       <case uri="direct:matched">
                         <values name="urgent" type="boolean" value="true"/>
                         <values name="department" value="billing"/>
                       </case>
+                      <otherwise uri="direct:other"/>
                     </switch>
                   </route>
                   <route><from uri="direct:matched"/><setBody><constant>matched</constant></setBody></route>

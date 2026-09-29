@@ -75,6 +75,7 @@ class SwitchJaxbTest {
                 assertEquals("urn:tickets", xpath.getNamespaces().get("t"));
                 assertEquals("billing", choice.getCases().get(0).getValue());
                 assertEquals("mock:billing", choice.getCases().get(0).getUri());
+                assertEquals("mock:other", choice.getOtherwise().getUri());
             }
         }
     }

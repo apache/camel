@@ -6680,9 +6680,9 @@
             "description" : "The note for this node"
           },
           "otherwise" : {
-            "type" : "string",
             "title" : "Otherwise",
-            "description" : "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues."
+            "description" : "Fixed fallback URI for null or unmatched selector results. Without a fallback processing continues.",
+            "$ref" : "#/items/definitions/org.apache.camel.model.SwitchOtherwiseDefinition"
           },
           "selector" : {
             "title" : "Selector",
@@ -6691,6 +6691,23 @@
           }
         },
         "required" : [ "selector" ]
+      },
+      "org.apache.camel.model.SwitchOtherwiseDefinition" : {
+        "title" : "Switch Otherwise",
+        "description" : "The fixed endpoint used when no switch case matches",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "parameters" : {
+            "type" : "object"
+          },
+          "uri" : {
+            "type" : "string",
+            "title" : "Uri",
+            "description" : "The fixed destination URI. Supports property placeholders, but not Simple expressions."
+          }
+        },
+        "required" : [ "uri" ]
       },
       "org.apache.camel.model.SwitchValueDefinition" : {
         "type" : "object",

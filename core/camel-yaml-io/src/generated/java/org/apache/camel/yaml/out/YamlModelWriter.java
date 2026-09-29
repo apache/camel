@@ -319,6 +319,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeSwitchDefinition(SwitchDefinition def) {
         return wrapNode("switch", doWriteSwitchDefinition(def));
     }
+    public JsonObject writeSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) {
+        return wrapNode("switchOtherwise", doWriteSwitchOtherwiseDefinition(def));
+    }
     public JsonObject writeSwitchValueDefinition(SwitchValueDefinition def) {
         return wrapNode("switchValue", doWriteSwitchValueDefinition(def));
     }
@@ -1839,10 +1842,15 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteSwitchDefinition(SwitchDefinition def) {
         JsonObject jo = new JsonObject();
         doWriteProcessorDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "otherwise", def.getOtherwise(), null);
         doWriteChildElement(jo, "selector", def.getSelector(), this::doWriteExpressionSubElementDefinition);
         doWriteStringList(jo, null, "keys", def.getKeys());
         doWriteChildList(jo, null, "case", def.getCases(), this::doWriteSwitchCaseDefinition);
+        doWriteChildElement(jo, "otherwise", def.getOtherwise(), this::doWriteSwitchOtherwiseDefinition);
+        return jo;
+    }
+    protected JsonObject doWriteSwitchOtherwiseDefinition(SwitchOtherwiseDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteAttribute(jo, "uri", def.getUri(), null);
         return jo;
     }
     protected JsonObject doWriteSwitchValueDefinition(SwitchValueDefinition def) {

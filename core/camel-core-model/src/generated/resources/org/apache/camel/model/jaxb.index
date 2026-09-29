@@ -99,6 +99,7 @@ StepDefinition
 StopDefinition
 SwitchCaseDefinition
 SwitchDefinition
+SwitchOtherwiseDefinition
 SwitchValueDefinition
 TemplatedRouteDefinition
 TemplatedRouteParameterDefinition
