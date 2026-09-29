@@ -69,6 +69,18 @@ public class SyslogRfc5424ParseTest extends CamelTestSupport {
     }
 
     @Test
+    public void testUnterminatedParamValue() {
+        // invalid input: the PARAM-VALUE is never closed, so the rest of the message is read as structured data and
+        // MSG is empty (before, the element was closed at the ']' inside the quotes)
+        String rest = "[exampleSDID@32473 note=\"x] hello";
+
+        Rfc5424SyslogMessage message = parse(HEADER + rest);
+
+        assertEquals(rest, message.getStructuredData());
+        assertEquals("", message.getLogMessage());
+    }
+
+    @Test
     public void testEscapedQuoteAndBackslashInParamValue() {
         String sd = "[exampleSDID@32473 quote=\"say \\\"x\\] y\\\"\" path=\"c:\\\\\" note=\"b\\] c\"][other@32473 n=\"2\"]";
 
