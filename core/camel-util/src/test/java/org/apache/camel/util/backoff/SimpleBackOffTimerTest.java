@@ -17,15 +17,21 @@
 package org.apache.camel.util.backoff;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -209,4 +215,51 @@ public class SimpleBackOffTimerTest {
         timer.close();
     }
 
+    @Test
+    void testCancelWhileCompletionCallbackWaitsForLock() throws Exception {
+        // the completion callback takes a lock of the owner of the task (as the supervising route controller does),
+        // and the owner cancels the task while it holds that lock
+        final ReentrantLock ownerLock = new ReentrantLock();
+        final CountDownLatch ownerHoldsLock = new CountDownLatch(1);
+        final AtomicReference<Thread> timerThread = new AtomicReference<>();
+        final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        final ExecutorService owner = Executors.newSingleThreadExecutor();
+        final BackOff backOff = BackOff.builder().delay(10).build();
+        final SimpleBackOffTimer timer = new SimpleBackOffTimer(executor);
+
+        try {
+            BackOffTimer.Task task = timer.schedule(
+                    backOff,
+                    context -> {
+                        timerThread.set(Thread.currentThread());
+                        ownerHoldsLock.await();
+                        // done, so the task completes
+                        return false;
+                    });
+            task.whenComplete(
+                    (context, throwable) -> {
+                        ownerLock.lock();
+                        ownerLock.unlock();
+                    });
+
+            Future<?> cancel = owner.submit(() -> {
+                ownerLock.lock();
+                try {
+                    ownerHoldsLock.countDown();
+                    // the completion callback of the task waits for the lock
+                    await().atMost(5, TimeUnit.SECONDS)
+                            .until(() -> timerThread.get() != null && ownerLock.hasQueuedThread(timerThread.get()));
+                    task.cancel();
+                } finally {
+                    ownerLock.unlock();
+                }
+            });
+
+            assertDoesNotThrow(() -> cancel.get(5, TimeUnit.SECONDS), "Cancelling the task should not deadlock");
+        } finally {
+            owner.shutdownNow();
+            executor.shutdownNow();
+            timer.close();
+        }
+    }
 }

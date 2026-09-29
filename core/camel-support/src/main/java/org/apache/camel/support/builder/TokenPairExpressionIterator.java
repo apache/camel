@@ -58,6 +58,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     public TokenPairExpressionIterator(Expression source, String startToken, String endToken, boolean includeTokens) {
         StringHelper.notEmpty(startToken, "startToken");
         StringHelper.notEmpty(endToken, "endToken");
+        checkTokensDiffer(startToken, endToken);
         this.startToken = startToken;
         this.endToken = endToken;
         this.includeTokens = includeTokens;
@@ -140,9 +141,18 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
         if (endExp != null) {
             end = endExp.evaluate(exchange, String.class);
         }
+        checkTokensDiffer(start, end);
         TokenPairIterator iterator = new TokenPairIterator(start, end, includeTokens, in, charset);
         iterator.init();
         return iterator;
+    }
+
+    private static void checkTokensDiffer(String startToken, String endToken) {
+        // the end token is the delimiter of the scanner, so a start token that is the same is never found
+        if (startToken != null && startToken.equals(endToken)) {
+            throw new IllegalArgumentException(
+                    "The start and end token must be different, both are: " + startToken);
+        }
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
@@ -93,6 +94,18 @@ public class ResequencerEngine<E> {
     private final Lock lock = new ReentrantLock();
 
     /**
+     * Whether this resequencer is stopped. Callers waiting in {@link #waitUntil(Predicate)} are released on stop, and
+     * no elements are inserted or delivered while stopped.
+     */
+    private volatile boolean stopped;
+
+    /**
+     * Incremented on every stop, under the lock, so that a caller released from {@link #waitUntil(Predicate)} by a stop
+     * fails even if this resequencer has been started again before it wakes up.
+     */
+    private volatile long stopCount;
+
+    /**
      * Creates a new resequencer instance with a default timeout of 2000 milliseconds.
      *
      * @param comparator a sequence element comparator.
@@ -103,16 +116,53 @@ public class ResequencerEngine<E> {
         this.lastDelivered = null;
     }
 
+    /**
+     * Starts this resequencer. Elements that were still waiting for their timeout when this resequencer was stopped
+     * wait for a full timeout again from now on.
+     */
     public void start() {
-        timer = new Timer(
-                ThreadHelper.resolveThreadName("Camel Thread ${counter} - ${name}", "Stream Resequencer Timer"), true);
+        lock.lock();
+        try {
+            timer = new Timer(
+                    ThreadHelper.resolveThreadName("Camel Thread ${counter} - ${name}", "Stream Resequencer Timer"), true);
+            stopped = false;
+            // the timeouts that were pending on stop were discarded with the old timer, so schedule them on the new
+            // one, otherwise these elements, and all elements behind them, would never be delivered
+            for (Element<E> element : sequence) {
+                if (element.scheduled()) {
+                    element.schedule(defineTimeout());
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
-     * Stops this resequencer (i.e. this resequencer's {@link Timer} instance).
+     * Stops this resequencer (i.e. this resequencer's {@link Timer} instance), and releases the callers waiting in
+     * {@link #waitUntil(Predicate)}, which then fail with a {@link RejectedExecutionException}. A {@link #deliver()} in
+     * progress ends after the element it is sending, so this method only waits for that element, not for all the
+     * elements that are ready for delivery. The remaining elements are kept and delivered after a restart.
      */
     public void stop() {
-        timer.cancel();
+        // set before taking the lock, which a running deliver() holds while it sends elements: it then returns after
+        // the element being sent
+        stopped = true;
+        lock.lock();
+        try {
+            // under the lock, so that an insert() that has not seen the flag can still schedule its timeout, which
+            // start() schedules again
+            if (timer != null) {
+                timer.cancel();
+            }
+            stopCount++;
+            for (CountDownLatch latch : waitConditions.keySet()) {
+                latch.countDown();
+            }
+            waitConditions.clear();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -133,22 +183,32 @@ public class ResequencerEngine<E> {
      * Wait for the following condition to happen. Do not call this method while holding a lock on the resequencer
      * engine, as it will deadlock. The predicate will be evaluated while holding a lock on the resequencer engine.
      *
-     * @param  pred                 the condition to wait for
-     * @throws InterruptedException if the thread is interrupted
+     * @param  pred                       the condition to wait for
+     * @throws InterruptedException       if the thread is interrupted
+     * @throws RejectedExecutionException if this resequencer is stopped, or is stopped while waiting
      */
     public void waitUntil(Predicate<Sequence<?>> pred) throws InterruptedException {
         CountDownLatch latch;
+        long stopCountAtWait;
         lock.lock();
         try {
+            if (stopped) {
+                throw new RejectedExecutionException("Resequencer is stopped");
+            }
             if (pred.test(sequence)) {
                 return;
             }
             latch = new CountDownLatch(1);
             waitConditions.put(latch, pred);
+            stopCountAtWait = stopCount;
         } finally {
             lock.unlock();
         }
         latch.await();
+        // compare with the stop count rather than read the flag, as a quick restart may have reset it already
+        if (stopped || stopCount != stopCountAtWait) {
+            throw new RejectedExecutionException("Resequencer is stopped");
+        }
     }
 
     private void evaluateConditions() {
@@ -235,12 +295,18 @@ public class ResequencerEngine<E> {
      * Inserts the given element into this resequencer. If the element is not ready for immediate delivery and has no
      * immediate presecessor then it is scheduled for timing out. After being timed out it is ready for delivery.
      *
-     * @param  o                        an element.
-     * @throws IllegalArgumentException if the element cannot be used with this resequencer engine
+     * @param  o                          an element.
+     * @throws IllegalArgumentException   if the element cannot be used with this resequencer engine
+     * @throws RejectedExecutionException if this resequencer is stopped
      */
     public void insert(E o) {
         lock.lock();
         try {
+            // a stopped resequencer has cancelled its timer, so the element could not be scheduled for timing out
+            if (stopped) {
+                throw new RejectedExecutionException("Resequencer is stopped");
+            }
+
             // wrap object into internal element
             Element<E> element = new Element<>(o);
 
@@ -312,7 +378,8 @@ public class ResequencerEngine<E> {
     public boolean deliverNext() throws Exception {
         lock.lock();
         try {
-            if (sequence.isEmpty()) {
+            // once stopped, the elements are kept for a restart, so that stop() does not wait for all of them
+            if (stopped || sequence.isEmpty()) {
                 return false;
             }
             // inspect element with the lowest sequence value

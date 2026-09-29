@@ -89,11 +89,11 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
                 new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
 
-        // restart Camel
-        assertEquals(0, starts);
+        // restart Camel (the event notifier was started when added as camel was already started)
+        assertEquals(1, starts);
         assertEquals(0, stops);
         mbeanServer.invoke(on, "restart", null, null);
-        assertEquals(1, starts);
+        assertEquals(2, starts);
         assertEquals(1, stops);
 
         status = (String) mbeanServer.getAttribute(on, "State");

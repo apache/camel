@@ -157,7 +157,7 @@ public class ClusteredRouteController extends DefaultRouteController {
      * Set the selector strategy to look-up a {@link CamelClusterService}
      */
     public void setClusterServiceSelector(CamelClusterService.Selector clusterServiceSelector) {
-        ObjectHelper.notNull(clusterService, "CamelClusterService.Selector");
+        ObjectHelper.notNull(clusterServiceSelector, "CamelClusterService.Selector");
 
         this.clusterServiceSelector = clusterServiceSelector;
     }
@@ -242,7 +242,10 @@ public class ClusteredRouteController extends DefaultRouteController {
                     final Duration initialDelay = ObjectHelper.supplyIfEmpty(configuration.getInitialDelay(),
                             defaultConfiguration::getInitialDelay);
 
-                    ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace(clusterService, namespace);
+                    // the cluster service may not be looked up yet, so the policy must then use the selector
+                    ClusteredRoutePolicy policy = clusterService != null
+                            ? ClusteredRoutePolicy.forNamespace(clusterService, namespace)
+                            : ClusteredRoutePolicy.forNamespace(clusterServiceSelector, namespace);
                     policy.setCamelContext(getCamelContext());
                     policy.setInitialDelay(initialDelay);
 

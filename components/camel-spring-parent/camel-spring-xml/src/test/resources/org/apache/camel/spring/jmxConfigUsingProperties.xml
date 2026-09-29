@@ -32,7 +32,8 @@
         <jmxAgent id="agent" disabled="{{myjmx.disabled}}"
                   usePlatformMBeanServer="{{myjmx.usePlatform}}"
                   statisticsLevel="RoutesOnly"
-                  useHostIPAddress="true"/>
+                  useHostIPAddress="true"
+                  mbeanServerDefaultDomain="myDomain"/>
 
         <route id="foo" autoStartup="false">
             <from uri="seda:start"/>

@@ -688,7 +688,20 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                             try {
                                 logger.info("Restarting route: {} attempt: {}", r.getId(), attempt);
                                 EventHelper.notifyRouteRestarting(getCamelContext(), r.get(), attempt);
-                                doStartRoute(r, false, rx -> DefaultSupervisingRouteController.super.startRoute(rx.getId()));
+                                lock.lock();
+                                try {
+                                    // the route may have been stopped or started manually (which cancels this task),
+                                    // or Camel may be stopping, while this attempt waited for the lock
+                                    if (routes.get(r) != context || context.getStatus() != BackOffTimer.Task.Status.Active
+                                            || !getCamelContext().isRunAllowed()) {
+                                        logger.info("Restarting route: {} attempt: {} is cancelled", r.getId(), attempt);
+                                        return false;
+                                    }
+                                    doStartRoute(r, false,
+                                            rx -> DefaultSupervisingRouteController.super.startRoute(rx.getId()));
+                                } finally {
+                                    lock.unlock();
+                                }
                                 logger.info("Route: {} started after {} attempts", r.getId(), attempt);
                                 return false;
                             } catch (Exception e) {
@@ -741,7 +754,9 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                                 }
                             }
 
-                            routes.remove(r);
+                            // a cancelled task completes again when its running attempt ends, and by then the route
+                            // may have a new restart task, which must not be removed
+                            routes.remove(r, task);
                         });
 
                         return task;

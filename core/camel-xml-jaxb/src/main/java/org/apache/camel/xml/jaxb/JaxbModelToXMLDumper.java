@@ -56,7 +56,6 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.xml.XmlLineNumberParser;
@@ -140,7 +139,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             throw new TypeConversionException(xml, Document.class, e);
         }
 
-        if (context.isDebugging()) {
+        if (sourceLocation || context.isDebugging()) {
             enrichLocations(dom, locations);
         }
         sanitizeXml(dom, generatedIds);
@@ -222,9 +221,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // replaced so re-create the model
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                NamedNode copy = modelToXml(context, xml, NamedNode.class);
-                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy, false, generatedIds,
-                        sourceLocation);
+                NamedNode copy = modelToXml(context, xml, NamedNode.class, sourceLocation);
+                xml = dumpModelAsXml(context, copy, false, generatedIds, sourceLocation);
             }
         }
 

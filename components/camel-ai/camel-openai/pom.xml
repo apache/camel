@@ -31,7 +31,7 @@
     <artifactId>camel-openai</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: AI :: OpenAI</name>
-    <description>Camel OpenAI component for chat completion using OpenAI API</description>
+    <description>Camel LLM component (OpenAI-compatible API) for chat completion, embeddings, audio, and images</description>
 
     <properties>
         <failsafe.rerunFailingTestsCount>3</failsafe.rerunFailingTestsCount>

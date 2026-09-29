@@ -32,7 +32,8 @@ import org.apache.camel.util.OrderedProperties;
 public abstract class AbstractLocationPropertiesSource extends ServiceSupport
         implements LoadablePropertiesSource, LocationPropertiesSource {
 
-    private final Properties properties = new OrderedProperties();
+    // volatile as the properties are replaced when reloading
+    private volatile Properties properties = new OrderedProperties();
     private final PropertiesComponent propertiesComponent;
     private final PropertiesLocation location;
 
@@ -57,9 +58,10 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
     public Properties loadProperties(Predicate<String> filter) {
         Properties answer = new OrderedProperties();
 
-        for (String name : properties.stringPropertyNames()) {
+        Properties current = properties;
+        for (String name : current.stringPropertyNames()) {
             if (filter.test(name)) {
-                answer.put(name, properties.get(name));
+                answer.put(name, current.get(name));
             }
         }
 
@@ -72,13 +74,13 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
         if (resolver != null) {
             location = location.substring(resolver.length());
         }
-        PropertiesLocation loc = new PropertiesLocation(resolver, location);
+        // keep the optional flag of the location
+        PropertiesLocation loc = new PropertiesLocation(resolver, location, this.location.isOptional());
         Properties prop = loadPropertiesFromLocation(propertiesComponent, loc);
         if (prop != null) {
-            prop = prepareLoadedProperties(prop);
-            // need to clear in case some properties was removed
-            properties.clear();
-            properties.putAll(prop);
+            // replace the properties (in case some properties was removed) in one step, so concurrent lookups
+            // see either the old or the new properties
+            properties = prepareLoadedProperties(prop);
         }
     }
 

@@ -30,7 +30,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -54,13 +53,20 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     private final Path leaderLockPath;
     private final Path leaderDataPath;
     private final AtomicReference<FileLockClusterLeaderInfo> clusterLeaderInfoRef = new AtomicReference<>();
-    private RandomAccessFile leaderLockFile;
-    private RandomAccessFile leaderDataFile;
-    private FileLock lock;
-    private ScheduledFuture<?> task;
+    // Written under stateLock (published by acquireLock, taken over by doStop or by the leadership-lost path of a
+    // current check). Volatile as the leadership check and the cluster data tasks read them without the lock.
+    private volatile RandomAccessFile leaderLockFile;
+    private volatile RandomAccessFile leaderDataFile;
+    private volatile FileLock lock;
     private int heartbeatTimeoutMultiplier;
     private long acquireLockIntervalMilliseconds;
     private FileLockClusterTaskExecutor clusterTaskExecutor;
+    // Guards generation and the hand-over of lock, leaderLockFile and leaderDataFile between the leadership check and
+    // doStop. It is only held for short state changes, never during file I/O or while listeners are notified.
+    private final ReentrantLock stateLock = new ReentrantLock();
+    // Incremented on every start and stop. A leadership check belongs to the generation of the start that scheduled
+    // it, and it ends without taking the lock or rescheduling itself once that generation is over.
+    private long generation;
 
     FileLockClusterView(FileLockClusterService cluster, String namespace) {
         super(cluster, namespace);
@@ -98,6 +104,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         try {
             contextStartLock.lock();
 
+            // Defensive only: doStop and the leadership-lost path always take over and clear the lock and files
             if (leaderLockFile != null) {
                 closeInternal();
                 fireLeadershipChangedEvent((CamelClusterMember) null);
@@ -121,79 +128,178 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         acquireLockIntervalMilliseconds = TimeUnit.MILLISECONDS.convert(
                 service.getAcquireLockInterval(),
                 service.getAcquireLockIntervalUnit());
+        if (acquireLockIntervalMilliseconds < 1) {
+            throw new IllegalArgumentException(
+                    "acquireLockInterval must be at least 1 millisecond, was: " + service.getAcquireLockInterval() + " "
+                                               + service.getAcquireLockIntervalUnit());
+        }
 
         heartbeatTimeoutMultiplier = service.getHeartbeatTimeoutMultiplier();
 
-        scheduleTryLock(true);
+        long gen;
+        stateLock.lock();
+        try {
+            gen = ++generation;
+        } finally {
+            stateLock.unlock();
+        }
+        scheduleTryLock(true, gen);
 
         localMember.setStatus(ClusterMemberStatus.STARTED);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (localMember.isLeader() && leaderDataFile != null) {
-            clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Void, Throwable>() {
-                @Override
-                public Void get() throws Throwable {
-                    try {
-                        FileChannel channel = leaderDataFile.getChannel();
-                        channel.truncate(0);
-                        channel.force(true);
-                    } catch (Exception e) {
-                        // Log and ignore since we need to release the file lock and do cleanup
-                        LOGGER.debug("Failed to truncate {} on {} stop", leaderDataPath, getClass().getSimpleName(), e);
-                    }
-                    return null;
-                }
-            }));
+        final boolean wasLeader;
+        final FileLock heldLock;
+        final RandomAccessFile heldLockFile;
+        final RandomAccessFile heldDataFile;
+        stateLock.lock();
+        try {
+            // A leadership check that is running now can no longer publish a lock it acquires: it re-checks the
+            // generation under stateLock and releases the lock instead. So the lock and files taken here are the
+            // only ones this view holds.
+            generation++;
+            wasLeader = localMember.isLeader();
+            localMember.setStatus(ClusterMemberStatus.STOPPED);
+            heldLock = lock;
+            heldLockFile = leaderLockFile;
+            heldDataFile = leaderDataFile;
+            lock = null;
+            leaderLockFile = null;
+            leaderDataFile = null;
+        } finally {
+            stateLock.unlock();
         }
 
-        closeInternal();
-        localMember.setStatus(ClusterMemberStatus.STOPPED);
-        clusterLeaderInfoRef.set(null);
+        if (wasLeader) {
+            // tell the listeners (such as clustered routes) that this member is no longer the leader, before the lock
+            // is released and another member can take over the leadership
+            fireLeadershipChangedEvent((CamelClusterMember) null);
+        }
+
+        try {
+            if (wasLeader && heldDataFile != null) {
+                clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Void, Throwable>() {
+                    @Override
+                    public Void get() throws Throwable {
+                        try {
+                            FileChannel channel = heldDataFile.getChannel();
+                            channel.truncate(0);
+                            channel.force(true);
+                        } catch (Exception e) {
+                            // Log and ignore since we need to release the file lock and do cleanup
+                            LOGGER.debug("Failed to truncate {} on {} stop", leaderDataPath, getClass().getSimpleName(), e);
+                        }
+                        return null;
+                    }
+                }));
+            }
+        } finally {
+            // The fields no longer reference the lock and files, so they must be released even if the truncate task
+            // timed out (for example on a hanging NFS mount), otherwise the stopped view would keep the lock
+            releaseFileLock(heldLock);
+            closeFile(heldLockFile);
+            closeFile(heldDataFile);
+            clusterLeaderInfoRef.set(null);
+        }
+    }
+
+    /**
+     * The lock, lock file and data file taken over from this view by {@link #takeOver(long)}.
+     */
+    private record HeldLock(FileLock lock, RandomAccessFile lockFile, RandomAccessFile dataFile) {
+        void release() {
+            releaseFileLock(lock);
+            closeFile(lockFile);
+            closeFile(dataFile);
+        }
+    }
+
+    /**
+     * If generation {@code gen} is still current, sets the member to FOLLOWER and takes the lock and files over from
+     * the view, so that the caller releases them outside stateLock. Returns null if the view has been stopped or
+     * started again since, in which case doStop (or the check of the newer generation) owns them.
+     */
+    private HeldLock takeOver(long gen) {
+        stateLock.lock();
+        try {
+            if (gen != generation) {
+                return null;
+            }
+            HeldLock held = new HeldLock(lock, leaderLockFile, leaderDataFile);
+            lock = null;
+            leaderLockFile = null;
+            leaderDataFile = null;
+            localMember.setStatus(ClusterMemberStatus.FOLLOWER);
+            return held;
+        } finally {
+            stateLock.unlock();
+        }
     }
 
     private void closeInternal() {
-        if (task != null) {
-            task.cancel(true);
-        }
-
         releaseFileLock();
         closeLockFiles();
     }
 
     private void closeLockFiles() {
-        if (leaderLockFile != null) {
-            try {
-                leaderLockFile.close();
-            } catch (Exception ignore) {
-                LOGGER.warn("{}", ignore.getMessage(), ignore);
-            }
-            leaderLockFile = null;
-        }
-
-        if (leaderDataFile != null) {
-            try {
-                leaderDataFile.close();
-            } catch (Exception ignore) {
-                LOGGER.warn("{}", ignore.getMessage(), ignore);
-            }
-            leaderDataFile = null;
-        }
+        closeFile(leaderLockFile);
+        leaderLockFile = null;
+        closeFile(leaderDataFile);
+        leaderDataFile = null;
     }
 
-    private void releaseFileLock() {
-        if (lock != null) {
+    private static void closeFile(RandomAccessFile file) {
+        if (file != null) {
             try {
-                lock.release();
+                file.close();
             } catch (Exception ignore) {
                 LOGGER.warn("{}", ignore.getMessage(), ignore);
             }
         }
     }
 
-    private void tryLock() {
-        if (isStarting() || isStarted()) {
+    private void releaseFileLock() {
+        releaseFileLock(lock);
+    }
+
+    private static void releaseFileLock(FileLock fileLock) {
+        if (fileLock != null) {
+            try {
+                fileLock.release();
+            } catch (Exception ignore) {
+                LOGGER.warn("{}", ignore.getMessage(), ignore);
+            }
+        }
+    }
+
+    private boolean isCurrentGeneration(long gen) {
+        stateLock.lock();
+        try {
+            return gen == generation;
+        } finally {
+            stateLock.unlock();
+        }
+    }
+
+    private boolean setFollower(long gen) {
+        stateLock.lock();
+        try {
+            if (gen != generation) {
+                return false;
+            }
+            localMember.setStatus(ClusterMemberStatus.FOLLOWER);
+            return true;
+        } finally {
+            stateLock.unlock();
+        }
+    }
+
+    private void tryLock(long gen) {
+        // A check scheduled by an earlier start, or by a start that has been stopped since, ends here without
+        // rescheduling itself, so that a stop ends the chain and a quick stop and start does not add a second chain
+        if (isCurrentGeneration(gen) && (isStarting() || isStarted())) {
             Exception reason = null;
 
             try {
@@ -211,19 +317,23 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
                 // Non-null lock at this point signifies leadership has been lost or relinquished
                 if (lock != null) {
-                    LOGGER.info("Lock on file {} lost (lock={}, cluster-member-id={})", leaderLockPath, lock,
-                            localMember.getUuid());
-                    localMember.setStatus(ClusterMemberStatus.FOLLOWER);
-                    fireLeadershipChangedEvent((CamelClusterMember) null);
-                    clusterLeaderInfoRef.set(null);
-                    releaseFileLock();
-                    closeLockFiles();
-                    lock = null;
+                    // Only if the view has not been stopped meanwhile: doStop then owns the lock and files, and the
+                    // member stays STOPPED
+                    HeldLock held = takeOver(gen);
+                    if (held != null) {
+                        LOGGER.info("Lock on file {} lost (lock={}, cluster-member-id={})", leaderLockPath, held.lock(),
+                                localMember.getUuid());
+                        fireLeadershipChangedEvent((CamelClusterMember) null);
+                        clusterLeaderInfoRef.set(null);
+                        held.release();
+                    }
                     return;
                 }
 
-                // Must be follower to reach here
-                localMember.setStatus(ClusterMemberStatus.FOLLOWER);
+                // Must be follower to reach here. A stopped view stays STOPPED and its check ends here
+                if (!setFollower(gen)) {
+                    return;
+                }
 
                 // Get & update cluster leader state
                 LOGGER.debug("Reading cluster leader state from {}", leaderDataPath);
@@ -247,18 +357,9 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                     // Attempt to obtain cluster leadership
                     LOGGER.debug("Try to acquire a lock on {} (cluster-member-id={})", leaderLockPath, localMember.getUuid());
 
-                    lock = null;
-                    leaderLockFile = createRandomAccessFile(leaderLockPath);
-                    leaderDataFile = createRandomAccessFile(leaderDataPath);
-                    if (leaderLockFile != null && leaderDataFile != null) {
-                        lock = leaderLockFile.getChannel().tryLock(0, Math.max(1, leaderLockFile.getChannel().size()), false);
-                    }
-
-                    if (lockIsValid()) {
+                    if (acquireLock(gen)) {
                         LOGGER.info("Lock on file {} acquired (lock={}, cluster-member-id={})", leaderLockPath, lock,
                                 localMember.getUuid());
-                        localMember.setStatus(ClusterMemberStatus.LEADER);
-                        clusterLeaderInfoRef.set(null);
                         fireLeadershipChangedEvent(localMember);
                         writeClusterLeaderInfo(true);
                     } else {
@@ -275,11 +376,63 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 if (lock == null) {
                     LOGGER.debug("Lock on file {} not acquired (cluster-member-id={})", leaderLockPath, localMember.getUuid(),
                             reason);
-                    closeLockFiles();
                 }
-                scheduleTryLock(false);
+                if (isCurrentGeneration(gen)) {
+                    scheduleTryLock(false, gen);
+                }
             }
         }
+    }
+
+    /**
+     * Opens the lock and data files and tries to lock the lock file. The files and the lock are only published to this
+     * view, and the member only becomes leader, if the view has not been stopped since the check of generation
+     * {@code gen} started. Otherwise the lock is released again. The file I/O runs without holding stateLock.
+     */
+    private boolean acquireLock(long gen) throws Exception {
+        if (!isCurrentGeneration(gen)) {
+            // stopped while the cluster data was read: do not take the lock, even briefly
+            return false;
+        }
+        RandomAccessFile newLockFile = null;
+        RandomAccessFile newDataFile = null;
+        FileLock newLock = null;
+        boolean published = false;
+        try {
+            newLockFile = createRandomAccessFile(leaderLockPath);
+            newDataFile = createRandomAccessFile(leaderDataPath);
+            if (newLockFile != null && newDataFile != null) {
+                newLock = newLockFile.getChannel().tryLock(0, Math.max(1, newLockFile.getChannel().size()), false);
+            }
+
+            if (lockIsValid(newLock)) {
+                stateLock.lock();
+                try {
+                    if (gen == generation) {
+                        lock = newLock;
+                        leaderLockFile = newLockFile;
+                        leaderDataFile = newDataFile;
+                        localMember.setStatus(ClusterMemberStatus.LEADER);
+                        clusterLeaderInfoRef.set(null);
+                        published = true;
+                    }
+                } finally {
+                    stateLock.unlock();
+                }
+
+                if (!published) {
+                    LOGGER.debug("Lock on file {} acquired after the view was stopped, releasing it (cluster-member-id={})",
+                            leaderLockPath, localMember.getUuid());
+                }
+            }
+        } finally {
+            if (!published) {
+                releaseFileLock(newLock);
+                closeFile(newLockFile);
+                closeFile(newDataFile);
+            }
+        }
+        return published;
     }
 
     void validateAcquireLockInterval(FileLockClusterLeaderInfo clusterLeaderInfo) {
@@ -293,7 +446,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         }
     }
 
-    void scheduleTryLock(boolean isFirstRun) {
+    void scheduleTryLock(boolean isFirstRun, long gen) {
         long offset = System.currentTimeMillis() % acquireLockIntervalMilliseconds;
         long delay = acquireLockIntervalMilliseconds - offset;
         if (delay <= 0) {
@@ -320,7 +473,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
         getClusterService().unwrap(FileLockClusterService.class)
                 .getExecutor()
-                .schedule(this::tryLock, delay, TimeUnit.MILLISECONDS);
+                .schedule(() -> tryLock(gen), delay, TimeUnit.MILLISECONDS);
     }
 
     boolean isLeaderStale(FileLockClusterLeaderInfo clusterLeaderInfo, FileLockClusterLeaderInfo previousClusterLeaderInfo) {
@@ -405,7 +558,11 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     }
 
     boolean lockIsValid() throws ExecutionException, TimeoutException {
-        if (lock != null && lock.isValid()) {
+        return lockIsValid(lock);
+    }
+
+    private boolean lockIsValid(FileLock fileLock) throws ExecutionException, TimeoutException {
+        if (fileLock != null && fileLock.isValid()) {
             return clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Boolean, Throwable>() {
                 @Override
                 public Boolean get() throws Throwable {

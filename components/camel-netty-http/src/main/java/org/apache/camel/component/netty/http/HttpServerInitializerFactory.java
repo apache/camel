@@ -171,7 +171,11 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         } else if (sslContext != null) {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(false);
-            engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
+            if (consumer.getConfiguration().isNeedClientAuth()) {
+                // only when enabled, to keep the client authentication from the sslContextParameters (such as
+                // REQUIRE or WANT) when needClientAuth is not enabled
+                engine.setNeedClientAuth(true);
+            }
             if (consumer.getConfiguration().isHostnameVerification()) {
                 SSLParameters sslParams = engine.getSSLParameters();
                 sslParams.setEndpointIdentificationAlgorithm("HTTPS");

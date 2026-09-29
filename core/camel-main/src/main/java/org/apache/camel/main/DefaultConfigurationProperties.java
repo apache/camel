@@ -3078,10 +3078,19 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Whether to use cloud properties location setting. Default is none.
+     * Sets the locations (comma separated values) where to find properties configuration as defined for cloud native
+     * environments such as Kubernetes. You should only scan text based mounted configuration.
      */
-    public T withCloudPropertiesLocation(boolean dumpRoutesResolvePlaceholders) {
+    public T withCloudPropertiesLocation(String cloudPropertiesLocation) {
         this.cloudPropertiesLocation = cloudPropertiesLocation;
+        return (T) this;
+    }
+
+    /**
+     * @deprecated this method has no effect, use {@link #withCloudPropertiesLocation(String)}
+     */
+    @Deprecated(since = "4.23")
+    public T withCloudPropertiesLocation(boolean dumpRoutesResolvePlaceholders) {
         return (T) this;
     }
 

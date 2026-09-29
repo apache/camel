@@ -21,6 +21,9 @@ import java.util.concurrent.CountDownLatch;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.DefaultConsumer;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,37 @@ abstract class MongoAbstractConsumerThread implements Runnable {
         this.cursorRegenerationDelayEnabled = !(this.cursorRegenerationDelay == 0);
     }
 
+    /**
+     * The exception handler of the consumer this thread feeds, so that a failure reaches the configured handler rather
+     * than being discarded on the consumer thread.
+     */
+    protected ExceptionHandler getExceptionHandler() {
+        return ((DefaultConsumer) consumer).getExceptionHandler();
+    }
+
+    /**
+     * Routes the exchange and reports a failure to the consumer's exception handler.
+     * <p>
+     * A route that fails does not throw from {@code process}: the failure is left on the exchange, so it is checked
+     * there.
+     *
+     * @param  exchange the exchange to route, created with {@code createExchange(false)} and released by the caller
+     * @return          {@code true} if the route processed the exchange without a failure
+     */
+    protected boolean processExchange(Exchange exchange) {
+        try {
+            consumer.getProcessor().process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        Exception cause = exchange.getException();
+        if (cause != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, cause);
+            return false;
+        }
+        return true;
+    }
+
     protected abstract MongoCursor<Document> initializeCursor();
 
     protected abstract void init() throws Exception;
@@ -70,8 +104,10 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                     doRun();
                 } catch (Exception e) {
                     if (keepRunning) {
+                        // this one repeats for as long as the cause persists, so it is the branch that
+                        // needs the stack trace, not the one below
                         log.warn("Exception from consuming from MongoDB caused by {}. Will try again on next poll.",
-                                e.getMessage());
+                                e.getMessage(), e);
                     } else {
                         log.warn("Exception from consuming from MongoDB caused by {}. ConsumerThread will be stopped.",
                                 e.getMessage(), e);

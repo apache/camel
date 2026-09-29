@@ -339,17 +339,7 @@ public class DefaultHttpBinding implements HttpBinding {
                     fileName = fileName.replaceAll("[\n\r\t]", "_");
                 }
                 // is the file name accepted
-                boolean accepted = true;
-                if (fileNameExtWhitelist != null) {
-                    String ext = FileUtil.onlyExt(fileName);
-                    if (ext != null) {
-                        ext = ext.toLowerCase(Locale.US);
-                        fileNameExtWhitelist = fileNameExtWhitelist.toLowerCase(Locale.US);
-                        if (!fileNameExtWhitelist.equals("*") && !fileNameExtWhitelist.contains(ext)) {
-                            accepted = false;
-                        }
-                    }
-                }
+                boolean accepted = isFileNameAccepted(fileName);
                 if (accepted) {
                     AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
                     am.addAttachment(fileName, new DataHandler(new CamelFileDataSource(fileObject, fileName)));
@@ -360,6 +350,39 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
             }
         }
+    }
+
+    /**
+     * Whether an uploaded file is accepted according to the configured {@link #getFileNameExtWhitelist()}.
+     * <p/>
+     * The file name extension is compared, case-insensitively, against each comma-separated entry of the whitelist
+     * exactly and not as a substring: a whitelist of "txt" must not accept an upload named "evil.x" just because
+     * "txt".contains("x"). A file is accepted when no whitelist is configured, when the whitelist is "*", or when the
+     * file name has no extension.
+     *
+     * @param  fileName the file name submitted by the client
+     * @return          true if the file is accepted
+     */
+    protected boolean isFileNameAccepted(String fileName) {
+        String whitelist = getFileNameExtWhitelist();
+        if (whitelist == null) {
+            return true;
+        }
+        String ext = FileUtil.onlyExt(fileName);
+        if (ext == null) {
+            return true;
+        }
+        ext = ext.toLowerCase(Locale.US);
+        whitelist = whitelist.toLowerCase(Locale.US);
+        if (whitelist.equals("*")) {
+            return true;
+        }
+        for (String allowed : whitelist.split(",")) {
+            if (allowed.trim().equals(ext)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

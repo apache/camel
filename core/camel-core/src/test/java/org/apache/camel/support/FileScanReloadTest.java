@@ -71,8 +71,9 @@ public class FileScanReloadTest extends ContextTestSupport {
         // nothing changed since
         assertThat(scanNames()).isEmpty();
 
-        // the save: a route and the property it uses, together
-        Files.writeString(dir.resolve("shop.yaml"), "two");
+        // the save: a route and the property it uses, together. The route changes length: written within the same
+        // millisecond as before, the modification time alone would not tell them apart (that case has its own test)
+        Files.writeString(dir.resolve("shop.yaml"), "one and two");
         Files.writeString(dir.resolve("application.properties"), "shop.name=Camel Shop\nshop.currency=EUR");
 
         // one scan, both files: the reload can apply the property before it builds the route

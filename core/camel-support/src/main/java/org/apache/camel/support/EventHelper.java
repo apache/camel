@@ -947,7 +947,7 @@ public final class EventHelper {
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
 
-            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeFailedEvents()) {
+            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeRedeliveryEvents()) {
                 continue;
             }
 
@@ -964,6 +964,13 @@ public final class EventHelper {
         return answer;
     }
 
+    /**
+     * Notifies that the exchange is being sent to the endpoint.
+     *
+     * @return true if the sending event was notified, or if an exchange sent event should be notified when the exchange
+     *         has been sent (the caller should then time the send and call
+     *         {@link #notifyExchangeSent(CamelContext, Exchange, Endpoint, long)})
+     */
     public static boolean notifyExchangeSending(CamelContext context, Exchange exchange, Endpoint endpoint) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
@@ -990,7 +997,12 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (isDisabledOrIgnored(notifier) || notifier.isIgnoreExchangeSendingEvents()) {
+            if (isDisabledOrIgnored(notifier)) {
+                continue;
+            }
+            // the exchange sent event must be notified even if the notifier does not want the sending event
+            answer |= !notifier.isIgnoreExchangeSentEvents();
+            if (notifier.isIgnoreExchangeSendingEvents()) {
                 continue;
             }
 
@@ -1567,7 +1579,13 @@ public final class EventHelper {
     }
 
     private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
-        if (!notifier.isEnabled(event)) {
+        // an exception from the notifier (also from isEnabled) must not affect routing
+        try {
+            if (!notifier.isEnabled(event)) {
+                return false;
+            }
+        } catch (Throwable e) {
+            LOG.warn("Error checking if event {} is enabled. This exception will be ignored.", event, e);
             return false;
         }
 

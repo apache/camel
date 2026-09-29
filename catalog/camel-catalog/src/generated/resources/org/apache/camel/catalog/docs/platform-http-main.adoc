@@ -42,6 +42,44 @@ These features are as follows:
 
 You configure these features in the `application.properties` file using the `camel.server.xxx` and `camel.management.xxx` options.
 
+=== Downloading files
+
+File download is enabled with `camel.management.downloadEnabled=true`.
+
+Calling `/q/download` without a file name returns a list of the files that can be downloaded.
+By default, the list only contains the source files of the routes (such as `*.camel.yaml` files).
+To also list the resources of the application, add the `classpath=true` query parameter.
+These are the resources from the classpath directories (such as `target/classes`) and from the application JAR
+when the application is packaged, and when using `camel run` the files from the project directory
+(such as `application.properties` and `openapi.json`). The content of the dependency JARs is not included.
+
+[source,bash]
+----
+# list route source files
+curl http://localhost:8080/q/download
+
+# list route source files and the resources of the application
+curl http://localhost:8080/q/download?classpath=true
+----
+
+The list can be filtered with an Ant-style pattern as the file name, for example to list only the properties files:
+
+[source,bash]
+----
+curl http://localhost:8080/q/download/*.properties?classpath=true
+----
+
+When the `Accept` header includes `html` (such as from a web browser), the list is returned as HTML links.
+
+To download a file, call `/q/download/` followed by the file name. The file is resolved from the classpath
+first, then from the route source files, and when using `camel run` from the project directory.
+A file on the classpath can be downloaded even if it is not listed (when not using `classpath=true`).
+
+[source,bash]
+----
+curl http://localhost:8080/q/download/application.properties
+----
+
 == JWT authentication
 
 The embedded HTTP server can validate JWT bearer tokens on incoming requests.

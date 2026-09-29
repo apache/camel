@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
@@ -124,6 +125,39 @@ public class PredicateBuilderTest extends TestSupport {
     @Test
     public void testValueIn() {
         assertMatches(header("name").in("Hiram", "Jonathan", "James", "Claus"));
+    }
+
+    @Test
+    public void testNumberValueIn() {
+        exchange.getIn().setHeader("n", 2);
+        // the values are compared by their numeric values, and are not converted to an Integer first
+        assertDoesNotMatch(header("n").in(2.5));
+        assertDoesNotMatch(header("n").in(2.9, 3.5));
+        assertDoesNotMatch(header("n").in(new BigDecimal("2.5")));
+        assertDoesNotMatch(header("n").in(4294967298L));
+        assertDoesNotMatch(header("n").in("2.5"));
+        assertMatches(header("n").in(1, 2, 3));
+        assertMatches(header("n").in(2.0));
+        assertMatches(header("n").in(2L));
+        assertMatches(header("n").in("2"));
+
+        exchange.getIn().setHeader("n", 0);
+        assertDoesNotMatch(header("n").in(-0.5));
+
+        exchange.getIn().setHeader("n", -1294967296);
+        assertDoesNotMatch(header("n").in(3000000000L));
+
+        exchange.getIn().setHeader("n", 99L);
+        assertDoesNotMatch(header("n").in(99.99, 100.01));
+        assertMatches(header("n").in(99));
+
+        exchange.getIn().setHeader("n", Long.MAX_VALUE);
+        assertDoesNotMatch(header("n").in(1e20));
+
+        exchange.getIn().setHeader("n", 2.5d);
+        assertMatches(header("n").in(2.5));
+        assertMatches(header("n").in("2.5"));
+        assertDoesNotMatch(header("n").in(2));
     }
 
     @Test

@@ -17,6 +17,15 @@
 package org.apache.camel.main;
 
 import org.apache.camel.spi.BootstrapCloseable;
+import org.apache.camel.vault.AwsVaultConfiguration;
+import org.apache.camel.vault.AzureVaultConfiguration;
+import org.apache.camel.vault.CyberArkVaultConfiguration;
+import org.apache.camel.vault.GcpVaultConfiguration;
+import org.apache.camel.vault.HashicorpVaultConfiguration;
+import org.apache.camel.vault.IBMSecretsManagerVaultConfiguration;
+import org.apache.camel.vault.KubernetesConfigMapVaultConfiguration;
+import org.apache.camel.vault.KubernetesVaultConfiguration;
+import org.apache.camel.vault.SpringCloudConfigConfiguration;
 import org.apache.camel.vault.VaultConfiguration;
 
 public class VaultConfigurationProperties extends VaultConfiguration implements BootstrapCloseable {
@@ -75,7 +84,116 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     // getter and setters
     // --------------------------------------------------------------
 
-    // these are inherited from the parent class
+    // these are inherited from the parent class, but must use the configurations of the fluent builders
+
+    @Override
+    public AwsVaultConfiguration getAwsVaultConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return aws != null ? aws : super.getAwsVaultConfiguration();
+    }
+
+    @Override
+    public void setAwsVaultConfiguration(AwsVaultConfiguration aws) {
+        super.setAwsVaultConfiguration(aws);
+        this.aws = aws instanceof AwsVaultConfigurationProperties p ? p : null;
+    }
+
+    @Override
+    public GcpVaultConfiguration getGcpVaultConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return gcp != null ? gcp : super.getGcpVaultConfiguration();
+    }
+
+    @Override
+    public void setGcpVaultConfiguration(GcpVaultConfiguration gcp) {
+        super.setGcpVaultConfiguration(gcp);
+        this.gcp = gcp instanceof GcpVaultConfigurationProperties p ? p : null;
+    }
+
+    @Override
+    public AzureVaultConfiguration getAzureVaultConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return azure != null ? azure : super.getAzureVaultConfiguration();
+    }
+
+    @Override
+    public void setAzureVaultConfiguration(AzureVaultConfiguration azure) {
+        super.setAzureVaultConfiguration(azure);
+        this.azure = azure instanceof AzureVaultConfigurationProperties p ? p : null;
+    }
+
+    @Override
+    public HashicorpVaultConfiguration getHashicorpVaultConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return hashicorp != null ? hashicorp : super.getHashicorpVaultConfiguration();
+    }
+
+    @Override
+    public void setHashicorpVaultConfiguration(HashicorpVaultConfiguration hashicorp) {
+        super.setHashicorpVaultConfiguration(hashicorp);
+        this.hashicorp = hashicorp instanceof HashicorpVaultConfigurationProperties p ? p : null;
+    }
+
+    @Override
+    public KubernetesVaultConfiguration getKubernetesVaultConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return kubernetes != null ? kubernetes : super.getKubernetesVaultConfiguration();
+    }
+
+    @Override
+    public void setKubernetesVaultConfiguration(KubernetesVaultConfiguration kubernetes) {
+        super.setKubernetesVaultConfiguration(kubernetes);
+        this.kubernetes = kubernetes instanceof KubernetesVaultConfigurationProperties p ? p : null;
+    }
+
+    @Override
+    public KubernetesConfigMapVaultConfiguration getKubernetesConfigMapVaultConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return kubernetesConfigmaps != null ? kubernetesConfigmaps : super.getKubernetesConfigMapVaultConfiguration();
+    }
+
+    @Override
+    public void setKubernetesConfigMapVaultConfiguration(KubernetesConfigMapVaultConfiguration kubernetesConfigmaps) {
+        super.setKubernetesConfigMapVaultConfiguration(kubernetesConfigmaps);
+        this.kubernetesConfigmaps
+                = kubernetesConfigmaps instanceof KubernetesConfigmapsVaultConfigurationProperties p ? p : null;
+    }
+
+    @Override
+    public IBMSecretsManagerVaultConfiguration getIBMSecretsManagerVaultConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return ibmSecretsManager != null ? ibmSecretsManager : super.getIBMSecretsManagerVaultConfiguration();
+    }
+
+    @Override
+    public void setIBMSecretsManagerVaultConfiguration(IBMSecretsManagerVaultConfiguration ibmSecretsManager) {
+        super.setIBMSecretsManagerVaultConfiguration(ibmSecretsManager);
+        this.ibmSecretsManager = ibmSecretsManager instanceof IBMSecretsManagerVaultConfigurationProperties p ? p : null;
+    }
+
+    @Override
+    public SpringCloudConfigConfiguration getSpringCloudConfigConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return springConfig != null ? springConfig : super.getSpringCloudConfigConfiguration();
+    }
+
+    @Override
+    public void setSpringCloudConfigConfiguration(SpringCloudConfigConfiguration springConfig) {
+        super.setSpringCloudConfigConfiguration(springConfig);
+        this.springConfig = springConfig instanceof SpringCloudConfigConfigurationProperties p ? p : null;
+    }
+
+    @Override
+    public CyberArkVaultConfiguration getCyberArkVaultConfiguration() {
+        // the configuration from the fluent builder, or else what has been set
+        return cyberark != null ? cyberark : super.getCyberArkVaultConfiguration();
+    }
+
+    @Override
+    public void setCyberArkVaultConfiguration(CyberArkVaultConfiguration cyberark) {
+        super.setCyberArkVaultConfiguration(cyberark);
+        this.cyberark = cyberark instanceof CyberArkVaultConfigurationProperties p ? p : null;
+    }
 
     // fluent builders
     // --------------------------------------------------------------

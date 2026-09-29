@@ -177,7 +177,9 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     public void onStart(Route route) {
         // if keepOpen then start w/ the circuit open
         if (keepOpenBool.get()) {
-            openCircuit(route);
+            // the circuit may still be open from before the route was stopped, and then the started consumer must
+            // be suspended again
+            reopenCircuit(route);
         }
     }
 
@@ -276,7 +278,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
                             closeCircuit(route);
                         } else {
                             LOG.debug("Opening circuit...");
-                            openCircuit(route);
+                            // keep the circuit open, and check again after halfOpenAfter
+                            reopenCircuit(route);
                         }
                     } else {
                         LOG.debug("Half opening circuit...");
@@ -323,15 +326,49 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         }
     }
 
+    /**
+     * Opens the circuit, also when it is already open: suspends the consumer and schedules the next half open check.
+     * Unlike {@link #openCircuit(Route)}, which only acts when the circuit is not open yet, this is used to keep an
+     * open circuit open.
+     */
+    protected void reopenCircuit(Route route) {
+        try {
+            lock.lock();
+            suspendOrStopConsumer(route.getConsumer());
+            state.set(STATE_OPEN);
+            openedAt = System.currentTimeMillis();
+            this.addHalfOpenTimer(route);
+            logState();
+        } catch (Exception e) {
+            handleException(e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     protected void addHalfOpenTimer(Route route) {
-        halfOpenTimer = new Timer();
-        halfOpenTimer.schedule(new HalfOpenTask(route), halfOpenAfter);
+        lock.lock();
+        try {
+            Timer previous = halfOpenTimer;
+            Timer timer = new Timer();
+            timer.schedule(new HalfOpenTask(route, timer), halfOpenAfter);
+            halfOpenTimer = timer;
+            if (previous != null) {
+                // only one half open check at a time (each timer has its own thread)
+                previous.cancel();
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     protected void halfOpenCircuit(Route route) {
         try {
             lock.lock();
-            resumeOrStartConsumer(route.getConsumer());
+            // do not resume the consumer if the route controller has suspended or stopped the route in the meantime
+            if (isResumeOrStartConsumerAllowed(route)) {
+                resumeOrStartConsumer(route.getConsumer());
+            }
             state.set(STATE_HALF_OPEN);
             logState();
         } catch (Exception e) {
@@ -344,7 +381,12 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     protected void closeCircuit(Route route) {
         try {
             lock.lock();
-            resumeOrStartConsumer(route.getConsumer());
+            // only resume the consumer when the circuit is open, as then this policy has suspended the consumer
+            // (when half open the consumer has already been resumed, so if it is suspended now, then by the route
+            // controller), and not if the route controller has suspended or stopped the route in the meantime
+            if (state.get() == STATE_OPEN && isResumeOrStartConsumerAllowed(route)) {
+                resumeOrStartConsumer(route.getConsumer());
+            }
             failures.set(0);
             success.set(0);
             lastFailure = 0;
@@ -390,16 +432,17 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     class HalfOpenTask extends TimerTask {
         private final Route route;
+        private final Timer timer;
 
-        HalfOpenTask(Route route) {
+        HalfOpenTask(Route route, Timer timer) {
             this.route = route;
+            this.timer = timer;
         }
 
         @Override
         public void run() {
-            if (halfOpenTimer != null) {
-                halfOpenTimer.cancel();
-            }
+            // cancel the timer of this task only, a newer timer may already have been scheduled
+            timer.cancel();
             calculateState(route);
         }
     }

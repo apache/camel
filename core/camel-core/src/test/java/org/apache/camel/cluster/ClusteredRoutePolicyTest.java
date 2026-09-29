@@ -19,6 +19,7 @@ package org.apache.camel.cluster;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +31,7 @@ import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClusteredRoutePolicyTest extends ContextTestSupport {
@@ -69,6 +71,9 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     @Test
     public void testClusteredRoutePolicyRemoveAllRoutes() throws Exception {
         cs.getView().setLeader(true);
+        // the policy starts the routes on its own thread
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
 
         context.getRouteController().stopRoute("foo");
         context.getRouteController().stopRoute("baz");
@@ -81,6 +86,9 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     @Test
     public void testClusteredRoutePolicyDontStartAutoStartFalseRoutes() {
         cs.getView().setLeader(true);
+        // the policy starts the routes on its own thread
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
 
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("baz"));
     }
@@ -116,6 +124,9 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     @Test
     public void testClusteredRoutePolicyAddRouteAlreadyLeader() throws Exception {
         cs.getView().setLeader(true);
+        // the policy starts the routes on its own thread
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
 
         context.addRoutes(new RouteBuilder() {
             @Override

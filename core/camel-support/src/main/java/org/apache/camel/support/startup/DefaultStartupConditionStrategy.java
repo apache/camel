@@ -152,7 +152,9 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
         int tick = 1;
         int counter = 1;
 
-        while (watch.taken() < timeout) {
+        // the condition that cannot continue
+        StartupCondition failed = null;
+        while (true) {
             boolean ok = true;
             for (StartupCondition startup : conditions) {
 
@@ -172,6 +174,9 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
                         LOG.trace("canContinue attempt #{}: {}", counter, startup.getName());
                         ok = startup.canContinue(camelContext);
                         LOG.debug("canContinue attempt #{}: {} -> {}", counter, startup.getName(), ok);
+                        if (!ok) {
+                            failed = startup;
+                        }
                     } catch (Exception e) {
                         throw new VetoCamelContextStartException(
                                 "Startup condition " + startup.getName() + " failed due to: " + e.getMessage(), e,
@@ -182,6 +187,10 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
             first = false;
             if (ok) {
                 return;
+            }
+            // check at least once, and once more after the last wait
+            if (watch.taken() >= timeout) {
+                break;
             }
 
             // wait a bit before next loop
@@ -208,11 +217,9 @@ public class DefaultStartupConditionStrategy extends ServiceSupport implements S
         }
 
         String error = "Startup condition timeout error";
-        for (StartupCondition startup : conditions) {
-            String msg = startup.getFailureMessage();
-            if (msg != null) {
-                error = "Startup condition: " + startup.getName() + " cannot continue due to: " + msg;
-            }
+        String msg = failed != null ? failed.getFailureMessage() : null;
+        if (msg != null) {
+            error = "Startup condition: " + failed.getName() + " cannot continue due to: " + msg;
         }
         if ("fail".equalsIgnoreCase(onTimeout)) {
             throw new VetoCamelContextStartException(error, camelContext, true);

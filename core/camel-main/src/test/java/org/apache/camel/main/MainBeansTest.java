@@ -173,6 +173,36 @@ public class MainBeansTest {
     }
 
     @Test
+    public void testBindBeansNestedListMoreThanTenElements() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // the elements are created when binding their nested keys (servers[10] is bound before servers[2])
+        main.addProperty("camel.beans.cluster", "#class:" + MyCluster.class.getName());
+        for (int i = 0; i < 12; i++) {
+            main.addProperty("camel.beans.cluster.servers[" + i + "].host", "host" + i);
+            main.addProperty("camel.beans.cluster.servers[" + i + "].port", String.valueOf(1000 + i));
+        }
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        MyCluster cluster = camelContext.getRegistry().lookupByNameAndType("cluster", MyCluster.class);
+        assertNotNull(cluster);
+
+        List<MyServer> servers = cluster.getServers();
+        assertEquals(12, servers.size());
+        for (int i = 0; i < 12; i++) {
+            assertEquals("host" + i, servers.get(i).getHost());
+            assertEquals(1000 + i, servers.get(i).getPort());
+        }
+
+        main.stop();
+    }
+
+    @Test
     public void testBindBeansMapSquareDotKey() {
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRouteBuilder());
@@ -270,6 +300,39 @@ public class MainBeansTest {
         assertEquals("emea", factory.get("region"));
 
         main.stop();
+    }
+
+    public static class MyCluster {
+        private List<MyServer> servers;
+
+        public List<MyServer> getServers() {
+            return servers;
+        }
+
+        public void setServers(List<MyServer> servers) {
+            this.servers = servers;
+        }
+    }
+
+    public static class MyServer {
+        private String host;
+        private int port;
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
     }
 
     public static class MyRouteBuilder extends RouteBuilder {

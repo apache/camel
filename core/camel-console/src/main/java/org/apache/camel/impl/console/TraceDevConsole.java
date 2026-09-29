@@ -96,7 +96,7 @@ public class TraceDevConsole extends AbstractDevConsole {
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            if (dump != null) {
+            if ("true".equalsIgnoreCase(dump)) {
                 for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
                     addMessage(t);
                 }
@@ -156,7 +156,7 @@ public class TraceDevConsole extends AbstractDevConsole {
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            if (dump != null) {
+            if ("true".equalsIgnoreCase(dump)) {
                 for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
                     addMessage(t);
                 }
