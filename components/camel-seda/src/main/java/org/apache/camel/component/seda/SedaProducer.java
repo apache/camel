@@ -263,12 +263,32 @@ public class SedaProducer extends DefaultAsyncProducer {
         }
 
         LOG.trace("Adding Exchange to queue: {}", target);
+        boolean added = false;
+        try {
+            added = offerToQueue(queue, target);
+        } finally {
+            if (copy && !added) {
+                // the copy is not queued (discarded, or failed to be added), so the exchange takes back its on
+                // completions (such as a consumer committing or rolling back the message), which also releases the
+                // stream cache of the copy
+                target.getExchangeExtension().handoverCompletions(exchange);
+            }
+        }
+    }
+
+    /**
+     * Adds the exchange to the queue
+     *
+     * @return {@code false} if the exchange is discarded as the queue is full
+     */
+    private boolean offerToQueue(BlockingQueue<Exchange> queue, Exchange target) {
         if (discardWhenFull) {
             try {
                 boolean added = queue.offer(target, 0, TimeUnit.MILLISECONDS);
                 if (!added) {
                     LOG.trace("Discarding Exchange as queue is full: {}", target);
                 }
+                return added;
             } catch (InterruptedException e) {
                 LOG.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
                 Thread.currentThread().interrupt();
@@ -298,6 +318,7 @@ public class SedaProducer extends DefaultAsyncProducer {
         } else {
             queue.add(target);
         }
+        return true;
     }
 
     private static RejectedExecutionException interruptedWhileAddingToQueue(InterruptedException cause) {
