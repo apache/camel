@@ -1151,10 +1151,10 @@ public abstract class JavaDslModelWriterSupport {
                 result.append(".state(").append(quote(question.getState())).append(")");
             }
             if (question.getThreshold() != null) {
-                result.append(".threshold(").append(Double.parseDouble(question.getThreshold())).append(")");
+                result.append(".threshold(").append(quote(question.getThreshold())).append(")");
             }
             if (question.getUncertainty() != null) {
-                result.append(".uncertainty(").append(Double.parseDouble(question.getUncertainty())).append(")");
+                result.append(".uncertainty(").append(quote(question.getUncertainty())).append(")");
             }
             if (question.getUncertaintyPolicy() != null) {
                 result.append(".uncertaintyPolicy(").append(quote(question.getUncertaintyPolicy())).append(")");

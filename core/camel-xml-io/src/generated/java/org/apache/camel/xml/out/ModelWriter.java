@@ -2144,9 +2144,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("name", def.getName(), null);
         doWriteAttribute("type", def.getType(), null);
         doWriteAttribute("state", def.getState(), null);
-        doWriteAttribute("threshold", def.getThreshold(), null);
-        doWriteAttribute("uncertainty", def.getUncertainty(), null);
-        doWriteAttribute("uncertaintyPolicy", def.getUncertaintyPolicy(), null);
+        doWriteAttribute("threshold", def.getThreshold(), "0.5");
+        doWriteAttribute("uncertainty", def.getUncertainty(), "0");
+        doWriteAttribute("uncertaintyPolicy", def.getUncertaintyPolicy(), "fail");
         doWriteElement("instructions", def.getInstructions(), this::doWriteString);
         doWriteList(null, "criterion", def.getCriteria(), this::doWritePropertyDefinition);
         doWriteList(null, "level", def.getLevels(), this::doWriteString);

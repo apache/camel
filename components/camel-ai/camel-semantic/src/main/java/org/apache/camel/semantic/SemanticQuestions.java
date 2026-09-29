@@ -90,6 +90,10 @@ public final class SemanticQuestions {
                 .forEach(location -> replace(location, Map.of()));
     }
 
+    Map<String, SemanticQuestion> snapshot() {
+        return questions;
+    }
+
     public SemanticQuestion get(String name) {
         SemanticQuestion question = questions.get(name);
         if (question == null) {

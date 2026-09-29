@@ -84,6 +84,7 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 try (InputStream is = resourceInputStream(resource)) {
                     RoutesDefinition routes = loadRoutesDefinition(getCamelContext(), is);
                     if (routes != null) {
+                        getRouteCollection().setSemantic(routes.getSemantic());
                         // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
                         // so create a copy and use the fluent builder to add the route
                         for (RouteDefinition route : routes.getRoutes()) {

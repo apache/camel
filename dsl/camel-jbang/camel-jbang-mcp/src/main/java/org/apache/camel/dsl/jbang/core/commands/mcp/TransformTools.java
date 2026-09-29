@@ -30,8 +30,12 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.app.SemanticDefinition;
+import org.apache.camel.semantic.DefaultSemanticDefinitionConfigurer;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
@@ -154,6 +158,7 @@ public class TransformTools {
 
             RoutesDefinition rd = new RoutesDefinition();
             rd.setRoutes(routeDefs);
+            rd.setSemantic(DefaultSemanticDefinitionConfigurer.getDefinition(ctx));
 
             StringWriter sw = new StringWriter();
             new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
@@ -179,9 +184,17 @@ public class TransformTools {
                         "Could not parse Java route. Ensure it contains a valid route definition.");
             }
 
+            // Java expression clauses are normally materialized when processors are created.
+            routeDefs.forEach(route -> ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ExpressionNode.class)
+                    .forEach(ExpressionNode::preCreateProcessor));
+
             if ("yaml".equals(targetFormat)) {
                 YamlModelWriter writer = new YamlModelWriter();
                 List<JsonObject> roots = new ArrayList<>();
+                SemanticDefinition semantic = DefaultSemanticDefinitionConfigurer.getDefinition(ctx);
+                if (semantic != null) {
+                    roots.add(writer.writeSemanticDefinition(semantic));
+                }
                 for (RouteDefinition route : routeDefs) {
                     roots.add(writer.writeRouteDefinition(route));
                 }
@@ -189,6 +202,7 @@ public class TransformTools {
             } else {
                 RoutesDefinition rd = new RoutesDefinition();
                 rd.setRoutes(routeDefs);
+                rd.setSemantic(DefaultSemanticDefinitionConfigurer.getDefinition(ctx));
 
                 StringWriter sw = new StringWriter();
                 new org.apache.camel.xml.out.ModelWriter(sw).writeRoutesDefinition(rd);
