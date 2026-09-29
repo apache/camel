@@ -401,7 +401,7 @@
         <milvus-client-version>2.6.25</milvus-client-version>
         <mina-version>2.2.9</mina-version>
         <minio-version>9.0.3</minio-version>
-        <mockito-version>5.23.0</mockito-version>
+        <mockito-version>5.24.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.13.0</mongo-java-driver-version>
         <msal4j-version>1.26.0</msal4j-version>
