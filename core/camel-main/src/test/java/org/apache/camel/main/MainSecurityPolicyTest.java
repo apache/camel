@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.SecurityUtils;
 import org.apache.camel.util.SecurityViolation;
 import org.junit.jupiter.api.Test;
@@ -267,7 +269,7 @@ public class MainSecurityPolicyTest {
     public void testInsecureSerializationViaDetectViolations() {
         // test insecure:serialization detection via SecurityUtils.detectViolations()
         Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put("camel.component.jms.allowJavaSerializedObject", "true");
+        properties.put("camel.component.jms.transferException", "true");
 
         List<SecurityViolation> violations = SecurityUtils.detectViolations(
                 properties,
@@ -277,7 +279,7 @@ public class MainSecurityPolicyTest {
 
         assertEquals(1, violations.size());
         assertEquals("insecure:serialization", violations.get(0).category());
-        assertTrue(violations.get(0).propertyKey().contains("allowJavaSerializedObject"));
+        assertTrue(violations.get(0).propertyKey().contains("transferException"));
     }
 
     @Test
@@ -550,6 +552,38 @@ public class MainSecurityPolicyTest {
             assertEquals("insecure:dev", result.getViolations().get(0).category());
         } finally {
             main.stop();
+        }
+    }
+
+    @Test
+    public void testOptionWithSameNameAsInsecureOptionOfAnotherComponent() {
+        // tls is an insecure:ssl option of camel-pinecone only, so tls=false on another component is not flagged
+        Main main = new Main();
+        main.bind("mytls", new MyTlsComponent());
+        main.addInitialProperty("camel.security.insecureSslPolicy", "fail");
+        main.addInitialProperty("camel.component.mytls.tls", "false");
+
+        assertDoesNotThrow(() -> {
+            main.start();
+            main.stop();
+        });
+    }
+
+    public static class MyTlsComponent extends DefaultComponent {
+
+        private boolean tls = true;
+
+        public boolean isTls() {
+            return tls;
+        }
+
+        public void setTls(boolean tls) {
+            this.tls = tls;
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
         }
     }
 }
