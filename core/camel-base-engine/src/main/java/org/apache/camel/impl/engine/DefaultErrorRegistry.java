@@ -208,9 +208,15 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         //   since the copy has more specific info about where the error actually occurred
         if (correlationId != null) {
             entries.removeIf(e -> exchangeId.equals(e.getExchangeId()) && isSameFailure(e.getException(), exception));
+            entry.fromCopy = true;
         } else {
             for (BacklogErrorEventMessage e : entries) {
-                if (exchangeId.equals(e.getExchangeId()) && isSameFailure(e.getException(), exception)) {
+                // the same exception again, or the failure of a correlated copy wrapped (or unwrapped) by the
+                // original exchange. A doCatch of the original exchange that throws a new exception wrapping the
+                // caught one is another failure, recorded besides the caught one
+                if (exchangeId.equals(e.getExchangeId()) && (e.getException() == exception
+                        || e instanceof DefaultBacklogErrorEventMessage dbe && dbe.fromCopy
+                                && isSameFailure(e.getException(), exception))) {
                     // the copy's entry stays (it names the node), but the original reporting the failure as
                     // handled (a circuit breaker's fallback, a doCatch around a multicast) means the exchange
                     // recovered: the entry is an error that was handled, not an error (CAMEL-24863)
@@ -579,6 +585,8 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         private final JsonObject data;
         private final Throwable exception;
         private volatile boolean handled;
+        // recorded from a correlated copy of the exchange (which the original exchange reports again)
+        private volatile boolean fromCopy;
         private volatile long repeatCount = 1;
         private volatile long repeatFirstTimestamp;
         private volatile long repeatLastTimestamp;

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BacklogErrorEventMessage;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,21 @@ public class ErrorRegistryEdgeCasesTest extends ContextTestSupport {
         assertThat(entries()).extracting(BacklogErrorEventMessage::getExceptionType)
                 .containsExactlyInAnyOrder(IllegalStateException.class.getName(), IllegalArgumentException.class.getName());
         assertThat(entries()).allSatisfy(e -> assertThat(e.isHandled()).isFalse());
+    }
+
+    @Test
+    public void testDoCatchThatThrowsWrappedExceptionIsRecorded() {
+        send("direct:wrap", "a");
+        assertThat(entries()).hasSize(2);
+        assertThat(entries()).anySatisfy(e -> {
+            assertThat(e.getException()).isInstanceOf(IllegalStateException.class).hasMessage("wrapped");
+            assertThat(e.isHandled()).isFalse();
+        });
+        assertThat(entries()).anySatisfy(e -> {
+            assertThat(e.getException()).isInstanceOf(IllegalArgumentException.class).hasMessage("inner");
+            assertThat(e.getToNode()).isEqualTo("w1");
+            assertThat(e.isHandled()).isFalse();
+        });
     }
 
     @Test
@@ -124,6 +140,14 @@ public class ErrorRegistryEdgeCasesTest extends ContextTestSupport {
                 from("direct:rethrow").routeId("rt")
                         .doTry().throwException(new IllegalArgumentException("x"))
                         .doCatch(IllegalArgumentException.class).throwException(new IllegalStateException("wrapped"))
+                        .end();
+                from("direct:wrap").routeId("wrap")
+                        .doTry().throwException(new IllegalArgumentException("inner")).id("w1")
+                        .doCatch(IllegalArgumentException.class)
+                        .process(e -> {
+                            throw new IllegalStateException(
+                                    "wrapped", e.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+                        })
                         .end();
                 from("direct:second").routeId("second")
                         .doTry().throwException(new IllegalArgumentException("first")).id("t1")
