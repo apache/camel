@@ -87,6 +87,84 @@ camel explain hello.yaml --verbose --catalog-context
 
 TIP: Use `--format=markdown` for structured output with headers, lists, and code blocks.
 
+== Project overview
+
+Where `camel explain` explains one route, `camel overview` gives a high-level view of all the integrations in
+a project directory, read from the route sources (no running integration needed):
+
+* the *entry points*: schedules (`timer`, `cron`, ...), HTTP endpoints and REST operations, and consumers of
+  external systems such as a Kafka topic;
+* the *routes*, with their description, where they consume from and the file and line they are written at;
+* the *flows between routes*: a route *calls* another over `direct`, *hands off* over `seda`, *publishes events*
+  over a broker (Kafka, JMS, ...), or *shares data* over the same folder or table;
+* the *external systems* grouped by category (AI, databases, messaging, files, email, HTTP, cloud), taken
+  from the component labels of the Camel catalog;
+* *findings*: a `direct` or `seda` endpoint that no route consumes, routes that call each other in a cycle,
+  duplicate route ids, routes without a description;
+* the *architecture*: the routes grouped by what they do. Routes that set `group` in the source keep
+  it. Routes that routes of two or more groups call are *shared services*. Routes reached only while
+  handling a failure (from a `doCatch`, an `onException` or a dead letter channel), or that only log,
+  are *utility*. The rest is *other* until the AI groups it (see below).
+
+[source,bash]
+----
+camel overview
+camel overview src/main/resources/camel
+camel overview --format=json
+----
+
+YAML and XML routes are read structurally. Java DSL routes are read by pattern matching on string literals in
+`from`, `to`, `routeId` and friends, so endpoints built from constants or the endpoint DSL are not shown; the
+overview says when it contains Java routes.
+Endpoint URIs are shown without their query, as a query may carry credentials.
+
+=== AI-assisted summary
+
+A diagram of many routes quickly becomes spaghetti, especially when the routes have no `description`.
+With `--ai` an LLM explains the project, and the result is saved in `camel-summary.md` in the project
+directory:
+
+[source,bash]
+----
+camel overview --ai
+camel overview --ai --api-type=anthropic
+----
+
+The LLM gets the facts above and excerpts of the routes (values of sensitive options such as passwords and
+tokens are masked), and writes:
+
+* an *overview* of what the project does as a whole;
+* the *capabilities*: the routes without a `group` in the source, grouped by what they achieve for the
+  business, such as _Order intake_, and which of them are *utility* routes (logging, dead letters, retries);
+* a *description* of each route that has none in the source, in two parts: a short *label* of a few words
+  (such as _Order intake & validation_), which is what diagrams and tables show, and a *note*, a sentence on
+  what the route does and why, shown in full where there is room. They map to the `description` and `note` of
+  a route in the DSL.
+
+The summary file is plain Markdown, meant to be read by people, committed with the routes, and read back by
+tools. It keeps the two kinds of content apart: the sections derived from the sources, and the sections an AI
+wrote, which are headed with `✦ AI-assisted`, and an AI-written route description or note is prefixed with
+`✦ AI:`.
+The file records which model wrote the AI sections, when, and a fingerprint of the route sources it saw, so a
+tool can tell when the routes changed afterwards; the file then says the AI sections may be out of date.
+Run `camel overview --ai` again to refresh them, or `camel overview --save` to refresh only the facts.
+
+Once the AI descriptions are reviewed, `--apply-descriptions` puts them into the route sources, so they become
+part of the routes (`description` and `note` in YAML and XML, `.routeDescription(...)` and `.routeNote(...)` in
+Java), shown by every tool, and no longer marked as AI-assisted. What a route already has is never changed: a
+route with a description only gets a note, and the other way around. Review the change with `git diff` before
+committing it.
+
+[source,bash]
+----
+camel overview --apply-descriptions
+----
+
+The same overview is available to AI agents through the `camel_project_overview` and
+`camel_save_project_summary` tools of the xref:camel-jbang-mcp.adoc[Camel MCP Server] and `camel tui --mcp`,
+and in the xref:camel-jbang-tui.adoc[Camel TUI] with the `/overview` command of the AI panel. The TUI draws
+the architecture in the Diagram tab: its top level, Architecture.
+
 == Harden — security analysis
 
 The `camel harden` command analyzes route files for security concerns and suggests hardening measures.

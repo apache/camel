@@ -495,6 +495,13 @@ public class CamelMonitor extends CamelCommand {
     private void wireContextCallbacks() {
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
+        ctx.openMarkdownAtCallback = actionsPopup::openMarkdownAt;
+        ctx.projectOverviewCallback = () -> {
+            if (shellPanel.isOpen()) {
+                shellPanel.close();
+            }
+            aiPanel.startProjectOverview();
+        };
         ctx.openOptionsCallback = actionsPopup::openOptions;
         ctx.openCatalogDocCallback = actionsPopup::openCatalogDoc;
         actionsPopup.setResetStatsAction(this::resetStats);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,12 @@ abstract class AbstractTab implements MonitorTab {
 
     protected AbstractTab(MonitorContext ctx) {
         this.ctx = ctx;
+    }
+
+    /** The source directory of the selected integration, where its project files and summary are; may be null. */
+    protected Path selectedSourceDirectory() {
+        IntegrationInfo info = ctx != null ? ctx.findSelectedIntegration() : null;
+        return info != null ? FilesBrowser.resolveSourceDirectory(info) : null;
     }
 
     // ---- Rendering helpers ----

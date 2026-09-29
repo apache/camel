@@ -68,6 +68,15 @@ class MonitorContext {
     OllamaMonitor ollamaMonitor;
     BiConsumer<String, Boolean> notificationCallback;
     BiConsumer<String, String> openMarkdownCallback;
+    /** Opens markdown in the doc viewer scrolled to a heading: title, markdown, heading (may be null). */
+    MarkdownOpener openMarkdownAtCallback;
+
+    interface MarkdownOpener {
+        void open(String title, String markdown, String heading);
+    }
+
+    /** Starts the AI project overview (CAMEL-25143) in the AI panel, which opens to show how it goes. */
+    Runnable projectOverviewCallback;
     OpenOptionsCallback openOptionsCallback;
     OpenOptionsCallback openCatalogDocCallback;
 

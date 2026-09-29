@@ -313,6 +313,7 @@ class ErrorsTab extends AbstractTableTab {
                             String.format(" Error Topology — step %d/%d ",
                                     diagram.getHistoryStepIndex() + 1, diagram.getHistoryStepCount()),
                             Style.EMPTY.fg(Theme.baseFg())));
+                    diagram.setAiSourceDirectory(selectedSourceDirectory());
                     diagram.renderHistoryTopologyDiagram(frame, diagramArea, title);
                 } else {
                     String routeId = diagram.getHistoryDrillDownRouteId();

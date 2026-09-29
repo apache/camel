@@ -109,4 +109,12 @@ interface AiSlashCommandContext {
      * start.
      */
     String launchDetached(AiSlashCommandRegistry.LaunchSpec spec);
+
+    /**
+     * Runs {@code /overview} (CAMEL-25143): the AI project overview of the selected integration's project. Returns what
+     * to show at once; explaining the project runs in the background and reports in the panel.
+     */
+    default String projectOverview(String arguments) {
+        return "The project overview is not available here.";
+    }
 }

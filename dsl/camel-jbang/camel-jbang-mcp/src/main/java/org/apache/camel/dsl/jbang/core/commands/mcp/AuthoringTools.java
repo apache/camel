@@ -244,6 +244,43 @@ public class AuthoringTools {
                 mavenCentral, "camelVersion", camelVersion));
     }
 
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "A high-level overview of a project's integrations from its route sources (no running "
+                        + "integration needed): routes, entry points, how routes connect (call, hand-off, event), "
+                        + "external systems by category, findings (missing routes, cycles, routes without a "
+                        + "description), and the AI-assisted parts of its camel-summary.md (fields starting "
+                        + "with ai). Use it to explain a project, then camel_save_project_summary to keep the "
+                        + "explanation.")
+    public JsonObject camel_project_overview(
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return call("camel_project_overview", args("directory", directory, "camelVersion", camelVersion));
+    }
+
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = "Saves what you wrote about a project into its camel-summary.md, marked as "
+                        + "AI-assisted, beside the facts derived from the sources, so people and tools can tell them "
+                        + "apart. Call camel_project_overview first. Omitted parts keep what the file has. Route "
+                        + "sources are not changed; to put a description into a route, edit the route.")
+    public JsonObject camel_save_project_summary(
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = "Two to four sentences on what the project does as a whole",
+                     required = false) String overview,
+            @ToolArg(description = "One line per capability: name: route ids comma separated | one sentence",
+                     required = false) String capabilities,
+            @ToolArg(description = "One line per route without a description: route id: short label (two to six words) |"
+                                   + " one sentence on what it does and why",
+                     required = false) String descriptions,
+            @ToolArg(description = "Route ids of plumbing with little business meaning (logging, dead letter, retries),"
+                                   + " comma separated",
+                     required = false) String utility,
+            @ToolArg(description = "The model writing this, recorded in the file", required = false) String model,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        return call("camel_save_project_summary", args("directory", directory, "overview", overview,
+                "capabilities", capabilities, "descriptions", descriptions, "utility", utility, "model", model,
+                "camelVersion", camelVersion));
+    }
+
     /** Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. */
     static JsonObject call(String tool, Map<String, String> args) {
         try {

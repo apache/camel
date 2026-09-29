@@ -150,6 +150,11 @@ final class AiSlashCommandRegistry {
                     return CommandResult.async(AiCliCommandExecutor.Request.infra(arguments));
                 }));
         commands.add(new Descriptor(
+                "overview", List.of("o"),
+                "Explain the project with AI: overview, capabilities, missing route descriptions (saved, marked AI-assisted)",
+                ProjectOverviewAssist.USAGE,
+                (context, arguments) -> CommandResult.system(context.projectOverview(arguments))));
+        commands.add(new Descriptor(
                 "send", List.of("s"), "Send a message to an endpoint", SEND_USAGE,
                 (context, arguments) -> CommandResult.async(
                         AiCliCommandExecutor.Request.send(context.selectedProcessName(), parseSend(arguments)))));

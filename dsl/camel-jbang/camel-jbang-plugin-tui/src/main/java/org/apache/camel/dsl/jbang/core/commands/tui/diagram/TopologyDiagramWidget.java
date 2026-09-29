@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import dev.tamboui.buffer.Buffer;
@@ -39,6 +40,7 @@ public class TopologyDiagramWidget implements Widget {
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
     private static final int MAX_WRAP_LINES = 3;
+    private static final String AI_MARK = "\u2726 ";
 
     private final TopologyLayoutResult layout;
     private final int nodeWidth;
@@ -52,8 +54,17 @@ public class TopologyDiagramWidget implements Widget {
     private final boolean highlightFailed;
 
     private final List<NodeBox> nodeBoxes = new ArrayList<>();
+    private Map<String, String> aiDescriptions = Map.of();
+    private Map<String, List<NodeLine>> nodeLines = Map.of();
+    private Map<String, NodeLine> groupTags = Map.of();
+    private Map<String, Color> groupColors = Map.of();
+    private Style aiStyle = Style.EMPTY.italic();
 
     public record NodeBox(String routeId, int startRow, int endRow, int startCol, int endCol, int layer) {
+    }
+
+    /** A line of a box's own content, in its own style. */
+    public record NodeLine(String text, Style style) {
     }
 
     public TopologyDiagramWidget(
@@ -79,6 +90,145 @@ public class TopologyDiagramWidget implements Widget {
         this.showDescription = showDescription;
         this.highlightRouteIds = highlightRouteIds;
         this.highlightFailed = highlightFailed;
+    }
+
+    /**
+     * Descriptions an AI suggested for routes that have none, by route id, shown with a mark in the given style when
+     * descriptions are shown, so they are not taken for what the route says.
+     */
+    public TopologyDiagramWidget withAiDescriptions(Map<String, String> descriptions, Style style) {
+        this.aiDescriptions = descriptions != null ? descriptions : Map.of();
+        this.aiStyle = style != null ? style : this.aiStyle;
+        return this;
+    }
+
+    /**
+     * The content of the boxes, by node id, instead of the route id and endpoint: for diagrams whose nodes are not
+     * routes, such as the architecture view. At most four lines a box.
+     */
+    public TopologyDiagramWidget withNodeLines(Map<String, List<NodeLine>> lines) {
+        this.nodeLines = lines != null ? lines : Map.of();
+        return this;
+    }
+
+    /**
+     * The group of each route (a route group, an AI capability, shared services, utility), shown as a tag line in the
+     * box and as the colour of its border.
+     */
+    public TopologyDiagramWidget withGroups(Map<String, NodeLine> tags, Map<String, Color> colors) {
+        this.groupTags = tags != null ? tags : Map.of();
+        this.groupColors = colors != null ? colors : Map.of();
+        return this;
+    }
+
+    /** The AI description a route node shows instead of its id, or null. */
+    private String aiDescription(TopologyLayoutNode node) {
+        if (!showDescription || isExternal(node) || node.routeId == null
+                || node.description != null && !node.description.isBlank()) {
+            return null;
+        }
+        String ai = aiDescriptions.get(node.routeId);
+        return ai != null && !ai.isBlank() ? AI_MARK + ai : null;
+    }
+
+    /** A description as a box shows it: at most two lines, cut with an ellipsis. */
+    private List<String> labelLines(String label) {
+        List<String> wrapped = wrapText(label, boxWidth - 4);
+        if (wrapped.size() <= 2) {
+            return wrapped;
+        }
+        String second = wrapped.get(1);
+        int max = Math.max(1, boxWidth - 4 - 3);
+        return List.of(wrapped.get(0), (second.length() > max ? second.substring(0, max) : second) + "...");
+    }
+
+    /** A box's lines and which of them are the AI label, the route id and the group tag (-1 when none). */
+    private record TextLines(List<String> lines, int aiLines, int idLine, int tagLine, NodeLine tag) {
+    }
+
+    /**
+     * The lines of a route box: the label and route id (descriptions on) or the route id and its endpoint, then the
+     * group tag when groups are shown, then metrics; at most {@code MAX_WRAP_LINES + 1}. Drawing and the box height
+     * both use it, so they agree.
+     */
+    private TextLines textLines(TopologyLayoutNode node, boolean ext) {
+        String line1;
+        String ai = aiDescription(node);
+        if (ext) {
+            line1 = node.from;
+        } else if (ai != null) {
+            line1 = ai;
+        } else if (showDescription && node.description != null && !node.description.isBlank()) {
+            line1 = node.description;
+        } else {
+            line1 = node.routeId;
+        }
+        NodeLine tag = ext || node.routeId == null ? null : groupTags.get(node.routeId);
+
+        List<String> lines = new ArrayList<>(wrapText(line1, boxWidth - 4));
+        int aiLines = ai != null ? lines.size() : 0;
+        int idLine = -1;
+        boolean labelled = !ext && !line1.equals(node.routeId);
+        if (labelled) {
+            // a description is a label: at most two lines (one when the group is shown), then the route id
+            List<String> label = labelLines(line1);
+            if (tag != null && label.size() > 1) {
+                int max = Math.max(1, boxWidth - 4 - 3);
+                String first = label.get(0);
+                label = List.of((first.length() > max ? first.substring(0, max) : first) + "...");
+            }
+            lines = new ArrayList<>(label);
+            aiLines = ai != null ? lines.size() : 0;
+            idLine = lines.size();
+            lines.add(node.routeId);
+        }
+        if (!ext && !showDescription) {
+            String line2 = "(" + node.from + ")";
+            List<String> fromLines = wrapText(line2, boxWidth - 4);
+            if (tag != null) {
+                // room for the group: the endpoint on one line, no spacer
+                lines.add(fromLines.size() > 1 ? fromLines.get(0) + "..." : fromLines.get(0));
+            } else {
+                lines.addAll(fromLines);
+                if (fromLines.size() < 2) {
+                    lines.add("");
+                }
+            }
+        }
+        int tagLine = -1;
+        if (tag != null) {
+            tagLine = lines.size();
+            lines.add(tag.text());
+        }
+
+        if (showMetrics) {
+            if (node.exchangesTotal > 0 || node.exchangesFailed > 0) {
+                long ok = node.exchangesTotal - node.exchangesFailed;
+                StringBuilder sb = new StringBuilder();
+                if (ok > 0) {
+                    sb.append(ok);
+                }
+                if (node.exchangesFailed > 0) {
+                    if (!sb.isEmpty()) {
+                        sb.append("/");
+                    }
+                    sb.append(node.exchangesFailed);
+                }
+                lines.add(sb.toString());
+            } else if (!ext) {
+                lines.add("");
+            }
+        }
+
+        while (lines.size() > MAX_WRAP_LINES + 1) {
+            lines.remove(lines.size() - 1);
+        }
+        return new TextLines(lines, aiLines, idLine, tagLine < lines.size() ? tagLine : -1, tag);
+    }
+
+    private List<NodeLine> ownLines(TopologyLayoutNode node) {
+        List<NodeLine> own = node.routeId != null ? nodeLines.get(node.routeId) : null;
+        return own == null || own.isEmpty() ? null : own.subList(0, Math.min(own.size(), MAX_WRAP_LINES + 1));
     }
 
     public List<NodeBox> getNodeBoxes() {
@@ -119,47 +269,17 @@ public class TopologyDiagramWidget implements Widget {
         int row = toRow(node.y);
 
         boolean ext = isExternal(node);
+        List<NodeLine> own = ownLines(node);
 
-        String line1;
-        if (ext) {
-            line1 = node.from;
-        } else if (showDescription && node.description != null && !node.description.isBlank()) {
-            line1 = node.description;
-        } else {
-            line1 = node.routeId;
-        }
-
-        List<String> lines = new ArrayList<>(wrapText(line1, boxWidth - 4));
-        if (!ext && !showDescription) {
-            String line2 = "(" + node.from + ")";
-            List<String> fromLines = wrapText(line2, boxWidth - 4);
-            lines.addAll(fromLines);
-            if (fromLines.size() < 2) {
-                lines.add("");
-            }
-        }
-
-        if (showMetrics) {
-            if (node.exchangesTotal > 0 || node.exchangesFailed > 0) {
-                long ok = node.exchangesTotal - node.exchangesFailed;
-                StringBuilder sb = new StringBuilder();
-                if (ok > 0) {
-                    sb.append(ok);
-                }
-                if (node.exchangesFailed > 0) {
-                    if (!sb.isEmpty()) {
-                        sb.append("/");
-                    }
-                    sb.append(node.exchangesFailed);
-                }
-                lines.add(sb.toString());
-            } else if (!ext) {
-                lines.add("");
-            }
-        }
-
-        while (lines.size() > MAX_WRAP_LINES + 1) {
-            lines.remove(lines.size() - 1);
+        TextLines text = textLines(node, ext);
+        List<String> lines = text.lines();
+        int aiLines = text.aiLines();
+        int idLine = text.idLine();
+        int tagLine = text.tagLine();
+        NodeLine tag = text.tag();
+        if (own != null) {
+            lines = new ArrayList<>(own.stream().map(NodeLine::text).toList());
+            tagLine = -1;
         }
 
         int height = 2 + lines.size();
@@ -174,6 +294,9 @@ public class TopologyDiagramWidget implements Widget {
         if (highlighted) {
             Color hlColor = highlightFailed ? highlightFailColor() : highlightOkColor();
             borderStyle = Style.EMPTY.fg(hlColor).bold();
+        } else if (!ext && groupColors.containsKey(node.routeId)) {
+            // the colour of the route's group, when groups are shown
+            borderStyle = Style.EMPTY.fg(groupColors.get(node.routeId));
         } else {
             borderStyle = ext ? dashedBorderStyle() : borderStyle();
         }
@@ -209,24 +332,32 @@ public class TopologyDiagramWidget implements Widget {
                 setChar(buffer, area, r, c, ' ', bgStyle);
             }
 
-            String text = lines.get(i);
-            if (text.length() > innerWidth) {
-                text = text.substring(0, Math.max(1, innerWidth - 3)) + "...";
+            String lineText = lines.get(i);
+            if (lineText.length() > innerWidth) {
+                lineText = lineText.substring(0, Math.max(1, innerWidth - 3)) + "...";
             }
-            int textCol = col + 2 + Math.max(0, (innerWidth - text.length()) / 2);
+            int textCol = col + 2 + Math.max(0, (innerWidth - lineText.length()) / 2);
 
             // Choose style based on content type
-            if (ext && i == 0) {
-                writeText(buffer, area, r, textCol, text, style(dashedBorderStyle(), selected));
+            if (own != null) {
+                writeText(buffer, area, r, textCol, lineText, style(own.get(i).style(), selected));
+            } else if (ext && i == 0) {
+                writeText(buffer, area, r, textCol, lineText, style(dashedBorderStyle(), selected));
             } else if (showMetrics && i == lines.size() - 1 && node.exchangesTotal > 0) {
-                drawMetricsLine(buffer, area, r, textCol, text, node, selected);
+                drawMetricsLine(buffer, area, r, textCol, lineText, node, selected);
+            } else if (i == tagLine) {
+                writeText(buffer, area, r, textCol, lineText, style(tag.style(), selected));
+            } else if (i < aiLines) {
+                writeText(buffer, area, r, textCol, lineText, style(aiStyle, selected));
+            } else if (i == idLine) {
+                writeText(buffer, area, r, textCol, lineText, style(fromLabelStyle(), selected));
             } else if (i == 0 && !ext) {
                 Style idStyle = highlighted
                         ? Style.EMPTY.fg(highlightFailed ? highlightFailColor() : highlightOkColor()).bold()
                         : routeIdStyle();
-                writeText(buffer, area, r, textCol, text, style(idStyle, selected));
+                writeText(buffer, area, r, textCol, lineText, style(idStyle, selected));
             } else {
-                writeText(buffer, area, r, textCol, text, style(fromLabelStyle(), selected));
+                writeText(buffer, area, r, textCol, lineText, style(fromLabelStyle(), selected));
             }
         }
 
@@ -318,6 +449,10 @@ public class TopologyDiagramWidget implements Widget {
     }
 
     private int boxHeight(TopologyLayoutNode node) {
+        List<NodeLine> own = ownLines(node);
+        if (own != null) {
+            return 2 + own.size();
+        }
         if (isExternal(node)) {
             int lines = 1;
             if (showMetrics && node.exchangesTotal > 0) {
@@ -325,23 +460,7 @@ public class TopologyDiagramWidget implements Widget {
             }
             return 2 + lines;
         }
-        String label = showDescription && node.description != null && !node.description.isBlank()
-                ? node.description : node.routeId;
-        int lines = wrapText(label, boxWidth - 4).size();
-        if (!showDescription) {
-            List<String> fromLines = wrapText("(" + node.from + ")", boxWidth - 4);
-            lines += fromLines.size();
-            if (fromLines.size() < 2) {
-                lines++;
-            }
-        }
-        if (showMetrics) {
-            lines++;
-        }
-        while (lines > MAX_WRAP_LINES + 1) {
-            lines--;
-        }
-        return 2 + lines;
+        return 2 + textLines(node, false).lines().size();
     }
 
     private void setChar(Buffer buffer, Rect area, int gridRow, int gridCol, char ch, Style style) {
@@ -393,7 +512,7 @@ public class TopologyDiagramWidget implements Widget {
                 || "external".equals(node.nodeType);
     }
 
-    static List<String> wrapText(String text, int maxWidth) {
+    public static List<String> wrapText(String text, int maxWidth) {
         if (maxWidth <= 0 || text.length() <= maxWidth) {
             return new ArrayList<>(List.of(text));
         }
@@ -426,7 +545,7 @@ public class TopologyDiagramWidget implements Widget {
         if (!remaining.isEmpty()) {
             int lastIdx = lines.size() - 1;
             String lastLine = lines.get(lastIdx);
-            String combined = lastLine + remaining;
+            String combined = lastLine + " " + remaining;
             lines.set(lastIdx, combined.substring(0, Math.max(1, maxWidth - 3)) + "...");
         }
 

@@ -69,6 +69,46 @@ Press `Enter` on a selected route to **drill down** into its
 internal EIP structure (the route diagram). Press `Esc` to
 return to the topology view.
 
+## Levels
+
+The line above the diagram shows its three zoom levels:
+Architecture › Topology › Route. The level shown is highlighted,
+one that does not apply yet is greyed out. `Enter` zooms in, `Esc`
+zooms out (route, topology, architecture), `v` (at the start of
+the line) moves to the next level, a click goes to a level.
+The right side shows the view settings of the level with their
+state: `a` ai (off shows only what the sources and the runtime
+say: no AI labels, notes or capabilities; it does not change the AI
+overview setting; with no summary yet it has the AI write one, as
+`/overview` does), `b` view (business: labels and what capabilities achieve;
+technical: route ids and endpoints), `m` metrics, `e` external, `d`
+detail, `g` group, `u` utility (one setting for the architecture
+and the topology, so both show the same groups). The footer lists
+only actions.
+
+## Architecture View
+
+The Architecture level shows the routes grouped by what they
+do for the business, one box per group: route groups from the
+source, the capabilities the AI project overview proposed (`✦`,
+italic), shared services (routes several groups use), Other, and
+Utility (plumbing: error handling, logging; `u` shows it). A box
+lists its route count, entry points and external systems; the
+panel at the bottom right shows the inside of the selected group,
+its routes as a tree from where messages enter.
+`Enter` goes down to the topology of all routes with the group's
+routes highlighted, `Enter` on a route opens its diagram,
+`Esc` goes back up. It follows edited routes and a new summary
+by itself.
+
+## AI-assisted descriptions
+
+With descriptions on (`n`), a route that has no description of its
+own shows the one the AI project overview (`/overview` in the AI
+panel) suggested, in italic and marked with `✦`. It was written by
+an AI, not taken from the route: review it, and `/overview apply`
+puts it into the route source once you agree.
+
 ## Route Diagram
 
 In the route diagram, each EIP node shows its type tag (colored)
@@ -97,7 +137,20 @@ you an at-a-glance view of where you are in the route.
 - `↑↓←→` — navigate between route boxes
 - `Enter` — drill down into selected route
 - `c` — show route source code
+- `v` — next level: architecture, topology, route
+- `g` — show each route's group in the topology, its colour as in
+  the architecture, with a legend of the groups at the bottom
+- `u` — show or hide utility routes (as in the architecture)
+- `s` — open the integration summary (camel-summary.md)
 - `Esc` — close diagram
+
+**Architecture view:**
+- `↑↓←→` — navigate between groups or routes
+- `Enter` — the topology of all routes, the group's highlighted
+- `u` — show or hide utility routes
+- `e` — external systems as boxes linked to the groups that use them
+- `s` — open the integration summary at its Architecture section
+- `Esc` — back to the groups, then to the topology
 
 **Route diagram:**
 - `↑↓←→` — navigate between EIP nodes
@@ -120,6 +173,6 @@ you an at-a-glance view of where you are in the route.
 **Common:**
 - `m` — toggle metrics on/off (default: on)
 - `e` — toggle external systems on/off (topology only)
-- `n` — toggle description labels on/off
+- `b` — business or technical view (`n` works too)
 - `PgUp/PgDn` — page scroll
 - `Home/End` — top/end
