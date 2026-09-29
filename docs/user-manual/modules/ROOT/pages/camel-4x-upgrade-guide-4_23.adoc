@@ -531,6 +531,13 @@ Some tabular data returned by the JMX MBeans had a key that was not unique, so t
 `KeyAlreadyExistsException`. The tabular data of the Choice EIP and doTry EIP `extendedInformation` and of
 `listTasks` of the task manager registry now have an `index` item as their key, the exchange factories of `listStatistics`
 are keyed by `url` and `routeId`, and endpoints that only differ in a secret (which is masked) are shown once.
+The `listEndpointServices` operation of the endpoint service registry is keyed by `routeId` as well, so two routes
+that consume from the same service are both listed.
+
+The notification types advertised by the event notifier MBean (`getNotificationInfo`) are now the types that
+`JmxNotificationEventNotifier` sends, which is the simple class name of the event (such as `ExchangeCompletedEvent`),
+and the notification class is `javax.management.Notification`. Before, the advertised types used a
+`org.apache.camel.management.event.` prefix and several events were missing.
 
 === camel-exec
 
