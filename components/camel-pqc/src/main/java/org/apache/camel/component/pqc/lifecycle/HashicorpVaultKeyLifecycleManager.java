@@ -35,6 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
+import org.bouncycastle.jcajce.spec.CMCEParameterSpec;
+import org.bouncycastle.jcajce.spec.FrodoKEMParameterSpec;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
@@ -629,13 +631,13 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
                 case "SABER":
                     return SABERParameterSpec.lightsaberkem128r3;
                 case "FRODO":
-                    return FrodoParameterSpec.frodokem640aes;
+                    return FrodoKEMParameterSpec.frodokem976aes;
                 case "BIKE":
                     return BIKEParameterSpec.bike128;
                 case "HQC":
                     return HQCParameterSpec.hqc128;
                 case "CMCE":
-                    return CMCEParameterSpec.mceliece348864;
+                    return CMCEParameterSpec.mceliece460896;
                 default:
                     return null;
             }

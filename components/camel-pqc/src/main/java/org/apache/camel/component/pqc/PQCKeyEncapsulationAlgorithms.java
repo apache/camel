@@ -24,9 +24,9 @@ public enum PQCKeyEncapsulationAlgorithms {
     // Experimental and non-standardized
     BIKE("BIKE", "BCPQC"),
     HQC("HQC", "BCPQC"),
-    CMCE("CMCE", "BCPQC"),
+    CMCE("CMCE", "BC"),
     SABER("SABER", "BCPQC"),
-    FRODO("FRODO", "BCPQC"),
+    FRODO("FrodoKEM", "BC"),
     NTRU("NTRU", "BCPQC"),
     NTRULPRime("NTRULPRime", "BCPQC"),
     SNTRUPrime("SNTRUPrime", "BCPQC"),
