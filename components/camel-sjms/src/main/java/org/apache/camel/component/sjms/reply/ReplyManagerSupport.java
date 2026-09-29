@@ -128,6 +128,15 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     @Override
+    public boolean cancelCorrelationId(String correlationId) {
+        if (correlationId != null && correlation != null && correlation.remove(correlationId) != null) {
+            log.debug("Cancelled reply correlation [{}]", correlationId);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onMessage(Message message, Session session) throws JMSException {
         String correlationID = getJMSCorrelationID(message);
 
