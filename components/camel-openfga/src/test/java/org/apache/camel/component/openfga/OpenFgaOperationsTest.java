@@ -268,6 +268,21 @@ class OpenFgaOperationsTest extends CamelTestSupport {
     }
 
     @Test
+    void writeTuplesNeverFallsBackToTheBodyWhenAConfiguredExpressionResolvesToNothing() throws Exception {
+        // the hole the previous fix left: a bare ${header.x} with the header absent evaluates to null, not "", so
+        // judging "is a tuple configured?" by the evaluated values concluded nothing was configured and read the
+        // body - handing the caller the tuple after all
+        Exchange out = template.request(
+                "openfga:writeTuples" + BASE + "&user=${header.u}&relation=${header.r}&object=${header.o}",
+                e -> e.getMessage().setBody(
+                        Map.of("user", "user:attacker", "relation", "owner", "object", "document:secret")));
+
+        assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class);
+        assertThat(out.getException()).hasMessageContaining("resolved to nothing");
+        verify(client, never()).writeTuples(anyList());
+    }
+
+    @Test
     void writeTuplesReportsAPartlyConfiguredTripleRatherThanCompletingItFromTheBody() {
         Exchange out = template.request("openfga:writeTuples" + BASE + "&user=user:anne",
                 e -> e.getMessage().setBody(

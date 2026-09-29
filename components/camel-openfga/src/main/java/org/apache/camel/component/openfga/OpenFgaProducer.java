@@ -318,12 +318,14 @@ public class OpenFgaProducer extends DefaultProducer {
         // that governs the check governs the write: the configuration decides and the message does not. Reading the
         // body in preference would mean a route that unmarshals an untrusted payload hands the caller the choice of
         // which relationship to grant - and "user:attacker owner document:secret" is a legitimate-looking tuple.
-        Tuple configured = new Tuple(
-                authorizer.rawUser(exchange), authorizer.rawRelation(exchange), authorizer.rawObject(exchange));
-        if (configured.user != null || configured.relation != null || configured.object != null) {
-            // a partly configured triple is a mistake rather than an invitation to fill the rest in from the
-            // message, so validated() reports whichever part is missing
-            return List.of(validated(configured));
+        // asked of the configuration, not of what it evaluated to: user=${header.u} with no such header evaluates to
+        // null, and judging by the value would read that as "nothing configured" and go on to take the tuple from the
+        // body - the very override configuring a tuple is meant to prevent
+        if (authorizer.hasConfiguredTuple()) {
+            // a part that is configured but resolved to nothing, like a partly configured triple, is a mistake rather
+            // than an invitation to fill the rest in from the message, so validated() reports which part it was
+            return List.of(validated(new Tuple(
+                    authorizer.rawUser(exchange), authorizer.rawRelation(exchange), authorizer.rawObject(exchange))));
         }
 
         List<Tuple> tuples = new ArrayList<>();
@@ -371,10 +373,18 @@ public class OpenFgaProducer extends DefaultProducer {
     }
 
     private static void reject(String reason, String what, String value) {
-        if (reason != null) {
-            throw new IllegalArgumentException(
-                    "A relationship tuple has an unusable " + what + " (" + reason + "): '" + value + "'");
+        if (reason == null) {
+            return;
         }
+        if (value == null || value.isEmpty()) {
+            // distinct from a malformed value, because the cause and the remedy are different: the endpoint asked for
+            // this part and the exchange did not carry it
+            throw new IllegalArgumentException(
+                    "The " + what + " configured for this relationship tuple resolved to nothing; a configured tuple"
+                                               + " is never completed from the message body");
+        }
+        throw new IllegalArgumentException(
+                "A relationship tuple has an unusable " + what + " (" + reason + "): '" + value + "'");
     }
 
     private static String stringValue(Map<?, ?> map, String key) {

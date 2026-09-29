@@ -358,6 +358,19 @@ public class OpenFgaAuthorizer {
     }
 
     /**
+     * Whether the endpoint configures a tuple at all, judged from the options as written rather than from what they
+     * evaluate to.
+     * <p/>
+     * The distinction is the whole point. {@code user=${header.u}} on an exchange with no such header evaluates to
+     * null, so deciding "is a tuple configured?" from the evaluated values would conclude that none is - and fall
+     * through to taking the tuple from the message body, which is exactly the override that configuring one is meant to
+     * prevent. A configured expression that resolves to nothing is an error, not an invitation.
+     */
+    boolean hasConfiguredTuple() {
+        return user != null || relation != null || object != null;
+    }
+
+    /**
      * Evaluates the {@code user}, {@code relation} and {@code object} options without the check-path guards and without
      * touching the decision headers, for the operations that write relationship tuples. There the values are not a
      * subject being judged but a tuple the route has decided to write, so a typed wildcard is allowed and the

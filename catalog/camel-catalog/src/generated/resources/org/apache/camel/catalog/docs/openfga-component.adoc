@@ -280,8 +280,6 @@ that window matters, at the cost of latency.
 The value is checked when the endpoint starts, and an unrecognised one — `higher_consistency`, say — is refused
 rather than accepted and quietly sent as `unknown_default_open_api` on every request.
 
-
-
 === Authentication and TLS
 
 For a server started with `--authn-method preshared`, set `apiToken`. For one behind an OIDC provider, set
