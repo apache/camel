@@ -1055,8 +1055,9 @@ exception. When the send fails after the request timeout, or the reply, has alre
 example a send that blocks longer than `requestTimeout` and then fails), the exchange keeps the outcome of the
 timeout or the reply, and the send failure is logged at WARN level.
 
-`org.apache.camel.component.sjms.reply.ReplyManager` has a new method `boolean cancelCorrelationId(String)`, which
-`ReplyManagerSupport` implements. A custom `ReplyManager` implementation has to implement it.
+`org.apache.camel.component.sjms.reply.ReplyManager` has a new default method `boolean cancelCorrelationId(String)`,
+which `ReplyManagerSupport` implements. A custom `ReplyManager` implementation that does not override it keeps the
+previous behaviour.
 
 === camel-tika
 
