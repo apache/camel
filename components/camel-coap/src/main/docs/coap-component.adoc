@@ -66,6 +66,15 @@ The following rules determine which request method the CoAP producer will use to
  3. `POST` if the message exchange body is not null.
  4. `GET` otherwise.
 
+=== Error responses from the CoAP consumer
+
+When the exchange fails, the CoAP consumer answers the request with `5.00 Internal Server Error`. The same applies
+when the response cannot be built once the route has completed, for example when the body cannot be converted to
+the response payload.
+
+By default the error response has no payload, so the exception's message is not sent to the client. Set
+`muteException=false` on the endpoint to send the exception's message as the payload instead.
+
 
 == Configuring COAP Server
 
