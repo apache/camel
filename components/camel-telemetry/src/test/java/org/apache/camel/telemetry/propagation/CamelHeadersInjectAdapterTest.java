@@ -51,4 +51,15 @@ public class CamelHeadersInjectAdapterTest {
         assertEquals("value1", map.get("-key-1-"));
     }
 
+    @Test
+    public void camelHeadersInAnyCaseAreNotInjected() {
+        SpanContextPropagationInjector adapter = new CamelHeadersSpanContextPropagationInjector(map);
+        adapter.put("CamelFoo", "value1");
+        adapter.put("camelFoo", "value2");
+        adapter.put("CAMELFOO", "value3");
+        adapter.put("CaMeLfoo", "value4");
+        adapter.put("traceparent", "value5");
+        assertEquals(1, map.size());
+        assertEquals("value5", map.get("traceparent"));
+    }
 }

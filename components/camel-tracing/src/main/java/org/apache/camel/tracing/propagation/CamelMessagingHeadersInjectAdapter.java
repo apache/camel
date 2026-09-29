@@ -19,6 +19,7 @@ package org.apache.camel.tracing.propagation;
 import java.util.Map;
 
 import org.apache.camel.tracing.InjectAdapter;
+import org.apache.camel.util.StringHelper;
 
 @Deprecated(since = "4.19.0")
 public final class CamelMessagingHeadersInjectAdapter implements InjectAdapter {
@@ -41,7 +42,7 @@ public final class CamelMessagingHeadersInjectAdapter implements InjectAdapter {
     @Override
     public void put(String key, String value) {
         // Assume any header property that begins with 'Camel' is for internal use
-        if (!key.startsWith("Camel")) {
+        if (!StringHelper.startsWithIgnoreCase(key, "Camel")) {
             this.map.put(encodeDash(key), value);
         }
     }

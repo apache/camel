@@ -31,6 +31,7 @@ import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,7 +206,7 @@ public class NettyHttpProducer extends NettyProducer {
                 .stream()
                 .filter(key -> !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE)
                         && !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT)
-                        && key.startsWith("Camel"))
+                        && StringHelper.startsWithIgnoreCase(key, "Camel"))
                 .collect(Collectors.toList());
 
         headersToRemove.stream().forEach(header -> exchange.getMessage().removeHeaders(header));

@@ -302,7 +302,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     protected void copyCamelHeaders(Map<String, Object> headers, Exchange exchange) {
         exchange.getIn().getHeaders().keySet()
                 .stream()
-                .filter(key -> key.startsWith("Camel"))
+                .filter(key -> StringHelper.startsWithIgnoreCase(key, "Camel"))
                 .forEach(key -> headers.put(key, exchange.getIn().getHeaders().get(key)));
 
     }

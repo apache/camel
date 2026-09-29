@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.telemetry.propagation;
+package org.apache.camel.tracing.propagation;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.telemetry.SpanContextPropagationInjector;
-import org.apache.camel.util.StringHelper;
+import org.junit.jupiter.api.Test;
 
-public final class CamelHeadersSpanContextPropagationInjector implements SpanContextPropagationInjector {
-    private final Map<String, Object> map;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    public CamelHeadersSpanContextPropagationInjector(final Map<String, Object> map) {
-        this.map = map;
-    }
+@Deprecated(since = "4.19.0")
+public class CamelHeadersInjectAdapterTest {
 
-    @Override
-    public void put(String key, String value) {
-        // Assume any header property that begins with 'Camel' is for internal use
-        if (!StringHelper.startsWithIgnoreCase(key, "Camel")) {
-            this.map.put(key, value);
-        }
+    @Test
+    public void camelHeadersInAnyCaseAreNotInjected() {
+        Map<String, Object> map = new HashMap<>();
+        CamelHeadersInjectAdapter adapter = new CamelHeadersInjectAdapter(map);
+        adapter.put("CamelFoo", "value1");
+        adapter.put("camelFoo", "value2");
+        adapter.put("CAMELFOO", "value3");
+        adapter.put("CaMeLfoo", "value4");
+        adapter.put("traceparent", "value5");
+        assertEquals(1, map.size());
+        assertEquals("value5", map.get("traceparent"));
     }
 }

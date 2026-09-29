@@ -52,4 +52,15 @@ public class CamelMessagingHeadersInjectAdapterTest {
         assertEquals("value1", map.get(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH));
     }
 
+    @Test
+    public void camelHeadersInAnyCaseAreNotInjected() {
+        SpanContextPropagationInjector adapter = new CamelJMSHeadersSpanContextPropagationInjector(map);
+        adapter.put("CamelFoo", "value1");
+        adapter.put("camelFoo", "value2");
+        adapter.put("CAMELFOO", "value3");
+        adapter.put("CaMeLfoo", "value4");
+        adapter.put("traceparent", "value5");
+        assertEquals(1, map.size());
+        assertEquals("value5", map.get("traceparent"));
+    }
 }

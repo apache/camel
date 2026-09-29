@@ -19,6 +19,7 @@ package org.apache.camel.telemetry.propagation;
 import java.util.Map;
 
 import org.apache.camel.telemetry.SpanContextPropagationInjector;
+import org.apache.camel.util.StringHelper;
 
 public final class CamelJMSHeadersSpanContextPropagationInjector implements SpanContextPropagationInjector {
 
@@ -37,7 +38,7 @@ public final class CamelJMSHeadersSpanContextPropagationInjector implements Span
     @Override
     public void put(String key, String value) {
         // Assume any header property that begins with 'Camel' is for internal use
-        if (!key.startsWith("Camel")) {
+        if (!StringHelper.startsWithIgnoreCase(key, "Camel")) {
             this.map.put(encodeDash(key), value);
         }
     }
